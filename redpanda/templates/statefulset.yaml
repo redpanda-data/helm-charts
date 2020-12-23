@@ -1,0 +1,157 @@
+{{/*
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/}}
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "redpanda.name" . }}
+  labels:
+   {{- include "redpanda.labels" . | nindent 4 }} 
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ template "redpanda.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    {{- with .Values.statefulset.labels }}
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+  serviceName: {{ template "redpanda.name" . }}
+  replicas: {{ .Values.statefulset.replicas }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app.kubernetes.io/name: {{ template "redpanda.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name | quote }}
+      {{- with .Values.statefulset.labels }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.statefulset.annotations }}
+      annotations: {{- toYaml . | nindent 6 }}
+    {{- end }}
+    spec:
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: {{ template "redpanda.name" . }}-configurator
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          command: ["/bin/sh", "-c"]
+          args:
+            - >
+              CONFIG=/etc/redpanda/redpanda.yaml;
+              NODE_ID=${HOSTNAME##*-};
+              SERVICE_NAME={{ template "redpanda.name" . }}-$NODE_ID.{{ template "redpanda.name" . }}.{{ .Release.Namespace }}.svc.{{ .Values.clusterDomain }};
+              cp /tmp/base-config/redpanda.yaml $CONFIG;
+              rpk --config $CONFIG config set redpanda.node_id $NODE_ID;
+              if [ "$NODE_ID" = "0" ]; then
+                rpk --config $CONFIG config set redpanda.seed_servers '[]' --format yaml;
+              fi;
+              rpk --config $CONFIG config set redpanda.advertised_rpc_api.address $SERVICE_NAME;
+              rpk --config $CONFIG config set redpanda.advertised_kafka_api.address $SERVICE_NAME;
+          volumeMounts:
+            - name: datadir
+              mountPath: {{ .Values.config.redpanda.data_directory }}
+            - name: base-config 
+              mountPath: /tmp/base-config 
+            - name: config
+              mountPath: /etc/redpanda
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      containers:
+        - name: {{ template "redpanda.name" . }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          args:
+            - >
+              --rpc-addr $(MY_POD_IP):33145
+              --kafka-addr $(MY_POD_IP):9092
+              --check=false
+              start
+              --
+              --default-log-level={{ .Values.config.seastar.default_log_level }}
+          env:
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          ports:
+            - containerPort: {{ .Values.config.redpanda.admin.port }}
+              name: admin
+            - containerPort: {{ .Values.config.redpanda.advertised_kafka_api.port }}
+              name: kafka
+            - containerPort: {{ .Values.config.redpanda.advertised_rpc_api.port }}
+              name: rpc
+          volumeMounts:
+            - name: datadir
+              mountPath: {{ .Values.config.redpanda.data_directory }}
+            - name: config
+              mountPath: /etc/redpanda
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: datadir
+        {{- if .Values.storage.persistentVolume.enabled }}
+          persistentVolumeClaim:
+            claimName: datadir
+        {{- else if .Values.storage.hostPath }}
+          hostPath:
+            path: {{ .Values.storage.hostPath | quote }}
+        {{- else }}
+          emptyDir: {}
+        {{- end }}
+        - name: base-config
+          configMap:
+            name: base-config
+        - name: config
+          emptyDir: {}
+      affinity:
+        {{- toYaml .Values.affinity | nindent 8 }}
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      tolerations:
+        {{- toYaml .Values.tolerations | nindent 8 }}
+{{- if .Values.storage.persistentVolume.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: datadir
+        labels:
+          app.kubernetes.io/name: {{ template "redpanda.name" . }}
+          app.kubernetes.io/instance: {{ .Release.Name | quote }}
+        {{- with .Values.storage.persistentVolume.labels }}
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with .Values.labels }}
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+      {{- with .Values.storage.persistentVolume.annotations }}
+        annotations: {{- toYaml . | nindent 10 }}
+      {{- end }}
+      spec:
+        accessModes: ["ReadWriteOnce"]
+      {{- if .Values.storage.persistentVolume.storageClass }}
+      {{- if (eq "-" .Values.storage.persistentVolume.storageClass) }}
+        storageClassName: ""
+      {{- else }}
+        storageClassName: {{ .Values.storage.persistentVolume.storageClass | quote}}
+      {{- end }}
+      {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.storage.persistentVolume.size | quote }}
+{{- end }}
