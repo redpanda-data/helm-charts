@@ -66,8 +66,6 @@ spec:
               rpk --config $CONFIG config set redpanda.advertised_rpc_api.address $SERVICE_NAME;
               rpk --config $CONFIG config set redpanda.advertised_kafka_api.address $SERVICE_NAME;
           volumeMounts:
-            - name: datadir
-              mountPath: {{ .Values.config.redpanda.data_directory }}
             - name: base-config 
               mountPath: /tmp/base-config 
             - name: config
