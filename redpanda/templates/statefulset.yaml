@@ -83,6 +83,7 @@ spec:
               start
               --
               --default-log-level={{ .Values.config.seastar.default_log_level }}
+              --reserve-memory 0M
           env:
             - name: MY_POD_IP
               valueFrom:
