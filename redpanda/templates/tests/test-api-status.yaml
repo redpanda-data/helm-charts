@@ -19,8 +19,16 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "{{ include "redpanda.fullname" . }}-test-api-status"
+  namespace: {{ .Release.Namespace | quote }}
   labels:
-    {{- include "redpanda.labels" . | nindent 4 }}
+    helm.sh/chart: {{ template "redpanda.chart" . }}
+    app.kubernetes.io/name: {{ template "redpanda.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/component: {{ template "redpanda.name" . }}
+  {{- with .Values.labels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   annotations:
     "helm.sh/hook": test
 spec:
@@ -30,11 +38,11 @@ spec:
       image: {{ .Values.image.repository }}:{{ .Values.image.tag }} 
       args: ["api", "status", "--brokers", "{{ include "redpanda.name" . }}:{{ .Values.config.redpanda.advertised_kafka_api.port }}"]
       volumeMounts:
-        - name: base-config 
+        - name: {{ template "redpanda.fullname" . }}-config 
           mountPath: /tmp/base-config 
   volumes:
-    - name: base-config
+    - name: {{ template "redpanda.fullname" . }}-config
       configMap:
-        name: base-config
+        name: {{ template "redpanda.fullname" . }}-config
     - name: config
       emptyDir: {}
