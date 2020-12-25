@@ -30,6 +30,10 @@ image:
   # The imagePullPolicy will default to Always when the tag is 'latest'
   tag: latest
 
+# Additional labels to apply to all Kubernetes resources created by this chart.
+labels: {}
+  # app.kubernetes.io/part-of: my-app
+
 # See https://vectorized.io/docs/configuration/
 config:
   config_file: /etc/redpanda/redpanda.yaml
@@ -80,11 +84,52 @@ config:
 
 statefulset:
   replicas: 3
+  updateStrategy:
+    type: RollingUpdate
+  podManagementPolicy: Parallel
+  budget:
+    maxUnavailable: 1
+
   # Additional labels to apply to this StatefulSet and all its Pods.
   labels:
     app.kubernetes.io/component: redpanda
   # Additional annotations to apply to the Pods of this StatefulSet.
   annotations: {}
+
+  # Inter-Pod Affinity rules for scheduling Pods of this StatefulSet.
+  # https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#inter-pod-affinity-and-anti-affinity
+  podAffinity: {}
+  # Anti-affinity rules for scheduling Pods of this StatefulSet.
+  # https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#inter-pod-affinity-and-anti-affinity
+  # You may either toggle options below for default anti-affinity rules,
+  # or specify the whole set of anti-affinity rules instead of them.
+  podAntiAffinity:
+    # The topologyKey to be used.
+    # Can be used to spread across different nodes, AZs, regions etc.
+    topologyKey: kubernetes.io/hostname
+    # Type of anti-affinity rules: either `soft`, `hard` or empty value (which
+    # disables anti-affinity rules).
+    type: soft
+    # Weight for `soft` anti-affinity rules.
+    # Does not apply for other anti-affinity types.
+    weight: 100
+  # Node selection constraints for scheduling Pods of this StatefulSet.
+  # https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
+  nodeSelector: {}
+
+  # PriorityClassName given to Pods of this StatefulSet
+  # https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass
+  priorityClassName: ""
+
+  # Taints to be tolerated by Pods of this StatefulSet.
+  # https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  tolerations: []
+
+  # https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+  topologySpreadConstraints:
+    maxSkew: 1
+    topologyKey: topology.kubernetes.io/zone
+    whenUnsatisfiable: ScheduleAnyway
 
 nameOverride: ""
 fullnameOverride: ""
@@ -154,18 +199,7 @@ storage:
 
 tolerations: []
 
-affinity:
-  podAntiAffinity:
-    preferredDuringSchedulingIgnoredDuringExecution:
-      - weight: 100
-        podAffinityTerm:
-          labelSelector:
-            matchExpressions:
-              - key: app
-                operator: In
-                values:
-                  - redpanda
-          topologyKey: kubernetes.io/hostname
+
 
 pdb:
   enabled: true
