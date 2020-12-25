@@ -18,9 +18,16 @@ limitations under the License.
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "redpanda.name" . }}
+  name: {{ include "redpanda.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
   labels:
-   {{- include "redpanda.labels" . | nindent 4 }} 
+    helm.sh/chart: {{ template "redpanda.chart" . }}
+    app.kubernetes.io/name: {{ template "redpanda.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+  {{- with .Values.labels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   clusterIP: None
   publishNotReadyAddresses: true
