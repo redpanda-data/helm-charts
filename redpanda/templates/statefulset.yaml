@@ -66,13 +66,7 @@ spec:
               rpk --config $CONFIG config set redpanda.advertised_rpc_api.address $SERVICE_NAME;
               rpk --config $CONFIG config set redpanda.advertised_kafka_api.address $SERVICE_NAME;
           volumeMounts:
-<<<<<<< HEAD
-            - name: datadir
-              mountPath: {{ .Values.config.redpanda.data_directory }}
-            - name: base-config 
-=======
             - name: {{ template "redpanda.fullname" . }}-config 
->>>>>>> 36f3bbf... Don't mount datadir in init container
               mountPath: /tmp/base-config 
             - name: config
               mountPath: /etc/redpanda
