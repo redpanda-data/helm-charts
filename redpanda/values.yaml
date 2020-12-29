@@ -68,8 +68,7 @@ config:
     coredump_dir: /var/lib/redpanda/coredump
     enable_memory_locking: false
     enable_usage_stats: true
-    overprovisioned: false
-    smp: 1
+    overprovisioned: true
     tls:
       cert_file: ""
       key_file: ""
@@ -92,6 +91,23 @@ statefulset:
 
   # Additional annotations to apply to the Pods of this StatefulSet.
   annotations: {}
+
+  # Redpanda makes use of a thread per core model which is described here: 
+  # https://vectorized.io/blog/tpc-buffers/ For this reason Redpanda should
+  # only be given full cores for requests and limits. The recommendation 
+  # for memory for Redpanda is at least 2GB per core. These values will also 
+  # affect the --smp and --memory flags which are passed to Redpanda.  
+  #
+  # NOTE: You can increase the number of cores but decreasing the number 
+  # is not supported currently. 
+  # https://github.com/vectorizedio/redpanda/issues/350#
+  resources:
+    requests:
+      cpu: 1
+      memory: 3Gi
+    limits:
+      cpu: 1
+      memory: 3Gi
 
   # Inter-Pod Affinity rules for scheduling Pods of this StatefulSet.
   # https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#inter-pod-affinity-and-anti-affinity
@@ -154,17 +170,6 @@ securityContext: {}
   # readOnlyRootFilesystem: true
   # runAsNonRoot: true
   # runAsUser: 1000
-
-# For guaranteed QoS see:
-# https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/#static-policy
-resources:
-  requests:
-    # requests.cpu must be an integer for containers in Guaranteed pods to be given access to exclusive CPUs
-    cpu: 1
-    memory: 3Gi
-  limits:
-    cpu: 1
-    memory: 3Gi
 
 nodeSelector: {}
 
