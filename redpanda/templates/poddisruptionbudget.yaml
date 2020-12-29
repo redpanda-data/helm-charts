@@ -15,26 +15,23 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */}}
 
-{{- if .Values.pdb.enabled }}
 apiVersion: policy/v1beta1
 kind: PodDisruptionBudget
 metadata:
   name: {{ template "redpanda.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
   labels:
-   {{- include "redpanda.labels" . | nindent 4 }} 
-spec:
-  {{- if .Values.pdb.maxUnavailable }}
-  maxUnavailable: {{ .Values.pdb.maxUnavailable }}
-  {{- else if .Values.pdb.minAvailable }}
-  minAvailable: {{ .Values.pdb.minAvailable }}
-  {{- else }}
-  maxUnavailable: 1
+    helm.sh/chart: {{ template "redpanda.chart" . }}
+    app.kubernetes.io/name: {{ template "redpanda.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/component: {{ template "redpanda.name" . }}
+  {{- with .Values.labels }}
+    {{- toYaml . | nindent 4 }}
   {{- end }}
+spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ template "redpanda.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    {{- with .Values.statefulset.labels }}
-      {{- toYaml . | nindent 6 }}
-    {{- end }}
-{{- end }}
+  maxUnavailable: {{ .Values.statefulset.budget.maxUnavailable | int64 }}

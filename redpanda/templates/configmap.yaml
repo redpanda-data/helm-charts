@@ -18,9 +18,17 @@ limitations under the License.
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: base-config
+  name: {{ include "redpanda.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
   labels:
-   {{- include "redpanda.labels" . | nindent 4 }} 
+    helm.sh/chart: {{ template "redpanda.chart" . }}
+    app.kubernetes.io/name: {{ template "redpanda.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/component: {{ template "redpanda.name" . }}
+  {{- with .Values.labels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 data:
   redpanda.yaml: |
     config_file: {{ .Values.config.config_file }}
