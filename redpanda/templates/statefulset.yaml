@@ -118,7 +118,7 @@ spec:
         {{- else }}
           emptyDir: {}
         {{- end }}
-        - name: {{ template "redpanda.fullname" . }}-config
+        - name: {{ template "redpanda.fullname" . }}
           configMap:
             name: {{ template "redpanda.fullname" . }}
         - name: config
