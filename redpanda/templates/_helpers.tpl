@@ -62,13 +62,13 @@ Create the name of the service account to use
 Strip out the suffixes on memory to pass to Redpanda
 */}}
 {{- define "redpanda.parseMemory" -}}
-{{- $type := typeOf .Values.statefulset.resources.requests.memory }}
+{{- $type := typeOf .Values.statefulset.resources.limits.memory }}
 {{- if eq $type "float64" }}
-{{- .Values.statefulset.resources.requests.memory | int64 }}
+{{- .Values.statefulset.resources.limits.memory | int64 }}
 {{- else if eq $type "int" }}
-{{- .Values.statefulset.resources.requests.memory }}
+{{- .Values.statefulset.resources.limits.memory }}
 {{- else }}
-{{- $string := .Values.statefulset.resources.requests.memory | toString }}
+{{- $string := .Values.statefulset.resources.limits.memory | toString }}
 {{- regexReplaceAll "(\\d+)(\\w?)i?" $string "${1}${2}" }}
 {{- end }}
 {{- end }}

@@ -68,7 +68,7 @@ config:
     coredump_dir: /var/lib/redpanda/coredump
     enable_memory_locking: false
     enable_usage_stats: true
-    overprovisioned: true
+    overprovisioned: false
     tls:
       cert_file: ""
       key_file: ""
@@ -98,13 +98,16 @@ statefulset:
   # for memory for Redpanda is at least 2GB per core. These values will also 
   # affect the --smp and --memory flags which are passed to Redpanda.  
   #
+  # Limits are only specified as to provide Guaranteed QoS: 
+  # https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-guaranteed
+  #
+  # To improve performance further it is recommended to enable CPU Affinity: 
+  # https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/#static-policy
+  #
   # NOTE: You can increase the number of cores but decreasing the number 
   # is not supported currently. 
   # https://github.com/vectorizedio/redpanda/issues/350#
   resources:
-    requests:
-      cpu: 1
-      memory: 3Gi
     limits:
       cpu: 1
       memory: 3Gi

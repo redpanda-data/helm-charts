@@ -84,7 +84,7 @@ spec:
               --rpc-addr $(MY_POD_IP):33145
               --kafka-addr $(MY_POD_IP):9092
               --check=false
-              --smp {{ .Values.statefulset.resources.requests.cpu }}
+              --smp {{ .Values.statefulset.resources.limits.cpu }}
               --memory {{ template "redpanda.parseMemory" . }}
               start
               --
@@ -108,7 +108,7 @@ spec:
             - name: config
               mountPath: /etc/redpanda
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.statefulset.resources | nindent 12 }}
       volumes:
         - name: datadir
         {{- if .Values.storage.persistentVolume.enabled }}
