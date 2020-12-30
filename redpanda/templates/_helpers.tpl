@@ -57,3 +57,18 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Strip out the suffixes on memory to pass to Redpanda
+*/}}
+{{- define "redpanda.parseMemory" -}}
+{{- $type := typeOf .Values.statefulset.resources.limits.memory }}
+{{- if eq $type "float64" }}
+{{- .Values.statefulset.resources.limits.memory | int64 }}
+{{- else if eq $type "int" }}
+{{- .Values.statefulset.resources.limits.memory }}
+{{- else }}
+{{- $string := .Values.statefulset.resources.limits.memory | toString }}
+{{- regexReplaceAll "(\\d+)(\\w?)i?" $string "${1}${2}" }}
+{{- end }}
+{{- end }}
