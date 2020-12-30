@@ -35,8 +35,8 @@ spec:
   ports:
     - name: kafka-tcp
       protocol: TCP
-      port: {{ .Values.config.redpanda.advertised_kafka_api.port }}
-      targetPort: {{ .Values.config.redpanda.advertised_kafka_api.port }}
+      port: {{ .Values.config.redpanda.kafka_api.port }}
+      targetPort: {{ .Values.config.redpanda.kafka_api.port }}
   selector:
     app.kubernetes.io/name: {{ template "redpanda.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name | quote }}

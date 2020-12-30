@@ -23,8 +23,6 @@
 # For an explanation of Redpanda configuration values:
 #   https://vectorized.io/docs/advanced-configuration/
 
-clusterDomain: cluster.local
-
 image:
   repository: vectorized/redpanda
   # The imagePullPolicy will default to Always when the tag is 'latest'
@@ -34,50 +32,66 @@ image:
 labels: {}
   # app.kubernetes.io/part-of: my-app
 
+clusterDomain: cluster.local
+
 # See https://vectorized.io/docs/configuration/
 config:
-  config_file: /etc/redpanda/redpanda.yaml
+  # If you have a license key please set it here or you can request one
+  # here: https://vectorized.io/redpanda 
   license_key: ""
+
+  # Update with your organization name
   organization: ""
+  
   redpanda:
     admin:
-      address: 0.0.0.0
+      # The port for the admin server. 
+      # 
+      # Metrics are served off of this port at /metrics. 
       port: 9644
-    advertised_kafka_api:
-      address: 0.0.0.0
-      port: 9092
-    advertised_rpc_api:
-      address: 0.0.0.0
-      port: 33145
-    auto_create_topics_enabled: true
-    data_directory: /var/lib/redpanda/data
-    developer_mode: false
     kafka_api:
-      address: 0.0.0.0
+      # The port for the Kafka API.
       port: 9092
-    kafka_api_tls:
-      cert_file: ""
-      enabled: false
-      key_file: ""
-      truststore_file: ""
-    node_id: 0
     rpc_server:
-      address: 0.0.0.0
+      # The port for the internal RPC server.
       port: 33145
+
   rpk:
-    coredump_dir: /var/lib/redpanda/coredump
+    # Enables memory locking. 
     enable_memory_locking: false
+   
+    # Send usage stats back to vectorized
     enable_usage_stats: true
+
+    # This should be set to true unless with have CPU affinity 
+    # https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/#static-policy
+    # 
+    # Equivalent to passing the following to redpanda
+    # --idle-poll-time-us 0 --thread-affinity 0 --poll-aio 0
     overprovisioned: true
-    tls:
-      cert_file: ""
-      key_file: ""
-      truststore_file: ""
+
+    # Increases the number of allowed asynchronous IO events
     tune_aio_events: false
+
+    # Syncs NTP 
     tune_clocksource: false
+
+    # Installs a custom script to process coredumps and save them to the given directory.
     tune_coredump: false
+
+    # Disables hyper-threading, sets the ACPI-cpufreq governor to 'performance'. Additionaly
+    # if system reboot is allowed: disables Intel P-States, disables Intel C-States,
+    # disables Turbo Boost
+    # 
+    # This is not possible to set to true while running in a container. 
     tune_cpu: false
+    
+    # Distributes IRQs across cores with the method deemed the most appropriate for the
+    # current device type (i.e. NVMe)
+    #
+    # This is not possible to set to true while running in a container. 
     tune_disk_irq: false
+  
   seastar:
     default_log_level: info
 
@@ -110,7 +124,7 @@ statefulset:
   resources:
     limits:
       cpu: 1
-      memory: 3Gi
+      memory: 2Gi
 
   # Inter-Pod Affinity rules for scheduling Pods of this StatefulSet.
   # https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#inter-pod-affinity-and-anti-affinity
@@ -147,9 +161,6 @@ statefulset:
     topologyKey: topology.kubernetes.io/zone
     whenUnsatisfiable: ScheduleAnyway
 
-nameOverride: ""
-fullnameOverride: ""
-
 serviceAccount:
   # Specifies whether a service account should be created
   create: false
@@ -158,8 +169,6 @@ serviceAccount:
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
-
-podAnnotations: {}
 
 # When using persistent storage the volume will be mounted as root. In order for redpanda to use the volume
 # we must set the fsGroup to the uid of redpanda, which is 101
@@ -174,7 +183,6 @@ securityContext: {}
   # runAsNonRoot: true
   # runAsUser: 1000
 
-nodeSelector: {}
 
 storage:
   # Absolute path on host to store Redpanda's data.
@@ -201,12 +209,3 @@ storage:
     labels: {}
     # Additional annotations to apply to the created PersistentVolumeClaims.
     annotations: {}
-
-tolerations: []
-
-
-
-pdb:
-  enabled: true
-  maxUnavailable: 1
-  minAvailable:

@@ -31,7 +31,7 @@ metadata:
   {{- end }}
 data:
   redpanda.yaml: |
-    config_file: {{ .Values.config.config_file }}
+    config_file: /etc/redpanda/redpanda.yaml
     license_key: {{ .Values.config.license_key }}
     organization: {{ .Values.config.organization }}
     redpanda:
@@ -42,7 +42,7 @@ data:
         - node_id: {{ . }}
           host:
             address: {{ template "redpanda.name" $envAll }}-{{ . }}.{{ template "redpanda.name" $envAll }}.{{ $envAll.Release.Namespace }}.svc.{{ $envAll.Values.clusterDomain }}
-            port: {{ $envAll.Values.config.redpanda.advertised_rpc_api.port }}
+            port: {{ $envAll.Values.config.redpanda.rpc_server.port }}
         {{- end }}
     rpk:
 {{ toYaml .Values.config.rpk | indent 6 }}
