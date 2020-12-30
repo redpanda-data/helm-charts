@@ -68,7 +68,9 @@ spec:
                 rpk --config $CONFIG config set redpanda.seed_servers '[]' --format yaml;
               fi;
               rpk --config $CONFIG config set redpanda.advertised_rpc_api.address $SERVICE_NAME;
+              rpk --config $CONFIG config set redpanda.advertised_rpc_api.port {{ .Values.config.redpanda.rpc_server.port }};
               rpk --config $CONFIG config set redpanda.advertised_kafka_api.address $SERVICE_NAME;
+              rpk --config $CONFIG config set redpanda.advertised_kafka_api.port  {{ .Values.config.redpanda.kafka_api.port }};
           volumeMounts:
             - name: {{ template "redpanda.fullname" . }}
               mountPath: /tmp/base-config 
@@ -81,8 +83,6 @@ spec:
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           args:
             - >
-              --rpc-addr $(MY_POD_IP):33145
-              --kafka-addr $(MY_POD_IP):9092
               --check=false
               --smp {{ .Values.statefulset.resources.limits.cpu }}
               --memory {{ template "redpanda.parseMemory" . }}
@@ -90,21 +90,16 @@ spec:
               --
               --default-log-level={{ .Values.config.seastar.default_log_level }}
               --reserve-memory 0M
-          env:
-            - name: MY_POD_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.podIP
           ports:
             - containerPort: {{ .Values.config.redpanda.admin.port }}
               name: admin
-            - containerPort: {{ .Values.config.redpanda.advertised_kafka_api.port }}
+            - containerPort: {{ .Values.config.redpanda.kafka_api.port }}
               name: kafka
-            - containerPort: {{ .Values.config.redpanda.advertised_rpc_api.port }}
+            - containerPort: {{ .Values.config.redpanda.rpc_server.port }}
               name: rpc
           volumeMounts:
             - name: datadir
-              mountPath: {{ .Values.config.redpanda.data_directory }}
+              mountPath: /var/lib/redpanda/data
             - name: config
               mountPath: /etc/redpanda
           resources:
