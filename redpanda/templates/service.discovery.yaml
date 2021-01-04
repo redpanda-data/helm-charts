@@ -15,6 +15,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */}}
 
+# This service is only used to create the DNS enteries for each pod in
+# the stateful set. This service should not be used by any client
+# application
 apiVersion: v1
 kind: Service
 metadata:
