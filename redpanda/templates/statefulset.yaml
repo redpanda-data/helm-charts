@@ -97,11 +97,6 @@ spec:
               name: kafka
             - containerPort: {{ .Values.config.redpanda.rpc_server.port }}
               name: rpc
-          livenessProbe:
-            tcpSocket:
-              port: {{ .Values.config.redpanda.rpc_server.port }}
-            initialDelaySeconds: 30
-            periodSeconds: 5
           volumeMounts:
             - name: datadir
               mountPath: /var/lib/redpanda/data
