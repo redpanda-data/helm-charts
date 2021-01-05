@@ -19,12 +19,16 @@ Congratulations on installing {{ .Chart.Name }}!
 
 The pods will rollout in a few seconds. To check the status:
 
-  $ kubectl -n {{ .Release.Namespace }} rollout status -w statefulset/redpanda
+  kubectl -n {{ .Release.Namespace }} rollout status -w statefulset/redpanda
 
 Try some sample commands, like creating a topic called topic1:
 
-  $ kubectl -n {{ .Release.Namespace }} run -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} rpk -- --brokers={{ include "redpanda.name" . }}-bootstrap:{{ .Values.config.redpanda.kafka_api.port }} api topic create topic1 --partitions=3 --replicas={{ .Values.statefulset.replicas }}
+  kubectl -n {{ .Release.Namespace }} run -ti --rm --restart=Never \
+    --image {{ .Values.image.repository }}:{{ .Values.image.tag }} \
+    rpk -- --brokers={{ include "redpanda.name" . }}-bootstrap:{{ .Values.config.redpanda.kafka_api.port }} api topic create topic1
 
 To get the api status:
  
-  $ kubectl -n {{ .Release.Namespace }} run -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} rpk -- --brokers={{ include "redpanda.name" . }}-bootstrap:{{ .Values.config.redpanda.kafka_api.port }} api status
+  kubectl -n {{ .Release.Namespace }} run -ti --rm --restart=Never \
+    --image {{ .Values.image.repository }}:{{ .Values.image.tag }} \
+    rpk -- --brokers={{ include "redpanda.name" . }}-bootstrap:{{ .Values.config.redpanda.kafka_api.port }} api status
