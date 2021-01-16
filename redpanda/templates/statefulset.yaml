@@ -104,6 +104,10 @@ spec:
               --kafka-addr=internal://{{ template "redpanda.kafka.internal.listen.address" . }}:{{ template "redpanda.kafka.internal.listen.port" . }}
               --advertise-rpc-addr={{ template "redpanda.rpc.advertise.address" . }}:{{ template "redpanda.rpc.advertise.port" . }}
               --rpc-addr={{ template "redpanda.rpc.listen.address" . }}:{{ template "redpanda.rpc.listen.port" . }}
+              {{- if .Values.loadBalancer.enabled }}
+              --advertise-kafka-addr=external://{{ template "redpanda.kafka.external.advertise.address" . }}:{{ template "redpanda.kafka.external.advertise.port" . }}
+              --kafka-addr=external://{{ template "redpanda.kafka.external.listen.address" . }}:{{ template "redpanda.kafka.external.listen.port" . }}
+              {{- end }}
               --
               --default-log-level={{ .Values.config.seastar.default_log_level }}
           ports:
@@ -111,6 +115,10 @@ spec:
               name: admin
             - containerPort: {{ template "redpanda.kafka.internal.listen.port" . }}
               name: kafka
+           {{- if .Values.loadBalancer.enabled }}
+            - containerPort: {{ template "redpanda.kafka.external.listen.port" . }}
+              name: kafka-external
+           {{- end }}
             - containerPort: {{ template "redpanda.rpc.listen.port" $ }}
               name: rpc
           volumeMounts:

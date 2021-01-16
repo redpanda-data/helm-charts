@@ -95,6 +95,28 @@ Generate configuration needed for rpk
 {{- (first .Values.config.redpanda.kafka_api).port -}}
 {{- end -}}
 
+{{- define "redpanda.kafka.external.domain" -}}
+{{- printf "%s." (.Values.loadBalancer.parentZone | trimSuffix ".")  -}}
+{{- end }}
+
+{{- define "redpanda.kafka.external.advertise.address" -}}
+{{- $host := "$(SERVICE_NAME)" -}}
+{{- $domain := include "redpanda.kafka.external.domain" . -}}
+{{- printf "%s.%s" $host $domain -}}
+{{- end -}}
+
+{{- define "redpanda.kafka.external.advertise.port" -}}
+{{- .Values.loadBalancer.port -}}
+{{- end -}}
+
+{{- define "redpanda.kafka.external.listen.address" -}}
+{{- "$(POD_IP)" -}}
+{{- end -}}
+
+{{- define "redpanda.kafka.external.listen.port" -}}
+{{- add1 (first .Values.config.redpanda.kafka_api).port -}}
+{{- end -}}
+
 {{- define "redpanda.rpc.advertise.address" -}}
 {{- $host := "$(SERVICE_NAME)" -}}
 {{- $domain := include "redpanda.internal.domain" . -}}
