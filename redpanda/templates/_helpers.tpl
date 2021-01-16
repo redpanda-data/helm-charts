@@ -66,3 +66,72 @@ Strip out the suffixes on memory to pass to Redpanda
 {{- regexReplaceAll "(\\d+)(\\w?)i?" $string "${1}${2}" }}
 {{- end }}
 {{- end }}
+
+{{/*
+Generate configuration needed for rpk
+*/}}
+{{- define "redpanda.internal.domain" -}}
+{{- $service := include "redpanda.fullname" . -}}
+{{- $ns := .Release.Namespace -}}
+{{- $domain := .Values.clusterDomain | trimSuffix "." -}}
+{{- printf "%s.%s.svc.%s." $service $ns $domain -}}
+{{- end }}
+
+{{- define "redpanda.kafka.external.domain" -}}
+{{- printf "%s." (.Values.loadBalancer.parentZone | trimSuffix ".")  -}}
+{{- end }}
+
+{{- define "redpanda.kafka.internal.advertise.address" -}}
+{{- $host := "$(SERVICE_NAME)" -}}
+{{- $domain := include "redpanda.internal.domain" . -}}
+{{- printf "%s.%s" $host $domain -}}
+{{- end -}}
+
+{{- define "redpanda.kafka.internal.advertise.port" -}}
+{{- (first .Values.config.redpanda.kafka_api).port -}}
+{{- end -}}
+
+{{- define "redpanda.kafka.internal.listen.address" -}}
+{{- "$(POD_IP)" -}}
+{{- end -}}
+
+{{- define "redpanda.kafka.internal.listen.port" -}}
+{{- (first .Values.config.redpanda.kafka_api).port -}}
+{{- end -}}
+
+{{- define "redpanda.kafka.external.advertise.address" -}}
+{{- $host := "$(SERVICE_NAME)" -}}
+{{- $domain := include "redpanda.kafka.external.domain" . -}}
+{{- printf "%s.%s" $host $domain -}}
+{{- end -}}
+
+{{- define "redpanda.kafka.external.advertise.port" -}}
+{{- .Values.loadBalancer.port -}}
+{{- end -}}
+
+{{- define "redpanda.kafka.external.listen.address" -}}
+{{- "$(POD_IP)" -}}
+{{- end -}}
+
+{{- define "redpanda.kafka.external.listen.port" -}}
+{{- add1 (first .Values.config.redpanda.kafka_api).port -}}
+{{- end -}}
+
+{{- define "redpanda.rpc.advertise.address" -}}
+{{- $host := "$(SERVICE_NAME)" -}}
+{{- $domain := include "redpanda.internal.domain" . -}}
+{{- printf "%s.%s" $host $domain -}}
+{{- end -}}
+
+{{- define "redpanda.rpc.advertise.port" -}}
+{{- .Values.config.redpanda.rpc_server.port -}}
+{{- end -}}
+
+{{- define "redpanda.rpc.listen.address" -}}
+{{- "$(POD_IP)" -}}
+{{- end -}}
+
+{{- define "redpanda.rpc.listen.port" -}}
+{{- .Values.config.redpanda.rpc_server.port -}}
+{{- end -}}
+

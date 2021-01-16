@@ -25,10 +25,17 @@ Try some sample commands, like creating a topic called topic1:
 
   kubectl -n {{ .Release.Namespace }} run -ti --rm --restart=Never \
     --image {{ .Values.image.repository }}:{{ .Values.image.tag }} \
-    rpk -- --brokers={{ include "redpanda.fullname" . }}-bootstrap:{{ .Values.config.redpanda.kafka_api.port }} api topic create topic1
+    rpk -- --brokers={{ include "redpanda.fullname" . }}-bootstrap:{{ template "redpanda.kafka.internal.advertise.port" $ }} api topic create topic1
 
 To get the api status:
  
   kubectl -n {{ .Release.Namespace }} run -ti --rm --restart=Never \
     --image {{ .Values.image.repository }}:{{ .Values.image.tag }} \
-    rpk -- --brokers={{ include "redpanda.fullname" . }}-bootstrap:{{ .Values.config.redpanda.kafka_api.port }} api status
+    rpk -- --brokers={{ include "redpanda.fullname" . }}-bootstrap:{{ template "redpanda.kafka.internal.advertise.port" $ }} api status
+
+{{- if .Values.loadBalancer.enabled }}
+
+Or from outside the cluster:
+
+  rpk --brokers={{ include "redpanda.fullname" . }}-0.{{ template "redpanda.kafka.external.domain" $ }}:{{ template "redpanda.kafka.external.advertise.port" $ }} api status
+{{- end }}

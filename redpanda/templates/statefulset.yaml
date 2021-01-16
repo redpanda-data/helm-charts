@@ -56,21 +56,25 @@ spec:
       initContainers:
         - name: {{ template "redpanda.name" . }}-configurator
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-          command: ["/bin/sh", "-c"]
+          imagePullPolicy: Always
+          command: ["/bin/bash", "-c"]
+          env:
+            - name: SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          # TODO:
+          # * Figure out what to do about node_id / seeds here - the operator will fix this separately
+          # * Once that's done, this init conmtainer can be removed
           args:
             - >
               CONFIG=/etc/redpanda/redpanda.yaml;
-              NODE_ID=${HOSTNAME##*-};
-              SERVICE_NAME={{ template "redpanda.fullname" . }}-$NODE_ID.{{ template "redpanda.fullname" . }}.{{ .Release.Namespace }}.svc.{{ .Values.clusterDomain }};
-              cp /tmp/base-config/redpanda.yaml $CONFIG;
-              rpk --config $CONFIG config set redpanda.node_id $NODE_ID;
+              NODE_ID=${SERVICE_NAME##*-};
+              cp /tmp/base-config/redpanda.yaml "$CONFIG";
+              rpk --config "$CONFIG" config set redpanda.node_id $NODE_ID;
               if [ "$NODE_ID" = "0" ]; then
-                rpk --config $CONFIG config set redpanda.seed_servers '[]' --format yaml;
+                rpk --config "$CONFIG" config set redpanda.seed_servers '[]' --format yaml;
               fi;
-              rpk --config $CONFIG config set redpanda.advertised_rpc_api.address $SERVICE_NAME;
-              rpk --config $CONFIG config set redpanda.advertised_rpc_api.port {{ .Values.config.redpanda.rpc_server.port }};
-              rpk --config $CONFIG config set redpanda.advertised_kafka_api.address $SERVICE_NAME;
-              rpk --config $CONFIG config set redpanda.advertised_kafka_api.port  {{ .Values.config.redpanda.kafka_api.port }};
           volumeMounts:
             - name: {{ template "redpanda.fullname" . }}
               mountPath: /tmp/base-config 
@@ -81,20 +85,42 @@ spec:
       containers:
         - name: {{ template "redpanda.name" . }}
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-          args:
-            - >
-              --check=false
-              --smp {{ .Values.statefulset.resources.limits.cpu }}
-              --memory {{ template "redpanda.parseMemory" . }}
-              start
-              --
-              --default-log-level={{ .Values.config.seastar.default_log_level }}
-              --reserve-memory 0M
+          env:
+            - name: SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          args: [
+            "redpanda",
+            "start",
+            "--smp={{ .Values.statefulset.resources.limits.cpu }}",
+            "--memory={{ template "redpanda.parseMemory" . }}",
+            "--reserve-memory=0M",
+            {{- if .Values.loadBalancer.enabled }}
+            "--advertise-kafka-addr=internal://{{ template "redpanda.kafka.internal.advertise.address" . }}:{{ template "redpanda.kafka.internal.advertise.port" . }},external://{{ template "redpanda.kafka.external.advertise.address" . }}:{{ template "redpanda.kafka.external.advertise.port" . }}",
+            "--kafka-addr=internal://{{ template "redpanda.kafka.internal.listen.address" . }}:{{ template "redpanda.kafka.internal.listen.port" . }},external://{{ template "redpanda.kafka.external.listen.address" . }}:{{ template "redpanda.kafka.external.listen.port" . }}",
+            {{- else }}
+            "--advertise-kafka-addr={{ template "redpanda.kafka.internal.advertise.address" . }}:{{ template "redpanda.kafka.internal.advertise.port" . }}",
+            "--kafka-addr={{ template "redpanda.kafka.internal.listen.address" . }}:{{ template "redpanda.kafka.internal.listen.port" . }}",
+            {{- end }}
+            "--advertise-rpc-addr={{ template "redpanda.rpc.advertise.address" . }}:{{ template "redpanda.rpc.advertise.port" . }}",
+            "--rpc-addr={{ template "redpanda.rpc.listen.address" . }}:{{ template "redpanda.rpc.listen.port" . }}",
+            "--",
+            "--default-log-level={{ .Values.config.seastar.default_log_level }}"
+          ]
           ports:
             - containerPort: {{ .Values.config.redpanda.admin.port }}
               name: admin
-            - containerPort: {{ .Values.config.redpanda.kafka_api.port }}
-              name: kafka
+            - containerPort: {{ template "redpanda.kafka.internal.listen.port" . }}
+              name: kafka-internal
+           {{- if .Values.loadBalancer.enabled }}
+            - containerPort: {{ template "redpanda.kafka.external.listen.port" . }}
+              name: kafka-external
+           {{- end }}
             - containerPort: {{ .Values.config.redpanda.rpc_server.port }}
               name: rpc
           volumeMounts:
