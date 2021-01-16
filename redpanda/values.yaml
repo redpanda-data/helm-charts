@@ -37,17 +37,17 @@ clusterDomain: cluster.local
 # See https://vectorized.io/docs/configuration/
 config:
   # If you have a license key please set it here or you can request one
-  # here: https://vectorized.io/redpanda 
+  # here: https://vectorized.io/redpanda
   license_key: ""
 
   # Update with your organization name
   organization: ""
-  
+
   redpanda:
     admin:
-      # The port for the admin server. 
-      # 
-      # Metrics are served off of this port at /metrics. 
+      # The port for the admin server.
+      #
+      # Metrics are served off of this port at /metrics.
       port: 9644
     kafka_api:
       # The port for the Kafka API.
@@ -57,15 +57,15 @@ config:
       port: 33145
 
   rpk:
-    # Enables memory locking. 
+    # Enables memory locking.
     enable_memory_locking: false
-   
+
     # Send usage stats back to vectorized
     enable_usage_stats: true
 
-    # This should be set to true unless with have CPU affinity 
+    # This should be set to true unless with have CPU affinity
     # https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/#static-policy
-    # 
+    #
     # Equivalent to passing the following to redpanda
     # --idle-poll-time-us 0 --thread-affinity 0 --poll-aio 0
     overprovisioned: true
@@ -73,7 +73,7 @@ config:
     # Increases the number of allowed asynchronous IO events
     tune_aio_events: false
 
-    # Syncs NTP 
+    # Syncs NTP
     tune_clocksource: false
 
     # Installs a custom script to process coredumps and save them to the given directory.
@@ -82,16 +82,16 @@ config:
     # Disables hyper-threading, sets the ACPI-cpufreq governor to 'performance'. Additionaly
     # if system reboot is allowed: disables Intel P-States, disables Intel C-States,
     # disables Turbo Boost
-    # 
-    # This is not possible to set to true while running in a container. 
+    #
+    # This is not possible to set to true while running in a container.
     tune_cpu: false
-    
+
     # Distributes IRQs across cores with the method deemed the most appropriate for the
     # current device type (i.e. NVMe)
     #
-    # This is not possible to set to true while running in a container. 
+    # This is not possible to set to true while running in a container.
     tune_disk_irq: false
-  
+
   seastar:
     default_log_level: info
 
@@ -106,20 +106,20 @@ statefulset:
   # Additional annotations to apply to the Pods of this StatefulSet.
   annotations: {}
 
-  # Redpanda makes use of a thread per core model which is described here: 
+  # Redpanda makes use of a thread per core model which is described here:
   # https://vectorized.io/blog/tpc-buffers/ For this reason Redpanda should
-  # only be given full cores for requests and limits. The recommendation 
-  # for memory for Redpanda is at least 2GB per core. These values will also 
-  # affect the --smp and --memory flags which are passed to Redpanda.  
+  # only be given full cores for requests and limits. The recommendation
+  # for memory for Redpanda is at least 2GB per core. These values will also
+  # affect the --smp and --memory flags which are passed to Redpanda.
   #
-  # Limits are only specified as to provide Guaranteed QoS: 
+  # Limits are only specified as to provide Guaranteed QoS:
   # https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-guaranteed
   #
-  # To improve performance further it is recommended to enable CPU Affinity: 
+  # To improve performance further it is recommended to enable CPU Affinity:
   # https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/#static-policy
   #
-  # NOTE: You can increase the number of cores but decreasing the number 
-  # is not supported currently. 
+  # NOTE: You can increase the number of cores but decreasing the number
+  # is not supported currently.
   # https://github.com/vectorizedio/redpanda/issues/350#
   resources:
     limits:
