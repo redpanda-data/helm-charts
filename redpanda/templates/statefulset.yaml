@@ -61,7 +61,7 @@ spec:
             - >
               CONFIG=/etc/redpanda/redpanda.yaml;
               NODE_ID=${HOSTNAME##*-};
-              SERVICE_NAME={{ template "redpanda.name" . }}-$NODE_ID.{{ template "redpanda.name" . }}.{{ .Release.Namespace }}.svc.{{ .Values.clusterDomain }};
+              SERVICE_NAME={{ template "redpanda.fullname" . }}-$NODE_ID.{{ template "redpanda.fullname" . }}.{{ .Release.Namespace }}.svc.{{ .Values.clusterDomain }};
               cp /tmp/base-config/redpanda.yaml $CONFIG;
               rpk --config $CONFIG config set redpanda.node_id $NODE_ID;
               if [ "$NODE_ID" = "0" ]; then

@@ -41,7 +41,7 @@ data:
         {{- range untilStep 0 (.Values.statefulset.replicas|int) 1 }}
         - node_id: {{ . }}
           host:
-            address: {{ template "redpanda.name" $envAll }}-{{ . }}.{{ template "redpanda.name" $envAll }}.{{ $envAll.Release.Namespace }}.svc.{{ $envAll.Values.clusterDomain }}
+            address: {{ template "redpanda.fullname" $envAll }}-{{ . }}.{{ template "redpanda.fullname" $envAll }}.{{ $envAll.Release.Namespace }}.svc.{{ $envAll.Values.clusterDomain }}
             port: {{ $envAll.Values.config.redpanda.rpc_server.port }}
         {{- end }}
     rpk:
