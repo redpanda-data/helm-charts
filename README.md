@@ -1,5 +1,7 @@
 # Redpanda Helm Chart
 
+![Lint and Test Charts](https://github.com/vectorizedio/helm-charts/workflows/Lint%20and%20Test%20Charts/badge.svg)
+
 ***Status: Early Access***
 
 This is the Helm Chart for [Redpanda](https://vectorized.io). 
@@ -15,12 +17,12 @@ This is the Helm Chart for [Redpanda](https://vectorized.io).
 
 First, clone this repo:
 
-```
+```sh
 git clone git@github.com:vectorizedio/helm-charts.git
 ```
 
 Install the Helm Chart:
 
-```
+```sh
 helm install --namespace redpanda --create-namespace redpanda ./redpanda
 ```
