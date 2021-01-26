@@ -21,7 +21,7 @@ on:
       - main
   pull_request:
     branches:
-      - *
+      - '**'
 jobs:
   lint-test:
     runs-on: ubuntu-20.04
