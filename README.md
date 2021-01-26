@@ -1,6 +1,6 @@
 # Redpanda Helm Chart
 
-![Lint and Test Charts](https://github.com/vectorizedio/helm-charts/workflows/Lint%20and%20Test%20Charts/badge.svg)
+![Lint and Test Charts](https://github.com/vectorizedio/helm-charts/workflows/.github/workflows/lint-test.yml/badge.svg)
 
 ***Status: Early Access***
 
