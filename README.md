@@ -13,6 +13,13 @@ This is the Helm Chart for [Redpanda](https://vectorized.io).
 
 ## Installation
 
+### Using the repository
+
+```sh
+helm repo add vectorizedio https://vectorizedio.github.io/helm-charts/
+helm install --namespace redpanda --create-namespace redpanda vectorizedio/redpanda
+```
+
 ### Local Installation
 
 First, clone this repo:
