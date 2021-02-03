@@ -34,4 +34,5 @@ spec:
     matchLabels:
       app.kubernetes.io/name: {{ template "redpanda.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name | quote }}
+      app.kubernetes.io/component: {{ template "redpanda.name" . }}
   maxUnavailable: {{ .Values.statefulset.budget.maxUnavailable | int64 }}

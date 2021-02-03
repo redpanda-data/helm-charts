@@ -34,6 +34,7 @@ spec:
     matchLabels:
       app.kubernetes.io/name: {{ template "redpanda.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name | quote }}
+      app.kubernetes.io/component: {{ template "redpanda.name" . }}
   serviceName: {{ template "redpanda.fullname" . }}
   replicas: {{ .Values.statefulset.replicas | int64 }}
   updateStrategy: {{- toYaml .Values.statefulset.updateStrategy | nindent 4 }}
@@ -164,6 +165,7 @@ spec:
                 matchLabels:
                   app.kubernetes.io/name: {{ template "redpanda.name" . }}
                   app.kubernetes.io/instance: {{ .Release.Name | quote }}
+                  app.kubernetes.io/component: {{ template "redpanda.name" . }}
         {{- else if eq .Values.statefulset.podAntiAffinity.type "soft" }}
           preferredDuringSchedulingIgnoredDuringExecution:
             - weight: {{ .Values.statefulset.podAntiAffinity.weight | int64 }}
@@ -173,6 +175,7 @@ spec:
                   matchLabels:
                     app.kubernetes.io/name: {{ template "redpanda.name" . }}
                     app.kubernetes.io/instance: {{ .Release.Name | quote }}
+                    app.kubernetes.io/component: {{ template "redpanda.name" . }}
         {{- end }}
         {{- else }}
           {{- toYaml .Values.statefulset.podAntiAffinity | nindent 10 }}
@@ -185,6 +188,7 @@ spec:
           matchLabels:
             app.kubernetes.io/name: {{ template "redpanda.name" . }}
             app.kubernetes.io/instance: {{ .Release.Name | quote }}
+            app.kubernetes.io/component: {{ template "redpanda.name" . }}
       {{- with .Values.statefulset.topologySpreadConstraints }}
         maxSkew: {{ .maxSkew }}
         topologyKey: {{ .topologyKey }}
