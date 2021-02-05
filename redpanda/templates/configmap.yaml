@@ -37,12 +37,10 @@ data:
     redpanda:
 {{ toYaml .Values.config.redpanda | indent 6 }}
       seed_servers:
-        {{- $envAll := . }}
         {{- range untilStep 0 (.Values.statefulset.replicas|int) 1 }}
-        - node_id: {{ . }}
-          host:
-            address: {{ template "redpanda.fullname" $envAll }}-{{ . }}.{{ template "redpanda.fullname" $envAll }}.{{ $envAll.Release.Namespace }}.svc.{{ $envAll.Values.clusterDomain }}
-            port: {{ $envAll.Values.config.redpanda.rpc_server.port }}
+        - host:
+            address: "{{ template "redpanda.fullname" $ }}-{{ . }}.{{ template "redpanda.internal.domain" $ }}"
+            port: {{ template "redpanda.rpc.advertise.port" $ }}
         {{- end }}
     rpk:
 {{ toYaml .Values.config.rpk | indent 6 }}

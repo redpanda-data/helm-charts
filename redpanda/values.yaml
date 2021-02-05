@@ -49,11 +49,17 @@ config:
       #
       # Metrics are served off of this port at /metrics.
       port: 9644
+
+    # Kafka API listeners
+    # The first entry is used to set up the headless service.
+    # Other entries are ignored.
     kafka_api:
-      # The port for the Kafka API.
-      port: 9092
+      - name: internal
+        address: $(POD_IP)
+        port: 9092
+
+    # rpc server listener
     rpc_server:
-      # The port for the internal RPC server.
       port: 33145
 
   rpk:
