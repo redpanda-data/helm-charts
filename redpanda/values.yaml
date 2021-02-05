@@ -50,8 +50,10 @@ config:
       # Metrics are served off of this port at /metrics.
       port: 9644
     kafka_api:
-      # The port for the Kafka API.
-      port: 9092
+      - name: internal
+        address: 0.0.0.0
+        # The port for the Kafka API.
+        port: 9092
     rpc_server:
       # The port for the internal RPC server.
       port: 33145
