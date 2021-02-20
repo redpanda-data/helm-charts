@@ -53,24 +53,27 @@ spec:
     spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      # TODO:
+      # * Figure out what to do about node_id / seeds here - the operator will fix this separately
+      # * Once that's done, this initContainer can be removed
       initContainers:
         - name: {{ template "redpanda.name" . }}-configurator
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           command: ["/bin/sh", "-c"]
+          env:
+            - name: SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
           args:
             - >
               CONFIG=/etc/redpanda/redpanda.yaml;
-              NODE_ID=${HOSTNAME##*-};
-              SERVICE_NAME={{ template "redpanda.fullname" . }}-$NODE_ID.{{ template "redpanda.fullname" . }}.{{ .Release.Namespace }}.svc.{{ .Values.clusterDomain }};
-              cp /tmp/base-config/redpanda.yaml $CONFIG;
-              rpk --config $CONFIG config set redpanda.node_id $NODE_ID;
+              NODE_ID=${SERVICE_NAME##*-};
+              cp /tmp/base-config/redpanda.yaml "$CONFIG";
+              rpk --config "$CONFIG" config set redpanda.node_id $NODE_ID;
               if [ "$NODE_ID" = "0" ]; then
-                rpk --config $CONFIG config set redpanda.seed_servers '[]' --format yaml;
+                rpk --config "$CONFIG" config set redpanda.seed_servers '[]' --format yaml;
               fi;
-              rpk --config $CONFIG config set redpanda.advertised_rpc_api.address $SERVICE_NAME;
-              rpk --config $CONFIG config set redpanda.advertised_rpc_api.port {{ .Values.config.redpanda.rpc_server.port }};
-              rpk --config $CONFIG config set redpanda.advertised_kafka_api.address $SERVICE_NAME;
-              rpk --config $CONFIG config set redpanda.advertised_kafka_api.port  {{ .Values.config.redpanda.kafka_api.port }};
           volumeMounts:
             - name: {{ template "redpanda.fullname" . }}
               mountPath: /tmp/base-config 
@@ -81,21 +84,34 @@ spec:
       containers:
         - name: {{ template "redpanda.name" . }}
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          env:
+            - name: SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
           args:
             - >
-              --check=false
-              --smp {{ .Values.statefulset.resources.limits.cpu }}
-              --memory {{ template "redpanda.parseMemory" . }}
+              redpanda
               start
+              --smp={{ .Values.statefulset.resources.limits.cpu }}
+              --memory={{ template "redpanda.parseMemory" . }}
+              --reserve-memory=0M
+              --advertise-kafka-addr=internal://{{ template "redpanda.kafka.internal.advertise.address" . }}:{{ template "redpanda.kafka.internal.advertise.port" . }}
+              --kafka-addr=internal://{{ template "redpanda.kafka.internal.listen.address" . }}:{{ template "redpanda.kafka.internal.listen.port" . }}
+              --advertise-rpc-addr={{ template "redpanda.rpc.advertise.address" . }}:{{ template "redpanda.rpc.advertise.port" . }}
+              --rpc-addr={{ template "redpanda.rpc.listen.address" . }}:{{ template "redpanda.rpc.listen.port" . }}
               --
               --default-log-level={{ .Values.config.seastar.default_log_level }}
-              --reserve-memory 0M
           ports:
             - containerPort: {{ .Values.config.redpanda.admin.port }}
               name: admin
-            - containerPort: {{ .Values.config.redpanda.kafka_api.port }}
+            - containerPort: {{ template "redpanda.kafka.internal.listen.port" . }}
               name: kafka
-            - containerPort: {{ .Values.config.redpanda.rpc_server.port }}
+            - containerPort: {{ template "redpanda.rpc.listen.port" $ }}
               name: rpc
           volumeMounts:
             - name: datadir

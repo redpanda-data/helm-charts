@@ -37,7 +37,7 @@ spec:
   containers:
     - name: {{ template "redpanda.name" . }}
       image: {{ .Values.image.repository }}:{{ .Values.image.tag }} 
-      args: ["api", "status", "--brokers", "{{ include "redpanda.fullname" . }}:{{ .Values.config.redpanda.kafka_api.port }}"]
+      args: ["api", "status", "--brokers", "{{ include "redpanda.fullname" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }}"]
       volumeMounts:
         - name: {{ template "redpanda.fullname" . }}
           mountPath: /tmp/base-config 
