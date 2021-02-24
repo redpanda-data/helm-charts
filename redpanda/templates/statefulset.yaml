@@ -100,6 +100,7 @@ spec:
               --smp={{ .Values.statefulset.resources.limits.cpu }}
               --memory={{ template "redpanda.parseMemory" . }}
               --reserve-memory=0M
+              --overprovisioned
               --advertise-kafka-addr=internal://{{ template "redpanda.kafka.internal.advertise.address" . }}:{{ template "redpanda.kafka.internal.advertise.port" . }}
               --kafka-addr=internal://{{ template "redpanda.kafka.internal.listen.address" . }}:{{ template "redpanda.kafka.internal.listen.port" . }}
               --advertise-rpc-addr={{ template "redpanda.rpc.advertise.address" . }}:{{ template "redpanda.rpc.advertise.port" . }}
