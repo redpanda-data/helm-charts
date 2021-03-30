@@ -1,3 +1,24 @@
+# OLD REPO: Please use the official k8s operator
+
+
+
+```
+
+# new k8s operator tree.
+
+
+https://github.com/vectorizedio/redpanda/tree/dev/src/go/k8s
+
+
+
+```
+
+> NOTE: This is no longer supported.
+> 
+> This repo is left here for older users that want to deploy their own containers without the help from an automated operator.
+> 
+
+
 # Redpanda Helm Chart
 
 ![Lint and Test Charts](https://github.com/vectorizedio/helm-charts/actions/workflows/lint-test.yml/badge.svg?branch=main)
