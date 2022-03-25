@@ -104,8 +104,8 @@ spec:
               --kafka-addr=internal://{{ template "redpanda.kafka.internal.listen.address" . }}:{{ template "redpanda.kafka.internal.listen.port" . }}
               --advertise-rpc-addr={{ template "redpanda.rpc.advertise.address" . }}:{{ template "redpanda.rpc.advertise.port" . }}
               --rpc-addr={{ template "redpanda.rpc.listen.address" . }}:{{ template "redpanda.rpc.listen.port" . }}
-              --
               --default-log-level={{ .Values.config.seastar.default_log_level }}
+              --
           ports:
             - containerPort: {{ .Values.config.redpanda.admin.port }}
               name: admin

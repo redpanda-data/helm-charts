@@ -26,7 +26,7 @@
 image:
   repository: vectorized/redpanda
   # The imagePullPolicy will default to Always when the tag is 'latest'
-  tag: v21.3.3
+  tag: v21.11.11
 
 # Additional labels to apply to all Kubernetes resources created by this chart.
 labels: {}
@@ -49,6 +49,7 @@ config:
       #
       # Metrics are served off of this port at /metrics.
       port: 9644
+      address: 0.0.0.0
 
     # Kafka API listeners
     # The first entry is used to set up the headless service.
@@ -60,6 +61,7 @@ config:
 
     # rpc server listener
     rpc_server:
+      address: 0.0.0.0
       port: 33145
 
   rpk:
