@@ -120,7 +120,7 @@ Generate configuration needed for rpk
 {{- end -}}
 
 {{- define "redpanda.pandaproxy.internal.advertise.port" -}}
-{{- .Values.config.pandaproxy.port -}}
+{{- (first .Values.config.pandaproxy.pandaproxy_api).port -}}
 {{- end -}}
 
 {{- define "redpanda.pandaproxy.internal.listen.address" -}}
@@ -128,7 +128,7 @@ Generate configuration needed for rpk
 {{- end -}}
 
 {{- define "redpanda.pandaproxy.internal.listen.port" -}}
-{{- .Values.config.pandaproxy.port -}}
+{{- (first .Values.config.pandaproxy.pandaproxy_api).port -}}
 {{- end -}}
 
 

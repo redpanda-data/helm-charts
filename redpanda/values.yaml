@@ -67,8 +67,10 @@ config:
   # panda proxy
   pandaproxy:
     enabled: true
-    address: 0.0.0.0
-    port: 8082
+    pandaproxy_api:
+    - address: 0.0.0.0
+      name: internal
+      port: 8082
 
 
   rpk:
