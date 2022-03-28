@@ -113,3 +113,23 @@ Generate configuration needed for rpk
 {{- .Values.config.redpanda.rpc_server.port -}}
 {{- end -}}
 
+{{- define "redpanda.pandaproxy.internal.advertise.address" -}}
+{{- $host := "$(SERVICE_NAME)" -}}
+{{- $domain := include "redpanda.internal.domain" . -}}
+{{- printf "%s.%s" $host $domain -}}
+{{- end -}}
+
+{{- define "redpanda.pandaproxy.internal.advertise.port" -}}
+{{- .Values.config.pandaproxy.port -}}
+{{- end -}}
+
+{{- define "redpanda.pandaproxy.internal.listen.address" -}}
+{{- "$(POD_IP)" -}}
+{{- end -}}
+
+{{- define "redpanda.pandaproxy.internal.listen.port" -}}
+{{- .Values.config.pandaproxy.port -}}
+{{- end -}}
+
+
+
