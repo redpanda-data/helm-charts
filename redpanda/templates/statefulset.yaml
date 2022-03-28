@@ -104,6 +104,9 @@ spec:
               --kafka-addr=internal://{{ template "redpanda.kafka.internal.listen.address" . }}:{{ template "redpanda.kafka.internal.listen.port" . }}
               --advertise-rpc-addr={{ template "redpanda.rpc.advertise.address" . }}:{{ template "redpanda.rpc.advertise.port" . }}
               --rpc-addr={{ template "redpanda.rpc.listen.address" . }}:{{ template "redpanda.rpc.listen.port" . }}
+              {{ if .Values.config.schema_registry.enabled }}
+              --schema-registry-addr=internal://{{ template "redpanda.schemaregistry.internal.listen.address" . }}:{{ template "redpanda.schemaregistry.internal.listen.port" . }}
+              {{ end }}
               {{ if .Values.config.pandaproxy.enabled }}
               --advertise-pandaproxy-addr=internal://{{ template "redpanda.pandaproxy.internal.advertise.address" . }}:{{ template "redpanda.pandaproxy.internal.advertise.port" . }}
               --pandaproxy-addr=internal://{{ template "redpanda.pandaproxy.internal.listen.address" . }}:{{ template "redpanda.pandaproxy.internal.listen.port" . }}

@@ -131,5 +131,13 @@ Generate configuration needed for rpk
 {{- (first .Values.config.pandaproxy.pandaproxy_api).port -}}
 {{- end -}}
 
+{{- define "redpanda.schemaregistry.internal.listen.address" -}}
+{{- "$(POD_IP)" -}}
+{{- end -}}
+
+{{- define "redpanda.schemaregistry.internal.listen.port" -}}
+{{- (first .Values.config.schema_registry.schema_registry_api).port -}}
+{{- end -}}
+
 
 

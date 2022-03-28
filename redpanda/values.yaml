@@ -72,6 +72,14 @@ config:
       name: internal
       port: 8082
 
+  schema_registry:
+    enabled: true
+    schema_registry_api:
+    - address: "0.0.0.0"
+      name: internal
+      port: 8081
+
+  schema_registry_replication_factor: 1
 
   rpk:
     # Enables memory locking.
