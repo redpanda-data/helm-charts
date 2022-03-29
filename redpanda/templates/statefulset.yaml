@@ -112,7 +112,6 @@ spec:
               --pandaproxy-addr=internal://{{ template "redpanda.pandaproxy.internal.listen.address" . }}:{{ template "redpanda.pandaproxy.internal.listen.port" . }}
               {{ end }}
               --default-log-level={{ .Values.config.seastar.default_log_level }}
-              --
           ports:
             - containerPort: {{ .Values.config.redpanda.admin.port }}
               name: admin

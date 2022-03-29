@@ -41,13 +41,4 @@ spec:
       image: {{ .Values.image.repository }}:{{ .Values.image.tag }} 
       command: ['curl']
       args: ["-m","3","{{ include "redpanda.fullname" . }}:{{ template "redpanda.pandaproxy.internal.advertise.port" $ }}/brokers"]
-      volumeMounts:
-        - name: {{ template "redpanda.fullname" . }}
-          mountPath: /tmp/base-config 
-  volumes:
-    - name: {{ template "redpanda.fullname" . }}
-      configMap:
-        name: {{ template "redpanda.fullname" . }}
-    - name: config
-      emptyDir: {}
 {{- end }}
