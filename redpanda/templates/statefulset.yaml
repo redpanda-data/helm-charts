@@ -100,8 +100,13 @@ spec:
               --smp={{ .Values.statefulset.resources.limits.cpu }}
               --memory={{ template "redpanda.parseMemory" . }}
               --reserve-memory=0M
+              {{- if .Values.loadBalancer.enabled }}
+              --advertise-kafka-addr=internal://{{ template "redpanda.kafka.internal.advertise.address" . }}:{{ template "redpanda.kafka.internal.advertise.port" . }},external://{{ template "redpanda.kafka.external.advertise.address" . }}:{{ template "redpanda.kafka.external.advertise.port" . }},
+              --kafka-addr=internal://{{ template "redpanda.kafka.internal.listen.address" . }}:{{ template "redpanda.kafka.internal.listen.port" . }},external://{{ template "redpanda.kafka.external.listen.address" . }}:{{ template "redpanda.kafka.external.listen.port" . }},
+              {{- else }}
               --advertise-kafka-addr=internal://{{ template "redpanda.kafka.internal.advertise.address" . }}:{{ template "redpanda.kafka.internal.advertise.port" . }}
               --kafka-addr=internal://{{ template "redpanda.kafka.internal.listen.address" . }}:{{ template "redpanda.kafka.internal.listen.port" . }}
+              {{- end }}
               --advertise-rpc-addr={{ template "redpanda.rpc.advertise.address" . }}:{{ template "redpanda.rpc.advertise.port" . }}
               --rpc-addr={{ template "redpanda.rpc.listen.address" . }}:{{ template "redpanda.rpc.listen.port" . }}
               {{ if .Values.config.schema_registry.enabled }}
@@ -116,7 +121,11 @@ spec:
             - containerPort: {{ .Values.config.redpanda.admin.port }}
               name: admin
             - containerPort: {{ template "redpanda.kafka.internal.listen.port" . }}
-              name: kafka
+              name: kafka-internal
+              {{- if .Values.loadBalancer.enabled }}
+            - containerPort: {{ template "redpanda.kafka.external.listen.port" . }}
+              name: kafka-external
+              {{- end }}
               {{- if .Values.config.pandaproxy.enabled }}
             - containerPort: {{ template "redpanda.pandaproxy.internal.listen.port" . }}
               name: pandaproxy

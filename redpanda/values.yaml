@@ -234,3 +234,16 @@ storage:
     labels: {}
     # Additional annotations to apply to the created PersistentVolumeClaims.
     annotations: {}
+
+loadBalancer:
+  enabled: true
+  # The parent zone for DNS entries.
+  # See https://github.com/kubernetes-sigs/external-dns
+  parentZone: my-project.gcp.domain.com.
+  # Additional annotations to apply to the created LoadBalancer services.
+  annotations: {}
+    # For example:
+    # cloud.google.com/load-balancer-type: "Internal"
+    # service.beta.kubernetes.io/aws-load-balancer-type: nlb
+  # External port to listen on
+  port: 9092
