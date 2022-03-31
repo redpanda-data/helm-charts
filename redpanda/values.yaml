@@ -50,36 +50,50 @@ config:
       # Metrics are served off of this port at /metrics.
       port: 9644
       address: 0.0.0.0
+      external:
+        enabled: false
 
     # Kafka API listeners
     # The first entry is used to set up the headless service.
-    # Other entries are ignored.
+    # Kafka external and internal advertised listeners will be
+    # derived from the configuration. External advertised listener will be via
+    # node port unless load balancer is configured.
     kafka_api:
       - name: internal
-        address: $(POD_IP)
+        address: $(POD_IP) 
         port: 9092
+        external:
+          enabled: true
+    ##  - name: external
+    ##    address: $(POD_IP)
+    ##    port: 9093
 
     # rpc server listener
     rpc_server:
       address: 0.0.0.0
       port: 33145
+      external:
+        enabled: false
 
-  # panda proxy
+  # panda proxy (listener)
   pandaproxy:
-    enabled: true
     pandaproxy_api:
     - address: 0.0.0.0
       name: internal
       port: 8082
+      external:
+        enabled: true
+    ## - address: 0.0.0.0
+    ##   name: external
+    ##   port: 8083
 
   schema_registry:
-    enabled: true
     schema_registry_api:
     - address: "0.0.0.0"
       name: internal
       port: 8081
-
-    schema_registry_replication_factor: 1
+      external:
+        enabled: false
 
   rpk:
     # Enables memory locking.
@@ -234,6 +248,7 @@ storage:
     labels: {}
     # Additional annotations to apply to the created PersistentVolumeClaims.
     annotations: {}
+
 
 loadBalancer:
   enabled: false

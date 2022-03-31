@@ -70,6 +70,15 @@ Strip out the suffixes on memory to pass to Redpanda
 {{/*
 Generate configuration needed for rpk
 */}}
+
+{{- define "redpanda.kafka.internal.listen.address" -}}
+{{- "$(POD_IP)" -}}
+{{- end -}}
+
+{{- define "redpanda.kafka.internal.listen.port" -}}
+{{- (first .Values.config.redpanda.kafka_api).port -}}
+{{- end -}}
+
 {{- define "redpanda.internal.domain" -}}
 {{- $service := include "redpanda.fullname" . -}}
 {{- $ns := .Release.Namespace -}}
@@ -87,13 +96,66 @@ Generate configuration needed for rpk
 {{- (first .Values.config.redpanda.kafka_api).port -}}
 {{- end -}}
 
-{{- define "redpanda.kafka.internal.listen.address" -}}
+
+
+
+{{- define "redpanda.kafka.external.listen.address" -}}
 {{- "$(POD_IP)" -}}
 {{- end -}}
 
-{{- define "redpanda.kafka.internal.listen.port" -}}
-{{- (first .Values.config.redpanda.kafka_api).port -}}
+{{- define "redpanda.kafka.external.listen.port" -}}
+{{- add1 (first .Values.config.redpanda.kafka_api).port -}}
 {{- end -}}
+
+
+
+{{/*
+The external advertised address can change depending on the externalisation method.
+If the method is to expose via load balancer this must be provided through the values
+load balancers configuration for parent zone. If the load balancer is not enabled
+then then services are externalised using NodePorts, in which case the external node
+IP is required for the advertised address. 
+*/}}
+
+{{- define "redpanda.kafka.external.domain" -}}
+{{- printf "%s." (.Values.loadBalancer.parentZone | trimSuffix ".")  -}}
+{{- end }}
+
+{{- define "redpanda.kafka.external.advertise.address" -}}
+{{- $host := "$(SERVICE_NAME)" -}}
+{{- $domain := include "redpanda.kafka.external.domain" . -}}
+{{- printf "%s.%s" $host $domain -}}
+{{- end -}}
+
+{{- define "redpanda.kafka.external.advertise.port" -}}
+{{- add1 (first .Values.config.redpanda.kafka_api).port -}}
+{{- end -}}
+
+{{- define "redpanda.kafka.external.advertise.nodeport.address" -}}
+{{- "$(HOST_IP)" -}}
+{{- end -}}
+
+{{- define "redpanda.kafka.external.advertise.nodeport.port" -}}
+{{- 32005 -}}
+{{- end -}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 {{- define "redpanda.rpc.advertise.address" -}}
 {{- $host := "$(SERVICE_NAME)" -}}
@@ -113,6 +175,28 @@ Generate configuration needed for rpk
 {{- .Values.config.redpanda.rpc_server.port -}}
 {{- end -}}
 
+{{- define "redpanda.admin.address" -}}
+{{- "$(POD_IP)" -}}
+{{- end -}}
+
+{{ define "redpanda.admin.port" -}}
+{{- .Values.config.redpanda.admin.port -}}
+{{- end -}}
+
+{{- define "redpanda.admin.external.address" -}}
+{{- "$(HOST_IP)" -}}
+{{- end -}}
+
+{{ define "redpanda.admin.external.port" -}}
+{{- (add1 .Values.config.redpanda.admin.port) -}}
+{{- end -}}
+
+
+
+
+
+
+
 {{- define "redpanda.pandaproxy.internal.advertise.address" -}}
 {{- $host := "$(SERVICE_NAME)" -}}
 {{- $domain := include "redpanda.internal.domain" . -}}
@@ -131,32 +215,44 @@ Generate configuration needed for rpk
 {{- (first .Values.config.pandaproxy.pandaproxy_api).port -}}
 {{- end -}}
 
+{{- define "redpanda.pandaproxy.external.listen.address" -}}
+{{- "$(POD_IP)" -}}
+{{- end -}}
+
+{{- define "redpanda.pandaproxy.external.listen.port" -}}
+{{- add1 (first .Values.config.pandaproxy.pandaproxy_api).port -}}
+{{- end -}}
+
 {{- define "redpanda.schemaregistry.internal.address" -}}
 {{- "$(POD_IP)" -}}
+{{- end -}}
+
+{{- define "redpanda.schemaregistry.external.nodeport.address" -}}
+{{- "0.0.0.0" -}}
 {{- end -}}
 
 {{- define "redpanda.schemaregistry.internal.port" -}}
 {{- (first .Values.config.schema_registry.schema_registry_api).port -}}
 {{- end -}}
 
-{{- define "redpanda.kafka.external.domain" -}}
-{{- printf "%s." (.Values.loadBalancer.parentZone | trimSuffix ".")  -}}
-{{- end }}
+{{- define "redpanda.schemaregistry.external.port" -}}
+{{- 18081 -}}
+{{- end -}}
 
-{{- define "redpanda.kafka.external.advertise.address" -}}
+{{- define "redpanda.pandaproxy.external.advertise.address" -}}
 {{- $host := "$(SERVICE_NAME)" -}}
 {{- $domain := include "redpanda.kafka.external.domain" . -}}
 {{- printf "%s.%s" $host $domain -}}
 {{- end -}}
 
-{{- define "redpanda.kafka.external.advertise.port" -}}
-{{- .Values.loadBalancer.port -}}
+{{- define "redpanda.pandaproxy.external.advertise.port" -}}
+{{- add1 (first .Values.config.pandaproxy.pandaproxy_api).port -}}
 {{- end -}}
 
-{{- define "redpanda.kafka.external.listen.address" -}}
-{{- "$(POD_IP)" -}}
+{{- define "redpanda.pandaproxy.external.advertise.nodeport.address" -}}
+{{- "$(HOST_IP)" -}}
 {{- end -}}
 
-{{- define "redpanda.kafka.external.listen.port" -}}
-{{- add1 (first .Values.config.redpanda.kafka_api).port -}}
+{{- define "redpanda.pandaproxy.external.advertise.nodeport.port" -}}
+{{- add1 (first .Values.config.pandaproxy.pandaproxy_api).port -}}
 {{- end -}}

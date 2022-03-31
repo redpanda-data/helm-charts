@@ -14,12 +14,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- $schemaregistry := .Values.config.schema_registry }}
-{{- if $schemaregistry.enabled }}
+{{- if or
+(first .Values.config.pandaproxy.pandaproxy_api).external.enabled
+(first .Values.config.schema_registry.schema_registry_api).external.enabled
+}}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "redpanda.fullname" . }}-schemaregistry
+  name: {{ include "redpanda.fullname" . }}-cluster
   namespace: {{ .Release.Namespace | quote }}
   labels:
     helm.sh/chart: {{ template "redpanda.chart" . }}
@@ -32,11 +34,21 @@ metadata:
   {{- end }}
 spec:
   type: ClusterIP
+  publishNotReadyAddresses: true
+  sessionAffinity: None
   ports:
-    - name: schemaregistry-tcp
+      {{- if (first .Values.config.pandaproxy.pandaproxy_api).external.enabled }}
+    - name: proxy-external
       protocol: TCP
-      port: {{ template "redpanda.schemaregistry.internal.port" $ }}
-      targetPort: {{ template "redpanda.schemaregistry.internal.port" $ }}
+      port: {{ template "redpanda.pandaproxy.external.advertise.port" . }}
+      targetPort: {{ template "redpanda.pandaproxy.external.advertise.port" . }}
+      {{- end }}
+      {{- if (first .Values.config.schema_registry.schema_registry_api).external.enabled }}
+    - name: schema-registry
+      protocol: TCP
+      port: {{ template "redpanda.schemaregistry.external.port" . }}
+      targetPort: {{ template "redpanda.schemaregistry.external.port" . }}
+      {{- end }}
   selector:
     app.kubernetes.io/name: {{ template "redpanda.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name | quote }}

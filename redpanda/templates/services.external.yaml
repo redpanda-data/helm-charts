@@ -14,14 +14,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-
-# This service is only used to create the DNS enteries for each pod in
-# the stateful set. This service should not be used by any client
-# application
+{{- if or
+(first .Values.config.redpanda.kafka_api).external.enabled
+.Values.config.redpanda.admin.external.enabled
+(first .Values.config.pandaproxy.pandaproxy_api).external.enabled
+(first .Values.config.schema_registry.schema_registry_api).external.enabled
+}}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "redpanda.fullname" . }}
+  name: {{ include "redpanda.fullname" . }}-external
   namespace: {{ .Release.Namespace | quote }}
   labels:
     helm.sh/chart: {{ template "redpanda.chart" . }}
@@ -33,22 +35,36 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  clusterIP: None
-  publishNotReadyAddresses: true
-  type: ClusterIP
+  type: NodePort 
+  externalTrafficPolicy: Local
+  sessionAffinity: None
   ports:
-    - name: kafka
+      {{- if (first .Values.config.redpanda.kafka_api).external.enabled }}
+    - name: kafka-external
       protocol: TCP
-      port: {{ template "redpanda.kafka.internal.advertise.port" $ }}
-      targetPort: {{ template "redpanda.kafka.internal.advertise.port" $ }}
-    - name: admin
+      port: {{ template "redpanda.kafka.external.advertise.port" $ }}
+      targetPort: {{ template "redpanda.kafka.external.advertise.port" $ }}
+      nodePort: {{ template "redpanda.kafka.external.advertise.nodeport.port" $}}
+      {{- end }}  
+      {{- if .Values.config.redpanda.admin.external.enabled }}
+    - name: admin-external
       protocol: TCP
       port: {{ template "redpanda.admin.port" $ }}
       targetPort: {{ template "redpanda.admin.port" $ }}
-    - name: proxy 
+      {{- end }}
+      {{- if (first .Values.config.pandaproxy.pandaproxy_api).external.enabled }}
+    - name: proxy-external
       protocol: TCP
-      port: {{ template "redpanda.pandaproxy.internal.advertise.port" $ }}
-      targetPort: {{ template "redpanda.pandaproxy.internal.advertise.port" $ }}
+      port: {{ template "redpanda.pandaproxy.external.advertise.port" $ }}
+      targetPort: {{ template "redpanda.pandaproxy.external.advertise.port" $ }}
+      {{- end }}
+      {{ if (first .Values.config.schema_registry.schema_registry_api).external.enabled }}
+    - name: schema-registry
+      protocol: TCP
+      port: {{ template "redpanda.schemaregistry.external.port" $ }}
+      targetPort: {{ template "redpanda.schemaregistry.external.port" $ }}
+      {{- end }}
   selector:
     app.kubernetes.io/name: {{ template "redpanda.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
+{{- end }}
