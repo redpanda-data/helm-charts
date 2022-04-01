@@ -1,0 +1,43 @@
+{{- range $i, $s := .Values.certIssuers }}
+apiVersion: v1
+data:
+  password: changeme 
+kind: Secret
+metadata:
+  name: {{ template "redpanda.fullname" $ }}-{{ $s }}-cert-keystore
+type: Opaque
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ template "redpanda.fullname" $ }}-{{ $s }}-cert
+spec:
+  dnsNames:
+  - redpanda-cluster.default.svc.cluster.local
+  - '*.redpanda-cluster.default.svc.cluster.local'
+  - redpanda.default.svc.cluster.local
+  - '*.redpanda.default.svc.cluster.local'
+  duration: 43800h0m0s
+  isCA: false
+  commonName: {{ template "redpanda.fullname" $ }}-{{ $s }}-cert
+  secretName: {{ template "redpanda.fullname" $ }}-{{ $s }}-cert
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: {{ template "redpanda.fullname" $ }}-{{ $s }}-root-issuer
+    kind: Issuer
+    group: cert-manager.io
+  keystores:
+    jks:
+      create: true
+      passwordSecretRef:
+        key: password
+        name:  {{ template "redpanda.fullname" $ }}-{{ $s }}-cert-keystore
+    jks:
+      create: true
+      passwordSecretRef:
+        key: password
+        name: {{ template "redpanda.fullname" $ }}-{{ $s }}-cert-keystore 
+---
+{{- end }}

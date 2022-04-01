@@ -1,0 +1,33 @@
+{{- range $i, $s := .Values.certIssuers }}
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ template "redpanda.fullname" $ }}-{{ $s }}-selfsigned-issuer
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ template "redpanda.fullname" $ }}-{{ $s }}-root-certificate 
+spec:
+  isCA: true
+  commonName: {{ template "redpanda.fullname" $ }}-{{ $s }}-root-certificate
+  secretName: {{ template "redpanda.fullname" $ }}-{{ $s }}-root-certificate
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: {{ template "redpanda.fullname" $ }}-{{ $s }}-selfsigned-issuer
+    kind: Issuer
+    group: cert-manager.io
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ template "redpanda.fullname" $ }}-{{ $s }}-root-issuer
+spec:
+  ca:
+    secretName: {{ template "redpanda.fullname" $ }}-{{ $s }}-root-certificate 
+---
+{{- end }}

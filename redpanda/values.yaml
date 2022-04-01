@@ -52,6 +52,11 @@ config:
       address: 0.0.0.0
       external:
         enabled: false
+    admin_api_tls:
+    - cert_file: /etc/tls/certs/admin/tls.crt
+      enabled: true
+      key_file: /etc/tls/certs/admin/tls.key
+      name: admin
 
     # Kafka API listeners
     # The first entry is used to set up the headless service.
@@ -64,9 +69,12 @@ config:
         port: 9092
         external:
           enabled: true
-    ##  - name: external
-    ##    address: $(POD_IP)
-    ##    port: 9093
+          subdomain: "streaming.rockdata.io"
+    kafka_api_tls:
+    - cert_file: /etc/tls/certs/tls.crt
+      enabled: true
+      key_file: /etc/tls/certs/tls.key
+      name: kafka
 
     # rpc server listener
     rpc_server:
@@ -83,9 +91,11 @@ config:
       port: 8082
       external:
         enabled: true
-    ## - address: 0.0.0.0
-    ##   name: external
-    ##   port: 8083
+  pandaproxy_api_tls:
+  - cert_file: /etc/tls/certs/pandaproxy/tls.crt
+    enabled: true
+    key_file: /etc/tls/certs/pandaproxy/tls.key
+    name: proxy
 
   schema_registry:
     schema_registry_api:
@@ -94,6 +104,11 @@ config:
       port: 8081
       external:
         enabled: false
+    schema_registry_api_tls:
+    - cert_file: /etc/tls/certs/schema-registry/tls.crt
+      enabled: true
+      key_file: /etc/tls/certs/schema-registry/tls.key
+      name: schema-registry
 
   rpk:
     # Enables memory locking.
@@ -262,3 +277,9 @@ loadBalancer:
     # service.beta.kubernetes.io/aws-load-balancer-type: nlb
   # External port to listen on
   port: 9092
+
+certIssuers:
+  - kafka
+  - proxy
+  - schema
+  - admin
