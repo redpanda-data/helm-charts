@@ -14,7 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-
+{{- if not (include "redpanda.tls.is-any-kafka-api-enabled" .) }}
 apiVersion: v1
 kind: Pod
 metadata:
@@ -47,3 +47,4 @@ spec:
         name: {{ template "redpanda.fullname" . }}
     - name: config
       emptyDir: {}
+{{- end }}

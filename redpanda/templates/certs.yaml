@@ -1,3 +1,4 @@
+{{- $values := .Values }}
 {{- range $i, $s := .Values.certIssuers }}
 apiVersion: v1
 data:
@@ -17,6 +18,8 @@ spec:
   - '*.redpanda-cluster.default.svc.cluster.local'
   - redpanda.default.svc.cluster.local
   - '*.redpanda.default.svc.cluster.local'
+  - {{ (first $values.config.redpanda.kafka_api).external.subdomain }}
+  - {{ printf "*.%s" (first $values.config.redpanda.kafka_api).external.subdomain | squote }}
   duration: 43800h0m0s
   isCA: false
   commonName: {{ template "redpanda.fullname" $ }}-{{ $s }}-cert

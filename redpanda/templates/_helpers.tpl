@@ -117,8 +117,12 @@ then then services are externalised using NodePorts, in which case the external 
 IP is required for the advertised address. 
 */}}
 
-{{- define "redpanda.kafka.external.domain" -}}
+{{- define "redpanda.kafka.external.domain-lb-bkp" -}}
 {{- printf "%s." (.Values.loadBalancer.parentZone | trimSuffix ".")  -}}
+{{- end }}
+
+{{- define "redpanda.kafka.external.domain" -}}
+{{- printf "%s." (first .Values.config.redpanda.kafka_api).external.subdomain | trimSuffix "." | default "$(HOST_IP)" -}}
 {{- end }}
 
 {{- define "redpanda.kafka.external.advertise.address" -}}
