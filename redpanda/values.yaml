@@ -74,8 +74,14 @@ config:
     - cert_file: /etc/tls/certs/tls.crt
       enabled: true
       key_file: /etc/tls/certs/tls.key
+      require_client_auth: false
       name: kafka
-
+    - cert_file: /etc/tls/certs/tls.crt
+      enabled: true
+      require_client_auth: false
+      key_file: /etc/tls/certs/tls.key
+      name: external 
+    
     # rpc server listener
     rpc_server:
       address: 0.0.0.0

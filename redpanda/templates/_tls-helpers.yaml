@@ -19,3 +19,23 @@ limitations under the License.
 {{- define "redpanda.tls.is-any-kafka-api-enabled" -}}
 {{- any  .Values.config.redpanda.kafka_api_tls -}}
 {{- end -}}
+
+{{- define "redpanda.tls.is-any-proxy-api-enabled" -}}
+{{- any  .Values.config.redpanda.pandaproxy_api_tls -}}
+{{- end -}}
+
+{{- define "redpanda.tls.is-any-admin-api-enabled" -}}
+{{- any  .Values.config.redpanda.admin_api_tls -}}
+{{- end -}}
+
+{{- define "redpanda.tls.is-any-schema-registry-api-enabled" -}}
+{{- any  .Values.config.redpanda.schema_registry_api_tls -}}
+{{- end -}}
+
+{{- define "redpanda.tls.is-any-api-enabled" -}}
+{{- any  (include "redpanda.tls.is-any-kafka-api-enabled" .) (include "redpanda.tls.is-any-proxy-api-enabled" .) (include "redpanda.tls.is-any-admin-api-enabled" .) (include  "redpanda.tls.is-any-schema-registry-api-enabled" .) -}}
+{{- end -}}
+
+
+
+

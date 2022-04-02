@@ -1,3 +1,4 @@
+{{- if (include "redpanda.tls.is-any-api-enabled" . ) }}
 {{- range $i, $s := .Values.certIssuers }}
 apiVersion: cert-manager.io/v1
 kind: Issuer
@@ -30,4 +31,5 @@ spec:
   ca:
     secretName: {{ template "redpanda.fullname" $ }}-{{ $s }}-root-certificate 
 ---
+{{- end }}
 {{- end }}
