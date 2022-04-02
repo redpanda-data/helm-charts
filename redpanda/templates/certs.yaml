@@ -15,10 +15,10 @@ metadata:
   name: {{ template "redpanda.fullname" $ }}-{{ $s }}-cert
 spec:
   dnsNames:
-  - {{ template "redpanda.fullname" $ }}-cluster.{{ include "redpanda.internal.domain" $ }}
-  - '*.{{ template "redpanda.fullname" $ }}-cluster.{{ include "redpanda.internal.domain" $ }}'
-  - {{ template "redpanda.fullname" $ }}.{{ include "redpanda.internal.domain" $ }}
-  - '*.{{ template "redpanda.fullname" $ }}.{{ include "redpanda.internal.domain" $ }}'
+  - {{ template "redpanda.fullname" $ }}-cluster.{{ (include "redpanda.internal.domain" $) | trimSuffix "." }}
+  - '*.{{ template "redpanda.fullname" $ }}-cluster.{{ (include "redpanda.internal.domain" $) | trimSuffix "." }}'
+  - {{ (include "redpanda.internal.domain" $) | trimSuffix "." }}
+  - '*.{{ (include "redpanda.internal.domain" $) | trimSuffix "." }}'
   - {{ (first $values.config.redpanda.kafka_api).external.subdomain }}
   - {{ printf "*.%s" (first $values.config.redpanda.kafka_api).external.subdomain | squote }}
   duration: 43800h0m0s
