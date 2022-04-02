@@ -99,17 +99,17 @@ config:
       port: 8082
       external:
         enabled: true
-  pandaproxy_api_tls:
-  - cert_file: /etc/tls/certs/pandaproxy/tls.crt
-    enabled: true
-    truststore_file: /etc/tls/certs/ca.crt
-    key_file: /etc/tls/certs/pandaproxy/tls.key
-    name: internal
-  - cert_file: /etc/tls/certs/pandaproxy/tls.crt
-    enabled: true
-    truststore_file: /etc/tls/certs/ca.crt
-    key_file: /etc/tls/certs/pandaproxy/tls.key
-    name: external
+    pandaproxy_api_tls:
+    - cert_file: /etc/tls/certs/pandaproxy/tls.crt
+      enabled: true
+      truststore_file: /etc/tls/certs/ca.crt
+      key_file: /etc/tls/certs/pandaproxy/tls.key
+      name: internal
+    - cert_file: /etc/tls/certs/pandaproxy/tls.crt
+      enabled: true
+      truststore_file: /etc/tls/certs/ca.crt
+      key_file: /etc/tls/certs/pandaproxy/tls.key
+      name: external
 
   schema_registry:
     schema_registry_api:
