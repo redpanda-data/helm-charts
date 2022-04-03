@@ -44,6 +44,9 @@ config:
   organization: ""
 
   redpanda:
+    enable_sasl: true
+    superUsers:
+      - "admin"
     admin:
       # The port for the admin server.
       #
@@ -114,7 +117,7 @@ config:
   schema_registry:
     schema_registry_api:
     - address: "0.0.0.0"
-      name: internal
+      name: schema-registry 
       port: 8081
       external:
         enabled: false
