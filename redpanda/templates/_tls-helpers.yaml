@@ -39,3 +39,6 @@ limitations under the License.
 
 
 
+{{- define "redpanda.sasl.is-any-kafka-api-enabled" -}}
+{{- any .Values.config.redpanda.enable_sasl -}}
+{{- end -}}
