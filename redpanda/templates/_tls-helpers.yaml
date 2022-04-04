@@ -36,9 +36,6 @@ limitations under the License.
 {{- any  (include "redpanda.tls.is-any-kafka-api-enabled" .) (include "redpanda.tls.is-any-pandaproxy-api-enabled" .) (include "redpanda.tls.is-any-admin-api-enabled" .) (include  "redpanda.tls.is-any-schema-registry-api-enabled" .) -}}
 {{- end -}}
 
-
-
-
 {{- define "redpanda.sasl.is-any-kafka-api-enabled" -}}
-{{- any .Values.config.redpanda.enable_sasl -}}
+{{- .Values.config.redpanda.enable_sasl -}}
 {{- end -}}
