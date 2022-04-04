@@ -14,7 +14,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- if and (include "redpanda.tls.is-any-kafka-api-enabled" .)  (include "redpanda.sasl.is-any-kafka-api-enabled" .) }}
+{{- $anySASL := default false .Values.config.redpanda.enable_sasl }}
+{{- if $anySASL }}
 apiVersion: v1
 kind: Pod
 metadata:
@@ -40,7 +41,7 @@ spec:
       command:
       - /bin/sh
       - -c
-      - rpk acl user create admin -p test --api-urls redpanda-0.redpanda.default.svc.cluster.local.:9644 --admin-api-tls-truststore /etc/tls/certs/admin/ca.crt --tls-truststore /etc/tls/certs/ca.crt && rpk topic create test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-256 --brokers redpanda-0.redpanda.default.svc.cluster.local.:9092 --tls-enabled --tls-truststore /etc/tls/certs/ca.crt && rpk topic describe test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-256 --brokers redpanda-0.redpanda.default.svc.cluster.local.:9092 --tls-enabled --tls-truststore /etc/tls/certs/ca.crt && rpk topic delete test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-256 --brokers redpanda-0.redpanda.default.svc.cluster.local.:9092 --tls-enabled --tls-truststore /etc/tls/certs/ca.crt && rpk acl user delete admin --tls-truststore /etc/tls/certs/ca.crt --admin-api-tls-truststore /etc/tls/certs/admin/ca.crt --api-urls redpanda-0.redpanda.default.svc.cluster.local.:9644 --brokers redpanda-0.redpanda.default.svc.cluster.local.
+      - rpk acl user delete admin --tls-truststore /etc/tls/certs/ca.crt --admin-api-tls-truststore /etc/tls/certs/admin/ca.crt --api-urls redpanda-0.redpanda.default.svc.cluster.local.:9644 --brokers redpanda-0.redpanda.default.svc.cluster.local.; sleep 5; rpk acl user create admin -p test --api-urls redpanda-0.redpanda.default.svc.cluster.local.:9644 --admin-api-tls-truststore /etc/tls/certs/admin/ca.crt --tls-truststore /etc/tls/certs/ca.crt && sleep 5 && rpk topic create test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-256 --brokers redpanda-0.redpanda.default.svc.cluster.local.:9092 --tls-enabled --tls-truststore /etc/tls/certs/ca.crt && rpk topic describe test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-256 --brokers redpanda-0.redpanda.default.svc.cluster.local.:9092 --tls-enabled --tls-truststore /etc/tls/certs/ca.crt && rpk topic delete test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-256 --brokers redpanda-0.redpanda.default.svc.cluster.local.:9092 --tls-enabled --tls-truststore /etc/tls/certs/ca.crt && rpk acl user delete admin --tls-truststore /etc/tls/certs/ca.crt --admin-api-tls-truststore /etc/tls/certs/admin/ca.crt --api-urls redpanda-0.redpanda.default.svc.cluster.local.:9644 --brokers redpanda-0.redpanda.default.svc.cluster.local.
       volumeMounts:
         - name: {{ template "redpanda.fullname" . }}
           mountPath: /tmp/base-config 

@@ -17,19 +17,35 @@ limitations under the License.
 */}}
 
 {{- define "redpanda.tls.is-any-kafka-api-enabled" -}}
-{{- any  .Values.config.redpanda.kafka_api_tls -}}
+{{- if .Values.config.redpanda.kafka_api_tls }}
+{{-  (first .Values.config.redpanda.kafka_api_tls).enabled -}}
+{{- else }}
+false
+{{- end -}}
 {{- end -}}
 
 {{- define "redpanda.tls.is-any-pandaproxy-api-enabled" -}}
-{{- any  .Values.config.redpanda.pandaproxy_api_tls -}}
+{{- if .Values.config.redpanda.admin_api_tls }}
+{{- (first .Values.config.redpanda.pandaproxy_api_tls).enabled -}}
+{{- else }}
+false
+{{- end -}}
 {{- end -}}
 
 {{- define "redpanda.tls.is-any-admin-api-enabled" -}}
-{{- any  .Values.config.redpanda.admin_api_tls -}}
+{{- if .Values.config.redpanda.admin_api_tls }}
+{{- (first .Values.config.redpanda.admin_api_tls).enabled -}}
+{{- else }}
+false
+{{- end -}}
 {{- end -}}
 
 {{- define "redpanda.tls.is-any-schema-registry-api-enabled" -}}
-{{- any  .Values.config.redpanda.schema_registry_api_tls -}}
+{{- if .Values.config.redpanda.schema_registry_api_tls }}
+{{- (first .Values.config.redpanda.schema_registry_api_tls).enabled -}}
+{{- else }}
+false
+{{- end -}}
 {{- end -}}
 
 {{- define "redpanda.tls.is-any-api-enabled" -}}
@@ -37,5 +53,5 @@ limitations under the License.
 {{- end -}}
 
 {{- define "redpanda.sasl.is-any-kafka-api-enabled" -}}
-{{- .Values.config.redpanda.enable_sasl -}}
+{{- false -}}
 {{- end -}}

@@ -14,7 +14,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- if and (include "redpanda.tls.is-any-kafka-api-enabled" .)  (not (include "redpanda.sasl.is-any-kafka-api-enabled" .)) }}
+{{- $anyTLS :=  default false .Values.config.redpanda.kafka_api_tls -}}
+{{- $anySASL := default false .Values.config.redpanda.enable_sasl }}
+{{- if and $anyTLS (not $anySASL) }}
 apiVersion: v1
 kind: Pod
 metadata:
@@ -32,7 +34,6 @@ metadata:
   annotations:
     "helm.sh/hook": test
     "helm.sh/hook-delete-policy": hook-succeeded
-    "testo" : {{ include "redpanda.sasl.is-any-kafka-api-enabled" . }}
 spec:
   restartPolicy: Never
   containers:

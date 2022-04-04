@@ -1,4 +1,3 @@
-{{- if (include "redpanda.tls.is-any-api-enabled" . ) }}
 {{- $values := .Values }}
 {{- range $i, $s := .Values.certIssuers }}
 apiVersion: v1
@@ -44,5 +43,4 @@ spec:
         key: password
         name: {{ template "redpanda.fullname" $ }}-{{ $s }}-cert-keystore 
 ---
-{{- end }}
 {{- end }}
