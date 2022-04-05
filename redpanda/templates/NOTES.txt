@@ -21,21 +21,70 @@ The pods will rollout in a few seconds. To check the status:
 
   kubectl -n {{ .Release.Namespace }} rollout status -w statefulset/{{ template "redpanda.fullname" . }}
 
-Try some sample commands, like creating a topic called topic1:
+Try some sample commands, like creating a topic called test-topic:
 
-  kubectl -n {{ .Release.Namespace }} run -ti --rm --restart=Never \
-    --image {{ .Values.image.repository }}:{{ .Values.image.tag }} \
-    rpk -- --brokers={{ include "redpanda.fullname" . }}-bootstrap:{{ template "redpanda.kafka.internal.advertise.port" $ }} topic create topic1
+{{- $anyTLS :=  default false .Values.config.redpanda.kafka_api_tls -}}
+{{- $anySASL := default false .Values.config.redpanda.enable_sasl }}
+{{- if not $anyTLS  }}
+
+With no TLS or SASL create a topic:
+
+  kubectl -n {{ .Release.Namespace }} run -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} -- rpk --brokers={{ include "redpanda.fullname" . }}-0:{{ template "redpanda.kafka.internal.advertise.port" $ }} topic create test-topic
 
 To get the api status:
  
-  kubectl -n {{ .Release.Namespace }} run -ti --rm --restart=Never \
-    --image {{ .Values.image.repository }}:{{ .Values.image.tag }} \
-    rpk -- --brokers={{ include "redpanda.fullname" . }}-bootstrap:{{ template "redpanda.kafka.internal.advertise.port" $ }} cluster info
+  kubectl -n {{ .Release.Namespace }} run -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} -- rpk --brokers={{ include "redpanda.fullname" . }}-0:{{ template "redpanda.kafka.internal.advertise.port" $ }} cluster info
+
+Describe the topic:
+
+  kubectl -n {{ .Release.Namespace }} run -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} -- rpk --brokers={{ include "redpanda.fullname" . }}-0:{{ template "redpanda.kafka.internal.advertise.port" $ }} topic describe test-topic
+ 
+Delete the topic:
+ 
+	kubectl -n {{ .Release.Namespace }} run -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} -- rpk --brokers={{ include "redpanda.fullname" . }}-0:{{ template "redpanda.kafka.internal.advertise.port" $ }} topic delete test-topic
+
+{{- end }}
+
+{{- if and $anyTLS (not $anySASL) }}
+
+With TLS enabled create a topic:
+
+CERT=$(kubectl exec -n default  {{ template "redpanda.name" . }}-0 -c redpanda -- cat /etc/tls/certs/ca.crt)                 
+
+  kubectl -n {{ .Release.Namespace }} run rpk -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} --command -- /bin/bash -c "rpk topic create test-topic --brokers {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }} --tls-enabled --tls-truststore <(echo '$CERT')" 
+
+Describe the topic:
+
+  kubectl -n {{ .Release.Namespace }} run rpk -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} --command -- /bin/bash -c "rpk topic describe test-topic --brokers {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }} --tls-enabled --tls-truststore <(echo '$CERT')" 
+
+Delete the topic:
+
+  kubectl -n {{ .Release.Namespace }} run rpk -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} --command -- /bin/bash -c "rpk topic delete test-topic --brokers {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }} --tls-enabled --tls-truststore <(echo '$CERT')"
+
+{{- end -}}
+
+{{- if and $anyTLS $anySASL }}
+
+With TLS enabled create a topic:
+
+CERT=$(kubectl exec -n default  {{ template "redpanda.name" . }}-0 -c redpanda -- cat /etc/tls/certs/ca.crt)                 
+
+  kubectl -n {{ .Release.Namespace }} run rpk -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} --command -- /bin/bash -c "rpk topic create test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-256 --brokers {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }} --tls-enabled --tls-truststore <(echo '$CERT')" 
+
+Describe the topic:
+
+  kubectl -n {{ .Release.Namespace }} run rpk -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} --command -- /bin/bash -c "rpk topic describe test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-256 --brokers {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }} --tls-enabled --tls-truststore <(echo '$CERT')" 
+
+Delete the topic:
+
+  kubectl -n {{ .Release.Namespace }} run -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} --command -- /bin/bash -c "rpk topic delete test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-256 --brokers {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }} --tls-enabled --tls-truststore <(echo '$CERT')" 
+
+{{- end -}}
 
 {{- if .Values.loadBalancer.enabled }}
 
 Or from outside the cluster:
 
   rpk --brokers={{ include "redpanda.fullname" . }}-0.{{ template "redpanda.kafka.external.domain" $ }}:{{ template "redpanda.kafka.external.advertise.port" $ }} api status
+
 {{- end }}
