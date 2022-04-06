@@ -115,21 +115,8 @@ The installation can be further tested with the following command:
 helm test redpanda
 ```
 
-#Troubleshooting
+##Troubleshooting
 
 
 
 
-### Local Installation
-
-First, clone this repo:
-
-```sh
-git clone git@github.com:vectorizedio/helm-charts.git
-```
-
-Install the Helm Chart:
-
-```sh
-helm install --namespace redpanda --create-namespace redpanda ./redpanda
-```
