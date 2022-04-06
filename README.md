@@ -115,6 +115,89 @@ The installation can be further tested with the following command:
 helm test redpanda
 ```
 
+##Issuer override
+
+The default behaviour of the chart is to create an issuer per service by iterating the following list in the values file.
+
+certIssuers:
+  - name: kafka
+  - name: proxy
+  - name: schema
+  - name: admin
+
+The certs-issuers.yaml iterates this list performing simple template substitution to generate first
+a self-signed kind:Issuer then that self-signed Issuer issues its own service based root Certificate.
+
+The self-signed root certificate is then used to create a <release>-<service>-root-issuer. For example (A):
+
+```
+rob@k8s-k03-sm:helm-charts-1$ kubectl get issuers -o wide
+redpanda-admin-root-issuer                             True    Signing CA verified   2m20s
+redpanda-admin-selfsigned-issuer                       True                          2m20s
+redpanda-kafka-root-issuer                             True    Signing CA verified   2m20s
+redpanda-kafka-selfsigned-issuer                       True                          2m20s
+redpanda-proxy-root-issuer                             True    Signing CA verified   2m20s
+redpanda-proxy-selfsigned-issuer                       True                          2m20s
+redpanda-schema-root-issuer                            True    Signing CA verified   2m20s
+redpanda-schema-selfsigned-issuer                      True                          2m20s
+```
+
+If required the issuer of the service cert issuers can be specified. This is possible to change per service individually if required.
+
+For example; in this case a self-signed issuer for the rockdata.io is generated as follows:
+
+```sh
+kubectl apply -f - << RDMI
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: rockdata-io-selfsigned-issuer
+spec:
+  selfSigned: {}
+RDMI
+```
+
+Therefore values yaml can be modified as follows to specifically override the kafka issuer:
+
+```
+certIssuers:
+  - name: kafka
+    issuerRef: rockdata-io-selfsigned-issuer
+  - name: proxy
+  - name: schema
+  - name: admin
+```
+
+```
+rob@k8s-k03-sm:/helm-charts-1$ k get certs -o wide
+redpanda-admin-cert                                   True    redpanda-admin-cert
+redpanda-admin-root-issuer                             Certificate is up to date and has not expired   33m
+redpanda-admin-root-certificate                       True    redpanda-admin-root-certificate
+redpanda-admin-selfsigned-issuer                       Certificate is up to date and has not expired   33m
+redpanda-kafka-cert                                   True    redpanda-kafka-cert
+redpanda-kafka-root-issuer                             Certificate is up to date and has not expired   33m
+redpanda-kafka-root-certificate                       True    redpanda-kafka-root-certificate
+rockdata-io-selfsigned-issuer                          Certificate is up to date and has not expired   33m
+redpanda-proxy-cert                                   True    redpanda-proxy-cert
+redpanda-proxy-root-issuer                             Certificate is up to date and has not expired   33m
+redpanda-proxy-root-certificate                       True    redpanda-proxy-root-certificate
+redpanda-proxy-selfsigned-issuer                       Certificate is up to date and has not expired   33m
+redpanda-schema-cert                                  True    redpanda-schema-cert
+redpanda-schema-root-issuer                            Certificate is up to date and has not expired   33m
+redpanda-schema-root-certificate                      True    redpanda-schema-root-certificate
+redpanda-schema-selfsigned-issuer                      Certificate is up to date and has not expired   33m
+```
+
+```
+rob@k8s-k03-sm:~/helm-charts-1$ k get issuers
+redpanda-admin-root-issuer                             True    36m                                                                 redpanda-admin-selfsigned-issuer                       True    36m
+redpanda-kafka-root-issuer                             True    36m                                                                 redpanda-proxy-root-issuer                             True    36m
+redpanda-proxy-selfsigned-issuer                       True    36m
+redpanda-schema-root-issuer                            True    36m                                                                 redpanda-schema-selfsigned-issuer                      True    36m
+rockdata-io-selfsigned-issuer                          True    37m
+```
+
+
 ##Troubleshooting
 
 
