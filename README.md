@@ -119,11 +119,13 @@ helm test redpanda
 
 The default behaviour of the chart is to create an issuer per service by iterating the following list in the values file.
 
+```
 certIssuers:
   - name: kafka
   - name: proxy
   - name: schema
   - name: admin
+```
 
 The certs-issuers.yaml iterates this list performing simple template substitution to generate first
 a self-signed kind:Issuer then that self-signed Issuer issues its own service based root Certificate.
@@ -168,7 +170,19 @@ certIssuers:
   - name: admin
 ```
 
+This can be easily tested by using using the following:
+
+```sh
+helm install redpanda . -f values_add_custom_issuer.yaml
 ```
+
+The afformentioned helm tests should pass.
+
+```
+helm test redpanda
+```
+
+
 rob@k8s-k03-sm:/helm-charts-1$ k get certs -o wide
 redpanda-admin-cert                                   True    redpanda-admin-cert
 redpanda-admin-root-issuer                             Certificate is up to date and has not expired   33m
