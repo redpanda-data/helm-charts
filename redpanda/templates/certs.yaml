@@ -1,5 +1,6 @@
 {{- $values := .Values }}
-{{- range $i, $s := .Values.certIssuers }}
+{{- range $i, $issuer := .Values.certIssuers }}
+{{- $s := $issuer.name }}
 apiVersion: v1
 data:
   password: changeme 

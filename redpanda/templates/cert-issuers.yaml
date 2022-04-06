@@ -1,10 +1,14 @@
-{{- range $i, $s := .Values.certIssuers }}
+{{- range $i, $issuer := .Values.certIssuers }}
+{{- $s := $issuer.name }}
+{{- $r := $issuer.issuerRef }}
+{{- if not $r }}
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: {{ template "redpanda.fullname" $ }}-{{ $s }}-selfsigned-issuer
 spec:
   selfSigned: {}
+{{- end }}
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -18,7 +22,11 @@ spec:
     algorithm: ECDSA
     size: 256
   issuerRef:
+{{- if $r }}
+    name: {{ $r }}
+{{- else }}
     name: {{ template "redpanda.fullname" $ }}-{{ $s }}-selfsigned-issuer
+{{- end }}
     kind: Issuer
     group: cert-manager.io
 ---

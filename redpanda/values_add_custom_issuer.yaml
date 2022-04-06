@@ -76,6 +76,7 @@ config:
 
 certIssuers:
   - name: kafka
+    issuerRef: rockdata-io-selfsigned-issuer
   - name: proxy
   - name: schema
   - name: admin
