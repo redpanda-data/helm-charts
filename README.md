@@ -43,6 +43,8 @@ RDMI
 
 kind create cluster --name redpanda --config=tri-node-config.yaml
 
+kubectl config current-context
+
 kubectl get nodes -o wide
 ```
 
@@ -50,8 +52,17 @@ If you intend to install tls, then you are required to install [cert-manager](ht
 
 Cert-manager installation information can be found [here](https://cert-manager.io/docs/installation/)
 
+Use this command to install cert-manager with Helm:
+
 ```sh
-kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.yaml
+helm repo add jetstack https://charts.jetstack.io && \
+helm repo update && \
+helm install \
+  cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --create-namespace \
+  --version v1.2.0 \
+  --set installCRDs=true
 ```
 
 ## Method 1: No TLS and No SASL
@@ -194,7 +205,7 @@ TBD
 
 An external load balancer can be demonstrated with a local kind cluster.
 
-In this example [MetalLB] (https://metallb.org/) is utilised.
+In this example [MetalLB](https://metallb.org/) is utilised.
 
 First the MetaLB dependency needs to be installed to the cluster. In this case:
 
