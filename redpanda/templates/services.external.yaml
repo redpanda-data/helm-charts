@@ -14,17 +14,25 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- $externalKafkaEnabled := (first .Values.config.redpanda.kafka_api).external.enabled }}
-{{- $externalAdminEnabled := .Values.config.redpanda.admin.external.enabled }}
-{{- $externalProxyEnabled := (first .Values.config.pandaproxy.pandaproxy_api).external.enabled }}
-{{- $externalSchemaRegistryEnabled := (first .Values.config.schema_registry.schema_registry_api).external.enabled }}
-{{- $externalLoadBalancerEnabled := .Values.loadBalancer.enabled }} 
-{{- if or
-  $externalKafkaEnabled
-  $externalAdminEnabled
-  $externalProxyEnabled
-  $externalSchemaRegistryEnabled
-}}
+{{- $externalKafkaNodePortEnabled := (first .Values.config.redpanda.kafka_api).external.enabled }}
+{{- $externalAdminNodePortEnabled := .Values.config.redpanda.admin.external.enabled }}
+{{- $externalProxyNodePortEnabled := (first .Values.config.pandaproxy.pandaproxy_api).external.enabled }}
+{{- $externalSchemaRegistryNodePortEnabled := (first .Values.config.schema_registry.schema_registry_api).external.enabled }}
+{{- $externalLoadBalancerEnabled := false }} 
+{{- $externalKafkaLBEnabled := false }}
+{{- $externalAdminLBEnabled := false }}
+{{- $externalProxyLBEnabled := false }}
+{{- $externalSchemaRegistryLBEnabled := false }}
+{{- $anyExternalLBEnabled := false }}
+{{- with .Values.loadBalancer }}
+  {{- $externalLoadBalancerEnabled = .enabled }} 
+  {{- $externalKafkaLBEnabled = .kafka.enabled }}
+  {{- $externalAdminLBEnabled = .admin.enabled }}
+  {{- $externalProxyLBEnabled = .proxy.enabled }}
+  {{- $externalSchemaRegistryLBEnabled = .schemaRegistry.enabled }}
+  {{- $anyExternalLBEnabled = or $externalKafkaLBEnabled $externalAdminLBEnabled $externalSchemaRegistryLBEnabled }}
+{{- end }}
+{{- if $anyExternalLBEnabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -44,26 +52,26 @@ spec:
   externalTrafficPolicy: Local
   sessionAffinity: None
   ports:
-      {{- if $externalKafkaEnabled }}
+      {{- if and $externalKafkaNodePortEnabled (not $externalKafkaLBEnabled) }}
     - name: kafka-external
       protocol: TCP
       port: {{ template "redpanda.kafka.external.advertise.port" $ }}
       targetPort: {{ template "redpanda.kafka.external.advertise.port" $ }}
       nodePort: {{ template "redpanda.kafka.external.advertise.nodeport.port" $}}
       {{- end }}  
-      {{- if $externalAdminEnabled }}
+      {{- if and $externalAdminNodePortEnabled (not $externalAdminLBEnabled) }}
     - name: admin-external
       protocol: TCP
       port: {{ template "redpanda.admin.port" $ }}
       targetPort: {{ template "redpanda.admin.port" $ }}
       {{- end }}
-      {{- if $externalProxyEnabled }}
+      {{- if and $externalProxyNodePortEnabled (not $externalProxyLBEnabled) }}
     - name: proxy-external
       protocol: TCP
       port: {{ template "redpanda.pandaproxy.external.advertise.port" $ }}
       targetPort: {{ template "redpanda.pandaproxy.external.advertise.port" $ }}
       {{- end }}
-      {{ if $externalSchemaRegistryEnabled }}
+      {{ if and $externalSchemaRegistryNodePortEnabled (not $externalSchemaRegistryLBEnabled)}}
     - name: schema-registry
       protocol: TCP
       port: {{ template "redpanda.schemaregistry.external.port" $ }}

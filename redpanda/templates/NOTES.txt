@@ -29,19 +29,19 @@ Try some sample commands, like creating a topic called test-topic:
 
 With no TLS or SASL create a topic:
 
-  kubectl -n {{ .Release.Namespace }} run -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} -- rpk --brokers={{ include "redpanda.fullname" . }}-0:{{ template "redpanda.kafka.internal.advertise.port" $ }} topic create test-topic
+  kubectl -n {{ .Release.Namespace }} run -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} -- rpk --brokers={{ include "redpanda.fullname" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }} topic create test-topic
 
 To get the api status:
  
-  kubectl -n {{ .Release.Namespace }} run -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} -- rpk --brokers={{ include "redpanda.fullname" . }}-0:{{ template "redpanda.kafka.internal.advertise.port" $ }} cluster info
+  kubectl -n {{ .Release.Namespace }} run -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} -- rpk --brokers={{ include "redpanda.fullname" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }} cluster info
 
 Describe the topic:
 
-  kubectl -n {{ .Release.Namespace }} run -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} -- rpk --brokers={{ include "redpanda.fullname" . }}-0:{{ template "redpanda.kafka.internal.advertise.port" $ }} topic describe test-topic
+  kubectl -n {{ .Release.Namespace }} run -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} -- rpk --brokers={{ include "redpanda.fullname" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }} topic describe test-topic
  
 Delete the topic:
  
-	kubectl -n {{ .Release.Namespace }} run -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} -- rpk --brokers={{ include "redpanda.fullname" . }}-0:{{ template "redpanda.kafka.internal.advertise.port" $ }} topic delete test-topic
+	kubectl -n {{ .Release.Namespace }} run -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} -- rpk --brokers={{ include "redpanda.fullname" . }}-0{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }} topic delete test-topic
 
 {{- end }}
 
@@ -81,10 +81,13 @@ Delete the topic:
 
 {{- end -}}
 
+
+{{- if .Values.loadBalancer }}
 {{- if .Values.loadBalancer.enabled }}
 
 Or from outside the cluster:
 
   rpk --brokers={{ include "redpanda.fullname" . }}-0.{{ template "redpanda.kafka.external.domain" $ }}:{{ template "redpanda.kafka.external.advertise.port" $ }} api status
 
+{{- end }}
 {{- end }}

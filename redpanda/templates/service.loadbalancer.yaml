@@ -42,10 +42,30 @@ metadata:
 spec:
   externalTrafficPolicy: Local
   ports:
+{{- if $lb.kafka.enabled }}
     - name: kafka
       protocol: TCP
-      port: {{$lb.port}}
-      targetPort: {{ template "redpanda.kafka.external.listen.port" $ }}
+      port: {{$lb.kafka.port}}
+      #targetPort: {{ template "redpanda.kafka.external.listen.port" $ }}
+{{- end }}
+{{- if $lb.admin.enabled }}
+    - name: admin
+      protocol: TCP
+      port: {{$lb.admin.port}}
+      targetPort: {{ template "redpanda.admin.external.listen.port" $ }}
+{{- end }}
+{{- if $lb.proxy.enabled }}
+    - name: proxy
+      protocol: TCP
+      port: {{$lb.proxy.port}}
+      targetPort: {{ template "redpanda.pandaproxy.external.listen.port" $ }}
+{{- end }}
+{{- if $lb.schemaRegistry.enabled }}
+    - name: schemaRegistry 
+      protocol: TCP
+      port: {{$lb.schemaRegistry.port}}
+      targetPort: {{ template "redpanda.schema_registry.external.listen.port" $ }}
+{{- end }}
   selector:
     app.kubernetes.io/name: {{ template "redpanda.name" $ }}
     app.kubernetes.io/instance: {{ $release.Name | quote }}

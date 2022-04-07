@@ -1,0 +1,22 @@
+loadBalancer:
+  enabled: true
+  kafka:
+    enabled: true
+    port: 9092
+  admin:
+    enabled: false
+    port: 9644
+  schemaRegistry:
+    enabled: false
+    port: 8081
+  proxy:
+    enabled: false
+    port: 8083 
+  # The parent zone for DNS entries.
+  # See https://github.com/kubernetes-sigs/external-dns
+  parentZone: streaming.rockdata.io.
+  # Additional annotations to apply to the created LoadBalancer services.
+  annotations: {}
+    # For example:
+    # cloud.google.com/load-balancer-type: "Internal"
+    # service.beta.kubernetes.io/aws-load-balancer-type: nlb

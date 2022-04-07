@@ -96,9 +96,6 @@ Generate configuration needed for rpk
 {{- (first .Values.config.redpanda.kafka_api).port -}}
 {{- end -}}
 
-
-
-
 {{- define "redpanda.kafka.external.listen.address" -}}
 {{- "$(POD_IP)" -}}
 {{- end -}}
@@ -106,8 +103,6 @@ Generate configuration needed for rpk
 {{- define "redpanda.kafka.external.listen.port" -}}
 {{- add1 (first .Values.config.redpanda.kafka_api).port -}}
 {{- end -}}
-
-
 
 {{/*
 The external advertised address can change depending on the externalisation method.
