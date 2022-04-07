@@ -14,7 +14,7 @@ loadBalancer:
     port: 8083 
   # The parent zone for DNS entries.
   # See https://github.com/kubernetes-sigs/external-dns
-  parentZone: streaming.rockdata.io.
+  parentZone: redpanda.kind
   # Additional annotations to apply to the created LoadBalancer services.
   annotations: {}
     # For example:
