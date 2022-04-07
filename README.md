@@ -46,7 +46,7 @@ kind create cluster --name redpanda --config=tri-node-config.yaml
 kubectl get nodes -o wide
 ```
 
-If you intend to install tls, then you are required to install [cert-manager] (https://cert-manager.io/docs).
+If you intend to install tls, then you are required to install [cert-manager](https://cert-manager.io/docs).
 
 Cert-manager installation information can be found [here](https://cert-manager.io/docs/installation/)
 
@@ -56,7 +56,7 @@ kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/
 
 ## Method 1: No TLS and No SASL
 
-If no TLS or SASl is required, simply invoke:
+If no TLS or SASL is required, simply invoke:
 
 ```sh
 helm install redpanda . -n redpanda --create-namespace 
@@ -168,29 +168,6 @@ The following helm tests that interact with the Redpanda cluster via TLS as befo
 helm test redpanda -n redpanda
 ```
 
-Note the following output illustrating the creation of hte rockdata-iot-selfsigned-issuer certificate.
-
-```
-rob@k8s-k03-sm:$ k get certs -o wide
-
-redpanda-admin-cert                                   True    redpanda-admin-cert
-redpanda-admin-root-issuer                             Certificate is up to date and has not expired   33m
-redpanda-admin-root-certificate                       True    redpanda-admin-root-certificate
-redpanda-admin-selfsigned-issuer                       Certificate is up to date and has not expired   33m
-redpanda-kafka-cert                                   True    redpanda-kafka-cert
-redpanda-kafka-root-issuer                             Certificate is up to date and has not expired   33m
-redpanda-kafka-root-certificate                       True    redpanda-kafka-root-certificate
-rockdata-io-selfsigned-issuer                          Certificate is up to date and has not expired   33m
-redpanda-proxy-cert                                   True    redpanda-proxy-cert
-redpanda-proxy-root-issuer                             Certificate is up to date and has not expired   33m
-redpanda-proxy-root-certificate                       True    redpanda-proxy-root-certificate
-redpanda-proxy-selfsigned-issuer                       Certificate is up to date and has not expired   33m
-redpanda-schema-cert                                  True    redpanda-schema-cert
-redpanda-schema-root-issuer                            Certificate is up to date and has not expired   33m
-redpanda-schema-root-certificate                      True    redpanda-schema-root-certificate
-redpanda-schema-selfsigned-issuer                      Certificate is up to date and has not expired   33m
-```
-
 Note the creation of the custom Issuer in the output below.
 
 ```
@@ -258,7 +235,7 @@ The Redpanda cluster can then be installed via the helm chart. In this case with
 helm install redpanda . -f values_add_lb.yaml -n redpanda
 ```
 
-For a local [kind](https://kind.sigs.k8s.io/) development environment it should be possible to adjust your /etc/hosts of your host machine to access the redpanda workers on your kind cluster.
+For a local [kind](https://kind.sigs.k8s.io/) development environment adjust your /etc/hosts of your host machine to access the redpanda workers on your kind cluster.
 
 ```
 172.18.255.2    redpanda-0.redpanda.kind
@@ -271,7 +248,7 @@ e.g.
 rob@k8s-k03-sm:$ rpk --brokers redpanda-0.redpanda.kind:9092 cluster info
 
 
-##Troubleshooting
+## Troubleshooting
 
 TBD
 
