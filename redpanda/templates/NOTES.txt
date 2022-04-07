@@ -49,7 +49,7 @@ Delete the topic:
 
 With TLS enabled create a topic:
 
-CERT=$(kubectl exec -n default  {{ template "redpanda.name" . }}-0 -c redpanda -- cat /etc/tls/certs/ca.crt)                 
+CERT=$(kubectl exec -n {{ .Release.Namespace }} {{ template "redpanda.name" . }}-0 -c redpanda -- cat /etc/tls/certs/ca.crt)                 
 
   kubectl -n {{ .Release.Namespace }} run rpk -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} --command -- /bin/bash -c "rpk topic create test-topic --brokers {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }} --tls-enabled --tls-truststore <(echo '$CERT')" 
 

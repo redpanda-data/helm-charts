@@ -130,9 +130,11 @@ spec:
               name: admin
             - containerPort: {{ template "redpanda.kafka.internal.listen.port" . }}
               name: kafka-internal
+              {{- if not (empty .Values.loadBalancer) }}
               {{- if .Values.loadBalancer.enabled }}
             - containerPort: {{ template "redpanda.kafka.external.listen.port" . }}
               name: kafka-external
+              {{- end }}
               {{- end }}
               {{- if .Values.config.pandaproxy.enabled }}
             - containerPort: {{ template "redpanda.pandaproxy.internal.listen.port" . }}
@@ -145,6 +147,8 @@ spec:
               mountPath: /var/lib/redpanda/data
             - name: config
               mountPath: /etc/redpanda
+{{- $anyTLS :=  default false .Values.config.redpanda.kafka_api_tls -}}
+{{- if $anyTLS }}
             - name: tlscert
               mountPath: /etc/tls/certs
             - name: tlsadmincert
@@ -153,6 +157,7 @@ spec:
               mountPath: /etc/tls/certs/pandaproxy
             - name: tlsschemaregistrycert
               mountPath: /etc/tls/certs/schema-registry
+{{- end }}
           resources:
             {{- toYaml .Values.statefulset.resources | nindent 12 }}
       volumes:
@@ -171,6 +176,7 @@ spec:
             name: {{ template "redpanda.fullname" . }}
         - name: config
           emptyDir: {}
+{{- if $anyTLS }}
         - name: tlscert
           secret:
             defaultMode: 420
@@ -215,6 +221,7 @@ spec:
             - key: ca.crt
               path: ca.crt
             secretName: {{ template "redpanda.fullname" . }}-schema-cert
+{{- end }}
       {{- if or .Values.statefulset.nodeAffinity .Values.statefulset.podAffinity .Values.statefulset.podAntiAffinity }}
       affinity:
       {{- with .Values.statefulset.nodeAffinity }}
