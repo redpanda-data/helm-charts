@@ -17,6 +17,7 @@ The chart uses a layered values.yaml files to demonstrate the different permutat
 * Helm >= 3.0
 * Kubernetes >= 1.18
 * Cert-Manager
+* MetalLB (optional)
 
 ## Installation
 
