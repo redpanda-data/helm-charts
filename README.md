@@ -10,7 +10,6 @@ This is the Helm Chart for [Redpanda](https://redpanda.com). It provides the abi
 - TLS and SASL 
 - External access.
 
-
 The chart uses a layered values.yaml files to demonstrate the different permutations of configuration. 
 
 ## Requirements
@@ -31,7 +30,7 @@ cd helm-charts-1/redpanda
 If required a multi node kind cluster can be created. Kind is shown here as an example; however, it is likely that you will have your own Kubernetes cluster e.g. GKE.
 
 ```sh
-cat <<RDMI > tri-node-config.yaml
+cat <<EOF > tri-node-config.yaml
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
@@ -39,7 +38,7 @@ nodes:
 - role: worker
 - role: worker
 - role: worker
-RDMI
+EOF
 
 kind create cluster --name redpanda --config=tri-node-config.yaml
 
@@ -96,9 +95,37 @@ The following test command will ensure that the kafka api, panda proxy and schem
 helm test redpanda -n redpanda
 ``` 
 
+Note that specification of the subdomain in the configuration is automatically detected and included in the SAN. For example the following amendment to the `kafka_api`
+
+```
+    kafka_api:
+      - name: kafka 
+        port: 9092
+        external:
+        	enabled: true
+        	subdomain: "streaming.rockdata.io"
+```
+
+Will generate the external nodeport and the following entries in the certificate
+
+```
+spec:                                                                         
+  commonName: redpanda-kafka-cert
+dnsNames:
+  - redpanda-cluster.redpanda.redpanda.svc.cluster.local                                                                                                                      
+  - '*.redpanda-cluster.redpanda.redpanda.svc.cluster.local'                                                                                                           
+  - redpanda.redpanda.svc.cluster.local                                                                                                     
+  - '*.redpanda.redpanda.svc.cluster.local'
+  - streaming.rockdata.io
+  - '*.streaming.rockdata.io'
+```
+
+Whereby the generated nodeport can be accessed with TLS via `redpanda-<x>.streaming.rockdata.io` for example.
+
+
 ## Method 3: TLS and SASL Enabled
 
-To further include SASL protection for your cluster the following command can be run, layering SASL configuration on top of the basic configuration and TLS configuration additively. For an extensive reference for Redpanda rpk ACL commands please visit [here] (https://docs.redpanda.com/docs/reference/rpk-commands/#rpk-acl).
+To further include SASL protection for your cluster the following command can be run, layering SASL configuration on top of the basic configuration and TLS configuration additively. For an extensive reference for Redpanda rpk ACL commands please visit [here](https://docs.redpanda.com/docs/reference/rpk-commands/#rpk-acl).
 
 ```sh
 helm install redpanda . -f values_add_tls.yaml -f values_add_sasl.yaml -n redpanda --create-namespace
@@ -114,7 +141,7 @@ helm test redpanda -n redpanda
 
 ##Issuer override
 
-The default behaviour of this chart is to create an issuer per service by iterating the following list in the values file. NOTE: the creation of issuers is bound to this list, not to the enablement of services (this may change in the future).
+The default behaviour of this chart is to create an Issuer per service by iterating the following list in the values file. NOTE: the creation of Issuers is bound to this list, not to the enablement of services (this may change in the future); therefore, an iIssuer can be added by merely appending to this list e.g. `- name: myservice`.
 
 ```
 certIssuers:
@@ -146,14 +173,14 @@ If required the issuer of the service cert issuers can be specified. This is pos
 For example; in this case a self-signed issuer for the rockdata.io company is generated as follows:
 
 ```sh
-kubectl apply -f - << RDMI
+kubectl apply -f - << EOF
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: rockdata-io-selfsigned-issuer
 spec:
   selfSigned: {}
-RDMI
+EOF
 ```
 
 Therefore values yaml can be modified as follows to specifically override the kafka issuer (NOTE: it is likely that the issuerRef specification will be enriched in the future):
@@ -196,9 +223,25 @@ rockdata-io-selfsigned-issuer                          True    37m
 
 # External Access
 
-## Node Ports
+## Created Services 
 
-TBD
+Note that the services created follow those stated in [Redpanda Kubernetes Connectivity](https://docs.redpanda.com/docs/deployment/kubernetes-connectivity/#created-services).
+
+| <cluster-name> | <cluster-name>-cluster | <cluster-name>-external |
+| | headless | load balanced |node ports | externally load balanced |
+| :--- | :---: | :---: | :---: |
+| Kafka API | y | n | y | y |
+| Admin API | y | n | y | WIP |
+| Schema Registry | y | y  | y | WIP |
+| PandaProxy API | y | y  | y | WIP |
+
+The chart will create the headless service as in the internal connectivity case, and can also create further services to support external connectivity:
+
+A load-balanced ClusterIP service that is used as an entrypoint for the Pandaproxy.
+
+A Nodeport service used to expose each API to the node's external network. Make sure that the node is externally accesible.
+
+In addition an external load balancer can be specified - see APPENDIX 1.
 
 
 ## APPENDIX 1: External Load Balancing Demo
@@ -207,13 +250,9 @@ An external load balancer can be demonstrated with a local kind cluster.
 
 In this example [MetalLB](https://metallb.org/) is utilised.
 
-First the MetaLB dependency needs to be installed to the cluster. In this case:
+First the MetaLB dependency needs to be installed to the cluster (this could be added as a conditional dependency to the chart). In this case:
 
 ```sh
-#!/bin/bash
-set -euo pipefail
-
-
 # TODO - add the other method of achieving this   
 NODES=$(kubectl get nodes -o json | jq -r '.items[].status.addresses | select(.[].address | startswith("redpanda-worker")) | .[] | select(.type == "InternalIP").address')
 SUBNET=$(echo "$NODES" | head -n1 | cut -d. -f 1,2).255
@@ -230,14 +269,14 @@ helm install \
 ```
 
 ```
-kubectl apply -f - << RDMI
+kubectl apply -f - << EOF
 configInline:
   address-pools:
     - name: default
       protocol: layer2
       addresses:
         - 172.18.255.1-172.18.255.250
-RDMI 
+EOF 
 ```
 
 The Redpanda cluster can then be installed via the helm chart. In this case with the demonstration load balancer values file layered onto the base values.yaml.
@@ -256,8 +295,9 @@ For a local [kind](https://kind.sigs.k8s.io/) development environment adjust you
 
 e.g.
 
+```sh
 rob@k8s-k03-sm:$ rpk --brokers redpanda-0.redpanda.kind:9092 cluster info
-
+```
 
 ## Troubleshooting
 
