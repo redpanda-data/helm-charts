@@ -41,7 +41,7 @@ Describe the topic:
  
 Delete the topic:
  
-	kubectl -n {{ .Release.Namespace }} run -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} -- rpk --brokers={{ include "redpanda.fullname" . }}-0{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }} topic delete test-topic
+	kubectl -n {{ .Release.Namespace }} run -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} -- rpk --brokers={{ include "redpanda.fullname" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }} topic delete test-topic
 
 {{- end }}
 
