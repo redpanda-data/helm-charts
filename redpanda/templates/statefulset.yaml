@@ -147,7 +147,12 @@ spec:
               mountPath: /var/lib/redpanda/data
             - name: config
               mountPath: /etc/redpanda
-{{- $anyTLS :=  default false .Values.config.redpanda.kafka_api_tls -}}
+{{- $anyTLS := or 
+  (default false .Values.config.redpanda.kafka_api_tls) 
+  (default false .Values.config.redpanda.admin_api_tls) 
+  (default false .Values.config.redpanda.schema_registry_api_tls) 
+  (default false .Values.config.redpanda.pandaproxy_api_tls) 
+-}}
 {{- if $anyTLS }}
             - name: tlscert
               mountPath: /etc/tls/certs
