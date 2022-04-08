@@ -61,13 +61,13 @@ config:
     # derived from the configuration. External advertised listener will be via
     # node port unless load balancer is configured.
     kafka_api:
-      - name: kafka 
-        address: $(POD_IP) 
+      - name: kafka
+        address: $(POD_IP)
         port: 9092
         external:
           enabled: true
           subdomain: "streaming.rockdata.io"
-    
+
     # rpc server listener
     rpc_server:
       address: 0.0.0.0
@@ -87,7 +87,7 @@ config:
   schema_registry:
     schema_registry_api:
     - address: "0.0.0.0"
-      name: schema-registry 
+      name: schema-registry
       port: 8081
       external:
         enabled: true
