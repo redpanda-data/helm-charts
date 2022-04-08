@@ -24,15 +24,16 @@ limitations under the License.
 {{- $externalProxyLBEnabled := false }}
 {{- $externalSchemaRegistryLBEnabled := false }}
 {{- $anyExternalLBEnabled := false }}
+{{- $anyExternalNodePortEnabled := false }}
 {{- with .Values.loadBalancer }}
   {{- $externalLoadBalancerEnabled = .enabled }} 
   {{- $externalKafkaLBEnabled = .kafka.enabled }}
   {{- $externalAdminLBEnabled = .admin.enabled }}
   {{- $externalProxyLBEnabled = .proxy.enabled }}
   {{- $externalSchemaRegistryLBEnabled = .schemaRegistry.enabled }}
-  {{- $anyExternalLBEnabled = or $externalKafkaLBEnabled $externalAdminLBEnabled $externalSchemaRegistryLBEnabled }}
+  {{- $anyExternalNodePortEnabled = or $externalKafkaNodePortEnabled $externalAdminNodePortEnabled $externalSchemaRegistryNodePortEnabled $externalProxyNodePortEnabled }}
 {{- end }}
-{{- if $anyExternalLBEnabled }}
+{{- if not $anyExternalNodePortEnabled }}
 apiVersion: v1
 kind: Service
 metadata:
