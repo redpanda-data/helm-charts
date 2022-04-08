@@ -239,7 +239,10 @@ The chart will create the headless service as in the internal connectivity case,
 
 A load-balanced ClusterIP service that is used as an entrypoint for the Pandaproxy.
 
+For further reference regarding the services behaviour please read [Redpanda Kubernetes Connectivity](https://docs.redpanda.com/docs/deployment/kubernetes-connectivity/#created-services).
+
 A Nodeport service used to expose each API to the node's external network. Make sure that the node is externally accesible.
+
 
 In addition an external load balancer can be specified - see APPENDIX 1.
 
