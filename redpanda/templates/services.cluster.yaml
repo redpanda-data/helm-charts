@@ -14,10 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- if or
-(first .Values.config.pandaproxy.pandaproxy_api).external.enabled
-(first .Values.config.schema_registry.schema_registry_api).external.enabled
-}}
+{{- if or (first .Values.config.pandaproxy.pandaproxy_api).external.enabled (first .Values.config.schema_registry.schema_registry_api).external.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
