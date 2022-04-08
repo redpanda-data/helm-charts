@@ -227,9 +227,9 @@ rockdata-io-selfsigned-issuer                          True    37m
 
 Note that the services created follow those stated in [Redpanda Kubernetes Connectivity](https://docs.redpanda.com/docs/deployment/kubernetes-connectivity/#created-services).
 
-| <cluster-name> | <cluster-name>-cluster | <cluster-name>-external |
-| | headless | load balanced |node ports | externally load balanced |
-| :--- | :---: | :---: | :---: |
+| \<cluster-name\> | \<cluster-name\>-cluster | \<cluster-name\>-external |
+| Type | headless | load balanced |node ports | externally load balanced |
+| :--- | :---: | :---: | :---: | :---: |
 | Kafka API | y | n | y | y |
 | Admin API | y | n | y | WIP |
 | Schema Registry | y | y  | y | WIP |
