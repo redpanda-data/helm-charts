@@ -1,0 +1,89 @@
+{{/*
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/}}
+{{- $release := .Release }}
+{{- $values := .Values }}
+{{- range $i, $issuer := $values.certIssuers }}
+{{- $s := $issuer.name }}
+{{- $r := $issuer.issuerRef }}
+{{- if not $r }}
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ template "redpanda.fullname" $ }}-{{ $s }}-selfsigned-issuer
+  namespace: {{ $release.Namespace | quote }}
+  labels:
+    helm.sh/chart: {{ template "redpanda.chart" $ }}
+    app.kubernetes.io/name: {{ template "redpanda.name" $ }}
+    app.kubernetes.io/instance: {{ $release.Name | quote }}
+    app.kubernetes.io/managed-by: {{ $release.Service | quote }}
+    app.kubernetes.io/component: {{ template "redpanda.name" $ }}
+  {{- with $values.labels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  selfSigned: {}
+{{- end }}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ template "redpanda.fullname" $ }}-{{ $s }}-root-certificate 
+  namespace: {{ $release.Namespace | quote }}
+  labels:
+    helm.sh/chart: {{ template "redpanda.chart" $ }}
+    app.kubernetes.io/name: {{ template "redpanda.name" $ }}
+    app.kubernetes.io/instance: {{ $release.Name | quote }}
+    app.kubernetes.io/managed-by: {{ $release.Service | quote }}
+    app.kubernetes.io/component: {{ template "redpanda.name" $ }}
+  {{- with $values.labels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  isCA: true
+  commonName: {{ template "redpanda.fullname" $ }}-{{ $s }}-root-certificate
+  secretName: {{ template "redpanda.fullname" $ }}-{{ $s }}-root-certificate
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+{{- if $r }}
+    name: {{ $r }}
+{{- else }}
+    name: {{ template "redpanda.fullname" $ }}-{{ $s }}-selfsigned-issuer
+{{- end }}
+    kind: Issuer
+    group: cert-manager.io
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ template "redpanda.fullname" $ }}-{{ $s }}-root-issuer
+  namespace: {{ $release.Namespace | quote }}
+  labels:
+    helm.sh/chart: {{ template "redpanda.chart" $ }}
+    app.kubernetes.io/name: {{ template "redpanda.name" $ }}
+    app.kubernetes.io/instance: {{ $release.Name | quote }}
+    app.kubernetes.io/managed-by: {{ $release.Service | quote }}
+    app.kubernetes.io/component: {{ template "redpanda.name" $ }}
+  {{- with $values.labels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  ca:
+    secretName: {{ template "redpanda.fullname" $ }}-{{ $s }}-root-certificate 
+---
+{{- end }}

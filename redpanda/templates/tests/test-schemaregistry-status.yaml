@@ -14,12 +14,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- $anyTLS :=  default false .Values.config.redpanda.kafka_api_tls -}}
+{{- $anyTLS :=  default false .Values.config.schema_registry.schema_registry_api_tls -}}
 {{- if not $anyTLS }}
 apiVersion: v1
 kind: Pod
 metadata:
-  name: "{{ include "redpanda.fullname" . }}-test-api-status"
+  name: "{{ include "redpanda.fullname" . }}-test-schemaregistry-status"
   namespace: {{ .Release.Namespace | quote }}
   labels:
     helm.sh/chart: {{ template "redpanda.chart" . }}
@@ -38,14 +38,6 @@ spec:
   containers:
     - name: {{ template "redpanda.name" . }}
       image: {{ .Values.image.repository }}:{{ .Values.image.tag }} 
-      args: ["cluster", "info", "--brokers", "{{ include "redpanda.fullname" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }}"]
-      volumeMounts:
-        - name: {{ template "redpanda.fullname" . }}
-          mountPath: /tmp/base-config 
-  volumes:
-    - name: {{ template "redpanda.fullname" . }}
-      configMap:
-        name: {{ template "redpanda.fullname" . }}
-    - name: config
-      emptyDir: {}
+      command: ['curl']
+      args: ["-m","3","{{ include "redpanda.fullname" . }}:{{ template "redpanda.pandaproxy.internal.listen.port" $ }}/subjects"]
 {{- end }}

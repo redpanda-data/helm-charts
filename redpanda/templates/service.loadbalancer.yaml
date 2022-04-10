@@ -1,0 +1,76 @@
+{{/*
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/}}
+{{- $release := .Release }}
+{{- $lb := .Values.loadBalancer }}
+{{- if $lb.enabled }}
+{{- range untilStep 0 (.Values.statefulset.replicas|int) 1 }}
+# This service is to expose a pod in the statefulset with a loadbalancer.
+# Includes integration with https://github.com/kubernetes-sigs/external-dns
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "redpanda.fullname" $ }}-{{ . }}
+  namespace: {{ $release.Namespace | quote }}
+  labels:
+    helm.sh/chart: {{ template "redpanda.chart" $ }}
+    app.kubernetes.io/name: {{ template "redpanda.name" $ }}
+    app.kubernetes.io/instance: {{ $release.Name | quote }}
+    app.kubernetes.io/managed-by: {{ $release.Service | quote }}
+    app.kubernetes.io/component: {{ template "redpanda.name" $ }}
+  {{- with $.Values.labels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: {{ template "redpanda.fullname" $ }}-{{ . }}.{{$lb.parentZone}}
+    {{- range $key, $value := $lb.annotations}}
+    {{$key}}: {{$value}}
+    {{- end }}
+spec:
+  externalTrafficPolicy: Local
+  ports:
+{{- if $lb.kafka.enabled }}
+    - name: kafka
+      protocol: TCP
+      port: {{$lb.kafka.port}}
+      #targetPort: {{ template "redpanda.kafka.external.listen.port" $ }}
+{{- end }}
+{{- if $lb.admin.enabled }}
+    - name: admin
+      protocol: TCP
+      port: {{$lb.admin.port}}
+      targetPort: {{ template "redpanda.admin.external.listen.port" $ }}
+{{- end }}
+{{- if $lb.proxy.enabled }}
+    - name: proxy
+      protocol: TCP
+      port: {{$lb.proxy.port}}
+      targetPort: {{ template "redpanda.pandaproxy.external.listen.port" $ }}
+{{- end }}
+{{- if $lb.schemaRegistry.enabled }}
+    - name: schemaRegistry 
+      protocol: TCP
+      port: {{$lb.schemaRegistry.port}}
+      targetPort: {{ template "redpanda.schema_registry.external.listen.port" $ }}
+{{- end }}
+  selector:
+    app.kubernetes.io/name: {{ template "redpanda.name" $ }}
+    app.kubernetes.io/instance: {{ $release.Name | quote }}
+    statefulset.kubernetes.io/pod-name: redpanda-{{ . }}
+  type: LoadBalancer
+---
+{{- end }}
+{{- end }}

@@ -14,14 +14,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-
-# This is the service that should be used by other clients
-# in the Kubernetes cluster. This will only work within the 
-# cluster and should not be publicly exposed via a load balancer. 
+{{- $anyTLS :=  default false .Values.config.pandaproxy.pandaproxy_api_tls -}}
+{{- if not $anyTLS }}
 apiVersion: v1
-kind: Service
+kind: Pod
 metadata:
-  name: {{ include "redpanda.fullname" . }}-bootstrap
+  name: "{{ include "redpanda.fullname" . }}-test-pandaproxy-status"
   namespace: {{ .Release.Namespace | quote }}
   labels:
     helm.sh/chart: {{ template "redpanda.chart" . }}
@@ -32,13 +30,14 @@ metadata:
   {{- with .Values.labels }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": hook-succeeded
 spec:
-  type: ClusterIP
-  ports:
-    - name: kafka-tcp
-      protocol: TCP
-      port: {{ template "redpanda.kafka.internal.advertise.port" $ }}
-      targetPort: {{ template "redpanda.kafka.internal.advertise.port" $ }}
-  selector:
-    app.kubernetes.io/name: {{ template "redpanda.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+  restartPolicy: Never
+  containers:
+    - name: {{ template "redpanda.name" . }}
+      image: {{ .Values.image.repository }}:{{ .Values.image.tag }} 
+      command: ['curl']
+      args: ["-m","3","{{ include "redpanda.fullname" . }}:{{ template "redpanda.pandaproxy.internal.advertise.port" $ }}/brokers"]
+{{- end }}
