@@ -14,7 +14,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -93,6 +92,10 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.podIP
+            - name: HOST_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
           args:
             - >
               redpanda
@@ -100,17 +103,43 @@ spec:
               --smp={{ .Values.statefulset.resources.limits.cpu }}
               --memory={{ template "redpanda.parseMemory" . }}
               --reserve-memory=0M
-              --advertise-kafka-addr=internal://{{ template "redpanda.kafka.internal.advertise.address" . }}:{{ template "redpanda.kafka.internal.advertise.port" . }}
-              --kafka-addr=internal://{{ template "redpanda.kafka.internal.listen.address" . }}:{{ template "redpanda.kafka.internal.listen.port" . }}
+              {{- if (first .Values.config.redpanda.kafka_api).external.enabled }}
+              --advertise-kafka-addr=kafka://{{ template "redpanda.kafka.internal.advertise.address" . }}:{{ template "redpanda.kafka.internal.advertise.port" . }},external://{{ template "redpanda.kafka.external.advertise.address" . }}:{{ template "redpanda.kafka.external.advertise.nodeport.port" . }},
+              --kafka-addr=kafka://{{ template "redpanda.kafka.internal.listen.address" . }}:{{ template "redpanda.kafka.internal.listen.port" . }},external://{{ template "redpanda.kafka.external.listen.address" . }}:{{ template "redpanda.kafka.external.listen.port" . }},
+              {{- else }}
+              --advertise-kafka-addr=kafka://{{ template "redpanda.kafka.internal.advertise.address" . }}:{{ template "redpanda.kafka.internal.advertise.port" . }}
+              --kafka-addr=kafka://{{ template "redpanda.kafka.internal.listen.address" . }}:{{ template "redpanda.kafka.internal.listen.port" . }}
+              {{- end }}
               --advertise-rpc-addr={{ template "redpanda.rpc.advertise.address" . }}:{{ template "redpanda.rpc.advertise.port" . }}
               --rpc-addr={{ template "redpanda.rpc.listen.address" . }}:{{ template "redpanda.rpc.listen.port" . }}
-              --
+              {{ if (first .Values.config.schema_registry.schema_registry_api).external.enabled }}
+              --schema-registry-addr=internal://{{ template "redpanda.schemaregistry.internal.address" . }}:{{ template "redpanda.schemaregistry.internal.port" . }},external://{{ template "redpanda.schemaregistry.external.nodeport.address" . }}:{{ template "redpanda.schemaregistry.external.port" . }}
+              {{- else }}
+              --schema-registry-addr=internal://{{ template "redpanda.schemaregistry.internal.address" . }}:{{ template "redpanda.schemaregistry.internal.port" . }}
+              {{ end }}
+              {{- if (first .Values.config.pandaproxy.pandaproxy_api).external.enabled }}
+              --advertise-pandaproxy-addr=internal://{{ template "redpanda.pandaproxy.internal.advertise.address" . }}:{{ template "redpanda.pandaproxy.internal.advertise.port" . }},external://{{ template "redpanda.pandaproxy.external.advertise.nodeport.address" . }}:{{ template "redpanda.pandaproxy.external.advertise.nodeport.port" . }}
+              --pandaproxy-addr=internal://{{ template "redpanda.pandaproxy.internal.listen.address" . }}:{{ template "redpanda.pandaproxy.internal.listen.port" . }},external://{{ template "redpanda.pandaproxy.external.listen.address" . }}:{{ template "redpanda.pandaproxy.external.listen.port" . }}
+              {{- else }}
+              --advertise-pandaproxy-addr=internal://{{ template "redpanda.pandaproxy.internal.advertise.address" . }}:{{ template "redpanda.pandaproxy.internal.advertise.port" . }}
+              --pandaproxy-addr=internal://{{ template "redpanda.pandaproxy.internal.listen.address" . }}:{{ template "redpanda.pandaproxy.internal.listen.port" . }}
+              {{- end }}
               --default-log-level={{ .Values.config.seastar.default_log_level }}
           ports:
             - containerPort: {{ .Values.config.redpanda.admin.port }}
               name: admin
             - containerPort: {{ template "redpanda.kafka.internal.listen.port" . }}
-              name: kafka
+              name: kafka-internal
+              {{- if not (empty .Values.loadBalancer) }}
+              {{- if .Values.loadBalancer.enabled }}
+            - containerPort: {{ template "redpanda.kafka.external.listen.port" . }}
+              name: kafka-external
+              {{- end }}
+              {{- end }}
+              {{- if .Values.config.pandaproxy.enabled }}
+            - containerPort: {{ template "redpanda.pandaproxy.internal.listen.port" . }}
+              name: pandaproxy
+              {{- end }}
             - containerPort: {{ template "redpanda.rpc.listen.port" $ }}
               name: rpc
           volumeMounts:
@@ -118,6 +147,17 @@ spec:
               mountPath: /var/lib/redpanda/data
             - name: config
               mountPath: /etc/redpanda
+{{- $anyTLS := or (default false .Values.config.redpanda.kafka_api_tls) (default false .Values.config.redpanda.admin_api_tls) (default false .Values.config.redpanda.schema_registry_api_tls) (default false .Values.config.redpanda.pandaproxy_api_tls) -}}
+{{- if $anyTLS }}
+            - name: tlscert
+              mountPath: /etc/tls/certs
+            - name: tlsadmincert
+              mountPath: /etc/tls/certs/admin
+            - name: tlspandaproxycert
+              mountPath: /etc/tls/certs/pandaproxy
+            - name: tlsschemaregistrycert
+              mountPath: /etc/tls/certs/schema-registry
+{{- end }}
           resources:
             {{- toYaml .Values.statefulset.resources | nindent 12 }}
       volumes:
@@ -136,6 +176,52 @@ spec:
             name: {{ template "redpanda.fullname" . }}
         - name: config
           emptyDir: {}
+{{- if $anyTLS }}
+        - name: tlscert
+          secret:
+            defaultMode: 420
+            items:
+            - key: tls.key
+              path: tls.key
+            - key: tls.crt
+              path: tls.crt
+            - key: ca.crt
+              path: ca.crt
+            secretName: {{ template "redpanda.fullname" . }}-kafka-cert
+        - name: tlsadmincert
+          secret:
+            defaultMode: 420
+            items:
+            - key: tls.key
+              path: tls.key
+            - key: tls.crt
+              path: tls.crt
+            - key: ca.crt
+              path: ca.crt
+            secretName: {{ template "redpanda.fullname" . }}-admin-cert
+        - name: tlspandaproxycert
+          secret:
+            defaultMode: 420
+            items:
+            - key: tls.key
+              path: tls.key
+            - key: tls.crt
+              path: tls.crt
+            - key: ca.crt
+              path: ca.crt
+            secretName: {{ template "redpanda.fullname" . }}-proxy-cert
+        - name: tlsschemaregistrycert
+          secret:
+            defaultMode: 420
+            items:
+            - key: tls.key
+              path: tls.key
+            - key: tls.crt
+              path: tls.crt
+            - key: ca.crt
+              path: ca.crt
+            secretName: {{ template "redpanda.fullname" . }}-schema-cert
+{{- end }}
       {{- if or .Values.statefulset.nodeAffinity .Values.statefulset.podAffinity .Values.statefulset.podAntiAffinity }}
       affinity:
       {{- with .Values.statefulset.nodeAffinity }}

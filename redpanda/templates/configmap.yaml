@@ -44,3 +44,7 @@ data:
         {{- end }}
     rpk:
 {{ toYaml .Values.config.rpk | indent 6 }}
+    pandaproxy:
+{{ toYaml .Values.config.pandaproxy | indent 6 }}
+    schema_registry:
+{{ toYaml .Values.config.schema_registry | indent 6 }}

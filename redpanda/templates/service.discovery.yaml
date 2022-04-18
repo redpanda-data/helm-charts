@@ -35,11 +35,20 @@ metadata:
 spec:
   clusterIP: None
   publishNotReadyAddresses: true
+  type: ClusterIP
   ports:
-    - name: kafka-tcp
+    - name: kafka
       protocol: TCP
       port: {{ template "redpanda.kafka.internal.advertise.port" $ }}
       targetPort: {{ template "redpanda.kafka.internal.advertise.port" $ }}
+    - name: admin
+      protocol: TCP
+      port: {{ template "redpanda.admin.port" $ }}
+      targetPort: {{ template "redpanda.admin.port" $ }}
+    - name: proxy 
+      protocol: TCP
+      port: {{ template "redpanda.pandaproxy.internal.advertise.port" $ }}
+      targetPort: {{ template "redpanda.pandaproxy.internal.advertise.port" $ }}
   selector:
     app.kubernetes.io/name: {{ template "redpanda.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
