@@ -24,8 +24,8 @@ The chart uses a layered values.yaml files to demonstrate the different permutat
 First, clone this repo:
 
 ```
-git clone https://github.com/redp01/helm-charts-1.git
-cd helm-charts-1/redpanda
+git clone https://github.com/redpanda-data/helm-charts.git
+cd helm-charts/redpanda
 ```
 
 If required a multi node kind cluster can be created. Kind is shown here as an example; however, it is likely that you will have your own Kubernetes cluster e.g. GKE.
