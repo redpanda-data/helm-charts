@@ -1,6 +1,7 @@
 {{- $values := .Values }}
 {{- range $i, $issuer := .Values.certIssuers }}
 {{- $s := $issuer.name }}
+{{- $d := $issuer.duration }}
 apiVersion: v1
 data:
   password: changeme 
@@ -21,7 +22,7 @@ spec:
   - '*.{{ (include "redpanda.internal.domain" $) | trimSuffix "." }}'
   - {{ (first $values.config.redpanda.kafka_api).external.subdomain }}
   - {{ printf "*.%s" (first $values.config.redpanda.kafka_api).external.subdomain | squote }}
-  duration: 43800h0m0s
+  duration: {{ $d | default "43800h" }}
   isCA: false
   commonName: {{ template "redpanda.fullname" $ }}-{{ $s }}-cert
   secretName: {{ template "redpanda.fullname" $ }}-{{ $s }}-cert
