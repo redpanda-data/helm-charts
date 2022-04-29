@@ -48,7 +48,7 @@ kubectl config current-context
 kubectl get nodes -o wide
 ```
 
-If you intend to install tls, then you are required to install [cert-manager](https://cert-manager.io/docs).
+If you intend to install TLS, then you are required to install [cert-manager](https://cert-manager.io/docs).
 
 Cert-manager installation information can be found [here](https://cert-manager.io/docs/installation/)
 
@@ -85,7 +85,7 @@ The output should indicate the success of the tests and some example commands yo
 If TLS is required, invoke the following:
 
 ```sh
-helm install redpanda . f values_add_tls.yaml -n redpanda --create-namespace 
+helm install redpanda . -f values_add_tls.yaml -n redpanda --create-namespace
 ```
 
 When this command is invoked the self signed issuers are created for each service by default following the model of the Redpanda [operator](https://www.redpanda.com). These self-signed Issuers are used to create per service root Issuers whome accordingly create keys and ca certs separately for each service. This behaviour is for example only. A later example will demonstrate how to utilise your own custom Issuer.
@@ -140,9 +140,9 @@ The installation can be further tested with the following command:
 helm test redpanda -n redpanda
 ```
 
-##Issuer override
+## Issuer override
 
-The default behaviour of this chart is to create an Issuer per service by iterating the following list in the values file. NOTE: the creation of Issuers is bound to this list, not to the enablement of services (this may change in the future); therefore, an iIssuer can be added by merely appending to this list e.g. `- name: myservice`.
+The default behaviour of this chart is to create an Issuer per service by iterating the following list in the values file. NOTE: the creation of Issuers is bound to this list, not to the enablement of services (this may change in the future); therefore, an Issuer can be added by merely appending to this list e.g. `- name: myservice`.
 
 ```
 certIssuers:
@@ -156,8 +156,8 @@ The certs-issuers.yaml iterates this list performing simple template substitutio
 
 The self-signed root certificate is then used to create a <release>-<service>-root-issuer. For example (A):
 
-```
-rob@k8s-k03-sm$ kubectl get issuers -o wide
+```sh
+> kubectl get issuers -o wide
 
 redpanda-admin-root-issuer                             True    Signing CA verified   2m20s
 redpanda-admin-selfsigned-issuer                       True                          2m20s
@@ -203,14 +203,14 @@ helm install redpanda . -f values_add_custom_issuer.yaml -n redpanda
 
 The following helm tests that interact with the Redpanda cluster via TLS as before should pass.
 
-```
+```sh
 helm test redpanda -n redpanda
 ```
 
 Note the creation of the custom Issuer in the output below.
 
-```
-rob@k8s-k03-sm:$ k get issuers
+```sh
+> kubectl get issuers
 
 redpanda-admin-root-issuer                             True    36m
 redpanda-admin-selfsigned-issuer                       True    36m
@@ -226,9 +226,6 @@ rockdata-io-selfsigned-issuer                          True    37m
 
 ## Created Services 
 
-Note that the services created follow those stated in [Redpanda Kubernetes Connectivity](https://docs.redpanda.com/docs/deployment/kubernetes-connectivity/#created-services).
-
-| \<cluster-name\> | \<cluster-name\>-cluster | \<cluster-name\>-external |
 | Type | headless | load balanced |node ports | externally load balanced |
 | :--- | :---: | :---: | :---: | :---: |
 | Kafka API | y | n | y | y |
@@ -239,8 +236,6 @@ Note that the services created follow those stated in [Redpanda Kubernetes Conne
 The chart will create the headless service as in the internal connectivity case, and can also create further services to support external connectivity:
 
 A load-balanced ClusterIP service that is used as an entrypoint for the Pandaproxy.
-
-For further reference regarding the services behaviour please read [Redpanda Kubernetes Connectivity](https://docs.redpanda.com/docs/deployment/kubernetes-connectivity/#created-services).
 
 A Nodeport service used to expose each API to the node's external network. Make sure that the node is externally accesible.
 
@@ -300,7 +295,7 @@ For a local [kind](https://kind.sigs.k8s.io/) development environment adjust you
 e.g.
 
 ```sh
-rob@k8s-k03-sm:$ rpk --brokers redpanda-0.redpanda.kind:9092 cluster info
+rpk --brokers redpanda-0.redpanda.kind:9092 cluster info
 ```
 
 ## Troubleshooting
