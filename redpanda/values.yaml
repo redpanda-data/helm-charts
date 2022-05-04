@@ -44,6 +44,9 @@ config:
   organization: ""
 
   redpanda:
+
+    cluster_id: "redpanda-cluster-1"
+
     enable_sasl: false
     admin:
       # The port for the admin server.
