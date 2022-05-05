@@ -138,7 +138,7 @@ statefulset:
   replicas: 3
   updateStrategy:
     type: RollingUpdate
-  podManagementPolicy: Parallel
+  podManagementPolicy: OrderedReady
   budget:
     maxUnavailable: 1
 
