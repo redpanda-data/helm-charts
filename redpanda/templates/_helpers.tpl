@@ -138,24 +138,6 @@ IP is required for the advertised address.
 {{- 32005 -}}
 {{- end -}}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 {{- define "redpanda.rpc.advertise.address" -}}
 {{- $host := "$(SERVICE_NAME)" -}}
 {{- $domain := include "redpanda.internal.domain" . -}}
@@ -170,7 +152,7 @@ IP is required for the advertised address.
 {{- "$(POD_IP)" -}}
 {{- end -}}
 
-{{ define "redpanda.rpc.listen.port" -}}
+{{- define "redpanda.rpc.listen.port" -}}
 {{- .Values.config.redpanda.rpc_server.port -}}
 {{- end -}}
 
@@ -178,7 +160,7 @@ IP is required for the advertised address.
 {{- "$(POD_IP)" -}}
 {{- end -}}
 
-{{ define "redpanda.admin.port" -}}
+{{- define "redpanda.admin.port" -}}
 {{- .Values.config.redpanda.admin.port -}}
 {{- end -}}
 
@@ -186,15 +168,9 @@ IP is required for the advertised address.
 {{- "$(HOST_IP)" -}}
 {{- end -}}
 
-{{ define "redpanda.admin.external.port" -}}
+{{- define "redpanda.admin.external.port" -}}
 {{- (add1 .Values.config.redpanda.admin.port) -}}
 {{- end -}}
-
-
-
-
-
-
 
 {{- define "redpanda.pandaproxy.internal.advertise.address" -}}
 {{- $host := "$(SERVICE_NAME)" -}}
