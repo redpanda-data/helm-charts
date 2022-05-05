@@ -69,6 +69,14 @@ With TLS enabled create a topic:
 
 CERT=$(kubectl exec -n {{ .Release.Namespace }}  {{ template "redpanda.name" . }}-0 -c redpanda -- cat /etc/tls/certs/ca.crt)                 
 
+Retreive the admin cert:
+
+ADMIN_CERT=$(kubectl exec -n {{ .Release.Namespace}}  {{ template "redpanda.name" . }}-0 -c redpanda -- cat /etc/tls/certs/admin/ca.crt) 
+
+Whilst the admin user is specified in the redpanda config, the user must be created using the admin api:
+
+ kubectl -n {{ .Release.Namespace }} run rpk -it --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} --command -- /bin/bash -c "rpk acl user create admin -p test --api-urls {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.admin.port" . }} --tls-enabled --tls-truststore <(echo '$CERT') --admin-api-tls-truststore <(echo '$ADMIN_CERT')"
+
   kubectl -n {{ .Release.Namespace }} run rpk -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} --command -- /bin/bash -c "rpk topic create test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-256 --brokers {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }} --tls-enabled --tls-truststore <(echo '$CERT')" 
 
 Describe the topic:
