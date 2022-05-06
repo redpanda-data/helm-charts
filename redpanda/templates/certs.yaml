@@ -18,9 +18,10 @@ limitations under the License.
 {{- range $i, $issuer := .Values.certIssuers }}
 {{- $s := $issuer.name }}
 {{- $d := $issuer.duration }}
+{{- $p := $issuer.password }}
 apiVersion: v1
 data:
-  password: changeme 
+  password: {{ $p | default "changeme" }}
 kind: Secret
 metadata:
   name: {{ template "redpanda.fullname" $ }}-{{ $s }}-cert-keystore
