@@ -38,17 +38,17 @@ config:
     # derived from the configuration. External advertised listener will be via
     # node port unless load balancer is configured.
     kafka_api_tls:
-    - cert_file: /etc/tls/certs/tls.crt
+    - cert_file: /etc/tls/certs/kafka/tls.crt
       enabled: true
-      key_file: /etc/tls/certs/tls.key
+      key_file: /etc/tls/certs/kafka/tls.key
       require_client_auth: false
       name: kafka 
-      truststore_file: /etc/tls/certs/ca.crt
-    - cert_file: /etc/tls/certs/tls.crt
+      truststore_file: /etc/tls/certs/kafka/ca.crt
+    - cert_file: /etc/tls/certs/kafka/tls.crt
       enabled: true
       require_client_auth: false
-      key_file: /etc/tls/certs/tls.key
-      truststore_file: /etc/tls/certs/ca.crt
+      key_file: /etc/tls/certs/kafka/tls.key
+      truststore_file: /etc/tls/certs/kafka/ca.crt
       name: external 
     
   # panda proxy (listener)
@@ -77,9 +77,9 @@ config:
 certIssuers:
   - name: kafka
     password: changeme
-  - name: proxy
+  - name: pandaproxy
     password: changeme
-  - name: schema
+  - name: schema-registry
     password: changeme
   - name: admin
     password: changeme
