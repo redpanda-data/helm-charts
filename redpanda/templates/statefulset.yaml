@@ -46,9 +46,11 @@ spec:
       {{- with .Values.labels }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
-    {{- with .Values.statefulset.annotations }}
-      annotations: {{- toYaml . | nindent 8 }}
-    {{- end }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- with $.Values.statefulset.annotations }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
     spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
