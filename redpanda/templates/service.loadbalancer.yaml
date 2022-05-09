@@ -64,7 +64,7 @@ spec:
     - name: schema-registry 
       protocol: TCP
       port: {{$lb.schemaRegistry.port}}
-      targetPort: {{ template "redpanda.schema_registry.external.listen.port" $ }}
+      targetPort: {{ template "redpanda.schemaregistry.external.port" $ }}
 {{- end }}
   selector:
     app.kubernetes.io/name: {{ template "redpanda.name" $ }}
