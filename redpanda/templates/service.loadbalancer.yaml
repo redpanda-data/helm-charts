@@ -46,7 +46,7 @@ spec:
     - name: kafka
       protocol: TCP
       port: {{$lb.kafka.port}}
-      #targetPort: {{ template "redpanda.kafka.external.listen.port" $ }}
+      targetPort: {{ template "redpanda.kafka.external.listen.port" $ }}
 {{- end }}
 {{- if $lb.admin.enabled }}
     - name: admin
