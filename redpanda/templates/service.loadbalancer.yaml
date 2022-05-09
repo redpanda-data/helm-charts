@@ -61,7 +61,7 @@ spec:
       targetPort: {{ template "redpanda.pandaproxy.external.listen.port" $ }}
 {{- end }}
 {{- if $lb.schemaRegistry.enabled }}
-    - name: schemaRegistry 
+    - name: schema-registry 
       protocol: TCP
       port: {{$lb.schemaRegistry.port}}
       targetPort: {{ template "redpanda.schema_registry.external.listen.port" $ }}
