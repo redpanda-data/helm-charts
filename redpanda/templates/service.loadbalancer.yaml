@@ -69,7 +69,7 @@ spec:
   selector:
     app.kubernetes.io/name: {{ template "redpanda.name" $ }}
     app.kubernetes.io/instance: {{ $release.Name | quote }}
-    statefulset.kubernetes.io/pod-name: redpanda-{{ . }}
+    statefulset.kubernetes.io/pod-name: {{ $release.Name }}-{{ . }}
   type: LoadBalancer
 ---
 {{- end }}
