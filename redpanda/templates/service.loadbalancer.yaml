@@ -52,7 +52,7 @@ spec:
     - name: admin
       protocol: TCP
       port: {{$lb.admin.port}}
-      targetPort: {{ template "redpanda.admin.external.listen.port" $ }}
+      targetPort: {{ template "redpanda.admin.external.port" $ }}
 {{- end }}
 {{- if $lb.proxy.enabled }}
     - name: proxy
