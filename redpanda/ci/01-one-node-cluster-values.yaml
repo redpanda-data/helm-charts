@@ -17,3 +17,6 @@ statefulset:
   resources:
     limits:
       memory: 1Gi
+  redpanda:
+    memory: 700M
+    reservedMemory: 200M
