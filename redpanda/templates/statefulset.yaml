@@ -152,7 +152,7 @@ spec:
 {{- if .Values.customCerts }}
   {{- range $i, $cert := .Values.customCerts }}
             - name: tls-{{ $cert.name }}
-              mountPath: {{ $cert.path | default "/etc/tls/certs/$cert.name" }}
+              mountPath: {{ $cert.path | default (printf "/etc/tls/certs/%s" $cert.name) }}
   {{end}}
 {{ else }}
             - name: tlscert
