@@ -101,7 +101,7 @@ Generate configuration needed for rpk
 {{- end -}}
 
 {{- define "redpanda.kafka.external.listen.port" -}}
-{{- add1 (first .Values.config.redpanda.kafka_api).port -}}
+{{- (first .Values.config.redpanda.kafka_api).external.port | default (add1 (first .Values.config.redpanda.kafka_api).port) -}}
 {{- end -}}
 
 {{/*
@@ -127,7 +127,7 @@ IP is required for the advertised address.
 {{- end -}}
 
 {{- define "redpanda.kafka.external.advertise.port" -}}
-{{- add1 (first .Values.config.redpanda.kafka_api).port -}}
+{{- (first .Values.config.redpanda.kafka_api).external.port | default (add1 (first .Values.config.redpanda.kafka_api).port) -}}
 {{- end -}}
 
 {{- define "redpanda.kafka.external.advertise.nodeport.address" -}}
@@ -135,7 +135,7 @@ IP is required for the advertised address.
 {{- end -}}
 
 {{- define "redpanda.kafka.external.advertise.nodeport.port" -}}
-{{- 32005 -}}
+{{- (first .Values.config.redpanda.kafka_api).external.port | default 32005 -}}
 {{- end -}}
 
 
