@@ -14,7 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- $anyTLS :=  default false .Values.config.redpanda.kafka_api_tls -}}
+{{- $anyTLS :=  default false .Values.config.redpanda.kafka_api_tls }}
 {{- $anySASL := default false .Values.config.redpanda.enable_sasl }}
 {{- if and $anyTLS (not $anySASL) }}
 apiVersion: v1
@@ -39,25 +39,24 @@ spec:
   containers:
     - name: {{ template "redpanda.name" . }}
       image: {{ .Values.image.repository }}:{{ .Values.image.tag }} 
-      args: ["cluster", "info", "--brokers", "{{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }}", "--tls-enabled", "--tls-truststore", "/etc/tls/certs/ca.crt"]
+      args: ["cluster", "info", "--brokers", "{{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }}", "--tls-enabled", "--tls-truststore", "/etc/tls/certs/kafka/ca.crt"]
       volumeMounts:
         - name: {{ template "redpanda.fullname" . }}
           mountPath: /tmp/base-config 
-        - name: tlscert
-          mountPath: /etc/tls/certs
-        - name: tlsadmincert
-          mountPath: /etc/tls/certs/admin
-        - name: tlspandaproxycert
-          mountPath: /etc/tls/certs/pandaproxy
-        - name: tlsschemaregistrycert
-          mountPath: /etc/tls/certs/schema-registry
+{{- range $i, $issuer := .Values.certIssuers }}
+{{- $s := $issuer.name }}
+        - name: tls-{{ $s }}
+          mountPath: /etc/tls/certs/{{ $s }}
+{{- end }}
   volumes:
     - name: {{ template "redpanda.fullname" . }}
       configMap:
         name: {{ template "redpanda.fullname" . }}
     - name: config
       emptyDir: {}
-    - name: tlscert
+{{- range $i, $issuer := .Values.certIssuers }}
+{{- $s := $issuer.name }}
+    - name: tls-{{ $s }}
       secret:
         defaultMode: 420
         items:
@@ -67,38 +66,6 @@ spec:
           path: tls.crt
         - key: ca.crt
           path: ca.crt
-        secretName: {{ template "redpanda.fullname" . }}-kafka-cert
-    - name: tlsadmincert
-      secret:
-        defaultMode: 420
-        items:
-        - key: tls.key
-          path: tls.key
-        - key: tls.crt
-          path: tls.crt
-        - key: ca.crt
-          path: ca.crt
-        secretName: {{ template "redpanda.fullname" . }}-admin-cert
-    - name: tlspandaproxycert
-      secret:
-        defaultMode: 420
-        items:
-        - key: tls.key
-          path: tls.key
-        - key: tls.crt
-          path: tls.crt
-        - key: ca.crt
-          path: ca.crt
-        secretName: {{ template "redpanda.fullname" . }}-proxy-cert
-    - name: tlsschemaregistrycert
-      secret:
-        defaultMode: 420
-        items:
-        - key: tls.key
-          path: tls.key
-        - key: tls.crt
-          path: tls.crt
-        - key: ca.crt
-          path: ca.crt
-        secretName: {{ template "redpanda.fullname" . }}-schema-cert
+        secretName: {{ template "redpanda.fullname" $ }}-{{ $s }}-cert
+{{- end }} 
 {{- end }}
