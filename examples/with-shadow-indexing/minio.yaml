@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: shadow-indexing
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio
+  namespace: shadow-indexing
+  labels:
+    app: minio
+spec:
+  type: ClusterIP
+  ports:
+    - port: 9000
+      name: api
+      protocol: TCP
+      targetPort: 9000
+  selector:
+    app: minio
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio
+  namespace: shadow-indexing
+  labels:
+    app: minio
+spec:
+  selector:
+    matchLabels:
+      app: minio
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: minio
+      name: minio
+    spec:
+      containers:
+      - name: minio
+        image: quay.io/minio/minio
+        args:
+        - server
+        - /data
+        env:
+        - name: MINIO_ROOT_USER
+          value: minio
+        - name: MINIO_ROOT_PASSWORD
+          value: minio123
+        - name: MINIO_SERVER_URL
+          value: "http://minio:9000"
+        - name: MINIO_REGION_NAME
+          value: local
+        - name: MINIO_DOMAIN
+          value: minio
+        ports:
+        - containerPort: 9000
+          hostPort: 9000
+        resources:
+          limits:
+            cpu: ".5"
+            memory: 4Gi

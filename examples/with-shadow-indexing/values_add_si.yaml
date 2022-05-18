@@ -1,0 +1,15 @@
+labels:
+  app: "minio"
+config:
+  redpanda:
+    cloud_storage_enabled: true                             # enable cloud storage
+    cloud_storage_region: "local"                           # S3 region
+    cloud_storage_bucket: "redpanda"                        # S3 bucket
+    cloud_storage_api_endpoint: "minio"                     # S3 API endpoint (will be generated for AWS if left blank)
+    cloud_storage_api_endpoint_port: 9000                   # S3 API port (default 443)
+    cloud_storage_access_key: "minio"                       # S3 access key
+    cloud_storage_secret_key: "minio123"                    # S3 secret key
+    cloud_storage_enable_remote_read: true                  # cluster-wide cloud storage read
+    cloud_storage_enable_remote_write: true                 # cluster-wide cloud storage write
+    cloud_storage_segment_max_upload_interval_sec: 30       # seconds between segment uploads (else segments uploaded when size == segment.bytes)
+    cloud_storage_disable_tls: true                         # disable TLS (set to true to disable TLS, or if TLS is handled by the proxy)
