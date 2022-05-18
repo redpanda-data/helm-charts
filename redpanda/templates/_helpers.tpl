@@ -102,7 +102,11 @@ IP is required for the advertised address.
 {{- end }}
 
 {{- define "redpanda.kafka.external.domain" -}}
-{{- printf "%s." (first .Values.config.redpanda.kafka_api).external.subdomain | trimSuffix "." | default "$(HOST_IP)" -}}
+{{- if ((first .Values.config.redpanda.kafka_api).external.subdomain) }}
+{{- printf "%s." (first .Values.config.redpanda.kafka_api).external.subdomain | trimSuffix "." }}
+{{- else }}
+{{- printf "%s." .Values.clusterDomain | trimSuffix "." }}
+{{- end }}
 {{- end }}
 
 {{- define "redpanda.kafka.external.advertise.address" -}}
