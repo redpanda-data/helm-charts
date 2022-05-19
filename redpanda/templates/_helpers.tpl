@@ -68,6 +68,70 @@ Strip out the suffixes on memory to pass to Redpanda
 {{- end }}
 
 {{/*
+we use a --reserve-memory argument which is the request amount R by 0.002 * R + 200 Mi
+*/}}
+{{- define "redpanda.reserveMemoryFromMB" -}}
+{{- $containerMemory := . | int64 }}
+{{- $reserveMemory := (div $containerMemory 500) | add 200 }}
+{{- if lt $reserveMemory $containerMemory }}
+{{- $reserveMemory | printf "%dM" }}
+{{- else }}
+{{- $reserveMemory | printf "\nthe memory is too low to obtain reserve at: %dM" | fail }}
+{{- end }}
+{{- end }}
+
+{{/*
+we use a --memory argument which is less than the request amount R by 0.002 * R + 200 Mi
+TODO: needs sensible minimum for the gt test
+*/}}
+{{- define "redpanda.memoryFromMB" -}}
+{{- $containerMemory := . | int64 }}
+{{- $reserveMemory := (div $containerMemory 500) | add 200 }}
+{{- $availableMemory := $reserveMemory | sub $containerMemory }}
+{{- if gt $availableMemory 1024 }}
+{{- $availableMemory | printf "%dM" }}
+{{- else }}
+{{- $availableMemory | printf "\navailable memory is %dM, it should be higher than 1 GB and ideally 2 GB per core." | fail }}
+{{- end }}
+{{- end }}
+
+{{/*
+The automatic caculation for memory requires the memory to be canonicalised to mebibytes. This method is intended
+to accept a helm quantity. Seastar only accepts kMGT via parse_memory_size in conversions.cc - all are base 2.
+The k8s request can be m | "" | k | M | G | T | P | Ki | Mi | Gi | Ti | Pi
+Note: http://docs.seastar.io/master/tutorial.html#seastar-memory
+In order to proceed with the reservation calculation we will provide the ability to canonicalise to seastar's M.
+Seastar's M is mebibytes.
+*/}}
+{{- define "redpanda.toMBFromQuantity" -}}
+{{ $mem := . }}
+{{- if hasSuffix "m" $mem }}
+{{- $rawmem := $mem | trimSuffix "m" | int64 }}
+{{- (div (mul $rawmem 1000000) 1048576) -}}
+{{- else if hasSuffix "k" $mem }}
+{{- $rawmem := $mem | trimSuffix "k" | int64 }}
+{{- (div (mul $rawmem 1000) 1048576) -}}
+{{- else if hasSuffix "M" $mem }}
+{{- $rawmem :=  $mem | trimSuffix "M" | int64 }}
+{{- (div (mul $rawmem 1000000) 1048576) -}}
+{{- else if hasSuffix "G" $mem }}
+{{- $rawmem := $mem | trimSuffix "G" | int64 }}
+{{- (div (mul $rawmem 1000000000) 1048576) -}}
+{{- else if hasSuffix "Ki" $mem }}
+{{- $rawmem := $mem | trimSuffix "Ki" | int64 }}
+{{- (div $rawmem 1024) -}}
+{{- else if hasSuffix "Mi" $mem }}
+{{- $mem | trimSuffix "Mi" | int64}}
+{{- else if hasSuffix "Gi" $mem }}
+{{- $rawmem := $mem | trimSuffix "Gi" | int64 }}
+{{- (mul $rawmem 1024) -}}
+{{- else }}
+{{- $rawmem := $mem | int64 }}
+{{- (div (mul $rawmem 1000000) 1048576) -}}
+{{- end }}
+{{- end }}
+
+{{/*
 Generate configuration needed for rpk
 */}}
 
