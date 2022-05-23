@@ -160,7 +160,19 @@ statefulset:
   resources:
     limits:
       cpu: 1
-      memory: 2Gi
+      memory: 2.5Gi
+
+  # Redpanda memory parameter can not exceed POD resource memory limit
+  # Example calculation:
+  # statefulset.redpanda.memory = 0.8 statefulset.resources.limits.memory
+  #
+  # NOTE: Memory flag does not support float numbers and support only E, P, T, G, M, k suffixes
+  # REF:
+  # https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory
+  # https://kubernetes.io/docs/reference/kubernetes-api/common-definitions/quantity/
+  redpanda:
+    memory: 2G
+    reservedMemory: 400k
 
   # Inter-Pod Affinity rules for scheduling Pods of this StatefulSet.
   # https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#inter-pod-affinity-and-anti-affinity

@@ -101,8 +101,8 @@ spec:
               redpanda
               start
               --smp={{ .Values.statefulset.resources.limits.cpu }}
-              --memory={{ template "redpanda.parseMemory" . }}
-              --reserve-memory=0M
+              --memory={{ .Values.statefulset.redpanda.memory }}
+              --reserve-memory={{ .Values.statefulset.redpanda.reservedMemory }}
               {{- if (first .Values.config.redpanda.kafka_api).external.enabled }}
               --advertise-kafka-addr=kafka://{{ template "redpanda.kafka.internal.advertise.address" . }}:{{ template "redpanda.kafka.internal.advertise.port" . }},external://{{ template "redpanda.kafka.external.advertise.address" . }}:{{ template "redpanda.kafka.external.advertise.nodeport.port" . }},
               --kafka-addr=kafka://{{ template "redpanda.kafka.internal.listen.address" . }}:{{ template "redpanda.kafka.internal.listen.port" . }},external://{{ template "redpanda.kafka.external.listen.address" . }}:{{ template "redpanda.kafka.external.listen.port" . }},
