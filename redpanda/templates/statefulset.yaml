@@ -14,6 +14,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
+{{- $values := .Values }}
+{{- $advertiseAddress := include "redpanda.kafka.internal.advertise.address" . -}}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -51,6 +53,8 @@ spec:
 {{- with $.Values.statefulset.annotations }}
   {{- toYaml . | nindent 8 }}
 {{- end }}
+    spec:
+      securityContext:
 {{- toYaml .Values.statefulset.podSecurityContext | nindent 8 }}
       initContainers:
         - name: {{ template "redpanda.name" . }}-configurator
@@ -77,7 +81,7 @@ spec:
               mountPath: /etc/redpanda
           resources:
 {{- toYaml .Values.statefulset.resources | nindent 12 }}
-{{- toYaml .Values.statefulset.resources | nindent 12 }}
+      containers:
         - name: {{ template "redpanda.name" . }}
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           env:
@@ -150,18 +154,18 @@ spec:
 {{- end }}
           resources:
 {{- toYaml .Values.statefulset.resources | nindent 12 }}
-{{- toYaml .Values.statefulset.resources | nindent 12 }}
+      volumes:
         - name: datadir
 {{- if .Values.storage.persistentVolume.enabled }}
-{{- if .Values.storage.persistentVolume.enabled }}
+          persistentVolumeClaim:
             claimName: datadir
 {{- else if .Values.storage.hostPath }}
-{{- else if .Values.storage.hostPath }}
+          hostPath:
             path: {{ .Values.storage.hostPath | quote }}
 {{- else }}
-{{- else }}
+          emptyDir: {}
 {{- end }}
-{{- end }}
+        - name: {{ template "redpanda.fullname" . }}
           configMap:
             name: {{ template "redpanda.fullname" . }}
         - name: config
@@ -183,13 +187,26 @@ spec:
             secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
   {{- end }}
 {{- end -}}
+{{- if or .Values.statefulset.nodeAffinity .Values.statefulset.podAffinity .Values.statefulset.podAntiAffinity }}
+      affinity:
+  {{- with .Values.statefulset.nodeAffinity }}
+        nodeAffinity: {{- toYaml . | nindent 10 }}
+  {{- end }}
+  {{- with .Values.statefulset.podAffinity }}
+        podAffinity: {{- toYaml . | nindent 10 }}
+  {{- end }}
+  {{- if .Values.statefulset.podAntiAffinity }}
+        podAntiAffinity:
+    {{- if .Values.statefulset.podAntiAffinity.type }}
+      {{- if eq .Values.statefulset.podAntiAffinity.type "hard" }}
+          requiredDuringSchedulingIgnoredDuringExecution:
             - topologyKey: {{ .Values.statefulset.podAntiAffinity.topologyKey }}
               labelSelector:
                 matchLabels:
                   app.kubernetes.io/name: {{ template "redpanda.name" . }}
                   app.kubernetes.io/instance: {{ .Release.Name | quote }}
-        {{- else if eq .Values.statefulset.podAntiAffinity.type "soft" }}
       {{- else if eq .Values.statefulset.podAntiAffinity.type "soft" }}
+          preferredDuringSchedulingIgnoredDuringExecution:
             - weight: {{ .Values.statefulset.podAntiAffinity.weight | int64 }}
               podAffinityTerm:
                 topologyKey: {{ .Values.statefulset.podAntiAffinity.topologyKey }}
