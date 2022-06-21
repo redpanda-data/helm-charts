@@ -163,6 +163,10 @@ listeners:
         cert: schema
         requireClientAuth: false
 #
+# Log level
+# Valid values are info, warn, debug, trace
+logLevel: info
+#
 
   rpk:
     # Enables memory locking.
@@ -199,9 +203,6 @@ listeners:
     #
     # This is not possible to set to true while running in a container.
     tune_disk_irq: false
-
-  seastar:
-    default_log_level: info
 
 statefulset:
   replicas: 3
