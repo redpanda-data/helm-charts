@@ -33,7 +33,7 @@ limitations under the License.
   {{- $externalSchemaRegistryLBEnabled = .schemaRegistry.enabled }}
   {{- $anyExternalNodePortEnabled = or $externalKafkaNodePortEnabled $externalAdminNodePortEnabled $externalSchemaRegistryNodePortEnabled $externalProxyNodePortEnabled }}
 {{- end }}
-{{- if not $anyExternalNodePortEnabled }}
+{{- if $anyExternalNodePortEnabled }}
 apiVersion: v1
 kind: Service
 metadata:
