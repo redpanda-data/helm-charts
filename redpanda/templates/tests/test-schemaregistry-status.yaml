@@ -38,5 +38,5 @@ spec:
     - name: {{ template "redpanda.name" . }}
       image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
       command: ['curl']
-      args: ["-m","3","{{ include "redpanda.fullname" . }}:{{ template "redpanda.pandaproxy.internal.listen.port" $ }}/subjects"]
+      args: ["-m","3","{{ include "redpanda.fullname" . }}:{{ template "redpanda.schemaregistry.internal.port" $ }}/subjects"]
 {{- end }}
