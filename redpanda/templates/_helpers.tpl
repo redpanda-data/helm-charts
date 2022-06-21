@@ -14,7 +14,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-
 {{/*
 Expand the name of the chart.
 */}}
@@ -139,24 +138,6 @@ IP is required for the advertised address.
 
 
 
-
-
-{{- define "redpanda.rpc.advertise.address" -}}
-{{- $host := "$(SERVICE_NAME)" -}}
-{{- $domain := include "redpanda.internal.domain" . -}}
-{{- printf "%s.%s" $host $domain -}}
-{{- end -}}
-
-{{- define "redpanda.rpc.advertise.port" -}}
-{{- .Values.config.redpanda.rpc_server.port -}}
-{{- end -}}
-
-{{- define "redpanda.rpc.listen.address" -}}
-{{- "$(POD_IP)" -}}
-{{- end -}}
-
-{{ define "redpanda.rpc.listen.port" -}}
-{{- .Values.config.redpanda.rpc_server.port -}}
 {{- end -}}
 
 {{- define "redpanda.admin.address" -}}
@@ -174,12 +155,6 @@ IP is required for the advertised address.
 {{ define "redpanda.admin.external.port" -}}
 {{- (add1 .Values.config.redpanda.admin.port) -}}
 {{- end -}}
-
-
-
-
-
-
 
 {{- define "redpanda.pandaproxy.internal.advertise.address" -}}
 {{- $host := "$(SERVICE_NAME)" -}}
@@ -209,12 +184,6 @@ IP is required for the advertised address.
 
 {{- define "redpanda.schemaregistry.internal.address" -}}
 {{- "$(POD_IP)" -}}
-{{- end -}}
-
-{{- define "redpanda.schemaregistry.external.nodeport.address" -}}
-{{- "0.0.0.0" -}}
-{{- end -}}
-
 {{- define "redpanda.schemaregistry.internal.port" -}}
 {{- (first .Values.config.schema_registry.schema_registry_api).port -}}
 {{- end -}}

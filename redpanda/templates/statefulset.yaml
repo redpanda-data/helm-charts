@@ -26,8 +26,8 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/component: {{ template "redpanda.name" . }}
   {{- with .Values.labels }}
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+  {{- toYaml . | nindent 4 }}
+{{- end }}
 spec:
   selector:
     matchLabels:
@@ -44,19 +44,14 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name | quote }}
         app.kubernetes.io/component: {{ template "redpanda.name" . }}
       {{- with .Values.labels }}
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+  {{- toYaml . | nindent 8 }}
+{{- end }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
-        {{- with $.Values.statefulset.annotations }}
-          {{- toYaml . | nindent 8 }}
-        {{- end }}
-    spec:
-      securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      # TODO:
-      # * Figure out what to do about node_id / seeds here - the operator will fix this separately
-      # * Once that's done, this initContainer can be removed
+{{- with $.Values.statefulset.annotations }}
+  {{- toYaml . | nindent 8 }}
+{{- end }}
+{{- toYaml .Values.statefulset.podSecurityContext | nindent 8 }}
       initContainers:
         - name: {{ template "redpanda.name" . }}-configurator
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
@@ -77,12 +72,12 @@ spec:
               fi;
           volumeMounts:
             - name: {{ template "redpanda.fullname" . }}
-              mountPath: /tmp/base-config 
+              mountPath: /tmp/base-config
             - name: config
               mountPath: /etc/redpanda
           resources:
-            {{- toYaml .Values.statefulset.resources | nindent 12 }}
-      containers:
+{{- toYaml .Values.statefulset.resources | nindent 12 }}
+{{- toYaml .Values.statefulset.resources | nindent 12 }}
         - name: {{ template "redpanda.name" . }}
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           env:
@@ -168,19 +163,19 @@ spec:
 {{- end }}
 {{- end }}
           resources:
-            {{- toYaml .Values.statefulset.resources | nindent 12 }}
-      volumes:
+{{- toYaml .Values.statefulset.resources | nindent 12 }}
+{{- toYaml .Values.statefulset.resources | nindent 12 }}
         - name: datadir
-        {{- if .Values.storage.persistentVolume.enabled }}
-          persistentVolumeClaim:
+{{- if .Values.storage.persistentVolume.enabled }}
+{{- if .Values.storage.persistentVolume.enabled }}
             claimName: datadir
-        {{- else if .Values.storage.hostPath }}
-          hostPath:
+{{- else if .Values.storage.hostPath }}
+{{- else if .Values.storage.hostPath }}
             path: {{ .Values.storage.hostPath | quote }}
-        {{- else }}
-          emptyDir: {}
-        {{- end }}
-        - name: {{ template "redpanda.fullname" . }}
+{{- else }}
+{{- else }}
+{{- end }}
+{{- end }}
           configMap:
             name: {{ template "redpanda.fullname" . }}
         - name: config
@@ -197,7 +192,7 @@ spec:
             - key: tls.crt
               path: tls.crt
             {{- if $cert.caEnabled }}
-            - key: ca.crt
+    {{- if $cert.caEnabled }}
               path: ca.crt
             {{- end }}
             secretName: {{ template "redpanda.fullname" $ }}-{{ $cert.name }}-cert
@@ -250,25 +245,25 @@ spec:
 {{- end }}
 {{- end }}
       {{- if or .Values.statefulset.nodeAffinity .Values.statefulset.podAffinity .Values.statefulset.podAntiAffinity }}
-      affinity:
+{{- if or .Values.statefulset.nodeAffinity .Values.statefulset.podAffinity .Values.statefulset.podAntiAffinity }}
       {{- with .Values.statefulset.nodeAffinity }}
-        nodeAffinity: {{- toYaml . | nindent 10 }}
+  {{- with .Values.statefulset.nodeAffinity }}
       {{- end }}
-      {{- with .Values.statefulset.podAffinity }}
-        podAffinity: {{- toYaml . | nindent 10 }}
+  {{- end }}
+  {{- with .Values.statefulset.podAffinity }}
       {{- end }}
-      {{- if .Values.statefulset.podAntiAffinity }}
-        podAntiAffinity:
+  {{- end }}
+  {{- if .Values.statefulset.podAntiAffinity }}
         {{- if .Values.statefulset.podAntiAffinity.type }}
-        {{- if eq .Values.statefulset.podAntiAffinity.type "hard" }}
-          requiredDuringSchedulingIgnoredDuringExecution:
+    {{- if .Values.statefulset.podAntiAffinity.type }}
+      {{- if eq .Values.statefulset.podAntiAffinity.type "hard" }}
             - topologyKey: {{ .Values.statefulset.podAntiAffinity.topologyKey }}
               labelSelector:
                 matchLabels:
                   app.kubernetes.io/name: {{ template "redpanda.name" . }}
                   app.kubernetes.io/instance: {{ .Release.Name | quote }}
         {{- else if eq .Values.statefulset.podAntiAffinity.type "soft" }}
-          preferredDuringSchedulingIgnoredDuringExecution:
+      {{- else if eq .Values.statefulset.podAntiAffinity.type "soft" }}
             - weight: {{ .Values.statefulset.podAntiAffinity.weight | int64 }}
               podAffinityTerm:
                 topologyKey: {{ .Values.statefulset.podAntiAffinity.topologyKey }}
@@ -276,33 +271,33 @@ spec:
                   matchLabels:
                     app.kubernetes.io/name: {{ template "redpanda.name" . }}
                     app.kubernetes.io/instance: {{ .Release.Name | quote }}
-        {{- end }}
-        {{- else }}
-          {{- toYaml .Values.statefulset.podAntiAffinity | nindent 10 }}
-        {{- end }}
       {{- end }}
+    {{- else }}
+      {{- toYaml .Values.statefulset.podAntiAffinity | nindent 10 }}
     {{- end }}
-    {{- if semverCompare ">=1.16-0" .Capabilities.KubeVersion.GitVersion }}
+  {{- end }}
+{{- end }}
+{{- if semverCompare ">=1.16-0" .Capabilities.KubeVersion.GitVersion }}
       topologySpreadConstraints:
       - labelSelector:
           matchLabels:
             app.kubernetes.io/name: {{ template "redpanda.name" . }}
             app.kubernetes.io/instance: {{ .Release.Name | quote }}
-      {{- with .Values.statefulset.topologySpreadConstraints }}
+  {{- with .Values.statefulset.topologySpreadConstraints }}
         maxSkew: {{ .maxSkew }}
         topologyKey: {{ .topologyKey }}
         whenUnsatisfiable: {{ .whenUnsatisfiable }}
-      {{- end }}
-    {{- end }}
-    {{- with .Values.statefulset.nodeSelector }}
+  {{- end }}
+{{- end }}
+{{- with .Values.statefulset.nodeSelector }}
       nodeSelector: {{- toYaml . | nindent 8 }}
-    {{- end }}
-    {{- if .Values.statefulset.priorityClassName }}
+{{- end }}
+{{- if .Values.statefulset.priorityClassName }}
       priorityClassName: {{ .Values.statefulset.priorityClassName }}
-    {{- end }}
-    {{- with .Values.statefulset.tolerations }}
+{{- end }}
+{{- with .Values.statefulset.tolerations }}
       tolerations: {{- toYaml . | nindent 8 }}
-    {{- end }}
+{{- end }}
 {{- if .Values.storage.persistentVolume.enabled }}
   volumeClaimTemplates:
     - metadata:
@@ -311,24 +306,24 @@ spec:
           app.kubernetes.io/name: {{ template "redpanda.name" . }}
           app.kubernetes.io/instance: {{ .Release.Name | quote }}
           app.kubernetes.io/component: {{ template "redpanda.name" . }}
-        {{- with .Values.storage.persistentVolume.labels }}
-          {{- toYaml . | nindent 10 }}
-        {{- end }}
-        {{- with .Values.labels }}
-          {{- toYaml . | nindent 10 }}
-        {{- end }}
-      {{- with .Values.storage.persistentVolume.annotations }}
+  {{- with .Values.storage.persistentVolume.labels }}
+    {{- toYaml . | nindent 10 }}
+  {{- end }}
+  {{- with .Values.commonLabels }}
+    {{- toYaml . | nindent 10 }}
+  {{- end }}
+  {{- with .Values.storage.persistentVolume.annotations }}
         annotations: {{- toYaml . | nindent 10 }}
-      {{- end }}
+  {{- end }}
       spec:
         accessModes: ["ReadWriteOnce"]
-      {{- if .Values.storage.persistentVolume.storageClass }}
-      {{- if (eq "-" .Values.storage.persistentVolume.storageClass) }}
+  {{- if .Values.storage.persistentVolume.storageClass }}
+    {{- if (eq "-" .Values.storage.persistentVolume.storageClass) }}
         storageClassName: ""
-      {{- else }}
-        storageClassName: {{ .Values.storage.persistentVolume.storageClass | quote}}
-      {{- end }}
-      {{- end }}
+    {{- else }}
+        storageClassName: {{ .Values.storage.persistentVolume.storageClass | quote }}
+    {{- end }}
+  {{- end }}
         resources:
           requests:
             storage: {{ .Values.storage.persistentVolume.size | quote }}

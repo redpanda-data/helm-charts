@@ -20,7 +20,7 @@ limitations under the License.
 apiVersion: v1
 kind: Pod
 metadata:
-  name: "{{ include "redpanda.fullname" . }}-test-schemaregistry-internal-tls-status"
+  name: {{ include "redpanda.fullname" . }}-test-schemaregistry-internal-tls-status
   namespace: {{ .Release.Namespace | quote }}
   labels:
     helm.sh/chart: {{ template "redpanda.chart" . }}
@@ -38,12 +38,12 @@ spec:
   restartPolicy: Never
   containers:
     - name: {{ template "redpanda.name" . }}
-      image: {{ .Values.image.repository }}:{{ .Values.image.tag }} 
+      image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
       command: ['curl']
       args: ["-v","-m","3","--ssl-reqd","--cacert","/etc/tls/certs/schema-registry/ca.crt","{{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.schemaregistry.internal.port" $ }}/subjects"]
       volumeMounts:
         - name: {{ template "redpanda.fullname" . }}
-          mountPath: /tmp/base-config 
+          mountPath: /tmp/base-config
         - name: tlscert
           mountPath: /etc/tls/certs
         - name: tlsadmincert

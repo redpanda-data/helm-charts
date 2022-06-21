@@ -20,7 +20,7 @@ limitations under the License.
 apiVersion: v1
 kind: Pod
 metadata:
-  name: "{{ include "redpanda.fullname" . }}-test-kafka-internal-tls-status"
+  name: {{ include "redpanda.fullname" . }}-test-kafka-internal-tls-status
   namespace: {{ .Release.Namespace | quote }}
   labels:
     helm.sh/chart: {{ template "redpanda.chart" . }}
@@ -38,11 +38,11 @@ spec:
   restartPolicy: Never
   containers:
     - name: {{ template "redpanda.name" . }}
-      image: {{ .Values.image.repository }}:{{ .Values.image.tag }} 
+      image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
       args: ["cluster", "info", "--brokers", "{{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }}", "--tls-enabled", "--tls-truststore", "/etc/tls/certs/ca.crt"]
       volumeMounts:
         - name: {{ template "redpanda.fullname" . }}
-          mountPath: /tmp/base-config 
+          mountPath: /tmp/base-config
         - name: tlscert
           mountPath: /etc/tls/certs
         - name: tlsadmincert

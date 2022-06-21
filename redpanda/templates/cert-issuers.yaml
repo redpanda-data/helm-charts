@@ -23,7 +23,7 @@ limitations under the License.
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
-  name: {{ template "redpanda.fullname" $ }}-{{ $s }}-selfsigned-issuer
+  name: {{ template "redpanda.fullname" $ }}-{{ $name }}-selfsigned-issuer
   namespace: {{ $release.Namespace | quote }}
   labels:
     helm.sh/chart: {{ template "redpanda.chart" $ }}
@@ -36,12 +36,12 @@ metadata:
   {{- end }}
 spec:
   selfSigned: {}
-{{- end }}
+    {{- end }}
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: {{ template "redpanda.fullname" $ }}-{{ $s }}-root-certificate 
+  name: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-certificate
   namespace: {{ $release.Namespace | quote }}
   labels:
     helm.sh/chart: {{ template "redpanda.chart" $ }}
@@ -54,24 +54,24 @@ metadata:
   {{- end }}
 spec:
   isCA: true
-  commonName: {{ template "redpanda.fullname" $ }}-{{ $s }}-root-certificate
-  secretName: {{ template "redpanda.fullname" $ }}-{{ $s }}-root-certificate
+  commonName: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-certificate
+  secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-certificate
   privateKey:
     algorithm: ECDSA
     size: 256
   issuerRef:
-{{- if $r }}
+    {{- if $r }}
     name: {{ $r }}
-{{- else }}
-    name: {{ template "redpanda.fullname" $ }}-{{ $s }}-selfsigned-issuer
-{{- end }}
+    {{- else }}
+    name: {{ template "redpanda.fullname" $ }}-{{ $name }}-selfsigned-issuer
+    {{- end }}
     kind: Issuer
     group: cert-manager.io
 ---
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
-  name: {{ template "redpanda.fullname" $ }}-{{ $s }}-root-issuer
+  name: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-issuer
   namespace: {{ $release.Namespace | quote }}
   labels:
     helm.sh/chart: {{ template "redpanda.chart" $ }}
@@ -84,6 +84,7 @@ metadata:
   {{- end }}
 spec:
   ca:
-    secretName: {{ template "redpanda.fullname" $ }}-{{ $s }}-root-certificate 
+    secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-certificate
 ---
+  {{- end }}
 {{- end }}

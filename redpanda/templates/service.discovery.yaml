@@ -45,7 +45,7 @@ spec:
       protocol: TCP
       port: {{ template "redpanda.admin.port" $ }}
       targetPort: {{ template "redpanda.admin.port" $ }}
-    - name: proxy 
+    - name: proxy
       protocol: TCP
       port: {{ template "redpanda.pandaproxy.internal.advertise.port" $ }}
       targetPort: {{ template "redpanda.pandaproxy.internal.advertise.port" $ }}

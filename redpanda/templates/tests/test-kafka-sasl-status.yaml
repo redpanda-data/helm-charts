@@ -37,14 +37,14 @@ spec:
   restartPolicy: Never
   containers:
     - name: {{ template "redpanda.name" . }}
-      image: {{ .Values.image.repository }}:{{ .Values.image.tag }} 
+      image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
       command:
       - /bin/sh
       - -c
       - rpk acl user delete admin --tls-truststore /etc/tls/certs/ca.crt --admin-api-tls-truststore /etc/tls/certs/admin/ca.crt --api-urls {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.admin.port" . }} --brokers {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }}; sleep 3; rpk acl user create admin -p test --api-urls {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.admin.port" . }} --admin-api-tls-truststore /etc/tls/certs/admin/ca.crt --tls-truststore /etc/tls/certs/ca.crt && sleep 3 && rpk topic create test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-256 --brokers {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }} --tls-enabled --tls-truststore /etc/tls/certs/ca.crt && rpk topic describe test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-256 --brokers {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }} --tls-enabled --tls-truststore /etc/tls/certs/ca.crt && rpk topic delete test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-256 --brokers {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }} --tls-enabled --tls-truststore /etc/tls/certs/ca.crt && rpk acl user delete admin --tls-truststore /etc/tls/certs/ca.crt --admin-api-tls-truststore /etc/tls/certs/admin/ca.crt --api-urls {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.admin.port" . }} --brokers {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }} 
       volumeMounts:
         - name: {{ template "redpanda.fullname" . }}
-          mountPath: /tmp/base-config 
+          mountPath: /tmp/base-config
         - name: tlscert
           mountPath: /etc/tls/certs
         - name: tlsadmincert
@@ -59,7 +59,7 @@ spec:
         name: {{ template "redpanda.fullname" . }}
     - name: config
       emptyDir: {}
-    - name: tlscert
+    - name: tlskafkacert
       secret:
         defaultMode: 420
         items:

@@ -20,7 +20,7 @@ limitations under the License.
 apiVersion: v1
 kind: Pod
 metadata:
-  name: "{{ include "redpanda.fullname" . }}-test-pandaproxy-internal-tls-status"
+  name: {{ include "redpanda.fullname" . }}-test-pandaproxy-internal-tls-status
   namespace: {{ .Release.Namespace | quote }}
   labels:
     helm.sh/chart: {{ template "redpanda.chart" . }}
@@ -38,12 +38,12 @@ spec:
   restartPolicy: Never
   containers:
     - name: {{ template "redpanda.name" . }}
-      image: {{ .Values.image.repository }}:{{ .Values.image.tag }} 
+      image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
       command: ['curl']
       args: ["-m","3","--ssl-reqd","--cacert","/etc/tls/certs/pandaproxy/ca.crt","https://{{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.pandaproxy.internal.advertise.port" $ }}/brokers"]
       volumeMounts:
         - name: {{ template "redpanda.fullname" . }}
-          mountPath: /tmp/base-config 
+          mountPath: /tmp/base-config
         - name: tlscert
           mountPath: /etc/tls/certs
         - name: tlsadmincert

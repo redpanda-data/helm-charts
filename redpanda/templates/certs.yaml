@@ -4,16 +4,16 @@
 {{- $d := $issuer.duration }}
 apiVersion: v1
 data:
-  password: changeme 
+  password: changeme
 kind: Secret
 metadata:
-  name: {{ template "redpanda.fullname" $ }}-{{ $s }}-cert-keystore
+  name: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert-keystore
 type: Opaque
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: {{ template "redpanda.fullname" $ }}-{{ $s }}-cert
+  name: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
 spec:
   dnsNames:
   - {{ template "redpanda.fullname" $ }}-cluster.{{ (include "redpanda.internal.domain" $) | trimSuffix "." }}
@@ -24,13 +24,13 @@ spec:
   - {{ printf "*.%s" (first $values.config.redpanda.kafka_api).external.subdomain | squote }}
   duration: {{ $d | default "43800h" }}
   isCA: false
-  commonName: {{ template "redpanda.fullname" $ }}-{{ $s }}-cert
-  secretName: {{ template "redpanda.fullname" $ }}-{{ $s }}-cert
+  commonName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
+  secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
   privateKey:
     algorithm: ECDSA
     size: 256
   issuerRef:
-    name: {{ template "redpanda.fullname" $ }}-{{ $s }}-root-issuer
+    name: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-issuer
     kind: Issuer
     group: cert-manager.io
   keystores:
@@ -38,11 +38,7 @@ spec:
       create: true
       passwordSecretRef:
         key: password
-        name:  {{ template "redpanda.fullname" $ }}-{{ $s }}-cert-keystore
-    jks:
-      create: true
-      passwordSecretRef:
-        key: password
-        name: {{ template "redpanda.fullname" $ }}-{{ $s }}-cert-keystore 
+        name: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert-keystore
 ---
+  {{- end }}
 {{- end }}

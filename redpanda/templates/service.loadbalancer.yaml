@@ -46,7 +46,6 @@ spec:
     - name: kafka
       protocol: TCP
       port: {{$lb.kafka.port}}
-      #targetPort: {{ template "redpanda.kafka.external.listen.port" $ }}
 {{- end }}
 {{- if $lb.admin.enabled }}
     - name: admin
@@ -64,7 +63,7 @@ spec:
     - name: schemaRegistry 
       protocol: TCP
       port: {{$lb.schemaRegistry.port}}
-      targetPort: {{ template "redpanda.schema_registry.external.listen.port" $ }}
+      targetPort: {{ template "redpanda.schemaregistry.external.listen.port" $ }}
 {{- end }}
   selector:
     app.kubernetes.io/name: {{ template "redpanda.name" $ }}
