@@ -25,7 +25,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/component: {{ template "redpanda.name" . }}
-  {{- with .Values.labels }}
+{{- with .Values.commonLabels }}
   {{- toYaml . | nindent 4 }}
 {{- end }}
 spec:
@@ -43,7 +43,7 @@ spec:
         app.kubernetes.io/name: {{ template "redpanda.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name | quote }}
         app.kubernetes.io/component: {{ template "redpanda.name" . }}
-      {{- with .Values.labels }}
+{{- with .Values.commonLabels }}
   {{- toYaml . | nindent 8 }}
 {{- end }}
       annotations:

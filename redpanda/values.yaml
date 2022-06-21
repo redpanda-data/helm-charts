@@ -17,33 +17,30 @@
 #
 # For further information on Helm templating see the documentation at:
 #  https://helm.sh/docs/chart_template_guide/values_files/
-#
-# For an explanation of Redpanda configuration values:
-#   https://vectorized.io/docs/advanced-configuration/
 
+# Common parameters
+#
+# Override redpanda.name template
+nameOverride: ""
+# Override redpanda.fullname template
+fullnameOverride: ""
+# Default kuberentes cluster domain
+clusterDomain: cluster.local
+# Additional labels added to all Kubernetes objects
+commonLabels: {}
+
+# Redpanda parameters
+#
 image:
   repository: vectorized/redpanda
+  # Redpanda version. This determines the installed version (not Chart.appVersion)
   # The imagePullPolicy will default to Always when the tag is 'latest'
-  tag: v21.11.15
-
-# Additional labels to apply to all Kubernetes resources created by this chart.
-labels: {}
-  # app.kubernetes.io/part-of: my-app
-
-clusterDomain: cluster.local
-
-# See https://vectorized.io/docs/configuration/
-config:
-  # If you have a license key please set it here or you can request one
-  # here: https://vectorized.io/redpanda
-  license_key: ""
-
-  # Update with your organization name
-  organization: ""
-
-  redpanda:
-    enable_sasl: false
-    admin:
+  pullPolicy: IfNotPresent
+# Your license key (optional)
+license_key: ""
+# Your organization name (optional)
+organization: ""
+#
       # The port for the admin server.
       #
       # Metrics are served off of this port at /metrics.

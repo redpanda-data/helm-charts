@@ -31,7 +31,7 @@ metadata:
     app.kubernetes.io/instance: {{ $release.Name | quote }}
     app.kubernetes.io/managed-by: {{ $release.Service | quote }}
     app.kubernetes.io/component: {{ template "redpanda.name" $ }}
-  {{- with $.Values.labels }}
+  {{- with $.Values.commonLabels }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
   annotations:
