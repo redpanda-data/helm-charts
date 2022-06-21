@@ -14,11 +14,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- $externalKafkaNodePortEnabled := (first .Values.config.redpanda.kafka_api).external.enabled }}
-{{- $externalAdminNodePortEnabled := .Values.config.redpanda.admin.external.enabled }}
-{{- $externalProxyNodePortEnabled := (first .Values.config.pandaproxy.pandaproxy_api).external.enabled }}
-{{- $externalSchemaRegistryNodePortEnabled := (first .Values.config.schema_registry.schema_registry_api).external.enabled }}
-{{- $externalLoadBalancerEnabled := false }} 
+{{- $externalKafkaNodePortEnabled := (first .Values.listeners.kafka.endpoints).external.enabled }}
+{{- $externalAdminNodePortEnabled := .Values.listeners.admin.external.enabled }}
+{{- $externalProxyNodePortEnabled := (first .Values.listeners.rest.endpoints).external.enabled }}
+{{- $externalSchemaRegistryNodePortEnabled := (first .Values.listeners.schemaRegistry.endpoints).external.enabled }}
+{{- $externalLoadBalancerEnabled := false }}
 {{- $externalKafkaLBEnabled := false }}
 {{- $externalAdminLBEnabled := false }}
 {{- $externalProxyLBEnabled := false }}

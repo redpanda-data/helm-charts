@@ -60,7 +60,7 @@ Generate configuration needed for rpk
 {{- end -}}
 
 {{- define "redpanda.kafka.internal.listen.port" -}}
-{{- (first .Values.config.redpanda.kafka_api).port -}}
+{{- (first .Values.listeners.kafka.endpoints).port -}}
 {{- end -}}
 
 {{- define "redpanda.internal.domain" -}}
@@ -77,7 +77,7 @@ Generate configuration needed for rpk
 {{- end -}}
 
 {{- define "redpanda.kafka.internal.advertise.port" -}}
-{{- (first .Values.config.redpanda.kafka_api).port -}}
+{{- (first .Values.listeners.kafka.endpoints).port -}}
 {{- end -}}
 
 {{- define "redpanda.kafka.external.listen.address" -}}
@@ -85,7 +85,7 @@ Generate configuration needed for rpk
 {{- end -}}
 
 {{- define "redpanda.kafka.external.listen.port" -}}
-{{- (first .Values.config.redpanda.kafka_api).external.port | default (add1 (first .Values.config.redpanda.kafka_api).port) -}}
+{{- (first .Values.listeners.kafka.endpoints).external.port | default (add1 (first .Values.listeners.kafka.endpoints).port) -}}
 {{- end -}}
 
 {{/*
@@ -101,7 +101,7 @@ IP is required for the advertised address.
 {{- end }}
 
 {{- define "redpanda.kafka.external.domain" -}}
-{{- printf "%s." (first .Values.config.redpanda.kafka_api).external.subdomain | trimSuffix "." | default "$(HOST_IP)" -}}
+{{- printf "%s." (first .Values.listeners.kafka.endpoints).external.subdomain | trimSuffix "." | default "$(HOST_IP)" -}}
 {{- end }}
 
 {{- define "redpanda.kafka.external.advertise.address" -}}
@@ -111,7 +111,7 @@ IP is required for the advertised address.
 {{- end -}}
 
 {{- define "redpanda.kafka.external.advertise.port" -}}
-{{- (first .Values.config.redpanda.kafka_api).external.port | default (add1 (first .Values.config.redpanda.kafka_api).port) -}}
+{{- (first .Values.listeners.kafka.endpoints).external.port | default (add1 (first .Values.listeners.kafka.endpoints).port) -}}
 {{- end -}}
 
 {{- define "redpanda.kafka.external.advertise.nodeport.address" -}}
@@ -119,25 +119,17 @@ IP is required for the advertised address.
 {{- end -}}
 
 {{- define "redpanda.kafka.external.advertise.nodeport.port" -}}
-{{- (first .Values.config.redpanda.kafka_api).external.port | default 32005 -}}
+{{- (first .Values.listeners.kafka.endpoints).external.port | default 32005 -}}
 {{- end -}}
 
 
+{{- define "redpanda.rpc.advertise.port" -}}
+{{- .Values.listeners.rpc.port -}}
+{{- end -}}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+{{ define "redpanda.rpc.listen.port" -}}
+{{- .Values.listeners.rpc.port -}}
 {{- end -}}
 
 {{- define "redpanda.admin.address" -}}
@@ -145,7 +137,7 @@ IP is required for the advertised address.
 {{- end -}}
 
 {{ define "redpanda.admin.port" -}}
-{{- .Values.config.redpanda.admin.port -}}
+{{- .Values.listeners.admin.port -}}
 {{- end -}}
 
 {{- define "redpanda.admin.external.address" -}}
@@ -153,7 +145,7 @@ IP is required for the advertised address.
 {{- end -}}
 
 {{ define "redpanda.admin.external.port" -}}
-{{- (add1 .Values.config.redpanda.admin.port) -}}
+{{- (add1 .Values.listeners.admin.port) -}}
 {{- end -}}
 
 {{- define "redpanda.pandaproxy.internal.advertise.address" -}}
@@ -163,7 +155,7 @@ IP is required for the advertised address.
 {{- end -}}
 
 {{- define "redpanda.pandaproxy.internal.advertise.port" -}}
-{{- (first .Values.config.pandaproxy.pandaproxy_api).port -}}
+{{- (first .Values.listeners.rest.endpoints).port -}}
 {{- end -}}
 
 {{- define "redpanda.pandaproxy.internal.listen.address" -}}
@@ -171,7 +163,7 @@ IP is required for the advertised address.
 {{- end -}}
 
 {{- define "redpanda.pandaproxy.internal.listen.port" -}}
-{{- (first .Values.config.pandaproxy.pandaproxy_api).port -}}
+{{- (first .Values.listeners.rest.endpoints).port -}}
 {{- end -}}
 
 {{- define "redpanda.pandaproxy.external.listen.address" -}}
@@ -179,13 +171,13 @@ IP is required for the advertised address.
 {{- end -}}
 
 {{- define "redpanda.pandaproxy.external.listen.port" -}}
-{{- add1 (first .Values.config.pandaproxy.pandaproxy_api).port -}}
+{{- add1 (first .Values.listeners.rest.endpoints).port -}}
 {{- end -}}
 
 {{- define "redpanda.schemaregistry.internal.address" -}}
 {{- "$(POD_IP)" -}}
 {{- define "redpanda.schemaregistry.internal.port" -}}
-{{- (first .Values.config.schema_registry.schema_registry_api).port -}}
+{{- (first .Values.listeners.schemaRegistry.endpoints).port -}}
 {{- end -}}
 
 {{- define "redpanda.schemaregistry.external.port" -}}
@@ -199,7 +191,7 @@ IP is required for the advertised address.
 {{- end -}}
 
 {{- define "redpanda.pandaproxy.external.advertise.port" -}}
-{{- add1 (first .Values.config.pandaproxy.pandaproxy_api).port -}}
+{{- add1 (first .Values.listeners.rest.endpoints).port -}}
 {{- end -}}
 
 {{- define "redpanda.pandaproxy.external.advertise.nodeport.address" -}}
@@ -207,6 +199,9 @@ IP is required for the advertised address.
 {{- end -}}
 
 {{- define "redpanda.pandaproxy.external.advertise.nodeport.port" -}}
+{{- add1 (first .Values.listeners.rest.endpoints).port -}}
+{{- end -}}
+
 {{/* ConfigMap variables */}}
 {{- define "admin-tls-enabled" -}}
 {{- $adminTlsEnabled1 := and .Values.auth.tls.enabled (or .Values.listeners.admin.tls.enabled (not (hasKey .Values.listeners.admin.tls "enabled"))) -}}

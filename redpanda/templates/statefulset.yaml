@@ -100,45 +100,43 @@ spec:
               --smp={{ .Values.statefulset.resources.limits.cpu }}
               --memory={{ .Values.statefulset.redpanda.memory }}
               --reserve-memory={{ .Values.statefulset.redpanda.reservedMemory }}
-              {{- if (first .Values.config.redpanda.kafka_api).external.enabled }}
-              --advertise-kafka-addr=kafka://{{ template "redpanda.kafka.internal.advertise.address" . }}:{{ template "redpanda.kafka.internal.advertise.port" . }},external://{{ template "redpanda.kafka.external.advertise.address" . }}:{{ template "redpanda.kafka.external.advertise.nodeport.port" . }},
-              --kafka-addr=kafka://{{ template "redpanda.kafka.internal.listen.address" . }}:{{ template "redpanda.kafka.internal.listen.port" . }},external://{{ template "redpanda.kafka.external.listen.address" . }}:{{ template "redpanda.kafka.external.listen.port" . }},
-              {{- else }}
-              --advertise-kafka-addr=kafka://{{ template "redpanda.kafka.internal.advertise.address" . }}:{{ template "redpanda.kafka.internal.advertise.port" . }}
-              --kafka-addr=kafka://{{ template "redpanda.kafka.internal.listen.address" . }}:{{ template "redpanda.kafka.internal.listen.port" . }}
-              {{- end }}
-              --advertise-rpc-addr={{ template "redpanda.rpc.advertise.address" . }}:{{ template "redpanda.rpc.advertise.port" . }}
-              --rpc-addr={{ template "redpanda.rpc.listen.address" . }}:{{ template "redpanda.rpc.listen.port" . }}
-              {{ if (first .Values.config.schema_registry.schema_registry_api).external.enabled }}
-              --schema-registry-addr=internal://{{ template "redpanda.schemaregistry.internal.address" . }}:{{ template "redpanda.schemaregistry.internal.port" . }},external://{{ template "redpanda.schemaregistry.external.nodeport.address" . }}:{{ template "redpanda.schemaregistry.external.port" . }}
-              {{- else }}
-              --schema-registry-addr=internal://{{ template "redpanda.schemaregistry.internal.address" . }}:{{ template "redpanda.schemaregistry.internal.port" . }}
-              {{ end }}
-              {{- if (first .Values.config.pandaproxy.pandaproxy_api).external.enabled }}
-              --advertise-pandaproxy-addr=internal://{{ template "redpanda.pandaproxy.internal.advertise.address" . }}:{{ template "redpanda.pandaproxy.internal.advertise.port" . }},external://{{ template "redpanda.pandaproxy.external.advertise.nodeport.address" . }}:{{ template "redpanda.pandaproxy.external.advertise.nodeport.port" . }}
-              --pandaproxy-addr=internal://{{ template "redpanda.pandaproxy.internal.listen.address" . }}:{{ template "redpanda.pandaproxy.internal.listen.port" . }},external://{{ template "redpanda.pandaproxy.external.listen.address" . }}:{{ template "redpanda.pandaproxy.external.listen.port" . }}
-              {{- else }}
-              --advertise-pandaproxy-addr=internal://{{ template "redpanda.pandaproxy.internal.advertise.address" . }}:{{ template "redpanda.pandaproxy.internal.advertise.port" . }}
-              --pandaproxy-addr=internal://{{ template "redpanda.pandaproxy.internal.listen.address" . }}:{{ template "redpanda.pandaproxy.internal.listen.port" . }}
-              {{- end }}
-              --default-log-level={{ .Values.config.seastar.default_log_level }}
+              --advertise-kafka-addr={{- range $listener := .Values.listeners.kafka.endpoints -}}
+{{ $listener.name}}://{{ $advertiseAddress }}:{{ $listener.port }},
+{{- end }}
+              --kafka-addr={{- range $listener := .Values.listeners.kafka.endpoints -}}
+{{ $listener.name }}://$(POD_IP):{{ $listener.port }},
+{{- end }}
+              --advertise-rpc-addr={{ $advertiseAddress }}:{{ .Values.listeners.rpc.port }}
+              --rpc-addr=$(POD_IP):{{ .Values.listeners.rpc.port }}
+              --schema-registry-addr={{- range $listener := .Values.listeners.schemaRegistry.endpoints -}}
+{{ $listener.name }}://$(POD_IP):{{ $listener.port }},
+{{- end }}
+              --advertise-pandaproxy-addr={{- range $listener := .Values.listeners.rest.endpoints -}}
+{{ $listener.name}}://{{ $advertiseAddress }}:{{ $listener.port }},
+{{- end }}
+              --pandaproxy-addr={{- range $listener := .Values.listeners.rest.endpoints -}}
+{{ $listener.name }}://$(POD_IP):{{ $listener.port }},
+{{- end }}
+              --default-log-level={{ .Values.logLevel }}
           ports:
-            - containerPort: {{ .Values.config.redpanda.admin.port }}
+{{- if .Values.listeners.admin.enabled }}
+            - containerPort: {{ $values.listeners.admin.port }}
               name: admin
-            - containerPort: {{ template "redpanda.kafka.internal.listen.port" . }}
-              name: kafka-internal
-              {{- if not (empty .Values.loadBalancer) }}
-              {{- if .Values.loadBalancer.enabled }}
-            - containerPort: {{ template "redpanda.kafka.external.listen.port" . }}
-              name: kafka-external
-              {{- end }}
-              {{- end }}
-              {{- if .Values.config.pandaproxy.enabled }}
-            - containerPort: {{ template "redpanda.pandaproxy.internal.listen.port" . }}
-              name: pandaproxy
-              {{- end }}
-            - containerPort: {{ template "redpanda.rpc.listen.port" $ }}
+{{- end }}
+{{- range $listener := .Values.listeners.kafka.endpoints }}
+            - containerPort: {{ $listener.port }}
+              name: kafka-{{ $listener.name }}
+{{- end }}
+{{- range $listener := .Values.listeners.rest.endpoints }}
+            - containerPort: {{ $listener.port }}
+              name: proxy-{{ $listener.name }}
+{{- end }}
+            - containerPort: {{ $values.listeners.rpc.port }}
               name: rpc
+{{- range $listener := .Values.listeners.schemaRegistry.endpoints }}
+            - containerPort: {{ $listener.port }}
+              name: schema-{{ $listener.name }}
+{{- end }}
           volumeMounts:
             - name: datadir
               mountPath: /var/lib/redpanda/data

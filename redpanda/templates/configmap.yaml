@@ -45,23 +45,90 @@ data:
     {{ toYaml . | indent 8 }}
   {{- end }}
 {{- end }}
+{{- if .Values.listeners.admin.enabled }}
+      admin:
+        address: {{ .Values.listeners.admin.address }}
+        name: admin
+        port: {{ .Values.listeners.admin.port }}
   {{- $adminTlsEnabled := include "admin-tls-enabled" . }}
   {{- if eq $adminTlsEnabled "true" }}
+      admin_api_tls:
+      - cert_file: {{ printf "/etc/tls/certs/%s" .Values.listeners.admin.tls.cert }}/tls.crt
+        enabled: true
+        key_file: {{ printf "/etc/tls/certs/%s" .Values.listeners.admin.tls.cert }}/tls.key
+        name: admin
+    {{- if .Values.listeners.admin.tls.requireClientAuth }}
+        require_client_auth: true
     {{- end }}
-    {{- if gt (len .Values.organization) 0 }}
-    organization: {{ .Values.organization }}
+        truststore_file: {{ printf "/etc/tls/certs/%s" .Values.listeners.admin.tls.cert }}/ca.crt
+  {{- end }}
+{{- else }}
+      enable_admin_api: false
+{{- end }}
+      enable_sasl: {{ .Values.auth.sasl.enabled }}
+      kafka_api_tls:
+{{- range $i, $listener := .Values.listeners.kafka.endpoints }}
+  {{- if hasKey $listener "tls" }}
+    {{- if or $listener.tls.enabled (and (empty $listener.tls.enabled) $values.auth.tls.enabled) }}
+      - cert_file: {{ printf "/etc/tls/certs/%s" $listener.tls.cert }}/tls.crt
+        enabled: true
+        key_file: {{ printf "/etc/tls/certs/%s" $listener.tls.cert }}/tls.key
+        name: {{ $listener.name }}
+        require_client_auth: {{ $listener.tls.requireClientAuth }}
+        truststore_file: {{ printf "/etc/tls/certs/%s" $listener.tls.cert }}/ca.crt
     {{- end }}
-    redpanda:
-{{ toYaml .Values.config.redpanda | indent 6 }}
+  {{- end }}
+{{- end }}
+{{- if hasKey .Values.listeners.rpc "tls" }}
+  {{- if or .Values.listeners.rpc.tls.enabled (and (empty .Values.listeners.rpc.tls.enabled) .Values.auth.tls.enabled) }}
+      rpc_server_tls:
+        enabled: true
+        require_client_auth: {{ .Values.listeners.rpc.tls.requireClientAuth }}
+        cert_file: {{ printf "/etc/tls/certs/%s" .Values.listeners.rpc.tls.cert }}/tls.crt
+        key_file: {{ printf "/etc/tls/certs/%s" .Values.listeners.rpc.tls.cert }}/tls.key
+        truststore_file: {{ printf "/etc/tls/certs/%s" .Values.listeners.rpc.tls.cert }}/ca.crt
+  {{- end }}
+{{- end }}
       seed_servers:
-        {{- range untilStep 0 (.Values.statefulset.replicas|int) 1 }}
-        - host:
-            address: "{{ template "redpanda.fullname" $ }}-{{ . }}.{{ template "redpanda.internal.domain" $ }}"
-            port: {{ template "redpanda.rpc.advertise.port" $ }}
-        {{- end }}
+{{- range untilStep 0 (.Values.statefulset.replicas|int) 1 }}
+      - host:
+          address: "{{ template "redpanda.fullname" $ }}-{{ . }}.{{ template "redpanda.internal.domain" $ }}"
+          port: {{ $values.listeners.rpc.port }}
+{{- end }}
     rpk:
-{{ toYaml .Values.config.rpk | indent 6 }}
+{{ toYaml .Values.rpk | indent 6 }}
+{{- if .Values.listeners.rest.enabled }}
     pandaproxy:
-{{ toYaml .Values.config.pandaproxy | indent 6 }}
+      pandaproxy_api_tls:
+  {{- range $i, $listener := .Values.listeners.rest.endpoints }}
+    {{- if hasKey $listener "tls" }}
+      {{- if or (default false $listener.tls.enabled) (and (not (hasKey $listener.tls "enabled")) $values.auth.tls.enabled) }}
+      - cert_file: {{ printf "/etc/tls/certs/%s" $listener.tls.cert }}/tls.crt
+        enabled: true
+        key_file: {{ printf "/etc/tls/certs/%s" $listener.tls.cert }}/tls.key
+        name: {{ $listener.name }}
+        require_client_auth: {{ $listener.tls.requireClientAuth }}
+        truststore_file: {{ printf "/etc/tls/certs/%s" $listener.tls.cert }}/ca.crt
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- if .Values.listeners.schemaRegistry.enabled }}
     schema_registry:
-{{ toYaml .Values.config.schema_registry | indent 6 }}
+      schema_registry_api_tls:
+  {{- range $i, $listener := .Values.listeners.schemaRegistry.endpoints }}
+    {{- if hasKey $listener "tls" }}
+      {{- if or (default false $listener.tls.enabled) (and (not (hasKey $listener.tls "enabled")) $values.auth.tls.enabled) }}
+      - cert_file: {{ printf "/etc/tls/certs/%s" $listener.tls.cert }}/tls.crt
+        enabled: true
+        key_file: {{ printf "/etc/tls/certs/%s" $listener.tls.cert }}/tls.key
+        name: {{ $listener.name }}
+        require_client_auth: {{ $listener.tls.requireClientAuth }}
+        truststore_file: {{ printf "/etc/tls/certs/%s" $listener.tls.cert }}/ca.crt
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- if not (eq (toYaml .Values.config) "null") }}
+  {{ toYaml .Values.config | indent 6 }}
+{{- end }}

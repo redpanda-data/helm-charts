@@ -82,46 +82,87 @@ auth:
       schema:
         caEnabled: true
 #
-      name: admin
-      external:
-        enabled: false
-
-    # Kafka API listeners
+# Listeners
+listeners:
+  # Admin API listener
+  admin:
+    enabled: true
+    address: 0.0.0.0
+    # The port for the admin server
+    # Metrics are served off of this port at /metrics
+    port: 9644
+    external:
+      enabled: false
+    tls:
+      # Optional flag to override the global TLS enabled flag
+      # enabled: true
+      # Name of the certificate used for TLS. Enable TLS with auth.tls.enabled
+      # Must match a cert registered at auth.tls.certs
+      cert: admin
+      # If true, the truststore file for this listener will be included in the ConfigMap
+      requireClientAuth: false
+  # Kafka API listeners
+  # The kafka listener group cannot be disabled
+  kafka:
     # The first entry is used to set up the headless service.
     # Kafka external and internal advertised listeners will be
     # derived from the configuration. External advertised listener will be via
     # node port unless load balancer is configured.
-    kafka_api:
-      - name: kafka
-        address: $(POD_IP)
-        port: 9092
-        external:
-          enabled: true
-          subdomain: "streaming.rockdata.io"
-
-    # rpc server listener
-    rpc_server:
-      address: 0.0.0.0
-      port: 33145
+    endpoints:
+    # TODO POD_IP doesn't mean anything to the user
+    # maybe make address optional, and if not set then default is $(POD_IP)
+    - address: $(POD_IP)
+      name: default
+      port: 9092
       external:
         enabled: false
-
-  # panda proxy (listener)
-  pandaproxy:
-    pandaproxy_api:
+        subdomain: "helm-test.redpanda.com"
+      tls:
+        # enabled: true
+        cert: kafka
+        requireClientAuth: false
+  # REST API listeners (aka PandaProxy)
+  rest:
+    enabled: true
+    # PandaProxy is a kafka client that connects to an endpoint from listeners.kafka.endpoints
+    kafkaEndpoint: default
+    endpoints:
     - address: 0.0.0.0
-      name: internal
+      name: default
       port: 8082
       external:
         enabled: true
-
-  schema_registry:
-    schema_registry_api:
-    - address: "0.0.0.0"
-      name: schema-registry
+      tls:
+        # enabled: true
+        cert: proxy
+        requireClientAuth: false
+  # RPC listener
+  # The RPC listener cannot be disabled
+  rpc:
+    address: 0.0.0.0
+    port: 33145
+    external:
+      enabled: false
+    tls:
+      # enabled: true
+      cert: rpc
+      requireClientAuth: false
+  # Schema registry listeners
+  schemaRegistry:
+    enabled: true
+    # Schema Registry is a kafka client that connects to an endpoint from listeners.kafka.endpoints
+    kafkaEndpoint: default
+    endpoints:
+    - address: 0.0.0.0
+      name: default
       port: 8081
       external:
         enabled: true
+      tls:
+        # enabled: true
+        cert: schema
+        requireClientAuth: false
+#
 
   rpk:
     # Enables memory locking.
