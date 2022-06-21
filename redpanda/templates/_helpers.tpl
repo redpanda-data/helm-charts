@@ -122,11 +122,19 @@ IP is required for the advertised address.
 {{- (first .Values.listeners.kafka.endpoints).external.port | default 32005 -}}
 {{- end -}}
 
+{{- define "redpanda.rpc.advertise.address" -}}
+{{- $host := "$(SERVICE_NAME)" -}}
+{{- $domain := include "redpanda.internal.domain" . -}}
+{{- printf "%s.%s" $host $domain -}}
+{{- end -}}
 
 {{- define "redpanda.rpc.advertise.port" -}}
 {{- .Values.listeners.rpc.port -}}
 {{- end -}}
 
+{{- define "redpanda.rpc.listen.address" -}}
+{{- "$(POD_IP)" -}}
+{{- end -}}
 
 {{ define "redpanda.rpc.listen.port" -}}
 {{- .Values.listeners.rpc.port -}}
@@ -176,6 +184,12 @@ IP is required for the advertised address.
 
 {{- define "redpanda.schemaregistry.internal.address" -}}
 {{- "$(POD_IP)" -}}
+{{- end -}}
+
+{{- define "redpanda.schemaregistry.external.nodeport.address" -}}
+{{- "0.0.0.0" -}}
+{{- end -}}
+
 {{- define "redpanda.schemaregistry.internal.port" -}}
 {{- (first .Values.listeners.schemaRegistry.endpoints).port -}}
 {{- end -}}
