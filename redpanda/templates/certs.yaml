@@ -1,7 +1,8 @@
-{{- $values := .Values }}
-{{- range $i, $issuer := .Values.certIssuers }}
-{{- $s := $issuer.name }}
-{{- $d := $issuer.duration }}
+{{- if eq (include "tls-enabled" .) "true" }}
+  {{- $release := .Release }}
+  {{- $values := .Values }}
+  {{- range $name, $issuer := $values.auth.tls.certs }}
+    {{- $d := $issuer.duration }}
 apiVersion: v1
 data:
   password: changeme

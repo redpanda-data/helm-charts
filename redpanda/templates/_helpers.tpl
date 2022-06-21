@@ -207,5 +207,32 @@ IP is required for the advertised address.
 {{- end -}}
 
 {{- define "redpanda.pandaproxy.external.advertise.nodeport.port" -}}
-{{- add1 (first .Values.config.pandaproxy.pandaproxy_api).port -}}
+{{/* ConfigMap variables */}}
+{{- define "admin-tls-enabled" -}}
+{{- $adminTlsEnabled1 := and .Values.auth.tls.enabled (or .Values.listeners.admin.tls.enabled (not (hasKey .Values.listeners.admin.tls "enabled"))) -}}
+{{- $adminTlsEnabled2 := and (not .Values.auth.tls.enabled) .Values.listeners.admin.tls.enabled -}}
+{{- print (and (or $adminTlsEnabled1 $adminTlsEnabled2) (not (empty .Values.listeners.admin.tls.cert))) -}}
+{{- end -}}
+
+{{- define "kafka-tls-enabled" -}}
+{{- $listener := first .Values.listeners.kafka.endpoints -}}
+{{ print (or $listener.tls.enabled (and (not (hasKey $listener.tls "enabled")) .Values.auth.tls.enabled)) }}
+{{- end -}}
+
+{{- define "rpc-tls-enabled" -}}
+{{- print (or .Values.listeners.rpc.tls.enabled (and (not (hasKey .Values.listeners.rpc.tls "enabled")) .Values.auth.tls.enabled)) -}}
+{{- end -}}
+
+{{- define "rest-tls-enabled" -}}
+{{- $listener := first .Values.listeners.rest.endpoints -}}
+{{ print (or $listener.tls.enabled (and (not (hasKey $listener.tls "enabled")) .Values.auth.tls.enabled)) }}
+{{- end -}}
+
+{{- define "schemaregistry-tls-enabled" -}}
+{{- $listener := first .Values.listeners.schemaRegistry.endpoints -}}
+{{ print (or $listener.tls.enabled (and (not (hasKey $listener.tls "enabled")) .Values.auth.tls.enabled)) }}
+{{- end -}}
+
+{{- define "tls-enabled" -}}
+{{- print (or (eq (include "admin-tls-enabled" .) "true") (eq (include "kafka-tls-enabled" .) "true") (eq (include "rest-tls-enabled" .) "true") (eq (include "rpc-tls-enabled" .) "true") (eq (include "schemaregistry-tls-enabled" .) "true")) -}}
 {{- end -}}

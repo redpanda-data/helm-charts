@@ -38,6 +38,15 @@ data:
     {{- if gt (len .Values.organization) 0 }}
     organization: {{ .Values.organization }}
     {{- end }}
+    redpanda:
+{{- if .Values.auth.sasl.enabled }}
+  {{- with .Values.auth.sasl.users }}
+      superusers:
+    {{ toYaml . | indent 8 }}
+  {{- end }}
+{{- end }}
+  {{- $adminTlsEnabled := include "admin-tls-enabled" . }}
+  {{- if eq $adminTlsEnabled "true" }}
     {{- end }}
     {{- if gt (len .Values.organization) 0 }}
     organization: {{ .Values.organization }}

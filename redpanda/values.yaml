@@ -41,11 +41,47 @@ license_key: ""
 # Your organization name (optional)
 organization: ""
 #
-      # The port for the admin server.
-      #
-      # Metrics are served off of this port at /metrics.
-      port: 9644
-      address: 0.0.0.0
+# Authentication
+auth:
+  #
+  # SASL configuration
+  sasl:
+    enabled: false
+    # user list
+    # TODO create user at startup
+    users:
+      - name: admin
+        # Password for the user. This will be used to generate a secret
+        # password: password
+        # If password isn't given, then the secretName must point to an already existing secret
+        # secretName: adminPassword
+  #
+  # TLS configuration
+  tls:
+    # Enable global TLS, which turns on TLS by default for all listeners
+    # Each listener must include a certificate name in its TLS section
+    # Any certificates in auth.tls.certs will still be loaded if enabled is false
+    # This is because listeners may enable TLS individually (see listeners.<listener name>.tls.enabled)
+    enabled: false
+    # list all certificates below, then reference a certificate's name in each listener (see listeners.<listener name>.tls.cert)
+    certs:
+      # This is the certificate name that is used to associate the certificate with a listener
+      # See listeners.<listener group>.tls.cert for more information
+      kafka:
+        # issuerRef:
+        #   name: redpanda-cert1-selfsigned-issuer
+        # The caEnabled flag determines whether the ca.crt file is included in the TLS mount path on each Redpanda pod
+        caEnabled: true
+        # duration: 43800h
+      rpc:
+        caEnabled: true
+      admin:
+        caEnabled: true
+      proxy:
+        caEnabled: true
+      schema:
+        caEnabled: true
+#
       name: admin
       external:
         enabled: false

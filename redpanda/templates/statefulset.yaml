@@ -144,23 +144,11 @@ spec:
               mountPath: /var/lib/redpanda/data
             - name: config
               mountPath: /etc/redpanda
-{{- $anyTLS := or (default false .Values.config.redpanda.kafka_api_tls) (default false .Values.config.redpanda.admin_api_tls) (default false .Values.config.redpanda.schema_registry_api_tls) (default false .Values.config.redpanda.pandaproxy_api_tls) -}}
-{{- if $anyTLS }}
-{{- if .Values.customCerts }}
-  {{- range $i, $cert := .Values.customCerts }}
-            - name: tls-{{ $cert.name }}
-              mountPath: {{ $cert.path | default (printf "/etc/tls/certs/%s" $cert.name) }}
-  {{end}}
-{{ else }}
-            - name: tlscert
-              mountPath: /etc/tls/certs
-            - name: tlsadmincert
-              mountPath: /etc/tls/certs/admin
-            - name: tlspandaproxycert
-              mountPath: /etc/tls/certs/pandaproxy
-            - name: tlsschemaregistrycert
-              mountPath: /etc/tls/certs/schema-registry
-{{- end }}
+{{- if eq (include "tls-enabled" .) "true" }}
+  {{- range $name, $cert := .Values.auth.tls.certs }}
+            - name: tls-{{ $name }}-cert
+              mountPath: {{ printf "/etc/tls/certs/%s" $name }}
+  {{- end }}
 {{- end }}
           resources:
 {{- toYaml .Values.statefulset.resources | nindent 12 }}
@@ -180,10 +168,9 @@ spec:
             name: {{ template "redpanda.fullname" . }}
         - name: config
           emptyDir: {}
-{{- if $anyTLS }}
-{{- if .Values.customCerts }}
-  {{- range $i, $cert := .Values.customCerts }}
-        - name: tls-{{ $cert.name }}
+{{- if eq (include "tls-enabled" .) "true" }}
+  {{- range $name, $cert := .Values.auth.tls.certs }}
+        - name: tls-{{ $name }}-cert
           secret:
             defaultMode: 420
             items:
@@ -191,72 +178,13 @@ spec:
               path: tls.key
             - key: tls.crt
               path: tls.crt
-            {{- if $cert.caEnabled }}
     {{- if $cert.caEnabled }}
-              path: ca.crt
-            {{- end }}
-            secretName: {{ template "redpanda.fullname" $ }}-{{ $cert.name }}-cert
-  {{end}}
-{{ else }}
-        - name: tlscert
-          secret:
-            defaultMode: 420
-            items:
-            - key: tls.key
-              path: tls.key
-            - key: tls.crt
-              path: tls.crt
             - key: ca.crt
               path: ca.crt
-            secretName: {{ template "redpanda.fullname" . }}-kafka-cert
-        - name: tlsadmincert
-          secret:
-            defaultMode: 420
-            items:
-            - key: tls.key
-              path: tls.key
-            - key: tls.crt
-              path: tls.crt
-            - key: ca.crt
-              path: ca.crt
-            secretName: {{ template "redpanda.fullname" . }}-admin-cert
-        - name: tlspandaproxycert
-          secret:
-            defaultMode: 420
-            items:
-            - key: tls.key
-              path: tls.key
-            - key: tls.crt
-              path: tls.crt
-            - key: ca.crt
-              path: ca.crt
-            secretName: {{ template "redpanda.fullname" . }}-proxy-cert
-        - name: tlsschemaregistrycert
-          secret:
-            defaultMode: 420
-            items:
-            - key: tls.key
-              path: tls.key
-            - key: tls.crt
-              path: tls.crt
-            - key: ca.crt
-              path: ca.crt
-            secretName: {{ template "redpanda.fullname" . }}-schema-cert
-{{- end }}
-{{- end }}
-      {{- if or .Values.statefulset.nodeAffinity .Values.statefulset.podAffinity .Values.statefulset.podAntiAffinity }}
-{{- if or .Values.statefulset.nodeAffinity .Values.statefulset.podAffinity .Values.statefulset.podAntiAffinity }}
-      {{- with .Values.statefulset.nodeAffinity }}
-  {{- with .Values.statefulset.nodeAffinity }}
-      {{- end }}
+    {{- end }}
+            secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
   {{- end }}
-  {{- with .Values.statefulset.podAffinity }}
-      {{- end }}
-  {{- end }}
-  {{- if .Values.statefulset.podAntiAffinity }}
-        {{- if .Values.statefulset.podAntiAffinity.type }}
-    {{- if .Values.statefulset.podAntiAffinity.type }}
-      {{- if eq .Values.statefulset.podAntiAffinity.type "hard" }}
+{{- end -}}
             - topologyKey: {{ .Values.statefulset.podAntiAffinity.topologyKey }}
               labelSelector:
                 matchLabels:

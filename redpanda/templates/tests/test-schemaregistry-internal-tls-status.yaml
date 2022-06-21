@@ -14,9 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- $anyTLS :=  default false .Values.config.schema_registry.schema_registry_api_tls -}}
-{{- $anySASL := default false .Values.config.redpanda.enable_sasl }}
-{{- if and $anyTLS (not $anySASL) }}
+{{- if and (eq (include "schemaregistry-tls-enabled" .) "true") (not .Values.auth.sasl.enabled) }}
 apiVersion: v1
 kind: Pod
 metadata:

@@ -14,8 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- $anyTLS :=  default false .Values.config.schema_registry.schema_registry_api_tls -}}
-{{- if not $anyTLS }}
+{{- if and (eq (include "schemaregistry-tls-enabled" .) "false") .Values.listeners.schemaRegistry.enabled }}
 apiVersion: v1
 kind: Pod
 metadata:

@@ -14,13 +14,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- $release := .Release }}
-{{- $values := .Values }}
-{{- range $i, $issuer := $values.certIssuers }}
-{{- $s := $issuer.name }}
-{{- $r := $issuer.issuerRef }}
-{{- if not $r }}
-apiVersion: cert-manager.io/v1
+{{- if eq (include "tls-enabled" .) "true" }}
+  {{- $release := .Release }}
+  {{- $values := .Values }}
+  {{- range $name, $issuer := $values.auth.tls.certs }}
+    {{- $r := $issuer.issuerRef }}
+    {{- if not $r }}
+  apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: {{ template "redpanda.fullname" $ }}-{{ $name }}-selfsigned-issuer

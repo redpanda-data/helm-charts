@@ -14,9 +14,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- $anyTLS :=  default false .Values.config.redpanda.kafka_api_tls -}}
-{{- $anySASL := default false .Values.config.redpanda.enable_sasl }}
-{{- if and $anyTLS (not $anySASL) }}
+{{ $anySASL := default false .Values.auth.sasl.enabled }}
+{{- if and (eq (include "kafka-tls-enabled" .) "true") (not $anySASL) }}
 apiVersion: v1
 kind: Pod
 metadata:
