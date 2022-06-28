@@ -14,6 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
+{{- /* TODO test expects the first schema registry listener to have TLS enabled */}}
 {{- if and (eq (include "schemaregistry-tls-enabled" .) "true") (not .Values.auth.sasl.enabled) }}
 apiVersion: v1
 kind: Pod
@@ -38,7 +39,7 @@ spec:
     - name: {{ template "redpanda.name" . }}
       image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
       command: ['curl']
-      args: ["-v","-m","3","--ssl-reqd","--cacert","/etc/tls/certs/{{ (first .Values.listeners.schemaRegistry.endpoints).tls.cert }}/ca.crt","https://{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.schemaregistry.internal.port" $ }}/subjects"]
+      args: ["-v","-m","3","--ssl-reqd","--cacert","/etc/tls/certs/{{ (first .Values.listeners.schemaRegistry.endpoints).tls.cert }}/ca.crt","https://{{ include "redpanda.internal.domain" . }}:{{ (first .Values.listeners.schemaRegistry.endpoints).port }}/subjects"]
       volumeMounts:
         - name: {{ template "redpanda.fullname" . }}
           mountPath: /tmp/base-config
