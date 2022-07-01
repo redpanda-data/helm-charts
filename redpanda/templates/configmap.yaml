@@ -30,6 +30,13 @@ metadata:
   {{- toYaml . | nindent 4 }}
 {{- end }}
 data:
+  bootstrap.yaml: |
+  {{- with .Values.config.cluster }}
+    {{- toYaml . | nindent 6 }}
+  {{- end }}
+  {{- with .Values.config.tunable }}
+    {{- toYaml . | nindent 6 }}
+  {{- end }}
   redpanda.yaml: |
     config_file: /etc/redpanda/redpanda.yaml
     {{- if gt (len .Values.license_key) 0 }}
@@ -95,6 +102,9 @@ data:
           address: "{{ template "redpanda.fullname" $ }}-{{ . }}.{{ template "redpanda.internal.domain" $ }}"
           port: {{ $values.listeners.rpc.port }}
 {{- end }}
+{{- if not (eq (toYaml .Values.config.node) "null") }}
+  {{ toYaml .Values.config.node | indent 4 }}
+{{- end }}
     rpk:
 {{ toYaml .Values.rpk | indent 6 }}
 {{- if .Values.listeners.rest.enabled }}
@@ -128,7 +138,4 @@ data:
       {{- end }}
     {{- end }}
   {{- end }}
-{{- end }}
-{{- if not (eq (toYaml .Values.config) "null") }}
-  {{ toYaml .Values.config | indent 6 }}
 {{- end }}
