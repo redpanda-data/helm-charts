@@ -1,0 +1,70 @@
+{{- if (include "redpanda.semver" . | semverCompare ">=22.1.4") }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "redpanda.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    helm.sh/chart: {{ template "redpanda.chart" . }}
+    app.kubernetes.io/name: {{ template "redpanda.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/component: {{ template "redpanda.name" . }}
+{{- with .Values.commonLabels }}
+  {{- toYaml . | nindent 4 }}
+{{- end }}
+  annotations:
+    # This is what defines this resource as a hook. Without this line, the
+    # job is considered part of the release.
+    "helm.sh/hook": post-upgrade
+    "helm.sh/hook-weight": "-5"
+    #"helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+      name: "{{ .Release.Name }}"
+      labels:
+        app.kubernetes.io/name: {{ template "redpanda.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name | quote }}
+        app.kubernetes.io/component: {{ template "redpanda.name" . }}
+{{- with .Values.commonLabels }}
+  {{- toYaml . | nindent 8 }}
+{{- end }}
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: {{ template "redpanda.name" . }}-post-upgrade
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        command: ["/bin/sh", "-c"]
+        args:
+          - >
+            rpk --api-urls {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.admin.port" $ }} cluster config import -f /tmp/base-config/bootstrap.yaml;
+        volumeMounts:
+          - name: {{ template "redpanda.fullname" . }}
+            mountPath: /tmp/base-config
+          - name: config
+            mountPath: /etc/redpanda
+      volumes:
+        - name: {{ template "redpanda.fullname" . }}
+          configMap:
+            name: {{ template "redpanda.fullname" . }}
+        - name: config
+          emptyDir: {}
+{{- if eq (include "tls-enabled" .) "true" }}
+  {{- range $name, $cert := .Values.auth.tls.certs }}
+        - name: tls-{{ $name }}-cert
+          secret:
+            defaultMode: 420
+            items:
+            - key: tls.key
+              path: tls.key
+            - key: tls.crt
+              path: tls.crt
+    {{- if $cert.caEnabled }}
+            - key: ca.crt
+              path: ca.crt
+    {{- end }}
+            secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
+  {{- end }}
+{{- end -}}
+{{- end }}

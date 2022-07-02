@@ -228,7 +228,7 @@ rpk:
 statefulset:
   replicas: 3
   updateStrategy:
-    type: RollingUpdate
+    type: OrderedReady 
   podManagementPolicy: Parallel
   budget:
     maxUnavailable: 1
@@ -339,14 +339,14 @@ config:
     # log_compression_type: producer                               # Default topic compression type
     # log_message_timestamp_type: create_time                      # Default topic messages timestamp type
     # retention_bytes: None                                        # max bytes per partition on disk before triggering a compaction
-    # rm_sync_timeout_ms: 2000ms                                   # Time to wait state catch up before rejecting a request
+    # rm_sync_timeout_ms: 2000ms 
     # rm_violation_recovery_policy: crash                          # Describes how to recover from an invariant violation happened on the partition level
     # target_quota_byte_rate: 2GB                                  # Target quota byte rate in bytes per second
     # tm_sync_timeout_ms: 2000ms                                   # Time to wait state catch up before rejecting a request
     # tm_violation_recovery_policy: crash                          # Describes how to recover from an invariant violation happened on the transaction coordinator level
     # transactional_id_expiration_ms: 10080min                     # Producer ids are expired once this time has elapsed after the last write with the given producer ID
   tunable:
-    # alter_topic_cfg_timeout_ms:5s                               # Time to wait for entries replication in controller log when executing alter configuration request
+    # alter_topic_cfg_timeout_ms: 5s                              # Time to wait for entries replication in controller log when executing alter configuration request
     # compacted_log_segment_size: 256MiB                           # How large in bytes should each compacted log segment be (default 256MiB)
     # controller_backend_housekeeping_interval_ms: 1s              # Interval between iterations of controller backend housekeeping loop
     # coproc_max_batch_size: 32kb                                  # Maximum amount of bytes to read from one topic read
