@@ -14,7 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- if or (first .Values.listeners.rest.endpoints).external.enabled (first .Values.listeners.schemaRegistry.endpoints).external.enabled }}
+{{- if or (first .Values.listeners.http.endpoints).external.enabled (first .Values.listeners.schemaRegistry.endpoints).external.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -34,7 +34,7 @@ spec:
   publishNotReadyAddresses: true
   sessionAffinity: None
   ports:
-      {{- if (first .Values.listeners.rest.endpoints).external.enabled }}
+      {{- if (first .Values.listeners.http.endpoints).external.enabled }}
     - name: proxy-external
       protocol: TCP
       port: {{ template "redpanda.pandaproxy.external.advertise.port" . }}

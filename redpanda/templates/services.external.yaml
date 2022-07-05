@@ -16,7 +16,7 @@ limitations under the License.
 */}}
 {{- $externalKafkaNodePortEnabled := (first .Values.listeners.kafka.endpoints).external.enabled }}
 {{- $externalAdminNodePortEnabled := .Values.listeners.admin.external.enabled }}
-{{- $externalProxyNodePortEnabled := (first .Values.listeners.rest.endpoints).external.enabled }}
+{{- $externalProxyNodePortEnabled := (first .Values.listeners.http.endpoints).external.enabled }}
 {{- $externalSchemaRegistryNodePortEnabled := (first .Values.listeners.schemaRegistry.endpoints).external.enabled }}
 {{- $externalLoadBalancerEnabled := false }}
 {{- $externalKafkaLBEnabled := false }}

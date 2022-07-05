@@ -2,7 +2,7 @@
 
 One way to debug during helm development is to diff the kubernetes configuration files that helm generates:
 
-Create and initialize git in a new directory make sure to be outside an existing source-controlled directory):
+Create and initialize git in a new directory (make sure to be outside an existing source-controlled directory):
 
 ```sh
 mkdir helm-output

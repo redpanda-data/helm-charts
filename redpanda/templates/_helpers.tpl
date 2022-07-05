@@ -163,7 +163,7 @@ IP is required for the advertised address.
 {{- end -}}
 
 {{- define "redpanda.pandaproxy.internal.advertise.port" -}}
-{{- (first .Values.listeners.rest.endpoints).port -}}
+{{- (first .Values.listeners.http.endpoints).port -}}
 {{- end -}}
 
 {{- define "redpanda.pandaproxy.internal.listen.address" -}}
@@ -171,7 +171,7 @@ IP is required for the advertised address.
 {{- end -}}
 
 {{- define "redpanda.pandaproxy.internal.listen.port" -}}
-{{- (first .Values.listeners.rest.endpoints).port -}}
+{{- (first .Values.listeners.http.endpoints).port -}}
 {{- end -}}
 
 {{- define "redpanda.pandaproxy.external.listen.address" -}}
@@ -179,7 +179,7 @@ IP is required for the advertised address.
 {{- end -}}
 
 {{- define "redpanda.pandaproxy.external.listen.port" -}}
-{{- add1 (first .Values.listeners.rest.endpoints).port -}}
+{{- add1 (first .Values.listeners.http.endpoints).port -}}
 {{- end -}}
 
 {{- define "redpanda.schemaregistry.internal.address" -}}
@@ -205,7 +205,7 @@ IP is required for the advertised address.
 {{- end -}}
 
 {{- define "redpanda.pandaproxy.external.advertise.port" -}}
-{{- add1 (first .Values.listeners.rest.endpoints).port -}}
+{{- add1 (first .Values.listeners.http.endpoints).port -}}
 {{- end -}}
 
 {{- define "redpanda.pandaproxy.external.advertise.nodeport.address" -}}
@@ -213,7 +213,7 @@ IP is required for the advertised address.
 {{- end -}}
 
 {{- define "redpanda.pandaproxy.external.advertise.nodeport.port" -}}
-{{- add1 (first .Values.listeners.rest.endpoints).port -}}
+{{- add1 (first .Values.listeners.http.endpoints).port -}}
 {{- end -}}
 
 {{/* ConfigMap variables */}}
@@ -232,8 +232,8 @@ IP is required for the advertised address.
 {{- print (or .Values.listeners.rpc.tls.enabled (and (not (hasKey .Values.listeners.rpc.tls "enabled")) .Values.auth.tls.enabled)) -}}
 {{- end -}}
 
-{{- define "rest-tls-enabled" -}}
-{{- $listener := first .Values.listeners.rest.endpoints -}}
+{{- define "http-tls-enabled" -}}
+{{- $listener := first .Values.listeners.http.endpoints -}}
 {{ print (or $listener.tls.enabled (and (not (hasKey $listener.tls "enabled")) .Values.auth.tls.enabled)) }}
 {{- end -}}
 
@@ -243,5 +243,5 @@ IP is required for the advertised address.
 {{- end -}}
 
 {{- define "tls-enabled" -}}
-{{- print (or (eq (include "admin-tls-enabled" .) "true") (eq (include "kafka-tls-enabled" .) "true") (eq (include "rest-tls-enabled" .) "true") (eq (include "rpc-tls-enabled" .) "true") (eq (include "schemaregistry-tls-enabled" .) "true")) -}}
+{{- print (or (eq (include "admin-tls-enabled" .) "true") (eq (include "kafka-tls-enabled" .) "true") (eq (include "http-tls-enabled" .) "true") (eq (include "rpc-tls-enabled" .) "true") (eq (include "schemaregistry-tls-enabled" .) "true")) -}}
 {{- end -}}
