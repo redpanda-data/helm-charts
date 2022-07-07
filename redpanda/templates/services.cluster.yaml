@@ -14,7 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- if or (first .Values.config.pandaproxy.pandaproxy_api).external.enabled (first .Values.config.schema_registry.schema_registry_api).external.enabled }}
+{{- if or (first .Values.listeners.http.endpoints).external.enabled (first .Values.listeners.schemaRegistry.endpoints).external.enabled }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -26,7 +26,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/component: {{ template "redpanda.name" . }}
-  {{- with .Values.labels }}
+  {{- with .Values.commonLabels }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
@@ -34,13 +34,13 @@ spec:
   publishNotReadyAddresses: true
   sessionAffinity: None
   ports:
-      {{- if (first .Values.config.pandaproxy.pandaproxy_api).external.enabled }}
+      {{- if (first .Values.listeners.http.endpoints).external.enabled }}
     - name: proxy-external
       protocol: TCP
       port: {{ template "redpanda.pandaproxy.external.advertise.port" . }}
       targetPort: {{ template "redpanda.pandaproxy.external.advertise.port" . }}
       {{- end }}
-      {{- if (first .Values.config.schema_registry.schema_registry_api).external.enabled }}
+      {{- if (first .Values.listeners.schemaRegistry.endpoints).external.enabled }}
     - name: schema-registry
       protocol: TCP
       port: {{ template "redpanda.schemaregistry.external.port" . }}

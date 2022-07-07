@@ -14,16 +14,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- $release := .Release }}
-{{- $values := .Values }}
-{{- range $i, $issuer := $values.certIssuers }}
-{{- $s := $issuer.name }}
-{{- $r := $issuer.issuerRef }}
-{{- if not $r }}
-apiVersion: cert-manager.io/v1
+{{- if eq (include "tls-enabled" .) "true" }}
+  {{- $release := .Release }}
+  {{- $values := .Values }}
+  {{- range $name, $issuer := $values.auth.tls.certs }}
+    {{- $r := $issuer.issuerRef }}
+    {{- if not $r }}
+  apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
-  name: {{ template "redpanda.fullname" $ }}-{{ $s }}-selfsigned-issuer
+  name: {{ template "redpanda.fullname" $ }}-{{ $name }}-selfsigned-issuer
   namespace: {{ $release.Namespace | quote }}
   labels:
     helm.sh/chart: {{ template "redpanda.chart" $ }}
@@ -31,17 +31,17 @@ metadata:
     app.kubernetes.io/instance: {{ $release.Name | quote }}
     app.kubernetes.io/managed-by: {{ $release.Service | quote }}
     app.kubernetes.io/component: {{ template "redpanda.name" $ }}
-  {{- with $values.labels }}
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+      {{- with $values.commonLabels }}
+        {{- toYaml . | nindent 4 }}
+      {{- end }}
 spec:
   selfSigned: {}
-{{- end }}
+    {{- end }}
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: {{ template "redpanda.fullname" $ }}-{{ $s }}-root-certificate 
+  name: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-certificate
   namespace: {{ $release.Namespace | quote }}
   labels:
     helm.sh/chart: {{ template "redpanda.chart" $ }}
@@ -49,29 +49,29 @@ metadata:
     app.kubernetes.io/instance: {{ $release.Name | quote }}
     app.kubernetes.io/managed-by: {{ $release.Service | quote }}
     app.kubernetes.io/component: {{ template "redpanda.name" $ }}
-  {{- with $values.labels }}
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+    {{- with $values.commonLabels }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
 spec:
   isCA: true
-  commonName: {{ template "redpanda.fullname" $ }}-{{ $s }}-root-certificate
-  secretName: {{ template "redpanda.fullname" $ }}-{{ $s }}-root-certificate
+  commonName: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-certificate
+  secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-certificate
   privateKey:
     algorithm: ECDSA
     size: 256
   issuerRef:
-{{- if $r }}
+    {{- if $r }}
     name: {{ $r }}
-{{- else }}
-    name: {{ template "redpanda.fullname" $ }}-{{ $s }}-selfsigned-issuer
-{{- end }}
+    {{- else }}
+    name: {{ template "redpanda.fullname" $ }}-{{ $name }}-selfsigned-issuer
+    {{- end }}
     kind: Issuer
     group: cert-manager.io
 ---
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
-  name: {{ template "redpanda.fullname" $ }}-{{ $s }}-root-issuer
+  name: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-issuer
   namespace: {{ $release.Namespace | quote }}
   labels:
     helm.sh/chart: {{ template "redpanda.chart" $ }}
@@ -79,11 +79,12 @@ metadata:
     app.kubernetes.io/instance: {{ $release.Name | quote }}
     app.kubernetes.io/managed-by: {{ $release.Service | quote }}
     app.kubernetes.io/component: {{ template "redpanda.name" $ }}
-  {{- with $values.labels }}
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+    {{- with $values.commonLabels }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
 spec:
   ca:
-    secretName: {{ template "redpanda.fullname" $ }}-{{ $s }}-root-certificate 
+    secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-certificate
 ---
+  {{- end }}
 {{- end }}

@@ -16,9 +16,12 @@
 apiVersion: v2
 name: redpanda
 description: Redpanda is the real-time engine for modern apps.
+maintainers:
+  - name: redpanda-data
+    url: https://github.com/orgs/redpanda-data/people
 type: application
-version: 1.0.7
-deprecated: true
-appVersion: 21.11.11
+version: 2.0.0-alpha.0
+appVersion: 21.11.16
+icon: https://redpanda.com/static/skate-panda-9c2e4bc5a1ed0052554e658519a50882.svg
 sources:
-- https://github.com/vectorizedio/helm-charts
+- https://github.com/redpanda-data/helm-charts

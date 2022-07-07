@@ -14,8 +14,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- $anyTLS :=  default false .Values.config.redpanda.kafka_api_tls -}}
-{{- if not $anyTLS }}
+{{- /* TODO test fails if SASL is enabled */}}
+{{- if eq (include "kafka-tls-enabled" .) "false" }}
 apiVersion: v1
 kind: Pod
 metadata:
@@ -27,7 +27,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/component: {{ template "redpanda.name" . }}
-  {{- with .Values.labels }}
+  {{- with .Values.commonLabels }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
   annotations:
@@ -37,11 +37,11 @@ spec:
   restartPolicy: Never
   containers:
     - name: {{ template "redpanda.name" . }}
-      image: {{ .Values.image.repository }}:{{ .Values.image.tag }} 
+      image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
       args: ["cluster", "info", "--brokers", "{{ include "redpanda.fullname" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }}"]
       volumeMounts:
         - name: {{ template "redpanda.fullname" . }}
-          mountPath: /tmp/base-config 
+          mountPath: /tmp/base-config
   volumes:
     - name: {{ template "redpanda.fullname" . }}
       configMap:

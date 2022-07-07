@@ -14,8 +14,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- $anyTLS :=  default false .Values.config.pandaproxy.pandaproxy_api_tls -}}
-{{- if not $anyTLS }}
+{{- /* TODO test fails if SASL is enabled */}}
+{{- /* TODO test expects the first listener to have TLS enabled */}}
+{{- if and (eq (include "http-tls-enabled" .) "false") .Values.listeners.http.enabled }}
 apiVersion: v1
 kind: Pod
 metadata:
@@ -27,7 +28,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/component: {{ template "redpanda.name" . }}
-  {{- with .Values.labels }}
+  {{- with .Values.commonLabels }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
   annotations:
@@ -37,7 +38,7 @@ spec:
   restartPolicy: Never
   containers:
     - name: {{ template "redpanda.name" . }}
-      image: {{ .Values.image.repository }}:{{ .Values.image.tag }} 
+      image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
       command: ['curl']
-      args: ["-m","3","{{ include "redpanda.fullname" . }}:{{ template "redpanda.pandaproxy.internal.advertise.port" $ }}/brokers"]
+      args: ["-m","3","{{ include "redpanda.fullname" . }}:{{ (first .Values.listeners.http.endpoints).port }}/brokers"]
 {{- end }}

@@ -29,7 +29,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/component: {{ template "redpanda.name" . }}
-  {{- with .Values.labels }}
+  {{- with .Values.commonLabels }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
@@ -45,7 +45,7 @@ spec:
       protocol: TCP
       port: {{ template "redpanda.admin.port" $ }}
       targetPort: {{ template "redpanda.admin.port" $ }}
-    - name: proxy 
+    - name: proxy
       protocol: TCP
       port: {{ template "redpanda.pandaproxy.internal.advertise.port" $ }}
       targetPort: {{ template "redpanda.pandaproxy.internal.advertise.port" $ }}
