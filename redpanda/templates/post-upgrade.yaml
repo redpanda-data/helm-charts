@@ -38,12 +38,22 @@ spec:
         command: ["/bin/sh", "-c"]
         args:
           - >
+{{- if eq (include "tls-enabled" .) "true" }}
+            rpk --api-urls {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.admin.port" $ }} cluster config import -f /tmp/base-config/bootstrap.yaml --admin-api-tls-enabled --admin-api-tls-truststore /etc/tls/certs/admin/ca.crt --tls-enabled --tls-truststore /etc/tls/certs/admin/ca.crt;
+{{- else }}
             rpk --api-urls {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.admin.port" $ }} cluster config import -f /tmp/base-config/bootstrap.yaml;
+{{- end }}            
         volumeMounts:
           - name: {{ template "redpanda.fullname" . }}
             mountPath: /tmp/base-config
           - name: config
             mountPath: /etc/redpanda
+{{- if eq (include "tls-enabled" .) "true" }}
+  {{- range $name, $cert := .Values.auth.tls.certs }}
+          - name: tls-{{ $name }}-cert
+            mountPath: {{ printf "/etc/tls/certs/%s" $name }}
+  {{- end }}
+{{- end }}
       volumes:
         - name: {{ template "redpanda.fullname" . }}
           configMap:
