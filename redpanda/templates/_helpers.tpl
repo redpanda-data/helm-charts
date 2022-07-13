@@ -252,3 +252,7 @@ IP is required for the advertised address.
 {{- define "tls-enabled" -}}
 {{- print (or (eq (include "admin-tls-enabled" .) "true") (eq (include "kafka-tls-enabled" .) "true") (eq (include "rest-tls-enabled" .) "true") (eq (include "rpc-tls-enabled" .) "true") (eq (include "schemaregistry-tls-enabled" .) "true")) -}}
 {{- end -}}
+
+{{- define "sasl-enabled" -}}
+{{- print .Values.auth.sasl.enabled | default "false" -}}
+{{- end -}}

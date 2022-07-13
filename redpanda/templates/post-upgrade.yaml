@@ -1,4 +1,5 @@
 {{- if (include "redpanda.semver" . | semverCompare ">=22.1.4") }}
+{{- $anySASL := default false .Values.auth.sasl.enabled }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -40,6 +41,10 @@ spec:
           - >
 {{- if eq (include "tls-enabled" .) "true" }}
             rpk --api-urls {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.admin.port" $ }} cluster config import -f /tmp/base-config/bootstrap.yaml --admin-api-tls-enabled --admin-api-tls-truststore /etc/tls/certs/admin/ca.crt --tls-enabled --tls-truststore /etc/tls/certs/admin/ca.crt;
+{{- else if eq (include "tls-enabled" .) "true" }}
+            rpk --api-urls {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.admin.port" $ }} cluster config import -f /tmp/base-config/bootstrap.yaml --user admin --password test --sasl-mechanism SCRAM-SHA-256;
+{{- else if (eq (include "tls-enabled" .) "true")  (eq (include "sasl-enabled" .) "true") }}
+            rpk --api-urls {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.admin.port" $ }} cluster config import -f /tmp/base-config/bootstrap.yaml --admin-api-tls-enabled --admin-api-tls-truststore /etc/tls/certs/admin/ca.crt --tls-enabled --tls-truststore /etc/tls/certs/admin/ca.crt --user admin --password test --sasl-mechanism SCRAM-SHA-256;
 {{- else }}
             rpk --api-urls {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.admin.port" $ }} cluster config import -f /tmp/base-config/bootstrap.yaml;
 {{- end }}            

@@ -31,7 +31,15 @@ metadata:
 {{- end }}
 data:
   bootstrap.yaml: |
-  {{- with .Values.config.cluster }}
+{{- if (include "redpanda.semver" . | semverCompare ">=22.1.4") }}
+{{- if .Values.auth.sasl.enabled }}
+      enable_sasl: true 
+  {{- with .Values.auth.sasl.users }}
+      superusers: ['{{ (first .).name }}']
+  {{- end }}
+{{- end }}
+{{- end }}
+ {{- with .Values.config.cluster }}
     {{- toYaml . | nindent 6 }}
   {{- end }}
   {{- with .Values.config.tunable }}
@@ -46,11 +54,13 @@ data:
     organization: {{ .Values.organization }}
     {{- end }}
     redpanda:
+{{- if not (include "redpanda.semver" . | semverCompare ">=22.1.4") }}
 {{- if .Values.auth.sasl.enabled }}
   {{- with .Values.auth.sasl.users }}
       superusers:
     {{ toYaml . | indent 8 }}
   {{- end }}
+{{- end }}
 {{- end }}
 {{- if .Values.listeners.admin.enabled }}
       admin:
