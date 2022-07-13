@@ -2,7 +2,11 @@
 
 ![Lint and Test Charts](https://github.com/vectorizedio/helm-charts/actions/workflows/lint-test.yml/badge.svg?branch=main)
 
-***Status: Early Access***
+## v2 in development
+
+We are making major changes to this chart to provide a number of new features and simplify how features can be managed from within `values.yaml`. For now this means we will have two versions of this chart. This version (main branch) is the older one, and the next version is in the [v2 branch](https://github.com/redpanda-data/helm-charts/tree/v2). Please see [this project](https://github.com/redpanda-data/helm-charts/projects/1) for details on what is being worked on and planned, and feel free to provide any feedback by [opening a new issue](https://github.com/redpanda-data/helm-charts/issues/new).
+
+## Overview 
 
 This is the Helm Chart for [Redpanda](https://redpanda.com). It provides the ability to set up a multi node redpanda cluster with optional:
 
