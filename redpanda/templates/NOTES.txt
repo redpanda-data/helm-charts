@@ -47,9 +47,11 @@ Delete the topic:
 
 {{- if and $anyTLS (not $anySASL) }}
 
-With TLS enabled create a topic:
+Request the certificate:
 
-CERT=$(kubectl exec -n {{ .Release.Namespace }} {{ template "redpanda.name" . }}-0 -c redpanda -- cat /etc/tls/certs/ca.crt)
+CERT=$(kubectl exec -n {{ .Release.Namespace }} {{ template "redpanda.name" . }}-0 -c redpanda -- cat /etc/tls/certs/kafk/aca.crt)
+
+With TLS enabled create a topic:
 
   kubectl -n {{ .Release.Namespace }} run rpk -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} --command -- /bin/bash -c "rpk topic create test-topic --brokers {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }} --tls-enabled --tls-truststore <(echo '$CERT')"
 
@@ -65,9 +67,17 @@ Delete the topic:
 
 {{- if and $anyTLS $anySASL }}
 
-With TLS enabled create a topic:
+Request the certificates:s
 
-CERT=$(kubectl exec -n {{ .Release.Namespace }} {{ template "redpanda.name" . }}-0 -c redpanda -- cat /etc/tls/certs/ca.crt)
+CERT=$(kubectl exec -n {{ .Release.Namespace }} {{ template "redpanda.name" . }}-0 -c redpanda -- cat /etc/tls/certs/kafka/ca.crt)
+
+ADMINCERT=$(kubectl exec -n {{ .Release.Namespace }} {{ template "redpanda.name" . }}-0 -c redpanda -- cat /etc/tls/certs/admin/ca.crt)
+
+Create admin user:
+
+ kubectl -n redpanda run rpk -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} --command -- /bin/bash -c "rpk acl user create admin --api-urls {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.admin.port }} --user admin --password test --sasl-mechanism  SCRAM-SHA-256 --admin-api-tls-enabled --admin-api-tls-truststore <(echo '$ADMINCERT')"
+
+With TLS enabled create a topic:
 
   kubectl -n {{ .Release.Namespace }} run rpk -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} --command -- /bin/bash -c "rpk topic create test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-256 --brokers {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }} --tls-enabled --tls-truststore <(echo '$CERT')"
 
