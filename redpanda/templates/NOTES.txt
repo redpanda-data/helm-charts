@@ -67,7 +67,7 @@ Delete the topic:
 
 {{- if and $anyTLS $anySASL }}
 
-Request the certificates:s
+Request the certificates:
 
 CERT=$(kubectl exec -n {{ .Release.Namespace }} {{ template "redpanda.name" . }}-0 -c redpanda -- cat /etc/tls/certs/kafka/ca.crt)
 
