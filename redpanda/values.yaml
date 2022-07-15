@@ -228,8 +228,8 @@ rpk:
 statefulset:
   replicas: 3
   updateStrategy:
-    type: OrderedReady 
-  podManagementPolicy: Parallel
+    type: RollingUpdate 
+  podManagementPolicy: OrderedReady
   budget:
     maxUnavailable: 1
   # Additional annotations to apply to the Pods of this StatefulSet.
