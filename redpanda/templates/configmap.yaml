@@ -30,14 +30,13 @@ metadata:
   {{- toYaml . | nindent 4 }}
 {{- end }}
 data:
-  bootstrap.yaml: |
 {{- if (include "redpanda.semver" . | semverCompare ">=22.1.4") }}
+  bootstrap.yaml: |
 {{- if .Values.auth.sasl.enabled }}
       enable_sasl: true 
   {{- with .Values.auth.sasl.users }}
       superusers: ['{{ (first .).name }}']
   {{- end }}
-{{- end }}
 {{- end }}
  {{- with .Values.config.cluster }}
     {{- toYaml . | nindent 6 }}
@@ -45,6 +44,7 @@ data:
   {{- with .Values.config.tunable }}
     {{- toYaml . | nindent 6 }}
   {{- end }}
+{{- end }}
   redpanda.yaml: |
     config_file: /etc/redpanda/redpanda.yaml
     {{- if gt (len .Values.license_key) 0 }}
@@ -60,6 +60,9 @@ data:
       superusers:
     {{ toYaml . | indent 8 }}
   {{- end }}
+{{- end }}
+{{- if not (eq (toYaml .Values.config) "null") }}
+  {{ toYaml .Values.config | indent 4 }}
 {{- end }}
 {{- end }}
 {{- if .Values.listeners.admin.enabled }}
