@@ -1,5 +1,4 @@
 {{- if (include "redpanda.semver" . | semverCompare ">=22.1.4") }}
-{{- $anySASL := default false .Values.auth.sasl.enabled }}
 apiVersion: batch/v1
 kind: Job
 metadata:
