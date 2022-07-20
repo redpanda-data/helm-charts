@@ -39,11 +39,15 @@ It is likely that you will have your own Kubernetes cluster (e.g. local, GKE, EK
 
 #### Option 1: Minikube
 
-[Install minikube](https://k8s-docs.netlify.app/en/docs/tasks/tools/install-minikube/) (if needed), then start a single node cluster:
+[Install minikube](https://k8s-docs.netlify.app/en/docs/tasks/tools/install-minikube/) (if needed), then start a 4-node cluster:
 
 ```sh
-minikube start
+minikube start --nodes 4 --memory=3000m --extra-config=apiserver.service-node-port-range=8081-65535
 ```
+
+This command starts minikube with 4 nodes (1 control plane, 3 worker nodes, 3G memory each) and will extend the NodePort range to include default ports for Redpanda services. This assumes the default memory size of 2.5Gi for each container is being used in `values.yaml`. You should modify the memory size given to each node based on your configuration and available memory.
+
+Extending the NodePort range is optional, but it could be useful if using the default NodePort external service. Having a NodePort range that includes all Redpanda services allows you to assign a single port per listener which gets re-used by the external service.
 
 #### Option 2: Kind
 
@@ -84,35 +88,41 @@ helm install \
 At this point you have a cluster and other pre-requisites available. We are now ready to install Redpanda into the cluster. Most of the time you will want Redpanda to be contained in its own namespace. This can be done with the following command:
 
 ```sh
-helm install redpanda redpanda -n redpanda --create-namespace
+helm install redpanda redpanda -n redpanda-ns --create-namespace
 ```
 
 The above command uses the default values from `values.yaml` to create multiple kubernetes objects in the redpanda namespace:
 
 ```sh
-> kubectl get all -A --field-selector=metadata.namespace=redpanda
-NAMESPACE   NAME             READY   STATUS    RESTARTS   AGE
-redpanda    pod/redpanda-0   1/1     Running   0          48s
-redpanda    pod/redpanda-1   1/1     Running   0          48s
-redpanda    pod/redpanda-2   1/1     Running   0          48s
-NAMESPACE   NAME                        TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                                                        AGE
-redpanda    service/redpanda            ClusterIP   None             <none>        9092/TCP,9644/TCP,8082/TCP                                     48s
-redpanda    service/redpanda-cluster    ClusterIP   10.100.155.122   <none>        8083/TCP,18081/TCP                                             48s
-redpanda    service/redpanda-external   NodePort    10.109.201.86    <none>        9093:32005/TCP,9644:30494/TCP,8083:30658/TCP,18081:31127/TCP   48s
-NAMESPACE   NAME                        READY   AGE
-redpanda    statefulset.apps/redpanda   3/3     48s
+> kubectl get all -A --field-selector=metadata.namespace=redpanda-ns
+NAMESPACE    NAME             READY   STATUS    RESTARTS   AGE
+redpanda-ns  pod/redpanda-0   1/1     Running   0          48s
+redpanda-ns  pod/redpanda-1   1/1     Running   0          48s
+redpanda-ns  pod/redpanda-2   1/1     Running   0          48s
+NAMESPACE    NAME                        TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                                                        AGE
+redpanda-ns  service/redpanda            ClusterIP   None             <none>        9092/TCP,9644/TCP,8082/TCP                                     48s
+redpanda-ns  service/redpanda-cluster    ClusterIP   10.100.155.122   <none>        8083/TCP,18081/TCP                                             48s
+redpanda-ns  service/redpanda-external   NodePort    10.109.201.86    <none>        9093:32005/TCP,9644:30494/TCP,8083:30658/TCP,18081:31127/TCP   48s
+NAMESPACE    NAME                        READY   AGE
+redpanda-ns  statefulset.apps/redpanda   3/3     48s
 ```
 
 ## Next steps
 
 Now you are ready to customize your configuration however you like. Check the [examples](./examples) folder for guides on enabling various Redpanda features.
 
+Many times you will be able to customize `values.yaml` and then apply these updates without needing to re-install the entire cluster. If you make a change that only impacts a single service (for example), then running the following command will only restart that service and leave the rest of the cluster running with the same state:
+
+```
+helm -n redpanda-ns upgrade redpanda ./redpanda
+```
+
 ## Cleanup
 
 Once you are done with your Redpanda cluster, the following command will uninstall all objects created in the redpanda namespace by the helm chart:
 
 ```sh
-> helm uninstall redpanda -n redpanda
+> helm uninstall redpanda -n redpanda-ns
 ```
 
 You may also want to delete the cluster. With Kind:

@@ -14,26 +14,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- $externalKafkaNodePortEnabled := (first .Values.listeners.kafka.endpoints).external.enabled }}
-{{- $externalAdminNodePortEnabled := .Values.listeners.admin.external.enabled }}
-{{- $externalProxyNodePortEnabled := (first .Values.listeners.http.endpoints).external.enabled }}
-{{- $externalSchemaRegistryNodePortEnabled := (first .Values.listeners.schemaRegistry.endpoints).external.enabled }}
-{{- $externalLoadBalancerEnabled := false }}
-{{- $externalKafkaLBEnabled := false }}
-{{- $externalAdminLBEnabled := false }}
-{{- $externalProxyLBEnabled := false }}
-{{- $externalSchemaRegistryLBEnabled := false }}
-{{- $anyExternalLBEnabled := false }}
-{{- $anyExternalNodePortEnabled := false }}
-{{- with .Values.loadBalancer }}
-  {{- $externalLoadBalancerEnabled = .enabled }}
-  {{- $externalKafkaLBEnabled = .kafka.enabled }}
-  {{- $externalAdminLBEnabled = .admin.enabled }}
-  {{- $externalProxyLBEnabled = .proxy.enabled }}
-  {{- $externalSchemaRegistryLBEnabled = .schemaRegistry.enabled }}
-  {{- $anyExternalNodePortEnabled = or $externalKafkaNodePortEnabled $externalAdminNodePortEnabled $externalSchemaRegistryNodePortEnabled $externalProxyNodePortEnabled }}
-{{- end }}
-{{- if $anyExternalNodePortEnabled }}
+{{- $values := .Values }}
+{{- if (eq (include "external-nodeport-enabled" .) "true") }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -53,31 +35,102 @@ spec:
   externalTrafficPolicy: Local
   sessionAffinity: None
   ports:
-      {{- if and $externalKafkaNodePortEnabled (not $externalKafkaLBEnabled) }}
-    - name: kafka-external
+{{- $listenerNodePortEnabled := true }}
+{{- $listenerHasExternalPort := false }}
+{{- if (hasKey $values.listeners.admin "external") }}
+  {{- if hasKey $values.listeners.admin.external "type" }}
+    {{- $listenerNodePortEnabled = and (or $values.listeners.admin.external.enabled (and (not (hasKey $values.listeners.admin.external "enabled")) $values.external.enabled)) (eq $values.listeners.admin.external.type "NodePort") }}
+  {{- else }}
+    {{- $listenerNodePortEnabled = and (or $values.listeners.admin.external.enabled (and (not (hasKey $values.listeners.admin.external "enabled")) $values.external.enabled)) (eq $values.external.type "NodePort") }}
+  {{- end }}
+  {{- $listenerHasExternalPort = (hasKey $values.listeners.admin.external "port") }}
+{{- else }}
+  {{- $listenerNodePortEnabled = and $values.external.enabled (eq $values.external.type "NodePort") }}
+{{- end }}
+{{- if $listenerNodePortEnabled }}
+    - name: admin
       protocol: TCP
-      port: {{ template "redpanda.kafka.external.advertise.port" $ }}
-      targetPort: {{ template "redpanda.kafka.external.advertise.port" $ }}
-      nodePort: {{ template "redpanda.kafka.external.advertise.nodeport.port" $}}
+      port: {{ $values.listeners.admin.port }}
+  {{- if $listenerHasExternalPort }}
+      nodePort: {{ $values.listeners.admin.external.port }}
+  {{- else }}
+      nodePort: {{ $values.listeners.admin.port }}
+  {{- end }}
+{{- end }}
+{{- range $listener := $values.listeners.kafka.endpoints }}
+  {{- if not (eq $listener.name "internal") }}
+    {{- $listenerNodePortEnabled := false }}
+    {{- $listenerHasExternalPort := false }}
+    {{- if hasKey $listener "external" }}
+      {{- if hasKey $listener.external "type" }}
+        {{- $listenerNodePortEnabled = and (or $listener.external.enabled (and (not (hasKey $listener.external "enabled")) $values.external.enabled)) (eq $listener.external.type "NodePort") }}
+      {{- else }}
+        {{- $listenerNodePortEnabled = and (or $listener.external.enabled (and (not (hasKey $listener.external "enabled")) $values.external.enabled)) (eq $values.external.type "NodePort") }}
       {{- end }}
-      {{- if and $externalAdminNodePortEnabled (not $externalAdminLBEnabled) }}
-    - name: admin-external
+      {{- $listenerHasExternalPort = (hasKey $listener.external "port") }}
+    {{- else }}
+      {{- $listenerNodePortEnabled = and $values.external.enabled (eq $values.external.type "NodePort") }}
+    {{- end }}
+    {{- if $listenerNodePortEnabled }}
+    - name: {{ $listener.name }}
       protocol: TCP
-      port: {{ template "redpanda.admin.port" $ }}
-      targetPort: {{ template "redpanda.admin.port" $ }}
+      port: {{ $listener.port }}
+      {{- if $listenerHasExternalPort }}
+      nodePort: {{ $listener.external.port }}
+      {{- else }}
+      nodePort: {{ $listener.port }}
       {{- end }}
-      {{- if and $externalProxyNodePortEnabled (not $externalProxyLBEnabled) }}
-    - name: proxy-external
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- range $listener := $values.listeners.http.endpoints }}
+  {{- $listenerNodePortEnabled := false }}
+  {{- $listenerHasExternalPort := false }}
+  {{- if hasKey $listener "external" }}
+    {{- if hasKey $listener.external "type" }}
+      {{- $listenerNodePortEnabled = and (or $listener.external.enabled (and (not (hasKey $listener.external "enabled")) $values.external.enabled)) (eq $listener.external.type "NodePort") }}
+    {{- else }}
+      {{- $listenerNodePortEnabled = and (or $listener.external.enabled (and (not (hasKey $listener.external "enabled")) $values.external.enabled)) (eq $values.external.type "NodePort") }}
+    {{- end }}
+    {{- $listenerHasExternalPort = (hasKey $listener.external "port") }}
+  {{- else }}
+    {{- $listenerNodePortEnabled = and $values.external.enabled (eq $values.external.type "NodePort") }}
+  {{- end }}
+  {{- if $listenerNodePortEnabled }}
+    - name: http
       protocol: TCP
-      port: {{ template "redpanda.pandaproxy.external.advertise.port" $ }}
-      targetPort: {{ template "redpanda.pandaproxy.external.advertise.port" $ }}
-      {{- end }}
-      {{ if and $externalSchemaRegistryNodePortEnabled (not $externalSchemaRegistryLBEnabled)}}
+      port: {{ $listener.port }}
+    {{- if $listenerHasExternalPort }}
+      nodePort: {{ $listener.external.port }}
+    {{- else }}
+      nodePort: {{ $listener.port }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- range $listener := $values.listeners.schemaRegistry.endpoints }}
+  {{- $listenerNodePortEnabled := false }}
+  {{- $listenerHasExternalPort := false }}
+  {{- if hasKey $listener "external" }}
+    {{- if hasKey $listener.external "type" }}
+      {{- $listenerNodePortEnabled = and (or $listener.external.enabled (and (not (hasKey $listener.external "enabled")) $values.external.enabled)) (eq $listener.external.type "NodePort") }}
+    {{- else }}
+      {{- $listenerNodePortEnabled = and (or $listener.external.enabled (and (not (hasKey $listener.external "enabled")) $values.external.enabled)) (eq $values.external.type "NodePort") }}
+    {{- end }}
+    {{- $listenerHasExternalPort = (hasKey $listener.external "port") }}
+  {{- else }}
+    {{- $listenerNodePortEnabled = and $values.external.enabled (eq $values.external.type "NodePort") }}
+  {{- end }}
+  {{- if $listenerNodePortEnabled }}
     - name: schema-registry
       protocol: TCP
-      port: {{ template "redpanda.schemaregistry.external.port" $ }}
-      targetPort: {{ template "redpanda.schemaregistry.external.port" $ }}
-      {{- end }}
+      port: {{ $listener.port }}
+    {{- if $listenerHasExternalPort }}
+      nodePort: {{ $listener.external.port }}
+    {{- else }}
+      nodePort: {{ $listener.port }}
+    {{- end }}
+  {{- end }}
+{{- end }}
   selector:
     app.kubernetes.io/name: {{ template "redpanda.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name | quote }}

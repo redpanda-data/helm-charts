@@ -34,7 +34,7 @@ commonLabels: {}
 image:
   repository: vectorized/redpanda
   # Redpanda version. This determines the installed version (not Chart.appVersion)
-  tag: v22.1.5
+  tag: v22.1.6
   # The imagePullPolicy will default to Always when the tag is 'latest'
   pullPolicy: IfNotPresent
 # Your license key (optional)
@@ -91,8 +91,15 @@ listeners:
     # The port for the admin server
     # Metrics are served off of this port at /metrics
     port: 9644
+    # Optional external section
     external:
-      enabled: false
+      # enabled: true
+      # Type of external access (options are NodePort and LoadBalancer)
+      # type: NodePort
+      # External port
+      # This listener port will be used for the external port if this is not included
+      port: 31644
+    # Optional TLS section (required if global TLS is enabled)
     tls:
       # Optional flag to override the global TLS enabled flag
       # enabled: true
@@ -103,16 +110,32 @@ listeners:
   # Kafka API listeners
   # The kafka listener group cannot be disabled
   kafka:
-    # The first entry is used to set up the headless service.
-    # Kafka external and internal advertised listeners will be
-    # derived from the configuration. External advertised listener will be via
-    # node port unless load balancer is configured.
+    # The first entry is used to set up the headless service, which enables
+    # internal clients within the same namespace to connect directly to brokers.
+    # By default there are two listeners, one for internal and another for external clients.
+    # A listener with the name `internal` must exist, and will always be advertised
+    # using the internal address.
+    # Other listeners will have the advertised address according to whether it is
+    # externally facing or not.
     endpoints:
-    - name: default
-      port: 9092
+    - name: internal
+      port: 9093
       external:
         enabled: false
-        subdomain: "helm-test.redpanda.com"
+      tls:
+        # enabled: true
+        cert: kafka
+        requireClientAuth: false
+    - name: external
+      port: 9092
+      # Optional external section
+      external:
+        # enabled: true
+        # Type of external access (options are NodePort and LoadBalancer)
+        # type: NodePort
+        # External port
+        # This listener port will be used for the external port if this is not included
+        port: 31092
       tls:
         # enabled: true
         cert: kafka
@@ -125,8 +148,14 @@ listeners:
     endpoints:
     - name: default
       port: 8082
+    # Optional external section
       external:
-        enabled: true
+        # enabled: true
+        # Type of external access (options are NodePort and LoadBalancer)
+        # type: NodePort
+        # External port
+        # This listener port will be used for the external port if this is not included
+        port: 30082
       tls:
         # enabled: true
         cert: proxy
@@ -135,8 +164,6 @@ listeners:
   # The RPC listener cannot be disabled
   rpc:
     port: 33145
-    external:
-      enabled: false
     tls:
       # enabled: true
       cert: rpc
@@ -149,15 +176,37 @@ listeners:
     endpoints:
     - name: default
       port: 8081
+      # Optional external section
       external:
-        enabled: true
+        # enabled: true
+        # Type of external access (options are NodePort and LoadBalancer)
+        # type: NodePort
+        # External port
+        # This listener port will be used for the external port if this is not included
+        port: 30081
       tls:
         # enabled: true
         cert: schema
         requireClientAuth: false
 #
+# External access configuration
+external:
+  # Default external access value for all listeners except RPC
+  # External config doesn't apply to RPC listeners as they are never externally accessible
+  # These values can be overridden by each listener if needed
+  enabled: true
+  # Default external access type (options are NodePort and LoadBalancer)
+  # TODO include IP range for load balancer that support it: https://github.com/redpanda-data/helm-charts/issues/106
+  type: NodePort
+  domain: local
+  # annotations:
+    # For example:
+    # cloud.google.com/load-balancer-type: "Internal"
+    # service.beta.kubernetes.io/aws-load-balancer-type: nlb
+
+#
 # Log level
-# Valid values are info, warn, debug, trace
+# Valid values (from least to most logging) are warn, info, debug, trace
 logLevel: info
 #
 # Persistence
@@ -213,6 +262,7 @@ rpk:
   tune_disk_irq: false
 
 statefulset:
+  # Number of Redpanda brokers (recommend setting this to the number of nodes in the cluster)
   replicas: 3
   updateStrategy:
     type: RollingUpdate

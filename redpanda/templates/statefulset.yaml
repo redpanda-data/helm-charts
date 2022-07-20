@@ -113,8 +113,31 @@ spec:
               --smp={{ .Values.statefulset.resources.limits.cpu }}
               --memory={{ .Values.statefulset.redpanda.memory }}
               --reserve-memory={{ .Values.statefulset.redpanda.reservedMemory }}
-              --advertise-kafka-addr={{- range $listener := .Values.listeners.kafka.endpoints -}}
-{{ $listener.name}}://{{ $advertiseAddress }}:{{ $listener.port }},
+              --advertise-kafka-addr=
+{{- range $listener := .Values.listeners.kafka.endpoints -}}
+  {{- $listenerNodePortEnabled := false -}}
+  {{- $advertiseKafkaHost := $advertiseAddress -}}
+  {{- $advertiseKafkaPort := $listener.port -}}
+  {{- if not (eq $listener.name "internal") -}}
+    {{- if hasKey $listener "external" -}}
+      {{- if hasKey $listener.external "type" -}}
+        {{- $listenerNodePortEnabled = and (or $listener.external.enabled (and (not (hasKey $listener.external "enabled")) $values.external.enabled)) (eq $listener.external.type "NodePort") -}}
+      {{- else -}}
+        {{- $listenerNodePortEnabled = and (or $listener.external.enabled (and (not (hasKey $listener.external "enabled")) $values.external.enabled)) (eq $values.external.type "NodePort") -}}
+      {{- end -}}
+    {{- else -}}
+      {{- $listenerNodePortEnabled = and $values.external.enabled (eq $values.external.type "NodePort") -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if $listenerNodePortEnabled -}}
+    {{- $advertiseKafkaHost = printf "$(SERVICE_NAME).%s" $values.external.domain -}}
+    {{- if hasKey $listener "external" -}}
+      {{- if hasKey $listener.external "port" -}}
+        {{- $advertiseKafkaPort = $listener.external.port -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{ $listener.name }}://{{ $advertiseKafkaHost }}:{{ $advertiseKafkaPort }},
 {{- end }}
               --kafka-addr={{- range $listener := .Values.listeners.kafka.endpoints -}}
 {{ $listener.name }}://$(POD_IP):{{ $listener.port }},
