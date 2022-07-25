@@ -10,7 +10,7 @@ This helm chart (`redpanda`) focuses on providing a helm chart that deploys a Re
 
 The `redpanda-operator` chart installs a golang-based operator that will deploy and manage your Redpanda cluster. Helm is primarily used only to deploy the operator, and from there you would interact with the operator and/or `kubectl` in order to modify your Redpanda cluster. `redpanda-operator` is released alongside Redpanda (see the latest release [here](https://github.com/redpanda-data/redpanda/releases)). For now, much of our site's helm documentation focuses on the `redpanda-operator` (see [here](https://docs.redpanda.com/docs/quickstart/kubernetes-qs-cloud/).
 
-We will continue to provide both projects going forward, so feel free to use which ever you prefer! But keep in mind that they are separate, incompatible projects, and instructions for one will not apply to the other. A good rule of thumb is that if you see mention of the word "operator" in some resource, it's not related to this `repdanda` helm chart. This helm chart has no operator and no custom resource definitions (CRDs).
+Feel free to use which ever you prefer! But keep in mind that they are separate, incompatible projects, and instructions for one will not apply to the other. A good rule of thumb is that if you see mention of the word "operator" in some resource, it's not related to this `repdanda` helm chart. This helm chart has no operator and no custom resource definitions (CRDs).
 
 ## v2 in development
 
