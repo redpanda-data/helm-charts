@@ -70,20 +70,16 @@ data:
         address: {{ .Values.listeners.admin.address }}
         name: admin
         port: {{ .Values.listeners.admin.port }}
-  {{- $adminTlsEnabled := include "admin-tls-enabled" . }}
-  {{- if eq $adminTlsEnabled "true" }}
+{{- if eq (include "admin-tls-enabled" .) "true" }}
       admin_api_tls:
       - cert_file: {{ printf "/etc/tls/certs/%s" .Values.listeners.admin.tls.cert }}/tls.crt
         enabled: true
         key_file: {{ printf "/etc/tls/certs/%s" .Values.listeners.admin.tls.cert }}/tls.key
         name: admin
-    {{- if .Values.listeners.admin.tls.requireClientAuth }}
+  {{- if .Values.listeners.admin.tls.requireClientAuth }}
         require_client_auth: true
-    {{- end }}
-        truststore_file: {{ printf "/etc/tls/certs/%s" .Values.listeners.admin.tls.cert }}/ca.crt
   {{- end }}
-{{- else }}
-      enable_admin_api: false
+        truststore_file: {{ printf "/etc/tls/certs/%s" .Values.listeners.admin.tls.cert }}/ca.crt
 {{- end }}
       enable_sasl: {{ .Values.auth.sasl.enabled }}
       kafka_api_tls:
@@ -120,10 +116,10 @@ data:
 {{- end }}
     rpk:
 {{ toYaml .Values.rpk | indent 6 }}
-{{- if .Values.listeners.rest.enabled }}
+{{- if .Values.listeners.http.enabled }}
     pandaproxy:
       pandaproxy_api_tls:
-  {{- range $i, $listener := .Values.listeners.rest.endpoints }}
+  {{- range $i, $listener := .Values.listeners.http.endpoints }}
     {{- if hasKey $listener "tls" }}
       {{- if or (default false $listener.tls.enabled) (and (not (hasKey $listener.tls "enabled")) $values.auth.tls.enabled) }}
       - cert_file: {{ printf "/etc/tls/certs/%s" $listener.tls.cert }}/tls.crt

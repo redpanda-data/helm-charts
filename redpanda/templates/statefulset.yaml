@@ -118,23 +118,21 @@ spec:
               --schema-registry-addr={{- range $listener := .Values.listeners.schemaRegistry.endpoints -}}
 {{ $listener.name }}://$(POD_IP):{{ $listener.port }},
 {{- end }}
-              --advertise-pandaproxy-addr={{- range $listener := .Values.listeners.rest.endpoints -}}
+              --advertise-pandaproxy-addr={{- range $listener := .Values.listeners.http.endpoints -}}
 {{ $listener.name}}://{{ $advertiseAddress }}:{{ $listener.port }},
 {{- end }}
-              --pandaproxy-addr={{- range $listener := .Values.listeners.rest.endpoints -}}
+              --pandaproxy-addr={{- range $listener := .Values.listeners.http.endpoints -}}
 {{ $listener.name }}://$(POD_IP):{{ $listener.port }},
 {{- end }}
               --default-log-level={{ .Values.logLevel }}
           ports:
-{{- if .Values.listeners.admin.enabled }}
-            - containerPort: {{ $values.listeners.admin.port }}
+            - containerPort: {{ .Values.listeners.admin.port }}
               name: admin
-{{- end }}
 {{- range $listener := .Values.listeners.kafka.endpoints }}
             - containerPort: {{ $listener.port }}
               name: kafka-{{ $listener.name }}
 {{- end }}
-{{- range $listener := .Values.listeners.rest.endpoints }}
+{{- range $listener := .Values.listeners.http.endpoints }}
             - containerPort: {{ $listener.port }}
               name: proxy-{{ $listener.name }}
 {{- end }}
