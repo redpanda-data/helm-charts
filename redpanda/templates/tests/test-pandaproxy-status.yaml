@@ -16,7 +16,7 @@ limitations under the License.
 */}}
 {{- /* TODO test fails if SASL is enabled */}}
 {{- /* TODO test expects the first listener to have TLS enabled */}}
-{{- if and (eq (include "rest-tls-enabled" .) "false") .Values.listeners.rest.enabled }}
+{{- if and (eq (include "http-tls-enabled" .) "false") .Values.listeners.http.enabled }}
 apiVersion: v1
 kind: Pod
 metadata:
@@ -40,5 +40,5 @@ spec:
     - name: {{ template "redpanda.name" . }}
       image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
       command: ['curl']
-      args: ["-m","3","{{ include "redpanda.fullname" . }}:{{ (first .Values.listeners.rest.endpoints).port }}/brokers"]
+      args: ["-m","3","{{ include "redpanda.fullname" . }}:{{ (first .Values.listeners.http.endpoints).port }}/brokers"]
 {{- end }}

@@ -4,7 +4,7 @@
 
 ***Status: Early Access***
 
-This is the Helm Chart for [Redpanda](https://redpanda.com). It provides the ability to set up a multi node redpanda cluster with the following features optional:
+This is the Helm Chart for [Redpanda](https://redpanda.com). It provides the ability to set up a multi node redpanda cluster with the following optional features:
 
 - Schema registry (enabled by default)
 - REST (aka PandaProxy, enabled by default)
