@@ -316,9 +316,6 @@ serviceAccount:
 # These values do not pertain to the kubernetes objects created with helm.
 # Instead these parameters get passed directly to the Redpanda binary at startup.
 # See https://docs.redpanda.com/docs/cluster-administration/configuration/
-# There are three subsections, cluster, tunable and node. The cluster and tunable sections
-# are written to the cluster .bootstrap.yaml and read into central config upon startup.
-# Values in the node section are written to redpanda.yaml.
 config:
   cluster:
     # auto_create_topics_enabled: true                             # Allow topic auto creation
