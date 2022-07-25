@@ -49,7 +49,7 @@ Delete the topic:
 
 Request the certificate:
 
-CERT=$(kubectl exec -n {{ .Release.Namespace }} {{ template "redpanda.name" . }}-0 -c redpanda -- cat /etc/tls/certs/kafk/aca.crt)
+CERT=$(kubectl exec -n {{ .Release.Namespace }} {{ template "redpanda.name" . }}-0 -c redpanda -- cat /etc/tls/certs/kafka/ca.crt)
 
 With TLS enabled create a topic:
 

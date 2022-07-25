@@ -55,35 +55,34 @@ data:
     {{- end }}
     redpanda:
 {{- if not (include "redpanda.semver" . | semverCompare ">=22.1.4") }}
-{{- if .Values.auth.sasl.enabled }}
-  {{- with .Values.auth.sasl.users }}
+  {{- if .Values.auth.sasl.enabled }}
+    {{- with .Values.auth.sasl.users }}
       superusers:
     {{ toYaml . | indent 8 }}
+    {{- end }}
+  {{- end }}
+  {{- if not (eq (toYaml .Values.config) "null") }}
+  {{ toYaml .Values.config | indent 4 }}
   {{- end }}
 {{- end }}
-{{- if not (eq (toYaml .Values.config) "null") }}
-  {{ toYaml .Values.config | indent 4 }}
-{{- end }}
-{{- end }}
-{{- if .Values.listeners.admin.enabled }}
       admin:
         address: {{ .Values.listeners.admin.address }}
         name: admin
         port: {{ .Values.listeners.admin.port }}
-{{- if eq (include "admin-tls-enabled" .) "true" }}
+    {{- if eq (include "admin-tls-enabled" .) "true" }}
       admin_api_tls:
       - cert_file: {{ printf "/etc/tls/certs/%s" .Values.listeners.admin.tls.cert }}/tls.crt
         enabled: true
         key_file: {{ printf "/etc/tls/certs/%s" .Values.listeners.admin.tls.cert }}/tls.key
         name: admin
-  {{- if .Values.listeners.admin.tls.requireClientAuth }}
+      {{- if .Values.listeners.admin.tls.requireClientAuth }}
         require_client_auth: true
-  {{- end }}
+      {{- end }}
         truststore_file: {{ printf "/etc/tls/certs/%s" .Values.listeners.admin.tls.cert }}/ca.crt
-{{- end }}
+    {{- end }}
       enable_sasl: {{ .Values.auth.sasl.enabled }}
       kafka_api_tls:
-{{- range $i, $listener := .Values.listeners.kafka.endpoints }}
+  {{- range $i, $listener := .Values.listeners.kafka.endpoints }}
   {{- if hasKey $listener "tls" }}
     {{- if or $listener.tls.enabled (and (empty $listener.tls.enabled) $values.auth.tls.enabled) }}
       - cert_file: {{ printf "/etc/tls/certs/%s" $listener.tls.cert }}/tls.crt
@@ -93,8 +92,8 @@ data:
         require_client_auth: {{ $listener.tls.requireClientAuth }}
         truststore_file: {{ printf "/etc/tls/certs/%s" $listener.tls.cert }}/ca.crt
     {{- end }}
+    {{- end }}
   {{- end }}
-{{- end }}
 {{- if hasKey .Values.listeners.rpc "tls" }}
   {{- if or .Values.listeners.rpc.tls.enabled (and (empty .Values.listeners.rpc.tls.enabled) .Values.auth.tls.enabled) }}
       rpc_server_tls:
