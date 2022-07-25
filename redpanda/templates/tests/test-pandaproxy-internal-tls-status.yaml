@@ -15,7 +15,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */}}
 {{- /* TODO test expects the first listener to have TLS enabled */}}
-{{ $anySASL := default false .Values.auth.sasl.enabled }}
 {{- if and (eq (include "rest-tls-enabled" .) "true") (eq (include "sasl-enabled" .) "false")  .Values.listeners.rest.enabled }}
 apiVersion: v1
 kind: Pod
