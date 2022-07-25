@@ -228,7 +228,7 @@ rpk:
 statefulset:
   replicas: 3
   updateStrategy:
-    type: RollingUpdate 
+    type: RollingUpdate
   podManagementPolicy: OrderedReady
   budget:
     maxUnavailable: 1
@@ -336,7 +336,7 @@ config:
     # log_compression_type: producer                               # Default topic compression type
     # log_message_timestamp_type: create_time                      # Default topic messages timestamp type
     # retention_bytes: None                                        # max bytes per partition on disk before triggering a compaction
-    # rm_sync_timeout_ms: 2000ms 
+    # rm_sync_timeout_ms: 2000ms
     # rm_violation_recovery_policy: crash                          # Describes how to recover from an invariant violation happened on the partition level
     # target_quota_byte_rate: 2GB                                  # Target quota byte rate in bytes per second
     # tm_sync_timeout_ms: 2000ms                                   # Time to wait state catch up before rejecting a request
