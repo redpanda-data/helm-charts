@@ -30,7 +30,7 @@ metadata:
   {{- toYaml . | nindent 4 }}
 {{- end }}
 data:
-{{- if (include "redpanda.semver" . | semverCompare ">=22.1.4") }}
+{{- if (include "redpanda.semver" . | semverCompare ">=22.1.1") }}
   bootstrap.yaml: |
 {{- if .Values.auth.sasl.enabled }}
       enable_sasl: true 
@@ -54,7 +54,7 @@ data:
     organization: {{ .Values.organization }}
     {{- end }}
     redpanda:
-{{- if not (include "redpanda.semver" . | semverCompare ">=22.1.4") }}
+{{- if not (include "redpanda.semver" . | semverCompare ">=22.1.1") }}
   {{- if .Values.auth.sasl.enabled }}
     {{- with .Values.auth.sasl.users }}
       superusers:
