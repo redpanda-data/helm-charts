@@ -57,6 +57,12 @@ spec:
       securityContext:
 {{- toYaml .Values.statefulset.podSecurityContext | nindent 8 }}
       initContainers:
+        - name: set-datadir-ownership
+          image: busybox:latest
+          command: ["/bin/sh", "-c", "chown 101:101 -R /var/lib/redpanda/data"]
+          volumeMounts:
+            - name: datadir
+              mountPath: /var/lib/redpanda/data
         - name: {{ template "redpanda.name" . }}-configurator
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           command: ["/bin/sh", "-c"]
