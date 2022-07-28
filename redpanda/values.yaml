@@ -39,8 +39,6 @@ image:
   pullPolicy: IfNotPresent
 # Your license key (optional)
 license_key: ""
-# Your organization name (optional)
-organization: ""
 #
 # Authentication
 auth:
@@ -204,10 +202,108 @@ external:
     # cloud.google.com/load-balancer-type: "Internal"
     # service.beta.kubernetes.io/aws-load-balancer-type: nlb
 
+# Logging
+logging:
+  # Log level
+  # Valid values (from least to most logging) are warn, info, debug, trace
+  logLevel: info
+  #
+  # Send usage stats back to Redpanda
+  # See https://docs.redpanda.com/docs/cluster-administration/monitoring/#stats-reporting
+  usageStats:
+    # rpk.enable_usage_stats
+    enabled: true
+    # Your organization name (optional)
+    # organization: your-org
+    # Your cluster ID (optional)
+    # clusterId: your-helm-cluster
 #
-# Log level
-# Valid values (from least to most logging) are warn, info, debug, trace
-logLevel: info
+resources:
+  # Both Redpanda and Kubernetes have multiple ways to allocate resources.
+  # There are also several associated parameters that impact how these resources are used by
+  # Kubernetes, the Redpanda app, and the subsystem Redpanda is built on (Seastar).
+  # This section attempts to simplify allocating resources by providing a single location
+  # where resources are defined.
+  # Helm sets these resource values within the following templates:
+  # - statefulset.yaml
+  # - configmap.yaml
+  #
+  # The default values below are what should work for a development environment.
+  # Production-level values and other considerations are provided in comments
+  # if those values are different from the default.
+  #
+  cpu:
+    # Redpanda makes use of a thread per core model described here:
+    # https://redpanda.com/blog/tpc-buffers
+    # For this reason, Redpanda should only be given full cores (cores parameter below).
+    #
+    # NOTE: You can increase cores, but decreasing cores is not currently supported:
+    # https://github.com/redpanda-data/redpanda/issues/350
+    #
+    # Equivalent to: --smp, resources.requests.cpu, and resources.limits.cpu
+    # For production: 4 or greater
+    cores: 1
+    #
+    # Overprovisioned means Redpanda won't assume it has all of the provisioned CPU.
+    # This should be true unless the container has CPU affinity (eg. min and max above are equal).
+    # Equivalent to: --idle-poll-time-us 0 --thread-affinity 0 --poll-aio 0
+    # overprovisioned: false
+  #
+  memory:
+    # Enables memory locking.
+    # For production: true
+    # enable_memory_locking: false
+    #
+    # It is recommended to have at least 2Gi of memory per core for the Redpanda binary.
+    # This memory is taken from the total memory given to each container.
+    # We allocate 80% of the container's memory to Redpanda, leaving the rest for
+    # the Seastar subsystem (reserveMemory) and other container processes.
+    # So at least 2.5Gi per core is recommended in order to ensure Redpanda has a full 2Gi.
+    #
+    # These values affect --memory and --reserve-memory flags passed to Redpanda and the memory
+    # requests/limits in the StatefulSet.
+    # Valid suffixes: k M G Ki Mi Gi
+    # Only support a single decimal (eg. 2.5Gi rather than 2.55Gi)
+    #
+    container:
+      # Minimum memory count for each Redpanda broker
+      # If omitted, the min value will equal the max value (requested resources defaults to limits)
+      # Equivalent to: resources.requests.memory
+      # For production: 10Gi or greater
+      # min: 2.5Gi
+      #
+      # Minimum memory count for each Redpanda broker
+      # Equivalent to: resources.limits.memory
+      # For production: 10Gi or greater
+      max: 2.5Gi
+    #
+    # redpanda:
+      # This optional redpanda section allows specifying the memory size for both the Redpanda
+      # process and the underlying reserved memory (used by Seastar).
+      # This section is omitted by default, and memory sizes are calculated automatically
+      # based on container memory.
+      # Uncommenting this section and setting memory and reserveMemory values will disable
+      # automatic calculation.
+      #
+      # If you are setting the following values manually, keep in mind the following guidelines (getting
+      # this wrong will potentially lead to performance issues, instability, loss of data, etc.):
+      # The amount of memory to allocate to a container is determined by the sum of three values:
+      # 1. Redpanda (at least 2Gi per core, ~80% of the container's total memory)
+      # 2. Seastar subsystem (200Mi * 0.2% of the container's total memory, 200Mi < x < 1Gi)
+      # 3. other container processes (whatever small amount remains)
+      #
+      # Memory for the Redpanda process.
+      # This must be lower the container's memory (resources.memory.container.min if provided, otherwise
+      # resources.memory.container.max).
+      # Equivalent to: --memory
+      # For production: 8Gi or greater
+      # memory: 2Gi
+      #
+      # Memory reserved for the Seastar subsystem.
+      # Any value above 1Gi will provide diminishing performance benefits.
+      # Equivalent to: --reserve-memory
+      # For production: 1Gi
+      # reserveMemory: 200Mi
 #
 # Persistence
 storage:
@@ -232,35 +328,6 @@ storage:
     # Additional annotations to apply to the created PersistentVolumeClaims.
     annotations: {}
 
-# Redpanda Keeper configuration
-rpk:
-  # Enables memory locking.
-  enable_memory_locking: false
-  # Send usage stats back to vectorized
-  enable_usage_stats: true
-  #
-  # This should be set to true unless with have CPU affinity
-  # https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/#static-policy
-  # Equivalent to passing the following to redpanda
-  # --idle-poll-time-us 0 --thread-affinity 0 --poll-aio 0
-  overprovisioned: true
-  # Increases the number of allowed asynchronous IO events
-  tune_aio_events: false
-  # Syncs NTP
-  tune_clocksource: false
-  # Installs a custom script to process coredumps and save them to the given directory.
-  tune_coredump: false
-  #
-  # Disables hyper-threading, sets the ACPI-cpufreq governor to 'performance'.
-  # Also if system reboot is allowed it disables: Intel P-States, Intel C-States, and Turbo Boost
-  # Setting to true is not possible while running in a container.
-  tune_cpu: false
-  #
-  # Distributes IRQs across cores with the method deemed the most appropriate for the
-  # current device type (i.e. NVMe)
-  # Setting to true is not possible while running in a container.
-  tune_disk_irq: false
-
 statefulset:
   # Number of Redpanda brokers (recommend setting this to the number of nodes in the cluster)
   replicas: 3
@@ -271,36 +338,16 @@ statefulset:
     maxUnavailable: 1
   # Additional annotations to apply to the Pods of this StatefulSet.
   annotations: {}
-  # Redpanda makes use of a thread per core model which is described here:
-  # https://redpanda.com/blog/tpc-buffers/ For this reason Redpanda should
-  # only be given full cores for requests and limits. The recommendation
-  # for memory for Redpanda is at least 2GB per core. These values will also
-  # affect the --smp and --memory flags which are passed to Redpanda.
   #
-  # Limits are only specified as to provide Guaranteed QoS:
-  # https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-guaranteed
+  # A note regarding statefulset resources:
+  # Resources are set through the top-level resources section above.
+  # It is recommended to set resources values in that section rather than here, as this will guarantee
+  # memory is allocated across containers, Redpanda, and the Seastar subsystem correctly.
+  # This automatic memory allocation is in place because Repanda and the Seastar subsystem require flags
+  # at startup that set the amount of memory available to each process.
+  # Kubernetes (mainly statefulset), Redpanda, and Seastar memory values are tightly coupled.
+  # Adding a resource section here will be ignored.
   #
-  # To improve performance further it is recommended to enable CPU Affinity:
-  # https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/#static-policy
-  #
-  # NOTE: You can increase the number of cores but decreasing the number
-  # is not supported currently.
-  # https://github.com/redpanda-data/redpanda/issues/350#
-  resources:
-    limits:
-      cpu: "1"
-      memory: 2.5Gi
-  # Redpanda memory parameter can not exceed POD resource memory limit
-  # Example calculation:
-  # statefulset.redpanda.memory = 0.8 statefulset.resources.limits.memory
-  #
-  # NOTE: Memory flag does not support float numbers and support only E, P, T, G, M, k suffixes
-  # REF:
-  # https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory
-  # https://kubernetes.io/docs/reference/kubernetes-api/common-definitions/quantity/
-  redpanda:
-    memory: 2G
-    reservedMemory: 400k
   # Inter-Pod Affinity rules for scheduling Pods of this StatefulSet.
   # https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#inter-pod-affinity-and-anti-affinity
   podAffinity: {}
@@ -348,6 +395,15 @@ serviceAccount:
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
+
+# Tuning configuration
+tuning:
+  # Increases the number of allowed asynchronous IO events
+  tune_aio_events: false
+  # Syncs NTP
+  tune_clocksource: false
+  # Installs a custom script to process coredumps and save them to the given directory.
+  tune_coredump: false
 
 # This section allows modifying various Redpanda settings not covered in other sections above.
 # These values do not pertain to the kubernetes objects created with helm.

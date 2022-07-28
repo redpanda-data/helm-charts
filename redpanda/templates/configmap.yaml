@@ -50,8 +50,13 @@ data:
     {{- if gt (len .Values.license_key) 0 }}
     license_key: {{ .Values.license_key }}
     {{- end }}
-    {{- if gt (len .Values.organization) 0 }}
-    organization: {{ .Values.organization }}
+    {{- if .Values.logging.usageStats.enabled }}
+      {{- if hasKey .Values.logging.usageStats "organization" }}
+    organization: {{ .Values.logging.usageStats.organization }}
+      {{- end }}
+      {{- if hasKey .Values.logging.usageStats "clusterId" }}
+    cluster_id: {{ .Values.logging.usageStats.clusterId}}
+      {{- end }}
     {{- end }}
     redpanda:
 {{- if not (include "redpanda.semver" . | semverCompare ">=22.1.1") }}
@@ -125,7 +130,20 @@ data:
           port: {{ $values.listeners.rpc.port }}
 {{- end }}
     rpk:
-{{ toYaml .Values.rpk | indent 6 }}
+      enable_usage_stats: {{ .Values.logging.usageStats.enabled }}
+{{- if hasKey .Values.resources.cpu "overprovisioned" }}
+      overprovisioned: {{ .Values.resources.cpu.overprovisioned }}
+{{- else }}
+      overprovisioned: false
+{{- end }}
+{{- if hasKey .Values.resources.memory "enable_memory_locking" }}
+      enable_memory_locking: {{ .Values.resources.memory.enable_memory_locking }}
+{{- else }}
+      enable_memory_locking: false
+{{- end }}
+      tune_cpu: false
+      tune_disk_irq: false
+{{ toYaml .Values.tuning | indent 6 }}
 {{- if .Values.listeners.http.enabled }}
     pandaproxy:
       pandaproxy_api_tls:
