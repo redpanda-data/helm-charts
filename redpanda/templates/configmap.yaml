@@ -58,12 +58,26 @@ data:
   {{- if .Values.auth.sasl.enabled }}
     {{- with .Values.auth.sasl.users }}
       superusers:
-    {{ toYaml . | indent 8 }}
+    {{ toYaml . | indent 4 }}
     {{- end }}
   {{- end }}
-  {{- if not (eq (toYaml .Values.config) "null") }}
-  {{ toYaml .Values.config | indent 4 }}
-  {{- end }}
+  {{- if .Values.config | keys -}}
+    {{- if (hasKey .Values.config "cluster") }}
+      {{- if .Values.config.cluster | keys -}}
+       {{ toYaml .Values.config.cluster | trim | indent 2 }}
+     {{- end}}
+    {{- end}}
+    {{- if (hasKey .Values.config "tunable") }}
+      {{- if .Values.config.tunable | keys -}}
+      {{ toYaml .Values.config.tunable | trim | indent 2 }}
+      {{- end}}
+    {{- end}}
+    {{- if and (not (hasKey .Values.config "cluster")) (not (hasKey .Values.config "tuneable")) }}
+      {{- if .Values.config | keys  -}}
+      {{ toYaml .Values.config | indent 4 }}
+      {{- end }}
+    {{- end }}
+  {{- end}}
 {{- end }}
       admin:
         address: {{ .Values.listeners.admin.address }}
@@ -109,9 +123,6 @@ data:
       - host:
           address: "{{ template "redpanda.fullname" $ }}-{{ . }}.{{ template "redpanda.internal.domain" $ }}"
           port: {{ $values.listeners.rpc.port }}
-{{- end }}
-{{- if not (eq (toYaml .Values.config.node) "null") }}
-  {{ toYaml .Values.config.node | indent 4 }}
 {{- end }}
     rpk:
 {{ toYaml .Values.rpk | indent 6 }}
