@@ -46,7 +46,7 @@ data:
   {{- end }}
 {{- end }}
       admin:
-        address: {{ .Values.listeners.admin.address }}
+        address: 0.0.0.0
         name: admin
         port: {{ .Values.listeners.admin.port }}
 {{- if eq (include "admin-tls-enabled" .) "true" }}
