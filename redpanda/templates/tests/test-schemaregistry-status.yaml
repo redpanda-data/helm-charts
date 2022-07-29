@@ -16,7 +16,7 @@ limitations under the License.
 */}}
 {{- /* TODO test fails if SASL is enabled */}}
 {{- /* TODO test expects the first listener to have TLS enabled */}}
-{{- if and (eq (include "schemaregistry-tls-enabled" .) "false") .Values.listeners.schemaRegistry.enabled }}
+{{- if and (eq (include "schemaregistry-tls-enabled" .) "false") (eq (include "sasl-enabled" .) "false") .Values.listeners.schemaRegistry.enabled }}
 apiVersion: v1
 kind: Pod
 metadata:

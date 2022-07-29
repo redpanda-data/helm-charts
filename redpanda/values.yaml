@@ -34,7 +34,7 @@ commonLabels: {}
 image:
   repository: vectorized/redpanda
   # Redpanda version. This determines the installed version (not Chart.appVersion)
-  tag: v21.11.16
+  tag: v22.1.5
   # The imagePullPolicy will default to Always when the tag is 'latest'
   pullPolicy: IfNotPresent
 # Your license key (optional)
@@ -223,7 +223,7 @@ statefulset:
   replicas: 3
   updateStrategy:
     type: RollingUpdate
-  podManagementPolicy: Parallel
+  podManagementPolicy: OrderedReady
   budget:
     maxUnavailable: 1
   # Additional annotations to apply to the Pods of this StatefulSet.
@@ -311,93 +311,100 @@ serviceAccount:
 # Instead these parameters get passed directly to the Redpanda binary at startup.
 # See https://docs.redpanda.com/docs/cluster-administration/configuration/
 config:
-  # node_id:                                                     # Unique ID identifying a node in the cluster
-  # data_directory:                                              # Place where redpanda will keep the data
-  # admin_api_doc_dir: /usr/share/redpanda/admin-api-doc         # Admin API doc directory
-  # alter_topic_cfg_timeout_ms: 5s                               # Time to wait for entries replication in controller log when executing alter configuration request
-  # api_doc_dir: /usr/share/redpanda/proxy-api-doc               # API doc directory
-  # auto_create_topics_enabled: false                            # Allow topic auto creation
-  # compacted_log_segment_size: 256MiB                           # How large in bytes should each compacted log segment be (default 256MiB)
-  # controller_backend_housekeeping_interval_ms: 1s              # Interval between iterations of controller backend housekeeping loop
-  # coproc_max_batch_size: 32kb                                  # Maximum amount of bytes to read from one topic read
-  # coproc_max_inflight_bytes: 10MB                              # Maximum amountt of inflight bytes when sending data to wasm engine
-  # coproc_max_ingest_bytes: 640kb                               # Maximum amount of data to hold from input logs in memory
-  # coproc_offset_flush_interval_ms: 300000ms                    # Interval for which all coprocessor offsets are flushed to disk
-  # coproc_supervisor_server: 127.0.0.1:43189                    # IpAddress and port for supervisor service
-  # create_topic_timeout_ms: 2000ms                              # Timeout (ms) to wait for new topic creation
-  # dashboard_dir: None                                          # serve http dashboard on / url
-  # default_num_windows: 10                                      # Default number of quota tracking windows
-  # transaction_coordinator_replication: 3                       # Replication factor for a transaction coordinator topic
-  # id_allocator_replication: 3                                  # Replication factor for an ID allocator topic
-  # default_window_sec: 1000ms                                   # Default quota tracking window size in milliseconds
-  # delete_retention_ms: 10080min                                # delete segments older than this (default 1 week)
-  # developer_mode: optional                                     # Skips most of the checks performed at startup
-  # disable_batch_cache: false                                   # Disable batch cache in log manager
-  # disable_metrics: false                                       # Disable registering metrics
-  # enable_coproc: false                                         # Enable coprocessing mode
-  # enable_idempotence: false                                    # Enable idempotent producer
-  # enable_pid_file: true                                        # Enable pid file; You probably don't want to change this
-  # enable_transactions: false                                   # Enable transactions
-  # fetch_reads_debounce_timeout: 1ms                            # Time to wait for next read in fetch request when requested min bytes wasn't reached
-  # fetch_session_eviction_timeout_ms: 60s                       # Minimum time before which unused session will get evicted from sessions; Maximum time after which inactive session will be deleted is two time given configuration valuecache
-  # group_initial_rebalance_delay: 300ms                         # Extra delay (ms) added to rebalance phase to wait for new members
-  # group_max_session_timeout_ms: 300s                           # The maximum allowed session timeout for registered consumers; Longer timeouts give consumers more time to process messages in between heartbeats at the cost of a longer time to detect failures; Default quota tracking window size in milliseconds
-  # group_min_session_timeout_ms: Optional                       # The minimum allowed session timeout for registered consumers; Shorter timeouts result in quicker failure detection at the cost of more frequent consumer heartbeating
-  # group_new_member_join_timeout: 30000ms                       # Timeout for new member joins
-  # group_topic_partitions: 1                                    # Number of partitions in the internal group membership topic
-  # id_allocator_batch_size: 1000                                # ID allocator allocates messages in batches (each batch is a one log record) and then serves requests from memory without touching the log until the batch is exhausted
-  # id_allocator_log_capacity: 100                               # Capacity of the id_allocator log in number of messages; Once it reached id_allocator_stm should compact the log
-  # join_retry_timeout_ms: 5s                                    # Time between cluster join retries in milliseconds
-  # kafka_group_recovery_timeout_ms: 30000ms                     # Kafka group recovery timeout expressed in milliseconds
-  # kafka_qdc_depth_alpha: 0.8                                   # Smoothing factor for kafka queue depth control depth tracking
-  # kafka_qdc_depth_update_ms: 7s                                # Update frequency for kafka queue depth control
-  # kafka_qdc_enable: false                                      # Enable kafka queue depth control
-  # kafka_qdc_idle_depth: 10                                     # Queue depth when idleness is detected in kafka queue depth control
-  # kafka_qdc_latency_alpha: 0.002                               # Smoothing parameter for kafka queue depth control latency tracking
-  # kafka_qdc_max_depth: 100                                     # Maximum queue depth used in kafka queue depth control
-  # kafka_qdc_max_latency_ms: 80ms                               # Max latency threshold for kafka queue depth control depth tracking
-  # kafka_qdc_min_depth: 1                                       # Minimum queue depth used in kafka queue depth control
-  # kafka_qdc_window_count: 12                                   # Number of windows used in kafka queue depth control latency tracking
-  # kafka_qdc_window_size_ms: 1500ms                             # Window size for kafka queue depth control latency tracking
-  # kvstore_flush_interval: 10ms                                 # Key-value store flush interval (ms)
-  # kvstore_max_segment_size: 16MB                               # Key-value maximum segment size (bytes)
-  # log_cleanup_policy: deletion                                 # Default topic cleanup policy
-  # log_compaction_interval_ms: 5min                             # How often do we trigger background compaction
-  # log_compression_type: producer                               # Default topic compression type
-  # log_message_timestamp_type: create_time                      # Default topic messages timestamp type
-  # log_segment_size: 1GB                                        # How large in bytes should each log segment be (default 1G)
-  # max_compacted_log_segment_size: 5GB                          # Max compacted segment size after consolidation
-  # max_kafka_throttle_delay_ms: 60000ms                         # Fail-safe maximum throttle delay on kafka requests
-  # metadata_dissemination_interval_ms: 3000ms                   # Interaval for metadata dissemination batching
-  # metadata_dissemination_retries: 10                           # Number of attempts of looking up a topic's meta data like shard before failing a request
-  # metadata_dissemination_retry_delay_ms: 500ms                 # Delay before retry a topic lookup in a shard or other meta tables
-  # quota_manager_gc_sec: 30000ms                                # Quota manager GC frequency in milliseconds
-  # rack: None                                                   # Rack identifier
-  # raft_election_timeout_ms: 1500ms                             # Election timeout expressed in milliseconds
-  # raft_heartbeat_interval_ms: 150ms                            # Milliseconds for raft leader heartbeats
-  # raft_heartbeat_timeout_ms: 3s                                # raft heartbeat RPC timeout
-  # raft_io_timeout_ms: 10000ms                                  # Raft I/O timeout
-  # raft_replicate_batch_window_size: 1MB                        # Max size of requests cached for replication
-  # raft_timeout_now_timeout_ms: 1s                              # Timeout for a timeout now request
-  # raft_transfer_leader_recovery_timeout_ms: 10s                # Timeout waiting for follower recovery when transferring leadership
-  # readers_cache_eviction_timeout_ms: 30s                       # Duration after which inactive readers will be evicted from cache
-  # reclaim_growth_window: 3000ms                                # Length of time in which reclaim sizes grow
-  # reclaim_max_size: 4MB                                        # Maximum batch cache reclaim size
-  # reclaim_min_size: 128KB                                      # Minimum batch cache reclaim size
-  # reclaim_stable_window: 10000ms                               # Length of time above which growth is reset
-  # recovery_append_timeout_ms: 5s                               # Timeout for append entries requests issued while updating stale follower
-  # release_cache_on_segment_roll: false                         # Free cache when segments roll
-  # replicate_append_timeout_ms: 3s                              # Timeout for append entries requests issued while replicating entries
-  # retention_bytes: None                                        # max bytes per partition on disk before triggering a compaction
-  # rm_sync_timeout_ms: 2000ms                                   # Time to wait state catch up before rejecting a request
-  # rm_violation_recovery_policy: crash                          # Describes how to recover from an invariant violation happened on the partition level
-  # segment_appender_flush_timeout_ms: 1ms                       # Maximum delay until buffered data is written
-  # target_quota_byte_rate: 2GB                                  # Target quota byte rate in bytes per second
-  # tm_sync_timeout_ms: 2000ms                                   # Time to wait state catch up before rejecting a request
-  # tm_violation_recovery_policy: crash                          # Describes how to recover from an invariant violation happened on the transaction coordinator level
-  # transactional_id_expiration_ms: 10080min                     # Producer ids are expired once this time has elapsed after the last write with the given producer ID
-  # wait_for_leader_timeout_ms: 5000ms                           # Timeout (ms) to wait for leadership in metadata cache
-  #
+  cluster:
+    # auto_create_topics_enabled: true                             # Allow topic auto creation
+    # transaction_coordinator_replication: 1                       # Replication factor for a transaction coordinator topic
+    # id_allocator_replication: 1                                  # Replication factor for an ID allocator topic
+    # disable_metrics: false                                       # Disable registering metrics
+    # enable_coproc: false                                         # Enable coprocessing mode
+    # enable_idempotence: false                                    # Enable idempotent producer
+    # enable_pid_file: true                                        # Enable pid file; You probably don't want to change this
+    # enable_transactions: false                                   # Enable transactions
+    # group_max_session_timeout_ms: 300s                           # The maximum allowed session timeout for registered consumers; Longer timeouts give consumers more time to process messages in between heartbeats at the cost of a longer time to detect failures; Default quota tracking window size in milliseconds
+    # group_min_session_timeout_ms: Optional                       # The minimum allowed session timeout for registered consumers; Shorter timeouts result in quicker failure detection at the cost of more frequent consumer heartbeating
+    # kafka_group_recovery_timeout_ms: 30000ms                     # Kafka group recovery timeout expressed in milliseconds
+    # kafka_qdc_enable: false                                      # Enable kafka queue depth control
+    # kafka_qdc_max_latency_ms: 80ms                               # Max latency threshold for kafka queue depth control depth tracking
+    # log_cleanup_policy: deletion                                 # Default topic cleanup policy
+    # log_compaction_interval_ms: 5min                             # How often do we trigger background compaction
+    # log_compression_type: producer                               # Default topic compression type
+    # log_message_timestamp_type: create_time                      # Default topic messages timestamp type
+    # retention_bytes: None                                        # max bytes per partition on disk before triggering a compaction
+    # rm_sync_timeout_ms: 2000ms
+    # rm_violation_recovery_policy: crash                          # Describes how to recover from an invariant violation happened on the partition level
+    # target_quota_byte_rate: 2GB                                  # Target quota byte rate in bytes per second
+    # tm_sync_timeout_ms: 2000ms                                   # Time to wait state catch up before rejecting a request
+    # tm_violation_recovery_policy: crash                          # Describes how to recover from an invariant violation happened on the transaction coordinator level
+    # transactional_id_expiration_ms: 10080min                     # Producer ids are expired once this time has elapsed after the last write with the given producer ID
+  tunable:
+    # alter_topic_cfg_timeout_ms: 5s                              # Time to wait for entries replication in controller log when executing alter configuration request
+    # compacted_log_segment_size: 256MiB                           # How large in bytes should each compacted log segment be (default 256MiB)
+    # controller_backend_housekeeping_interval_ms: 1s              # Interval between iterations of controller backend housekeeping loop
+    # coproc_max_batch_size: 32kb                                  # Maximum amount of bytes to read from one topic read
+    # coproc_max_inflight_bytes: 10MB                              # Maximum amountt of inflight bytes when sending data to wasm engine
+    # coproc_max_ingest_bytes: 640kb                               # Maximum amount of data to hold from input logs in memory
+    # coproc_offset_flush_interval_ms: 300000ms                    # Interval for which all coprocessor offsets are flushed to disk
+    # create_topic_timeout_ms: 2000ms                              # Timeout (ms) to wait for new topic creation
+    # default_num_windows: 10                                      # Default number of quota tracking windows
+    # default_window_sec: 1000ms                                   # Default quota tracking window size in milliseconds
+    # delete_retention_ms: 10080min                                # delete segments older than this (default 1 week)
+    # developer_mode: optional                                     # Skips most of the checks performed at startup
+    # disable_batch_cache: false                                   # Disable batch cache in log manager
+    # fetch_reads_debounce_timeout: 1ms                            # Time to wait for next read in fetch request when requested min bytes wasn't reached
+    # fetch_session_eviction_timeout_ms: 60s                       # Minimum time before which unused session will get evicted from sessions; Maximum time after which inactive session will be deleted is two time given configuration valuecache
+    # group_initial_rebalance_delay: 300ms                         # Extra delay (ms) added to rebalance phase to wait for new members
+    # group_new_member_join_timeout: 30000ms                       # Timeout for new member joins
+    # group_topic_partitions: 1                                    # Number of partitions in the internal group membership topic
+    # id_allocator_batch_size: 1000                                # ID allocator allocates messages in batches (each batch is a one log record) and then serves requests from memory without touching the log until the batch is exhausted
+    # id_allocator_log_capacity: 100                               # Capacity of the id_allocator log in number of messages; Once it reached id_allocator_stm should compact the log
+    # join_retry_timeout_ms: 5s                                    # Time between cluster join retries in milliseconds
+    # kafka_qdc_idle_depth: 10                                     # Queue depth when idleness is detected in kafka queue depth control
+    # kafka_qdc_latency_alpha: 0.002                               # Smoothing parameter for kafka queue depth control latency tracking
+    # kafka_qdc_max_depth: 100                                     # Maximum queue depth used in kafka queue depth control
+    # kafka_qdc_min_depth: 1                                       # Minimum queue depth used in kafka queue depth control
+    # kafka_qdc_window_count: 12                                   # Number of windows used in kafka queue depth control latency tracking
+    # kafka_qdc_window_size_ms: 1500ms                             # Window size for kafka queue depth control latency tracking
+    # kvstore_flush_interval: 10ms                                 # Key-value store flush interval (ms)
+    # kvstore_max_segment_size: 16MB                               # Key-value maximum segment size (bytes)
+    # log_segment_size: 1GB                                        # How large in bytes should each log segment be (default 1G)
+    # max_compacted_log_segment_size: 5GB                          # Max compacted segment size after consolidation
+    # max_kafka_throttle_delay_ms: 60000ms                         # Fail-safe maximum throttle delay on kafka requests
+    # metadata_dissemination_interval_ms: 3000ms                   # Interaval for metadata dissemination batching
+    # metadata_dissemination_retries: 10                           # Number of attempts of looking up a topic's meta data like shard before failing a request
+    # metadata_dissemination_retry_delay_ms: 500ms                 # Delay before retry a topic lookup in a shard or other meta tables
+    # quota_manager_gc_sec: 30000ms                                # Quota manager GC frequency in milliseconds
+    # raft_learner_recovery_rate: 104857600                          # Raft learner recovery rate in bytes per second
+    # raft_heartbeat_disconnect_failures: 3 #After how many failed heartbeats to forcibly close an unresponsive TCP connection. Set to 0 to disable force disconnection.
+    # raft_heartbeat_interval_ms: 150 #The interval in ms between raft leader heartbeats.
+    # raft_heartbeat_timeout_ms: 3000	#Raft heartbeat RPC timeout.
+    # raft_io_timeout_ms: 10000	#Raft I/O timeout.
+    # raft_max_concurrent_append_requests_per_follower: 16	#Maximum number of concurrent append entries requests sent by leader to one follower.
+    # raft_max_recovery_memory: 33554432	#Maximum memory that can be used for reads in the raft recovery process.
+    # raft_recovery_default_read_size: 524288	#Default size of read issued during raft follower recovery.
+    # raft_replicate_batch_window_size: 1048576	#Maximum size of requests cached for replication.
+    # raft_smp_max_non_local_requests:   #Maximum number of x-core requests pending in Raft seastar::smp group. (for more details look at seastar::smp_service_group documentation).
+    # raft_timeout_now_timeout_ms: 1000   #Timeout for a timeout now request.
+    # raft_transfer_leader_recovery_timeout_ms: 1000	#Timeout waiting for follower recovery when transferring leadership.
+    # raft_election_timeout_ms: 1500ms                             # Election timeout expressed in milliseconds TBD - election_time_out
+    # readers_cache_eviction_timeout_ms: 30s                       # Duration after which inactive readers will be evicted from cache
+    # reclaim_growth_window: 3000ms                                # Length of time in which reclaim sizes grow
+    # reclaim_max_size: 4MB                                        # Maximum batch cache reclaim size
+    # reclaim_min_size: 128KB                                      # Minimum batch cache reclaim size
+    # reclaim_stable_window: 10000ms                               # Length of time above which growth is reset
+    # recovery_append_timeout_ms: 5s                               # Timeout for append entries requests issued while updating stale follower
+    # release_cache_on_segment_roll: false                         # Free cache when segments roll
+    # replicate_append_timeout_ms: 3s                              # Timeout for append entries requests issued while replicating entries
+    # segment_appender_flush_timeout_ms: 1ms                       # Maximum delay until buffered data is written
+    # wait_for_leader_timeout_ms: 5000ms                           # Timeout (ms) to wait for leadership in metadata cache
+  node:
+    # node_id:                                                     # Unique ID identifying a node in the cluster
+    # data_directory:                                              # Place where redpanda will keep the data
+    # admin_api_doc_dir: /usr/share/redpanda/admin-api-doc         # Admin API doc directory
+    # api_doc_dir: /usr/share/redpanda/proxy-api-doc               # API doc directory
+    # coproc_supervisor_server: 127.0.0.1:43189                    # IpAddress and port for supervisor service
+    # dashboard_dir: None                                          # serve http dashboard on / url
+    # rack: None                                                   # Rack identifier
+
   # Invalid properties
   # Any of these properties will be ignored. These otherwise valid properties are not allowed
   # to be used in this section since they impact deploying Redpanda in Kubernetes.

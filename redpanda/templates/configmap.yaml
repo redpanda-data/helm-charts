@@ -30,6 +30,21 @@ metadata:
   {{- toYaml . | nindent 4 }}
 {{- end }}
 data:
+{{- if (include "redpanda.semver" . | semverCompare ">=22.1.1") }}
+  bootstrap.yaml: |
+{{- if .Values.auth.sasl.enabled }}
+      enable_sasl: true 
+  {{- with .Values.auth.sasl.users }}
+      superusers: ['{{ (first .).name }}']
+  {{- end }}
+{{- end }}
+ {{- with .Values.config.cluster }}
+    {{- toYaml . | nindent 6 }}
+  {{- end }}
+  {{- with .Values.config.tunable }}
+    {{- toYaml . | nindent 6 }}
+  {{- end }}
+{{- end }}
   redpanda.yaml: |
     config_file: /etc/redpanda/redpanda.yaml
     {{- if gt (len .Values.license_key) 0 }}
@@ -39,30 +54,49 @@ data:
     organization: {{ .Values.organization }}
     {{- end }}
     redpanda:
-{{- if .Values.auth.sasl.enabled }}
-  {{- with .Values.auth.sasl.users }}
-      superusers:
-    {{ toYaml . | indent 8 }}
+{{- if not (include "redpanda.semver" . | semverCompare ">=22.1.1") }}
+  {{- if .Values.auth.sasl.enabled }}
+      enable_sasl: true 
+    {{- with .Values.auth.sasl.users }}
+      superusers: ['{{ (first .).name }}']
+    {{- end }}
   {{- end }}
+  {{- if .Values.config | keys -}}
+    {{- if (hasKey .Values.config "cluster") }}
+      {{- if .Values.config.cluster | keys -}}
+       {{ toYaml .Values.config.cluster | trim | indent 2 }}
+     {{- end}}
+    {{- end}}
+    {{- if (hasKey .Values.config "tunable") }}
+      {{- if .Values.config.tunable | keys -}}
+      {{ toYaml .Values.config.tunable | trim | indent 2 }}
+      {{- end}}
+    {{- end}}
+    {{- if and (not (hasKey .Values.config "cluster")) (not (hasKey .Values.config "tuneable")) }}
+      {{- if .Values.config | keys  -}}
+      {{ toYaml .Values.config | indent 4 }}
+      {{- end }}
+    {{- end }}
+  {{- end}}
 {{- end }}
       admin:
         address: {{ .Values.listeners.admin.address }}
         name: admin
         port: {{ .Values.listeners.admin.port }}
-{{- if eq (include "admin-tls-enabled" .) "true" }}
+    {{- if eq (include "admin-tls-enabled" .) "true" }}
       admin_api_tls:
       - cert_file: {{ printf "/etc/tls/certs/%s" .Values.listeners.admin.tls.cert }}/tls.crt
         enabled: true
         key_file: {{ printf "/etc/tls/certs/%s" .Values.listeners.admin.tls.cert }}/tls.key
         name: admin
-  {{- if .Values.listeners.admin.tls.requireClientAuth }}
+      {{- if .Values.listeners.admin.tls.requireClientAuth }}
         require_client_auth: true
-  {{- end }}
+      {{- end }}
         truststore_file: {{ printf "/etc/tls/certs/%s" .Values.listeners.admin.tls.cert }}/ca.crt
-{{- end }}
+    {{- end }}
       enable_sasl: {{ .Values.auth.sasl.enabled }}
       kafka_api_tls:
-{{- range $i, $listener := .Values.listeners.kafka.endpoints }}
+  {{- range $i, $listener := .Values.listeners.kafka.endpoints }}
   {{- if hasKey $listener "tls" }}
     {{- if or $listener.tls.enabled (and (empty $listener.tls.enabled) $values.auth.tls.enabled) }}
       - cert_file: {{ printf "/etc/tls/certs/%s" $listener.tls.cert }}/tls.crt
@@ -72,8 +106,8 @@ data:
         require_client_auth: {{ $listener.tls.requireClientAuth }}
         truststore_file: {{ printf "/etc/tls/certs/%s" $listener.tls.cert }}/ca.crt
     {{- end }}
+    {{- end }}
   {{- end }}
-{{- end }}
 {{- if hasKey .Values.listeners.rpc "tls" }}
   {{- if or .Values.listeners.rpc.tls.enabled (and (empty .Values.listeners.rpc.tls.enabled) .Values.auth.tls.enabled) }}
       rpc_server_tls:
@@ -123,7 +157,4 @@ data:
       {{- end }}
     {{- end }}
   {{- end }}
-{{- end }}
-{{- if not (eq (toYaml .Values.config) "null") }}
-  {{ toYaml .Values.config | indent 6 }}
 {{- end }}

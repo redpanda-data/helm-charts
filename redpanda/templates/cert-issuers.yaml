@@ -20,7 +20,7 @@ limitations under the License.
   {{- range $name, $issuer := $values.auth.tls.certs }}
     {{- $r := $issuer.issuerRef }}
     {{- if not $r }}
-  apiVersion: cert-manager.io/v1
+apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: {{ template "redpanda.fullname" $ }}-{{ $name }}-selfsigned-issuer

@@ -14,8 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{ $anySASL := default false .Values.auth.sasl.enabled }}
-{{- if and (eq (include "kafka-tls-enabled" .) "true") (not $anySASL) }}
+{{- if and (eq (include "kafka-tls-enabled" .) "true") (eq (include "sasl-enabled" .) "false") }}
 apiVersion: v1
 kind: Pod
 metadata:
@@ -38,19 +37,27 @@ spec:
   containers:
     - name: {{ template "redpanda.name" . }}
       image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-      args: ["cluster", "info", "--brokers", "{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }}", "--tls-enabled", "--tls-truststore", "/etc/tls/certs/{{ (first .Values.listeners.kafka.endpoints).tls.cert }}/ca.crt"]
+      args: ["cluster", "info", "--brokers", "redpanda-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }}", "--tls-enabled", "--tls-truststore", "/etc/tls/certs/kafka/ca.crt"]
       volumeMounts:
-        - name: {{ template "redpanda.fullname" . }}
-          mountPath: /tmp/base-config
-        - name: tlscert
-          mountPath: /etc/tls/certs/{{ (first .Values.listeners.kafka.endpoints).tls.cert }}
+        - name: config
+          mountPath: /etc/redpanda
+{{- if eq (include "tls-enabled" .) "true" }}
+  {{- range $name, $cert := .Values.auth.tls.certs }}
+        - name: tls-{{ $name }}-cert
+          mountPath: {{ printf "/etc/tls/certs/%s" $name }}
+  {{- end }}
+{{- end }}
+      resources:
+{{- toYaml .Values.statefulset.resources | nindent 12 }}
   volumes:
     - name: {{ template "redpanda.fullname" . }}
       configMap:
         name: {{ template "redpanda.fullname" . }}
     - name: config
       emptyDir: {}
-    - name: tlscert
+{{- if eq (include "tls-enabled" .) "true" }}
+  {{- range $name, $cert := .Values.auth.tls.certs }}
+    - name: tls-{{ $name }}-cert
       secret:
         defaultMode: 420
         items:
@@ -58,7 +65,11 @@ spec:
           path: tls.key
         - key: tls.crt
           path: tls.crt
+    {{- if $cert.caEnabled }}
         - key: ca.crt
           path: ca.crt
-        secretName: {{ template "redpanda.fullname" . }}-{{ (first .Values.listeners.kafka.endpoints).tls.cert }}-cert
+    {{- end }}
+        secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
+  {{- end }}
+{{- end -}}
 {{- end }}

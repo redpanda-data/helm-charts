@@ -41,6 +41,13 @@ Create chart name and version as used by the chart label.
 {{- end }}
 
 {{/*
+Get the version of redpanda being used as an image
+*/}}
+{{- define "redpanda.semver" -}}
+{{ .Values.image.tag | trimPrefix "v" }}
+{{- end }}
+
+{{/*
 Create the name of the service account to use
 */}}
 {{- define "redpanda.serviceAccountName" -}}
@@ -244,4 +251,8 @@ IP is required for the advertised address.
 
 {{- define "tls-enabled" -}}
 {{- print (or (eq (include "admin-tls-enabled" .) "true") (eq (include "kafka-tls-enabled" .) "true") (eq (include "http-tls-enabled" .) "true") (eq (include "rpc-tls-enabled" .) "true") (eq (include "schemaregistry-tls-enabled" .) "true")) -}}
+{{- end -}}
+
+{{- define "sasl-enabled" -}}
+{{- print .Values.auth.sasl.enabled | default "false" -}}
 {{- end -}}

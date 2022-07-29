@@ -14,12 +14,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- /* TODO test expects the first schema registry listener to have TLS enabled */}}
-{{- if and (eq (include "schemaregistry-tls-enabled" .) "true") (eq (include "sasl-enabled" .) "false") }}
+{{- if and (eq (include "sasl-enabled" .) "true") (eq (include "tls-enabled" .) "true") }}
 apiVersion: v1
 kind: Pod
 metadata:
-  name: {{ include "redpanda.fullname" . }}-test-schemaregistry-internal-tls-status
+  name: "{{ include "redpanda.fullname" . }}-test-kafka-sasl-status"
   namespace: {{ .Release.Namespace | quote }}
   labels:
     helm.sh/chart: {{ template "redpanda.chart" . }}
@@ -38,8 +37,10 @@ spec:
   containers:
     - name: {{ template "redpanda.name" . }}
       image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
-      command: ['curl']
-      args: ["-v","-m","3","--ssl-reqd","--cacert","/etc/tls/certs/schema/ca.crt","https://{{ include "redpanda.internal.domain" . }}:{{ (first .Values.listeners.schemaRegistry.endpoints).port }}/subjects"]
+      command:
+      - /bin/sh
+      - -c
+      - rpk acl user delete admin --tls-truststore /etc/tls/certs/kafak/ca.crt --admin-api-tls-truststore /etc/tls/certs/admin/ca.crt --api-urls redpanda-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.admin.port" . }} --brokers {{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }}; sleep 3; rpk acl user create admin -p test --api-urls redpanda-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.admin.port" . }} --admin-api-tls-truststore /etc/tls/certs/admin/ca.crt --tls-truststore /etc/tls/certs/kafka/ca.crt && sleep 3 && rpk topic create test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-256 --brokers {{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }} --tls-enabled --tls-truststore /etc/tls/certs/kafka/ca.crt && rpk topic describe test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-256 --brokers {{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }} --tls-enabled --tls-truststore /etc/tls/certs/kafka/ca.crt && rpk topic delete test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-256 --brokers {{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }} --tls-enabled --tls-truststore /etc/tls/certs/kafka/ca.crt && rpk acl user delete admin --tls-truststore /etc/tls/certs/kafka/ca.crt --admin-api-tls-truststore /etc/tls/certs/admin/ca.crt --api-urls redpanda-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.admin.port" . }} --brokers {{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }}
       volumeMounts:
         - name: config
           mountPath: /etc/redpanda
