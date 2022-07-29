@@ -396,14 +396,44 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-# Tuning configuration
-tuning:
-  # Increases the number of allowed asynchronous IO events
-  tune_aio_events: false
+tuning: {}
+  # This section contains Redpanda tuning parameters.
+  # Each parameter below is set to their default values.
+  # Remove the curly brackets above if you uncomment any parameters below.
+  #
+  # Increases the number of allowed asynchronous IO events.
+  # tune_aio_events: false
+  #
   # Syncs NTP
-  tune_clocksource: false
-  # Installs a custom script to process coredumps and save them to the given directory.
-  tune_coredump: false
+  # tune_clocksource: false
+  #
+  # Creates a "ballast" file so that, if a Redpanda node runs out of space,
+  # you can delete the ballast file to allow the node to resume operations and then
+  # delete a topic or records to reduce the space used by Redpanda.
+  # tune_ballast_file: false
+  #
+  # The path where the ballast file will be created.
+  # ballast_file_path: "/var/lib/redpanda/data/ballast"
+  #
+  # The ballast file size.
+  # ballast_file_size: "1GiB"
+  #
+  # (Optional) The vendor, VM type and storage device type that redpanda will run on, in
+  # the format <vendor>:<vm>:<storage>. This hints to rpk which configuration values it
+  # should use for the redpanda IO scheduler.
+  # Some valid values are "gcp:c2-standard-16:nvme", "aws:i3.xlarge:default"
+  # well_known_io: ""
+  #
+  # The following tuning parameters must be false in container environments and will be ignored:
+  #   tune_network
+  #   tune_disk_scheduler
+  #   tune_disk_nomerges
+  #   tune_disk_irq
+  #   tune_fstrim
+  #   tune_cpu
+  #   tune_swappiness
+  #   tune_transparent_hugepages
+  #   tune_coredump
 
 # This section allows modifying various Redpanda settings not covered in other sections above.
 # These values do not pertain to the kubernetes objects created with helm.

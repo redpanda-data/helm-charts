@@ -141,9 +141,30 @@ data:
 {{- else }}
       enable_memory_locking: false
 {{- end }}
-      tune_cpu: false
-      tune_disk_irq: false
-{{ toYaml .Values.tuning | indent 6 }}
+{{- if hasKey .Values.tuning "tune_aio_events" }}
+  {{- if .Values.tuning.tune_aio_events }}
+      tune_aio_events: true
+  {{- end }}
+{{- end }}
+{{- if hasKey .Values.tuning "tune_clocksource" }}
+  {{- if .Values.tuning.tune_clocksource }}
+      tune_clocksource: true
+  {{- end }}
+{{- end }}
+{{- if hasKey .Values.tuning "tune_ballast_file" }}
+  {{- if .Values.tuning.tune_ballast_file }}
+      tune_ballast_file: true
+  {{- end }}
+{{- end }}
+{{- if hasKey .Values.tuning "ballast_file_path" }}
+      ballast_file_path: {{ .Values.tuning.ballast_file_path }}
+{{- end }}
+{{- if hasKey .Values.tuning "ballast_file_size" }}
+      ballast_file_size: {{ .Values.tuning.ballast_file_size }}
+{{- end }}
+{{- if hasKey .Values.tuning "well_known_io" }}
+      well_known_io: {{ .Values.tuning.well_known_io }}
+{{- end }}
 {{- if .Values.listeners.http.enabled }}
     pandaproxy:
       pandaproxy_api_tls:
