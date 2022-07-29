@@ -56,9 +56,9 @@ data:
     redpanda:
 {{- if not (include "redpanda.semver" . | semverCompare ">=22.1.1") }}
   {{- if .Values.auth.sasl.enabled }}
+      enable_sasl: true 
     {{- with .Values.auth.sasl.users }}
-      superusers:
-    {{ toYaml . | indent 4 }}
+      superusers: ['{{ (first .).name }}']
     {{- end }}
   {{- end }}
   {{- if .Values.config | keys -}}

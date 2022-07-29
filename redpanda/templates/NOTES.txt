@@ -25,7 +25,7 @@ Try some sample commands, like creating a topic called test-topic:
 
 {{- $anyTLS := default false .Values.auth.tls.enabled -}}
 {{- $anySASL := default false .Values.auth.sasl.enabled }}
-{{- if not $anyTLS }}
+{{- if and (not $anyTLS) (not $anySASL) }}
 
 With no TLS or SASL create a topic:
 
@@ -65,6 +65,26 @@ Delete the topic:
 
 {{- end -}}
 
+{{- if and (not $anyTLS) $anySASL }}
+
+Create admin user:
+
+ kubectl -n {{ .Release.Namespace }} run rpk -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} --command -- /bin/bash -c "rpk acl user create admin --api-urls {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.admin.port }} --user admin --password test --sasl-mechanism  SCRAM-SHA-256"
+
+With SASL enabled create a topic:
+
+  kubectl -n {{ .Release.Namespace }} run rpk -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} --command -- /bin/bash -c "rpk topic create test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-256 --brokers {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }}"
+
+Describe the topic:
+
+  kubectl -n {{ .Release.Namespace }} run rpk -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} --command -- /bin/bash -c "rpk topic describe test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-256 --brokers {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }}"
+
+Delete the topic:
+
+  kubectl -n {{ .Release.Namespace }} run -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} --command -- /bin/bash -c "rpk topic delete test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-256 --brokers {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.kafka.internal.advertise.port" $ }}"
+
+{{- end -}}
+
 {{- if and $anyTLS $anySASL }}
 
 Request the certificates:
@@ -75,7 +95,7 @@ ADMINCERT=$(kubectl exec -n {{ .Release.Namespace }} {{ template "redpanda.name"
 
 Create admin user:
 
- kubectl -n redpanda run rpk -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} --command -- /bin/bash -c "rpk acl user create admin --api-urls {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.admin.port }} --user admin --password test --sasl-mechanism  SCRAM-SHA-256 --admin-api-tls-enabled --admin-api-tls-truststore <(echo '$ADMINCERT')"
+ kubectl -n {{ .Release.Namespace }} run rpk -ti --rm --restart=Never --image {{ .Values.image.repository }}:{{ .Values.image.tag }} --command -- /bin/bash -c "rpk acl user create admin --api-urls {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.admin.port }} --user admin --password test --sasl-mechanism  SCRAM-SHA-256 --admin-api-tls-enabled --admin-api-tls-truststore <(echo '$ADMINCERT')"
 
 With TLS enabled create a topic:
 
