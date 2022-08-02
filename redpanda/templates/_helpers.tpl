@@ -256,3 +256,166 @@ IP is required for the advertised address.
 {{- define "sasl-enabled" -}}
 {{- print .Values.auth.sasl.enabled | default "false" -}}
 {{- end -}}
+
+{{- define "admin-external-nodeport-enabled" -}}
+  {{- $values := .Values -}}
+  {{- if hasKey $values.listeners.admin "external" -}}
+    {{- if hasKey $values.listeners.admin.external "type" -}}
+      {{- print (and (or $values.listeners.admin.external.enabled (and (not (hasKey $values.listeners.admin.external "enabled")) $values.external.enabled)) (eq $values.listeners.admin.external.type "NodePort")) -}}
+    {{- else -}}
+      {{- print (and (or $values.listeners.admin.external.enabled (and (not (hasKey $values.listeners.admin.external "enabled")) $values.external.enabled)) (eq $values.external.type "NodePort")) -}}
+    {{- end -}}
+  {{- else -}}
+    {{- print (and $values.external.enabled (eq $values.external.type "NodePort")) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- define "kafka-external-nodeport-enabled" -}}
+  {{- $values := .Values -}}
+  {{- $listenerExternalEnabled := false -}}
+  {{- range $listener := $values.listeners.kafka.endpoints -}}
+    {{- if hasKey $listener "external" -}}
+      {{- if hasKey $listener.external "type" -}}
+        {{- $listenerExternalEnabled = and (or $listener.external.enabled (and (not (hasKey $listener.external "enabled")) $values.external.enabled)) (eq $listener.external.type "NodePort") -}}
+      {{- else -}}
+        {{- $listenerExternalEnabled = and (or $listener.external.enabled (and (not (hasKey $listener.external "enabled")) $values.external.enabled)) (eq $values.external.type "NodePort") -}}
+      {{- end -}}
+    {{- else -}}
+      {{- $listenerExternalEnabled = and $values.external.enabled (eq $values.external.type "NodePort") -}}
+    {{- end -}}
+  {{- end -}}
+  {{ print $listenerExternalEnabled }}
+{{- end -}}
+
+{{- define "http-external-nodeport-enabled" -}}
+  {{- $values := .Values -}}
+  {{- $listenerExternalEnabled := false -}}
+  {{- range $listener := $values.listeners.http.endpoints -}}
+    {{- if hasKey $listener "external" -}}
+      {{- if hasKey $listener.external "type" -}}
+        {{- $listenerExternalEnabled = and (or $listener.external.enabled (and (not (hasKey $listener.external "enabled")) $values.external.enabled)) (eq $listener.external.type "NodePort") -}}
+      {{- else -}}
+        {{- $listenerExternalEnabled = and (or $listener.external.enabled (and (not (hasKey $listener.external "enabled")) $values.external.enabled)) (eq $values.external.type "NodePort") -}}
+      {{- end -}}
+    {{- else -}}
+      {{- $listenerExternalEnabled = and $values.external.enabled (eq $values.external.type "NodePort") -}}
+    {{- end -}}
+  {{- end -}}
+  {{ print $listenerExternalEnabled }}
+{{- end -}}
+
+{{- define "rpc-external-nodeport-enabled" -}}
+  {{- $values := .Values -}}
+  {{- if hasKey $values.listeners.rpc "external" -}}
+    {{- if hasKey $values.listeners.rpc.external "type" -}}
+      {{- print (and (or $values.listeners.rpc.external.enabled (and (not (hasKey $values.listeners.rpc.external "enabled")) $values.external.enabled)) (eq $values.listeners.rpc.external.type "NodePort")) -}}
+    {{- else -}}
+      {{- print (and (or $values.listeners.rpc.external.enabled (and (not (hasKey $values.listeners.rpc.external "enabled")) $values.external.enabled)) (eq $values.external.type "NodePort")) -}}
+    {{- end -}}
+  {{- else -}}
+    {{- print (and $values.external.enabled (eq $values.external.type "NodePort")) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- define "schemaregistry-external-nodeport-enabled" -}}
+  {{- $values := .Values -}}
+  {{- $listenerExternalEnabled := false -}}
+  {{- range $listener := $values.listeners.schemaRegistry.endpoints -}}
+    {{- if hasKey $listener "external" -}}
+      {{- if hasKey $listener.external "type" -}}
+        {{- $listenerExternalEnabled = and (or $listener.external.enabled (and (not (hasKey $listener.external "enabled")) $values.external.enabled)) (eq $listener.external.type "NodePort") -}}
+      {{- else -}}
+        {{- $listenerExternalEnabled = and (or $listener.external.enabled (and (not (hasKey $listener.external "enabled")) $values.external.enabled)) (eq $values.external.type "NodePort") -}}
+      {{- end -}}
+    {{- else -}}
+      {{- $listenerExternalEnabled = and $values.external.enabled (eq $values.external.type "NodePort") -}}
+    {{- end -}}
+  {{- end -}}
+  {{ print $listenerExternalEnabled }}
+{{- end -}}
+
+
+{{- define "external-nodeport-enabled" -}}
+{{- print (or (eq (include "admin-external-nodeport-enabled" .) "true") (eq (include "kafka-external-nodeport-enabled" .) "true") (eq (include "http-external-nodeport-enabled" .) "true") (eq (include "rpc-external-nodeport-enabled" .) "true") (eq (include "schemaregistry-external-nodeport-enabled" .) "true")) -}}
+{{- end -}}
+
+{{- define "admin-external-lb-enabled" -}}
+  {{- $values := .Values -}}
+  {{- if hasKey $values.listeners.admin "external" -}}
+    {{- if hasKey $values.listeners.admin.external "type" -}}
+      {{- print (and (or $values.listeners.admin.external.enabled (and (not (hasKey $values.listeners.admin.external "enabled")) $values.external.enabled)) (eq $values.listeners.admin.external.type "LoadBalancer")) -}}
+    {{- else -}}
+      {{- print (and (or $values.listeners.admin.external.enabled (and (not (hasKey $values.listeners.admin.external "enabled")) $values.external.enabled)) (eq $values.external.type "LoadBalancer")) -}}
+    {{- end -}}
+  {{- else -}}
+    {{- print (and $values.external.enabled (eq $values.external.type "LoadBalancer")) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- define "kafka-external-lb-enabled" -}}
+  {{- $values := .Values -}}
+  {{- $listenerLbEnabled := false -}}
+  {{- range $listener := $values.listeners.kafka.endpoints -}}
+    {{- if hasKey $listener "external" -}}
+      {{- if hasKey $listener.external "type" -}}
+        {{- $listenerLbEnabled = and (or $listener.external.enabled (and (not (hasKey $listener.external "enabled")) $values.external.enabled)) (eq $listener.external.type "LoadBalancer") -}}
+      {{- else -}}
+        {{- $listenerLbEnabled = and (or $listener.external.enabled (and (not (hasKey $listener.external "enabled")) $values.external.enabled)) (eq $values.external.type "LoadBalancer") -}}
+      {{- end -}}
+    {{- else -}}
+      {{- $listenerLbEnabled = and $values.external.enabled (eq $values.external.type "LoadBalancer") -}}
+    {{- end -}}
+  {{- end -}}
+  {{ print $listenerLbEnabled }}
+{{- end -}}
+
+{{- define "http-external-lb-enabled" -}}
+  {{- $values := .Values -}}
+  {{- $listenerLbEnabled := false -}}
+  {{- range $listener := $values.listeners.http.endpoints -}}
+    {{- if hasKey $listener "external" -}}
+      {{- if hasKey $listener.external "type" -}}
+        {{- $listenerLbEnabled = and (or $listener.external.enabled (and (not (hasKey $listener.external "enabled")) $values.external.enabled)) (eq $listener.external.type "LoadBalancer") -}}
+      {{- else -}}
+        {{- $listenerLbEnabled = and (or $listener.external.enabled (and (not (hasKey $listener.external "enabled")) $values.external.enabled)) (eq $values.external.type "LoadBalancer") -}}
+      {{- end -}}
+    {{- else -}}
+      {{- $listenerLbEnabled = and $values.external.enabled (eq $values.external.type "LoadBalancer") -}}
+    {{- end -}}
+  {{- end -}}
+  {{ print $listenerLbEnabled }}
+{{- end -}}
+
+{{- define "rpc-external-lb-enabled" -}}
+  {{- $values := .Values -}}
+  {{- if hasKey $values.listeners.rpc "external" -}}
+    {{- if hasKey $values.listeners.rpc.external "type" -}}
+      {{- print (and (or $values.listeners.rpc.external.enabled (and (not (hasKey $values.listeners.rpc.external "enabled")) $values.external.enabled)) (eq $values.listeners.rpc.external.type "LoadBalancer")) -}}
+    {{- else -}}
+      {{- print (and (or $values.listeners.rpc.external.enabled (and (not (hasKey $values.listeners.rpc.external "enabled")) $values.external.enabled)) (eq $values.external.type "LoadBalancer")) -}}
+    {{- end -}}
+  {{- else -}}
+    {{- print (and $values.external.enabled (eq $values.external.type "LoadBalancer")) -}}
+  {{- end -}}
+{{- end -}}
+
+{{- define "schemaregistry-external-lb-enabled" -}}
+  {{- $values := .Values -}}
+  {{- $listenerLbEnabled := false -}}
+  {{- range $listener := $values.listeners.schemaRegistry.endpoints -}}
+    {{- if hasKey $listener "external" -}}
+      {{- if hasKey $listener.external "type" -}}
+        {{- $listenerLbEnabled = and (or $listener.external.enabled (and (not (hasKey $listener.external "enabled")) $values.external.enabled)) (eq $listener.external.type "LoadBalancer") -}}
+      {{- else -}}
+        {{- $listenerLbEnabled = and (or $listener.external.enabled (and (not (hasKey $listener.external "enabled")) $values.external.enabled)) (eq $values.external.type "LoadBalancer") -}}
+      {{- end -}}
+    {{- else -}}
+      {{- $listenerLbEnabled = and $values.external.enabled (eq $values.external.type "LoadBalancer") -}}
+    {{- end -}}
+  {{- end -}}
+  {{ print $listenerLbEnabled }}
+{{- end -}}
+
+{{- define "external-lb-enabled" -}}
+{{- print (or (eq (include "admin-external-lb-enabled" .) "true") (eq (include "kafka-external-lb-enabled" .) "true") (eq (include "http-external-lb-enabled" .) "true") (eq (include "rpc-external-lb-enabled" .) "true") (eq (include "schemaregistry-external-lb-enabled" .) "true")) -}}
+{{- end -}}
