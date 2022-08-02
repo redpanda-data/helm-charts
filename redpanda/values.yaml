@@ -88,7 +88,6 @@ listeners:
   # Admin API listener
   # The kafka listener group cannot be disabled
   admin:
-    address: 0.0.0.0
     # The port for the admin server
     # Metrics are served off of this port at /metrics
     port: 9644
@@ -109,10 +108,7 @@ listeners:
     # derived from the configuration. External advertised listener will be via
     # node port unless load balancer is configured.
     endpoints:
-    # TODO POD_IP doesn't mean anything to the user
-    # maybe make address optional, and if not set then default is $(POD_IP)
-    - address: $(POD_IP)
-      name: default
+    - name: default
       port: 9092
       external:
         enabled: false
@@ -127,8 +123,7 @@ listeners:
     # PandaProxy is a kafka client that connects to an endpoint from listeners.kafka.endpoints
     kafkaEndpoint: default
     endpoints:
-    - address: 0.0.0.0
-      name: default
+    - name: default
       port: 8082
       external:
         enabled: true
@@ -139,7 +134,6 @@ listeners:
   # RPC listener
   # The RPC listener cannot be disabled
   rpc:
-    address: 0.0.0.0
     port: 33145
     external:
       enabled: false
@@ -153,8 +147,7 @@ listeners:
     # Schema Registry is a kafka client that connects to an endpoint from listeners.kafka.endpoints
     kafkaEndpoint: default
     endpoints:
-    - address: 0.0.0.0
-      name: default
+    - name: default
       port: 8081
       external:
         enabled: true
