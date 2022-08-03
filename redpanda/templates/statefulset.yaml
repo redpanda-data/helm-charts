@@ -110,9 +110,9 @@ spec:
             - >
               redpanda
               start
-              --smp={{ .Values.statefulset.resources.limits.cpu }}
-              --memory={{ .Values.statefulset.redpanda.memory }}
-              --reserve-memory={{ .Values.statefulset.redpanda.reservedMemory }}
+              --smp={{ .Values.resources.cpu.cores }}
+              --memory={{ template "redpanda-memory" . }}M
+              --reserve-memory={{ template "redpanda-reserve-memory" . }}M
               --advertise-kafka-addr=
 {{- range $listener := .Values.listeners.kafka.endpoints -}}
   {{- $listenerNodePortEnabled := false -}}
@@ -153,7 +153,7 @@ spec:
               --pandaproxy-addr={{- range $listener := .Values.listeners.http.endpoints -}}
 {{ $listener.name }}://$(POD_IP):{{ $listener.port }},
 {{- end }}
-              --default-log-level={{ .Values.logLevel }}
+              --default-log-level={{ .Values.logging.logLevel }}
           ports:
             - containerPort: {{ .Values.listeners.admin.port }}
               name: admin
@@ -183,7 +183,14 @@ spec:
   {{- end }}
 {{- end }}
           resources:
-{{- toYaml .Values.statefulset.resources | nindent 12 }}
+{{- if hasKey .Values.resources.memory "min" }}
+            requests:
+              cpu: {{ .Values.resources.cpu.cores }}
+              memory: {{ .Values.resources.memory.container.min }}
+{{- end }}
+            limits:
+              cpu: {{ .Values.resources.cpu.cores }}
+              memory: {{ .Values.resources.memory.container.max }}
       volumes:
         - name: datadir
 {{- if .Values.storage.persistentVolume.enabled }}

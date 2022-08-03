@@ -419,3 +419,144 @@ IP is required for the advertised address.
 {{- define "external-lb-enabled" -}}
 {{- print (or (eq (include "admin-external-lb-enabled" .) "true") (eq (include "kafka-external-lb-enabled" .) "true") (eq (include "http-external-lb-enabled" .) "true") (eq (include "rpc-external-lb-enabled" .) "true") (eq (include "schemaregistry-external-lb-enabled" .) "true")) -}}
 {{- end -}}
+
+{{/* Resource variables */}}
+{{- define "redpanda-memoryToMi" -}}
+  {{/*
+  This template converts the incoming memory value to whole number mebibytes.
+  Input can be: k | K | m | M | g | G | Ki | Mi | Gi
+  */}}
+  {{- $mem := . -}}
+  {{- $result := 0 -}}
+  {{- if or (hasSuffix "K" $mem) (hasSuffix "k" $mem) -}}
+    {{- $rawmem := $mem | trimSuffix "K" | trimSuffix "k" -}}
+    {{- if contains "." $rawmem -}}
+      {{- $rawmem = $rawmem | float64 -}}
+      {{- $result = divf (mulf $rawmem (mul 8 1000)) (mul 8 1024 1024) -}}
+    {{- else -}}
+      {{- $rawmem = $rawmem | int64 -}}
+      {{- $result = divf (mul $rawmem (mul 8 1000)) (mul 8 1024 1024) -}}
+    {{- end -}}
+    {{- $result = floor $result -}}
+  {{- else if or (hasSuffix "M" $mem) (hasSuffix "m" $mem) -}}
+    {{- $rawmem := $mem | trimSuffix "M" | trimSuffix "m" -}}
+    {{- if contains "." $rawmem -}}
+      {{- $rawmem = $rawmem | float64 -}}
+      {{- $result = divf (mulf $rawmem (mul 8 1000 1000)) (mul 8 1024 1024) -}}
+    {{- else -}}
+      {{- $rawmem = $rawmem | int64 -}}
+      {{- $result = divf (mul $rawmem (mul 8 1000 1000)) (mul 8 1024 1024) -}}
+    {{- end -}}
+    {{- $result = floor $result -}}
+  {{- else if or (hasSuffix "G" $mem) (hasSuffix "g" $mem) -}}
+    {{- $rawmem := $mem | trimSuffix "G" | trimSuffix "g" -}}
+    {{- if contains "." $rawmem -}}
+      {{- $rawmem = $rawmem | float64 -}}
+      {{- $result = divf (mulf $rawmem (mul 8 1000 1000 1000)) (mul 8 1024 1024) -}}
+    {{- else -}}
+      {{- $rawmem = $rawmem | int64 -}}
+      {{- $result = divf (mul $rawmem (mul 8 1000 1000 1000)) (mul 8 1024 1024) -}}
+    {{- end -}}
+    {{- $result = floor $result -}}
+  {{- else if hasSuffix "Ki" $mem }}
+    {{- $rawmem := $mem | trimSuffix "Ki" -}}
+    {{- if contains "." $rawmem -}}
+      {{- $rawmem = $rawmem | float64 -}}
+      {{- $result = divf (mulf $rawmem (mul 8 1024)) (mul 8 1024 1024) -}}
+    {{- else -}}
+      {{- $rawmem = $rawmem | int64 -}}
+      {{- $result = divf (mul $rawmem (mul 8 1024)) (mul 8 1024 1024) -}}
+    {{- end -}}
+    {{- $result = floor $result -}}
+  {{- else if hasSuffix "Mi" $mem -}}
+    {{- $result = $mem | trimSuffix "Mi" -}}
+    {{- if contains "." $result -}}
+      {{- $result = $result | float64 -}}
+    {{- else -}}
+      {{- $result = $result | int64 -}}
+    {{- end -}}
+  {{- else if hasSuffix "Gi" $mem -}}
+    {{- $rawmem := $mem | trimSuffix "Gi" -}}
+    {{- if contains "." $rawmem -}}
+      {{- $rawmem = $rawmem | float64 -}}
+      {{- $result = (mulf $rawmem 1024) | floor -}}
+    {{- else -}}
+      {{- $rawmem = $rawmem | int64 -}}
+      {{- $result = (mul $rawmem 1024) -}}
+    {{- end -}}
+  {{- else }}
+    {{- printf "\n%s is invalid memory amount\nSuffixes can be: k | K | m | M | g | G | Ki | Mi | Gi" $mem | fail -}}
+  {{- end }}
+  {{- $result -}}
+{{- end -}}
+
+{{- define "container-memory" -}}
+  {{- $result := "" -}}
+  {{- if (hasKey .Values.resources.memory.container "min") -}}
+    {{- $result = .Values.resources.memory.container.min | include "redpanda-memoryToMi" -}}
+  {{- else -}}
+    {{- $result = .Values.resources.memory.container.max | include "redpanda-memoryToMi" -}}
+  {{- end -}}
+  {{- if eq $result "" -}}
+    {{- "unable to get memory value" | fail -}}
+  {{- end -}}
+  {{- $result -}}
+{{- end -}}
+
+{{- define "redpanda-reserve-memory" -}}
+  {{/*
+  Determines the value of --reserve-memory flag (in mebibytes with M suffix, per Seastar).
+  This template looks at all locations where memory could be set.
+  These locations, in order of priority, are:
+  - .Values.resources.memory.redpanda.reserveMemory (commented out by default, users could uncomment)
+  - .Values.resources.memory.container.min (commented out by default, users could uncomment and
+    change to something lower than .Values.resources.memory.container.max)
+  - .Values.resources.memory.container.max (set by default)
+  */}}
+  {{- $result := 0 -}}
+  {{- if (hasKey .Values.resources.memory "redpanda") -}}
+    {{- $result = .Values.resources.memory.redpanda.reserveMemory | include "redpanda-memoryToMi" | int64 -}}
+  {{- else if (hasKey .Values.resources.memory.container "min") -}}
+    {{- $result = add (mulf (include "container-memory" .) 0.002) 200 -}}
+    {{- if gt $result 1000 -}}
+      {{- $result = 1000 -}}
+    {{- end -}}
+  {{- else -}}
+    {{- $result = add (mulf (include "container-memory" .) 0.002) 200 -}}
+    {{- if gt $result 1000 -}}
+      {{- $result = 1000 -}}
+    {{- end -}}
+  {{- end -}}
+  {{- if eq $result 0 -}}
+    {{- "unable to get memory value" | fail -}}
+  {{- end -}}
+  {{- $result -}}
+{{- end -}}
+
+{{- define "redpanda-memory" -}}
+  {{/*
+  Determines the value of --memory flag (in mebibytes with M suffix, per Seastar).
+  This template looks at all locations where memory could be set.
+  These locations, in order of priority, are:
+  - .Values.resources.memory.redpanda.memory (commented out by default, users could uncomment)
+  - .Values.resources.memory.container.min (commented out by default, users could uncomment and
+    change to something lower than .Values.resources.memory.container.max)
+  - .Values.resources.memory.container.max (set by default)
+  */}}
+  {{- $result := 0 -}}
+  {{- if (hasKey .Values.resources.memory "redpanda") -}}
+    {{- $result = .Values.resources.memory.redpanda.memory | include "redpanda-memoryToMi" | int64 -}}
+  {{- else -}}
+    {{- $result = mulf (include "container-memory" .) 0.8 | int64 -}}
+  {{- end -}}
+  {{- if eq $result 0 -}}
+    {{- "unable to get memory value" | fail -}}
+  {{- end -}}
+  {{- if lt $result 2000 -}}
+    {{- printf "\n%d is below the minimum recommended value for Redpanda" $result | fail -}}
+  {{- end -}}
+  {{- if gt (add $result (include "redpanda-reserve-memory" .)) (include "container-memory" . | int64) -}}
+    {{- printf "\nNot enough container memory for Redpanda memory values\nredpanda: %d, reserve: %d, container: %d" $result (include "redpanda-reserve-memory" . | int64) (include "container-memory" . | int64) | fail -}}
+  {{- end -}}
+  {{- $result -}}
+{{- end -}}

@@ -14,9 +14,3 @@
 # limitations under the License.
 statefulset:
   replicas: 1
-  resources:
-    limits:
-      memory: 1Gi
-  redpanda:
-    memory: 700M
-    reservedMemory: 200M
