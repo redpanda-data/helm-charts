@@ -20,11 +20,14 @@
 
 # Common parameters
 #
-# Override redpanda.name template
+# Override the app.kubernetes.io/name label
 nameOverride: ""
-# Override redpanda.fullname template
+# Objects are named based on the name of the helm release. fullnameOverride,
+# overrides this behavior naming resources as specified.
 fullnameOverride: ""
-# Default kuberentes cluster domain
+# Cluster's default DNS domain.
+# You should overwrite it if you're using a different one,
+# otherwise Redpanda node discovery and TLS certificates won't work.
 clusterDomain: cluster.local
 # Additional labels added to all Kubernetes objects
 commonLabels: {}
@@ -81,112 +84,6 @@ auth:
       schema:
         caEnabled: true
 #
-# Listeners
-listeners:
-  # Admin API listener
-  # The kafka listener group cannot be disabled
-  admin:
-    # The port for the admin server
-    # Metrics are served off of this port at /metrics
-    port: 9644
-    # Optional external section
-    external:
-      # enabled: true
-      # Type of external access (options are NodePort and LoadBalancer)
-      # type: NodePort
-      # External port
-      # This listener port will be used for the external port if this is not included
-      port: 31644
-    # Optional TLS section (required if global TLS is enabled)
-    tls:
-      # Optional flag to override the global TLS enabled flag
-      # enabled: true
-      # Name of certificate used for TLS (must match a cert registered at auth.tls.certs)
-      cert: admin
-      # If true, the truststore file for this listener will be included in the ConfigMap
-      requireClientAuth: false
-  # Kafka API listeners
-  # The kafka listener group cannot be disabled
-  kafka:
-    # The first entry is used to set up the headless service, which enables
-    # internal clients within the same namespace to connect directly to brokers.
-    # By default there are two listeners, one for internal and another for external clients.
-    # A listener with the name `internal` must exist, and will always be advertised
-    # using the internal address.
-    # Other listeners will have the advertised address according to whether it is
-    # externally facing or not.
-    endpoints:
-    - name: internal
-      port: 9093
-      external:
-        enabled: false
-      tls:
-        # enabled: true
-        cert: kafka
-        requireClientAuth: false
-    - name: external
-      port: 9092
-      # Optional external section
-      external:
-        # enabled: true
-        # Type of external access (options are NodePort and LoadBalancer)
-        # type: NodePort
-        # External port
-        # This listener port will be used for the external port if this is not included
-        port: 31092
-      tls:
-        # enabled: true
-        cert: kafka
-        requireClientAuth: false
-  # HTTP API listeners (aka PandaProxy)
-  http:
-    enabled: true
-    # PandaProxy is a kafka client that connects to an endpoint from listeners.kafka.endpoints
-    kafkaEndpoint: default
-    endpoints:
-    - name: default
-      port: 8082
-    # Optional external section
-      external:
-        # enabled: true
-        # Type of external access (options are NodePort and LoadBalancer)
-        # type: NodePort
-        # External port
-        # This listener port will be used for the external port if this is not included
-        port: 30082
-      tls:
-        # enabled: true
-        cert: proxy
-        requireClientAuth: false
-  # RPC listener
-  # The RPC listener cannot be disabled
-  rpc:
-    port: 33145
-    tls:
-      # enabled: true
-      cert: rpc
-      requireClientAuth: false
-  # Schema registry listeners
-  schemaRegistry:
-    enabled: true
-    # Schema Registry is a kafka client that connects to an endpoint from listeners.kafka.endpoints
-    kafkaEndpoint: default
-    endpoints:
-    - name: default
-      port: 8081
-      # Optional external section
-      external:
-        # enabled: true
-        # Type of external access (options are NodePort and LoadBalancer)
-        # type: NodePort
-        # External port
-        # This listener port will be used for the external port if this is not included
-        port: 30081
-      tls:
-        # enabled: true
-        cert: schema
-        requireClientAuth: false
-#
 # External access configuration
 external:
   # Default external access value for all listeners except RPC
@@ -196,6 +93,8 @@ external:
   # Default external access type (options are NodePort and LoadBalancer)
   # TODO include IP range for load balancer that support it: https://github.com/redpanda-data/helm-charts/issues/106
   type: NodePort
+  # This domain name will be appended to the pod name and added to the `advertised_kafka_api`
+  # node configuration flag.
   domain: local
   # annotations:
     # For example:
@@ -316,12 +215,13 @@ storage:
   persistentVolume:
     enabled: true
     size: 3Gi
-    # If defined, then `storageClassName: <storageClass>`.
-    # If set to "-", then `storageClassName: ""`, which disables dynamic
-    # provisioning.
-    # If undefined or empty (default), then no `storageClassName` spec is set,
-    # so the default provisioner will be chosen (gp2 on AWS, standard on
-    # GKE, AWS & OpenStack).
+    # Define storageClass to choose a specific StorageClass from your kubernetes installation.
+    # Set to "-", to disables dynamic provisioning.
+    # Leave empty (default) to allow kubernetes to set the storage class to
+    # the cluster default. To get information about the default storage class, run:
+    # ```
+    # kubectl describe storageclass $(kubectl get storageclass -o=jsonpath='{.items[?(@.metadata.annotations.storageclass\.kubernetes\.io/is-default-class=="true")].metadata.name}')
+    # ```
     storageClass: ""
     # Additional labels to apply to the created PersistentVolumeClaims.
     labels: {}
@@ -359,8 +259,9 @@ statefulset:
     # The topologyKey to be used.
     # Can be used to spread across different nodes, AZs, regions etc.
     topologyKey: kubernetes.io/hostname
-    # Type of anti-affinity rules: either `soft`, `hard` or empty value (which
-    # disables anti-affinity rules).
+    # Type of pod anti-affinity rules: either `soft`, `hard` or empty value (which
+    # disables anti-affinity rules). Pod anti-affinity rules either try to place (soft) or require that (hard)
+    # pods be assigned to different worker nodes.
     type: soft
     # Weight for `soft` anti-affinity rules.
     # Does not apply for other anti-affinity types.
@@ -566,3 +467,114 @@ config:
   # rpc_server_tls                                TLS configuration for RPC server                                validate
   # seed_servers                                List of the seed servers used to join current cluster; If the seed_server list is empty the node will be a cluster root and it will form a new cluster                                None
   # superusers                                List of superuser usernames                                None
+
+#
+# Listener overrides
+#
+# Use this section to override the per-listener settings configured above
+#
+listeners:
+  # Admin API listener
+  # The admin listener group cannot be disabled
+  admin:
+    # The port for the admin server
+    # Metrics are served off of this port at /metrics
+    port: 9644
+    # Optional external section
+    external:
+      # Optional keys to override the external access configuration (`external`)
+      # for the admin API
+      # enabled: true
+      # type: NodePort
+
+      # This listener port will be used for the external port if this is not included
+      port: 31644
+    # Optional TLS section (required if global TLS is enabled)
+    tls:
+      # Optional flag to override the global TLS enabled flag
+      # enabled: true
+      # Name of certificate used for TLS (must match a cert registered at auth.tls.certs)
+      cert: admin
+      # If true, the truststore file for this listener will be included in the ConfigMap
+      requireClientAuth: false
+  # Kafka API listeners
+  # The kafka listener group cannot be disabled
+  kafka:
+    # The first entry is used to set up the headless service, which enables
+    # internal clients within the same namespace to connect directly to brokers.
+    # By default there are two listeners, one for internal and another for external clients.
+    # A listener with the name `internal` must exist, and will always be advertised
+    # using the internal address.
+    # Other listeners will have the advertised address according to whether it is
+    # externally facing or not.
+    endpoints:
+    - name: internal
+      port: 9093
+      external:
+        enabled: false
+      tls:
+        # enabled: true
+        cert: kafka
+        requireClientAuth: false
+    - name: external
+      port: 9092
+      # Optional external section
+      external:
+        # enabled: true
+        # Type of external access (options are NodePort and LoadBalancer)
+        # type: NodePort
+        # External port
+        # This listener port will be used for the external port if this is not included
+        port: 31092
+      tls:
+        # enabled: true
+        cert: kafka
+        requireClientAuth: false
+  # HTTP API listeners (aka PandaProxy)
+  http:
+    enabled: true
+    # PandaProxy is a kafka client that connects to an endpoint from listeners.kafka.endpoints
+    kafkaEndpoint: default
+    endpoints:
+    - name: default
+      port: 8082
+    # Optional external section
+      external:
+        # enabled: true
+        # Type of external access (options are NodePort and LoadBalancer)
+        # type: NodePort
+        # External port
+        # This listener port will be used for the external port if this is not included
+        port: 30082
+      tls:
+        # enabled: true
+        cert: proxy
+        requireClientAuth: false
+  # RPC listener
+  # The RPC listener cannot be disabled
+  rpc:
+    port: 33145
+    tls:
+      # enabled: true
+      cert: rpc
+      requireClientAuth: false
+  # Schema registry listeners
+  schemaRegistry:
+    enabled: true
+    # Schema Registry is a kafka client that connects to an endpoint from listeners.kafka.endpoints
+    kafkaEndpoint: default
+    endpoints:
+    - name: default
+      port: 8081
+      # Optional external section
+      external:
+        # enabled: true
+        # Type of external access (options are NodePort and LoadBalancer)
+        # type: NodePort
+        # External port
+        # This listener port will be used for the external port if this is not included
+        port: 30081
+      tls:
+        # enabled: true
+        cert: schema
+        requireClientAuth: false
