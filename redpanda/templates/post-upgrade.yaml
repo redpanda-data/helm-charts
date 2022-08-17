@@ -33,20 +33,20 @@ spec:
     spec:
       restartPolicy: Never
       containers:
-      - name: {{ template "redpanda.name" . }}-post-upgrade
+      - name: {{ template "redpanda.fullname" . }}-post-upgrade
         image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
         command: ["/bin/sh", "-c"]
         args:
           - >
 {{- if and (eq (include "tls-enabled" .) "true")  (eq (include "sasl-enabled" .) "true") }}
-            rpk --api-urls {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.admin.port" $ }} cluster config import -f /tmp/base-config/bootstrap.yaml --admin-api-tls-enabled --admin-api-tls-truststore /etc/tls/certs/admin/ca.crt --tls-enabled --tls-truststore /etc/tls/certs/admin/ca.crt --user admin --password test --sasl-mechanism SCRAM-SHA-256;
+            rpk --api-urls {{ template "redpanda.fullname" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.admin.port" $ }} cluster config import -f /tmp/base-config/bootstrap.yaml --admin-api-tls-enabled --admin-api-tls-truststore /etc/tls/certs/admin/ca.crt --tls-enabled --tls-truststore /etc/tls/certs/admin/ca.crt --user admin --password test --sasl-mechanism SCRAM-SHA-256;
 
 {{- else if eq (include "tls-enabled" .) "true" }}
-            rpk --api-urls {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.admin.port" $ }} cluster config import -f /tmp/base-config/bootstrap.yaml --admin-api-tls-enabled --admin-api-tls-truststore /etc/tls/certs/admin/ca.crt --tls-enabled --tls-truststore /etc/tls/certs/admin/ca.crt;
+            rpk --api-urls {{ template "redpanda.fullname" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.admin.port" $ }} cluster config import -f /tmp/base-config/bootstrap.yaml --admin-api-tls-enabled --admin-api-tls-truststore /etc/tls/certs/admin/ca.crt --tls-enabled --tls-truststore /etc/tls/certs/admin/ca.crt;
 {{- else if eq (include "sasl-enabled" .) "true" }}
-            rpk --api-urls {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.admin.port" $ }} cluster config import -f /tmp/base-config/bootstrap.yaml --user admin --password test --sasl-mechanism SCRAM-SHA-256;
+            rpk --api-urls {{ template "redpanda.fullname" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.admin.port" $ }} cluster config import -f /tmp/base-config/bootstrap.yaml --user admin --password test --sasl-mechanism SCRAM-SHA-256;
 {{- else }}
-            rpk --api-urls {{ template "redpanda.name" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.admin.port" $ }} cluster config import -f /tmp/base-config/bootstrap.yaml;
+            rpk --api-urls {{ template "redpanda.fullname" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ template "redpanda.admin.port" $ }} cluster config import -f /tmp/base-config/bootstrap.yaml;
 {{- end }}            
         volumeMounts:
           - name: {{ template "redpanda.fullname" . }}
