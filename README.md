@@ -32,7 +32,7 @@ See the [values.yaml](./redpanda/values.yaml) file for all possible properties.
 ### Required software
 
 * Helm >= 3.0
-* Kubernetes >= 1.18
+* Kubernetes >= 1.21
 * Cert-Manager (optional, needed for TLS)
 * MetalLB (optional)
 
