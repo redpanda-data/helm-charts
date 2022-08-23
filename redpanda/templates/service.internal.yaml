@@ -14,7 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-
+---
 # This service is only used to create the DNS enteries for each pod in
 # the stateful set. This service should not be used by any client
 # application
@@ -33,22 +33,9 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  clusterIP: None
   publishNotReadyAddresses: true
   type: ClusterIP
-  ports:
-    - name: kafka
-      protocol: TCP
-      port: {{ template "redpanda.kafka.internal.advertise.port" $ }}
-      targetPort: {{ template "redpanda.kafka.internal.advertise.port" $ }}
-    - name: admin
-      protocol: TCP
-      port: {{ template "redpanda.admin.port" $ }}
-      targetPort: {{ template "redpanda.admin.port" $ }}
-    - name: proxy
-      protocol: TCP
-      port: {{ template "redpanda.pandaproxy.internal.advertise.port" $ }}
-      targetPort: {{ template "redpanda.pandaproxy.internal.advertise.port" $ }}
+  clusterIP: None
   selector:
     app.kubernetes.io/name: {{ template "redpanda.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name | quote }}

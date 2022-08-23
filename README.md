@@ -10,9 +10,9 @@ Please note that we have two helm charts: `redpanda` (this project) and `redpand
 
 This helm chart (`redpanda`) focuses on providing a helm chart that deploys a Redpanda cluster according to the configuration in a values.yaml. Once deployed, you continue to use the helm command and modify [`values.yaml`](https://github.com/redpanda-data/helm-charts/blob/main/redpanda/values.yaml) to change and/or upgrade your Redpanda deployment.
 
-The `redpanda-operator` chart installs a golang-based operator that will deploy and manage your Redpanda cluster. Helm is primarily used in that project only to deploy the operator, and from there you would interact with the operator and/or `kubectl` in order to modify your Redpanda cluster. `redpanda-operator` is released alongside Redpanda (see the latest release [here](https://github.com/redpanda-data/redpanda/releases)). For now, much of our site's helm documentation focuses on the `redpanda-operator` (see [here](https://docs.redpanda.com/docs/quickstart/kubernetes-qs-cloud/)). We are improving our documentation to have more extensive coverage of both the `redpanda-operator` and this `redpanda` helm chart.
+The `redpanda-operator` chart installs a kubernetes operator that will deploy and manage a Redpanda cluster. The future state of the operator is in flux and may change in the near future. Helm is primarily used in that project only to deploy the operator, and from there you would interact with the operator and/or `kubectl` in order to modify your Redpanda cluster. `redpanda-operator` is released alongside Redpanda (see the latest release [here](https://github.com/redpanda-data/redpanda/releases)). For now, much of our site's helm documentation focuses on the `redpanda-operator` (see [here](https://docs.redpanda.com/docs/quickstart/kubernetes-qs-cloud/)). We are improving our documentation to have more extensive coverage of both the `redpanda-operator` and this `redpanda` helm chart.
 
-Feel free to use which ever helm chart you prefer! But keep in mind that they are separate, incompatible projects, and instructions for one will not apply to the other. A good rule of thumb is that if you see mention of the word "operator" in some resource, it's not related to this helm chart. This chart has no operator and no custom resource definitions (CRDs).
+This is the recommended chart. Feel free to use which ever helm chart you prefer, but keep in mind that they are separate, incompatible projects, and instructions for one will not apply to the other. A good rule of thumb is that if you see mention of the word "operator" in some resource, it's not related to this helm chart. This chart has no operator and no custom resource definitions (CRDs).
 
 ## Overview
 
@@ -91,19 +91,19 @@ helm install \
   cert-manager jetstack/cert-manager \
   --namespace cert-manager \
   --create-namespace \
-  --version v1.8.0 \
   --set installCRDs=true
 ```
 
 ## Redpanda
 
-At this point you have a cluster and other pre-requisites available. We are now ready to install Redpanda into the cluster. Most of the time you will want Redpanda to be contained in its own namespace. This can be done with the following command:
+At this point you have a cluster and other pre-requisites available and are now ready to install Redpanda into the cluster.
+Install Redpanda using this chart into a namespace (eg. redpanda-ns) using the default values:
 
 ```sh
 helm install redpanda redpanda -n redpanda-ns --create-namespace
 ```
 
-The above command uses the default values from `values.yaml` to create multiple kubernetes objects in the redpanda namespace:
+Inspect the resources installed:
 
 ```sh
 > kubectl get all -A --field-selector=metadata.namespace=redpanda-ns
@@ -121,12 +121,61 @@ redpanda-ns  statefulset.apps/redpanda   3/3     48s
 
 ## Next steps
 
-Now you are ready to customize your configuration however you like. Check the [examples](./examples) folder for guides on enabling various Redpanda features.
+Installing the way we have here will only use the default configuration options for this chart. Many times, you will want to customize the chart to use your preferred configuration.
 
-Many times you will be able to customize `values.yaml` and then apply these updates without needing to re-install the entire cluster. If you make a change that only impacts a single service (for example), then running the following command will only restart that service and leave the rest of the cluster running with the same state:
+To see what options are configurable on a chart, use helm show values:
+
+```sh
+helm show values redpanda
+```
+
+```yaml
+# ...
+
+# Common parameters
+#
+# Override redpanda.name template
+nameOverride: ""
+# Override redpanda.fullname template
+fullnameOverride: ""
+# Default kuberentes cluster domain
+clusterDomain: cluster.local
+# Additional labels added to all Kubernetes objects
+commonLabels: {}
+
+# Redpanda parameters
+#
+image:
+  repository: vectorized/redpanda
+  # Redpanda version. This determines the installed version (not Chart.appVersion)
+  tag: v22.1.6
+  # The imagePullPolicy will default to Always when the tag is 'latest'
+  pullPolicy: IfNotPresent
+
+# ...
+```
+
+You can override any of these settings in a yaml formatted file and pass that file during installation:
+```sh
+echo '{image.pullPolicy: Always}' > myvalues.yaml
+helm install -f myvalues.yaml redpanda
+```
+
+The above will be merged with the default values, overriding just the pullPolicy, setting it to "Always". The rest of the defaults will be unchanged.
+
+There are two ways to pass configuration data during install:
+
+- --values (or -f): Specify a YAML file with overrides. This can be specified multiple times and the rightmost file will take precedence
+- --set: Specify overrides on the command line.
+
+The installation can be customized by providing values in yaml or json, or by overriding the defaults on the command line using the `--set` flag. Check the [examples](./examples) folder for guides on enabling various Redpanda features.
+
+If both are used, --set values are merged into --values with higher precedence. For more information, see the [helm documentation][helm_customizing]
+
+Many times you will be able apply updates without needing to re-install the entire cluster. If you make a change that only impacts a single service (for example), then running the following command will only restart that service and leave the rest of the cluster running with the same state:
 
 ```
-helm -n redpanda-ns upgrade redpanda ./redpanda
+helm -n redpanda-ns upgrade -f myvalues.yaml redpanda ./redpanda
 ```
 
 ## Cleanup
@@ -148,3 +197,5 @@ Or with Minikube:
 ```sh
 > minikube delete
 ```
+
+[helm_customizing]: https://helm.sh/docs/intro/using_helm/#customizing-the-chart-before-installing

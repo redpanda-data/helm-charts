@@ -14,12 +14,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- if eq (include "tls-enabled" .) "true" }}
+{{- if (include "tls-enabled" . | fromJson).bool }}
   {{- $release := .Release }}
   {{- $values := .Values }}
-  {{- range $name, $issuer := $values.auth.tls.certs }}
-    {{- $r := $issuer.issuerRef }}
+  {{- range $name, $data := $values.tls.certs }}
+    {{/* If issuerRef is defined, use the specified issuer for the certs
+         If it's not defined, create and use our own issuer. */}}
+    {{- $r := $data.issuerRef }}
     {{- if not $r }}
+---
+# The self-signed issuer is used to create the self-signed CA
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
@@ -31,13 +35,33 @@ metadata:
     app.kubernetes.io/instance: {{ $release.Name | quote }}
     app.kubernetes.io/managed-by: {{ $release.Service | quote }}
     app.kubernetes.io/component: {{ template "redpanda.name" $ }}
-      {{- with $values.commonLabels }}
-        {{- toYaml . | nindent 4 }}
-      {{- end }}
+    {{- with $values.commonLabels }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
 spec:
   selfSigned: {}
     {{- end }}
 ---
+# This is the self-signed CA used to issue certs
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-issuer
+  namespace: {{ $release.Namespace | quote }}
+  labels:
+    helm.sh/chart: {{ template "redpanda.chart" $ }}
+    app.kubernetes.io/name: {{ template "redpanda.name" $ }}
+    app.kubernetes.io/instance: {{ $release.Name | quote }}
+    app.kubernetes.io/managed-by: {{ $release.Service | quote }}
+    app.kubernetes.io/component: {{ template "redpanda.name" $ }}
+    {{- with $values.commonLabels }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  ca:
+    secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-certificate
+---
+# This is the root CA certificate
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -60,31 +84,8 @@ spec:
     algorithm: ECDSA
     size: 256
   issuerRef:
-    {{- if $r }}
-    name: {{ $r }}
-    {{- else }}
     name: {{ template "redpanda.fullname" $ }}-{{ $name }}-selfsigned-issuer
-    {{- end }}
     kind: Issuer
     group: cert-manager.io
----
-apiVersion: cert-manager.io/v1
-kind: Issuer
-metadata:
-  name: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-issuer
-  namespace: {{ $release.Namespace | quote }}
-  labels:
-    helm.sh/chart: {{ template "redpanda.chart" $ }}
-    app.kubernetes.io/name: {{ template "redpanda.name" $ }}
-    app.kubernetes.io/instance: {{ $release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ $release.Service | quote }}
-    app.kubernetes.io/component: {{ template "redpanda.name" $ }}
-    {{- with $values.commonLabels }}
-      {{- toYaml . | nindent 4 }}
-    {{- end }}
-spec:
-  ca:
-    secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-certificate
----
   {{- end }}
 {{- end }}

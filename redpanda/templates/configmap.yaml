@@ -15,6 +15,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */}}
 {{- $values := .Values }}
+{{- $users := list -}}
+{{- if .Values.auth.sasl.enabled -}}
+  {{- range $user := .Values.auth.sasl.users -}}
+    {{- $users = append $users $user.name -}}
+  {{- end -}}
+{{- end -}}
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -27,134 +34,187 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/component: {{ template "redpanda.name" . }}
 {{- with .Values.commonLabels }}
-  {{- toYaml . | nindent 4 }}
+    {{- toYaml . | nindent 4 }}
 {{- end }}
 data:
 {{- if (include "redpanda.semver" . | semverCompare ">=22.1.1") }}
   bootstrap.yaml: |
-{{- if .Values.auth.sasl.enabled }}
-      enable_sasl: true 
-  {{- with .Values.auth.sasl.users }}
-      superusers: ['{{ (first .).name }}']
+    enable_sasl: {{ dig "sasl" "enabled" false .Values.auth }}
+  {{- if $users }}
+    superusers: {{ toJson $users }}
   {{- end }}
-{{- end }}
- {{- with .Values.config.cluster }}
-    {{- toYaml . | nindent 6 }}
+  {{- with (dig "cluster" dict .Values.config) }}
+    {{- toYaml . | nindent 4 }}
   {{- end }}
-  {{- with .Values.config.tunable }}
-    {{- toYaml . | nindent 6 }}
+  {{- with (dig "tunable" dict .Values.config) }}
+    {{- toYaml . | nindent 4 }}
   {{- end }}
 {{- end }}
   redpanda.yaml: |
     config_file: /etc/redpanda/redpanda.yaml
-    {{- if gt (len .Values.license_key) 0 }}
-    license_key: {{ .Values.license_key }}
-    {{- end }}
-    {{- if .Values.logging.usageStats.enabled }}
-      {{- if hasKey .Values.logging.usageStats "organization" }}
-    organization: {{ .Values.logging.usageStats.organization }}
-      {{- end }}
-      {{- if hasKey .Values.logging.usageStats "clusterId" }}
-    cluster_id: {{ .Values.logging.usageStats.clusterId}}
-      {{- end }}
-    {{- end }}
+{{- with .Values.license_key }}
+    license_key: {{ . }}
+{{- end }}
+{{- if .Values.logging.usageStats.enabled }}
+  {{- with (dig "usageStats" "organization" "" .Values.logging) }}
+    organization: {{ . }}
+  {{- end }}
+  {{- with (dig "usageStats" "clusterId" "" .Values.logging) }}
+    cluster_id: {{ . }}
+  {{- end }}
+{{- end }}
     redpanda:
 {{- if not (include "redpanda.semver" . | semverCompare ">=22.1.1") }}
-  {{- if .Values.auth.sasl.enabled }}
-      enable_sasl: true 
-    {{- with .Values.auth.sasl.users }}
-      superusers: ['{{ (first .).name }}']
-    {{- end }}
+      enable_sasl: {{ dig "sasl" "enabled" false .Values.auth }}
+  {{- if $users }}
+      superusers: {{ toJson $users }}
   {{- end }}
-  {{- if .Values.config | keys -}}
-    {{- if (hasKey .Values.config "cluster") }}
-      {{- if .Values.config.cluster | keys -}}
-       {{ toYaml .Values.config.cluster | trim | indent 2 }}
-     {{- end}}
-    {{- end}}
-    {{- if (hasKey .Values.config "tunable") }}
-      {{- if .Values.config.tunable | keys -}}
-      {{ toYaml .Values.config.tunable | trim | indent 2 }}
-      {{- end}}
-    {{- end}}
-    {{- if and (not (hasKey .Values.config "cluster")) (not (hasKey .Values.config "tuneable")) }}
-      {{- if .Values.config | keys  -}}
-      {{ toYaml .Values.config | indent 4 }}
-      {{- end }}
-    {{- end }}
-  {{- end}}
+  {{- with (dig "cluster" dict .Values.config) }}
+    {{- toYaml . | nindent 6 }}
+  {{- end }}
+  {{- with (dig "tunable" dict .Values.config) }}
+    {{- toYaml . | nindent 6 }}
+  {{- end }}
 {{- end }}
-      admin:
-        address: 0.0.0.0
-        name: admin
-        port: {{ .Values.listeners.admin.port }}
-    {{- if eq (include "admin-tls-enabled" .) "true" }}
-      admin_api_tls:
-      - cert_file: {{ printf "/etc/tls/certs/%s" .Values.listeners.admin.tls.cert }}/tls.crt
-        enabled: true
-        key_file: {{ printf "/etc/tls/certs/%s" .Values.listeners.admin.tls.cert }}/tls.key
-        name: admin
-      {{- if .Values.listeners.admin.tls.requireClientAuth }}
-        require_client_auth: true
+      {{- with dig "node" dict .Values.config }}
+      {{- . | toYaml | nindent 6 }}
       {{- end }}
-        truststore_file: {{ printf "/etc/tls/certs/%s" .Values.listeners.admin.tls.cert }}/ca.crt
-    {{- end }}
-      enable_sasl: {{ .Values.auth.sasl.enabled }}
+      admin:
+        name: admin
+        address: 0.0.0.0
+        port: {{ .Values.listeners.admin.port }}
+{{- if (include "admin-internal-tls-enabled" . | fromJson).bool }}
+      admin_api_tls:
+        - name: admin
+          enabled: true
+          cert_file: /etc/tls/certs/{{ .Values.listeners.admin.tls.cert }}/tls.crt
+          key_file: /etc/tls/certs/{{ .Values.listeners.admin.tls.cert }}/tls.key
+          truststore_file: /etc/tls/certs/{{ .Values.listeners.admin.tls.cert }}/ca.crt
+          require_client_auth: {{ .Values.listeners.admin.tls.requireClientAuth }}
+{{- end }}
+      kafka_api:
+        - name: internal
+          address: 0.0.0.0
+          port: {{ .Values.listeners.kafka.port }}
+{{- range $name, $listener := .Values.listeners.kafka.external }}
+        - name: {{ $name }}
+          address: 0.0.0.0
+          port: {{ $listener.port }}
+{{- end }}
       kafka_api_tls:
-  {{- range $i, $listener := .Values.listeners.kafka.endpoints }}
-  {{- if hasKey $listener "tls" }}
-    {{- if or $listener.tls.enabled (and (empty $listener.tls.enabled) $values.auth.tls.enabled) }}
-      - cert_file: {{ printf "/etc/tls/certs/%s" $listener.tls.cert }}/tls.crt
-        enabled: true
-        key_file: {{ printf "/etc/tls/certs/%s" $listener.tls.cert }}/tls.key
-        name: {{ $listener.name }}
-        require_client_auth: {{ $listener.tls.requireClientAuth }}
-        truststore_file: {{ printf "/etc/tls/certs/%s" $listener.tls.cert }}/ca.crt
-    {{- end }}
-    {{- end }}
+{{- $service := .Values.listeners.kafka }}
+{{- if (include "kafka-internal-tls-enabled" . | fromJson).bool }}
+        - name: internal
+          enabled: true
+          cert_file: /etc/tls/certs/{{ $service.tls.cert }}/tls.crt
+          key_file: /etc/tls/certs/{{ $service.tls.cert }}/tls.key
+          truststore_file: /etc/tls/certs/{{ $service.tls.cert }}/ca.crt
+          require_client_auth: {{ $service.tls.requireClientAuth }}
+{{- end }}
+{{- range $name, $listener := $service.external }}
+  {{- $k := dict "Values" $values "listener" $listener }}
+  {{- if (include "kafka-external-tls-enabled" $k | fromJson).bool }}
+        - name: {{ $name }}
+          enabled: true
+          cert_file: /etc/tls/certs/{{ template "kafka-external-tls-cert" $k}}/tls.crt
+          key_file: /etc/tls/certs/{{ template "kafka-external-tls-cert" $k}}/tls.key
+          truststore_file: /etc/tls/certs/{{ template "kafka-external-tls-cert" $k}}/ca.crt
+          require_client_auth: {{ dig "tls" "requireClientAuth" false $listener }}
   {{- end }}
-{{- if hasKey .Values.listeners.rpc "tls" }}
-  {{- if or .Values.listeners.rpc.tls.enabled (and (empty .Values.listeners.rpc.tls.enabled) .Values.auth.tls.enabled) }}
+{{- end }}
+      rpc_server:
+        address: 0.0.0.0
+        port: {{ .Values.listeners.rpc.port }}
+{{- if (include "rpc-tls-enabled" . | fromJson).bool }}
       rpc_server_tls:
         enabled: true
         require_client_auth: {{ .Values.listeners.rpc.tls.requireClientAuth }}
-        cert_file: {{ printf "/etc/tls/certs/%s" .Values.listeners.rpc.tls.cert }}/tls.crt
-        key_file: {{ printf "/etc/tls/certs/%s" .Values.listeners.rpc.tls.cert }}/tls.key
-        truststore_file: {{ printf "/etc/tls/certs/%s" .Values.listeners.rpc.tls.cert }}/ca.crt
-  {{- end }}
+        cert_file: /etc/tls/certs/{{ .Values.listeners.rpc.tls.cert }}/tls.crt
+        key_file: /etc/tls/certs/{{ .Values.listeners.rpc.tls.cert }}/tls.key
+        truststore_file: /etc/tls/certs/{{ .Values.listeners.rpc.tls.cert }}/ca.crt
 {{- end }}
       seed_servers:
 {{- range untilStep 0 (.Values.statefulset.replicas|int) 1 }}
-      - host:
-          address: "{{ template "redpanda.fullname" $ }}-{{ . }}.{{ template "redpanda.internal.domain" $ }}"
-          port: {{ $values.listeners.rpc.port }}
+        - host:
+            address: "{{ template "redpanda.fullname" $ }}-{{ . }}.{{ template "redpanda.internal.domain" $ }}"
+            port: {{ $values.listeners.rpc.port }}
+{{- end }}
+{{- if .Values.listeners.http.enabled }}
+{{- if .Values.listeners.schemaRegistry.enabled }}
+    schema_registry:
+      schema_registry:
+        - name: internal
+          address: 0.0.0.0
+          port: {{ .Values.listeners.schemaRegistry.port }}
+{{- range $name, $listener := .Values.listeners.schemaRegistry.external }}
+        - name: {{ $name }}
+          address: 0.0.0.0
+          port: {{ $listener.port }}
+{{- end }}
+      schema_registry_api_tls:
+  {{- if (include "schemaRegistry-internal-tls-enabled" . | fromJson).bool }}
+        - name: internal
+          enabled: true
+          cert_file: /etc/tls/certs/{{ .Values.listeners.schemaRegistry.tls.cert }}/tls.crt
+          key_file: /etc/tls/certs/{{ .Values.listeners.schemaRegistry.tls.cert }}/tls.key
+          truststore_file: /etc/tls/certs/{{ .Values.listeners.schemaRegistry.tls.cert }}/ca.crt
+          require_client_auth: {{ .Values.listeners.schemaRegistry.tls.requireClientAuth }}
+  {{- end }}
+  {{- range $i, $listener := .Values.listeners.schemaRegistry.external }}
+    {{- $k := dict "Values" $values "listener" $listener }}
+    {{- if (include "schemaRegistry-external-tls-enabled" $k | fromJson).bool }}
+        - name: {{ $listener.name }}
+          enabled: true
+          cert_file: /etc/tls/certs/{{ template "schemaRegistry-external-tls-cert" $k }}/tls.crt
+          key_file: /etc/tls/certs/{{ template "schemaRegistry-external-tls-cert" $k }}/tls.key
+          truststore_file: /etc/tls/certs/{{ template "schemaRegistry-external-tls-cert" $k }}/ca.crt
+          require_client_auth: {{ dig "tls" "requireClientAuth" false $listener}}
+    {{- end }}
+  {{- end }}
+{{- end }}
+    pandaproxy:
+      pandaproxy_api:
+        - name: internal
+          address: 0.0.0.0
+          port: {{ .Values.listeners.http.port }}
+  {{- range $name, $listener := .Values.listeners.http.external }}
+        - name: {{ $name }}
+          address: 0.0.0.0
+          port: {{ $listener.port }}
+  {{- end }}
+      pandaproxy_api_tls:
+  {{- if (include "http-internal-tls-enabled" . | fromJson).bool }}
+          - name: internal
+            enabled: true
+            cert_file: /etc/tls/certs/{{ .Values.listeners.http.tls.cert }}/tls.crt
+            key_file: /etc/tls/certs/{{ .Values.listeners.http.tls.cert }}/tls.key
+            truststore_file: /etc/tls/certs/{{ .Values.listeners.http.tls.cert }}/ca.crt
+            require_client_auth: {{ .Values.listeners.http.tls.requireClientAuth }}
+  {{- end }}
+  {{- range $name, $listener := .Values.listeners.http.external }}
+    {{- $k := dict "Values" $values "listener" $listener }}
+    {{- if (include "http-external-tls-enabled" $k | fromJson).bool }}
+          - name: {{ $name }}
+            enabled: true
+            cert_file: /etc/tls/certs/{{ template "kafka-external-tls-cert" $k }}/tls.crt
+            key_file: /etc/tls/certs/{{ template "kafka-external-tls-cert" $k }}/tls.key
+            truststore_file: /etc/tls/certs/{{ template "kafka-external-tls-cert" $k}}/ca.crt
+            require_client_auth: {{ dig "tls" "requireClientAuth" false $listener }}
+    {{- end }}
+  {{- end }}
 {{- end }}
     rpk:
       enable_usage_stats: {{ .Values.logging.usageStats.enabled }}
-{{- if hasKey .Values.resources.cpu "overprovisioned" }}
-      overprovisioned: {{ .Values.resources.cpu.overprovisioned }}
-{{- else }}
-      overprovisioned: false
-{{- end }}
-{{- if hasKey .Values.resources.memory "enable_memory_locking" }}
-      enable_memory_locking: {{ .Values.resources.memory.enable_memory_locking }}
-{{- else }}
-      enable_memory_locking: false
-{{- end }}
+      overprovisioned: {{ dig "cpu" "overprovisioned" false .Values.resources }}
+      enable_memory_locking: {{ dig "memory" "enable_memory_locking" false .Values.resources }}
 {{- if hasKey .Values.tuning "tune_aio_events" }}
-  {{- if .Values.tuning.tune_aio_events }}
-      tune_aio_events: true
-  {{- end }}
+      tune_aio_events: {{ .Values.tuning.tune_aio_events }}
 {{- end }}
 {{- if hasKey .Values.tuning "tune_clocksource" }}
-  {{- if .Values.tuning.tune_clocksource }}
-      tune_clocksource: true
-  {{- end }}
+      tune_clocksource: {{ .Values.tuning.tune_clocksource }}
 {{- end }}
 {{- if hasKey .Values.tuning "tune_ballast_file" }}
-  {{- if .Values.tuning.tune_ballast_file }}
-      tune_ballast_file: true
-  {{- end }}
+      tune_ballast_file: {{ .Values.tuning.tune_ballast_file }}
 {{- end }}
 {{- if hasKey .Values.tuning "ballast_file_path" }}
       ballast_file_path: {{ .Values.tuning.ballast_file_path }}
@@ -164,36 +224,4 @@ data:
 {{- end }}
 {{- if hasKey .Values.tuning "well_known_io" }}
       well_known_io: {{ .Values.tuning.well_known_io }}
-{{- end }}
-{{- if .Values.listeners.http.enabled }}
-    pandaproxy:
-      pandaproxy_api_tls:
-  {{- range $i, $listener := .Values.listeners.http.endpoints }}
-    {{- if hasKey $listener "tls" }}
-      {{- if or (default false $listener.tls.enabled) (and (not (hasKey $listener.tls "enabled")) $values.auth.tls.enabled) }}
-      - cert_file: {{ printf "/etc/tls/certs/%s" $listener.tls.cert }}/tls.crt
-        enabled: true
-        key_file: {{ printf "/etc/tls/certs/%s" $listener.tls.cert }}/tls.key
-        name: {{ $listener.name }}
-        require_client_auth: {{ $listener.tls.requireClientAuth }}
-        truststore_file: {{ printf "/etc/tls/certs/%s" $listener.tls.cert }}/ca.crt
-      {{- end }}
-    {{- end }}
-  {{- end }}
-{{- end }}
-{{- if .Values.listeners.schemaRegistry.enabled }}
-    schema_registry:
-      schema_registry_api_tls:
-  {{- range $i, $listener := .Values.listeners.schemaRegistry.endpoints }}
-    {{- if hasKey $listener "tls" }}
-      {{- if or (default false $listener.tls.enabled) (and (not (hasKey $listener.tls "enabled")) $values.auth.tls.enabled) }}
-      - cert_file: {{ printf "/etc/tls/certs/%s" $listener.tls.cert }}/tls.crt
-        enabled: true
-        key_file: {{ printf "/etc/tls/certs/%s" $listener.tls.cert }}/tls.key
-        name: {{ $listener.name }}
-        require_client_auth: {{ $listener.tls.requireClientAuth }}
-        truststore_file: {{ printf "/etc/tls/certs/%s" $listener.tls.cert }}/ca.crt
-      {{- end }}
-    {{- end }}
-  {{- end }}
 {{- end }}

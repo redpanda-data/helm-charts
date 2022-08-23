@@ -39,6 +39,7 @@ image:
   pullPolicy: IfNotPresent
 # Your license key (optional)
 license_key: ""
+
 #
 # Authentication
 auth:
@@ -54,138 +55,28 @@ auth:
         # password: password
         # If password isn't given, then the secretName must point to an already existing secret
         # secretName: adminPassword
-  #
-  # TLS configuration
-  tls:
-    # Enable global TLS, which turns on TLS by default for all listeners
-    # Each listener must include a certificate name in its TLS section
-    # Any certificates in auth.tls.certs will still be loaded if enabled is false
-    # This is because listeners may enable TLS individually (see listeners.<listener name>.tls.enabled)
-    enabled: false
-    # list all certificates below, then reference a certificate's name in each listener (see listeners.<listener name>.tls.cert)
-    certs:
-      # This is the certificate name that is used to associate the certificate with a listener
-      # See listeners.<listener group>.tls.cert for more information
-      kafka:
-        # issuerRef:
-        #   name: redpanda-cert1-selfsigned-issuer
-        # The caEnabled flag determines whether the ca.crt file is included in the TLS mount path on each Redpanda pod
-        caEnabled: true
-        # duration: 43800h
-      rpc:
-        caEnabled: true
-      admin:
-        caEnabled: true
-      proxy:
-        caEnabled: true
-      schema:
-        caEnabled: true
+
 #
-# Listeners
-listeners:
-  # Admin API listener
-  # The kafka listener group cannot be disabled
-  admin:
-    # The port for the admin server
-    # Metrics are served off of this port at /metrics
-    port: 9644
-    # Optional external section
-    external:
-      # enabled: true
-      # Type of external access (options are NodePort and LoadBalancer)
-      # type: NodePort
-      # External port
-      # This listener port will be used for the external port if this is not included
-      port: 31644
-    # Optional TLS section (required if global TLS is enabled)
-    tls:
-      # Optional flag to override the global TLS enabled flag
-      # enabled: true
-      # Name of certificate used for TLS (must match a cert registered at auth.tls.certs)
-      cert: admin
-      # If true, the truststore file for this listener will be included in the ConfigMap
-      requireClientAuth: false
-  # Kafka API listeners
-  # The kafka listener group cannot be disabled
-  kafka:
-    # The first entry is used to set up the headless service, which enables
-    # internal clients within the same namespace to connect directly to brokers.
-    # By default there are two listeners, one for internal and another for external clients.
-    # A listener with the name `internal` must exist, and will always be advertised
-    # using the internal address.
-    # Other listeners will have the advertised address according to whether it is
-    # externally facing or not.
-    endpoints:
-    - name: internal
-      port: 9093
-      external:
-        enabled: false
-      tls:
-        # enabled: true
-        cert: kafka
-        requireClientAuth: false
-    - name: external
-      port: 9092
-      # Optional external section
-      external:
-        # enabled: true
-        # Type of external access (options are NodePort and LoadBalancer)
-        # type: NodePort
-        # External port
-        # This listener port will be used for the external port if this is not included
-        port: 31092
-      tls:
-        # enabled: true
-        cert: kafka
-        requireClientAuth: false
-  # HTTP API listeners (aka PandaProxy)
-  http:
-    enabled: true
-    # PandaProxy is a kafka client that connects to an endpoint from listeners.kafka.endpoints
-    kafkaEndpoint: default
-    endpoints:
-    - name: default
-      port: 8082
-    # Optional external section
-      external:
-        # enabled: true
-        # Type of external access (options are NodePort and LoadBalancer)
-        # type: NodePort
-        # External port
-        # This listener port will be used for the external port if this is not included
-        port: 30082
-      tls:
-        # enabled: true
-        cert: proxy
-        requireClientAuth: false
-  # RPC listener
-  # The RPC listener cannot be disabled
-  rpc:
-    port: 33145
-    tls:
-      # enabled: true
-      cert: rpc
-      requireClientAuth: false
-  # Schema registry listeners
-  schemaRegistry:
-    enabled: true
-    # Schema Registry is a kafka client that connects to an endpoint from listeners.kafka.endpoints
-    kafkaEndpoint: default
-    endpoints:
-    - name: default
-      port: 8081
-      # Optional external section
-      external:
-        # enabled: true
-        # Type of external access (options are NodePort and LoadBalancer)
-        # type: NodePort
-        # External port
-        # This listener port will be used for the external port if this is not included
-        port: 30081
-      tls:
-        # enabled: true
-        cert: schema
-        requireClientAuth: false
+# TLS configuration
+tls:
+  # Enable global TLS, which turns on TLS by default for all listeners
+  # Each listener must include a certificate name in its TLS section
+  # Any certificates in auth.tls.certs will still be loaded if enabled is false
+  # This is because listeners may enable TLS individually (see listeners.<listener name>.tls.enabled)
+  enabled: false
+  # list all certificates below, then reference a certificate's name in each listener (see listeners.<listener name>.tls.cert)
+  certs:
+    # This is the certificate name that is used to associate the certificate with a listener
+    # See listeners.<listener group>.tls.cert for more information
+    default:
+      # Define an issuerRef to use your own custom pre-installed Issuer
+      # issuerRef:
+      #   name: redpanda-default-root-issuer
+      #   kind: Issuer   # Can be Issuer or ClusterIssuer
+      # The caEnabled flag determines whether the ca.crt file is included in the TLS mount path on each Redpanda pod
+      caEnabled: true
+      # duration: 43800h
+
 #
 # External access configuration
 external:
@@ -333,7 +224,7 @@ statefulset:
   replicas: 3
   updateStrategy:
     type: RollingUpdate
-  podManagementPolicy: OrderedReady
+  podManagementPolicy: Parallel
   budget:
     maxUnavailable: 1
   # Additional annotations to apply to the Pods of this StatefulSet.
@@ -435,6 +326,113 @@ tuning: {}
   #   tune_transparent_hugepages
   #   tune_coredump
 
+### Overrides
+#
+# This sections can be used to override global settings configured above for individual
+# listeners.
+#
+listeners:
+  # Admin API listener
+  # The kafka listener group cannot be disabled
+  admin:
+    # The port for the admin server
+    port: 9644
+    # Optional external section
+    external:
+      # # `enabled`` is used to override the setting of the `external` top-level key
+      # # for this external listener. The default is `true`.
+      # enabled: true
+      # # Type of external access (options are NodePort and LoadBalancer)
+      # type: NodePort
+      # # External port
+      # # `nodePort` defines the TCP port to listen on for NodePort types.
+      # nodePort: 31644
+    # Optional TLS section (required if global TLS is enabled)
+    tls:
+      # Optional flag to override the global TLS enabled flag
+      # enabled: true
+      # Name of certificate used for TLS (must match a cert registered at auth.tls.certs)
+      cert: default
+      # If true, the truststore file for this listener will be included in the ConfigMap
+      requireClientAuth: false
+  # Kafka API listeners
+  # The kafka listener group cannot be disabled
+  kafka:
+    port: 9093
+    # Listeners internal to kubernetes service network
+    tls:
+      # enabled: true
+      cert: default
+      requireClientAuth: false
+    # External listeners
+    external:
+    # to disable external kafka listeners when the global `external` is enabled,
+    # replace this with an empty list, ie: `external: []`
+      default:
+        port: 9094
+        # Type can be `NodePort or `LoadBalancer`. If unset, it will default to the type
+        # in the `external` section.`
+        type: NodePort
+        # External port
+        # This listener port will be used on each kubernetes node
+        nodePort: 31092
+  # HTTP API listeners (aka PandaProxy)
+  # PandaProxy is a kafka client that connects to an endpoint from listeners.kafka.endpoints
+  http:
+    enabled: true
+    port: 8082
+    kafkaEndpoint: default
+    tls:
+      # enabled: true
+      cert: default
+      requireClientAuth: false
+    # External listeners
+    external:
+      default:
+        # Ports must be unique per listener
+        port: 8083
+        # Type of external access (options are ClusterIP, NodePort, and LoadBalancer)
+        type: NodePort
+        # External port
+        # This listener port will be used for the external port if NodePort is selected
+        nodePort: 30082
+  # RPC listener
+  # The RPC listener cannot be disabled
+  rpc:
+    port: 33145
+    tls:
+      # enabled: true
+      cert: default
+      requireClientAuth: false
+  # Schema registry listeners
+  schemaRegistry:
+    enabled: true
+    port: 8081
+    # Schema Registry is a kafka client that connects to an endpoint from listeners.kafka.endpoints
+    kafkaEndpoint: default
+    tls:
+      # enabled: true
+      cert: default
+      requireClientAuth: false
+    external:
+      default:
+        # Ports must be unique per listener
+        port: 8080
+        # Optional external section
+        # enabled: true
+        # Type of external access (options are NodePort and LoadBalancer)
+        # type: NodePort
+        # External port
+        # This listener port will be used for the external port if this is not included
+        nodePort: 30081
+
+# Expert Config
+
+# This section contains various settings supported by Redpanda that may not work
+# correctly in a kubernetes cluster. Changing these settings comes with some risk.
+#
+# Here be dragons!
+#
 # This section allows modifying various Redpanda settings not covered in other sections above.
 # These values do not pertain to the kubernetes objects created with helm.
 # Instead these parameters get passed directly to the Redpanda binary at startup.
@@ -477,7 +475,6 @@ config:
     # default_num_windows: 10                                      # Default number of quota tracking windows
     # default_window_sec: 1000ms                                   # Default quota tracking window size in milliseconds
     # delete_retention_ms: 10080min                                # delete segments older than this (default 1 week)
-    # developer_mode: optional                                     # Skips most of the checks performed at startup
     # disable_batch_cache: false                                   # Disable batch cache in log manager
     # fetch_reads_debounce_timeout: 1ms                            # Time to wait for next read in fetch request when requested min bytes wasn't reached
     # fetch_session_eviction_timeout_ms: 60s                       # Minimum time before which unused session will get evicted from sessions; Maximum time after which inactive session will be deleted is two time given configuration valuecache
@@ -533,6 +530,7 @@ config:
     # coproc_supervisor_server: 127.0.0.1:43189                    # IpAddress and port for supervisor service
     # dashboard_dir: None                                          # serve http dashboard on / url
     # rack: None                                                   # Rack identifier
+    # developer_mode: optional                                     # Skips most of the checks performed at startup
 
   # Invalid properties
   # Any of these properties will be ignored. These otherwise valid properties are not allowed
