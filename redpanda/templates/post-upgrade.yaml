@@ -1,0 +1,89 @@
+{{- if (include "redpanda.semver" . | semverCompare ">=22.1.1") }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "redpanda.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    helm.sh/chart: {{ template "redpanda.chart" . }}
+    app.kubernetes.io/name: {{ template "redpanda.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/component: {{ template "redpanda.name" . }}
+{{- with .Values.commonLabels }}
+  {{- toYaml . | nindent 4 }}
+{{- end }}
+  annotations:
+    # This is what defines this resource as a hook. Without this line, the
+    # job is considered part of the release.
+    "helm.sh/hook": post-upgrade
+    "helm.sh/hook-weight": "-5"
+spec:
+  template:
+    metadata:
+      name: "{{ .Release.Name }}"
+      labels:
+        app.kubernetes.io/name: {{ template "redpanda.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name | quote }}
+        app.kubernetes.io/component: {{ template "redpanda.name" . }}
+{{- with .Values.commonLabels }}
+  {{- toYaml . | nindent 8 }}
+{{- end }}
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: {{ template "redpanda.name" . }}-post-upgrade
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        command: ["/bin/sh", "-c"]
+        args:
+          - >
+            rpk cluster config import -f /tmp/base-config/bootstrap.yaml
+            --api-urls {{ template "redpanda.fullname" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.admin.port }}
+{{- if (include "admin-internal-tls-enabled" . | fromJson).bool }}
+            --admin-api-tls-enabled
+            --admin-api-tls-truststore /etc/tls/certs/{{ .Values.listeners.admin.tls.cert }}/ca.crt
+{{- end }}
+{{- if (include "kafka-internal-tls-enabled" . | fromJson).bool }}
+            --tls-enabled
+            --tls-truststore /etc/tls/certs/{{ .Values.listeners.kafka.tls.cert }}/ca.crt
+{{- end }}
+{{- if (include "sasl-enabled" . | fromJson).bool }}
+            --user {{ (first .Values.auth.sasl.users).name }}
+            --password {{ (first .Values.auth.sasl.users).password }}
+            --sasl-mechanism SCRAM-SHA-256
+{{- end }}
+        volumeMounts:
+          - name: {{ template "redpanda.fullname" . }}
+            mountPath: /tmp/base-config
+          - name: config
+            mountPath: /etc/redpanda
+{{- if (include "tls-enabled" . | fromJson).bool }}
+  {{- range $name, $cert := .Values.tls.certs }}
+          - name: redpanda-{{ $name }}-cert
+            mountPath: {{ printf "/etc/tls/certs/%s" $name }}
+  {{- end }}
+{{- end }}
+      volumes:
+        - name: {{ template "redpanda.fullname" . }}
+          configMap:
+            name: {{ template "redpanda.fullname" . }}
+        - name: config
+          emptyDir: {}
+{{- if (include "tls-enabled" . | fromJson).bool }}
+  {{- range $name, $cert := .Values.tls.certs }}
+        - name: redpanda-{{ $name }}-cert
+          secret:
+            defaultMode: 420
+            items:
+            - key: tls.key
+              path: tls.key
+            - key: tls.crt
+              path: tls.crt
+    {{- if $cert.caEnabled }}
+            - key: ca.crt
+              path: ca.crt
+    {{- end }}
+            secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
+  {{- end }}
+{{- end -}}
+{{- end }}

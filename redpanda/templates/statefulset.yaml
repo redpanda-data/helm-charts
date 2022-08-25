@@ -14,6 +14,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
+
+{{- $values := .Values }}
+{{- $advertiseAddress := include "redpanda.kafka.internal.advertise.address" . -}}
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -25,39 +29,43 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
     app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
     app.kubernetes.io/component: {{ template "redpanda.name" . }}
-  {{- with .Values.labels }}
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+{{- with .Values.commonLabels }}
+  {{- toYaml . | nindent 4 }}
+{{- end }}
 spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: {{ template "redpanda.name" . }}
-      app.kubernetes.io/instance: {{ .Release.Name | quote }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
   serviceName: {{ template "redpanda.fullname" . }}
   replicas: {{ .Values.statefulset.replicas | int64 }}
-  updateStrategy: {{- toYaml .Values.statefulset.updateStrategy | nindent 4 }}
-  podManagementPolicy: {{ .Values.statefulset.podManagementPolicy | quote }}
+  updateStrategy:
+    {{- toYaml .Values.statefulset.updateStrategy | nindent 4 }}
+  podManagementPolicy: {{ .Values.statefulset.podManagementPolicy }}
   template:
     metadata:
       labels:
         app.kubernetes.io/name: {{ template "redpanda.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name | quote }}
         app.kubernetes.io/component: {{ template "redpanda.name" . }}
-      {{- with .Values.labels }}
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+{{- with .Values.commonLabels }}
+        {- toYaml . | nindent 8 }}
+{{- end }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
-        {{- with $.Values.statefulset.annotations }}
-          {{- toYaml . | nindent 8 }}
-        {{- end }}
+{{- with $.Values.statefulset.annotations }}
+        {{- toYaml . | nindent 8 }}
+{{- end }}
     spec:
       securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      # TODO:
-      # * Figure out what to do about node_id / seeds here - the operator will fix this separately
-      # * Once that's done, this initContainer can be removed
+        {{- toYaml .Values.statefulset.podSecurityContext | nindent 8 }}
       initContainers:
+        - name: set-datadir-ownership
+          image: busybox:latest
+          command: ["/bin/sh", "-c", "chown 101:101 -R /var/lib/redpanda/data"]
+          volumeMounts:
+            - name: datadir
+              mountPath: /var/lib/redpanda/data
         - name: {{ template "redpanda.name" . }}-configurator
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           command: ["/bin/sh", "-c"]
@@ -71,13 +79,16 @@ spec:
               CONFIG=/etc/redpanda/redpanda.yaml;
               NODE_ID=${SERVICE_NAME##*-};
               cp /tmp/base-config/redpanda.yaml "$CONFIG";
+              {{- if (include "redpanda.semver" . | semverCompare ">=22.1.1") }}
+              cp /tmp/base-config/bootstrap.yaml /etc/redpanda/.bootstrap.yaml;
+              {{- end }}
               rpk --config "$CONFIG" config set redpanda.node_id $NODE_ID;
               if [ "$NODE_ID" = "0" ]; then
                 rpk --config "$CONFIG" config set redpanda.seed_servers '[]' --format yaml;
               fi;
           volumeMounts:
             - name: {{ template "redpanda.fullname" . }}
-              mountPath: /tmp/base-config 
+              mountPath: /tmp/base-config
             - name: config
               mountPath: /etc/redpanda
           resources:
@@ -98,97 +109,121 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.hostIP
-          args:
-            - >
-              redpanda
-              start
-              --smp={{ .Values.statefulset.resources.limits.cpu }}
-              --memory={{ .Values.statefulset.redpanda.memory }}
-              --reserve-memory={{ .Values.statefulset.redpanda.reservedMemory }}
-              {{- if (first .Values.config.redpanda.kafka_api).external.enabled }}
-              --advertise-kafka-addr=kafka://{{ template "redpanda.kafka.internal.advertise.address" . }}:{{ template "redpanda.kafka.internal.advertise.port" . }},external://{{ template "redpanda.kafka.external.advertise.address" . }}:{{ template "redpanda.kafka.external.advertise.nodeport.port" . }},
-              --kafka-addr=kafka://{{ template "redpanda.kafka.internal.listen.address" . }}:{{ template "redpanda.kafka.internal.listen.port" . }},external://{{ template "redpanda.kafka.external.listen.address" . }}:{{ template "redpanda.kafka.external.listen.port" . }},
-              {{- else }}
-              --advertise-kafka-addr=kafka://{{ template "redpanda.kafka.internal.advertise.address" . }}:{{ template "redpanda.kafka.internal.advertise.port" . }}
-              --kafka-addr=kafka://{{ template "redpanda.kafka.internal.listen.address" . }}:{{ template "redpanda.kafka.internal.listen.port" . }}
-              {{- end }}
-              --advertise-rpc-addr={{ template "redpanda.rpc.advertise.address" . }}:{{ template "redpanda.rpc.advertise.port" . }}
-              --rpc-addr={{ template "redpanda.rpc.listen.address" . }}:{{ template "redpanda.rpc.listen.port" . }}
-              {{ if (first .Values.config.schema_registry.schema_registry_api).external.enabled }}
-              --schema-registry-addr=internal://{{ template "redpanda.schemaregistry.internal.address" . }}:{{ template "redpanda.schemaregistry.internal.port" . }},external://{{ template "redpanda.schemaregistry.external.nodeport.address" . }}:{{ template "redpanda.schemaregistry.external.port" . }}
-              {{- else }}
-              --schema-registry-addr=internal://{{ template "redpanda.schemaregistry.internal.address" . }}:{{ template "redpanda.schemaregistry.internal.port" . }}
-              {{ end }}
-              {{- if (first .Values.config.pandaproxy.pandaproxy_api).external.enabled }}
-              --advertise-pandaproxy-addr=internal://{{ template "redpanda.pandaproxy.internal.advertise.address" . }}:{{ template "redpanda.pandaproxy.internal.advertise.port" . }},external://{{ template "redpanda.pandaproxy.external.advertise.nodeport.address" . }}:{{ template "redpanda.pandaproxy.external.advertise.nodeport.port" . }}
-              --pandaproxy-addr=internal://{{ template "redpanda.pandaproxy.internal.listen.address" . }}:{{ template "redpanda.pandaproxy.internal.listen.port" . }},external://{{ template "redpanda.pandaproxy.external.listen.address" . }}:{{ template "redpanda.pandaproxy.external.listen.port" . }}
-              {{- else }}
-              --advertise-pandaproxy-addr=internal://{{ template "redpanda.pandaproxy.internal.advertise.address" . }}:{{ template "redpanda.pandaproxy.internal.advertise.port" . }}
-              --pandaproxy-addr=internal://{{ template "redpanda.pandaproxy.internal.listen.address" . }}:{{ template "redpanda.pandaproxy.internal.listen.port" . }}
-              {{- end }}
-              --default-log-level={{ .Values.config.seastar.default_log_level }}
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                {{- if (include "admin-internal-tls-enabled" . |fromJson).bool }}
+                - >
+                  curl https://localhost:{{ .Values.listeners.admin.port }}/v1/cluster/health_overview
+                  -svk --cacert /etc/tls/certs/{{ .Values.listeners.admin.tls.cert }}/ca.crt |
+                  grep '"is_healthy": true'
+                {{- else }}
+                - >
+                  curl -sv http://localhost:{{ .Values.listeners.admin.port }}/v1/cluster/health_overview |
+                  grep '"is_healthy": true'
+                {{- end }}
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                {{- if (include "admin-internal-tls-enabled" . |fromJson).bool }}
+                - >
+                  curl https://localhost:{{ .Values.listeners.admin.port }}/v1/cluster/health_overview
+                  -svk --cacert /etc/tls/certs/{{ .Values.listeners.admin.tls.cert }}/ca.crt |
+                  grep '"is_healthy": true'
+                {{- else }}
+                - >
+                  curl -sv http://localhost:{{ .Values.listeners.admin.port }}/v1/cluster/health_overview |
+                  grep '"is_healthy": true'
+                {{- end }}
+          command:
+            - rpk
+            - redpanda
+            - start
+            - --smp={{ .Values.resources.cpu.cores }}
+            - --memory={{ template "redpanda-memory" . }}M
+            - --reserve-memory={{ template "redpanda-reserve-memory" . }}
+            - --default-log-level={{ .Values.logging.logLevel }}
+            - --kafka-addr=internal://$(POD_IP):{{ .Values.listeners.kafka.port }},
+{{- range $name,$listener := .Values.listeners.kafka.external -}}
+                {{ $name }}://$(POD_IP):{{ $listener.port }},
+{{- end }}
+            - --rpc-addr=$(POD_IP):{{ .Values.listeners.rpc.port }}
+            - --schema-registry-addr=internal://$(POD_IP):{{ .Values.listeners.schemaRegistry.port }},
+{{- range $name, $listener := .Values.listeners.schemaRegistry.external -}}
+                {{ $name }}://$(POD_IP):{{ $listener.port }},
+{{- end }}
+            - --pandaproxy-addr=internal://$(POD_IP):{{ .Values.listeners.http.port }},
+{{- range $name, $listener := .Values.listeners.http.endpoints -}}
+                {{ $name }}://$(POD_IP):{{ $listener.port }},
+  {{- end }}
+            - --advertise-kafka-addr=internal://{{ $advertiseAddress }}:{{ .Values.listeners.kafka.port }},
+{{- range $name, $listener := .Values.listeners.kafka.external -}}
+  {{- $enabled := dig "enabled" $values.external.enabled $listener -}}
+  {{- $listenerNodePortEnabled := and $enabled (eq (dig "type" $values.external.type $listener) "NodePort") -}}
+  {{- $advertiseKafkaHost := $advertiseAddress -}}
+  {{- $advertiseKafkaPort := $listener.nodePort -}}
+  {{- if $listenerNodePortEnabled -}}
+    {{- $advertiseKafkaHost = printf "$(SERVICE_NAME).%s" $values.external.domain -}}
+  {{- end -}}
+                {{ $name }}://{{ $advertiseKafkaHost }}:{{ $advertiseKafkaPort }},
+{{- end }}
+            - --advertise-rpc-addr={{ $advertiseAddress }}:{{ .Values.listeners.rpc.port }}
+            - --advertise-pandaproxy-addr=internal://{{ $advertiseAddress }}:{{ .Values.listeners.http.port }},
+{{- range $name, $listener := .Values.listeners.http.external -}}
+                {{ $name}}://{{ $advertiseAddress }}:{{ $listener.nodePort }},
+{{- end }}
           ports:
-            - containerPort: {{ .Values.config.redpanda.admin.port }}
-              name: admin
-            - containerPort: {{ template "redpanda.kafka.internal.listen.port" . }}
-              name: kafka-internal
-              {{- if not (empty .Values.loadBalancer) }}
-              {{- if .Values.loadBalancer.enabled }}
-            - containerPort: {{ template "redpanda.kafka.external.listen.port" . }}
-              name: kafka-external
-              {{- end }}
-              {{- end }}
-              {{- if .Values.config.pandaproxy.enabled }}
-            - containerPort: {{ template "redpanda.pandaproxy.internal.listen.port" . }}
-              name: pandaproxy
-              {{- end }}
-            - containerPort: {{ template "redpanda.rpc.listen.port" $ }}
-              name: rpc
+{{- range $name, $listener := .Values.listeners }}
+            - name: {{ lower $name }}
+              containerPort: {{ $listener.port }}
+  {{- range $externalName, $external := $listener.external }}
+            - name: {{ lower $name | trunc 6 }}-{{ lower $externalName | trunc 8}}
+              containerPort: {{ $external.port }}
+  {{- end }}
+{{- end }}
           volumeMounts:
             - name: datadir
               mountPath: /var/lib/redpanda/data
             - name: config
               mountPath: /etc/redpanda
-{{- $anyTLS := or (default false .Values.config.redpanda.kafka_api_tls) (default false .Values.config.redpanda.admin_api_tls) (default false .Values.config.redpanda.schema_registry_api_tls) (default false .Values.config.redpanda.pandaproxy_api_tls) -}}
-{{- if $anyTLS }}
-{{- if .Values.customCerts }}
-  {{- range $i, $cert := .Values.customCerts }}
-            - name: tls-{{ $cert.name }}
-              mountPath: {{ $cert.path | default (printf "/etc/tls/certs/%s" $cert.name) }}
-  {{end}}
-{{ else }}
-            - name: tlscert
-              mountPath: /etc/tls/certs
-            - name: tlsadmincert
-              mountPath: /etc/tls/certs/admin
-            - name: tlspandaproxycert
-              mountPath: /etc/tls/certs/pandaproxy
-            - name: tlsschemaregistrycert
-              mountPath: /etc/tls/certs/schema-registry
-{{- end }}
+{{- if (include "tls-enabled" . | fromJson).bool }}
+  {{- range $name, $cert := .Values.tls.certs }}
+            - name: redpanda-{{ $name }}-cert
+              mountPath: {{ printf "/etc/tls/certs/%s" $name }}
+  {{- end }}
 {{- end }}
           resources:
-            {{- toYaml .Values.statefulset.resources | nindent 12 }}
+{{- if hasKey .Values.resources.memory "min" }}
+            requests:
+              cpu: {{ .Values.resources.cpu.cores }}
+              memory: {{ .Values.resources.memory.container.min }}
+{{- end }}
+            limits:
+              cpu: {{ .Values.resources.cpu.cores }}
+              memory: {{ .Values.resources.memory.container.max }}
       volumes:
         - name: datadir
-        {{- if .Values.storage.persistentVolume.enabled }}
+{{- if .Values.storage.persistentVolume.enabled }}
           persistentVolumeClaim:
             claimName: datadir
-        {{- else if .Values.storage.hostPath }}
+{{- else if .Values.storage.hostPath }}
           hostPath:
             path: {{ .Values.storage.hostPath | quote }}
-        {{- else }}
+{{- else }}
           emptyDir: {}
-        {{- end }}
+{{- end }}
         - name: {{ template "redpanda.fullname" . }}
           configMap:
             name: {{ template "redpanda.fullname" . }}
         - name: config
           emptyDir: {}
-{{- if $anyTLS }}
-{{- if .Values.customCerts }}
-  {{- range $i, $cert := .Values.customCerts }}
-        - name: tls-{{ $cert.name }}
+{{- if (include "tls-enabled" . | fromJson).bool }}
+  {{- range $name, $cert := .Values.tls.certs }}
+        - name: redpanda-{{ $name }}-cert
           secret:
             defaultMode: 420
             items:
@@ -196,78 +231,32 @@ spec:
               path: tls.key
             - key: tls.crt
               path: tls.crt
-            {{- if $cert.caEnabled }}
+    {{- if $cert.caEnabled }}
             - key: ca.crt
               path: ca.crt
-            {{- end }}
-            secretName: {{ template "redpanda.fullname" $ }}-{{ $cert.name }}-cert
-  {{end}}
-{{ else }}
-        - name: tlscert
-          secret:
-            defaultMode: 420
-            items:
-            - key: tls.key
-              path: tls.key
-            - key: tls.crt
-              path: tls.crt
-            - key: ca.crt
-              path: ca.crt
-            secretName: {{ template "redpanda.fullname" . }}-kafka-cert
-        - name: tlsadmincert
-          secret:
-            defaultMode: 420
-            items:
-            - key: tls.key
-              path: tls.key
-            - key: tls.crt
-              path: tls.crt
-            - key: ca.crt
-              path: ca.crt
-            secretName: {{ template "redpanda.fullname" . }}-admin-cert
-        - name: tlspandaproxycert
-          secret:
-            defaultMode: 420
-            items:
-            - key: tls.key
-              path: tls.key
-            - key: tls.crt
-              path: tls.crt
-            - key: ca.crt
-              path: ca.crt
-            secretName: {{ template "redpanda.fullname" . }}-proxy-cert
-        - name: tlsschemaregistrycert
-          secret:
-            defaultMode: 420
-            items:
-            - key: tls.key
-              path: tls.key
-            - key: tls.crt
-              path: tls.crt
-            - key: ca.crt
-              path: ca.crt
-            secretName: {{ template "redpanda.fullname" . }}-schema-cert
-{{- end }}
-{{- end }}
-      {{- if or .Values.statefulset.nodeAffinity .Values.statefulset.podAffinity .Values.statefulset.podAntiAffinity }}
+    {{- end }}
+            secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
+  {{- end }}
+{{- end -}}
+{{- if or .Values.statefulset.nodeAffinity .Values.statefulset.podAffinity .Values.statefulset.podAntiAffinity }}
       affinity:
-      {{- with .Values.statefulset.nodeAffinity }}
+  {{- with .Values.statefulset.nodeAffinity }}
         nodeAffinity: {{- toYaml . | nindent 10 }}
-      {{- end }}
-      {{- with .Values.statefulset.podAffinity }}
+  {{- end }}
+  {{- with .Values.statefulset.podAffinity }}
         podAffinity: {{- toYaml . | nindent 10 }}
-      {{- end }}
-      {{- if .Values.statefulset.podAntiAffinity }}
+  {{- end }}
+  {{- if .Values.statefulset.podAntiAffinity }}
         podAntiAffinity:
-        {{- if .Values.statefulset.podAntiAffinity.type }}
-        {{- if eq .Values.statefulset.podAntiAffinity.type "hard" }}
+    {{- if .Values.statefulset.podAntiAffinity.type }}
+      {{- if eq .Values.statefulset.podAntiAffinity.type "hard" }}
           requiredDuringSchedulingIgnoredDuringExecution:
             - topologyKey: {{ .Values.statefulset.podAntiAffinity.topologyKey }}
               labelSelector:
                 matchLabels:
                   app.kubernetes.io/name: {{ template "redpanda.name" . }}
                   app.kubernetes.io/instance: {{ .Release.Name | quote }}
-        {{- else if eq .Values.statefulset.podAntiAffinity.type "soft" }}
+      {{- else if eq .Values.statefulset.podAntiAffinity.type "soft" }}
           preferredDuringSchedulingIgnoredDuringExecution:
             - weight: {{ .Values.statefulset.podAntiAffinity.weight | int64 }}
               podAffinityTerm:
@@ -276,33 +265,33 @@ spec:
                   matchLabels:
                     app.kubernetes.io/name: {{ template "redpanda.name" . }}
                     app.kubernetes.io/instance: {{ .Release.Name | quote }}
-        {{- end }}
-        {{- else }}
-          {{- toYaml .Values.statefulset.podAntiAffinity | nindent 10 }}
-        {{- end }}
       {{- end }}
+    {{- else }}
+      {{- toYaml .Values.statefulset.podAntiAffinity | nindent 10 }}
     {{- end }}
-    {{- if semverCompare ">=1.16-0" .Capabilities.KubeVersion.GitVersion }}
+  {{- end }}
+{{- end }}
+{{- if semverCompare ">=1.16-0" .Capabilities.KubeVersion.GitVersion }}
       topologySpreadConstraints:
       - labelSelector:
           matchLabels:
             app.kubernetes.io/name: {{ template "redpanda.name" . }}
             app.kubernetes.io/instance: {{ .Release.Name | quote }}
-      {{- with .Values.statefulset.topologySpreadConstraints }}
+  {{- with .Values.statefulset.topologySpreadConstraints }}
         maxSkew: {{ .maxSkew }}
         topologyKey: {{ .topologyKey }}
         whenUnsatisfiable: {{ .whenUnsatisfiable }}
-      {{- end }}
-    {{- end }}
-    {{- with .Values.statefulset.nodeSelector }}
+  {{- end }}
+{{- end }}
+{{- with .Values.statefulset.nodeSelector }}
       nodeSelector: {{- toYaml . | nindent 8 }}
-    {{- end }}
-    {{- if .Values.statefulset.priorityClassName }}
+{{- end }}
+{{- if .Values.statefulset.priorityClassName }}
       priorityClassName: {{ .Values.statefulset.priorityClassName }}
-    {{- end }}
-    {{- with .Values.statefulset.tolerations }}
+{{- end }}
+{{- with .Values.statefulset.tolerations }}
       tolerations: {{- toYaml . | nindent 8 }}
-    {{- end }}
+{{- end }}
 {{- if .Values.storage.persistentVolume.enabled }}
   volumeClaimTemplates:
     - metadata:
@@ -311,24 +300,24 @@ spec:
           app.kubernetes.io/name: {{ template "redpanda.name" . }}
           app.kubernetes.io/instance: {{ .Release.Name | quote }}
           app.kubernetes.io/component: {{ template "redpanda.name" . }}
-        {{- with .Values.storage.persistentVolume.labels }}
-          {{- toYaml . | nindent 10 }}
-        {{- end }}
-        {{- with .Values.labels }}
-          {{- toYaml . | nindent 10 }}
-        {{- end }}
-      {{- with .Values.storage.persistentVolume.annotations }}
+  {{- with .Values.storage.persistentVolume.labels }}
+    {{- toYaml . | nindent 10 }}
+  {{- end }}
+  {{- with .Values.commonLabels }}
+    {{- toYaml . | nindent 10 }}
+  {{- end }}
+  {{- with .Values.storage.persistentVolume.annotations }}
         annotations: {{- toYaml . | nindent 10 }}
-      {{- end }}
+  {{- end }}
       spec:
         accessModes: ["ReadWriteOnce"]
-      {{- if .Values.storage.persistentVolume.storageClass }}
-      {{- if (eq "-" .Values.storage.persistentVolume.storageClass) }}
+  {{- if .Values.storage.persistentVolume.storageClass }}
+    {{- if (eq "-" .Values.storage.persistentVolume.storageClass) }}
         storageClassName: ""
-      {{- else }}
-        storageClassName: {{ .Values.storage.persistentVolume.storageClass | quote}}
-      {{- end }}
-      {{- end }}
+    {{- else }}
+        storageClassName: {{ .Values.storage.persistentVolume.storageClass | quote }}
+    {{- end }}
+  {{- end }}
         resources:
           requests:
             storage: {{ .Values.storage.persistentVolume.size | quote }}

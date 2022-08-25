@@ -12,20 +12,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-# values.yaml
-#
-# This file contains values for variables referenced from yaml files in the templates directory.
-#
-# For further information on Helm templating see the documentation at:
-#   https://helm.sh/docs/chart_template_guide/values_files/
-#
-# For an explanation of Redpanda configuration values:
-#   https://vectorized.io/docs/advanced-configuration/
-
-# See https://vectorized.io/docs/configuration/
-config:
-  redpanda:
-    enable_sasl: true
-    superUsers:
-      - "admin"
+statefulset:
+  replicas: 1
+tls:
+  enabled: false
+auth:
+  sasl:
+    enabled: false

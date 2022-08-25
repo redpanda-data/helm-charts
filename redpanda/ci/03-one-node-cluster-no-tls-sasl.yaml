@@ -12,16 +12,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-apiVersion: v2
-name: redpanda
-description: Redpanda is the real-time engine for modern apps.
-maintainers:
-  - name: redpanda-data
-    url: https://github.com/orgs/redpanda-data/people
-type: application
-version: 2.0.0
-appVersion: 22.1.6
-icon: https://redpanda.com/static/skate-panda-9c2e4bc5a1ed0052554e658519a50882.svg
-sources:
-- https://github.com/redpanda-data/helm-charts
+statefulset:
+  replicas: 1
+tls:
+  enabled: false
+auth:
+  sasl:
+    enabled: true

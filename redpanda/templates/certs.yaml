@@ -1,48 +1,45 @@
-{{- $values := .Values }}
-{{- range $i, $issuer := .Values.certIssuers }}
-{{- $s := $issuer.name }}
-{{- $d := $issuer.duration }}
-apiVersion: v1
-data:
-  password: changeme 
-kind: Secret
-metadata:
-  name: {{ template "redpanda.fullname" $ }}-{{ $s }}-cert-keystore
-type: Opaque
+{{- if (include "tls-enabled" . | fromJson).bool }}
+  {{- $service := include "redpanda.fullname" . -}}
+  {{- $ns := .Release.Namespace -}}
+  {{- $domain := .Values.clusterDomain | trimSuffix "." -}}
+  {{- $listeners := .Values.listeners -}}
+  {{- range $name, $data := .Values.tls.certs }}
+    {{- $d := $data.duration }}
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: {{ template "redpanda.fullname" $ }}-{{ $s }}-cert
+  name: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
 spec:
   dnsNames:
-  - {{ template "redpanda.fullname" $ }}-cluster.{{ (include "redpanda.internal.domain" $) | trimSuffix "." }}
-  - '*.{{ template "redpanda.fullname" $ }}-cluster.{{ (include "redpanda.internal.domain" $) | trimSuffix "." }}'
-  - {{ (include "redpanda.internal.domain" $) | trimSuffix "." }}
-  - '*.{{ (include "redpanda.internal.domain" $) | trimSuffix "." }}'
-  - {{ (first $values.config.redpanda.kafka_api).external.subdomain }}
-  - {{ printf "*.%s" (first $values.config.redpanda.kafka_api).external.subdomain | squote }}
+  - {{ template "redpanda.fullname" $ }}-cluster.{{ printf "%s.%s.svc.%s" $service $ns $domain }}
+  - {{ template "redpanda.fullname" $ }}-cluster.{{ printf "%s.%s.svc" $service $ns }}
+  - {{ template "redpanda.fullname" $ }}-cluster.{{ printf "%s.%s" $service $ns }}
+  - "*.{{ template "redpanda.fullname" $ }}-cluster.{{ printf "%s.%s.svc.%s" $service $ns $domain }}"
+  - "*.{{ template "redpanda.fullname" $ }}-cluster.{{ printf "%s.%s.svc" $service $ns }}"
+  - "*.{{ template "redpanda.fullname" $ }}-cluster.{{ printf "%s.%s" $service $ns }}"
+  - {{ printf "%s.%s.svc.%s" $service $ns $domain }}
+  - {{ printf "%s.%s.svc" $service $ns }}
+  - {{ printf "%s.%s" $service $ns }}
+  - {{ printf "*.%s.%s.svc.%s" $service $ns $domain | quote }}
+  - {{ printf "*.%s.%s.svc" $service $ns | quote }}
+  - {{ printf "*.%s.%s" $service $ns | quote }}
   duration: {{ $d | default "43800h" }}
   isCA: false
-  commonName: {{ template "redpanda.fullname" $ }}-{{ $s }}-cert
-  secretName: {{ template "redpanda.fullname" $ }}-{{ $s }}-cert
+  commonName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
+  secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
   privateKey:
     algorithm: ECDSA
     size: 256
+    {{- if not (empty $data.issuerRef) }}
   issuerRef:
-    name: {{ template "redpanda.fullname" $ }}-{{ $s }}-root-issuer
+    {{- toYaml $data.issuerRef | nindent 4 }}
+    group: cert-manager.io
+    {{- else }}
+  issuerRef:
+    name: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-issuer
     kind: Issuer
     group: cert-manager.io
-  keystores:
-    jks:
-      create: true
-      passwordSecretRef:
-        key: password
-        name:  {{ template "redpanda.fullname" $ }}-{{ $s }}-cert-keystore
-    jks:
-      create: true
-      passwordSecretRef:
-        key: password
-        name: {{ template "redpanda.fullname" $ }}-{{ $s }}-cert-keystore 
----
+    {{- end }}
+  {{- end }}
 {{- end }}
