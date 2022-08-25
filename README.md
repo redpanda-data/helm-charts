@@ -8,24 +8,6 @@ Please note that we have two helm charts: `redpanda` (this project) and `redpand
 
 This helm chart (`redpanda`) focuses on providing a helm chart that deploys a Redpanda cluster according to the configuration in a values.yaml. Once deployed, you continue to use the helm command and modify [`values.yaml`](https://github.com/redpanda-data/helm-charts/blob/main/redpanda/values.yaml) to change and/or upgrade your Redpanda deployment.
 
-The `redpanda-operator` chart installs a golang-based operator that will deploy and manage your Redpanda cluster. Helm is primarily used only to deploy the operator, and from there you would interact with the operator and/or `kubectl` in order to modify your Redpanda cluster. `redpanda-operator` is released alongside Redpanda (see the latest release [here](https://github.com/redpanda-data/redpanda/releases)). For now, much of our site's helm documentation focuses on the `redpanda-operator` (see [here](https://docs.redpanda.com/docs/quickstart/kubernetes-qs-cloud/)).
-
-Feel free to use which ever helm chart you prefer! But keep in mind that they are separate, incompatible projects, and instructions for one will not apply to the other. A good rule of thumb is that if you see mention of the word "operator" in some resource, it's not related to this helm chart. This chart has no operator and no custom resource definitions (CRDs).
-
-## v2 in development
-
-We are making major changes to this chart to provide a number of new features and simplify how features can be managed from within `values.yaml`. For now this means we will have two versions of this chart. This version (main branch) is the older one, and the next version is in the [v2 branch](https://github.com/redpanda-data/helm-charts/tree/v2). Please see [this project](https://github.com/redpanda-data/helm-charts/projects/1) for details on what is being worked on and planned, and feel free to provide any feedback by [opening a new issue](https://github.com/redpanda-data/helm-charts/issues/new).
-
-We also plan to update our docs site with details on this helm chart. Right now much of the helm-related documentation focuses on `redpanda-operator`, but that will change as we finalize the initial v2 release of this chart. Once we are comfortable with the v2 branch it will be merged into main branch.
-
-## Overview 
-
-## We have two different helm projects
-
-Please note that we have two helm charts: `redpanda` (this project) and `redpanda-operator` ([here](https://github.com/redpanda-data/redpanda/tree/dev/src/go/k8s/helm-chart/charts/redpanda-operator)). These are two separate projects!
-
-This helm chart (`redpanda`) focuses on providing a helm chart that deploys a Redpanda cluster according to the configuration in a values.yaml. Once deployed, you continue to use the helm command and modify [`values.yaml`](https://github.com/redpanda-data/helm-charts/blob/main/redpanda/values.yaml) to change and/or upgrade your Redpanda deployment.
-
 The `redpanda-operator` chart installs a kubernetes operator that will deploy and manage a Redpanda cluster. The future state of the operator is in flux and may change in the near future. Helm is primarily used in that project only to deploy the operator, and from there you would interact with the operator and/or `kubectl` in order to modify your Redpanda cluster. `redpanda-operator` is released alongside Redpanda (see the latest release [here](https://github.com/redpanda-data/redpanda/releases)). For now, much of our site's helm documentation focuses on the `redpanda-operator` (see [here](https://docs.redpanda.com/docs/quickstart/kubernetes-qs-cloud/)). We are improving our documentation to have more extensive coverage of both the `redpanda-operator` and this `redpanda` helm chart.
 
 This is the recommended chart. Feel free to use which ever helm chart you prefer, but keep in mind that they are separate, incompatible projects, and instructions for one will not apply to the other. A good rule of thumb is that if you see mention of the word "operator" in some resource, it's not related to this helm chart. This chart has no operator and no custom resource definitions (CRDs).
@@ -48,7 +30,7 @@ See the [values.yaml](./redpanda/values.yaml) file for all possible properties.
 ### Required software
 
 * Helm >= 3.0
-* Kubernetes >= 1.18
+* Kubernetes >= 1.21
 * Cert-Manager (optional, needed for TLS)
 * MetalLB (optional)
 
