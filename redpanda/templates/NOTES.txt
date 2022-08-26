@@ -18,7 +18,7 @@ Congratulations on installing {{ .Chart.Name }}!
 
 The pods will rollout in a few seconds. To check the status:
 
-  kubectl -n {{ .Release.Namespace }} rollout status -statefulset {{ template "redpanda.fullname" . }} --watch
+  kubectl -n {{ .Release.Namespace }} rollout status statefulset {{ template "redpanda.fullname" . }} --watch
 
 Try some sample commands, like creating a topic called test-topic:
 
