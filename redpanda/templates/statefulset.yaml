@@ -109,6 +109,24 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.hostIP
+          startupProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                {{- if (include "admin-internal-tls-enabled" . |fromJson).bool }}
+                - >
+                  curl https://localhost:{{ .Values.listeners.admin.port }}/v1/cluster/health_overview
+                  -svk --cacert /etc/tls/certs/{{ .Values.listeners.admin.tls.cert }}/ca.crt |
+                  grep '"is_healthy": true'
+                {{- else }}
+                - >
+                  curl -sv http://localhost:{{ .Values.listeners.admin.port }}/v1/cluster/health_overview |
+                  grep '"is_healthy": true'
+                {{- end }}
+            initialDelaySeconds: {{ .Values.statefulset.startupProbe.initialDelaySeconds }}
+            failureThreshold: {{ .Values.statefulset.startupProbe.failureThreshold }}
+            periodSeconds: {{ .Values.statefulset.startupProbe.periodSeconds }}
           livenessProbe:
             exec:
               command:
@@ -124,6 +142,9 @@ spec:
                   curl -sv http://localhost:{{ .Values.listeners.admin.port }}/v1/cluster/health_overview |
                   grep '"is_healthy": true'
                 {{- end }}
+            initialDelaySeconds: {{ .Values.statefulset.livenessProbe.initialDelaySeconds }}
+            failureThreshold: {{ .Values.statefulset.livenessProbe.failureThreshold }}
+            periodSeconds: {{ .Values.statefulset.livenessProbe.periodSeconds }}
           readinessProbe:
             exec:
               command:
@@ -139,6 +160,10 @@ spec:
                   curl -sv http://localhost:{{ .Values.listeners.admin.port }}/v1/cluster/health_overview |
                   grep '"is_healthy": true'
                 {{- end }}
+            initialDelaySeconds: {{ .Values.statefulset.readinessProbe.initialDelaySeconds }}
+            failureThreshold: {{ .Values.statefulset.readinessProbe.failureThreshold }}
+            periodSeconds: {{ .Values.statefulset.readinessProbe.periodSeconds }}
+            successThreshold: {{ .Values.statefulset.readinessProbe.initialDelaySeconds }}
           command:
             - rpk
             - redpanda

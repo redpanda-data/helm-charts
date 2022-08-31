@@ -229,6 +229,20 @@ statefulset:
     maxUnavailable: 1
   # Additional annotations to apply to the Pods of this StatefulSet.
   annotations: {}
+  # Adjust the period for your probes to meet your needs (see https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes)
+  startupProbe:
+    initialDelaySeconds: 1
+    failureThreshold: 120
+    periodSeconds: 10
+  livenessProbe:
+    initialDelaySeconds: 30
+    failureThreshold: 3
+    periodSeconds: 10
+  readinessProbe:
+    initialDelaySeconds: 10
+    failureThreshold: 3
+    periodSeconds: 10
+    successThreshold: 1
   #
   # A note regarding statefulset resources:
   # Resources are set through the top-level resources section above.
