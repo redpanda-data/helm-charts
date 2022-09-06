@@ -23,7 +23,9 @@ This is the Helm Chart for [Redpanda](https://redpanda.com). It provides the abi
 - External access
 - Load balancing
 
-See the [values.yaml](./redpanda/values.yaml) file for all possible properties.
+We have included an [examples folder](./examples/README.md) with more details on how to use this helm chart. Each example focuses on specific features like the ones listed above. We recommend completing the instructions in this README before continuing steps in any of these examples.
+
+We have also included many comments through the [values.yaml](./redpanda/values.yaml) file. Please take a look at this file for more details.
 
 ## Prerequisites
 
