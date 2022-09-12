@@ -235,11 +235,11 @@ statefulset:
     failureThreshold: 120
     periodSeconds: 10
   livenessProbe:
-    initialDelaySeconds: 30
+    initialDelaySeconds: 10
     failureThreshold: 3
     periodSeconds: 10
   readinessProbe:
-    initialDelaySeconds: 10
+    initialDelaySeconds: 1
     failureThreshold: 3
     periodSeconds: 10
     successThreshold: 1

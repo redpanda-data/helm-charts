@@ -118,11 +118,25 @@ spec:
                 - >
                   curl https://localhost:{{ .Values.listeners.admin.port }}/v1/cluster/health_overview
                   -svk --cacert /etc/tls/certs/{{ .Values.listeners.admin.tls.cert }}/ca.crt |
-                  grep '"is_healthy": true'
+                  awk '{
+                    id = $0; gsub(/.*"controller_id": /, "", id); gsub(/,.*/, "", id)
+                    nd_str = $0; gsub(/.*"nodes_down": \[/, "", nd_str); gsub(/\].*/, "", nd_str)
+                    FS=","
+                    split(nd_str, nd_list)
+                    for (i in nd_list) nodes_down[nd_list[i]]=""
+                    exit (id in nodes_down)
+                  }'
                 {{- else }}
                 - >
                   curl -sv http://localhost:{{ .Values.listeners.admin.port }}/v1/cluster/health_overview |
-                  grep '"is_healthy": true'
+                  awk '{
+                    id = $0; gsub(/.*"controller_id": /, "", id); gsub(/,.*/, "", id)
+                    nd_str = $0; gsub(/.*"nodes_down": \[/, "", nd_str); gsub(/\].*/, "", nd_str)
+                    FS=","
+                    split(nd_str, nd_list)
+                    for (i in nd_list) nodes_down[nd_list[i]]=""
+                    exit (id in nodes_down)
+                  }'
                 {{- end }}
             initialDelaySeconds: {{ .Values.statefulset.startupProbe.initialDelaySeconds }}
             failureThreshold: {{ .Values.statefulset.startupProbe.failureThreshold }}
@@ -135,12 +149,10 @@ spec:
                 {{- if (include "admin-internal-tls-enabled" . |fromJson).bool }}
                 - >
                   curl https://localhost:{{ .Values.listeners.admin.port }}/v1/cluster/health_overview
-                  -svk --cacert /etc/tls/certs/{{ .Values.listeners.admin.tls.cert }}/ca.crt |
-                  grep '"is_healthy": true'
+                  -svk --cacert /etc/tls/certs/{{ .Values.listeners.admin.tls.cert }}/ca.crt
                 {{- else }}
                 - >
-                  curl -sv http://localhost:{{ .Values.listeners.admin.port }}/v1/cluster/health_overview |
-                  grep '"is_healthy": true'
+                  curl -sv http://localhost:{{ .Values.listeners.admin.port }}/v1/cluster/health_overview
                 {{- end }}
             initialDelaySeconds: {{ .Values.statefulset.livenessProbe.initialDelaySeconds }}
             failureThreshold: {{ .Values.statefulset.livenessProbe.failureThreshold }}
@@ -154,11 +166,25 @@ spec:
                 - >
                   curl https://localhost:{{ .Values.listeners.admin.port }}/v1/cluster/health_overview
                   -svk --cacert /etc/tls/certs/{{ .Values.listeners.admin.tls.cert }}/ca.crt |
-                  grep '"is_healthy": true'
+                  awk '{
+                    id = $0; gsub(/.*"controller_id": /, "", id); gsub(/,.*/, "", id)
+                    nd_str = $0; gsub(/.*"nodes_down": \[/, "", nd_str); gsub(/\].*/, "", nd_str)
+                    FS=","
+                    split(nd_str, nd_list)
+                    for (i in nd_list) nodes_down[nd_list[i]]=""
+                    exit (id in nodes_down)
+                  }'
                 {{- else }}
                 - >
                   curl -sv http://localhost:{{ .Values.listeners.admin.port }}/v1/cluster/health_overview |
-                  grep '"is_healthy": true'
+                  awk '{
+                    id = $0; gsub(/.*"controller_id": /, "", id); gsub(/,.*/, "", id)
+                    nd_str = $0; gsub(/.*"nodes_down": \[/, "", nd_str); gsub(/\].*/, "", nd_str)
+                    FS=","
+                    split(nd_str, nd_list)
+                    for (i in nd_list) nodes_down[nd_list[i]]=""
+                    exit (id in nodes_down)
+                  }'
                 {{- end }}
             initialDelaySeconds: {{ .Values.statefulset.readinessProbe.initialDelaySeconds }}
             failureThreshold: {{ .Values.statefulset.readinessProbe.failureThreshold }}
