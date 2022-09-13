@@ -198,19 +198,6 @@ spec:
             - --memory={{ template "redpanda-memory" . }}M
             - --reserve-memory={{ template "redpanda-reserve-memory" . }}
             - --default-log-level={{ .Values.logging.logLevel }}
-            - --kafka-addr=internal://$(POD_IP):{{ .Values.listeners.kafka.port }},
-{{- range $name,$listener := .Values.listeners.kafka.external -}}
-                {{ $name }}://$(POD_IP):{{ $listener.port }},
-{{- end }}
-            - --rpc-addr=$(POD_IP):{{ .Values.listeners.rpc.port }}
-            - --schema-registry-addr=internal://$(POD_IP):{{ .Values.listeners.schemaRegistry.port }},
-{{- range $name, $listener := .Values.listeners.schemaRegistry.external -}}
-                {{ $name }}://$(POD_IP):{{ $listener.port }},
-{{- end }}
-            - --pandaproxy-addr=internal://$(POD_IP):{{ .Values.listeners.http.port }},
-{{- range $name, $listener := .Values.listeners.http.endpoints -}}
-                {{ $name }}://$(POD_IP):{{ $listener.port }},
-  {{- end }}
             - --advertise-kafka-addr=internal://{{ $advertiseAddress }}:{{ .Values.listeners.kafka.port }},
 {{- range $name, $listener := .Values.listeners.kafka.external -}}
   {{- $enabled := dig "enabled" $values.external.enabled $listener -}}
