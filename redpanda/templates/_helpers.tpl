@@ -44,7 +44,7 @@ Create chart name and version as used by the chart label.
 Get the version of redpanda being used as an image
 */}}
 {{- define "redpanda.semver" -}}
-{{ .Values.image.tag | trimPrefix "v" }}
+{{ include "redpanda.tag" . | trimPrefix "v" }}
 {{- end }}
 
 {{/*
@@ -62,7 +62,17 @@ Create the name of the service account to use
 Use AppVersion if image.tag is not set
 */}}
 {{- define "redpanda.tag" -}}
-{{- default .Chart.AppVersion .Values.image.tag -}}
+{{- $tag := default .Chart.AppVersion .Values.image.tag -}}
+{{- $matchString := "^v(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$" -}}
+{{- $match := mustRegexMatch $matchString $tag -}}
+{{- if not $match -}}
+  {{/*
+  This error message is for end users. This can also occur if
+  AppVersion doesn't start with a 'v' in Chart.yaml.
+  */}}
+  {{ fail "image.tag must start with a 'v' and be valid semver" }}
+{{- end -}}
+{{- $tag -}}
 {{- end -}}
 
 {{/*
