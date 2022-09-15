@@ -21,6 +21,69 @@
           "pattern": "^(Always|Never|IfNotPresent)$"
         }
       }
+    },
+    "license_key": {
+      "type": "string",
+      "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+    },
+    "auth": {
+      "type": "object",
+      "required": [
+        "sasl"
+      ],
+      "properties": {
+        "sasl": {
+          "type": "object",
+          "required": [
+            "enabled",
+            "users"
+          ],
+          "if": {
+            "properties": {
+              "enabled": {
+                "enum": [
+                  true
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              },
+              "users": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "password": {
+                      "type": "string"
+                    }
+                  },
+                  "oneOf": [
+                    {
+                      "required": [
+                        "name",
+                        "password"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "name",
+                        "secretName"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }
