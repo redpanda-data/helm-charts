@@ -49,14 +49,14 @@ Try some sample commands, like creating a topic called test-topic:
   {{ $rpkAdmin = $rpk }}
 {{- end }}
 {{- if $anySASL }}
-  {{ $rpk = printf "%s %s" $rpk "--user admin --password test --sasl-mechanism  SCRAM-SHA-256" }}
-  {{ $rpkAdmin = printf "%s %s" $rpkAdmin "--user admin --password test --sasl-mechanism  SCRAM-SHA-256" }}
+  {{ $rpk = printf "%s --user %s --password $YOUR_PASSWORD --sasl-mechanism SCRAM-SHA-256" $rpk (.Values.auth.sasl.users | first).name }}
+  {{ $rpkAdmin = printf "%s --user %s --password $YOUR_PASSWORD --sasl-mechanism SCRAM-SHA-256" $rpkAdmin (.Values.auth.sasl.users | first).name }}
 {{- end }}
 
 {{- if and $anySASL }}
 Create a user:
 
-  {{ $rpkAdmin }} acl user create admin
+  {{ $rpkAdmin }} acl user create myuser -p changeme
 {{- end }}
 
 Get the api status:

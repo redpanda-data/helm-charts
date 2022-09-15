@@ -357,3 +357,34 @@ IP is required for the advertised address.
   {{- end -}}
   {{- $result -}}
 {{- end -}}
+
+{{- define "api-urls" -}}
+{{ template "redpanda.fullname" . }}-0.{{ include "redpanda.internal.domain" .}}:{{ .Values.listeners.admin.port }}
+{{- end -}}
+
+{{- define "rpk-command" -}}
+  {{- $command := list "rpk" -}}
+  {{- $command = concat $command (list "--api-urls" (include "api-urls" . )) -}}
+  {{- if (include "admin-internal-tls-enabled" . | fromJson).bool -}}
+    {{- $command = concat $command (list
+      "--admin-api-tls-enabled"
+      "--admin-api-tls-truststore"
+      (printf "/etc/tls/certs/%s/ca.crt" .Values.listeners.admin.tls.cert))
+    -}}
+  {{- end -}}
+  {{- if (include "kafka-internal-tls-enabled" . | fromJson).bool -}}
+    {{- $command = concat $command (list
+      "--tls-enabled"
+      "--tls-truststore"
+      (printf "/etc/tls/certs/%s/ca.crt" .Values.listeners.kafka.tls.cert))
+    -}}
+  {{- end -}}
+  {{- if (include "sasl-enabled" . | fromJson).bool -}}
+    {{- $command = concat $command (list
+      "--user" (first .Values.auth.sasl.users).name
+      "--password" (first .Values.auth.sasl.users).password
+      "--sasl-mechanism SCRAM-SHA-256")
+    -}}
+  {{- end -}}
+{{ $command | join " " }}
+{{- end -}}

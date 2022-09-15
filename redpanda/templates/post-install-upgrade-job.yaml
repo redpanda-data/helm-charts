@@ -1,0 +1,102 @@
+{{/*
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/}}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "redpanda.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    helm.sh/chart: {{ template "redpanda.chart" . }}
+    app.kubernetes.io/name: {{ template "redpanda.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/component: {{ template "redpanda.name" . }}
+{{- with .Values.commonLabels }}
+  {{- toYaml . | nindent 4 }}
+{{- end }}
+  annotations:
+    # This is what defines this resource as a hook. Without this line, the
+    # job is considered part of the release.
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation
+    "helm.sh/hook-weight": "-10"
+spec:
+  template:
+    metadata:
+      name: "{{ .Release.Name }}"
+      labels:
+        app.kubernetes.io/name: {{ template "redpanda.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name | quote }}
+        app.kubernetes.io/component: {{ template "redpanda.name" . }}
+{{- with .Values.commonLabels }}
+  {{- toYaml . | nindent 8 }}
+{{- end }}
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: {{ template "redpanda.name" . }}-post-install
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        command:
+            - bash
+            - -c
+        args:
+          - >
+{{- if .Values.auth.sasl.enabled }}
+  {{- range $user := .Values.auth.sasl.users }}
+            {{ template "rpk-command" $ }} acl user create {{ $user.name }} -p {{ $user.password | quote }}
+            ;
+  {{- end }}
+{{- end }}
+{{- if and (include "redpanda.semver" . | semverCompare ">=22.2.0") (not (empty .Values.license_key)) }}
+            {{ template "rpk-command" $ }} cluster license set {{ .Values.license_key | quote }}
+            ;
+{{- end }}
+        volumeMounts:
+          - name: {{ template "redpanda.fullname" . }}
+            mountPath: /tmp/base-config
+          - name: config
+            mountPath: /etc/redpanda
+{{- if (include "tls-enabled" . | fromJson).bool }}
+  {{- range $name, $cert := .Values.tls.certs }}
+          - name: redpanda-{{ $name }}-cert
+            mountPath: {{ printf "/etc/tls/certs/%s" $name }}
+  {{- end }}
+{{- end }}
+      volumes:
+        - name: {{ template "redpanda.fullname" . }}
+          configMap:
+            name: {{ template "redpanda.fullname" . }}
+        - name: config
+          emptyDir: {}
+{{- if (include "tls-enabled" . | fromJson).bool }}
+  {{- range $name, $cert := .Values.tls.certs }}
+        - name: redpanda-{{ $name }}-cert
+          secret:
+            defaultMode: 420
+            items:
+            - key: tls.key
+              path: tls.key
+            - key: tls.crt
+              path: tls.crt
+    {{- if $cert.caEnabled }}
+            - key: ca.crt
+              path: ca.crt
+    {{- end }}
+            secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
+  {{- end }}
+{{- end -}}

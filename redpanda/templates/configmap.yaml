@@ -52,9 +52,6 @@ data:
 {{- end }}
   redpanda.yaml: |
     config_file: /etc/redpanda/redpanda.yaml
-{{- with .Values.license_key }}
-    license_key: {{ . }}
-{{- end }}
 {{- if .Values.logging.usageStats.enabled }}
   {{- with (dig "usageStats" "organization" "" .Values.logging) }}
     organization: {{ . }}
