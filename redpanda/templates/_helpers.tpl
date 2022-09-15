@@ -59,6 +59,13 @@ Create the name of the service account to use
 {{- end }}
 
 {{/*
+Use AppVersion if image.tag is not set
+*/}}
+{{- define "redpanda.tag" -}}
+{{- default .Chart.AppVersion .Values.image.tag -}}
+{{- end -}}
+
+{{/*
 Generate configuration needed for rpk
 */}}
 

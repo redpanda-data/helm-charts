@@ -50,7 +50,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: {{ template "redpanda.name" . }}-post-install
-        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}
         command:
             - bash
             - -c

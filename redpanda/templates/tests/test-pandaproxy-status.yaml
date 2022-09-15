@@ -36,7 +36,7 @@ spec:
   restartPolicy: Never
   containers:
     - name: {{ template "redpanda.name" . }}
-      image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+      image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}
       command:
         - curl
         - -svm3
