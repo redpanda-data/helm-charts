@@ -209,7 +209,7 @@ IP is required for the advertised address.
 {{- $enabled := and .Values.external.enabled (eq .Values.external.type "NodePort") -}}
 {{- range $listener := .Values.listeners -}}
   {{- range $external := $listener.external -}}
-    {{- if eq (dig "type" $values.external.type $external) "NodePort" -}}
+    {{- if and (dig "enabled" false $external) (eq (dig "type" $values.external.type $external) "NodePort") -}}
       {{- $enabled = true -}}
     {{- end -}}
   {{- end -}}
