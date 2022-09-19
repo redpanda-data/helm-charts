@@ -142,7 +142,7 @@ Then in one terminal start the folllowing client which will consume messages to 
 Run the producer in another terminal:
 
 ```
-> rpk topic consume external-access --brokers redpanda-0.local:31092
+> rpk topic produce external-access --brokers redpanda-0.local:31092
 ```
 
 In the above terminal where the producer is running, type some text and press enter. You should see an event printed on the consumer side similar to the following:
