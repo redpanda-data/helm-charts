@@ -362,8 +362,8 @@ IP is required for the advertised address.
 {{ template "redpanda.fullname" . }}-0.{{ include "redpanda.internal.domain" .}}:{{ .Values.listeners.admin.port }}
 {{- end -}}
 
-{{- define "rpk-command" -}}
-  {{- $command := list "rpk" -}}
+{{- define "rpk-flags" -}}
+  {{- $command := list -}}
   {{- $command = concat $command (list "--api-urls" (include "api-urls" . )) -}}
   {{- if (include "admin-internal-tls-enabled" . | fromJson).bool -}}
     {{- $command = concat $command (list

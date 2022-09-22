@@ -58,12 +58,12 @@ spec:
           - >
 {{- if .Values.auth.sasl.enabled }}
   {{- range $user := .Values.auth.sasl.users }}
-            {{ template "rpk-command" $ }} acl user create {{ $user.name }} -p {{ $user.password | quote }}
+            rpk acl user create {{ $user.name }} -p {{ $user.password | quote }} {{ template "rpk-flags" $ }} 
             ;
   {{- end }}
 {{- end }}
 {{- if and (include "redpanda.semver" . | semverCompare ">=22.2.0") (not (empty .Values.license_key)) }}
-            {{ template "rpk-command" $ }} cluster license set {{ .Values.license_key | quote }}
+            rpk cluster license set {{ .Values.license_key | quote }} {{ template "rpk-flags" $ }} 
             ;
 {{- end }}
         volumeMounts:
