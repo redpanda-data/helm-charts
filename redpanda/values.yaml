@@ -41,20 +41,15 @@ image:
 license_key: ""
 
 #
-# Authentication
+# Authentication & SASL configuration
 auth:
-  #
-  # SASL configuration
-  sasl:
-    enabled: false
-    # user list
-    # TODO create user at startup
-    users:
-      - name: admin
-        # Password for the user. This will be used to generate a secret
-        # password: password
-        # If password isn't given, then the secretName must point to an already existing secret
-        # secretName: adminPassword
+  enabled: false
+  # Set `bootstrap: {}` to enable sasl but not create the `RP_BOOTSTRAP_USER` envvar
+  bootstrap:
+    user: admin
+    password: ""
+    secretName: ""
+  additionalSuperUsers: []
 
 #
 # TLS configuration

@@ -96,6 +96,11 @@ spec:
       containers:
         - name: {{ template "redpanda.name" . }}
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          {{- if .Values.auth.enabled }}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.auth.bootstrap.secretName | default (include "redpanda.bootstrap-secret-name" .) }}
+          {{- end }}
           env:
             - name: SERVICE_NAME
               valueFrom:

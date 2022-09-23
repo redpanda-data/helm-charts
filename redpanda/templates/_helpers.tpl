@@ -201,7 +201,7 @@ IP is required for the advertised address.
 {{- end -}}
 
 {{- define "sasl-enabled" -}}
-{{- toJson (dict "bool" (dig "enabled" false .Values.auth.sasl)) -}}
+{{- toJson (dict "bool" (dig "enabled" false .Values.auth)) -}}
 {{- end -}}
 
 {{- define "external-nodeport-enabled" -}}
@@ -387,4 +387,19 @@ IP is required for the advertised address.
     -}}
   {{- end -}}
 {{ $command | join " " }}
+{{- end -}}
+
+{{- define "common-labels" }}
+helm.sh/chart: {{ template "redpanda.chart" . }}
+app.kubernetes.io/name: {{ template "redpanda.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name | quote }}
+app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+app.kubernetes.io/component: {{ template "redpanda.name" . }}
+{{- with .Values.commonLabels }}
+{{- toYaml . }}
+{{- end }}
+{{- end -}}
+
+{{- define "redpanda.bootstrap-secret-name" -}}
+{{ include "redpanda.fullname" . }}-bootstrap
 {{- end -}}
