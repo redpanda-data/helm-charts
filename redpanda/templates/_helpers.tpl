@@ -389,7 +389,7 @@ IP is required for the advertised address.
 {{ $command | join " " }}
 {{- end -}}
 
-{{- define "common-labels" }}
+{{- define "common-labels" -}}
 helm.sh/chart: {{ template "redpanda.chart" . }}
 app.kubernetes.io/name: {{ template "redpanda.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name | quote }}

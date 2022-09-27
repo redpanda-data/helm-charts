@@ -5,7 +5,7 @@ metadata:
   name: {{ include "redpanda.fullname" . }}-post-upgrade
   namespace: {{ .Release.Namespace | quote }}
   labels:
-{{ include "common-labels" . | toYaml | nindent 4 }}
+{{ include "common-labels" . | nindent 4 }}
 data:
   post-upgrade.sh: |-
     {{ .Files.Get "post-upgrade.sh" | nindent 4 }}

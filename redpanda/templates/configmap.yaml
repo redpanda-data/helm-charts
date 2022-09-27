@@ -14,7 +14,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-
+{{- $values := .Values }}
+{{- $users := list -}}
+{{- if .Values.auth.enabled -}}
+  {{- if .Values.auth.bootstrap -}}
+    {{- $users = append $users .Values.auth.bootstrap.user -}}
+  {{- end -}}
+  {{- range $user := .Values.auth.additionalSuperUsers -}}
+    {{- $users = append $users $user.name -}}
+  {{- end -}}
+{{- end -}}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -22,22 +31,13 @@ metadata:
   name: {{ include "redpanda.fullname" . }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
-    helm.sh/chart: {{ template "redpanda.chart" . }}
-    app.kubernetes.io/name: {{ template "redpanda.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/component: {{ template "redpanda.name" . }}
-{{- with .Values.commonLabels }}
-    {{- toYaml . | nindent 4 }}
-{{- end }}
+{{- include "common-labels" . | nindent 4 }}
 data:
 {{- if (include "redpanda.semver" . | semverCompare ">=22.1.1") }}
   bootstrap.yaml: |
     enable_sasl: {{ dig "enabled" false .Values.auth }}
   {{- if or (and .Values.auth.enabled (dig "user" false .Values.auth.bootstrap)) .Values.auth.additionalSuperUsers }}
-    superusers:
-      - {{ .Values.auth.bootstrap.user }}
-      {{ .Values.auth.additionalSuperUsers | toYaml | nindent 6 }}
+    superusers: {{ toJson $users }}
   {{- end }}
   {{- with (dig "cluster" dict .Values.config) }}
     {{- toYaml . | nindent 4 }}

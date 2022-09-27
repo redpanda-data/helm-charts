@@ -17,5 +17,6 @@ statefulset:
 tls:
   enabled: false
 auth:
-  sasl:
-    enabled: true
+  enabled: true
+  bootstrap:
+    password: password

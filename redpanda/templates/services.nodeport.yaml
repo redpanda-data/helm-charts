@@ -23,14 +23,7 @@ metadata:
   name: {{ include "redpanda.fullname" . }}-external
   namespace: {{ .Release.Namespace | quote }}
   labels:
-    helm.sh/chart: {{ template "redpanda.chart" . }}
-    app.kubernetes.io/name: {{ template "redpanda.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/component: {{ template "redpanda.name" . }}
-  {{- with .Values.commonLabels }}
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+{{ include "common-labels" . | nindent 4 }}
 spec:
   type: NodePort
   externalTrafficPolicy: Local

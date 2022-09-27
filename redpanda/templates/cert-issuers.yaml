@@ -30,7 +30,7 @@ metadata:
   name: {{ template "redpanda.fullname" $ }}-{{ $name }}-selfsigned-issuer
   namespace: {{ $release.Namespace | quote }}
   labels:
-{{ include "common-labels" . | toYaml | nindent 4 }}
+{{ include "common-labels" . | nindent 4 }}
 spec:
   selfSigned: {}
     {{- end }}
@@ -42,7 +42,7 @@ metadata:
   name: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-issuer
   namespace: {{ $release.Namespace | quote }}
   labels:
-{{ include "common-labels" . | toYaml | nindent 4 }}
+{{ include "common-labels" . | nindent 4 }}
 spec:
   ca:
     secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-certificate
@@ -54,7 +54,7 @@ metadata:
   name: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-certificate
   namespace: {{ $release.Namespace | quote }}
   labels:
-{{ include "common-labels" . | toYaml | nindent 4 }}
+{{ include "common-labels" . | nindent 4 }}
 spec:
   isCA: true
   commonName: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-certificate
