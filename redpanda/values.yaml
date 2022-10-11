@@ -353,14 +353,14 @@ listeners:
     port: 9644
     # Optional external section
     external:
-      # # `enabled`` is used to override the setting of the `external` top-level key
-      # # for this external listener. The default is `true`.
-      # enabled: true
-      # # Type of external access (options are NodePort and LoadBalancer)
-      # type: NodePort
-      # # External port
-      # # `nodePort` defines the TCP port to listen on for NodePort types.
-      # nodePort: 31644
+      default:
+        # `enabled`` is used to override the setting of the `external` top-level key
+        # for this external listener. The default is `true`.
+        # enabled: true
+
+        # External port
+        # `nodePort` defines the TCP port to listen on for NodePort types.
+        nodePort: 31644
     # Optional TLS section (required if global TLS is enabled)
     tls:
       # Optional flag to override the global TLS enabled flag
@@ -452,7 +452,7 @@ listeners:
 # Instead these parameters get passed directly to the Redpanda binary at startup.
 # See https://docs.redpanda.com/docs/cluster-administration/configuration/
 config:
-  cluster:
+  cluster: {}
     # auto_create_topics_enabled: true                             # Allow topic auto creation
     # transaction_coordinator_replication: 1                       # Replication factor for a transaction coordinator topic
     # id_allocator_replication: 1                                  # Replication factor for an ID allocator topic
@@ -477,7 +477,7 @@ config:
     # tm_sync_timeout_ms: 2000ms                                   # Time to wait state catch up before rejecting a request
     # tm_violation_recovery_policy: crash                          # Describes how to recover from an invariant violation happened on the transaction coordinator level
     # transactional_id_expiration_ms: 10080min                     # Producer ids are expired once this time has elapsed after the last write with the given producer ID
-  tunable:
+  tunable: {}
     # alter_topic_cfg_timeout_ms: 5s                              # Time to wait for entries replication in controller log when executing alter configuration request
     # compacted_log_segment_size: 256MiB                           # How large in bytes should each compacted log segment be (default 256MiB)
     # controller_backend_housekeeping_interval_ms: 1s              # Interval between iterations of controller backend housekeeping loop
@@ -536,7 +536,7 @@ config:
     # replicate_append_timeout_ms: 3s                              # Timeout for append entries requests issued while replicating entries
     # segment_appender_flush_timeout_ms: 1ms                       # Maximum delay until buffered data is written
     # wait_for_leader_timeout_ms: 5000ms                           # Timeout (ms) to wait for leadership in metadata cache
-  node:
+  node: {}
     # node_id:                                                     # Unique ID identifying a node in the cluster
     # data_directory:                                              # Place where redpanda will keep the data
     # admin_api_doc_dir: /usr/share/redpanda/admin-api-doc         # Admin API doc directory
