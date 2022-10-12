@@ -68,7 +68,7 @@ spec:
         - name: post-upgrade-script
           configMap:
             name: {{ include "redpanda.fullname" . }}-post-upgrade
-            defaultMode: 0777
+            defaultMode: 0544
         - name: config
           emptyDir: {}
 {{- if (include "tls-enabled" . | fromJson).bool }}
