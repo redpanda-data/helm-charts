@@ -26,7 +26,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: {{ template "redpanda.name" . }}-post-upgrade
-        image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+        image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}
         command: ["/bin/sh", "-c"]
         args:
           - /mnt/scripts/post-upgrade.sh

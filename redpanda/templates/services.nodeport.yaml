@@ -35,7 +35,7 @@ spec:
   {{- if and $enabled (eq $type "NodePort") }}
     - name: admin-{{ $name }}
       protocol: TCP
-      port: {{ $listener.port }}
+      port: {{ $values.listeners.admin.port }}
       nodePort: {{ $listener.nodePort }}
   {{- end }}
 {{- end }}
