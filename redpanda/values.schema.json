@@ -1,0 +1,810 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "type": "object",
+  "required": [
+    "image"
+  ],
+  "properties": {
+    "image": {
+      "description": "Values used to define the container image to be used for Redpanda",
+      "type": "object",
+      "required": [
+        "repository",
+        "pullPolicy"
+      ],
+      "properties": {
+        "repository": {
+          "description": "container image repository",
+          "default": "vectorized/redpanda",
+          "type": "string",
+          "pattern": "^[a-z0-9-_/.]+$"
+        },
+        "tag": {
+          "description": "The container image tag. Use the Redpanda release version. Must be a valid semver prefixed with a 'v'.",
+          "default": "Chart.appVersion",
+          "type": "string",
+          "pattern": "^v(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$|^$"
+        },
+        "pullPolicy": {
+          "description": "The Kubernetes Pod image pull policy.",
+          "type": "string",
+          "pattern": "^(Always|Never|IfNotPresent)$"
+        }
+      }
+    },
+    "license_key": {
+      "type": "string",
+      "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$"
+    },
+    "auth": {
+      "type": "object",
+      "required": [
+        "sasl"
+      ],
+      "properties": {
+        "sasl": {
+          "type": "object",
+          "required": [
+            "enabled",
+            "users"
+          ],
+          "if": {
+            "properties": {
+              "enabled": {
+                "enum": [
+                  true
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              },
+              "users": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "password": {
+                      "type": "string"
+                    }
+                  },
+                  "oneOf": [
+                    {
+                      "required": [
+                        "name",
+                        "password"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "name",
+                        "secretName"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      }
+    },
+    "tls": {
+      "type": "object",
+      "required": [
+        "enabled"
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "certs": {
+          "type": "object",
+          "minProperties": 1,
+          "patternProperties": {
+            "^[A-Za-z_][A-Za-z0-9_]*$": {
+              "type": "object",
+              "required": [
+                "caEnabled"
+              ],
+              "properties": {
+                "issuerRef": {
+                  "type": "string"
+                },
+                "caEnabled": {
+                  "type": "boolean"
+                },
+                "duration": {
+                  "type": "string",
+                  "pattern": ".*[smh]$"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "external": {
+      "type": "object",
+      "required": [
+        "enabled",
+        "type",
+        "domain"
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string",
+          "pattern": "^NodePort$"
+        },
+        "domain": {
+          "type": "string",
+          "format": "idn-hostname"
+        }
+      }
+    },
+    "logging": {
+      "type": "object",
+      "required": [
+        "logLevel",
+        "usageStats"
+      ],
+      "parameters": {
+        "logLevel": {
+          "type": "string",
+          "pattern": "^(error|warn|info|debug|trace)$"
+        },
+        "usageStats": {
+          "type": "object",
+          "required": [
+            "enabled"
+          ],
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "resources": {
+      "type": "object",
+      "required": [
+        "cpu",
+        "memory"
+      ],
+      "properties": {
+        "cpu": {
+          "type": "object",
+          "required": [
+            "cores"
+          ],
+          "properties": {
+            "cores": {
+              "type": "integer"
+            },
+            "overprovisioned": {
+              "type": "boolean"
+            }
+          }
+        },
+        "memory": {
+          "type": "object",
+          "required": [
+            "container"
+          ],
+          "properties": {
+            "enable_memory_locking": {
+              "type": "boolean"
+            },
+            "container": {
+              "type": "object",
+              "required": [
+                "max"
+              ],
+              "properties": {
+                "min": {
+                  "type": "string",
+                  "pattern": "^[0-9]+(\\.[0-9]){0,1}(k|M|G|Ki|Mi|Gi)$"
+                },
+                "max": {
+                  "type": "string",
+                  "pattern": "^[0-9]+(\\.[0-9]){0,1}(k|M|G|Ki|Mi|Gi)$"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "storage": {
+      "type": "object",
+      "required": [
+        "hostPath",
+        "persistentVolume"
+      ],
+      "properties": {
+        "hostPath": {
+          "type": "string"
+        },
+        "persistentVolume": {
+          "type": "object",
+          "required": [
+            "enabled",
+            "size",
+            "storageClass",
+            "labels",
+            "annotations"
+          ],
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "size": {
+              "type": "string",
+              "pattern": "^[0-9]+(\\.[0-9]){0,1}(k|M|G|Ki|Mi|Gi)$"
+            },
+            "storageClass": {
+              "type": "string"
+            },
+            "labels": {
+              "type": "object"
+            },
+            "annotations": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "statefulset": {
+      "type": "object",
+      "required": [
+        "replicas",
+        "updateStrategy",
+        "podManagementPolicy",
+        "budget",
+        "annotations",
+        "startupProbe",
+        "livenessProbe",
+        "readinessProbe",
+        "podAffinity",
+        "podAntiAffinity",
+        "nodeSelector",
+        "priorityClassName",
+        "tolerations",
+        "topologySpreadConstraints",
+        "podSecurityContext"
+      ],
+      "properties": {
+        "replicas": {
+          "type": "integer"
+        },
+        "updateStrategy": {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "pattern": "^(RollingUpdate|OnDelete)$"
+            }
+          }
+        },
+        "podManagementPolicy": {
+          "type": "string",
+          "pattern": "^(OrderedReady|Parallel)$"
+        },
+        "budget": {
+          "type": "object",
+          "required": [
+            "maxUnavailable"
+          ],
+          "properties": {
+            "maxUnavailable": {
+              "type": "integer"
+            }
+          }
+        },
+        "annotations": {
+          "type": "object"
+        },
+        "startupProbe": {
+          "type": "object",
+          "required": [
+            "initialDelaySeconds",
+            "failureThreshold",
+            "periodSeconds"
+          ],
+          "properties": {
+            "initialDelaySeconds": {
+              "type": "integer"
+            },
+            "failureThreshold": {
+              "type": "integer"
+            },
+            "periodSeconds": {
+              "type": "integer"
+            }
+          }
+        },
+        "livenessProbe": {
+          "type": "object",
+          "required": [
+            "initialDelaySeconds",
+            "failureThreshold",
+            "periodSeconds"
+          ],
+          "properties": {
+            "initialDelaySeconds": {
+              "type": "integer"
+            },
+            "failureThreshold": {
+              "type": "integer"
+            },
+            "periodSeconds": {
+              "type": "integer"
+            }
+          }
+        },
+        "readinessProbe": {
+          "type": "object",
+          "required": [
+            "initialDelaySeconds",
+            "failureThreshold",
+            "periodSeconds"
+          ],
+          "properties": {
+            "initialDelaySeconds": {
+              "type": "integer"
+            },
+            "failureThreshold": {
+              "type": "integer"
+            },
+            "periodSeconds": {
+              "type": "integer"
+            }
+          }
+        },
+        "podAffinity": {
+          "type": "object"
+        },
+        "podAntiAffinity": {
+          "type": "object",
+          "required": [
+            "topologyKey",
+            "type",
+            "weight"
+          ],
+          "properties": {
+            "topologyKey": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string",
+              "pattern": "^(hard|soft)$"
+            },
+            "weight": {
+              "type": "integer"
+            }
+          }
+        },
+        "nodeSelector": {
+          "type": "object"
+        },
+        "priorityClassName": {
+          "type": "string"
+        },
+        "tolerations": {
+          "type": "array"
+        },
+        "topologySpreadConstraints": {
+          "type": "object",
+          "required": [
+            "maxSkew",
+            "topologyKey",
+            "whenUnsatisfiable"
+          ],
+          "properties": {
+            "maxSkew": {
+              "type": "integer"
+            },
+            "topologyKey": {
+              "type": "string"
+            },
+            "whenUnsatisfiable": {
+              "type": "string",
+              "pattern": "^(ScheduleAnyway|DoNotSchedule)$"
+            }
+          }
+        },
+        "podSecurityContext": {
+          "type": "object",
+          "required": [
+            "fsGroup"
+          ],
+          "properties": {
+            "fsGroup": {
+              "type": "integer"
+            },
+            "runAsNonRoot": {
+              "type": "boolean"
+            },
+            "runAsUser": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "serviceAccount": {
+      "type": "object",
+      "required": [
+        "create",
+        "annotations",
+        "name"
+      ],
+      "properties": {
+        "create": {
+          "type": "boolean"
+        },
+        "annotations": {
+          "type": "object"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "tuning": {
+      "type": "object",
+      "properties": {
+        "tune_aio_events": {
+          "type": "boolean"
+        },
+        "tune_clocksource": {
+          "type": "boolean"
+        },
+        "tune_ballast_file": {
+          "type": "boolean"
+        },
+        "ballast_file_path": {
+          "type": "string"
+        },
+        "ballast_file_size": {
+          "type": "string"
+        },
+        "well_known_io": {
+          "type": "string"
+        }
+      }
+    },
+    "listeners": {
+      "type": "object",
+      "required": [
+        "admin",
+        "kafka",
+        "http",
+        "rpc",
+        "schemaRegistry"
+      ],
+      "properties": {
+        "admin": {
+          "type": "object",
+          "required": [
+            "port",
+            "external",
+            "tls"
+          ],
+          "properties": {
+            "port": {
+              "type": "integer"
+            },
+            "external": {
+              "type": "object",
+              "minProperties": 1,
+              "patternProperties": {
+                "^[A-Za-z_][A-Za-z0-9_]*$": {
+                  "type": "object",
+                  "required": [
+                    "nodePort"
+                  ],
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean"
+                    },
+                    "type": {
+                      "type": "string",
+                      "pattern": "^NodePort$"
+                    },
+                    "nodePort": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            },
+            "tls": {
+              "type": "object",
+              "required": [
+                "cert",
+                "requireClientAuth"
+              ],
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "cert": {
+                  "type": "string"
+                },
+                "requireClientAuth": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        },
+        "kafka": {
+          "type": "object",
+          "required": [
+            "port",
+            "external",
+            "tls"
+          ],
+          "properties": {
+            "port": {
+              "type": "integer"
+            },
+            "external": {
+              "type": "object",
+              "minProperties": 1,
+              "patternProperties": {
+                "^[A-Za-z_][A-Za-z0-9_]*$": {
+                  "type": "object",
+                  "required": [
+                    "port",
+                    "nodePort"
+                  ],
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean"
+                    },
+                    "port": {
+                      "type": "integer"
+                    },
+                    "type": {
+                      "type": "string",
+                      "pattern": "^NodePort$"
+                    },
+                    "nodePort": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            },
+            "tls": {
+              "type": "object",
+              "required": [
+                "cert",
+                "requireClientAuth"
+              ],
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "cert": {
+                  "type": "string"
+                },
+                "requireClientAuth": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        },
+        "http": {
+          "type": "object",
+          "required": [
+            "enabled",
+            "port",
+            "kafkaEndpoint",
+            "external",
+            "tls"
+          ],
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "port": {
+              "type": "integer"
+            },
+            "kafkaEndpoint": {
+              "type": "string",
+              "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+            },
+            "external": {
+              "type": "object",
+              "minProperties": 1,
+              "patternProperties": {
+                "^[A-Za-z_][A-Za-z0-9_]*$": {
+                  "type": "object",
+                  "required": [
+                    "port",
+                    "nodePort"
+                  ],
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean"
+                    },
+                    "port": {
+                      "type": "integer"
+                    },
+                    "type": {
+                      "type": "string",
+                      "pattern": "^NodePort$"
+                    },
+                    "nodePort": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            },
+            "tls": {
+              "type": "object",
+              "required": [
+                "cert",
+                "requireClientAuth"
+              ],
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "cert": {
+                  "type": "string"
+                },
+                "requireClientAuth": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        },
+        "rpc": {
+          "type": "object",
+          "required": [
+            "port",
+            "tls"
+          ],
+          "properties": {
+            "port": {
+              "type": "integer"
+            },
+            "tls": {
+              "type": "object",
+              "required": [
+                "cert",
+                "requireClientAuth"
+              ],
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "cert": {
+                  "type": "string"
+                },
+                "requireClientAuth": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        },
+        "schemaRegistry": {
+          "type": "object",
+          "required": [
+            "enabled",
+            "port",
+            "kafkaEndpoint",
+            "external",
+            "tls"
+          ],
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "port": {
+              "type": "integer"
+            },
+            "kafkaEndpoint": {
+              "type": "string",
+              "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+            },
+            "external": {
+              "type": "object",
+              "minProperties": 1,
+              "patternProperties": {
+                "^[A-Za-z_][A-Za-z0-9_]*$": {
+                  "type": "object",
+                  "required": [
+                    "port",
+                    "nodePort"
+                  ],
+                  "properties": {
+                    "enabled": {
+                      "type": "boolean"
+                    },
+                    "port": {
+                      "type": "integer"
+                    },
+                    "type": {
+                      "type": "string",
+                      "pattern": "^NodePort$"
+                    },
+                    "nodePort": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            },
+            "tls": {
+              "type": "object",
+              "required": [
+                "cert",
+                "requireClientAuth"
+              ],
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "cert": {
+                  "type": "string"
+                },
+                "requireClientAuth": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "config": {
+      "type": "object",
+      "required": [
+        "cluster",
+        "tunable",
+        "node"
+      ],
+      "properties": {
+        "cluster": {
+          "type": "object"
+        },
+        "tunable": {
+          "type": "object"
+        },
+        "node": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

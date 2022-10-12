@@ -67,7 +67,7 @@ spec:
             - name: datadir
               mountPath: /var/lib/redpanda/data
         - name: {{ template "redpanda.name" . }}-configurator
-          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}
           command: ["/bin/sh", "-c"]
           env:
             - name: SERVICE_NAME
@@ -95,7 +95,7 @@ spec:
             {{- toYaml .Values.statefulset.resources | nindent 12 }}
       containers:
         - name: {{ template "redpanda.name" . }}
-          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}
           env:
             - name: SERVICE_NAME
               valueFrom:
@@ -219,8 +219,10 @@ spec:
             - name: {{ lower $name }}
               containerPort: {{ $listener.port }}
   {{- range $externalName, $external := $listener.external }}
+    {{- if $external.port }}
             - name: {{ lower $name | trunc 6 }}-{{ lower $externalName | trunc 8}}
               containerPort: {{ $external.port }}
+    {{- end }}
   {{- end }}
 {{- end }}
           volumeMounts:
