@@ -12,8 +12,34 @@ entries:
         - name: Documentation
           url: https://docs.redpanda.com
     apiVersion: v2
+    appVersion: 22.2.6
+    created: "2022-10-12T12:08:24.327186139-07:00"
+    description: Redpanda is the real-time engine for modern apps.
+    digest: 540dcf8ca4b1243db1d0105bece94b82396f0a1fb2476e7bcdcb37ddde285bb2
+    icon: https://images.ctfassets.net/paqvtpyf8rwu/3cYHw5UzhXCbKuR24GDFGO/73fb682e6157d11c10d5b2b5da1d5af0/skate-stand-panda.svg
+    maintainers:
+    - name: redpanda-data
+      url: https://github.com/orgs/redpanda-data/people
+    name: redpanda
+    sources:
+    - https://github.com/redpanda-data/helm-charts
+    type: application
+    urls:
+    - https://charts.redpanda.com/redpanda-2.1.9.tgz
+    version: 2.1.9
+  - annotations:
+      artifacthub.io/images: |
+        - name: redpanda
+          image: vectorized/redpanda:v22.2.4
+        - name: busybox
+          image: busybox:latest
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://docs.redpanda.com
+    apiVersion: v2
     appVersion: 22.2.5
-    created: "2022-10-12T09:11:37.146096605-07:00"
+    created: "2022-10-12T12:08:24.324301949-07:00"
     description: Redpanda is the real-time engine for modern apps.
     digest: fcf7e2bfbd796955bb13918b30780419f7911195ae069c0a52775c7dde469bc4
     icon: https://images.ctfassets.net/paqvtpyf8rwu/3cYHw5UzhXCbKuR24GDFGO/73fb682e6157d11c10d5b2b5da1d5af0/skate-stand-panda.svg
@@ -39,7 +65,7 @@ entries:
           url: https://docs.redpanda.com
     apiVersion: v2
     appVersion: 22.2.5
-    created: "2022-10-12T09:11:37.142765297-07:00"
+    created: "2022-10-12T12:08:24.321517769-07:00"
     description: Redpanda is the real-time engine for modern apps.
     digest: bf4ac9c9d6ed9bcbfb3a534869da1556449c60a143c6fc7721bd2e68149d71a0
     icon: https://images.ctfassets.net/paqvtpyf8rwu/3cYHw5UzhXCbKuR24GDFGO/73fb682e6157d11c10d5b2b5da1d5af0/skate-stand-panda.svg
@@ -55,7 +81,7 @@ entries:
     version: 2.1.7
   - apiVersion: v2
     appVersion: 22.2.4
-    created: "2022-10-12T09:11:37.141233401-07:00"
+    created: "2022-10-12T12:08:24.316756009-07:00"
     description: Redpanda is the real-time engine for modern apps.
     digest: d47abf4f9bf6bd03557249ba277dd3ac92d1b78642ebe583c8fd6ddcf36d7bed
     icon: https://images.ctfassets.net/paqvtpyf8rwu/3cYHw5UzhXCbKuR24GDFGO/73fb682e6157d11c10d5b2b5da1d5af0/skate-stand-panda.svg
@@ -71,7 +97,7 @@ entries:
     version: 2.1.6
   - apiVersion: v2
     appVersion: 22.2.2
-    created: "2022-10-12T09:11:37.139775607-07:00"
+    created: "2022-10-12T12:08:24.314059475-07:00"
     description: Redpanda is the real-time engine for modern apps.
     digest: 49677df462d6b765e204fd301c52aa111e20ea8ee0b0b08deb0eb3ba624968c4
     icon: https://redpanda.com/static/skate-panda-9c2e4bc5a1ed0052554e658519a50882.svg
@@ -87,7 +113,7 @@ entries:
     version: 2.1.5
   - apiVersion: v2
     appVersion: 22.2.2
-    created: "2022-10-12T09:11:37.138418313-07:00"
+    created: "2022-10-12T12:08:24.311449976-07:00"
     description: Redpanda is the real-time engine for modern apps.
     digest: e526b2dc47e151effc92d9eb91bae448b3b7fba4e956e51b30c9ad52694f603c
     icon: https://redpanda.com/static/skate-panda-9c2e4bc5a1ed0052554e658519a50882.svg
@@ -103,7 +129,7 @@ entries:
     version: 2.1.4
   - apiVersion: v2
     appVersion: 22.2.2
-    created: "2022-10-12T09:11:37.136992138-07:00"
+    created: "2022-10-12T12:08:24.308891404-07:00"
     description: Redpanda is the real-time engine for modern apps.
     digest: 6a20f5774618d529f0f1f6a6eb3177178bcc635c05e713fb115f0987937a89ee
     icon: https://redpanda.com/static/skate-panda-9c2e4bc5a1ed0052554e658519a50882.svg
@@ -119,7 +145,7 @@ entries:
     version: 2.1.3
   - apiVersion: v2
     appVersion: 22.2.2
-    created: "2022-10-12T09:11:37.135602523-07:00"
+    created: "2022-10-12T12:08:24.306323735-07:00"
     description: Redpanda is the real-time engine for modern apps.
     digest: 28cc1491b44ec5b3578785d291605557ccba1d23a60f8d66d42eb9ca07318e70
     icon: https://redpanda.com/static/skate-panda-9c2e4bc5a1ed0052554e658519a50882.svg
@@ -135,7 +161,7 @@ entries:
     version: 2.1.2
   - apiVersion: v2
     appVersion: 22.2.2
-    created: "2022-10-12T09:11:37.134064526-07:00"
+    created: "2022-10-12T12:08:24.303740385-07:00"
     description: Redpanda is the real-time engine for modern apps.
     digest: cdb92c4f6ab51a57a0f8ac5d7d350728f622c336726b396595d3c04dfb89c828
     icon: https://redpanda.com/static/skate-panda-9c2e4bc5a1ed0052554e658519a50882.svg
@@ -151,7 +177,7 @@ entries:
     version: 2.1.1
   - apiVersion: v2
     appVersion: 22.2.2
-    created: "2022-10-12T09:11:37.13003294-07:00"
+    created: "2022-10-12T12:08:24.299120784-07:00"
     description: Redpanda is the real-time engine for modern apps.
     digest: 367c68cd452261d53653a4584a94c19b98b9337d52e7d3be9826ac94fe02e4be
     icon: https://redpanda.com/static/skate-panda-9c2e4bc5a1ed0052554e658519a50882.svg
@@ -167,7 +193,7 @@ entries:
     version: 2.1.0
   - apiVersion: v2
     appVersion: 22.1.6
-    created: "2022-10-12T09:11:37.127637337-07:00"
+    created: "2022-10-12T12:08:24.296526574-07:00"
     description: Redpanda is the real-time engine for modern apps.
     digest: 08870f47998dfe238f90a3a98d4266772a18f81363ff73f3f59142d71d102b00
     icon: https://redpanda.com/static/skate-panda-9c2e4bc5a1ed0052554e658519a50882.svg
@@ -183,7 +209,7 @@ entries:
     version: 2.0.2
   - apiVersion: v2
     appVersion: 22.1.6
-    created: "2022-10-12T09:11:37.125019192-07:00"
+    created: "2022-10-12T12:08:24.293590336-07:00"
     description: Redpanda is the real-time engine for modern apps.
     digest: 6dcc8048be1493c1ac46051f0d0a4c10d1aa6e0e65bb6b8ed048235fdbbb9b90
     icon: https://redpanda.com/static/skate-panda-9c2e4bc5a1ed0052554e658519a50882.svg
@@ -199,7 +225,7 @@ entries:
     version: 2.0.1
   - apiVersion: v2
     appVersion: 21.11.16
-    created: "2022-10-12T09:11:37.122653966-07:00"
+    created: "2022-10-12T12:08:24.290987931-07:00"
     description: Redpanda is the real-time engine for modern apps.
     digest: c012abc19dfc47034716c5f9739d00e374ac0b1a1a22921377cb90e97bc5c583
     icon: https://redpanda.com/static/skate-panda-9c2e4bc5a1ed0052554e658519a50882.svg
@@ -215,7 +241,7 @@ entries:
     version: 2.0.0
   - apiVersion: v2
     appVersion: 21.11.11
-    created: "2022-10-12T09:11:37.120958872-07:00"
+    created: "2022-10-12T12:08:24.289222412-07:00"
     deprecated: true
     description: Redpanda is the real-time engine for modern apps.
     digest: faf5783d9b73731504bc830a72cfb810c2b6f95b691b6eb42bb05546c8e9f7ca
@@ -228,7 +254,7 @@ entries:
     version: 1.0.7
   - apiVersion: v2
     appVersion: latest
-    created: "2022-10-12T09:11:37.119377012-07:00"
+    created: "2022-10-12T12:08:24.287528369-07:00"
     deprecated: true
     description: Redpanda is the real-time engine for modern apps.
     digest: 63dcbe17a9d463fdb0cfe67dedf76fc0af798b9092e3c8bf3eb4e12ea9b97560
@@ -241,7 +267,7 @@ entries:
     version: 1.0.6
   - apiVersion: v2
     appVersion: latest
-    created: "2022-10-12T09:11:37.118315529-07:00"
+    created: "2022-10-12T12:08:24.286417132-07:00"
     description: Redpanda is the real-time engine for modern apps.
     digest: 61119d946424db0d3b0976e70e00336cf465ee9dc7c94450533053597119ad48
     maintainers:
@@ -256,7 +282,7 @@ entries:
     version: 1.0.4
   - apiVersion: v2
     appVersion: latest
-    created: "2022-10-12T09:11:37.117153916-07:00"
+    created: "2022-10-12T12:08:24.285204312-07:00"
     description: Redpanda is the real-time engine for modern apps.
     digest: 4b711dc089f32f75d7a2f99f43f632a5d94b6acfbbf2275d0140745c08c48b21
     maintainers:
@@ -271,7 +297,7 @@ entries:
     version: 1.0.3
   - apiVersion: v2
     appVersion: latest
-    created: "2022-10-12T09:11:37.116052697-07:00"
+    created: "2022-10-12T12:08:24.284043731-07:00"
     description: Redpanda is the real-time engine for modern apps.
     digest: 2b1f35ea7a453b8f879bd50886ae6c3006f6d6de286a05c8d751669cdbe88833
     maintainers:
@@ -286,7 +312,7 @@ entries:
     version: 1.0.2
   - apiVersion: v2
     appVersion: latest
-    created: "2022-10-12T09:11:37.113840622-07:00"
+    created: "2022-10-12T12:08:24.282807236-07:00"
     description: Redpanda is the real-time engine for modern apps.
     digest: 3efe5afee8e5d951349eb268d6d8ebe02d3f411a9ed6b34948fdb678bb154ddd
     maintainers:
@@ -301,7 +327,7 @@ entries:
     version: 1.0.1
   - apiVersion: v2
     appVersion: latest
-    created: "2022-10-12T09:11:37.112228485-07:00"
+    created: "2022-10-12T12:08:24.280697495-07:00"
     description: Redpanda is the real-time engine for modern apps.
     digest: 5a88fe0cf8256060440a9790e377f6df8f325759d09011cae929ae761f88c8da
     maintainers:
@@ -316,7 +342,7 @@ entries:
     version: 1.0.0
   - apiVersion: v2
     appVersion: latest
-    created: "2022-10-12T09:11:37.111221986-07:00"
+    created: "2022-10-12T12:08:24.279839308-07:00"
     description: Redpanda is the real-time engine for modern apps.
     digest: 9367d83ea1dff5001ce4d7087e8db6789726b3a10af7aaa73ccc07b166fe41c9
     maintainers:
@@ -329,4 +355,4 @@ entries:
     urls:
     - https://charts.redpanda.com/redpanda-0.1.0.tgz
     version: 0.1.0
-generated: "2022-10-12T09:11:37.109961125-07:00"
+generated: "2022-10-12T12:08:24.27874887-07:00"
