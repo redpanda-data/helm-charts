@@ -351,28 +351,54 @@ IP is required for the advertised address.
 {{- end -}}
 
 {{- define "rpk-flags" -}}
-  {{- $command := list -}}
-  {{- $command = concat $command (list "--api-urls" (include "api-urls" . )) -}}
+  {{- $admin := list -}}
+  {{- $admin = concat $admin (list "--api-urls" (include "api-urls" . )) -}}
   {{- if (include "admin-internal-tls-enabled" . | fromJson).bool -}}
-    {{- $command = concat $command (list
+    {{- $admin = concat $admin (list
       "--admin-api-tls-enabled"
       "--admin-api-tls-truststore"
       (printf "/etc/tls/certs/%s/ca.crt" .Values.listeners.admin.tls.cert))
     -}}
   {{- end -}}
+  {{- $kafka := list -}}
   {{- if (include "kafka-internal-tls-enabled" . | fromJson).bool -}}
-    {{- $command = concat $command (list
+    {{- $kafka = concat $kafka (list
       "--tls-enabled"
       "--tls-truststore"
       (printf "/etc/tls/certs/%s/ca.crt" .Values.listeners.kafka.tls.cert))
     -}}
   {{- end -}}
+  {{- $sasl := list -}}
   {{- if (include "sasl-enabled" . | fromJson).bool -}}
-    {{- $command = concat $command (list
+    {{- $sasl = concat $sasl (list
       "--user" (first .Values.auth.sasl.users).name
       "--password" (first .Values.auth.sasl.users).password
       "--sasl-mechanism SCRAM-SHA-256")
     -}}
   {{- end -}}
-{{ $command | join " " }}
+{{- toJson (dict "admin" (join " " $admin) "kafka" (join " " $kafka) "sasl" (join " " $sasl)) -}}
+{{- end -}}
+
+{{- define "rpk-common-flags" -}}
+{{- $flags := fromJson (include "rpk-flags" .) -}}
+{{ join " " (list $flags.admin $flags.sasl $flags.kafka)}}
+{{- end -}}
+
+{{- define "rpk-produce-flags" -}}
+{{- $flags := fromJson (include "rpk-flags" .) -}}
+{{ join " " (list $flags.sasl $flags.kafka)}}
+{{- end -}}
+
+{{- define "rpk-consume-flags" -}}
+{{- $flags := fromJson (include "rpk-flags" .) -}}
+{{ join " " (list $flags.sasl $flags.kafka)}}
+{{- end -}}
+
+{{- define "storage-min-free-bytes" -}}
+{{- $fiveGiB := 5368709120 -}}
+{{- if dig "enabled" false .Values.storage.persistentVolume -}}
+  {{- min $fiveGiB (mulf (include "SI-to-bytes" .Values.storage.persistentVolume.size) 0.05 | int64) -}}
+{{- else -}}
+{{- $fiveGiB -}}
+{{- end -}}
 {{- end -}}

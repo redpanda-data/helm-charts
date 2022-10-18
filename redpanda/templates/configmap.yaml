@@ -49,6 +49,9 @@ data:
   {{- with (dig "tunable" dict .Values.config) }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
+  {{- if not (hasKey .Values.config.cluster "storage_min_free_bytes") }}
+    storage_min_free_bytes: {{ include "storage-min-free-bytes" . }}
+  {{- end }}
 {{- end }}
   redpanda.yaml: |
     config_file: /etc/redpanda/redpanda.yaml
@@ -67,10 +70,13 @@ data:
       superusers: {{ toJson $users }}
   {{- end }}
   {{- with (dig "cluster" dict .Values.config) }}
-    {{- toYaml . | nindent 6 }}
+      {{- toYaml . | nindent 6 }}
   {{- end }}
   {{- with (dig "tunable" dict .Values.config) }}
-    {{- toYaml . | nindent 6 }}
+      {{- toYaml . | nindent 6 }}
+  {{- end }}
+  {{- if not (hasKey "storage_min_free_bytes" .Values.config.cluster) }}
+      storage_min_free_bytes: {{ include "storage-min-free-bytes" . }}
   {{- end }}
 {{- end }}
       {{- with dig "node" dict .Values.config }}
