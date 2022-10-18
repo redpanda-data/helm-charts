@@ -234,74 +234,45 @@ IP is required for the advertised address.
 {{- toJson (dict "bool" $enabled) -}}
 {{- end -}}
 
+{{- define "SI-to-bytes" -}}
+  {{/*
+  This template converts the incoming SI value to whole number bytes.
+  Input can be: b | B | k | K | m | M | g | G | Ki | Mi | Gi
+  */}}
+  {{- $si := . -}}
+  {{- $bytes := 0 -}}
+  {{- if or (hasSuffix "B" $si) (hasSuffix "b" $si) -}}
+    {{- $bytes = $si | trimSuffix "B" | trimSuffix "b" | float64 | floor -}}
+  {{- else if or (hasSuffix "K" $si) (hasSuffix "k" $si) -}}
+    {{- $raw := $si | trimSuffix "K" | trimSuffix "k" | float64 -}}
+    {{- $bytes = mulf $raw (mul 1000) | floor -}}
+  {{- else if or (hasSuffix "M" $si) (hasSuffix "m" $si) -}}
+    {{- $raw := $si | trimSuffix "M" | trimSuffix "m" | float64 -}}
+    {{- $bytes = mulf $raw (mul 1000 1000) | floor -}}
+  {{- else if or (hasSuffix "G" $si) (hasSuffix "g" $si) -}}
+    {{- $raw := $si | trimSuffix "G" | trimSuffix "g" | float64 -}}
+    {{- $bytes = mulf $raw (mul 1000 1000 1000) | floor -}}
+  {{- else if hasSuffix "Ki" $si -}}
+    {{- $raw := $si | trimSuffix "Ki" | float64 -}}
+    {{- $bytes = mulf $raw (mul 1024) | floor -}}
+  {{- else if hasSuffix "Mi" $si -}}
+    {{- $raw := $si | trimSuffix "Mi" | float64 -}}
+    {{- $bytes = mulf $raw (mul 1024 1024) | floor -}}
+  {{- else if hasSuffix "Gi" $si -}}
+    {{- $raw := $si | trimSuffix "Gi" | float64 -}}
+    {{- $bytes = mulf $raw (mul 1024 1024 1024) | floor -}}
+  {{- else -}}
+    {{- printf "\n%s is invalid SI quantity\nSuffixes can be: b | B | k | K | m | M | g | G | Ki | Mi | Gi" $si | fail -}}
+  {{- end -}}
+  {{- $bytes | int64 -}}
+{{- end -}}
+
 {{/* Resource variables */}}
 {{- define "redpanda-memoryToMi" -}}
   {{/*
   This template converts the incoming memory value to whole number mebibytes.
-  Input can be: k | K | m | M | g | G | Ki | Mi | Gi
   */}}
-  {{- $mem := . -}}
-  {{- $result := 0 -}}
-  {{- if or (hasSuffix "K" $mem) (hasSuffix "k" $mem) -}}
-    {{- $rawmem := $mem | trimSuffix "K" | trimSuffix "k" -}}
-    {{- if contains "." $rawmem -}}
-      {{- $rawmem = $rawmem | float64 -}}
-      {{- $result = divf (mulf $rawmem (mul 8 1000)) (mul 8 1024 1024) -}}
-    {{- else -}}
-      {{- $rawmem = $rawmem | int64 -}}
-      {{- $result = divf (mul $rawmem (mul 8 1000)) (mul 8 1024 1024) -}}
-    {{- end -}}
-    {{- $result = floor $result -}}
-  {{- else if or (hasSuffix "M" $mem) (hasSuffix "m" $mem) -}}
-    {{- $rawmem := $mem | trimSuffix "M" | trimSuffix "m" -}}
-    {{- if contains "." $rawmem -}}
-      {{- $rawmem = $rawmem | float64 -}}
-      {{- $result = divf (mulf $rawmem (mul 8 1000 1000)) (mul 8 1024 1024) -}}
-    {{- else -}}
-      {{- $rawmem = $rawmem | int64 -}}
-      {{- $result = divf (mul $rawmem (mul 8 1000 1000)) (mul 8 1024 1024) -}}
-    {{- end -}}
-    {{- $result = floor $result -}}
-  {{- else if or (hasSuffix "G" $mem) (hasSuffix "g" $mem) -}}
-    {{- $rawmem := $mem | trimSuffix "G" | trimSuffix "g" -}}
-    {{- if contains "." $rawmem -}}
-      {{- $rawmem = $rawmem | float64 -}}
-      {{- $result = divf (mulf $rawmem (mul 8 1000 1000 1000)) (mul 8 1024 1024) -}}
-    {{- else -}}
-      {{- $rawmem = $rawmem | int64 -}}
-      {{- $result = divf (mul $rawmem (mul 8 1000 1000 1000)) (mul 8 1024 1024) -}}
-    {{- end -}}
-    {{- $result = floor $result -}}
-  {{- else if hasSuffix "Ki" $mem }}
-    {{- $rawmem := $mem | trimSuffix "Ki" -}}
-    {{- if contains "." $rawmem -}}
-      {{- $rawmem = $rawmem | float64 -}}
-      {{- $result = divf (mulf $rawmem (mul 8 1024)) (mul 8 1024 1024) -}}
-    {{- else -}}
-      {{- $rawmem = $rawmem | int64 -}}
-      {{- $result = divf (mul $rawmem (mul 8 1024)) (mul 8 1024 1024) -}}
-    {{- end -}}
-    {{- $result = floor $result -}}
-  {{- else if hasSuffix "Mi" $mem -}}
-    {{- $result = $mem | trimSuffix "Mi" -}}
-    {{- if contains "." $result -}}
-      {{- $result = $result | float64 -}}
-    {{- else -}}
-      {{- $result = $result | int64 -}}
-    {{- end -}}
-  {{- else if hasSuffix "Gi" $mem -}}
-    {{- $rawmem := $mem | trimSuffix "Gi" -}}
-    {{- if contains "." $rawmem -}}
-      {{- $rawmem = $rawmem | float64 -}}
-      {{- $result = (mulf $rawmem 1024) | floor -}}
-    {{- else -}}
-      {{- $rawmem = $rawmem | int64 -}}
-      {{- $result = (mul $rawmem 1024) -}}
-    {{- end -}}
-  {{- else }}
-    {{- printf "\n%s is invalid memory amount\nSuffixes can be: k | K | m | M | g | G | Ki | Mi | Gi" $mem | fail -}}
-  {{- end }}
-  {{- $result -}}
+  {{- div (include "SI-to-bytes" .) (mul 1024 1024) -}}
 {{- end -}}
 
 {{- define "container-memory" -}}
