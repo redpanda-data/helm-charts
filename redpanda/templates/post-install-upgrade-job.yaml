@@ -18,7 +18,7 @@ limitations under the License.
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ template "redpanda.fullname" . }}
+  name: {{ template "redpanda.fullname" . }}-post-install
   namespace: {{ .Release.Namespace | quote }}
   labels:
     helm.sh/chart: {{ template "redpanda.chart" . }}
@@ -66,6 +66,10 @@ spec:
             rpk cluster license set {{ .Values.license_key | quote }} {{ template "rpk-flags" $ }} 
             ;
 {{- end }}
+        {{- with .Values.post_install_job.resources }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         volumeMounts:
           - name: {{ template "redpanda.fullname" . }}
             mountPath: /tmp/base-config

@@ -219,6 +219,26 @@ storage:
     # Additional annotations to apply to the created PersistentVolumeClaims.
     annotations: {}
 
+post_install_job: {}
+  # Resource requests and limits for the post-install batch job
+  # resources:
+  #   requests:
+  #     cpu: 1
+  #     memory: 512Mi
+  #   limits:
+  #     cpu: 2
+  #     memory: 1024Mi
+
+post_upgrade_job: {}
+  # Resource requests and limits for the post-upgrade batch job
+  # resources:
+  #   requests:
+  #     cpu: 1
+  #     memory: 512Mi
+  #   limits:
+  #     cpu: 2
+  #     memory: 1024Mi
+
 statefulset:
   # Number of Redpanda brokers (recommend setting this to the number of nodes in the cluster)
   replicas: 3

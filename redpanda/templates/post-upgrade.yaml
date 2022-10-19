@@ -2,7 +2,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ template "redpanda.fullname" . }}
+  name: {{ template "redpanda.fullname" . }}-post-upgrade
   namespace: {{ .Release.Namespace | quote }}
   labels:
     helm.sh/chart: {{ template "redpanda.chart" . }}
@@ -52,6 +52,10 @@ spec:
             --password {{ (first .Values.auth.sasl.users).password }}
             --sasl-mechanism SCRAM-SHA-256
 {{- end }}
+        {{- with .Values.post_upgrade_job.resources }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         volumeMounts:
           - name: {{ template "redpanda.fullname" . }}
             mountPath: /tmp/base-config
