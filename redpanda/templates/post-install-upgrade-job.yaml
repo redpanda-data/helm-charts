@@ -66,6 +66,10 @@ spec:
             rpk cluster license set {{ .Values.license_key | quote }} {{ template "rpk-flags" $ }} 
             ;
 {{- end }}
+        {{- with .Values.post_install_job.resources }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         volumeMounts:
           - name: {{ template "redpanda.fullname" . }}
             mountPath: /tmp/base-config

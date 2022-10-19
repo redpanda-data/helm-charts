@@ -272,6 +272,74 @@
         }
       }
     },
+    "post_install_job": {
+      "type": "object",
+      "properties": {
+        "resources": {
+          "type": "object",
+          "properties": {
+            "requests": {
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "type": "integer"
+                },
+                "memory": {
+                  "type": "string",
+                  "pattern": "^[0-9]+(\\.[0-9]){0,1}(k|M|G|Ki|Mi|Gi)$"
+                }
+              }
+            },
+            "limits": {
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "type": "integer"
+                },
+                "memory": {
+                  "type": "string",
+                  "pattern": "^[0-9]+(\\.[0-9]){0,1}(k|M|G|Ki|Mi|Gi)$"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "post_upgrade_job": {
+      "type": "object",
+      "properties": {
+        "resources": {
+          "type": "object",
+          "properties": {
+            "requests": {
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "type": "integer"
+                },
+                "memory": {
+                  "type": "string",
+                  "pattern": "^[0-9]+(\\.[0-9]){0,1}(k|M|G|Ki|Mi|Gi)$"
+                }
+              }
+            },
+            "limits": {
+              "type": "object",
+              "properties": {
+                "cpu": {
+                  "type": "integer"
+                },
+                "memory": {
+                  "type": "string",
+                  "pattern": "^[0-9]+(\\.[0-9]){0,1}(k|M|G|Ki|Mi|Gi)$"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "statefulset": {
       "type": "object",
       "required": [

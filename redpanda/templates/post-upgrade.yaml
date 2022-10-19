@@ -52,6 +52,10 @@ spec:
             --password {{ (first .Values.auth.sasl.users).password }}
             --sasl-mechanism SCRAM-SHA-256
 {{- end }}
+        {{- with .Values.post_upgrade_job.resources }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         volumeMounts:
           - name: {{ template "redpanda.fullname" . }}
             mountPath: /tmp/base-config
