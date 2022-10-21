@@ -10,7 +10,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
-  namespace: {{ .Release.Namespace | quote }}
+  namespace: {{ $ns | quote }}
 spec:
   dnsNames:
   - {{ template "redpanda.fullname" $ }}-cluster.{{ printf "%s.%s.svc.%s" $service $ns $domain }}
