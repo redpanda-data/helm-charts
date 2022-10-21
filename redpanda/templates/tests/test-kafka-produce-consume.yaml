@@ -1,0 +1,78 @@
+{{/*
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/}}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ include "redpanda.fullname" . }}-test-kafka-produce-consume
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    helm.sh/chart: {{ template "redpanda.chart" . }}
+    app.kubernetes.io/name: {{ template "redpanda.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/component: {{ template "redpanda.name" . }}
+  {{- with .Values.commonLabels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  restartPolicy: Never
+  containers:
+    - name: {{ template "redpanda.name" . }}
+      image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}
+      command:
+      - /bin/bash
+      - -c
+      - >
+        rpk topic create "produce.consume.test" {{ include "rpk-common-flags" . }}
+        echo "Pandas are awesome!" | rpk topic produce {{ include "rpk-produce-flags" . }} || exit 1
+        rpk topic consume {{ include "rpk-consume-flags" . }} | grep "Pandas are awesome!"
+      volumeMounts:
+        - name: config
+          mountPath: /etc/redpanda
+{{- if (include "tls-enabled" . | fromJson).bool -}}
+  {{- range $name, $cert := .Values.tls.certs }}
+        - name: redpanda-{{ $name }}-cert
+          mountPath: {{ printf "/etc/tls/certs/%s" $name }}
+  {{- end }}
+{{- end }}
+      resources: {{ toYaml .Values.statefulset.resources | nindent 12 }}
+  volumes:
+    - name: {{ template "redpanda.fullname" . }}
+      configMap:
+        name: {{ template "redpanda.fullname" . }}
+    - name: config
+      emptyDir: {}
+{{- if (include "tls-enabled" . | fromJson).bool }}
+  {{- range $name, $cert := .Values.tls.certs }}
+    - name: redpanda-{{ $name }}-cert
+      secret:
+        defaultMode: 420
+        items:
+        - key: tls.key
+          path: tls.key
+        - key: tls.crt
+          path: tls.crt
+    {{- if $cert.caEnabled }}
+        - key: ca.crt
+          path: ca.crt
+    {{- end }}
+        secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
+  {{- end }}
+{{- end -}}
