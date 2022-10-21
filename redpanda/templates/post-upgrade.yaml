@@ -1,4 +1,5 @@
 {{- if (include "redpanda.semver" . | semverCompare ">=22.1.1") }}
+{{- $rpkFlags := include "rpk-common-flags" . }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -36,21 +37,13 @@ spec:
         image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}
         command: ["/bin/sh", "-c"]
         args:
-          - >
-            rpk cluster config import -f /tmp/base-config/bootstrap.yaml
-            --api-urls {{ template "redpanda.fullname" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.admin.port }}
-{{- if (include "admin-internal-tls-enabled" . | fromJson).bool }}
-            --admin-api-tls-enabled
-            --admin-api-tls-truststore /etc/tls/certs/{{ .Values.listeners.admin.tls.cert }}/ca.crt
+          - |
+            rpk cluster config import -f /tmp/base-config/bootstrap.yaml {{ $rpkFlags }}
+{{- range $key, $value := .Values.config.cluster }}
+            rpk cluster config set {{ $key }} {{ $value }} {{ $rpkFlags }}
 {{- end }}
-{{- if (include "kafka-internal-tls-enabled" . | fromJson).bool }}
-            --tls-enabled
-            --tls-truststore /etc/tls/certs/{{ .Values.listeners.kafka.tls.cert }}/ca.crt
-{{- end }}
-{{- if (include "sasl-enabled" . | fromJson).bool }}
-            --user {{ (first .Values.auth.sasl.users).name }}
-            --password {{ (first .Values.auth.sasl.users).password }}
-            --sasl-mechanism SCRAM-SHA-256
+{{- if not (hasKey .Values.config.cluster "storage_min_free_bytes") }}
+            rpk cluster config set storage_min_free_bytes {{ include "storage-min-free-bytes" . }} {{ $rpkFlags }}
 {{- end }}
         {{- with .Values.post_upgrade_job.resources }}
         resources:
