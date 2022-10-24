@@ -15,6 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */}}
 
+{{- if .Capabilities.APIVersions.Has "policy/v1/PodDisruptionBudget" }}
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
@@ -35,3 +36,4 @@ spec:
       app.kubernetes.io/name: {{ template "redpanda.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name | quote }}
   maxUnavailable: {{ .Values.statefulset.budget.maxUnavailable | int64 }}
+{{- end }}
