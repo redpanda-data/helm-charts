@@ -6,6 +6,12 @@ This Helm chart (`redpanda`) deploys a Redpanda cluster.
 Once deployed, you continue to use the Helm command and override values to change and/or upgrade your Redpanda deployment.
 The defaults are in [values.yaml][values].
 
+## Requirements
+
+- Helm v3.5.0 or newer
+- Kubernetes 1.21.0 or newer
+- Cert-manager 1.9.0 or newer (optional for TLS support)
+
 ## Overview
 
 This is the Helm Chart for [Redpanda](https://redpanda.com). It provides the ability to set up a multi node redpanda cluster with the following optional features:
