@@ -20,9 +20,12 @@ maintainers:
   - name: redpanda-data
     url: https://github.com/orgs/redpanda-data/people
 type: application
-version: 2.2.4
+version: 2.2.5
 appVersion: v22.2.6
-kubeVersion: "^1.21.0"
+# kubeVersion must be suffixed with "-0" to be able to match cloud providers
+# kubernetes versions like "v1.23.8-gke.1900". Their suffix is interpreted as a
+# pre-release. Our "-0" allows pre-releases to be matched.
+kubeVersion: "^1.21.0-0"
 icon: https://images.ctfassets.net/paqvtpyf8rwu/3cYHw5UzhXCbKuR24GDFGO/73fb682e6157d11c10d5b2b5da1d5af0/skate-stand-panda.svg
 sources:
   - https://github.com/redpanda-data/helm-charts
