@@ -70,9 +70,14 @@ spec:
             ;
   {{- end }}
 {{- end }}
-{{- if and (include "redpanda.semver" . | semverCompare ">=22.2.0") (not (empty .Values.license_key)) }}
-            rpk cluster license set "$REDPANDA_LICENSE" {{ template "rpk-common-flags" $ }} 
+{{- if (include "redpanda.semver" . | semverCompare ">=22.2.0") }}
+  {{- if not (empty .Values.license_secret_ref) }}
+            rpk cluster license set "$REDPANDA_LICENSE" {{ template "rpk-common-flags" $ }}
             ;
+  {{- else if not (empty .Values.license_key) }}
+            rpk cluster license set {{ .Values.license_key | quote }} {{ template "rpk-common-flags" $ }}
+            ;
+  {{- end }}
 {{- end }}
         {{- with .Values.post_install_job.resources }}
         resources:

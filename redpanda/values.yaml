@@ -42,7 +42,8 @@ image:
   # The imagePullPolicy will default to Always when the tag is 'latest'
   pullPolicy: IfNotPresent
 # Your license key (optional)
-license_key: {}
+license_key: ""
+license_secret_ref: {}
 # Secret name and secret key where license is stored
 # secret_name: my-secret
 # secret_key: key-where-license-is-stored
