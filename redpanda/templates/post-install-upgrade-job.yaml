@@ -51,13 +51,13 @@ spec:
       containers:
       - name: {{ template "redpanda.name" . }}-post-install
         image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}
-        {{- if not (empty .Values.license_key) }}
+        {{- if not (empty .Values.license_secret_ref) }}
         env:
           - name: REDPANDA_LICENSE
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.license_key.secret_name }}
-                key: {{ .Values.license_key.secret_key }}
+                name: {{ .Values.license_secret_ref.secret_name }}
+                key: {{ .Values.license_secret_ref.secret_key }}
         {{- end }}
         command:
             - bash
