@@ -37,5 +37,5 @@ spec:
       app.kubernetes.io/instance: {{ .Release.Name | quote }}
   maxUnavailable: {{ .Values.statefulset.budget.maxUnavailable | int64 }}
 {{- else if (not .Values.ephemeralUsage.enabled) }}
-  fail "You must use Kubernetes 1.21+ for a production cluster. If you're not using this in production and you know why doing this is a bad idea, you can set 'ephemeralUsage.enabled=false' to continue."
+{{- fail "You must use Kubernetes 1.21+ for a production cluster. If you're not using this in production and you know why doing this is a bad idea, you can set 'ephemeralUsage.enabled=false' to continue." }}
 {{- end }}
