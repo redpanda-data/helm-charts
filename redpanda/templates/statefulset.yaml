@@ -79,7 +79,7 @@ spec:
               CONFIG=/etc/redpanda/redpanda.yaml;
               NODE_ID=${SERVICE_NAME##*-};
               cp /tmp/base-config/redpanda.yaml "$CONFIG";
-              {{- if (include "redpanda.semver" . | semverCompare ">=22.1.1") }}
+              {{- if (include "redpanda-atleast-22-1-1" . | fromJson).bool }}
               cp /tmp/base-config/bootstrap.yaml /etc/redpanda/.bootstrap.yaml;
               {{- end }}
               rpk --config "$CONFIG" config set redpanda.node_id $NODE_ID;
