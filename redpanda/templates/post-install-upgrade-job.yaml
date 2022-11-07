@@ -70,7 +70,7 @@ spec:
             ;
   {{- end }}
 {{- end }}
-{{- if (include "redpanda.semver" . | semverCompare ">=22.2.0") }}
+{{- if (include "redpanda-atleast-22-2-0" . | fromJson).bool }}
   {{- if not (empty .Values.license_secret_ref) }}
             rpk cluster license set "$REDPANDA_LICENSE" {{ template "rpk-common-flags" $ }}
             ;

@@ -1,4 +1,4 @@
-{{- if (include "redpanda.semver" . | semverCompare ">=22.1.1") }}
+{{- if (include "redpanda-atleast-22-1-1" . | fromJson).bool }}
 {{- $rpkFlags := include "rpk-common-flags" . }}
 apiVersion: batch/v1
 kind: Job
