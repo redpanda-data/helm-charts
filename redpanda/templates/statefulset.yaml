@@ -77,15 +77,19 @@ spec:
           args:
             - >
               CONFIG=/etc/redpanda/redpanda.yaml;
-              NODE_ID=${SERVICE_NAME##*-};
               cp /tmp/base-config/redpanda.yaml "$CONFIG";
               {{- if (include "redpanda-atleast-22-1-1" . | fromJson).bool }}
               cp /tmp/base-config/bootstrap.yaml /etc/redpanda/.bootstrap.yaml;
               {{- end }}
+              {{- if (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
+              rpk --config "$CONFIG" config set redpanda.empty_seed_starts_cluster false;
+              {{- else }}
+              NODE_ID=${SERVICE_NAME##*-};
               rpk --config "$CONFIG" config set redpanda.node_id $NODE_ID;
               if [ "$NODE_ID" = "0" ]; then
                 rpk --config "$CONFIG" config set redpanda.seed_servers '[]' --format yaml;
               fi;
+              {{- end }}
           volumeMounts:
             - name: {{ template "redpanda.fullname" . }}
               mountPath: /tmp/base-config
