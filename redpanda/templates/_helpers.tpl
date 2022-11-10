@@ -410,3 +410,7 @@ IP is required for the advertised address.
 {{- define "redpanda-atleast-22-2-0" -}}
 {{- toJson (dict "bool" (or (not (eq .Values.image.repository "vectorized/redpanda")) (include "redpanda.semver" . | semverCompare ">=22.2.0"))) -}}
 {{- end -}}
+
+{{- define "redpanda-atleast-22-3-0" -}}
+{{- toJson (dict "bool" (or (not (eq .Values.image.repository "vectorized/redpanda")) (include "redpanda.semver" . | semverCompare ">=22.3.0"))) -}}
+{{- end -}}
