@@ -1,1 +1,1 @@
-redpanda/README.md
+charts/redpanda/README.md
