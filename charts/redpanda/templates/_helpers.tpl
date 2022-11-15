@@ -373,7 +373,7 @@ IP is required for the advertised address.
     {{- $sasl = concat $sasl (list
       "--user" (first .Values.auth.sasl.users).name
       "--password" (first .Values.auth.sasl.users).password
-      "--sasl-mechanism SCRAM-SHA-256")
+      "--sasl-mechanism SCRAM-SHA-512")
     -}}
   {{- end -}}
 {{- toJson (dict "admin" (join " " $admin) "kafka" (join " " $kafka) "sasl" (join " " $sasl)) -}}

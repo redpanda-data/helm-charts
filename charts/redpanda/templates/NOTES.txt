@@ -49,8 +49,8 @@ Try some sample commands, like creating a topic called test-topic:
   {{ $rpkAdmin = $rpk }}
 {{- end }}
 {{- if $anySASL }}
-  {{ $rpk = printf "%s --user %s --password $YOUR_PASSWORD --sasl-mechanism SCRAM-SHA-256" $rpk (.Values.auth.sasl.users | first).name }}
-  {{ $rpkAdmin = printf "%s --user %s --password $YOUR_PASSWORD --sasl-mechanism SCRAM-SHA-256" $rpkAdmin (.Values.auth.sasl.users | first).name }}
+  {{ $rpk = printf "%s --user %s --password $YOUR_PASSWORD --sasl-mechanism SCRAM-SHA-512" $rpk (.Values.auth.sasl.users | first).name }}
+  {{ $rpkAdmin = printf "%s --user %s --password $YOUR_PASSWORD --sasl-mechanism SCRAM-SHA-512" $rpkAdmin (.Values.auth.sasl.users | first).name }}
 {{- end }}
 
 {{- if and $anySASL }}

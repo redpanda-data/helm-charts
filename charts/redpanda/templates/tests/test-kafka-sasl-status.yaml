@@ -45,14 +45,14 @@ spec:
         --api-urls {{ include "redpanda.fullname" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.admin.port }}
         --brokers {{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.kafka.port }};
         sleep 3;
-        rpk acl user create admin -p test
+        rpk acl user create admin --password test
         --api-urls {{ include "redpanda.fullname" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.admin.port }} &&
         sleep 3 &&
-        rpk topic create test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-256
+        rpk topic create test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-512
         --brokers {{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.kafka.port }} &&
-        rpk topic describe test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-256
+        rpk topic describe test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-512
         --brokers {{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.kafka.port }} &&
-        rpk topic delete test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-256
+        rpk topic delete test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-512
         --brokers {{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.kafka.port }} &&
         rpk acl user delete admin
         --api-urls {{ include "redpanda.fullname" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.admin.port }}

@@ -52,13 +52,13 @@ spec:
         --admin-api-tls-truststore /etc/tls/certs/{{ .Values.listeners.admin.tls.cert }}/ca.crt
         --api-urls {{ include "redpanda.fullname" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.admin.port }} &&
         sleep 3 &&
-        rpk topic create test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-256
+        rpk topic create test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-512
         --tls-enabled --tls-truststore /etc/tls/certs/{{ .Values.listeners.kafka.tls.cert }}/ca.crt
         --brokers {{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.kafka.port }} &&
-        rpk topic describe test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-256
+        rpk topic describe test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-512
         --tls-enabled --tls-truststore /etc/tls/certs/{{ .Values.listeners.kafka.tls.cert }}/ca.crt
         --brokers {{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.kafka.port }} &&
-        rpk topic delete test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-256
+        rpk topic delete test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-512
         --tls-enabled --tls-truststore /etc/tls/certs/{{ .Values.listeners.kafka.tls.cert }}/ca.crt
         --brokers {{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.kafka.port }} &&
         rpk acl user delete admin
