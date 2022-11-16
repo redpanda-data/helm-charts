@@ -16,41 +16,65 @@
 name: Lint and Test Charts
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - "**"
 jobs:
-  lint-test:
+  lint:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
       - name: Set up Helm
-        uses: azure/setup-helm@v1
+        uses: azure/setup-helm@v3
         with:
-          version: v3.9.3
+          version: v3.10.2
 
       - name: Set up chart-testing
-        uses: helm/chart-testing-action@v2.0.1
-        with:
-          version: v3.7.0
+        uses: helm/chart-testing-action@v2.3.1
 
       - name: Run chart-testing (lint)
-        run: ct lint --config redpanda/ci/ct.yaml
+        run: ct lint --config .github/ct.yaml
+  test:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.10.2
+
+      - name: Set up chart-testing
+        uses: helm/chart-testing-action@v2.3.1
+
+      - name: Run chart-testing (list-changed)
+        id: list-changed
+        run: |
+          changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }})
+          if [[ -n "$changed" ]]; then
+            echo "::set-output name=changed::true"
+          fi
 
       - name: Create kind cluster
         uses: helm/kind-action@v1.3.0
         with:
           config: .github/kind.yaml
+        if: steps.list-changed.outputs.changed == 'true'
 
       - name: Check kind config worked
         run: kubectl get nodes
+        if: steps.list-changed.outputs.changed == 'true'
+
+      - name: install cert-manager
+        run: kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.10.0/cert-manager.yaml
+        if: steps.list-changed.outputs.changed == 'true'
 
       - name: Run chart-testing (install)
-        run: ct install --config redpanda/ci/ct.yaml
+        run: ct install --config .github/ct.yaml
