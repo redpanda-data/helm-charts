@@ -42,5 +42,9 @@ spec:
       command:
         - curl
         - -svm3
+        - --retry
+        - "300"
+        - --retry-max-time
+        - "120"
         - http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects
 {{- end }}
