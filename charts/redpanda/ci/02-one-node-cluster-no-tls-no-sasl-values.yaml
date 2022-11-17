@@ -15,10 +15,10 @@
 statefulset:
   replicas: 1
 tls:
-  enabled: true
+  enabled: false
 auth:
   sasl:
-    enabled: true
+    enabled: false
 storage:
   persistentVolume:
     size: 3Gi

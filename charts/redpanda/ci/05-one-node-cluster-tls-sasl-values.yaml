@@ -15,10 +15,13 @@
 statefulset:
   replicas: 1
 tls:
-  enabled: false
+  enabled: true
 auth:
   sasl:
     enabled: true
+    users:
+      - name: admin
+        password: hunter2
 storage:
   persistentVolume:
     size: 3Gi
