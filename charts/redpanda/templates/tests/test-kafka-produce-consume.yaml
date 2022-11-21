@@ -40,9 +40,9 @@ spec:
       - /bin/bash
       - -c
       - >
-        rpk topic create "produce.consume.test" {{ include "rpk-common-flags" . }}
-        echo "Pandas are awesome!" | rpk topic produce {{ include "rpk-produce-flags" . }} || exit 1
-        rpk topic consume {{ include "rpk-consume-flags" . }} | grep "Pandas are awesome!"
+        rpk topic create "produce.consume.test" {{ include "rpk-topic-flags" . }} || exit 1
+        echo "Pandas are awesome!" | rpk topic produce {{ include "rpk-topic-flags" . }} || exit 1
+        rpk topic consume {{ include "rpk-topic-flags" . }} | grep "Pandas are awesome!"
       volumeMounts:
         - name: config
           mountPath: /etc/redpanda
