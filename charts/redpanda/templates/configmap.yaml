@@ -46,9 +46,7 @@ data:
   {{- with (dig "cluster" dict .Values.config) }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
-  {{- with (dig "tunable" dict .Values.config) }}
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+  {{- include "tunable" . }}
   {{- if and (not (hasKey .Values.config.cluster "storage_min_free_bytes")) ((include "redpanda-atleast-22-2-0" . | fromJson).bool) }}
     storage_min_free_bytes: {{ include "storage-min-free-bytes" . }}
   {{- end }}

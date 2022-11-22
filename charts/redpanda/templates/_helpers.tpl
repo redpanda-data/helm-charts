@@ -419,6 +419,24 @@ IP is required for the advertised address.
 {{- end -}}
 {{- end -}}
 
+{{- define "tunable" -}}
+{{- $tunable := dig "tunable" dict .Values.config }}
+{{- if (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
+{{- toYaml $tunable | nindent 4 }}
+{{- else if (include "redpanda-atleast-22-2-0" . | fromJson).bool }}
+{{- $tunable = unset $tunable "log_segment_size_min" }}
+{{- $tunable = unset $tunable "log_segment_size_max" }}
+{{- $tunable = unset $tunable "kafka_batch_max_bytes" }}
+{{- toYaml $tunable | nindent 4 }}
+{{- else if (include "redpanda-atleast-22-1-1" . | fromJson).bool }}
+{{- $tunable = unset $tunable "log_segment_size_min" }}
+{{- $tunable = unset $tunable "log_segment_size_max" }}
+{{- $tunable = unset $tunable "kafka_batch_max_bytes" }}
+{{- $tunable = unset $tunable "topic_partitions_per_shard" }}
+{{- toYaml $tunable | nindent 4 }}
+{{- end }}
+{{- end }}
+
 {{- define "redpanda-atleast-22-1-1" -}}
 {{- toJson (dict "bool" (or (not (eq .Values.image.repository "vectorized/redpanda")) (include "redpanda.semver" . | semverCompare ">=22.1.1"))) -}}
 {{- end -}}
