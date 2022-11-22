@@ -384,12 +384,7 @@ IP is required for the advertised address.
 {{ join " " (list $flags.admin $flags.sasl $flags.kafka)}}
 {{- end -}}
 
-{{- define "rpk-produce-flags" -}}
-{{- $flags := fromJson (include "rpk-flags" .) -}}
-{{ join " " (list $flags.sasl $flags.kafka)}}
-{{- end -}}
-
-{{- define "rpk-consume-flags" -}}
+{{- define "rpk-topic-flags" -}}
 {{- $flags := fromJson (include "rpk-flags" .) -}}
 {{ join " " (list $flags.sasl $flags.kafka)}}
 {{- end -}}
