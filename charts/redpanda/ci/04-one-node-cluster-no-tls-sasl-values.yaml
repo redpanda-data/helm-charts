@@ -18,7 +18,10 @@ tls:
   enabled: false
 auth:
   sasl:
-    enabled: false
+    enabled: true
+    users:
+      - name: admin
+        password: hunter2
 storage:
   persistentVolume:
     size: 3Gi
