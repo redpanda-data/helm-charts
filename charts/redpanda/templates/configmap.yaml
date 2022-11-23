@@ -64,6 +64,9 @@ data:
   {{- end }}
 {{- end }}
     redpanda:
+{{- if (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
+      empty_seed_starts_cluster: false
+{{- end }}
 {{- if not (include "redpanda-atleast-22-1-1" . | fromJson).bool }}
       enable_sasl: {{ dig "sasl" "enabled" false .Values.auth }}
   {{- if $users }}
