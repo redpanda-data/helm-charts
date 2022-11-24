@@ -49,7 +49,7 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name | quote }}
         app.kubernetes.io/component: {{ template "redpanda.name" . }}
 {{- with .Values.commonLabels }}
-        {- toYaml . | nindent 8 }}
+        {{- toYaml . | nindent 8 }}
 {{- end }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
