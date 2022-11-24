@@ -9,5 +9,5 @@ helm repo update
 helm install redpanda/console -f myvalues.yaml
 ```
 
-Have a look at the [values.yaml](./console/values.yaml) file to see the available options.
+Have a look at the [values.yaml](./values.yaml) file to see the available options.
 Additionally, there is an example configuration in the [examples](./examples) directory.
