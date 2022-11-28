@@ -134,7 +134,17 @@
               ],
               "properties": {
                 "issuerRef": {
-                  "type": "string"
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "enum": ["ClusterIssuer", "Issuer"]
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  }
                 },
                 "caEnabled": {
                   "type": "boolean"
