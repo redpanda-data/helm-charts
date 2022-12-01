@@ -92,8 +92,7 @@ external:
   # External config doesn't apply to RPC listeners as they are never externally accessible
   # These values can be overridden by each listener if needed
   enabled: true
-  # Default external access type (options are NodePort and LoadBalancer)
-  # TODO include IP range for load balancer that support it: https://github.com/redpanda-data/helm-charts/issues/106
+  # Default external access type (NodePort is the only option for now)
   type: NodePort
   domain: local
   # annotations:
@@ -412,8 +411,7 @@ listeners:
     # replace this with an empty list, ie: `external: []`
       default:
         port: 9094
-        # Type can be `NodePort or `LoadBalancer`. If unset, it will default to the type
-        # in the `external` section.`
+        # If unset, it will default to the type in the `external` section.
         type: NodePort
         # External port
         # This listener port will be used on each kubernetes node
@@ -433,7 +431,7 @@ listeners:
       default:
         # Ports must be unique per listener
         port: 8083
-        # Type of external access (options are ClusterIP, NodePort, and LoadBalancer)
+        # If unset, it will default to the type in the `external` section.
         type: NodePort
         # External port
         # This listener port will be used for the external port if NodePort is selected
@@ -462,7 +460,7 @@ listeners:
         port: 8080
         # Optional external section
         # enabled: true
-        # Type of external access (options are NodePort and LoadBalancer)
+        # If unset, it will default to the type in the `external` section.
         # type: NodePort
         # External port
         # This listener port will be used for the external port if this is not included
@@ -506,7 +504,7 @@ config:
     # tm_violation_recovery_policy: crash                          # Describes how to recover from an invariant violation happened on the transaction coordinator level
     # transactional_id_expiration_ms: 10080min                     # Producer ids are expired once this time has elapsed after the last write with the given producer ID
   tunable: {}
-    # alter_topic_cfg_timeout_ms: 5s                              # Time to wait for entries replication in controller log when executing alter configuration request
+    # alter_topic_cfg_timeout_ms: 5s                               # Time to wait for entries replication in controller log when executing alter configuration request
     # compacted_log_segment_size: 256MiB                           # How large in bytes should each compacted log segment be (default 256MiB)
     # controller_backend_housekeeping_interval_ms: 1s              # Interval between iterations of controller backend housekeeping loop
     # coproc_max_batch_size: 32kb                                  # Maximum amount of bytes to read from one topic read
@@ -541,18 +539,18 @@ config:
     # metadata_dissemination_retries: 10                           # Number of attempts of looking up a topic's meta data like shard before failing a request
     # metadata_dissemination_retry_delay_ms: 500ms                 # Delay before retry a topic lookup in a shard or other meta tables
     # quota_manager_gc_sec: 30000ms                                # Quota manager GC frequency in milliseconds
-    # raft_learner_recovery_rate: 104857600                          # Raft learner recovery rate in bytes per second
-    # raft_heartbeat_disconnect_failures: 3 #After how many failed heartbeats to forcibly close an unresponsive TCP connection. Set to 0 to disable force disconnection.
-    # raft_heartbeat_interval_ms: 150 #The interval in ms between raft leader heartbeats.
-    # raft_heartbeat_timeout_ms: 3000	#Raft heartbeat RPC timeout.
-    # raft_io_timeout_ms: 10000	#Raft I/O timeout.
-    # raft_max_concurrent_append_requests_per_follower: 16	#Maximum number of concurrent append entries requests sent by leader to one follower.
-    # raft_max_recovery_memory: 33554432	#Maximum memory that can be used for reads in the raft recovery process.
-    # raft_recovery_default_read_size: 524288	#Default size of read issued during raft follower recovery.
-    # raft_replicate_batch_window_size: 1048576	#Maximum size of requests cached for replication.
-    # raft_smp_max_non_local_requests:   #Maximum number of x-core requests pending in Raft seastar::smp group. (for more details look at seastar::smp_service_group documentation).
-    # raft_timeout_now_timeout_ms: 1000   #Timeout for a timeout now request.
-    # raft_transfer_leader_recovery_timeout_ms: 1000	#Timeout waiting for follower recovery when transferring leadership.
+    # raft_learner_recovery_rate: 104857600                        # Raft learner recovery rate in bytes per second
+    # raft_heartbeat_disconnect_failures: 3                        # After how many failed heartbeats to forcibly close an unresponsive TCP connection. Set to 0 to disable force disconnection.
+    # raft_heartbeat_interval_ms: 150                              # The interval in ms between raft leader heartbeats.
+    # raft_heartbeat_timeout_ms: 3000                              # Raft heartbeat RPC timeout.
+    # raft_io_timeout_ms: 10000                                    # Raft I/O timeout.
+    # raft_max_concurrent_append_requests_per_follower: 16         # Maximum number of concurrent append entries requests sent by leader to one follower.
+    # raft_max_recovery_memory: 33554432                           # Maximum memory that can be used for reads in the raft recovery process.
+    # raft_recovery_default_read_size: 524288                      # Default size of read issued during raft follower recovery.
+    # raft_replicate_batch_window_size: 1048576                    # Maximum size of requests cached for replication.
+    # raft_smp_max_non_local_requests:                             # Maximum number of x-core requests pending in Raft seastar::smp group. (for more details look at seastar::smp_service_group documentation).
+    # raft_timeout_now_timeout_ms: 1000                            # Timeout for a timeout now request.
+    # raft_transfer_leader_recovery_timeout_ms: 1000               # Timeout waiting for follower recovery when transferring leadership.
     # raft_election_timeout_ms: 1500ms                             # Election timeout expressed in milliseconds TBD - election_time_out
     # readers_cache_eviction_timeout_ms: 30s                       # Duration after which inactive readers will be evicted from cache
     # reclaim_growth_window: 3000ms                                # Length of time in which reclaim sizes grow
@@ -578,31 +576,31 @@ config:
   # Any of these properties will be ignored. These otherwise valid properties are not allowed
   # to be used in this section since they impact deploying Redpanda in Kubernetes.
   # Make use of the above sections to modify these values instead (see comments below).
-  # admin: 127.0.0.1:9644                               # Address and port of admin server
-  # admin_api_tls: validate_many                                # TLS configuration for admin HTTP server
-  # advertised_kafka_api: None                                # Address of Kafka API published to the clients
-  # advertised_pandaproxy_api: None                               # Rest API address and port to publish to client
-  # advertised_rpc_api: None                                # Address of RPC endpoint published to other cluster members
-  # cloud_storage_access_key: None                                # AWS access key
-  # cloud_storage_api_endpoint: None                                # Optional API endpoint
-  # cloud_storage_api_endpoint_port: 443                                # TLS port override
-  # cloud_storage_bucket: None                                # AWS bucket that should be used to store data
+  # admin: "127.0.0.1:9644"                                        # Address and port of admin server
+  # admin_api_tls: validate_many                                   # TLS configuration for admin HTTP server
+  # advertised_kafka_api: None                                     # Address of Kafka API published to the clients
+  # advertised_pandaproxy_api: None                                # Rest API address and port to publish to client
+  # advertised_rpc_api: None                                       # Address of RPC endpoint published to other cluster members
+  # cloud_storage_access_key: None                                 # AWS access key
+  # cloud_storage_api_endpoint: None                               # Optional API endpoint
+  # cloud_storage_api_endpoint_port: 443                           # TLS port override
+  # cloud_storage_bucket: None                                     # AWS bucket that should be used to store data
   # cloud_storage_disable_tls: false                               # Disable TLS for all S3 connections
-  # cloud_storage_enabled: false                                # Enable archival storage
-  # cloud_storage_max_connections: 20                                # Max number of simultaneous uploads to S3
-  # cloud_storage_reconciliation_ms: 10s                                # Interval at which the archival service runs reconciliation (ms)
-  # cloud_storage_region: None                                # AWS region that houses the bucket used for storage
-  # cloud_storage_secret_key: None                                # AWS secret key
-  # cloud_storage_trust_file: None                                # Path to certificate that should be used to validate server certificate during TLS handshake
-  # default_topic_partitions: 1                                # Default number of partitions per topic
-  # default_topic_replications: 3                                # Default replication factor for new topics
-  # enable_admin_api                                Enable the admin API                                true
-  # enable_sasl                                Enable SASL authentication for Kafka connections                                false
-  # kafka_api                                Address and port of an interface to listen for Kafka API requests                                127.0.0.1:9092
-  # kafka_api_tls                                TLS configuration for Kafka API endpoint                                None
-  # pandaproxy_api                                Rest API listen address and port                                0.0.0.0:8082
-  # pandaproxy_api_tls                                TLS configuration for Pandaproxy api                                validate_many
-  # rpc_server                                IP address and port for RPC server                                127.0.0.1:33145
-  # rpc_server_tls                                TLS configuration for RPC server                                validate
-  # seed_servers                                List of the seed servers used to join current cluster; If the seed_server list is empty the node will be a cluster root and it will form a new cluster                                None
-  # superusers                                List of superuser usernames                                None
+  # cloud_storage_enabled: false                                   # Enable archival storage
+  # cloud_storage_max_connections: 20                              # Max number of simultaneous uploads to S3
+  # cloud_storage_reconciliation_ms: 10s                           # Interval at which the archival service runs reconciliation (ms)
+  # cloud_storage_region: None                                     # AWS region that houses the bucket used for storage
+  # cloud_storage_secret_key: None                                 # AWS secret key
+  # cloud_storage_trust_file: None                                 # Path to certificate that should be used to validate server certificate during TLS handshake
+  # default_topic_partitions: 1                                    # Default number of partitions per topic
+  # default_topic_replications: 3                                  # Default replication factor for new topics
+  # enable_admin_api: true                                         # Enable the admin API
+  # enable_sasl: false                                             # Enable SASL authentication for Kafka connections
+  # kafka_api: "127.0.0.1:9092"                                    # Address and port of an interface to listen for Kafka API requests
+  # kafka_api_tls: None                                            # TLS configuration for Kafka API endpoint
+  # pandaproxy_api: "0.0.0.0:8082"                                 # Rest API listen address and port
+  # pandaproxy_api_tls: validate_many                              # TLS configuration for Pandaproxy api
+  # rpc_server: "127.0.0.1:33145"                                  # IP address and port for RPC server
+  # rpc_server_tls: validate                                       # TLS configuration for RPC server
+  # seed_servers: None                                             # List of the seed servers used to join current cluster; If the seed_server list is empty the node will be a cluster root and it will form a new cluster
+  # superusers: None                                               # List of superuser usernames
