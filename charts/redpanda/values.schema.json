@@ -48,6 +48,21 @@
         }
       }
     },
+    "rackAwareness": {
+      "type": "object",
+      "required": [
+        "enabled",
+        "nodeAnnotation"
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "nodeAnnotation": {
+          "type": "string"
+        }
+      }
+    },
     "auth": {
       "type": "object",
       "required": [
@@ -574,6 +589,21 @@
         },
         "name": {
           "type": "string"
+        }
+      }
+    },
+    "rbac": {
+      "type": "object",
+      "required": [
+        "enabled",
+        "annotations"
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "annotations": {
+          "type": "object"
         }
       }
     },

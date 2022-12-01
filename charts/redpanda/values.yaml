@@ -19,7 +19,7 @@
 #  https://helm.sh/docs/chart_template_guide/values_files/
 
 #
-# >>> This chart requires Helm version 3.5.0 or greater <<<
+# >>> This chart requires Helm version 3.6.0 or greater <<<
 #
 
 # Common parameters
@@ -47,6 +47,16 @@ license_secret_ref: {}
 # Secret name and secret key where license is stored
 # secret_name: my-secret
 # secret_key: key-where-license-is-stored
+# Rack Awareness
+rackAwareness:
+  # When running in multiple racks or availability zones, use the Kubernetes Node
+  # annotation value as the Redpanda rack value.
+  # Enabling this requires running with a service account with "get" Node permissions.
+  # Set serviceAccount.create=true and rbac.enabled=true to have the helm chart configure that permission.
+  enabled: false
+  # This is the common well-known annotation to use. You would only want to override
+  # this if you have your own custom Node annotation to use instead.
+  nodeAnnotation: topology.kubernetes.io/zone
 
 #
 # Authentication
@@ -344,6 +354,12 @@ serviceAccount:
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
+# Role Based Access Control
+rbac:
+  # enable this for features that need extra priveleges
+  enabled: false
+  # annotations to add to the rbac resources
+  annotations: {}
 
 tuning: {}
   # This section contains Redpanda tuning parameters.
