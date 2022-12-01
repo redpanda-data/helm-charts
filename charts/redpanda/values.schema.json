@@ -185,6 +185,13 @@
         "domain": {
           "type": "string",
           "format": "idn-hostname"
+        },
+        "addressType": {
+          "type": "string",
+          "pattern": "^(subdomain|ip)$"
+        },
+        "addresses": {
+          "type": "string"
         }
       }
     },

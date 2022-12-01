@@ -74,19 +74,48 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
+            - name: EXTERNAL_ADDRESSES
+              value: {{ .Values.external.addresses }}
           args:
             - >
               CONFIG=/etc/redpanda/redpanda.yaml;
               cp /tmp/base-config/redpanda.yaml "$CONFIG";
+              NODE_ID=${SERVICE_NAME##*-};
               {{- if (include "redpanda-atleast-22-1-1" . | fromJson).bool }}
               cp /tmp/base-config/bootstrap.yaml /etc/redpanda/.bootstrap.yaml;
               {{- end }}
               {{- if not (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
-              NODE_ID=${SERVICE_NAME##*-};
               rpk --config "$CONFIG" redpanda config set redpanda.node_id $NODE_ID;
               if [ "$NODE_ID" = "0" ]; then
                 rpk --config "$CONFIG" redpanda config set redpanda.seed_servers '[]' --format yaml;
               fi;
+              {{- end }}
+              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[0].name internal ;
+              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[0].address {{ $advertiseAddress }} ;
+              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[0].port {{ .Values.listeners.kafka.port }} ;
+              {{- $listenerIndex := 1 -}}
+              {{- range $name, $listener := .Values.listeners.kafka.external -}}
+                {{- $enabled := dig "enabled" $values.external.enabled $listener -}}
+                {{- $listenerNodePortEnabled := and $enabled (eq (dig "type" $values.external.type $listener) "NodePort") -}}
+                {{- $advertiseKafkaHost := $advertiseAddress -}}
+                {{- $advertiseKafkaPort := $listener.nodePort -}}
+                {{- if $listenerNodePortEnabled -}}
+                  {{- if $values.external.addresses -}}
+              NODE_INDEX=`expr $NODE_ID + 1`;
+              NODE_ADDRESS=`echo $EXTERNAL_ADDRESSES | cut -d ' ' -f $NODE_INDEX`;
+                    {{- if eq $values.external.addressType "ip" -}}
+              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].address $NODE_ADDRESS;
+                    {{- else -}}
+              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].address $NODE_ADDRESS.{{ $values.external.domain }};
+                    {{- end -}}
+                  {{- else -}}
+                    {{- $advertiseKafkaHost = printf "$(SERVICE_NAME).%s" $values.external.domain -}}
+              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].address {{ $advertiseKafkaHost }} ;
+                  {{- end -}}
+                {{- end -}}
+              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].name {{ $name }} ;
+              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].port {{ $advertiseKafkaPort }} ;
+                {{- $listenerIndex = add $listenerIndex 1 -}}
               {{- end }}
           volumeMounts:
             - name: {{ template "redpanda.fullname" . }}
@@ -200,17 +229,6 @@ spec:
             - --memory={{ template "redpanda-memory" . }}M
             - --reserve-memory={{ template "redpanda-reserve-memory" . }}
             - --default-log-level={{ .Values.logging.logLevel }}
-            - --advertise-kafka-addr=internal://{{ $advertiseAddress }}:{{ .Values.listeners.kafka.port }},
-{{- range $name, $listener := .Values.listeners.kafka.external -}}
-  {{- $enabled := dig "enabled" $values.external.enabled $listener -}}
-  {{- $listenerNodePortEnabled := and $enabled (eq (dig "type" $values.external.type $listener) "NodePort") -}}
-  {{- $advertiseKafkaHost := $advertiseAddress -}}
-  {{- $advertiseKafkaPort := $listener.nodePort -}}
-  {{- if $listenerNodePortEnabled -}}
-    {{- $advertiseKafkaHost = printf "$(SERVICE_NAME).%s" $values.external.domain -}}
-  {{- end -}}
-                {{ $name }}://{{ $advertiseKafkaHost }}:{{ $advertiseKafkaPort }},
-{{- end }}
             - --advertise-rpc-addr={{ $advertiseAddress }}:{{ .Values.listeners.rpc.port }}
             - --advertise-pandaproxy-addr=internal://{{ $advertiseAddress }}:{{ .Values.listeners.http.port }},
 {{- range $name, $listener := .Values.listeners.http.external -}}
