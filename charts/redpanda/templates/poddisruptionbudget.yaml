@@ -15,6 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */}}
 
+{{- if .Capabilities.APIVersions.Has "policy/v1/PodDisruptionBudget" }}
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
@@ -35,3 +36,6 @@ spec:
       app.kubernetes.io/name: {{ template "redpanda.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name | quote }}
   maxUnavailable: {{ .Values.statefulset.budget.maxUnavailable | int64 }}
+{{- else if (not .Values.ephemeralUsage.enabled) }}
+{{- fail "You must use Kubernetes 1.21+ for a production cluster. If you're not using this in production and you know why doing this is a bad idea, you can set 'ephemeralUsage.enabled=false' to continue." }}
+{{- end }}

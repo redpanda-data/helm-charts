@@ -466,6 +466,13 @@ listeners:
         # This listener port will be used for the external port if this is not included
         nodePort: 30081
 
+### Non-production usage
+#
+# ephemeralUsage - Enabling this key relaxes some properties related to high availability, like the
+#   implementation of a PodDisruptionBudget (this enables deployment onto older K8s versions as well)
+ephemeralUsage:
+  enabled: false
+
 # Expert Config
 
 # This section contains various settings supported by Redpanda that may not work
