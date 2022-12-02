@@ -63,6 +63,10 @@ auth:
         # password: password
         # If password isn't given, then the secretName must point to an already existing secret
         # secretName: adminPassword
+        # if the mecanism is unspecified, it defaults to .Values.auth.sasl.mechanism
+        # mechanism: SCRAM-SHA-512
+    # if unspecified, mechanism defaults to SCRAM-SHA-512
+    # mechanism: SCRAM-SHA-512
 
 #
 # TLS configuration

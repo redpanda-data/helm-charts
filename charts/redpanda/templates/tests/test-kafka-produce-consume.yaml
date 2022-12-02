@@ -52,9 +52,10 @@ spec:
           command:
           - /bin/bash
           - -c
-          - >
-            rpk topic create produce.consume.test.$POD_NAME {{ include "rpk-topic-flags" . }} || exit 1 &&
-            echo "Pandas are awesome!" | rpk topic produce produce.consume.test.$POD_NAME {{ include "rpk-topic-flags" . }} || exit 1 &&
+          - |
+            set -e
+            rpk topic create produce.consume.test.$POD_NAME {{ include "rpk-topic-flags" . }}
+            echo "Pandas are awesome!" | rpk topic produce produce.consume.test.$POD_NAME {{ include "rpk-topic-flags" . }}
             rpk topic consume produce.consume.test.$POD_NAME -n 1 {{ include "rpk-topic-flags" . }} | grep "Pandas are awesome!"
           volumeMounts:
             - name: config

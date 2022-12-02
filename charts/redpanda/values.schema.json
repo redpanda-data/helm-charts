@@ -84,6 +84,10 @@
                     },
                     "password": {
                       "type": "string"
+                    },
+                    "mechanism": {
+                      "type": "string",
+                      "pattern": "^(SCRAM-SHA-512|SCRAM-SHA-256)$"
                     }
                   },
                   "oneOf": [
@@ -101,6 +105,10 @@
                     }
                   ]
                 }
+              },
+              "mechanism": {
+                "type": "string",
+                "pattern": "^(SCRAM-SHA-512|SCRAM-SHA-256)$"
               }
             }
           },

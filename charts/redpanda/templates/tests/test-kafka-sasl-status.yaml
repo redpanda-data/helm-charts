@@ -14,7 +14,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- if and (include "sasl-enabled" . | fromJson).bool (not (include "tls-enabled" . | fromJson).bool) }}
+{{- if (include "sasl-enabled" . | fromJson).bool }}
+{{- $testTopicFlags := mustRegexReplaceAll "--user \\S+ " (include "rpk-topic-flags" . ) "--user tommytester " }}
+{{- $testTopicFlags := mustRegexReplaceAll "--password \\S+ " $testTopicFlags "--password test " }}
 apiVersion: v1
 kind: Pod
 metadata:
@@ -40,23 +42,17 @@ spec:
       command:
       - /bin/bash
       - -c
-      - >
-        rpk acl user delete admin
-        --api-urls {{ include "redpanda.fullname" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.admin.port }}
-        --brokers {{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.kafka.port }};
-        sleep 3;
-        rpk acl user create admin -p test
-        --api-urls {{ include "redpanda.fullname" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.admin.port }} &&
-        sleep 3 &&
-        rpk topic create test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-256
-        --brokers {{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.kafka.port }} &&
-        rpk topic describe test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-256
-        --brokers {{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.kafka.port }} &&
-        rpk topic delete test-topic --user admin --password test --sasl-mechanism SCRAM-SHA-256
-        --brokers {{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.kafka.port }} &&
-        rpk acl user delete admin
-        --api-urls {{ include "redpanda.fullname" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.admin.port }}
-        --brokers {{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.kafka.port }}
+      - |
+        rpk acl user delete tommytester {{ include "rpk-common-flags" . }}
+        sleep 3
+        set -e
+        rpk acl user create tommytester --new-password test --mechanism {{ include "sasl-mechanism" . }} {{ include "rpk-common-flags" . }}
+        rpk acl create --allow-principal 'tommytester' --allow-host '*' --operation all --topic 'test-topic' {{ include "rpk-topic-flags" . }}
+        sleep 3
+        rpk topic create test-topic {{ $testTopicFlags }}
+        rpk topic describe test-topic {{ $testTopicFlags }}
+        rpk topic delete test-topic {{ $testTopicFlags }}
+        rpk acl user delete tommytester {{ include "rpk-common-flags" . }}
       volumeMounts:
         - name: config
           mountPath: /etc/redpanda
