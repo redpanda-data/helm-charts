@@ -14,63 +14,39 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
+{{- $anySASL := (include "sasl-enabled" . | fromJson).bool }}
+{{- $rpk :=
+  printf "kubectl -n %s exec -ti %s-0 -c redpanda -- rpk"
+    .Release.Namespace
+    (include "redpanda.fullname" .)
+}}
+
 Congratulations on installing {{ .Chart.Name }}!
 
 The pods will rollout in a few seconds. To check the status:
 
   kubectl -n {{ .Release.Namespace }} rollout status statefulset {{ template "redpanda.fullname" . }} --watch
 
-Try some sample commands, like creating a topic called test-topic:
-
-{{- $anyTLS := (include "tls-enabled" . | fromJson).bool  -}}
-{{- $anySASL := (include "sasl-enabled" . | fromJson).bool }}
-{{- $brokers := printf "%s-0.%s:%d"
-  (include "redpanda.fullname" .)
-  (include "redpanda.internal.domain" .)
-  (int .Values.listeners.kafka.port)
--}}
-{{- $rpk :=
-  printf "kubectl -n %s exec -ti %s-0 -c redpanda -- rpk --brokers=%s"
-    .Release.Namespace
-    (include "redpanda.fullname" .)
-    $brokers
-}}
-{{- $rpkAdmin := "" }}
-{{- if $anyTLS }}
-  {{ $rpk = printf "%s --tls-enabled --tls-truststore=/etc/tls/certs/%s/ca.crt" $rpk .Values.listeners.kafka.tls.cert }}
-  {{ $rpkAdmin = printf "%s --admin-api-tls-enabled --admin-api-tls-truststore=/etc/tls/certs/%s/ca.crt --api-urls=%s-0.%s:%d"
-        $rpk
-        .Values.listeners.admin.tls.cert
-        (include "redpanda.fullname" .)
-        (include "redpanda.internal.domain" .)
-        (int .Values.listeners.admin.port)
-  }}
-{{- else }}
-  {{ $rpkAdmin = $rpk }}
-{{- end }}
-{{- if $anySASL }}
-  {{ $rpk = printf "%s --user %s --password $YOUR_PASSWORD --sasl-mechanism SCRAM-SHA-512" $rpk (.Values.auth.sasl.users | first).name }}
-  {{ $rpkAdmin = printf "%s --user %s --password $YOUR_PASSWORD --sasl-mechanism SCRAM-SHA-512" $rpkAdmin (.Values.auth.sasl.users | first).name }}
-{{- end }}
+Try some sample commands:
 
 {{- if and $anySASL }}
 Create a user:
 
-  {{ $rpkAdmin }} acl user create myuser -p changeme
+  {{ $rpk }} acl user create myuser -p changeme --mechanism {{ include "sasl-mechanism" . }} {{ include "rpk-common-flags" . }}
 {{- end }}
 
 Get the api status:
 
-  {{ $rpk }} cluster info
+  {{ $rpk }} cluster info {{ include "rpk-common-flags" . }}
 
 Create a topic
 
-  {{ $rpk }} topic create test-topic
+  {{ $rpk }} topic create test-topic {{ include "rpk-topic-flags" . }}
 
 Describe the topic:
 
-  {{ $rpk }} topic describe test-topic
+  {{ $rpk }} topic describe test-topic {{ include "rpk-topic-flags" . }}
 
 Delete the topic:
 
-  {{ $rpk }} topic delete test-topic
+  {{ $rpk }} topic delete test-topic {{ include "rpk-topic-flags" . }}

@@ -350,7 +350,16 @@ IP is required for the advertised address.
 {{ template "redpanda.fullname" . }}-0.{{ include "redpanda.internal.domain" .}}:{{ .Values.listeners.admin.port }}
 {{- end -}}
 
+{{- define "sasl-mechanism" -}}
+{{- dig "sasl" "mechanism" "SCRAM-SHA-512" .Values.auth -}}
+{{- end -}}
+
+{{- define "sasl-user-mechanism" -}}
+{{- dig "mechanism" (include "sasl-mechanism" $) $.user -}}
+{{- end -}}
+
 {{- define "rpk-flags" -}}
+  {{- $root := . -}}
   {{- $admin := list -}}
   {{- $admin = concat $admin (list "--api-urls" (include "api-urls" . )) -}}
   {{- if (include "admin-internal-tls-enabled" . | fromJson).bool -}}
@@ -373,20 +382,31 @@ IP is required for the advertised address.
     {{- $sasl = concat $sasl (list
       "--user" (first .Values.auth.sasl.users).name
       "--password" (first .Values.auth.sasl.users).password
-      "--sasl-mechanism SCRAM-SHA-512")
+      "--sasl-mechanism " (include "sasl-mechanism" .)
+    )
     -}}
   {{- end -}}
-{{- toJson (dict "admin" (join " " $admin) "kafka" (join " " $kafka) "sasl" (join " " $sasl)) -}}
+  {{- $brokers := list -}}
+  {{- range $i := untilStep 0 (.Values.statefulset.replicas|int) 1 -}}
+    {{- $brokers = concat $brokers (list (printf "%s-%d.%s:%d"
+      (include "redpanda.fullname" $root)
+      $i
+      (include "redpanda.internal.domain" $root)
+      (int $root.Values.listeners.kafka.port)))
+    -}}
+  {{- end -}}
+  {{- $brokersFlag := printf "--brokers %s" (join "," $brokers) -}}
+{{- toJson (dict "admin" (join " " $admin) "kafka" (join " " $kafka) "sasl" (join " " $sasl) "brokers" $brokersFlag) -}}
 {{- end -}}
 
 {{- define "rpk-common-flags" -}}
 {{- $flags := fromJson (include "rpk-flags" .) -}}
-{{ join " " (list $flags.admin $flags.sasl $flags.kafka)}}
+{{ join " " (list $flags.brokers $flags.admin $flags.sasl $flags.kafka)}}
 {{- end -}}
 
 {{- define "rpk-topic-flags" -}}
 {{- $flags := fromJson (include "rpk-flags" .) -}}
-{{ join " " (list $flags.sasl $flags.kafka)}}
+{{ join " " (list $flags.brokers $flags.sasl $flags.kafka)}}
 {{- end -}}
 
 {{- define "storage-min-free-bytes" -}}
