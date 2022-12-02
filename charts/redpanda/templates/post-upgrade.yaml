@@ -32,6 +32,9 @@ spec:
 {{- end }}
     spec:
       restartPolicy: Never
+      {{- if .Values.serviceAccount }}
+      serviceAccountName: {{ include "redpanda.serviceAccountName" (list . "postUpgrade" ) }}
+      {{- end }}
       containers:
       - name: {{ template "redpanda.name" . }}-post-upgrade
         image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}

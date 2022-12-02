@@ -49,14 +49,54 @@ Get the version of redpanda being used as an image
 
 {{/*
 Create the name of the service account to use
+{{ include "redpanda.serviceAccountName" (list . "statefulset") }}
+{{ include "redpanda.serviceAccountName" (list . "kafkaProduceConsume" "tests") }}
+  * root is the chart root .
+  * service_id is the service as defined in values.
+    ex: statefulset, postUpgrade, postInstallUpgrade
+  * child is a child of serviceAccounts containing it's own serviceAccount definition.
+    ex: tests
 */}}
 {{- define "redpanda.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "redpanda.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
-{{- end }}
-{{- end }}
+{{- $root := index . 0 }}
+{{- $service_id := index . 1 }}
+{{- $child := (ternary (last .) "" (gt (len .) 2)) }}
+{{- $service := (fromJson (include "redpanda.serviceAccount" (list $root.Values.serviceAccount $service_id $child))) -}}
+{{- if $service.create }}
+  {{- default (include "redpanda.fullname" $root) $service.name }}
+{{- else -}}
+  {{- default "default" $service.name }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Get the serviceAccount definition and if it does not exists return parent defintion
+{{ include "redpanda.serviceAccount" (list .Values.serviceAccount "statefulset") }}
+{{ include "redpanda.serviceAccountName" (list .Values.serviceAccount "kafkaProduceConsume" "tests") }}
+  * root is the chart root .
+  * service_id is the service as defined in values.
+    ex: statefulset, postUpgrade, postInstallUpgrade, tests
+  * child is a child of serviceAccounts containing it's own serviceAccount definition.
+    ex: tests
+*/}}
+{{- define "redpanda.serviceAccount" -}}
+{{ $root := index . 0 }}
+{{ $service := index . 1 }}
+{{ $child := (ternary (last .) "" (gt (len .) 2)) }}
+{{- with $root -}}
+  {{- if hasKey . $child -}}
+    {{ if hasKey (get . $child) $service }}
+      {{ toJson (get (get . $child) $service) }}
+    {{- else }}
+      {{ toJson (get . $child) }}
+    {{- end }}
+  {{- else if hasKey . $service }}
+    {{ toJson (get . $service) }}
+  {{- else -}}
+    {{ toJson . }}
+  {{- end -}}
+{{- end -}}
+{{- end -}}
 
 {{/*
 Use AppVersion if image.tag is not set

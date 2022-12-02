@@ -36,6 +36,9 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
   restartPolicy: Never
+  {{- if .Values.serviceAccount }}
+  serviceAccountName: {{ include "redpanda.serviceAccountName" (list . "schemaRegistryStatus" "tests" ) }}
+  {{- end }}
   containers:
     - name: {{ template "redpanda.name" . }}
       image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}

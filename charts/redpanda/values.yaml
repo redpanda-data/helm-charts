@@ -327,6 +327,65 @@ serviceAccount:
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
+  # All config bellow this comment allows for setting specific service accounts
+  # for parts of the helm. Any services with no additional config will use the
+  # service account defined in the top level serviceAccount definition.
+  # Create service account specific to statefulset and tests
+  #statefulset:
+  #  create: true
+  #  annotations: {}
+  #  name: "test"
+ # postUpgrade:
+ #   create: false
+ #   annotations: {}
+ #   name: ""
+ # postInstallUpgrade:
+ #   create: false
+ #   annotations: {}
+ #   name: ""
+ # Test specific service account
+ # Setting values for the tests object will apply the same service account to
+ # all tests.
+ # tests:
+ #   create: false
+ #   annotations: {}
+ #   name: ""
+   # apiStatus:
+   #   create:false
+   #   annotations: {}
+   #   name: ""
+   # kafkaInternalTlsStatus:
+   #   create: false
+   #   annotations: {}
+   #   name: ""
+   # kafkaProduceConsume:
+   #   create: false
+   #   annotations: {}
+   #   name: ""
+   # kafkaSaslStatus:
+   #   create: false
+   #   annotations: {}
+   #   name: ""
+   # kafkaSaslTlsStatus:
+   #   create: false
+   #   annotations: {}
+   #   name: ""
+   # pandaProxyInternalTlsStatus:
+   #   create: false
+   #   annotations: {}
+   #   name: ""
+   # pandaProxyStatus:
+   #   create: false
+   #   annotations: {}
+   #   name: ""
+   # schemaRegistryInternalTlsStatus:
+   #   create: false
+   #   annotations: {}
+   #   name: ""
+   # schemaRegistryStatus:
+   #   create: false
+   #   annotations: {}
+   #   name: ""
 
 tuning: {}
   # This section contains Redpanda tuning parameters.

@@ -48,6 +48,9 @@ spec:
 {{- end }}
     spec:
       restartPolicy: Never
+      {{- if .Values.serviceAccount }}
+      serviceAccountName: {{ include "redpanda.serviceAccountName" (list . "postInstallUpgrade" ) }}
+      {{- end }}
       containers:
       - name: {{ template "redpanda.name" . }}-post-install
         image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}
@@ -66,7 +69,7 @@ spec:
           - >
 {{- if .Values.auth.sasl.enabled }}
   {{- range $user := .Values.auth.sasl.users }}
-            rpk acl user create {{ $user.name }} -p {{ $user.password | quote }} {{ template "rpk-common-flags" $ }} 
+            rpk acl user create {{ $user.name }} -p {{ $user.password | quote }} {{ template "rpk-common-flags" $ }}
             ;
   {{- end }}
 {{- end }}
