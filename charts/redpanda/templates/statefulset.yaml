@@ -57,6 +57,9 @@ spec:
         {{- toYaml . | nindent 8 }}
 {{- end }}
     spec:
+      {{- if .Values.serviceAccount }}
+      serviceAccountName: {{ include "redpanda.serviceAccountName" (list . "statefulset" ) }}
+      {{- end }}
       securityContext:
         {{- toYaml .Values.statefulset.podSecurityContext | nindent 8 }}
       initContainers:

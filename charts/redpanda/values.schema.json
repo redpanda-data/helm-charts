@@ -559,6 +559,40 @@
         },
         "name": {
           "type": "string"
+        },
+        "statefulset": {
+          "$ref": "#/$defs/serviceAccount"
+        },
+        "postUpgradeJob": {
+          "$ref": "#/$defs/serviceAccount"
+        },
+        "postInstallJob": {
+          "$ref": "#/$defs/serviceAccount"
+        },
+        "tests": {
+          "type": "object",
+          "required": [
+            "create",
+            "annotations",
+            "name"
+          ],
+          "propertyNames": {
+            "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+          },
+          "properties": {
+            "create": {
+              "type": "boolean"
+            },
+            "annotations": {
+              "type": "object"
+            },
+            "name": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/serviceAccount"
+          }
         }
       }
     },
@@ -895,6 +929,28 @@
           "type": "object"
         }
       }
+    }
+  },
+  "$defs": {
+    "serviceAccount": {
+      "type": "object",
+      "required": [
+        "create",
+        "annotations",
+        "name"
+      ],
+      "properties": {
+        "create": {
+          "type": "boolean"
+        },
+        "annotations": {
+          "type": "object"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
     }
   }
 }
