@@ -27,6 +27,22 @@ The pods will rollout in a few seconds. To check the status:
 
   kubectl -n {{ .Release.Namespace }} rollout status statefulset {{ template "redpanda.fullname" . }} --watch
 
+{{- if (default .Values.external true) }}
+Get your node's external IP addresses with the following command:
+  kubectl get nodes -o wide
+
+Then set the REDPANDA_BROKERS environment variable using the external IPs:
+  export REDPANDA_BROKERS=<external IP>:31092,<external IP>:31092,<external IP>:31092
+
+Add IP addresses for each of the {{ .Values.statefulset.replicas }} nodes in your cluster (the above example lists three).
+
+Now rpk can be used like this when using sub-commands that access the Kafka API port:
+  rpk cluster info
+
+For rpk sub-commands that use the admin API port, run rpk with the following flag:
+  rpk cluster health --api-urls <external IP>:31644,<external IP>:31644,<external IP>:31644
+{{- end }}
+
 Try some sample commands:
 
 {{- if and $anySASL }}

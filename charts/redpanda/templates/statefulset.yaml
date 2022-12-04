@@ -75,7 +75,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.name
             - name: EXTERNAL_ADDRESSES
-              value: {{ .Values.external.addresses }}
+              value: "{{ .Values.external.addresses }}"
           args:
             - >
               CONFIG=/etc/redpanda/redpanda.yaml;
@@ -90,31 +90,48 @@ spec:
                 rpk --config "$CONFIG" redpanda config set redpanda.seed_servers '[]' --format yaml;
               fi;
               {{- end }}
-              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[0].name internal ;
-              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[0].address {{ $advertiseAddress }} ;
-              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[0].port {{ .Values.listeners.kafka.port }} ;
+              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[0].name internal;
+              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[0].address {{ $advertiseAddress }};
+              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[0].port {{ .Values.listeners.kafka.port }};
               {{- $listenerIndex := 1 -}}
               {{- range $name, $listener := .Values.listeners.kafka.external -}}
                 {{- $enabled := dig "enabled" $values.external.enabled $listener -}}
                 {{- $listenerNodePortEnabled := and $enabled (eq (dig "type" $values.external.type $listener) "NodePort") -}}
-                {{- $advertiseKafkaHost := $advertiseAddress -}}
                 {{- $advertiseKafkaPort := $listener.nodePort -}}
-                {{- if $listenerNodePortEnabled -}}
-                  {{- if $values.external.addresses -}}
-              NODE_INDEX=`expr $NODE_ID + 1`;
-              NODE_ADDRESS=`echo $EXTERNAL_ADDRESSES | cut -d ' ' -f $NODE_INDEX`;
-                    {{- if eq $values.external.addressType "ip" -}}
-              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].address $NODE_ADDRESS;
-                    {{- else -}}
-              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].address $NODE_ADDRESS.{{ $values.external.domain }};
-                    {{- end -}}
+                {{- if $values.external.addressType -}}
+                  {{- if and (eq $values.external.addressType "ip") (not $values.external.addresses) -}}
+                    {{ fail "external.addressType of ip must have external.addresses set"}}
+                  {{- else if and (eq $values.external.addressType "subdomain") (or (not $values.external.domain) (not $values.external.addresses)) -}}
+                    {{ fail "external.addressType of subdomain must have external.domain and external.addresses set"}}
                   {{- else -}}
-                    {{- $advertiseKafkaHost = printf "$(SERVICE_NAME).%s" $values.external.domain -}}
-              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].address {{ $advertiseKafkaHost }} ;
+              NODE_INDEX=`expr $NODE_ID + 1`;
+              EXTERNAL_ADDRESS=`echo $EXTERNAL_ADDRESSES | cut -d ' ' -f $NODE_INDEX`;
+                    {{- if eq $values.external.addressType "ip" -}}
+              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].address $EXTERNAL_ADDRESS;
+                    {{- end -}}
+                    {{- if eq $values.external.addressType "subdomain" -}}
+              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].address $EXTERNAL_ADDRESS.{{ $values.external.domain }};
+                    {{- end -}}
                   {{- end -}}
+                {{- else -}}
+              APISERVER=https://kubernetes.default.svc;
+              SERVICEACCOUNT=/var/run/secrets/kubernetes.io/serviceaccount;
+              NAMESPACE=$(cat ${SERVICEACCOUNT}/namespace);
+              TOKEN=$(cat ${SERVICEACCOUNT}/token);
+              CACERT=${SERVICEACCOUNT}/ca.crt;
+              cd /etc/redpanda;
+              curl https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 -sLo jq;
+              chmod +x jq;
+              NODE_NAME=`curl -s --cacert ${CACERT} --header "Authorization: Bearer ${TOKEN}" -X GET ${APISERVER}/api/v1/namespaces/redpanda/pods | ./jq -r --arg SERVICE_NAME $SERVICE_NAME '.items | map( select(.metadata.name == $SERVICE_NAME)) | .[] | .spec.nodeName'`;
+              EXTERNAL_IP=`curl -s --cacert ${CACERT} --header "Authorization: Bearer ${TOKEN}" -X GET ${APISERVER}/api/v1/nodes/${NODE_NAME}/status | ./jq -r '.status.addresses | .[] | select(.type=="ExternalIP") | .address'`;
+              INTERNAL_IP=`curl -s --cacert ${CACERT} --header "Authorization: Bearer ${TOKEN}" -X GET ${APISERVER}/api/v1/nodes/${NODE_NAME}/status | ./jq -r '.status.addresses | .[] | select(.type=="InternalIP") | .address'`;
+              if [ -n $EXTERNAL_IP ];
+              then rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].address $EXTERNAL_IP;
+              else rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].address $INTERNAL_IP;
+              fi;
                 {{- end -}}
-              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].name {{ $name }} ;
-              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].port {{ $advertiseKafkaPort }} ;
+              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].name {{ $name }};
+              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].port {{ $advertiseKafkaPort }};
                 {{- $listenerIndex = add $listenerIndex 1 -}}
               {{- end }}
           volumeMounts:
