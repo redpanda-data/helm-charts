@@ -96,9 +96,22 @@ external:
   # External config doesn't apply to RPC listeners as they are never externally accessible
   # These values can be overridden by each listener if needed
   enabled: true
-  # Default external access type (NodePort is the only option for now)
+  # Default external access type (only NodePort at the moment)
   type: NodePort
+  # Domain to be used for each node
   domain: local
+  #
+  # addressType can be set to the following: subdomain ip
+  # with subdomain, each node will advertise an address with <external.addresses[replica index]>.<domain>
+  # with ip, each node will advertise only <external.addresses[replica index]> (and domain will be ignored)
+  # addressType: subdomain
+  #
+  # The addresses list must have an entry for each statefulset replica
+  # By default, the statefulset is called redpanda and has 3 replicas
+  # If you want to access nodes by their IP: addresses: "18.224.215.250 18.118.163.26 3.142.153.29"
+  # Or if you want to access nodes via DNS: addresses: "apple bacon carrot"
+  # addresses: "redpanda-0 redpanda-1 redpanda-2"
+  #
   # annotations:
     # For example:
     # cloud.google.com/load-balancer-type: "Internal"
