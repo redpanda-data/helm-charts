@@ -1,0 +1,70 @@
+{{/*
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/}}
+---
+{{- if .Values.rbac.enabled -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "redpanda.fullname" . }}
+  labels:
+    helm.sh/chart: {{ template "redpanda.chart" . }}
+    app.kubernetes.io/name: {{ template "redpanda.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/component: {{ template "redpanda.name" . }}
+  {{- with .Values.commonLabels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.serviceAccount.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+rules:
+  - apiGroups:
+    - ""
+    resources:
+      - nodes
+    verbs:
+      - get
+      - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "redpanda.fullname" . }}
+  labels:
+    helm.sh/chart: {{ template "redpanda.chart" . }}
+    app.kubernetes.io/name: {{ template "redpanda.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/component: {{ template "redpanda.name" . }}
+  {{- with .Values.commonLabels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.serviceAccount.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "redpanda.fullname" . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "redpanda.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace | quote }}
+{{- end }}

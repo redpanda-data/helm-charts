@@ -16,7 +16,7 @@ limitations under the License.
 */}}
 
 {{- $values := .Values }}
-{{- $advertiseAddress := include "redpanda.kafka.internal.advertise.address" . -}}
+{{- $advertiseAddress := include "redpanda.kafka.internal.advertise.address" . }}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -59,6 +59,7 @@ spec:
     spec:
       securityContext:
         {{- toYaml .Values.statefulset.podSecurityContext | nindent 8 }}
+      serviceAccountName: {{ include "redpanda.serviceAccountName" . }}
       initContainers:
         - name: set-datadir-ownership
           image: busybox:latest
@@ -76,46 +77,68 @@ spec:
                   fieldPath: metadata.name
             - name: EXTERNAL_ADDRESSES
               value: {{ .Values.external.addresses }}
+            - name: KUBERNETES_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
           args:
-            - >
-              CONFIG=/etc/redpanda/redpanda.yaml;
-              cp /tmp/base-config/redpanda.yaml "$CONFIG";
-              NODE_ID=${SERVICE_NAME##*-};
+            - |
+              set -xe
+              CONFIG=/etc/redpanda/redpanda.yaml
+              POD_ORDINAL=${SERVICE_NAME##*-}
+
+              # Setup config files
+              cp /tmp/base-config/redpanda.yaml "${CONFIG}"
               {{- if (include "redpanda-atleast-22-1-1" . | fromJson).bool }}
-              cp /tmp/base-config/bootstrap.yaml /etc/redpanda/.bootstrap.yaml;
+              cp /tmp/base-config/bootstrap.yaml /etc/redpanda/.bootstrap.yaml
               {{- end }}
+
               {{- if not (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
-              rpk --config "$CONFIG" redpanda config set redpanda.node_id $NODE_ID;
-              if [ "$NODE_ID" = "0" ]; then
-                rpk --config "$CONFIG" redpanda config set redpanda.seed_servers '[]' --format yaml;
-              fi;
+              # Configure bootstrap
+              ## Not used for Redpanda v22.3.0+
+              rpk --config "${CONFIG}" redpanda config set redpanda.node_id "${POD_ORDINAL}"
+              if [ "${POD_ORDINAL}" = "0" ]; then
+                rpk --config "${CONFIG}" redpanda config set redpanda.seed_servers '[]' --format yaml
+              fi
               {{- end }}
-              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[0].name internal ;
-              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[0].address {{ $advertiseAddress }} ;
-              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[0].port {{ .Values.listeners.kafka.port }} ;
-              {{- $listenerIndex := 1 -}}
-              {{- range $name, $listener := .Values.listeners.kafka.external -}}
-                {{- $enabled := dig "enabled" $values.external.enabled $listener -}}
-                {{- $listenerNodePortEnabled := and $enabled (eq (dig "type" $values.external.type $listener) "NodePort") -}}
-                {{- $advertiseKafkaHost := $advertiseAddress -}}
-                {{- $advertiseKafkaPort := $listener.nodePort -}}
-                {{- if $listenerNodePortEnabled -}}
-                  {{- if $values.external.addresses -}}
-              NODE_INDEX=`expr $NODE_ID + 1`;
-              NODE_ADDRESS=`echo $EXTERNAL_ADDRESSES | cut -d ' ' -f $NODE_INDEX`;
-                    {{- if eq $values.external.addressType "ip" -}}
-              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].address $NODE_ADDRESS;
-                    {{- else -}}
-              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].address $NODE_ADDRESS.{{ $values.external.domain }};
-                    {{- end -}}
-                  {{- else -}}
-                    {{- $advertiseKafkaHost = printf "$(SERVICE_NAME).%s" $values.external.domain -}}
-              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].address {{ $advertiseKafkaHost }} ;
-                  {{- end -}}
-                {{- end -}}
-              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].name {{ $name }} ;
-              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].port {{ $advertiseKafkaPort }} ;
-                {{- $listenerIndex = add $listenerIndex 1 -}}
+
+              # Configure internal kafka listeners
+              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[0].name internal
+              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[0].address {{ $advertiseAddress }}
+              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[0].port {{ .Values.listeners.kafka.port }}
+
+              # Configure external kafka listeners
+              {{- $listenerIndex := 1 }}
+              {{- range $name, $listener := .Values.listeners.kafka.external }}
+                {{- $enabled := dig "enabled" $values.external.enabled $listener }}
+                {{- $listenerNodePortEnabled := and $enabled (eq (dig "type" $values.external.type $listener) "NodePort") }}
+                {{- $advertiseKafkaHost := $advertiseAddress }}
+                {{- $advertiseKafkaPort := $listener.nodePort }}
+                {{- if $listenerNodePortEnabled }}
+                  {{- if $values.external.addresses }}
+              NODE_INDEX=`expr $NODE_ID + 1`
+              NODE_ADDRESS=`echo $EXTERNAL_ADDRESSES | cut -d ' ' -f $NODE_INDEX`
+                    {{- if eq $values.external.addressType "ip" }}
+              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].address $NODE_ADDRESS
+                    {{- else }}
+              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].address $NODE_ADDRESS.{{ $values.external.domain }}
+                    {{- end }}
+                  {{- else }}
+                    {{- $advertiseKafkaHost = printf "$(SERVICE_NAME).%s" $values.external.domain }}
+              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].address {{ $advertiseKafkaHost }}
+                  {{- end }}
+                {{- end }}
+              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].name {{ $name }}
+              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].port {{ $advertiseKafkaPort }}
+                {{- $listenerIndex = add $listenerIndex 1 }}
+              {{- end }}
+
+              {{- if (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
+                {{- if .Values.rackAwareness.enabled }}
+                # Configure Rack Awareness
+                RACK=$(curl --silent --cacert /run/secrets/kubernetes.io/serviceaccount/ca.crt --fail -H 'Authorization: Bearer '$(cat /run/secrets/kubernetes.io/serviceaccount/token) "https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS}/api/v1/nodes/${KUBERNETES_NODE_NAME}?pretty=true" | grep {{ .Values.rackAwareness.nodeAnnotation | quote | squote }} | sed 's/.*": "\([^"]\+\).*/\1/')
+                rpk --config "$CONFIG" redpanda config set redpanda.rack "${RACK}"
+                {{- end }}
               {{- end }}
           volumeMounts:
             - name: {{ template "redpanda.fullname" . }}
@@ -232,7 +255,7 @@ spec:
             - --advertise-rpc-addr={{ $advertiseAddress }}:{{ .Values.listeners.rpc.port }}
             - --advertise-pandaproxy-addr=internal://{{ $advertiseAddress }}:{{ .Values.listeners.http.port }},
 {{- range $name, $listener := .Values.listeners.http.external -}}
-                {{ $name}}://{{ $advertiseAddress }}:{{ $listener.nodePort }},
+                {{ $name }}://{{ $advertiseAddress }}:{{ $listener.nodePort }},
 {{- end }}
           ports:
 {{- range $name, $listener := .Values.listeners }}
@@ -297,7 +320,7 @@ spec:
     {{- end }}
             secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
   {{- end }}
-{{- end -}}
+{{- end }}
 {{- if or .Values.statefulset.nodeAffinity .Values.statefulset.podAffinity .Values.statefulset.podAntiAffinity }}
       affinity:
   {{- with .Values.statefulset.nodeAffinity }}

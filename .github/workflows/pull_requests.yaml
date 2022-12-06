@@ -72,6 +72,10 @@ jobs:
         run: kubectl get nodes
         if: steps.list-changed.outputs.changed == 'true'
 
+      - name: Annotate nodes for rack awareness
+        run: .github/annotate_kind_nodes.sh chart-testing
+        if: steps.list-changed.outputs.changed == 'true'
+
       - name: install cert-manager
         run: kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.10.0/cert-manager.yaml
         if: steps.list-changed.outputs.changed == 'true'

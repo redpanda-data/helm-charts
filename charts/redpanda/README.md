@@ -38,9 +38,7 @@ See the [60-Second Guide for Kubernetes][kubernetes-qs-dev]
 If you have improvements that can be made to this Helm chart, please consider becoming a contributor.
 See our [Contributing][contributing] document for more details.
 
-[values]: https://github.com/redpanda-data/helm-charts/blob/main/redpanda/values.yaml
+[values]: https://github.com/redpanda-data/helm-charts/blob/main/charts/redpanda/values.yaml
 [examples]: https://github.com/redpanda-data/helm-charts/blob/main/examples/README.md
 [contributing]: https://github.com/redpanda-data/helm-charts/blob/main/CONTRIBUTING.md
 [kubernetes-qs-dev]: https://docs.redpanda.com/docs/quickstart/kubernetes-qs-dev/
-
-
