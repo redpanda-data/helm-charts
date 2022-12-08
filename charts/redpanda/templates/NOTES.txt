@@ -41,6 +41,10 @@ Try some sample commands:
 Create a user:
 
   {{ include "rpk-acl-user-create" $rpk }}
+
+Give the user permissions:
+
+    {{ include "rpk-acl-create" $rpk }}
 {{- end }}
 
 Get the api status:

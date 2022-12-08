@@ -21,26 +21,38 @@ Any rpk command that's given to the user in NOTES.txt must be defined in this te
 and tested in a test.
 */}}
 
+{{/* tested in tests/test-kafka-sasl-status.yaml */}}
 {{- define "rpk-acl-user-create" -}}
 {{ .rpk }} acl user create myuser --new-password changeme --mechanism {{ include "sasl-mechanism" . }} {{ include "rpk-common-flags" . }}
 {{- end -}}
 
+{{/* tested in tests/test-kafka-sasl-status.yaml */}}
 {{- define "rpk-acl-create" -}}
 {{ .rpk }} acl create --allow-principal 'myuser' --allow-host '*' --operation all --topic 'test-topic' {{ include "rpk-topic-flags" . }}
 {{- end -}}
 
+{{/* tested in tests/test-kafka-sasl-status.yaml */}}
 {{- define "rpk-cluster-info" -}}
 {{ .rpk }} cluster info {{ include "rpk-common-flags" . }}
 {{- end -}}
 
+{{/* tested in tests/test-kafka-sasl-status.yaml */}}
 {{- define "rpk-topic-create" -}}
-{{ .rpk }} topic create test-topic {{ include "rpk-topic-flags" . }}
+{{- $sasl := mustDeepCopy . -}}
+{{- $_ := set $sasl "auth" (dict "username" "myuser" "password" "changeme") -}}
+{{ .rpk }} topic create test-topic {{ include "rpk-topic-flags" $sasl }}
 {{- end -}}
 
+{{/* tested in tests/test-kafka-sasl-status.yaml */}}
 {{- define "rpk-topic-describe" -}}
-{{ .rpk }} topic describe test-topic {{ include "rpk-topic-flags" . }}
+{{- $sasl := mustDeepCopy . -}}
+{{- $_ := set $sasl "auth" (dict "username" "myuser" "password" "changeme") -}}
+{{ .rpk }} topic describe test-topic {{ include "rpk-topic-flags" $sasl }}
 {{- end -}}
 
+{{/* tested in tests/test-kafka-sasl-status.yaml */}}
 {{- define "rpk-topic-delete" -}}
-{{ .rpk }} topic delete test-topic {{ include "rpk-topic-flags" . }}
+{{- $sasl := mustDeepCopy . -}}
+{{- $_ := set $sasl "auth" (dict "username" "myuser" "password" "changeme") -}}
+{{ .rpk }} topic delete test-topic {{ include "rpk-topic-flags" $sasl }}
 {{- end -}}
