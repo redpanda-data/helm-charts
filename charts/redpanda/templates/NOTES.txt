@@ -14,11 +14,19 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
+
+{{/*
+Any rpk command that's given to the user in in this file must be defined in _example-commands.tpl and tested in a test.
+*/}}
+
 {{- $anySASL := (include "sasl-enabled" . | fromJson).bool }}
-{{- $rpk :=
+{{- $rpk := deepCopy . }}
+{{ $rpk | toYaml }}
+
+{{- $_ := set $rpk "rpk" (
   printf "kubectl -n %s exec -ti %s-0 -c redpanda -- rpk"
     .Release.Namespace
-    (include "redpanda.fullname" .)
+    (include "redpanda.fullname" .))
 }}
 
 Congratulations on installing {{ .Chart.Name }}!
@@ -32,21 +40,21 @@ Try some sample commands:
 {{- if and $anySASL }}
 Create a user:
 
-  {{ $rpk }} acl user create myuser -p changeme --mechanism {{ include "sasl-mechanism" . }} {{ include "rpk-common-flags" . }}
+  {{ include "rpk-acl-user-create" $rpk }}
 {{- end }}
 
 Get the api status:
 
-  {{ $rpk }} cluster info {{ include "rpk-common-flags" . }}
+  {{ include "rpk-cluster-info" $rpk }}
 
 Create a topic
 
-  {{ $rpk }} topic create test-topic {{ include "rpk-topic-flags" . }}
+  {{ include "rpk-topic-create" $rpk }}
 
 Describe the topic:
 
-  {{ $rpk }} topic describe test-topic {{ include "rpk-topic-flags" . }}
+  {{ include "rpk-topic-describe" $rpk }}
 
 Delete the topic:
 
-  {{ $rpk }} topic delete test-topic {{ include "rpk-topic-flags" . }}
+  {{ include "rpk-topic-delete" $rpk }}
