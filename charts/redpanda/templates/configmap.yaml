@@ -148,7 +148,6 @@ data:
             address: "{{ template "redpanda.fullname" $ }}-{{ . }}.{{ template "redpanda.internal.domain" $ }}"
             port: {{ $values.listeners.rpc.port }}
 {{- end }}
-{{- if .Values.listeners.http.enabled }}
 {{- if .Values.listeners.schemaRegistry.enabled }}
     schema_registry:
       schema_registry:
@@ -181,6 +180,7 @@ data:
     {{- end }}
   {{- end }}
 {{- end }}
+{{- if .Values.listeners.http.enabled }}
     pandaproxy:
       pandaproxy_api:
         - name: internal
