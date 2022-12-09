@@ -1,0 +1,47 @@
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+apiVersion: v2
+name: console
+description: Helm chart to deploy Redpanda Console.
+
+maintainers:
+  - name: redpanda-data
+    url: https://github.com/orgs/redpanda-data/people
+type: application
+
+# This is the chart version. This version number should be incremented each time you make changes
+# to the chart and its templates, including the app version.
+# Versions are expected to follow Semantic Versioning (https://semver.org/)
+
+# Chart versions do not track appVersion
+version: 0.3.2
+
+# The app version is the version of the Chart application
+appVersion: v2.0.2
+
+icon: https://images.ctfassets.net/paqvtpyf8rwu/3cYHw5UzhXCbKuR24GDFGO/73fb682e6157d11c10d5b2b5da1d5af0/skate-stand-panda.svg
+sources:
+  - https://github.com/redpanda-data/helm-charts
+annotations:
+  artifacthub.io/license: Apache-2.0
+  artifacthub.io/links: |
+    - name: Documentation
+      url: https://docs.redpanda.com
+    - name: "Helm (>= 3.6.0)"
+      url: https://helm.sh/docs/intro/install/
+  artifacthub.io/images: |
+    - name: redpanda
+      image: vectorized/console:v2.0.2
