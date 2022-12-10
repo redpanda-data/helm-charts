@@ -68,7 +68,24 @@ spec:
 {{- if .Values.auth.sasl.enabled }}
   {{- $values := .Values }}
   {{- range $user := .Values.auth.sasl.users }}
-            rpk acl user create {{ $user.name }} -p {{ $user.password | quote }} --mechanism {{ include "sasl-user-mechanism" (dict "user" $user "Values" $values) }} {{ template "rpk-common-flags" $ }}
+            # To avoid `set -e` from exiting the command when a user exists; catch the stderr output and exit codes into `creation_result`
+            # and `creation_result_exit_code` for use later
+            creation_result=$(rpk acl user create {{ $user.name }} -p {{ $user.password | quote }} --mechanism {{ include "sasl-user-mechanism" (dict "user" $user "Values" $values) }} {{ template "rpk-common-flags" $ }} 2>&1) && creation_result_exit_code=$? || creation_result_exit_code=$?
+            
+            # On a non-success exit code
+            if [[ $creation_result_exit_code -ne 0 ]]; then
+              # Check if the stderr contains "User already exists"
+              if [[ $creation_result == *"User already exists"* ]]; then
+                printf "The %s user already exists, skipping creation.\n" {{ $user.name }}
+              else
+                # Another error occurred, so output the original message and exit code
+                echo "$creation_result"
+                exit $creation_result_exit_code
+              fi
+            # On a success, the user was created so output that
+            else
+              printf "Created user %s.\n" {{ $user.name }}
+            fi
   {{- end }}
 {{- end }}
 {{- if (include "redpanda-atleast-22-2-0" . | fromJson).bool }}
