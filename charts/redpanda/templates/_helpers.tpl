@@ -379,9 +379,10 @@ IP is required for the advertised address.
   {{- end -}}
   {{- $sasl := list -}}
   {{- if (include "sasl-enabled" . | fromJson).bool -}}
+    {{- $root := . | toJson | fromJson -}}
     {{- $sasl = concat $sasl (list
-      "--user" (first .Values.auth.sasl.users).name
-      "--password" (first .Values.auth.sasl.users).password
+      "--user" (dig "auth" "username" (first .Values.auth.sasl.users).name $root)
+      "--password" (dig "auth" "password" (first .Values.auth.sasl.users).password $root)
       "--sasl-mechanism " (include "sasl-mechanism" .)
     )
     -}}
