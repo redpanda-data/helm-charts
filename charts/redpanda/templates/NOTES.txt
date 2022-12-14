@@ -21,7 +21,6 @@ Any rpk command that's given to the user in in this file must be defined in _exa
 
 {{- $anySASL := (include "sasl-enabled" . | fromJson).bool }}
 {{- $rpk := deepCopy . }}
-{{ $rpk | toYaml }}
 
 {{- $_ := set $rpk "rpk" (
   printf "kubectl -n %s exec -ti %s-0 -c redpanda -- rpk"
