@@ -409,7 +409,7 @@
         "priorityClassName",
         "tolerations",
         "topologySpreadConstraints",
-        "podSecurityContext"
+        "securityContext"
       ],
       "properties": {
         "replicas": {
@@ -554,17 +554,15 @@
             }
           }
         },
-        "podSecurityContext": {
+        "securityContext": {
           "type": "object",
           "required": [
-            "fsGroup"
+            "fsGroup",
+            "runAsUser"
           ],
           "properties": {
             "fsGroup": {
               "type": "integer"
-            },
-            "runAsNonRoot": {
-              "type": "boolean"
             },
             "runAsUser": {
               "type": "integer"

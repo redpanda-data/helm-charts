@@ -57,13 +57,14 @@ spec:
         {{- toYaml . | nindent 8 }}
 {{- end }}
     spec:
-      securityContext:
-        {{- toYaml .Values.statefulset.podSecurityContext | nindent 8 }}
+      securityContext: {{ include "pod-security-context" . | nindent 8 }}
       serviceAccountName: {{ include "redpanda.serviceAccountName" . }}
       initContainers:
         - name: set-datadir-ownership
           image: busybox:latest
-          command: ["/bin/sh", "-c", "chown 101:101 -R /var/lib/redpanda/data"]
+          {{- $uid := dig "podSecurityContext" "runAsUser" .Values.statefulset.securityContext.runAsUser .Values.statefulset }}
+          {{- $gid := dig "podSecurityContext" "fsGroup" .Values.statefulset.securityContext.fsGroup .Values.statefulset }}
+          command: ["/bin/sh", "-c", "chown {{ $uid }}:{{ $gid }} -R /var/lib/redpanda/data"]
           volumeMounts:
             - name: datadir
               mountPath: /var/lib/redpanda/data
@@ -140,13 +141,13 @@ spec:
                 rpk --config "$CONFIG" redpanda config set redpanda.rack "${RACK}"
                 {{- end }}
               {{- end }}
+          securityContext: {{ include "container-security-context" . | nindent 12 }}
           volumeMounts:
             - name: {{ template "redpanda.fullname" . }}
               mountPath: /tmp/base-config
             - name: config
               mountPath: /etc/redpanda
-          resources:
-            {{- toYaml .Values.statefulset.resources | nindent 12 }}
+          resources: {{ toYaml .Values.statefulset.resources | nindent 12 }}
       containers:
         - name: {{ template "redpanda.name" . }}
           image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}
@@ -268,6 +269,7 @@ spec:
     {{- end }}
   {{- end }}
 {{- end }}
+          securityContext: {{ include "container-security-context" . | nindent 12 }}
           volumeMounts:
             - name: datadir
               mountPath: /var/lib/redpanda/data
