@@ -1,3 +1,4 @@
+{{- if .Values.post_upgrade_job.enabled }}
 {{- if (include "redpanda-atleast-22-1-1" . | fromJson).bool }}
 {{- $rpkFlags := include "rpk-common-flags" . }}
 apiVersion: batch/v1
@@ -14,11 +15,17 @@ metadata:
 {{- with .Values.commonLabels }}
   {{- toYaml . | nindent 4 }}
 {{- end }}
+{{- with .Values.post_upgrade_job.labels }}
+  {{- toYaml . | nindent 4 }}
+{{- end }}
   annotations:
     # This is what defines this resource as a hook. Without this line, the
     # job is considered part of the release.
     "helm.sh/hook": post-upgrade
     "helm.sh/hook-weight": "-5"
+{{- with .Values.post_upgrade_job.annotations }}
+  {{- toYaml . | nindent 4 }}
+{{- end }}
 spec:
   template:
     metadata:
@@ -83,4 +90,5 @@ spec:
             secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
   {{- end }}
 {{- end -}}
+{{- end }}
 {{- end }}
