@@ -430,3 +430,15 @@ IP is required for the advertised address.
 {{- define "redpanda-atleast-22-3-0" -}}
 {{- toJson (dict "bool" (or (not (eq .Values.image.repository "vectorized/redpanda")) (include "redpanda.semver" . | semverCompare ">=22.3.0"))) -}}
 {{- end -}}
+
+# manage backward compatibility with renaming podSecurityContext to securityContext
+{{- define "pod-security-context" -}}
+fsGroup: {{ dig "podSecurityContext" "fsGroup" .Values.statefulset.securityContext.fsGroup .Values.statefulset }}
+{{- end -}}
+
+# for backward compatibility, force a default on releases that didn't
+# set the podSecurityContext.runAsUser before
+{{- define "container-security-context" -}}
+runAsUser: {{ dig "podSecurityContext" "runAsUser" .Values.statefulset.securityContext.runAsUser .Values.statefulset }}
+runAsGroup: {{ dig "podSecurityContext" "fsGroup" .Values.statefulset.securityContext.fsGroup .Values.statefulset }}
+{{- end -}}

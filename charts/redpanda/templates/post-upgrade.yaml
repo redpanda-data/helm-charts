@@ -32,6 +32,7 @@ spec:
 {{- end }}
     spec:
       restartPolicy: Never
+      securityContext: {{ include "pod-security-context" . | nindent 8 }}
       containers:
       - name: {{ template "redpanda.name" . }}-post-upgrade
         image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}
@@ -49,6 +50,7 @@ spec:
         resources:
           {{- toYaml . | nindent 10 }}
         {{- end }}
+        securityContext: {{ include "container-security-context" . | nindent 10 }}
         volumeMounts:
           - name: {{ template "redpanda.fullname" . }}
             mountPath: /tmp/base-config

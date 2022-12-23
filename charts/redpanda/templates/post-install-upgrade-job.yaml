@@ -48,6 +48,7 @@ spec:
 {{- end }}
     spec:
       restartPolicy: Never
+      securityContext: {{ include "pod-security-context" . | nindent 8 }}
       containers:
       - name: {{ template "redpanda.name" . }}-post-install
         image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}
@@ -71,7 +72,7 @@ spec:
             # To avoid `set -e` from exiting the command when a user exists; catch the stderr output and exit codes into `creation_result`
             # and `creation_result_exit_code` for use later
             creation_result=$(rpk acl user create {{ $user.name }} -p {{ $user.password | quote }} --mechanism {{ include "sasl-user-mechanism" (dict "user" $user "Values" $values) }} {{ template "rpk-common-flags" $ }} 2>&1) && creation_result_exit_code=$? || creation_result_exit_code=$?
-            
+
             # On a non-success exit code
             if [[ $creation_result_exit_code -ne 0 ]]; then
               # Check if the stderr contains "User already exists"
@@ -99,6 +100,7 @@ spec:
         resources:
           {{- toYaml . | nindent 10 }}
         {{- end }}
+        securityContext: {{ include "container-security-context" . | nindent 10 }}
         volumeMounts:
           - name: {{ template "redpanda.fullname" . }}
             mountPath: /tmp/base-config
