@@ -344,12 +344,9 @@ statefulset:
     maxSkew: 1
     topologyKey: topology.kubernetes.io/zone
     whenUnsatisfiable: ScheduleAnyway
-  # When using persistent storage the volume will be mounted as root. In order for redpanda to use the volume
-  # we must set the fsGroup to the uid of redpanda, which is 101
-  podSecurityContext:
+  securityContext:
     fsGroup: 101
-    # runAsNonRoot: true
-    # runAsUser: 1000
+    runAsUser: 101
 
 # Service account management
 serviceAccount:
