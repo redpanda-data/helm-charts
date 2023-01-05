@@ -266,7 +266,7 @@ post_install_job:
   # labels: {}
   # annotations: {}
 
-post_upgrade_job: 
+post_upgrade_job:
   enabled: true
   # Resource requests and limits for the post-upgrade batch job
   # resources:
@@ -278,6 +278,17 @@ post_upgrade_job:
   #     memory: 1024Mi
   # labels: {}
   # annotations: {}
+  # Additional environment variables for the Post Upgrade Job
+  # extraEnv:
+  #   - name: AWS_SECRET_ACCESS_KEY
+  #     valueFrom:
+  #       secretKeyRef:
+  #         name: my-secret
+  #         key: redpanda-aws-secret-access-key
+  # Additional environment variables for the Post Upgrade Job mapped from Secret or ConfigMap
+  # extraEnvFrom:
+  #   - secretRef:
+  #       name: redpanda-aws-secrets
 
 statefulset:
   # Number of Redpanda brokers (recommend setting this to the number of nodes in the cluster)
