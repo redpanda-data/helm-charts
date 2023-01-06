@@ -58,6 +58,14 @@ spec:
           {{- toYaml . | nindent 10 }}
         {{- end }}
         securityContext: {{ include "container-security-context" . | nindent 10 }}
+        {{- if .Values.post_upgrade_job.extraEnv }}
+        env:
+          {{- include "common.tplvalues.render" (dict "value" .Values.post_upgrade_job.extraEnv "context" $) | nindent 10 }}
+        {{- end }}
+        {{- if .Values.post_upgrade_job.extraEnvFrom }}
+        envFrom:
+          {{- include "common.tplvalues.render" (dict "value" .Values.post_upgrade_job.extraEnvFrom "context" $) | nindent 10 }}
+        {{- end }}
         volumeMounts:
           - name: {{ template "redpanda.fullname" . }}
             mountPath: /tmp/base-config
