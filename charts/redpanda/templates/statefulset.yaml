@@ -117,8 +117,8 @@ spec:
                 {{- $advertiseKafkaPort := $listener.nodePort }}
                 {{- if $listenerNodePortEnabled }}
                   {{- if $values.external.addresses }}
-              NODE_INDEX=`expr $NODE_ID + 1`
-              NODE_ADDRESS=`echo $EXTERNAL_ADDRESSES | cut -d ' ' -f $NODE_INDEX`
+              NODE_INDEX=`expr ${POD_ORDINAL} + 1`
+              NODE_ADDRESS=`echo $EXTERNAL_ADDRESSES | cut -d ' ' -f ${NODE_INDEX}`
                     {{- if eq $values.external.addressType "ip" }}
               rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].address $NODE_ADDRESS
                     {{- else }}
