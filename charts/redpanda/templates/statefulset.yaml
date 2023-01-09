@@ -80,38 +80,37 @@ spec:
                 fieldRef:
                   fieldPath: metadata.name
 {{- range $listenerName, $listenerVals := $values.listeners }}
-  {{- if and $listenerVals.external (or (eq $listenerName "kafka") (eq $listenerName "http")) }}
-            - name: ADVERTISED_{{ upper $listenerName }}_ADDRESSES
-              value: "{{ range $replicaIndex := until ($values.statefulset.replicas | int) -}}
-{ {{- printf "%s:%s,%s:%s,%s:%s" ("name" | squote) ("internal" | squote) ("address" | squote) ($internalAdvertiseAddress | squote) ("port" | squote) ($listenerVals.port | squote) -}} };
-      {{- range $externalName, $externalVals := $listenerVals.external -}}
-        {{- $port := $listenerVals.port -}}
-        {{- if $externalVals.port -}}
-          {{- $port = $externalVals.port -}}
-        {{- end -}}
-        {{- if $externalVals.advertisedPorts -}}
-          {{- if lt (sub (len $externalVals.advertisedPorts) 1) $replicaIndex -}}
-            {{- $port = index $externalVals.advertisedPorts (sub (len $externalVals.advertisedPorts) 1) -}}
-          {{- else -}}
-            {{- $port = index $externalVals.advertisedPorts $replicaIndex -}}
-          {{- end -}}
-        {{- end -}}
-        {{- if $values.external.addresses -}}
-          {{- if $values.external.domain -}}
-{ {{- printf "%s:%s,%s:%s,%s:%s" ("name" | squote) ($externalName | squote) ("address" | squote) ((printf "%s.%s" (index $values.external.addresses $replicaIndex) $values.external.domain) | squote) ("port" | squote) ($port | squote) -}} }
-          {{- else -}}
-{ {{- printf "%s:%s,%s:%s,%s:%s" ("name" | squote) ($externalName | squote) ("address" | squote) (index $values.external.addresses $replicaIndex | squote) ("port" | squote) ($port | squote) -}} }
-          {{- end -}}
-        {{- else -}}
-{ {{- printf "%s:%s,%s:%s,%s:%s" ("name" | squote) ($externalName | squote) ("address" | squote) ($externalAdvertiseAddress | squote) ("port" | squote) ($port | squote) -}} }
-        {{- end -}}
-;
-      {{- end }}
-      {{- if not (eq $replicaIndex (sub $values.statefulset.replicas 1)) -}}
-        {{- " " -}}
-      {{- end -}}
-    {{- end }}"
+  {{- $ordList := list }}
+  {{- range $replicaIndex := until ($values.statefulset.replicas | int) }}
+    {{- $listenerList := list }}
+    {{- if and $listenerVals.external (or (eq $listenerName "kafka") (eq $listenerName "http")) }}
+      {{- $listenerList = append $listenerList (toJson (dict "name" "internal" "address" $internalAdvertiseAddress "port" $listenerVals.port)) }}
+        {{- range $externalName, $externalVals := $listenerVals.external }}
+
+          {{- $port := dig "port" $listenerVals.port $externalVals }}
+          {{- if $externalVals.advertisedPorts }}
+            {{- if eq (len $externalVals.advertisedPorts) 1 }}
+              {{- $port = index $externalVals.advertisedPorts 0 }}
+            {{- else }}
+              {{- $port = index $externalVals.advertisedPorts $replicaIndex }}
+            {{- end }}
+          {{- end }}
+
+          {{- $host := dict "name" $externalName "address" $externalAdvertiseAddress "port" $port }}
+          {{- if $values.external.addresses }}
+            {{- if $values.external.domain }}
+              {{- $host = dict "name" $externalName "address" (printf "%s.%s" (index $values.external.addresses $replicaIndex) $values.external.domain) "port" $port }}
+            {{- else }}
+              {{- $host = dict "name" $externalName  "address" (index $values.external.addresses $replicaIndex) "port" $port }}
+            {{- end }}
+          {{- end }}
+          {{- $listenerList = mustAppend $listenerList (toJson $host) }}
+        {{- end }}
+    {{- end }}
+    {{- $ordList = mustAppend $ordList (nospace (join ";" $listenerList)) }}
   {{- end }}
+            - name: ADVERTISED_{{ upper $listenerName }}_ADDRESSES
+              value: {{ squote (join " " $ordList) }}
 {{- end }}
             - name: KUBERNETES_NODE_NAME
               valueFrom:
