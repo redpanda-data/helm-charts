@@ -33,7 +33,7 @@ and tested in a test.
 
 {{/* tested in tests/test-kafka-sasl-status.yaml */}}
 {{- define "rpk-cluster-info" -}}
-{{ .rpk }} cluster info {{ include "rpk-common-flags" . }}
+{{ .rpk }} cluster info {{ include "rpk-topic-flags" . }}
 {{- end -}}
 
 {{/* tested in tests/test-kafka-sasl-status.yaml */}}
