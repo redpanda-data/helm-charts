@@ -439,7 +439,7 @@ listeners:
     tls:
       # Optional flag to override the global TLS enabled flag
       # enabled: true
-      # Name of certificate used for TLS (must match a cert registered at auth.tls.certs)
+      # Name of certificate used for TLS (must match a cert registered at tls.certs)
       cert: default
       # If true, the truststore file for this listener will be included in the ConfigMap
       requireClientAuth: false

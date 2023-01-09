@@ -22,7 +22,6 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: {{ template "redpanda.fullname" . }}
-  namespace: {{ .Release.Namespace | quote }}
   labels:
     helm.sh/chart: {{ template "redpanda.chart" . }}
     app.kubernetes.io/name: {{ template "redpanda.name" . }}
@@ -150,7 +149,7 @@ spec:
           resources: {{ toYaml .Values.statefulset.resources | nindent 12 }}
       containers:
         - name: {{ template "redpanda.name" . }}
-          image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}
+          image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
           env:
             - name: SERVICE_NAME
               valueFrom:
@@ -164,6 +163,15 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.hostIP
+{{- if gt ( .Values.statefulset.replicas | int64 ) 2 }}
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/bash", "-c", "./var/lifecycle/postStart.sh"]
+            preStop:
+              exec:
+                command: ["/bin/bash", "-c", "./var/lifecycle/preStop.sh"]
+{{- end }}
           startupProbe:
             exec:
               command:
@@ -264,13 +272,17 @@ spec:
               containerPort: {{ $listener.port }}
   {{- range $externalName, $external := $listener.external }}
     {{- if $external.port }}
-            - name: {{ lower $name | trunc 6 }}-{{ lower $externalName | trunc 8}}
+            - name: {{ lower $name | trunc 6 }}-{{ lower $externalName | trunc 8 }}
               containerPort: {{ $external.port }}
     {{- end }}
   {{- end }}
 {{- end }}
           securityContext: {{ include "container-security-context" . | nindent 12 }}
           volumeMounts:
+{{- if gt ( .Values.statefulset.replicas | int64 ) 2 }}
+            - name: lifecycle-scripts
+              mountPath: /var/lifecycle
+{{- end }}
             - name: datadir
               mountPath: /var/lib/redpanda/data
             - name: config
@@ -291,6 +303,12 @@ spec:
               cpu: {{ .Values.resources.cpu.cores }}
               memory: {{ .Values.resources.memory.container.max }}
       volumes:
+{{- if gt ( .Values.statefulset.replicas | int64 ) 2 }}
+        - name: lifecycle-scripts
+          secret:
+            secretName: {{ template "redpanda.fullname" . }}-sts-lifecycle
+            defaultMode: 0774
+{{- end }}
         - name: datadir
 {{- if .Values.storage.persistentVolume.enabled }}
           persistentVolumeClaim:
