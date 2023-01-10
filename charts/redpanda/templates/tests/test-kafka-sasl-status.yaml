@@ -51,6 +51,7 @@ spec:
         rpk acl user delete myuser {{ include "rpk-common-flags" . }}
         sleep 3
         set -e
+        {{ include "rpk-cluster-info" $rpk }}
         {{ include "rpk-acl-user-create" $rpk }}
         {{ include "rpk-acl-create" $rpk }}
         sleep 3
