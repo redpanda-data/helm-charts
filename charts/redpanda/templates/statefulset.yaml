@@ -149,7 +149,7 @@ spec:
               {{- if (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
                 {{- if .Values.rackAwareness.enabled }}
                 # Configure Rack Awareness
-                RACK=$(curl --silent --cacert /run/secrets/kubernetes.io/serviceaccount/ca.crt --fail -H 'Authorization: Bearer '$(cat /run/secrets/kubernetes.io/serviceaccount/token) "https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS}/api/v1/nodes/${KUBERNETES_NODE_NAME}?pretty=true" | grep {{ .Values.rackAwareness.nodeAnnotation | quote | squote }} | sed 's/.*": "\([^"]\+\).*/\1/')
+                RACK=$(curl --silent --cacert /run/secrets/kubernetes.io/serviceaccount/ca.crt --fail -H 'Authorization: Bearer '$(cat /run/secrets/kubernetes.io/serviceaccount/token) "https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS}/api/v1/nodes/${KUBERNETES_NODE_NAME}?pretty=true" | grep {{ .Values.rackAwareness.nodeAnnotation | quote | squote }} | grep -v '\"key\":' | sed 's/.*": "\([^"]\+\).*/\1/')
                 rpk --config "$CONFIG" redpanda config set redpanda.rack "${RACK}"
                 {{- end }}
               {{- end }}
