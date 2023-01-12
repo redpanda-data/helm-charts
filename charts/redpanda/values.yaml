@@ -65,6 +65,19 @@ rackAwareness:
   # this if you have your own custom Node annotation to use instead.
   nodeAnnotation: topology.kubernetes.io/zone
 
+#
+# Console
+console:
+  enabled: true
+  configmap:
+    create: false
+  secret:
+    create: false
+  deployment:
+    create: false
+  config: {}
+
+#
 # Authentication
 auth:
   # SASL configuration

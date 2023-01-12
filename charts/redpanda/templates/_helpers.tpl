@@ -525,3 +525,16 @@ return a warning if the chart is configured with insufficient memory
     {{- printf "%d is below the minimum recommended value for Redpanda" $result -}}
   {{- end -}}
 {{- end -}}
+
+
+{{- define "seed-server-list" -}}
+  {{- $brokers := list -}}
+  {{- range $ordinal := until (.Values.statefulset.replicas | int) -}}
+    {{- $brokers = append $brokers (printf "%s-%d.%s"
+        (include "redpanda.fullname" $)
+        $ordinal
+        (include "redpanda.internal.domain" $))
+    -}}
+  {{- end -}}
+  {{- toJson $brokers -}}
+{{- end -}}

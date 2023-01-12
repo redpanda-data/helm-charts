@@ -1,0 +1,108 @@
+{{ if (not .Values.console.deployment.create) }}
+
+{{ $extraVolumes := list }}
+{{ $extraVolumeMounts := list }}
+{{ $command := list }}
+{{ if (include "sasl-enabled" . | fromJson).bool }}
+  {{ $command = concat $command (list "sh" "-xc") }}
+  {{ $command = append $command (printf "set -e; IFS=: read -r KAFKA_SASL_USERNAME KAFKA_SASL_PASSWORD KAFKA_SASL_MECHANISM < /mnt/users/users.txt; KAFKA_SASL_MECHANISM=${KAFKA_SASL_MECHANISM:-%s}; export KAFKA_SASL_USERNAME KAFKA_SASL_PASSWORD KAFKA_SASL_MECHANISM; /app/console $@" ( include "sasl-mechanism" . )) }}
+  {{ $command = append $command "--" }}
+  {{ $extraVolumes = append $extraVolumes (dict
+    "name" (printf "%s-users" (include "redpanda.fullname" .))
+    "secret" (dict
+      "secretName" .Values.auth.sasl.secretRef
+    )
+  )}}
+  {{ $extraVolumeMounts = append $extraVolumeMounts (dict
+    "name" (printf "%s-users" (include "redpanda.fullname" .))
+    "mountPath" "/mnt/users"
+    "readOnly" true
+  ) }}
+{{ end }}
+
+{{ $kafkaTLS := list }}
+{{ if (include "kafka-internal-tls-enabled" . | fromJson).bool }}
+  {{ $service := .Values.listeners.kafka }}
+  {{ $cert := get .Values.tls.certs $service.tls.cert }}
+  {{ if $cert.caEnabled }}
+    {{ $kafkaTLS = append $kafkaTLS (dict
+      "name" "KAFKA_TLS_CAFILEPATH"
+      "value" (printf "/mnt/cert/kafka/%s/ca.crt" $service.tls.cert)
+    )}}
+    {{ $extraVolumes = append $extraVolumes (dict
+        "name" (printf "kafka-%s-cert" $service.tls.cert)
+        "secret" (dict
+          "defaultMode" 0420
+          "items" (list (dict "key" "ca.crt" "path" "ca.crt") )
+          "secretName" (printf "%s-%s-cert" (include "redpanda.fullname" .) $service.tls.cert)
+    ))}}
+    {{ $extraVolumeMounts = append $extraVolumeMounts (dict
+        "name" (printf "kafka-%s-cert" $service.tls.cert)
+        "mountPath" (printf "/mnt/cert/kafka/%s" $service.tls.cert)
+        "readOnly" true
+    )}}
+  {{ end }}
+{{ end }}
+
+{{ $schemaRegistryTLS := list }}
+{{ if (include "schemaRegistry-internal-tls-enabled" . | fromJson).bool }}
+  {{ $service := .Values.listeners.schemaRegistry }}
+  {{ $cert := get .Values.tls.certs $service.tls.cert }}
+  {{ if $cert.caEnabled }}
+    {{ $schemaRegistryTLS = append $schemaRegistryTLS (dict
+      "name" "KAFKA_SCHEMAREGISTRY_TLS_CAFILEPATH"
+      "value" (printf "/mnt/cert/schemaregistry/%s/ca.crt" $service.tls.cert)
+    )}}
+    {{ $extraVolumes = append $extraVolumes (dict
+        "name" (printf "schemaregistry-%s-cert" $service.tls.cert)
+        "secret" (dict
+          "defaultMode" 0420
+          "items" (list (dict "key" "ca.crt" "path" "ca.crt") )
+          "secretName" (printf "%s-%s-cert" (include "redpanda.fullname" .) $service.tls.cert)
+    ))}}
+    {{ $extraVolumeMounts = append $extraVolumeMounts (dict
+        "name" (printf "schemaregistry-%s-cert" $service.tls.cert)
+        "mountPath" (printf "/mnt/cert/schemaregistry/%s" $service.tls.cert)
+        "readOnly" true
+    )}}
+  {{ end }}
+{{ end }}
+
+{{ $adminTLS := list }}
+{{ if (include "admin-internal-tls-enabled" . | fromJson).bool }}
+  {{ $service := .Values.listeners.admin }}
+  {{ $cert := get .Values.tls.certs $service.tls.cert }}
+  {{ if $cert.caEnabled }}
+    {{ $adminTLS = append $adminTLS (dict
+      "name" "REDPANDA_ADMINAPI_TLS_CAFILEPATH"
+      "value" (printf "/mnt/cert/adminapi/%s/ca.crt" $service.tls.cert)
+    )}}
+    {{ $extraVolumes = append $extraVolumes (dict
+        "name" (printf "adminapi-%s-cert" $service.tls.cert)
+        "secret" (dict
+          "defaultMode" 0420
+          "items" (list (dict "key" "ca.crt" "path" "ca.crt") )
+          "secretName" (printf "%s-%s-cert" (include "redpanda.fullname" .) $service.tls.cert)
+    ))}}
+    {{ $extraVolumeMounts = append $extraVolumeMounts (dict
+        "name" (printf "adminapi-%s-cert" $service.tls.cert)
+        "mountPath" (printf "/mnt/cert/adminapi/%s" $service.tls.cert)
+        "readOnly" true
+    )}}
+  {{ end }}
+{{ end }}
+
+{{ $extraEnv := concat $kafkaTLS $adminTLS $schemaRegistryTLS }}
+{{ $consoleValues := dict "Values" (dict
+  "extraVolumes" $extraVolumes
+  "extraVolumeMounts" $extraVolumeMounts
+  "extraEnv" $extraEnv
+)}}
+{{ if not (empty $command) }}
+  {{ $consoleValues := merge $consoleValues (dict "Values" (dict "deployment" (dict "command" $command))) }}
+{{ end }}
+{{ $consoleValues := merge $consoleValues (dict "Values" (dict "deployment" (dict "create" (not .Values.console.deployment.create)))) }}
+{{ $helmVars := deepCopy .Subcharts.console }}
+{{ $helmVars := merge $consoleValues $helmVars }}
+{{ include (print .Subcharts.console.Template.BasePath "/deployment.yaml") $helmVars }}
+{{ end }}

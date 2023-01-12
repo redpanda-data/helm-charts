@@ -1,0 +1,60 @@
+{{ $values := .Values }}
+
+{{/* if the console chart has the creation of the configmap disabled, create it here instead */}}
+{{ if not .Values.console.configmap.create }}
+{{ $consoleConfigmap := dict "create" true }}
+
+{{/* kafka section */}}
+
+{{/* brokers */}}
+{{ $kafkaBrokers := list }}
+{{ range (include "seed-server-list" . | mustFromJson) }}
+  {{ $kafkaBrokers = append $kafkaBrokers (printf "%s:%d" . (int $values.listeners.kafka.port)) }}
+{{ end }}
+
+{{/* sasl */}}
+{{/* the rest of sasl is configured through the secret */}}
+{{ $kafkaSASL := dict "enabled" (include "sasl-enabled" . | fromJson).bool }}
+
+{{/* tls */}}
+{{/* the rest of tls is configured through the secret */}}
+{{ $kafkaTLS := dict "enabled" (include "kafka-internal-tls-enabled" . | fromJson).bool }}
+
+{{/* schemaRegistry */}}
+{{- $urls := list -}}
+{{ $proto := "http" }}
+{{ if (include "schemaRegistry-internal-tls-enabled" . | fromJson).bool }}
+  {{ $proto = "https" }}
+{{ end }}
+{{ $port := int $values.listeners.schemaRegistry.port }}
+{{ range (include "seed-server-list" . | mustFromJson) }}
+  {{ $urls = append $urls (printf "%s://%s:%d" $proto . $port) }}
+{{ end }}
+{{/* tls */}}
+{{/* the rest of tls is configured through the secret */}}
+{{ $schemaRegistryTLS := dict "enabled" (include "schemaRegistry-internal-tls-enabled" . | fromJson).bool }}
+
+{{ $kafkaSchemaRegistry := dict
+      "enabled" .Values.listeners.schemaRegistry.enabled
+      "urls" $urls
+      "tls" $schemaRegistryTLS
+}}
+{{ $consoleConfigKafka := dict
+      "brokers" $kafkaBrokers
+      "sasl" $kafkaSASL
+      "tls" $kafkaTLS
+      "schemaRegistry" $kafkaSchemaRegistry
+}}
+{{ $consoleConfig := dict "kafka" $consoleConfigKafka }}
+{{ $config := dict
+    "Values" (dict
+      "console" (dict "config" $consoleConfig)
+      "configmap" $consoleConfigmap
+    )
+}}
+
+{{ $console := deepCopy .Subcharts.console }}
+{{ $console := merge $config $console }}
+
+{{ include (print .Subcharts.console.Template.BasePath "/configmap.yaml") $console }}
+{{ end }}
