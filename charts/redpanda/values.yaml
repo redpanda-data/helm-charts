@@ -232,6 +232,25 @@ storage:
   # If not specified, then `emptyDir` will be used instead.
   # If specified, but `persistentVolume.enabled` is `true`, then has no effect.
   hostPath: ""
+  # Absolute path on host to store Redpanda's tiered storage cache data.
+  # If not specified, then `emptyDir` will be used instead.
+  # If specified, but `tieredStoragePersistentVolume.enabled` is `true`, then has no effect.
+  tieredStorageHostPath: ""
+  # If `enabled` is `true` then a PersistentVolumeClaim will be created for tiered storage cache and
+  # used to store data retrieved from cloud storage (eg. S3), otherwise `hostPath` is used.
+  tieredStoragePersistentVolume:
+    enabled: false
+    # If defined, then `storageClassName: <storageClass>`.
+    # If set to "-", then `storageClassName: ""`, which disables dynamic
+    # provisioning.
+    # If undefined or empty (default), then no `storageClassName` spec is set,
+    # so the default provisioner will be chosen (gp2 on AWS, standard on
+    # GKE, AWS & OpenStack).
+    storageClass: ""
+    # Additional labels to apply to the created PersistentVolumeClaims.
+    labels: {}
+    # Additional annotations to apply to the created PersistentVolumeClaims.
+    annotations: {}
   # If `enabled` is `true` then a PersistentVolumeClaim will be created and
   # used to store Redpanda's data, otherwise `hostPath` is used.
   persistentVolume:
@@ -248,6 +267,133 @@ storage:
     labels: {}
     # Additional annotations to apply to the created PersistentVolumeClaims.
     annotations: {}
+  # Tiered Storage helps to lower storage costs by offloading log segments to cloud storage.
+  # You can specify the amount of local storage you want to retain in local storage.
+  # You don't need to specify which log segments you want to move because Redpanda moves them automatically
+  # based on cluster-level configuration properties. Redpanda Tiered Storage indexes where data is offloaded,
+  # so it can retrieve the data when you need it.
+  #
+  # Prerequisite:
+  # * AWS S3 bucket or GCP bucket or Azure blob storage
+  # * IAM role that has access to bucket
+  #
+  # REF: https://docs.redpanda.com/docs/manage/tiered-storage/#tiered-storage-configuration-properties
+  #
+  # Topic configuration flags override any cluster-level configuration. For example, on new topics,
+  # if `cloud_storage_enable_remote_write` is set to `true`, you can set `redpanda.remote.write` to `false`
+  # to turn it off for a particular topic. Or, if you have Tiered Storage turned off for the cluster, you can enable it
+  # for individual topics with the topic flags. When cluster-level properties are changed,
+  # the changes apply only to new topics, not existing topics.
+  #
+  # REF: https://docs.redpanda.com/docs/manage/tiered-storage/#enable-tiered-storage-for-a-topic
+  tieredConfig:
+    # Global flag that enables Tiered Storage feature if license is provided.
+    # Default is false.
+    cloud_storage_enabled: false
+    # Cluster wide config option to enable data upload from Redpanda to cloud storage if set to true.
+    cloud_storage_enable_remote_write: true
+    # Cluster wide config option to enable Redpanda to fetch data from cloud storage if set to true.
+    cloud_storage_enable_remote_read: true
+
+    # `cloud_storage_credentials_source` configuration option is available starting from 22.3.X
+    #
+    # Possible values:
+    # `config_file` - If IAM roles are not available, specify credentials in the cluster configuration file.
+    # `aws_instance_metadata` - For an AWS EC2 instance, use the instance metadata API from AWS.
+    # `sts` - For AWS on Kubernetes, use the Secure Token Service (STS).
+    # `gcp_instance_metadata` - For a VM running on GCP, or for Google Kubernetes Engine (GKE), use the instance metadata API from GCP.
+    #
+    # REF: https://docs.redpanda.com/docs/manage/security/iam-roles/#configuring-iam-roles
+    cloud_storage_credentials_source: config_file
+
+    # Cloud storage region. Required.
+    cloud_storage_region: ""
+    # Cloud storage bucket name. Required.
+    cloud_storage_bucket: ""
+    # Cloud storage access key used to authenticated if `cloud_storage_credentials_source` is set to `config`
+    # cloud_storage_access_key: ""
+    # Cloud storage secret key used to authenticated if `cloud_storage_credentials_source` is set to `config`
+    # cloud_storage_secret_key: ""
+    # API endpoint.
+    #
+    # - For AWS, this can be left blank. It’s generated automatically using the region and bucket.
+    #
+    # - For Google Cloud Service, use storage.googleapis.com.
+    # cloud_storage_api_endpoint: ""
+
+    # Maximum size of the disk cache used by Tiered Storage.
+    # Default is 20 GiB.
+    cloud_storage_cache_size: 21474836480
+    # The directory for the Tiered Storage cache. You must specify the full path. Default is: <redpanda-data-directory>/cloud_storage_cache.
+    # cloud_storage_cache_directory: ""
+
+    # The time, in milliseconds, between cache checks. The size of the cache can grow quickly,
+    # so it’s important to have a small interval between checks, but if the checks are too frequent,
+    # they consume a lot of resources.
+    # Default is 30000 ms.
+    # cloud_storage_cache_check_interval: 30000
+
+    # The time, in milliseconds, that is used as an initial backoff interval in the exponential
+    # backoff algorithm to handle an error.
+    # Default is 100 ms.
+    # cloud_storage_initial_backoff_ms: 100
+
+    # The maximum number of connections to cloud storage on a node per CPU.
+    # Remote read and remote write share the same pool of connections.
+    # This means that if a connection is being used to upload a segment, it cannot be used to download another segment.
+    # If this value is too small, some workloads might starve for connections, which results in delayed uploads and downloads.
+    # If this value is too large, Redpanda tries to upload a lot of files at the same time and might overwhelm the system.
+    # Default is 20.
+    # cloud_storage_max_connections: 20
+
+    # Timeout for segment upload. Redpanda retries the upload after the timeout.
+    # Default is 30000 ms.
+    # cloud_storage_segment_upload_timeout_ms: 30000
+
+    # Timeout for manifest upload. Redpanda retries the upload after the timeout.
+    # Default is 10000 ms.
+    # cloud_storage_manifest_upload_timeout_ms: 10000
+
+    # The maximum idle time for persistent HTTP connections. Differs depending on the cloud provider.
+    # Default is 5000 ms, which is sufficient for most providers.
+    # cloud_storage_max_connection_idle_time_ms: 5000
+
+    # Sets the number of seconds for idle timeout. If this property is empty, Redpanda uploads metadata to the cloud storage,
+    # but the segment is not uploaded until it reaches the segment.bytes size.
+    # By default, the property is empty.
+    # cloud_storage_segment_max_upload_interval_sec: 1
+    # The public certificate used to validate the TLS connection to cloud storage. If this is empty, Redpanda uses your operating system's CA cert pool.
+    # cloud_storage_trust_file: ""
+
+    # Under normal circumstances, you should not need to configure the following properties:
+
+    # The recompute interval for the upload controller. Default is 60000 ms.
+    # cloud_storage_upload_ctrl_update_interval_ms: 60000
+
+    # The proportional coefficient for the upload controller. Default is -2.
+    # cloud_storage_upload_ctrl_p_coeff: -2
+
+    # The derivative coefficient for the upload controller. Default is 0.
+    # cloud_storage_upload_ctrl_d_coeff: 0
+
+    # The minimum number of I/O and CPU shares that the remote write process can use. Default is 100.
+    # cloud_storage_upload_ctrl_min_shares: 100
+
+    # The maximum number of I/O and CPU shares that the remote write process can use. Default is 1000.
+    # cloud_storage_upload_ctrl_max_shares: 1000
+
+    # Sets the interval, in milliseconds, used to reconcile partitions that need to be uploaded.
+    # A long reconciliation interval can result in a delayed reaction to topic creation,
+    # topic deletion, or leadership rebalancing events. A short reconciliation interval
+    # guarantees that new partitions are picked up quickly, but the process uses more resources.
+    # Default is 10000 ms.
+    # cloud_storage_reconciliation_interval_ms: 10000
+
+    # Disables TLS encryption. You can set this to true if TLS termination is done by the proxy, such as HAProxy. Default is false.
+    # cloud_storage_disable_tls: false
+
+    # Overrides the default API endpoint port. Default is 443.
+    # cloud_storage_api_endpoint_port: 443
 
 post_install_job:
   enabled: true
@@ -619,17 +765,6 @@ config:
   # advertised_kafka_api: None                                     # Address of Kafka API published to the clients
   # advertised_pandaproxy_api: None                                # Rest API address and port to publish to client
   # advertised_rpc_api: None                                       # Address of RPC endpoint published to other cluster members
-  # cloud_storage_access_key: None                                 # AWS access key
-  # cloud_storage_api_endpoint: None                               # Optional API endpoint
-  # cloud_storage_api_endpoint_port: 443                           # TLS port override
-  # cloud_storage_bucket: None                                     # AWS bucket that should be used to store data
-  # cloud_storage_disable_tls: false                               # Disable TLS for all S3 connections
-  # cloud_storage_enabled: false                                   # Enable archival storage
-  # cloud_storage_max_connections: 20                              # Max number of simultaneous uploads to S3
-  # cloud_storage_reconciliation_ms: 10s                           # Interval at which the archival service runs reconciliation (ms)
-  # cloud_storage_region: None                                     # AWS region that houses the bucket used for storage
-  # cloud_storage_secret_key: None                                 # AWS secret key
-  # cloud_storage_trust_file: None                                 # Path to certificate that should be used to validate server certificate during TLS handshake
   # default_topic_partitions: 1                                    # Default number of partitions per topic
   # default_topic_replications: 3                                  # Default replication factor for new topics
   # enable_admin_api: true                                         # Enable the admin API
