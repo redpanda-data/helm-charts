@@ -221,6 +221,19 @@ Generate configuration needed for rpk
   {{- $result -}}
 {{- end -}}
 
+{{- define "external-nodeport-enabled" -}}
+{{- $values := .Values -}}
+{{- $enabled := and .Values.external.enabled (eq .Values.external.type "NodePort") -}}
+{{- range $listener := .Values.listeners -}}
+  {{- range $external := $listener.external -}}
+    {{- if and (dig "enabled" false $external) (eq (dig "type" $values.external.type $external) "NodePort") -}}
+      {{- $enabled = true -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- toJson (dict "bool" $enabled) -}}
+{{- end -}}
+
 {{- define "redpanda-reserve-memory" -}}
   {{/*
   Determines the value of --reserve-memory flag (in mebibytes with M suffix, per Seastar).

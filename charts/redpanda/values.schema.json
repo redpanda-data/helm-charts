@@ -651,6 +651,7 @@
             },
             "external": {
               "type": "object",
+              "minProperties": 1,
               "patternProperties": {
                 "^[A-Za-z_][A-Za-z0-9_]*$": {
                   "type": "object",
@@ -693,6 +694,7 @@
           "type": "object",
           "required": [
             "port",
+            "external",
             "tls"
           ],
           "properties": {

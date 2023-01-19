@@ -106,7 +106,7 @@ external:
   # This be overridden by each listener if needed
   enabled: true
   # External access type. `NodePort` is the only acceptable value if defined.
-  # If undefined, then advertised listeners will be configured and a service must be created manually
+  # If undefined, then advertised listeners will be configured in Redpanda, but the helm chart will not create a Service. You must create a Service manually.
   type: NodePort
   # Optional domain advertised to external clients
   # If specified, then it will be appended to the `external.addresses` values as each broker's advertised address
@@ -443,7 +443,7 @@ listeners:
   # Kafka API listeners
   kafka:
     # The port for internal client connections (10092 is default to avoid conflicts with the external default port 9092)
-    port: 10092
+    port: 9093
     tls:
       # enabled: true
       cert: default
@@ -452,16 +452,14 @@ listeners:
       default:
         # enabled: true
         # The port used for external client connections
-        port: 9092
+        port: 9094
         # If undefined, `listeners.kafka.external.port` is used
         advertisedPorts:
         - 31092
   # HTTP API listeners (aka PandaProxy)
   http:
     enabled: true
-    port: 9082
-    # TODO is this for internal and external clients? why can't internal connect to kafka internal, and each external connect to matchin kafka external? then this can be removed
-    # determines which kafka listener the internal kafka client backing this API will connect to
+    port: 8082
     kafkaEndpoint: default
     tls:
       # enabled: true
@@ -470,7 +468,7 @@ listeners:
     external:
       default:
         # enabled: true
-        port: 8082
+        port: 8083
         advertisedPorts:
         - 30082
   # RPC listener (this is never externally accessible)
@@ -493,7 +491,7 @@ listeners:
       default:
         # enabled: true
         advertisedPorts:
-        - 31081
+        - 30081
 
 # Expert Config
 

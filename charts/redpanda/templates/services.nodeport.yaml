@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */}}
 {{- $values := .Values }}
-{{- if (and .Values.external.enabled (eq .Values.external.type "NodePort")) }}
+{{- if (include "external-nodeport-enabled" . | fromJson).bool }}
 ---
 apiVersion: v1
 kind: Service
@@ -42,7 +42,7 @@ spec:
     - name: admin-{{ $name }}
       protocol: TCP
       port: {{ $values.listeners.admin.port }}
-      nodePort: {{ index $listener.advertisedPorts 0 }}
+      nodePort: {{ dig "nodePort" (first (dig "advertisedPorts" (list $values.listeners.admin.port) $listener)) $listener }}
   {{- end }}
 {{- end }}
 {{- range $name, $listener := $values.listeners.kafka.external }}
@@ -51,7 +51,7 @@ spec:
     - name: kafka-{{ $name }}
       protocol: TCP
       port: {{ $listener.port }}
-      nodePort: {{ index $listener.advertisedPorts 0 }}
+      nodePort: {{ dig "nodePort" (first (dig "advertisedPorts" (list $values.listeners.kafka.port) $listener)) $listener }}
   {{- end }}
 {{- end }}
 {{- range $name, $listener := $values.listeners.http.external }}
@@ -60,7 +60,7 @@ spec:
     - name: http-{{ $name }}
       protocol: TCP
       port: {{ $listener.port }}
-      nodePort: {{ index $listener.advertisedPorts 0 }}
+      nodePort: {{ dig "nodePort" (first (dig "advertisedPorts" (list $values.listeners.http.port) $listener)) $listener }}
   {{- end }}
 {{- end }}
 {{- range $name, $listener := $values.listeners.schemaRegistry.external }}
@@ -69,7 +69,7 @@ spec:
     - name: schema-{{ $name }}
       protocol: TCP
       port: {{ $values.listeners.schemaRegistry.port }}
-      nodePort: {{ index $listener.advertisedPorts 0 }}
+      nodePort: {{ dig "nodePort" (first (dig "advertisedPorts" (list $values.listeners.schemaRegistry.port) $listener)) $listener }}
   {{- end }}
 {{- end }}
   selector:

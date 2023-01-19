@@ -314,7 +314,7 @@ spec:
             - --advertise-rpc-addr={{ $internalAdvertiseAddress }}:{{ .Values.listeners.rpc.port }}
           ports:
 {{- range $name, $listener := .Values.listeners }}
-            - name: {{ lower $name | trunc 6 }}-internal
+            - name: {{ lower $name }}
               containerPort: {{ $listener.port }}
   {{- range $externalName, $external := $listener.external }}
     {{- if $external.port }}
