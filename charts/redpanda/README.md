@@ -30,7 +30,7 @@ The Redpanda Helm chart is configured in the [`values.yaml`][values] file. To cu
 
 - Configure the deployed Kubernetes components.
 
-To learn how to override the default values in the `values.yaml` file, see the [Helm documentation](helm).
+To learn how to override the default values in the `values.yaml` file, see the [Helm documentation][helm].
 
 All configuration options for the Redpanda Helm chart are documented in the [`values.yaml`][values] file.
 
