@@ -79,65 +79,11 @@ Use AppVersion if image.tag is not set
 Generate configuration needed for rpk
 */}}
 
-{{- define "listen.address" -}}
-{{- "$(POD_IP)" -}}
-{{- end -}}
-
-{{- define "nodeport.listen.address" -}}
-{{- "$(HOST_IP)" -}}
-{{- end -}}
-
 {{- define "redpanda.internal.domain" -}}
 {{- $service := include "redpanda.fullname" . -}}
 {{- $ns := .Release.Namespace -}}
 {{- $domain := .Values.clusterDomain | trimSuffix "." -}}
 {{- printf "%s.%s.svc.%s." $service $ns $domain -}}
-{{- end -}}
-
-{{- define "redpanda.kafka.internal.advertise.address" -}}
-{{- $host := "$(SERVICE_NAME)" -}}
-{{- $domain := include "redpanda.internal.domain" . -}}
-{{- printf "%s.%s" $host $domain -}}
-{{- end -}}
-
-{{/*
-The external advertised address can change depending on the externalisation method.
-If the method is to expose via load balancer this must be provided through the values
-load balancers configuration for parent zone. If the load balancer is not enabled
-then then services are externalised using NodePorts, in which case the external node
-IP is required for the advertised address.
-*/}}
-
-{{- define "redpanda.kafka.external.domain-lb-bkp" -}}
-{{- .Values.loadBalancer.parentZone | trimSuffix "." -}}
-{{- end -}}
-
-{{- define "redpanda.kafka.external.domain" -}}
-{{- .Values.external.domain | trimSuffix "." | default "$(HOST_IP)" -}}
-{{- end -}}
-
-{{- define "redpanda.kafka.external.advertise.address" -}}
-{{- $host := "$(SERVICE_NAME)" -}}
-{{- $domain := include "redpanda.kafka.external.domain" . -}}
-{{- printf "%s.%s" $host $domain -}}
-{{- end -}}
-
-{{- define "redpanda.rpc.advertise.address" -}}
-{{- $host := "$(SERVICE_NAME)" -}}
-{{- $domain := include "redpanda.internal.domain" . -}}
-{{- printf "%s.%s" $host $domain -}}
-{{- end -}}
-
-{{- define "redpanda.pandaproxy.internal.advertise.address" -}}
-{{- $host := "$(SERVICE_NAME)" -}}
-{{- $domain := include "redpanda.internal.domain" . -}}
-{{- printf "%s.%s" $host $domain -}}
-{{- end -}}
-
-{{- define "redpanda.pandaproxy.external.advertise.address" -}}
-{{- $host := "$(SERVICE_NAME)" -}}
-{{- $domain := include "redpanda.kafka.external.domain" . -}}
-{{- printf "%s.%s" $host $domain -}}
 {{- end -}}
 
 {{/* ConfigMap variables */}}
@@ -219,19 +165,6 @@ IP is required for the advertised address.
 
 {{- define "sasl-enabled" -}}
 {{- toJson (dict "bool" (dig "enabled" false .Values.auth.sasl)) -}}
-{{- end -}}
-
-{{- define "external-nodeport-enabled" -}}
-{{- $values := .Values -}}
-{{- $enabled := and .Values.external.enabled (eq .Values.external.type "NodePort") -}}
-{{- range $listener := .Values.listeners -}}
-  {{- range $external := $listener.external -}}
-    {{- if and (dig "enabled" false $external) (eq (dig "type" $values.external.type $external) "NodePort") -}}
-      {{- $enabled = true -}}
-    {{- end -}}
-  {{- end -}}
-{{- end -}}
-{{- toJson (dict "bool" $enabled) -}}
 {{- end -}}
 
 {{- define "SI-to-bytes" -}}
