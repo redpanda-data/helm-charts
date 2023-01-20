@@ -426,3 +426,37 @@ runAsGroup: {{ dig "podSecurityContext" "fsGroup" .Values.statefulset.securityCo
   {{- end -}}
   {{- $result -}}
 {{- end -}}
+
+{{- /*
+advertised-port returns either the only advertised port if only one is specified,
+or the port specified for this pod ordinal when there is a full list provided.
+
+This will return a string int or panic if there is more than one port provided,
+but not enough ports for the number of replicas requested.
+*/ -}}
+{{- define "advertised-port" -}}
+  {{- $port := dig "port" .listenerVals.port .externalVals -}}
+  {{- if .externalVals.advertisedPorts -}}
+    {{- if eq (len .externalVals.advertisedPorts) 1 -}}
+      {{- $port = mustFirst .externalVals.advertisedPorts -}}
+    {{- else -}}
+      {{- $port = index .externalVals.advertisedPorts .replicaIndex -}}
+    {{- end -}}
+  {{- end -}}
+  {{ $port }}
+{{- end -}}
+
+{{- /*
+advertised-host returns a json sring with the data neded for configuring the advertised listener
+*/ -}}
+{{- define "advertised-host" -}}
+  {{- $host := dict "name" .externalName "address" .externalAdvertiseAddress "port" .port -}}
+  {{- if .values.external.addresses -}}
+    {{- if .values.external.domain -}}
+      {{- $host = dict "name" .externalName "address" (printf "%s.%s" (index .values.external.addresses .replicaIndex) .values.external.domain) "port" .port -}}
+    {{- else -}}
+      {{- $host = dict "name" .externalName  "address" (index .values.external.addresses .replicaIndex) "port" .port -}}
+    {{- end -}}
+  {{- end -}}
+  {{- toJson $host -}}
+{{- end -}}
