@@ -49,5 +49,5 @@ spec:
         - "300"
         - --retry-max-time
         - "120"
-        - http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects
+        - http://{{ include "redpanda.fullname" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects
 {{- end }}

@@ -185,9 +185,7 @@
     "external": {
       "type": "object",
       "required": [
-        "enabled",
-        "type",
-        "domain"
+        "enabled"
       ],
       "properties": {
         "enabled": {
@@ -201,12 +199,8 @@
           "type": "string",
           "format": "idn-hostname"
         },
-        "addressType": {
-          "type": "string",
-          "pattern": "^(subdomain|ip)$"
-        },
         "addresses": {
-          "type": "string"
+          "type": "array"
         }
       }
     },
@@ -661,19 +655,16 @@
               "patternProperties": {
                 "^[A-Za-z_][A-Za-z0-9_]*$": {
                   "type": "object",
-                  "required": [
-                    "nodePort"
-                  ],
                   "properties": {
                     "enabled": {
                       "type": "boolean"
                     },
-                    "type": {
-                      "type": "string",
-                      "pattern": "^NodePort$"
-                    },
-                    "nodePort": {
-                      "type": "integer"
+                    "advertisedPorts": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "integer"
+                      }
                     }
                   }
                 }
@@ -717,8 +708,7 @@
                 "^[A-Za-z_][A-Za-z0-9_]*$": {
                   "type": "object",
                   "required": [
-                    "port",
-                    "nodePort"
+                    "port"
                   ],
                   "properties": {
                     "enabled": {
@@ -727,12 +717,12 @@
                     "port": {
                       "type": "integer"
                     },
-                    "type": {
-                      "type": "string",
-                      "pattern": "^NodePort$"
-                    },
-                    "nodePort": {
-                      "type": "integer"
+                    "advertisedPorts": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "integer"
+                      }
                     }
                   }
                 }
@@ -785,8 +775,7 @@
                 "^[A-Za-z_][A-Za-z0-9_]*$": {
                   "type": "object",
                   "required": [
-                    "port",
-                    "nodePort"
+                    "port"
                   ],
                   "properties": {
                     "enabled": {
@@ -795,12 +784,12 @@
                     "port": {
                       "type": "integer"
                     },
-                    "type": {
-                      "type": "string",
-                      "pattern": "^NodePort$"
-                    },
-                    "nodePort": {
-                      "type": "integer"
+                    "advertisedPorts": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "integer"
+                      }
                     }
                   }
                 }
@@ -882,10 +871,6 @@
               "patternProperties": {
                 "^[A-Za-z_][A-Za-z0-9_]*$": {
                   "type": "object",
-                  "required": [
-                    "port",
-                    "nodePort"
-                  ],
                   "properties": {
                     "enabled": {
                       "type": "boolean"
@@ -893,12 +878,12 @@
                     "port": {
                       "type": "integer"
                     },
-                    "type": {
-                      "type": "string",
-                      "pattern": "^NodePort$"
-                    },
-                    "nodePort": {
-                      "type": "integer"
+                    "advertisedPorts": {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "type": "integer"
+                      }
                     }
                   }
                 }

@@ -28,7 +28,7 @@
 nameOverride: ""
 # Override redpanda.fullname template
 fullnameOverride: ""
-# Default kuberentes cluster domain
+# Default kubernetes cluster domain
 clusterDomain: cluster.local
 # Additional labels added to all Kubernetes objects
 commonLabels: {}
@@ -102,25 +102,21 @@ tls:
 #
 # External access configuration
 external:
-  # Default external access value for all listeners except RPC
-  # External config doesn't apply to RPC listeners as they are never externally accessible
-  # These values can be overridden by each listener if needed
+  # Default external access value for each service
+  # Services can toggle external access per listener (ie. `listeners.<service name>.external.<listener name>.enabled`)
   enabled: true
-  # Default external access type (only NodePort at the moment)
+  # External access type. `NodePort` is the only acceptable value if defined.
+  # If undefined, then advertised listeners will be configured in Redpanda, but the helm chart will not create a Service. You must create a Service manually.
   type: NodePort
-  # Domain to be used for each node
-  domain: local
-  #
-  # addressType can be set to the following: subdomain ip
-  # with subdomain, each node will advertise an address with <external.addresses[replica index]>.<domain>
-  # with ip, each node will advertise only <external.addresses[replica index]> (and domain will be ignored)
-  # addressType: subdomain
-  #
-  # The addresses list must have an entry for each statefulset replica
-  # By default, the statefulset is called redpanda and has 3 replicas
-  # If you want to access nodes by their IP: addresses: "18.224.215.250 18.118.163.26 3.142.153.29"
-  # Or if you want to access nodes via DNS: addresses: "apple bacon carrot"
-  # addresses: "redpanda-0 redpanda-1 redpanda-2"
+  # Optional domain advertised to external clients
+  # If specified, then it will be appended to the `external.addresses` values as each broker's advertised address
+  # domain: local
+  # An optional addresses list with an entry for each broker / statefulset replica combo (default count of 3)
+  # The values can be IP addresses or DNS names. Keep in mind that `external.domain`, if exists, will be appended to this value
+  # addresses:
+  # - redpanda-0
+  # - redpanda-1
+  # - redpanda-2
   #
   # annotations:
     # For example:
@@ -420,21 +416,22 @@ tuning: {}
 # listeners.
 #
 listeners:
-  # Admin API listener
-  # The kafka listener group cannot be disabled
+  # Admin API listener (only one)
   admin:
-    # The port for the admin server
+    # The port for both internal and external connections to the admin API
     port: 9644
     # Optional external section
     external:
+      # Name of the external listener
       default:
-        # `enabled`` is used to override the setting of the `external` top-level key
-        # for this external listener. The default is `true`.
+        # This overrides `external.enabled` for only this listener
         # enabled: true
-
-        # External port
-        # `nodePort` defines the TCP port to listen on for NodePort types.
-        nodePort: 31644
+        # The port advertised to this listener's external clients
+        # List one port if you want to use the same port for each broker (would be the case when using NodePort service)
+        # Otherwise list the port you want to use for each broker in order by statefulset replica
+        # If undefined, `listeners.admin.port` is used
+        advertisedPorts:
+        - 31644
     # Optional TLS section (required if global TLS is enabled)
     tls:
       # Optional flag to override the global TLS enabled flag
@@ -444,27 +441,22 @@ listeners:
       # If true, the truststore file for this listener will be included in the ConfigMap
       requireClientAuth: false
   # Kafka API listeners
-  # The kafka listener group cannot be disabled
   kafka:
+    # The port for internal client connections (10092 is default to avoid conflicts with the external default port 9092)
     port: 9093
-    # Listeners internal to kubernetes service network
     tls:
       # enabled: true
       cert: default
       requireClientAuth: false
-    # External listeners
     external:
-    # to disable external kafka listeners when the global `external` is enabled,
-    # replace this with an empty list, ie: `external: []`
       default:
+        # enabled: true
+        # The port used for external client connections
         port: 9094
-        # If unset, it will default to the type in the `external` section.
-        type: NodePort
-        # External port
-        # This listener port will be used on each kubernetes node
-        nodePort: 31092
+        # If undefined, `listeners.kafka.external.port` is used
+        advertisedPorts:
+        - 31092
   # HTTP API listeners (aka PandaProxy)
-  # PandaProxy is a kafka client that connects to an endpoint from listeners.kafka.endpoints
   http:
     enabled: true
     port: 8082
@@ -473,18 +465,13 @@ listeners:
       # enabled: true
       cert: default
       requireClientAuth: false
-    # External listeners
     external:
       default:
-        # Ports must be unique per listener
+        # enabled: true
         port: 8083
-        # If unset, it will default to the type in the `external` section.
-        type: NodePort
-        # External port
-        # This listener port will be used for the external port if NodePort is selected
-        nodePort: 30082
-  # RPC listener
-  # The RPC listener cannot be disabled
+        advertisedPorts:
+        - 30082
+  # RPC listener (this is never externally accessible)
   rpc:
     port: 33145
     tls:
@@ -495,7 +482,6 @@ listeners:
   schemaRegistry:
     enabled: true
     port: 8081
-    # Schema Registry is a kafka client that connects to an endpoint from listeners.kafka.endpoints
     kafkaEndpoint: default
     tls:
       # enabled: true
@@ -503,15 +489,9 @@ listeners:
       requireClientAuth: false
     external:
       default:
-        # Ports must be unique per listener
-        port: 8080
-        # Optional external section
         # enabled: true
-        # If unset, it will default to the type in the `external` section.
-        # type: NodePort
-        # External port
-        # This listener port will be used for the external port if this is not included
-        nodePort: 30081
+        advertisedPorts:
+        - 30081
 
 # Expert Config
 

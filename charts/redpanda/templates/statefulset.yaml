@@ -16,7 +16,11 @@ limitations under the License.
 */}}
 
 {{- $values := .Values }}
-{{- $advertiseAddress := include "redpanda.kafka.internal.advertise.address" . }}
+{{- $internalAdvertiseAddress := printf "%s.%s" "$(SERVICE_NAME)" (include "redpanda.internal.domain" .) -}}
+{{- $externalAdvertiseAddress := printf "$(SERVICE_NAME)" -}}
+{{- if $values.external.domain -}}
+  {{- $externalAdvertiseAddress = printf "$(SERVICE_NAME).%s" $values.external.domain -}}
+{{- end -}}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -69,14 +73,38 @@ spec:
               mountPath: /var/lib/redpanda/data
         - name: {{ template "redpanda.name" . }}-configurator
           image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}
-          command: ["/bin/sh", "-c"]
+          command: ["/bin/bash", "-c"]
           env:
             - name: SERVICE_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-            - name: EXTERNAL_ADDRESSES
-              value: {{ .Values.external.addresses }}
+{{- range $listenerName := (list "kafka" "http") }}
+{{- $listenerVals := get $values.listeners $listenerName }}
+  {{- $ordList := list }}
+  {{- /* do this for each pod in the statefulset */}}
+  {{- range $replicaIndex := until ($values.statefulset.replicas | int) }}
+    {{- /* build a list of listeners */}}
+    {{- $listenerList := list (toJson (dict "name" "internal" "address" $internalAdvertiseAddress "port" $listenerVals.port)) }}
+    {{- if $listenerVals.external }}
+        {{- /* add each external listener */}}
+        {{- range $externalName, $externalVals := $listenerVals.external }}
+          {{- $tmplVals := dict "listenerVals" $listenerVals "externalVals" $externalVals "replicaIndex" $replicaIndex "externalName" $externalName "externalAdvertiseAddress" $externalAdvertiseAddress "values" $values }}
+          {{- $port := int (include "advertised-port" $tmplVals) }}
+          {{- $host := include "advertised-host" (mustMerge $tmplVals (dict "port" $port)) }}
+          {{- $listenerList = mustAppend $listenerList $host }}
+        {{- end }}
+    {{- end }}
+    {{- /*
+    This is making a semicolon list of listeners, one list for each pod.
+    We can safely remove all the spaces as there cannot be a space in a name, address, or port, and this fixes
+    a problem where a user can feed in a trailing space on a hostname.
+    */}}
+    {{- $ordList = mustAppend $ordList (nospace (join ";" $listenerList)) }}
+  {{- end }}
+            - name: ADVERTISED_{{ upper $listenerName }}_ADDRESSES
+              value: {{ squote (join " " $ordList) }}
+{{- end }}
             - name: KUBERNETES_NODE_NAME
               valueFrom:
                 fieldRef:
@@ -102,36 +130,23 @@ spec:
               fi
               {{- end }}
 
-              # Configure internal kafka listeners
-              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[0].name internal
-              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[0].address {{ $advertiseAddress }}
-              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[0].port {{ .Values.listeners.kafka.port }}
+              NODE_INDEX=`expr $POD_ORDINAL + 1`
 
-              # Configure external kafka listeners
-              {{- $listenerIndex := 1 }}
-              {{- range $name, $listener := .Values.listeners.kafka.external }}
-                {{- $enabled := dig "enabled" $values.external.enabled $listener }}
-                {{- $listenerNodePortEnabled := and $enabled (eq (dig "type" $values.external.type $listener) "NodePort") }}
-                {{- $advertiseKafkaHost := $advertiseAddress }}
-                {{- $advertiseKafkaPort := $listener.nodePort }}
-                {{- if $listenerNodePortEnabled }}
-                  {{- if $values.external.addresses }}
-              NODE_INDEX=`expr $NODE_ID + 1`
-              NODE_ADDRESS=`echo $EXTERNAL_ADDRESSES | cut -d ' ' -f $NODE_INDEX`
-                    {{- if eq $values.external.addressType "ip" }}
-              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].address $NODE_ADDRESS
-                    {{- else }}
-              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].address $NODE_ADDRESS.{{ $values.external.domain }}
-                    {{- end }}
-                  {{- else }}
-                    {{- $advertiseKafkaHost = printf "$(SERVICE_NAME).%s" $values.external.domain }}
-              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].address {{ $advertiseKafkaHost }}
-                  {{- end }}
-                {{- end }}
-              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].name {{ $name }}
-              rpk redpanda --config "$CONFIG" config set redpanda.advertised_kafka_api[{{ $listenerIndex }}].port {{ $advertiseKafkaPort }}
-                {{- $listenerIndex = add $listenerIndex 1 }}
-              {{- end }}
+              LISTENER_INDEX=1
+              LISTENER=`echo $ADVERTISED_KAFKA_ADDRESSES | cut -d ' ' -f $NODE_INDEX | cut -d ';' -f $LISTENER_INDEX`
+              until [ "$LISTENER" == "" ]; do
+                rpk redpanda config --config "$CONFIG" set redpanda.advertised_kafka_api[$(($LISTENER_INDEX-1))] "$LISTENER"
+                let "LISTENER_INDEX+=1"
+                LISTENER=`echo $ADVERTISED_KAFKA_ADDRESSES | cut -d ' ' -f $NODE_INDEX | cut -d ';' -f $LISTENER_INDEX`
+              done
+
+              LISTENER_INDEX=1
+              LISTENER=`echo $ADVERTISED_HTTP_ADDRESSES | cut -d ' ' -f $NODE_INDEX | cut -d ';' -f $LISTENER_INDEX`
+              until [ "$LISTENER" == "" ]; do
+                rpk redpanda config --config "$CONFIG" set pandaproxy.advertised_pandaproxy_api[$(($LISTENER_INDEX-1))] "$LISTENER"
+                let "LISTENER_INDEX+=1"
+                LISTENER=`echo $ADVERTISED_HTTP_ADDRESSES | cut -d ' ' -f $NODE_INDEX | cut -d ';' -f $LISTENER_INDEX`
+              done
 
               {{- if (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
                 {{- if .Values.rackAwareness.enabled }}
@@ -261,11 +276,7 @@ spec:
             - --memory={{ template "redpanda-memory" . }}M
             - --reserve-memory={{ template "redpanda-reserve-memory" . }}
             - --default-log-level={{ .Values.logging.logLevel }}
-            - --advertise-rpc-addr={{ $advertiseAddress }}:{{ .Values.listeners.rpc.port }}
-            - --advertise-pandaproxy-addr=internal://{{ $advertiseAddress }}:{{ .Values.listeners.http.port }},
-{{- range $name, $listener := .Values.listeners.http.external -}}
-                {{ $name }}://{{ $advertiseAddress }}:{{ $listener.nodePort }},
-{{- end }}
+            - --advertise-rpc-addr={{ $internalAdvertiseAddress }}:{{ .Values.listeners.rpc.port }}
           ports:
 {{- range $name, $listener := .Values.listeners }}
             - name: {{ lower $name }}

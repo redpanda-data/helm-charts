@@ -38,42 +38,38 @@ spec:
   ports:
 {{- range $name, $listener := $values.listeners.admin.external }}
   {{- $enabled := dig "enabled" $values.external.enabled $listener }}
-  {{- $type := dig "type" $values.external.type $listener }}
-  {{- if and $enabled (eq $type "NodePort") }}
+  {{- if $enabled }}
     - name: admin-{{ $name }}
       protocol: TCP
       port: {{ $values.listeners.admin.port }}
-      nodePort: {{ $listener.nodePort }}
+      nodePort: {{ dig "nodePort" (first (dig "advertisedPorts" (list $values.listeners.admin.port) $listener)) $listener }}
   {{- end }}
 {{- end }}
 {{- range $name, $listener := $values.listeners.kafka.external }}
   {{- $enabled := dig "enabled" $values.external.enabled $listener }}
-  {{- $type := dig "type" $values.external.type $listener }}
-  {{- if and $enabled (eq $type "NodePort") }}
+  {{- if $enabled }}
     - name: kafka-{{ $name }}
       protocol: TCP
       port: {{ $listener.port }}
-      nodePort: {{ $listener.nodePort }}
+      nodePort: {{ dig "nodePort" (first (dig "advertisedPorts" (list $values.listeners.kafka.port) $listener)) $listener }}
   {{- end }}
 {{- end }}
 {{- range $name, $listener := $values.listeners.http.external }}
   {{- $enabled := dig "enabled" $values.external.enabled $listener }}
-  {{- $type := dig "type" $values.external.type $listener }}
-  {{- if and $enabled (eq $type "NodePort") }}
+  {{- if $enabled }}
     - name: http-{{ $name }}
       protocol: TCP
       port: {{ $listener.port }}
-      nodePort: {{ $listener.nodePort }}
+      nodePort: {{ dig "nodePort" (first (dig "advertisedPorts" (list $values.listeners.http.port) $listener)) $listener }}
   {{- end }}
 {{- end }}
 {{- range $name, $listener := $values.listeners.schemaRegistry.external }}
   {{- $enabled := dig "enabled" $values.external.enabled $listener }}
-  {{- $type := dig "type" $values.external.type $listener }}
-  {{- if and $enabled (eq $type "NodePort") }}
+  {{- if $enabled }}
     - name: schema-{{ $name }}
       protocol: TCP
-      port: {{ $listener.port }}
-      nodePort: {{ $listener.nodePort }}
+      port: {{ $values.listeners.schemaRegistry.port }}
+      nodePort: {{ dig "nodePort" (first (dig "advertisedPorts" (list $values.listeners.schemaRegistry.port) $listener)) $listener }}
   {{- end }}
 {{- end }}
   selector:
