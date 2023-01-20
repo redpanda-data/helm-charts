@@ -22,7 +22,7 @@ limitations under the License.
   {{- $listeners := .Values.listeners -}}
   {{- $values := .Values }}
   {{- range $name, $data := .Values.tls.certs }}
-    {{- $d := $data.duration }}
+  {{- $d := $data.duration }}
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -35,6 +35,7 @@ metadata:
 {{- end }}
 spec:
   dnsNames:
+{{- if (empty $data.issuerRef) }}
   - {{ template "redpanda.fullname" $ }}-cluster.{{ printf "%s.%s.svc.%s" $service $ns $domain }}
   - {{ template "redpanda.fullname" $ }}-cluster.{{ printf "%s.%s.svc" $service $ns }}
   - {{ template "redpanda.fullname" $ }}-cluster.{{ printf "%s.%s" $service $ns }}
@@ -47,25 +48,26 @@ spec:
   - {{ printf "*.%s.%s.svc.%s" $service $ns $domain | quote }}
   - {{ printf "*.%s.%s.svc" $service $ns | quote }}
   - {{ printf "*.%s.%s" $service $ns | quote }}
+{{- end }}
 {{- if $values.external.domain }}
+  - "{{ $values.external.domain }}"
   - "*.{{ $values.external.domain }}"
 {{- end }}
   duration: {{ $d | default "43800h" }}
   isCA: false
-  commonName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
   secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
   privateKey:
     algorithm: ECDSA
     size: 256
-    {{- if not (empty $data.issuerRef) }}
+  {{- if not (empty $data.issuerRef) }}
   issuerRef:
-    {{- toYaml $data.issuerRef | nindent 4 }}
+  {{- toYaml $data.issuerRef | nindent 4 }}
     group: cert-manager.io
-    {{- else }}
+  {{- else }}
   issuerRef:
     name: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-issuer
     kind: Issuer
     group: cert-manager.io
-    {{- end }}
+  {{- end }}
   {{- end }}
 {{- end }}
