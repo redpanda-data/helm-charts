@@ -90,8 +90,7 @@
         "sasl": {
           "type": "object",
           "required": [
-            "enabled",
-            "users"
+            "enabled"
           ],
           "if": {
             "properties": {
@@ -103,45 +102,18 @@
             }
           },
           "then": {
+            "required": [
+              "secretRef"
+            ],
             "properties": {
               "enabled": {
                 "type": "boolean"
               },
-              "users": {
-                "type": "array",
-                "minItems": 1,
-                "items": {
-                  "properties": {
-                    "name": {
-                      "type": "string"
-                    },
-                    "password": {
-                      "type": "string"
-                    },
-                    "mechanism": {
-                      "type": "string",
-                      "pattern": "^(SCRAM-SHA-512|SCRAM-SHA-256)$"
-                    }
-                  },
-                  "oneOf": [
-                    {
-                      "required": [
-                        "name",
-                        "password"
-                      ]
-                    },
-                    {
-                      "required": [
-                        "name",
-                        "secretName"
-                      ]
-                    }
-                  ]
-                }
-              },
               "mechanism": {
-                "type": "string",
-                "pattern": "^(SCRAM-SHA-512|SCRAM-SHA-256)$"
+                "type": "string"
+              },
+              "secretRef": {
+                "type": "string"
               }
             }
           },
@@ -149,6 +121,12 @@
             "properties": {
               "enabled": {
                 "type": "boolean"
+              },
+              "mechanism": {
+                "type": "string"
+              },
+              "secretRef": {
+                "type": "string"
               }
             }
           }

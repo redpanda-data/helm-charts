@@ -19,19 +19,19 @@ Expand the name of the chart.
 */}}
 {{- define "redpanda.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
-{{- end }}
+{{- end -}}
 
 {{/*
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 */}}
 {{- define "redpanda.fullname" -}}
-{{- if .Values.fullnameOverride }}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- printf "%s" .Release.Name | trunc 63 | trimSuffix "-" }}
-{{- end }}
-{{- end }}
+{{- if .Values.fullnameOverride -}}
+{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- printf "%s" .Release.Name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}
 
 {{/*
 Create chart name and version as used by the chart label.
@@ -300,10 +300,6 @@ Generate configuration needed for rpk
 {{- dig "sasl" "mechanism" "SCRAM-SHA-512" .Values.auth -}}
 {{- end -}}
 
-{{- define "sasl-user-mechanism" -}}
-{{- dig "mechanism" (include "sasl-mechanism" $) $.user -}}
-{{- end -}}
-
 {{- define "rpk-flags" -}}
   {{- $root := . -}}
   {{- $admin := list -}}
@@ -325,11 +321,10 @@ Generate configuration needed for rpk
   {{- end -}}
   {{- $sasl := list -}}
   {{- if (include "sasl-enabled" . | fromJson).bool -}}
-    {{- $root := . | toJson | fromJson -}}
     {{- $sasl = concat $sasl (list
-      "--user" (dig "auth" "username" (first .Values.auth.sasl.users).name $root)
-      "--password" (dig "auth" "password" (first .Values.auth.sasl.users).password $root)
-      "--sasl-mechanism " (include "sasl-mechanism" .)
+      "--user" ( print "$(find /etc/secrets/users/* -print | sed -n 1p | xargs cat | sed -n 1p | tr ':' '\n' | sed -n 1p )" | quote )
+      "--password" ( print "$(find /etc/secrets/users/* -print | sed -n 1p | xargs cat | sed -n 1p | tr ':' '\n' | sed -n 2p )" | quote )
+      "--sasl-mechanism" ( printf "$(find /etc/secrets/users/* -print | sed -n 1p | xargs cat | sed -n 1p | tr ':' '\n' | sed -n 3p | grep . || echo %s )" (include "sasl-mechanism" .) | quote )
     )
     -}}
   {{- end -}}
@@ -351,9 +346,26 @@ Generate configuration needed for rpk
 {{ join " " (list $flags.brokers $flags.admin $flags.sasl $flags.kafka)}}
 {{- end -}}
 
+{{- define "rpk-common-flags-no-sasl" -}}
+{{- $flags := fromJson (include "rpk-flags" .) -}}
+{{ join " " (list $flags.brokers $flags.admin $flags.kafka)}}
+{{- end -}}
+
+{{- define "rpk-dummy-sasl" -}}
+{{- if (include "sasl-enabled" . | fromJson).bool -}}
+{{ "--user <admin-user-in-secret> --password <admin-password-in-secret> --sasl-mechanism <mechanism-in-secret>" -}}
+{{- else -}}
+{{ "" }}
+{{- end -}}
+{{- end -}}
+
 {{- define "rpk-topic-flags" -}}
 {{- $flags := fromJson (include "rpk-flags" .) -}}
-{{ join " " (list $flags.brokers $flags.sasl $flags.kafka)}}
+    {{- if (include "sasl-enabled" . | fromJson).bool -}}
+        {{- join " " (list $flags.brokers $flags.kafka $flags.sasl) -}}
+    {{- else -}}
+        {{- join " " (list $flags.brokers $flags.kafka) -}}
+    {{- end -}}
 {{- end -}}
 
 {{- define "storage-min-free-bytes" -}}

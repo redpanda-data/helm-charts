@@ -65,27 +65,23 @@ rackAwareness:
   # this if you have your own custom Node annotation to use instead.
   nodeAnnotation: topology.kubernetes.io/zone
 
-#
 # Authentication
 auth:
-  #
   # SASL configuration
   sasl:
+    # When enabling SASL, you are required to have a secret available and referenced in secretRef
     enabled: false
-    # user list
-    # TODO create user at startup
-    users:
-      - name: admin
-        # Password for the user. This will be used to generate a secret
-        # password: password
-        # If password isn't given, then the secretName must point to an already existing secret
-        # secretName: adminPassword
-        # if the mecanism is unspecified, it defaults to .Values.auth.sasl.mechanism
-        # mechanism: SCRAM-SHA-512
     # if unspecified, mechanism defaults to SCRAM-SHA-512
-    # mechanism: SCRAM-SHA-512
+    mechanism: SCRAM-SHA-512
+    # A secret is expected to exist to contain several files that contain a user in the following format:
+    # <fileName>=<userName>:<password>:<mechanism>
+    # You can create these users in the following way:
+    # create a file with one entry per line in the following format:
+    # <username>:<password>:<mechanism>
+    # kubectl -n redpanda create secret generic my-users --from-file=users.txt
+    # secret/my-users created
+    secretRef: ""
 
-#
 # TLS configuration
 tls:
   # Enable global TLS, which turns on TLS by default for all listeners
@@ -111,7 +107,7 @@ tls:
 external:
   # Default external access value for each service
   # Services can toggle external access per listener (ie. `listeners.<service name>.external.<listener name>.enabled`)
-  enabled: true
+  enabled: false
   # External access type. `NodePort` is the only acceptable value if defined.
   # If undefined, then advertised listeners will be configured in Redpanda, but the helm chart will not create a Service. You must create a Service manually.
   type: NodePort
