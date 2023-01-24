@@ -16,8 +16,23 @@ limitations under the License.
 */}}
 
 {{/*
-Any rpk command that's given to the user in in this file must be defined in _example-commands.tpl and tested in a test.
+  Add warnings to the warnings template
 */}}
+{{ $warnings := (fromJson (include "warnings" .)).result }}
+{{- if $warnings }}
+---
+{{ range $warning := $warnings }}
+{{ $warning }}
+{{- end }}
+
+---
+{{- end }}
+
+{{-
+/*
+Any rpk command that's given to the user in in this file must be defined in _example-commands.tpl and tested in a test.
+*/
+-}}
 
 {{- $anySASL := (include "sasl-enabled" . | fromJson).bool }}
 {{- $rpk := deepCopy . }}
