@@ -479,7 +479,7 @@ statefulset:
     topologyKey: kubernetes.io/hostname
     # Type of anti-affinity rules: either `soft`, `hard` or empty value (which
     # disables anti-affinity rules).
-    type: soft
+    type: hard
     # Weight for `soft` anti-affinity rules.
     # Does not apply for other anti-affinity types.
     weight: 100
