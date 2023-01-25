@@ -323,7 +323,6 @@ data:
   {{- end }}
 {{- end }}
 {{- /* END LISTENERS */}}
-
     rpk:
       enable_usage_stats: {{ .Values.logging.usageStats.enabled }}
       overprovisioned: {{ dig "cpu" "overprovisioned" false .Values.resources }}

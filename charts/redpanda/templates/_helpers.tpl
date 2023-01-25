@@ -492,10 +492,15 @@ runAsGroup: {{ dig "podSecurityContext" "fsGroup" .Values.statefulset.securityCo
 {{- define "admin-tls-curl-flags" -}}
   {{- $result := "" -}}
   {{- if (include "admin-internal-tls-enabled" . | fromJson).bool -}}
+    {{- $certificate :=  get .Values.tls.certs .Values.listeners.admin.tls.cert -}}
     {{- $path := (printf "/etc/tls/certs/%s" .Values.listeners.admin.tls.cert) -}}
     {{- $result = (printf "--cacert %s/tls.crt" $path) -}}
     {{- if .Values.listeners.admin.tls.requireClientAuth -}}
-      {{- $result = (printf "--cacert %s/ca.crt --cert %s/tls.crt --key %s/tls.key" $path $path $path) -}}
+      {{- if $certificate.caEnabled -}}
+        {{- $result = (printf "--cacert %s/ca.crt --cert %s/tls.crt --key %s/tls.key" $path $path $path) -}}
+      {{- else -}}
+        {{- $result = (printf "--cert %s/tls.crt --key %s/tls.key" $path $path $path) -}}
+      {{- end -}}
     {{- end -}}
   {{- end -}}
   {{- $result -}}
