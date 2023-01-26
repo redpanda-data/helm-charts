@@ -1,4 +1,4 @@
-{{/*
+{{- /*
 Licensed to the Apache Software Foundation (ASF) under one or more
 contributor license agreements.  See the NOTICE file distributed with
 this work for additional information regarding copyright ownership.
@@ -95,59 +95,105 @@ data:
       {{- with dig "node" dict .Values.config }}
       {{- . | toYaml | nindent 6 }}
       {{- end }}
+{{- /* LISTENERS */}}
+{{- /* Admin API */}}
+{{- $service := .Values.listeners.admin }}
       admin:
         name: admin
         address: 0.0.0.0
-        port: {{ .Values.listeners.admin.port }}
+        port: {{ $service.port }}
 {{- if (include "admin-internal-tls-enabled" . | fromJson).bool }}
       admin_api_tls:
-        - name: admin
-          enabled: true
-          cert_file: /etc/tls/certs/{{ .Values.listeners.admin.tls.cert }}/tls.crt
-          key_file: /etc/tls/certs/{{ .Values.listeners.admin.tls.cert }}/tls.key
-          truststore_file: /etc/tls/certs/{{ .Values.listeners.admin.tls.cert }}/ca.crt
-          require_client_auth: {{ .Values.listeners.admin.tls.requireClientAuth }}
+        name: admin
+        enabled: true
+        cert_file: /etc/tls/certs/{{ $service.tls.cert }}/tls.crt
+        key_file: /etc/tls/certs/{{ $service.tls.cert }}/tls.key
+        require_client_auth: {{ $service.tls.requireClientAuth }}
+  {{- $cert := get .Values.tls.certs $service.tls.cert }}
+  {{- if empty $cert }}
+    {{- fail (printf "Certificate, '%s', used but not defined")}}
+  {{- end }}
+  {{- if $cert.caEnabled }}
+        truststore_file: /etc/tls/certs/{{ $service.tls.cert }}/ca.crt
+  {{- else }}
+        {{- /* This is a required field so we use the default in the redpanda debian container */}}
+        truststore_file: /etc/ssl/certs/ca-certificates.crt
+  {{- end }}
 {{- end }}
+{{- /* Kafka API */}}
+{{- $service = .Values.listeners.kafka }}
       kafka_api:
         - name: internal
           address: 0.0.0.0
-          port: {{ .Values.listeners.kafka.port }}
+          port: {{ $service.port }}
 {{- range $name, $listener := .Values.listeners.kafka.external }}
         - name: {{ $name }}
           address: 0.0.0.0
           port: {{ $listener.port }}
 {{- end }}
       kafka_api_tls:
-{{- $service := .Values.listeners.kafka }}
 {{- if (include "kafka-internal-tls-enabled" . | fromJson).bool }}
         - name: internal
           enabled: true
           cert_file: /etc/tls/certs/{{ $service.tls.cert }}/tls.crt
           key_file: /etc/tls/certs/{{ $service.tls.cert }}/tls.key
-          truststore_file: /etc/tls/certs/{{ $service.tls.cert }}/ca.crt
           require_client_auth: {{ $service.tls.requireClientAuth }}
+  {{- $cert := get .Values.tls.certs $service.tls.cert }}
+  {{- if empty $cert }}
+    {{- fail (printf "Certificate, '%s', used but not defined")}}
+  {{- end }}
+  {{- if $cert.caEnabled }}
+          truststore_file: /etc/tls/certs/{{ $service.tls.cert }}/ca.crt
+  {{- else }}
+          {{- /* This is a required field so we use the default in the redpanda debian container */}}
+          truststore_file: /etc/ssl/certs/ca-certificates.crt
+  {{- end }}
 {{- end }}
 {{- range $name, $listener := $service.external }}
   {{- $k := dict "Values" $values "listener" $listener }}
   {{- if (include "kafka-external-tls-enabled" $k | fromJson).bool }}
+    {{- $mtls := dig "tls" "requireClientAuth" false $listener }}
+    {{- $mtls = dig "tls" "requireClientAuth" $mtls $k }}
+    {{- $certName := include "kafka-external-tls-cert" $k }}
+    {{- $certPath := printf "/etc/tls/certs/%s" $certName }}
+    {{- $cert := get $values.tls.certs $certName }}
+    {{- if empty $cert }}
+      {{- fail (printf "Certificate, '%s', used but not defined")}}
+    {{- end }}
         - name: {{ $name }}
           enabled: true
-          cert_file: /etc/tls/certs/{{ template "kafka-external-tls-cert" $k}}/tls.crt
-          key_file: /etc/tls/certs/{{ template "kafka-external-tls-cert" $k}}/tls.key
-          truststore_file: /etc/tls/certs/{{ template "kafka-external-tls-cert" $k}}/ca.crt
-          require_client_auth: {{ dig "tls" "requireClientAuth" false $listener }}
+          cert_file: {{ $certPath }}/tls.crt
+          key_file: {{ $certPath }}/tls.key
+          require_client_auth: {{ $mtls }}
+    {{- if $cert.caEnabled }}
+          truststore_file: {{ $certPath }}/ca.crt
+    {{- else }}
+          {{- /* This is a required field so we use the default in the redpanda debian container */}}
+          truststore_file: /etc/ssl/certs/ca-certificates.crt
+    {{- end }}
   {{- end }}
 {{- end }}
+{{- /* RPC Server */}}
+{{- $service = .Values.listeners.rpc }}
       rpc_server:
         address: 0.0.0.0
-        port: {{ .Values.listeners.rpc.port }}
+        port: {{ $service.port }}
 {{- if (include "rpc-tls-enabled" . | fromJson).bool }}
       rpc_server_tls:
         enabled: true
-        require_client_auth: {{ .Values.listeners.rpc.tls.requireClientAuth }}
-        cert_file: /etc/tls/certs/{{ .Values.listeners.rpc.tls.cert }}/tls.crt
-        key_file: /etc/tls/certs/{{ .Values.listeners.rpc.tls.cert }}/tls.key
-        truststore_file: /etc/tls/certs/{{ .Values.listeners.rpc.tls.cert }}/ca.crt
+        cert_file: /etc/tls/certs/{{ $service.tls.cert }}/tls.crt
+        key_file: /etc/tls/certs/{{ $service.tls.cert }}/tls.key
+        require_client_auth: {{ $service.tls.requireClientAuth }}
+  {{- $cert := get .Values.tls.certs $service.tls.cert }}
+  {{- if empty $cert }}
+    {{- fail (printf "Certificate, '%s', used but not defined")}}
+  {{- end }}
+  {{- if $cert.caEnabled }}
+        truststore_file: /etc/tls/certs/{{ $service.tls.cert }}/ca.crt
+  {{- else }}
+        {{- /* This is a required field so we use the default in the redpanda debian container */}}
+        truststore_file: /etc/ssl/certs/ca-certificates.crt
+  {{- end }}
 {{- end }}
       seed_servers:
 {{- range untilStep 0 (.Values.statefulset.replicas|int) 1 }}
@@ -162,70 +208,120 @@ data:
     {{- unset .Values.storage.tieredConfig "cloud_storage_credentials_source" | toYaml | nindent 6 }}
   {{- end }}
 {{- end }}
+{{- /* Schema Registry API */}}
 {{- if .Values.listeners.schemaRegistry.enabled }}
+  {{- $service = .Values.listeners.schemaRegistry }}
     schema_registry:
       schema_registry_api:
         - name: internal
           address: 0.0.0.0
-          port: {{ .Values.listeners.schemaRegistry.port }}
-{{- range $name, $listener := .Values.listeners.schemaRegistry.external }}
+          port: {{ $service.port }}
+  {{- range $name, $listener := $service.external }}
         - name: {{ $name }}
           address: 0.0.0.0
           port: {{ $listener.port }}
-{{- end }}
+  {{- end }}
       schema_registry_api_tls:
   {{- if (include "schemaRegistry-internal-tls-enabled" . | fromJson).bool }}
         - name: internal
           enabled: true
-          cert_file: /etc/tls/certs/{{ .Values.listeners.schemaRegistry.tls.cert }}/tls.crt
-          key_file: /etc/tls/certs/{{ .Values.listeners.schemaRegistry.tls.cert }}/tls.key
-          truststore_file: /etc/tls/certs/{{ .Values.listeners.schemaRegistry.tls.cert }}/ca.crt
-          require_client_auth: {{ .Values.listeners.schemaRegistry.tls.requireClientAuth }}
+          cert_file: /etc/tls/certs/{{ $service.tls.cert }}/tls.crt
+          key_file: /etc/tls/certs/{{ $service.tls.cert }}/tls.key
+          require_client_auth: {{ $service.tls.requireClientAuth }}
+    {{- $cert := get .Values.tls.certs $service.tls.cert }}
+    {{- if empty $cert }}
+      {{- fail (printf "Certificate, '%s', used but not defined")}}
+    {{- end }}
+    {{- if $cert.caEnabled }}
+          truststore_file: /etc/tls/certs/{{ $service.tls.cert }}/ca.crt
+    {{- else }}
+          {{- /* This is a required field so we use the default in the redpanda debian container */}}
+          truststore_file: /etc/ssl/certs/ca-certificates.crt
+    {{- end }}
   {{- end }}
-  {{- range $i, $listener := .Values.listeners.schemaRegistry.external }}
+  {{- range $name, $listener := $service.external }}
     {{- $k := dict "Values" $values "listener" $listener }}
     {{- if (include "schemaRegistry-external-tls-enabled" $k | fromJson).bool }}
-        - name: {{ $listener.name }}
+      {{- $mtls := dig "tls" "requireClientAuth" false $listener }}
+      {{- $mtls = dig "tls" "requireClientAuth" $mtls $k }}
+      {{- $certName := include "schemaRegistry-external-tls-cert" $k }}
+      {{- $certPath := printf "/etc/tls/certs/%s" $certName }}
+      {{- $cert := get $values.tls.certs $certName }}
+      {{- if empty $cert }}
+        {{- fail (printf "Certificate, '%s', used but not defined")}}
+      {{- end }}
+        - name: {{ $name }}
           enabled: true
-          cert_file: /etc/tls/certs/{{ template "schemaRegistry-external-tls-cert" $k }}/tls.crt
-          key_file: /etc/tls/certs/{{ template "schemaRegistry-external-tls-cert" $k }}/tls.key
-          truststore_file: /etc/tls/certs/{{ template "schemaRegistry-external-tls-cert" $k }}/ca.crt
-          require_client_auth: {{ dig "tls" "requireClientAuth" false $listener}}
+          cert_file: {{ $certPath }}/tls.crt
+          key_file: {{ $certPath }}/tls.key
+          require_client_auth: {{ $mtls }}
+      {{- if $cert.caEnabled }}
+          truststore_file: {{ $certPath }}/ca.crt
+      {{- else }}
+          {{- /* This is a required field so we use the default in the redpanda debian container */}}
+          truststore_file: /etc/ssl/certs/ca-certificates.crt
+      {{- end }}
     {{- end }}
   {{- end }}
 {{- end }}
+{{- /* HTTP Proxy */}}
 {{- if .Values.listeners.http.enabled }}
+  {{- $service = .Values.listeners.http }}
     pandaproxy:
       pandaproxy_api:
         - name: internal
           address: 0.0.0.0
-          port: {{ .Values.listeners.http.port }}
-  {{- range $name, $listener := .Values.listeners.http.external }}
+          port: {{ $service.port }}
+  {{- range $name, $listener := $service.external }}
         - name: {{ $name }}
           address: 0.0.0.0
           port: {{ $listener.port }}
   {{- end }}
       pandaproxy_api_tls:
   {{- if (include "http-internal-tls-enabled" . | fromJson).bool }}
-          - name: internal
-            enabled: true
-            cert_file: /etc/tls/certs/{{ .Values.listeners.http.tls.cert }}/tls.crt
-            key_file: /etc/tls/certs/{{ .Values.listeners.http.tls.cert }}/tls.key
-            truststore_file: /etc/tls/certs/{{ .Values.listeners.http.tls.cert }}/ca.crt
-            require_client_auth: {{ .Values.listeners.http.tls.requireClientAuth }}
+        - name: internal
+          enabled: true
+          cert_file: /etc/tls/certs/{{ $service.tls.cert }}/tls.crt
+          key_file: /etc/tls/certs/{{ $service.tls.cert }}/tls.key
+          require_client_auth: {{ $service.tls.requireClientAuth }}
+    {{- $cert := get .Values.tls.certs $service.tls.cert }}
+    {{- if empty $cert }}
+      {{- fail (printf "Certificate, '%s', used but not defined")}}
+    {{- end }}
+    {{- if $cert.caEnabled }}
+          truststore_file: /etc/tls/certs/{{ $service.tls.cert }}/ca.crt
+    {{- else }}
+          {{- /* This is a required field so we use the default in the redpanda debian container */}}
+          truststore_file: /etc/ssl/certs/ca-certificates.crt
+    {{- end }}
   {{- end }}
-  {{- range $name, $listener := .Values.listeners.http.external }}
+  {{- range $name, $listener := $service.external }}
     {{- $k := dict "Values" $values "listener" $listener }}
     {{- if (include "http-external-tls-enabled" $k | fromJson).bool }}
-          - name: {{ $name }}
-            enabled: true
-            cert_file: /etc/tls/certs/{{ template "kafka-external-tls-cert" $k }}/tls.crt
-            key_file: /etc/tls/certs/{{ template "kafka-external-tls-cert" $k }}/tls.key
-            truststore_file: /etc/tls/certs/{{ template "kafka-external-tls-cert" $k}}/ca.crt
-            require_client_auth: {{ dig "tls" "requireClientAuth" false $listener }}
+      {{- $mtls := dig "tls" "requireClientAuth" false $listener }}
+      {{- $mtls = dig "tls" "requireClientAuth" $mtls $k }}
+      {{- $certName := include "http-external-tls-cert" $k }}
+      {{- $certPath := printf "/etc/tls/certs/%s" $certName }}
+      {{- $cert := get $values.tls.certs $certName }}
+      {{- if empty $cert }}
+        {{- fail (printf "Certificate, '%s', used but not defined")}}
+      {{- end }}
+        - name: {{ $name }}
+          enabled: true
+          cert_file: {{ $certPath }}/tls.crt
+          key_file: {{ $certPath }}/tls.key
+          require_client_auth: {{ $mtls }}
+      {{- if $cert.caEnabled }}
+          truststore_file: {{ $certPath }}/ca.crt
+      {{- else }}
+          {{- /* This is a required field so we use the default in the redpanda debian container */}}
+          truststore_file: /etc/ssl/certs/ca-certificates.crt
+      {{- end }}
     {{- end }}
   {{- end }}
 {{- end }}
+{{- /* END LISTENERS */}}
+
     rpk:
       enable_usage_stats: {{ .Values.logging.usageStats.enabled }}
       overprovisioned: {{ dig "cpu" "overprovisioned" false .Values.resources }}
