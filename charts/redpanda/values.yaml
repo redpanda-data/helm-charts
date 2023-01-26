@@ -502,7 +502,7 @@ statefulset:
     # The topologyKey to be used.
     # Can be used to spread across different nodes, AZs, regions etc.
     topologyKey: kubernetes.io/hostname
-    # Type of anti-affinity rules: either `soft`, `hard`.
+    # Type of anti-affinity rules: either `soft` or `hard`.
     type: hard
     # Weight for `soft` anti-affinity rules.
     # Does not apply for other anti-affinity types.
