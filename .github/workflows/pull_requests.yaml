@@ -81,6 +81,6 @@ jobs:
         run: kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.10.0/cert-manager.yaml
         if: steps.list-changed.outputs.changed == 'true'
 
-      - name: Run chart-testing (install)
-        run: ct install --config .github/ct.yaml
+      - name: Run chart-testing (install and upgrade)
+        run: ct install --config .github/ct.yaml --upgrade
         if: steps.list-changed.outputs.changed == 'true'
