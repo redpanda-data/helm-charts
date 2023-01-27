@@ -407,9 +407,9 @@ runAsUser: {{ dig "podSecurityContext" "runAsUser" .Values.statefulset.securityC
 runAsGroup: {{ dig "podSecurityContext" "fsGroup" .Values.statefulset.securityContext.fsGroup .Values.statefulset }}
 {{- end -}}
 
-{{- define "tls-curl-flags" -}}
+{{- define "admin-tls-curl-flags" -}}
   {{- $result := "" -}}
-  {{- if (include "tls-enabled" . | fromJson).bool -}}
+  {{- if (include "admin-internal-tls-enabled" . | fromJson).bool -}}
     {{- $path := (printf "/etc/tls/certs/%s" .Values.listeners.admin.tls.cert) -}}
     {{- $result = (printf "--cacert %s/tls.crt" $path) -}}
     {{- if .Values.listeners.admin.tls.requireClientAuth -}}
@@ -419,9 +419,9 @@ runAsGroup: {{ dig "podSecurityContext" "fsGroup" .Values.statefulset.securityCo
   {{- $result -}}
 {{- end -}}
 
-{{- define "http-protocol" -}}
+{{- define "admin-http-protocol" -}}
   {{- $result := "http" -}}
-  {{- if (include "tls-enabled" . | fromJson).bool -}}
+  {{- if (include "admin-internal-tls-enabled" . | fromJson).bool -}}
     {{- $result = "https" -}}
   {{- end -}}
   {{- $result -}}
