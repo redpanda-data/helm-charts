@@ -38,6 +38,12 @@ spec:
   {{- toYaml . | nindent 8 }}
 {{- end }}
     spec:
+    {{- with .Values.nodeSelector }}
+      nodeSelector: {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations: {{- toYaml . | nindent 8 }}
+    {{- end }}
       restartPolicy: Never
       securityContext: {{ include "pod-security-context" . | nindent 8 }}
       containers:
