@@ -33,10 +33,10 @@ clusterDomain: cluster.local
 # Additional labels added to all Kubernetes objects
 commonLabels: {}
 
-# Global node selection constraints for scheduling Pods, can override this for statefulsets.
+# Node selection constraints for scheduling Pods, can override this for statefulsets.
 # https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
 nodeSelector: {}
-# Global taints to be tolerated by Pods, can override this for statefulsets.
+# Taints to be tolerated by Pods, can override this for statefulsets.
 # https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
 tolerations: []
 
