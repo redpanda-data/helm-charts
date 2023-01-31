@@ -92,41 +92,32 @@
           "required": [
             "enabled"
           ],
-          "if": {
-            "properties": {
-              "enabled": {
-                "enum": [
-                  true
-                ]
-              }
-            }
-          },
-          "then": {
-            "required": [
-              "secretRef"
-            ],
-            "properties": {
-              "enabled": {
-                "type": "boolean"
-              },
-              "mechanism": {
-                "type": "string"
-              },
-              "secretRef": {
-                "type": "string"
-              }
-            }
-          },
-          "else": {
-            "properties": {
-              "enabled": {
-                "type": "boolean"
-              },
-              "mechanism": {
-                "type": "string"
-              },
-              "secretRef": {
-                "type": "string"
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "mechanism": {
+              "type": "string"
+            },
+            "secretRef": {
+              "type": "string"
+            },
+            "users": {
+              "type": "array",
+              "minItems": 0,
+              "items": {
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "mechanism": {
+                    "type": "string",
+                    "pattern": "^(SCRAM-SHA-512|SCRAM-SHA-256)$"
+                  }
+                }
               }
             }
           }

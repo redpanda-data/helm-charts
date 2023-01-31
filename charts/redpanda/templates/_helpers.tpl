@@ -346,6 +346,16 @@ Generate configuration needed for rpk
 {{ join " " (list $flags.brokers $flags.admin $flags.sasl $flags.kafka)}}
 {{- end -}}
 
+{{- define "rpk-common-flags-no-admin" -}}
+{{- $flags := fromJson (include "rpk-flags" .) -}}
+{{ join " " (list $flags.brokers $flags.kafka $flags.sasl)}}
+{{- end -}}
+
+{{- define "rpk-common-flags-no-admin-no-sasl" -}}
+{{- $flags := fromJson (include "rpk-flags" .) -}}
+{{ join " " (list $flags.brokers $flags.kafka)}}
+{{- end -}}
+
 {{- define "rpk-common-flags-no-sasl" -}}
 {{- $flags := fromJson (include "rpk-flags" .) -}}
 {{ join " " (list $flags.brokers $flags.admin $flags.kafka)}}

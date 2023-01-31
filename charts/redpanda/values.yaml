@@ -73,14 +73,21 @@ auth:
     enabled: false
     # if unspecified, mechanism defaults to SCRAM-SHA-512
     mechanism: SCRAM-SHA-512
-    # A secret is expected to exist to contain several files that contain a user in the following format:
-    # <fileName>=<userName>:<password>:<mechanism>
+    # A secret is expected to exist to contain a file with users in the following format:
+    # <userName>:<password>:<mechanism>
     # You can create these users in the following way:
     # create a file with one entry per line in the following format:
     # <username>:<password>:<mechanism>
+    # Ensure there is an empty line at the end of the file.
     # kubectl -n redpanda create secret generic my-users --from-file=users.txt
-    # secret/my-users created
-    secretRef: ""
+    # Then secretRef is required, regardless if created a users list (below) or not
+    secretRef: "redpanda-users"
+    # optional list of users
+    # If not an empty list, these users will be created in a secret whose name is defined in "secretRef"
+    users:
+    - name: admin
+      password: change-me
+      mechanism: SCRAM-SHA-512
 
 # TLS configuration
 tls:
