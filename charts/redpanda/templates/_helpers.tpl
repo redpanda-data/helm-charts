@@ -283,8 +283,8 @@ Generate configuration needed for rpk
   {{- if eq $result 0 -}}
     {{- "unable to get memory value" | fail -}}
   {{- end -}}
-  {{- if lt $result 2000 -}}
-    {{- printf "\n%d is below the minimum recommended value for Redpanda" $result | fail -}}
+  {{- if lt $result 256 -}}
+    {{- printf "\n%d is below the minimum value for Redpanda" $result | fail -}}
   {{- end -}}
   {{- if gt (add $result (include "redpanda-reserve-memory" .)) (include "container-memory" . | int64) -}}
     {{- printf "\nNot enough container memory for Redpanda memory values\nredpanda: %d, reserve: %d, container: %d" $result (include "redpanda-reserve-memory" . | int64) (include "container-memory" . | int64) | fail -}}
@@ -366,22 +366,22 @@ Generate configuration needed for rpk
 {{- end -}}
 
 {{- define "tunable" -}}
-{{- $tunable := dig "tunable" dict .Values.config }}
-{{- if (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
-{{- toYaml $tunable | nindent 4 }}
-{{- else if (include "redpanda-atleast-22-2-0" . | fromJson).bool }}
-{{- $tunable = unset $tunable "log_segment_size_min" }}
-{{- $tunable = unset $tunable "log_segment_size_max" }}
-{{- $tunable = unset $tunable "kafka_batch_max_bytes" }}
-{{- toYaml $tunable | nindent 4 }}
-{{- else if (include "redpanda-atleast-22-1-1" . | fromJson).bool }}
-{{- $tunable = unset $tunable "log_segment_size_min" }}
-{{- $tunable = unset $tunable "log_segment_size_max" }}
-{{- $tunable = unset $tunable "kafka_batch_max_bytes" }}
-{{- $tunable = unset $tunable "topic_partitions_per_shard" }}
-{{- toYaml $tunable | nindent 4 }}
-{{- end }}
-{{- end }}
+{{- $tunable := dig "tunable" dict .Values.config -}}
+{{- if (include "redpanda-atleast-22-3-0" . | fromJson).bool -}}
+{{- toYaml $tunable | nindent 4 -}}
+{{- else if (include "redpanda-atleast-22-2-0" . | fromJson).bool -}}
+{{- $tunable = unset $tunable "log_segment_size_min" -}}
+{{- $tunable = unset $tunable "log_segment_size_max" -}}
+{{- $tunable = unset $tunable "kafka_batch_max_bytes" -}}
+{{- toYaml $tunable | nindent 4 -}}
+{{- else if (include "redpanda-atleast-22-1-1" . | fromJson).bool -}}
+{{- $tunable = unset $tunable "log_segment_size_min" -}}
+{{- $tunable = unset $tunable "log_segment_size_max" -}}
+{{- $tunable = unset $tunable "kafka_batch_max_bytes" -}}
+{{- $tunable = unset $tunable "topic_partitions_per_shard" -}}
+{{- toYaml $tunable | nindent 4 -}}
+{{- end -}}
+{{- end -}}
 
 {{- define "redpanda-atleast-22-1-1" -}}
 {{- toJson (dict "bool" (or (not (eq .Values.image.repository "vectorized/redpanda")) (include "redpanda.semver" . | semverCompare ">=22.1.1"))) -}}
@@ -475,3 +475,29 @@ Set default path for tiered storage cache or use one provided
   {{- .Values.storage.tieredConfig.cloud_storage_cache_directory }}
 {{- end }}
 {{- end }}
+
+{{/*
+"warnings" is an aggregate that returns a list of warnings to be shown in NOTES.txt
+*/}}
+{{- define "warnings" -}}
+  {{- $result := list -}}
+  {{- $warnings := list "redpanda-memory-warning" -}}
+  {{- range $t := $warnings -}}
+    {{- $warning := printf "**Warning**: %s" (include $t $) -}}
+      {{- if $warning -}}
+        {{- $result = append $result $warning -}}
+      {{- end -}}
+  {{- end -}}
+  {{/* fromJson cannot decode list */}}
+  {{- toJson (dict "result" $result) -}}
+{{- end -}}
+
+{{/*
+return a warning if the chart is configured with insufficient memory
+*/}}
+{{- define "redpanda-memory-warning" -}}
+  {{- $result := (include "redpanda-memory" .) | int -}}
+  {{- if lt $result 2000 -}}
+    {{- printf "%d is below the minimum recommended value for Redpanda" $result -}}
+  {{- end -}}
+{{- end -}}
