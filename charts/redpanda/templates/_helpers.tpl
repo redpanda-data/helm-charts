@@ -472,9 +472,9 @@ advertised-host returns a json sring with the data neded for configuring the adv
   {{- $result := list -}}
   {{- $warnings := list "redpanda-memory-warning" -}}
   {{- range $t := $warnings -}}
-    {{- $warning := printf "**Warning**: %s" (include $t $) -}}
+    {{- $warning := include $t $ -}}
       {{- if $warning -}}
-        {{- $result = append $result $warning -}}
+        {{- $result = append $result (printf "**Warning**: %s" $warning) -}}
       {{- end -}}
   {{- end -}}
   {{/* fromJson cannot decode list */}}
