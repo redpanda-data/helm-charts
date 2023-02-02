@@ -109,9 +109,9 @@ spec:
 
         {{- if (include "redpanda-atleast-22-2-0" . | fromJson).bool }}
           {{- if not (empty .Values.license_secret_ref) }}
-            rpk cluster license set "$REDPANDA_LICENSE" {{ template "rpk-common-flags" $ }}
+            rpk cluster license set "$REDPANDA_LICENSE" {{ template "rpk-common-flags-no-sasl" $ }}
           {{- else if not (empty .Values.license_key) }}
-            rpk cluster license set {{ .Values.license_key | quote }} {{ template "rpk-common-flags" $ }}
+            rpk cluster license set {{ .Values.license_key | quote }} {{ template "rpk-common-flags-no-sasl" $ }}
           {{- end }}
         {{- end }}
         {{- with .Values.post_install_job.resources }}
