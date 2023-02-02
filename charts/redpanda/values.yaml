@@ -114,7 +114,7 @@ tls:
 external:
   # Default external access value for each service
   # Services can toggle external access per listener (ie. `listeners.<service name>.external.<listener name>.enabled`)
-  enabled: false
+  enabled: true
   # External access type. `NodePort` is the only acceptable value if defined.
   # If undefined, then advertised listeners will be configured in Redpanda, but the helm chart will not create a Service. You must create a Service manually.
   type: NodePort

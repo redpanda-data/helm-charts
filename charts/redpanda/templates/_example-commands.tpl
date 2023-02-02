@@ -23,63 +23,63 @@ and tested in a test.
 
 {{/* tested in tests/test-kafka-sasl-status.yaml */}}
 {{- define "rpk-acl-user-create" -}}
-{{ .rpk }} acl user create myuser --new-password changeme --mechanism {{ include "sasl-mechanism" . }} {{ include "rpk-common-flags-no-sasl" . }}
+{{ .rpk }} acl user create myuser --new-password changeme --mechanism {{ include "sasl-mechanism" . }} {{ include "rpk-flags-no-sasl" . }}
 {{- end -}}
 
 {{- define "rpk-acl-create" -}}
-{{ .rpk }} acl create --allow-principal 'myuser' --allow-host '*' --operation all --topic 'test-topic' {{ include "rpk-common-flags-no-admin-no-sasl" . }} {{ include "rpk-dummy-sasl" . }}
+{{ .rpk }} acl create --allow-principal 'myuser' --allow-host '*' --operation all --topic 'test-topic' {{ include "rpk-flags-no-admin-no-sasl" . }} {{ include "rpk-dummy-sasl" . }}
 {{- end -}}
 
 {{- define "rpk-cluster-info" -}}
-{{ .rpk }} cluster info {{ include "rpk-common-flags-no-admin-no-sasl" . }} {{ include "rpk-dummy-sasl" . }}
+{{ .rpk }} cluster info {{ include "rpk-flags-no-admin-no-sasl" . }} {{ include "rpk-dummy-sasl" . }}
 {{- end -}}
 
 {{- define "rpk-topic-create" -}}
 {{- $flags := fromJson (include "rpk-flags" .) -}}
-{{ .rpk }} topic create test-topic {{ include "rpk-common-flags-no-admin-no-sasl" . }} {{ include "rpk-dummy-sasl" . }}
+{{ .rpk }} topic create test-topic {{ include "rpk-flags-no-admin-no-sasl" . }} {{ include "rpk-dummy-sasl" . }}
 {{- end -}}
 
 {{- define "rpk-topic-describe" -}}
 {{- $flags := fromJson (include "rpk-flags" .) -}}
-{{ .rpk }} topic describe test-topic {{ include "rpk-common-flags-no-admin-no-sasl" . }} {{ include "rpk-dummy-sasl" . }}
+{{ .rpk }} topic describe test-topic {{ include "rpk-flags-no-admin-no-sasl" . }} {{ include "rpk-dummy-sasl" . }}
 {{- end -}}
 
 {{- define "rpk-topic-delete" -}}
 {{- $flags := fromJson (include "rpk-flags" .) -}}
-{{ .rpk }} topic delete test-topic {{ include "rpk-common-flags-no-admin-no-sasl" . }} {{ include "rpk-dummy-sasl" . }}
+{{ .rpk }} topic delete test-topic {{ include "rpk-flags-no-admin-no-sasl" . }} {{ include "rpk-dummy-sasl" . }}
 {{- end -}}
 
 
 {{/* tested in tests/test-kafka-sasl-status.yaml */}}
 {{- define "rpk-acl-user-create-no-dummy-sasl" -}}
-{{ .rpk }} acl user create myuser --new-password changeme --mechanism {{ include "sasl-mechanism" . }} {{ include "rpk-common-flags-no-sasl" . }}
+{{ .rpk }} acl user create myuser --new-password changeme --mechanism {{ include "sasl-mechanism" . }} {{ include "rpk-flags-no-sasl" . }}
 {{- end -}}
 
 {{/* tested in tests/test-kafka-sasl-status.yaml */}}
 {{- define "rpk-acl-create-no-dummy-sasl" -}}
-{{ .rpk }} acl create --allow-principal 'myuser' --allow-host '*' --operation all --topic 'test-topic' {{ include "rpk-common-flags-no-admin" . }}
+{{ .rpk }} acl create --allow-principal 'myuser' --allow-host '*' --operation all --topic 'test-topic' {{ include "rpk-flags-no-admin" . }}
 {{- end -}}
 
 {{/* tested in tests/test-kafka-sasl-status.yaml */}}
 {{- define "rpk-cluster-info-no-dummy-sasl" -}}
-{{ .rpk }} cluster info {{ include "rpk-common-flags-no-admin" . }}
+{{ .rpk }} cluster info {{ include "rpk-flags-no-admin" . }}
 {{- end -}}
 
 {{/* tested in tests/test-kafka-sasl-status.yaml */}}
 {{- define "rpk-topic-create-no-dummy-sasl" -}}
 {{- $flags := fromJson (include "rpk-flags" .) -}}
-{{ .rpk }} topic create test-topic {{ include "rpk-common-flags-no-admin" . }}
+{{ .rpk }} topic create test-topic {{ include "rpk-flags-no-admin" . }}
 {{- end -}}
 
 {{/* tested in tests/test-kafka-sasl-status.yaml */}}
 {{- define "rpk-topic-describe-no-dummy-sasl" -}}
 {{- $flags := fromJson (include "rpk-flags" .) -}}
-{{ .rpk }} topic describe test-topic {{ include "rpk-common-flags-no-admin" . }}
+{{ .rpk }} topic describe test-topic {{ include "rpk-flags-no-admin" . }}
 {{- end -}}
 
 {{/* tested in tests/test-kafka-sasl-status.yaml */}}
 {{- define "rpk-topic-delete-no-dummy-sasl" -}}
 {{- $flags := fromJson (include "rpk-flags" .) -}}
-{{ .rpk }} topic delete test-topic {{ include "rpk-common-flags-no-admin" . }}
+{{ .rpk }} topic delete test-topic {{ include "rpk-flags-no-admin" . }}
 {{- end -}}
 

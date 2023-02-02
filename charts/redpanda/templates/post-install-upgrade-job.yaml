@@ -89,7 +89,7 @@ spec:
               fi
               echo "Creating user ${USER_NAME}..."
               MECHANISM=${MECHANISM:-{{- include "sasl-mechanism" . }}}
-              creation_result=$(rpk acl user create ${USER_NAME} --password=${PASSWORD} --mechanism ${MECHANISM} {{ template "rpk-common-flags-no-sasl" $ }} 2>&1) && creation_result_exit_code=$? || creation_result_exit_code=$?  # On a non-success exit code
+              creation_result=$(rpk acl user create ${USER_NAME} --password=${PASSWORD} --mechanism ${MECHANISM} {{ template "rpk-flags-no-sasl" $ }} 2>&1) && creation_result_exit_code=$? || creation_result_exit_code=$?  # On a non-success exit code
               if [[ $creation_result_exit_code -ne 0 ]]; then
               # Check if the stderr contains "User already exists"
                 if [[ $creation_result == *"User already exists"* ]]; then
@@ -109,9 +109,9 @@ spec:
 
         {{- if (include "redpanda-atleast-22-2-0" . | fromJson).bool }}
           {{- if not (empty .Values.license_secret_ref) }}
-            rpk cluster license set "$REDPANDA_LICENSE" {{ template "rpk-common-flags-no-sasl" $ }}
+            rpk cluster license set "$REDPANDA_LICENSE" {{ template "rpk-flags-no-sasl" $ }}
           {{- else if not (empty .Values.license_key) }}
-            rpk cluster license set {{ .Values.license_key | quote }} {{ template "rpk-common-flags-no-sasl" $ }}
+            rpk cluster license set {{ .Values.license_key | quote }} {{ template "rpk-flags-no-sasl" $ }}
           {{- end }}
         {{- end }}
         {{- with .Values.post_install_job.resources }}
