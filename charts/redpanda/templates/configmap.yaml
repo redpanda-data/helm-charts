@@ -219,7 +219,14 @@ data:
   {{- range $name, $listener := $service.external }}
         - name: {{ $name }}
           address: 0.0.0.0
-          port: {{ $listener.port }}
+          {{- /*
+            when upgrading from an older version that had a missing port, fail if we cannot guess a default
+            this should work in all cases as the older versions would have failed with multiple listeners anyway
+          */}}
+          {{- if and (empty $listener.port) (ne (len $service.external) 1) }}
+            {{- fail "missing required port for schemaRegistry listener $listener.name" }}
+          {{- end }}
+          port: {{ $listener.port | default 8084 }}
   {{- end }}
       schema_registry_api_tls:
   {{- if (include "schemaRegistry-internal-tls-enabled" . | fromJson).bool }}
