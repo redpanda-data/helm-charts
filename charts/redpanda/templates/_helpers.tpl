@@ -356,6 +356,11 @@ Generate configuration needed for rpk
 {{ join " " (list $flags.brokers $flags.admin $flags.kafka)}}
 {{- end -}}
 
+{{- define "rpk-flags-no-admin-no-sasl" -}}
+{{- $flags := fromJson (include "rpk-flags" .) -}}
+{{ join " " (list $flags.brokers $flags.kafka)}}
+{{- end -}}
+
 {{- define "rpk-dummy-sasl" -}}
 {{- if (include "sasl-enabled" . | fromJson).bool -}}
 {{ "--user <admin-user-in-secret> --password <admin-password-in-secret> --sasl-mechanism <mechanism-in-secret>" -}}
