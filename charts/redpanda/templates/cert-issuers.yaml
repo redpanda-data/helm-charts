@@ -30,14 +30,9 @@ metadata:
   name: {{ template "redpanda.fullname" $ }}-{{ $name }}-selfsigned-issuer
   namespace: {{ $release.Namespace | quote }}
   labels:
-    helm.sh/chart: {{ template "redpanda.chart" $ }}
-    app.kubernetes.io/name: {{ template "redpanda.name" $ }}
-    app.kubernetes.io/instance: {{ $release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ $release.Service | quote }}
-    app.kubernetes.io/component: {{ template "redpanda.name" $ }}
-    {{- with $values.commonLabels }}
-      {{- toYaml . | nindent 4 }}
-    {{- end }}
+{{- with include "full.labels" . }}
+  {{- . | nindent 4 }}
+{{- end }}
 spec:
   selfSigned: {}
     {{- end }}
@@ -49,14 +44,9 @@ metadata:
   name: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-issuer
   namespace: {{ $release.Namespace | quote }}
   labels:
-    helm.sh/chart: {{ template "redpanda.chart" $ }}
-    app.kubernetes.io/name: {{ template "redpanda.name" $ }}
-    app.kubernetes.io/instance: {{ $release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ $release.Service | quote }}
-    app.kubernetes.io/component: {{ template "redpanda.name" $ }}
-    {{- with $values.commonLabels }}
-      {{- toYaml . | nindent 4 }}
-    {{- end }}
+{{- with include "full.labels" . }}
+  {{- . | nindent 4 }}
+{{- end }}
 spec:
   ca:
     secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-certificate
@@ -68,14 +58,9 @@ metadata:
   name: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-certificate
   namespace: {{ $release.Namespace | quote }}
   labels:
-    helm.sh/chart: {{ template "redpanda.chart" $ }}
-    app.kubernetes.io/name: {{ template "redpanda.name" $ }}
-    app.kubernetes.io/instance: {{ $release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ $release.Service | quote }}
-    app.kubernetes.io/component: {{ template "redpanda.name" $ }}
-    {{- with $values.commonLabels }}
-      {{- toYaml . | nindent 4 }}
-    {{- end }}
+{{- with include "full.labels" . }}
+  {{- . | nindent 4 }}
+{{- end }}
 spec:
   isCA: true
   commonName: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-certificate
