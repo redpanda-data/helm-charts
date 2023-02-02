@@ -30,8 +30,13 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: {{ template "redpanda.name" . }}
-      app.kubernetes.io/instance: {{ .Release.Name | quote }}
   maxUnavailable: {{ .Values.statefulset.budget.maxUnavailable | int64 }}
+  selector:
+    matchLabels: {{ (include "statefulset-pod-labels" .) | nindent 6 }}
+{{- $budget := .Values.statefulset.budget.maxUnavailable }}
+{{- /* to maintain quorum, raft cannot lose more than half its members */}}
+{{- $minReplicas := divf .Values.statefulset.replicas 2 | floor }}
+{{- /* the lowest we can go is 1 so allow that always */}}
+{{- if and (gt $budget (float64 1)) (gt $budget $minReplicas) }}
+  {{- fail "statefulset.budget.maxUnavailable is set too high to maintain quorum: $budget > $minReplicas" }}
+{{- end }}

@@ -21,6 +21,8 @@ limitations under the License.
 {{- if $values.external.domain -}}
   {{- $externalAdvertiseAddress = printf "$(SERVICE_NAME).%s" $values.external.domain -}}
 {{- end -}}
+{{- $uid := dig "podSecurityContext" "runAsUser" .Values.statefulset.securityContext.runAsUser .Values.statefulset -}}
+{{- $gid := dig "podSecurityContext" "fsGroup" .Values.statefulset.securityContext.fsGroup .Values.statefulset -}}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -37,9 +39,7 @@ metadata:
 {{- end }}
 spec:
   selector:
-    matchLabels:
-      app.kubernetes.io/name: {{ template "redpanda.name" . }}
-      app.kubernetes.io/instance: {{ .Release.Name }}
+    matchLabels: {{ (include "statefulset-pod-labels" .) | nindent 6 }}
   serviceName: {{ template "redpanda.fullname" . }}
   replicas: {{ .Values.statefulset.replicas | int64 }}
   updateStrategy:
@@ -47,13 +47,7 @@ spec:
   podManagementPolicy: {{ .Values.statefulset.podManagementPolicy }}
   template:
     metadata:
-      labels:
-        app.kubernetes.io/name: {{ template "redpanda.name" . }}
-        app.kubernetes.io/instance: {{ .Release.Name | quote }}
-        app.kubernetes.io/component: {{ template "redpanda.name" . }}
-{{- with .Values.commonLabels }}
-        {{- toYaml . | nindent 8 }}
-{{- end }}
+      labels: {{ (include "statefulset-pod-labels" .) | nindent 8 }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
 {{- with $.Values.statefulset.annotations }}
@@ -65,8 +59,6 @@ spec:
       initContainers:
         - name: set-datadir-ownership
           image: busybox:latest
-          {{- $uid := dig "podSecurityContext" "runAsUser" .Values.statefulset.securityContext.runAsUser .Values.statefulset }}
-          {{- $gid := dig "podSecurityContext" "fsGroup" .Values.statefulset.securityContext.fsGroup .Values.statefulset }}
           command: ["/bin/sh", "-c", "chown {{ $uid }}:{{ $gid }} -R /var/lib/redpanda/data"]
           volumeMounts:
             - name: datadir
@@ -74,14 +66,12 @@ spec:
 {{- if and (include "is-licensed" . | fromJson).bool .Values.storage.tieredConfig.cloud_storage_enabled }}
         - name: set-tiered-storage-cache-dir-ownership
           image: busybox:latest
-          {{- $uid := dig "podSecurityContext" "runAsUser" .Values.statefulset.securityContext.runAsUser .Values.statefulset }}
-          {{- $gid := dig "podSecurityContext" "fsGroup" .Values.statefulset.securityContext.fsGroup .Values.statefulset }}
           command: ["/bin/sh", "-c", 'chown {{ $uid }}:{{ $gid }} -R {{ template "tieredStorage.cacheDirectory" . }}']
           volumeMounts:
             - name: tiered-storage-dir
               mountPath: {{ template "tieredStorage.cacheDirectory" . }}
 {{- end }}
-        - name: {{ template "redpanda.name" . }}-configurator
+        - name: {{ (include "redpanda.name" .) | trunc 51 }}-configurator
           image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}
           command: ["/bin/bash", "-c"]
           env:
@@ -331,7 +321,7 @@ spec:
 {{- if gt ( .Values.statefulset.replicas | int64 ) 2 }}
         - name: lifecycle-scripts
           secret:
-            secretName: {{ template "redpanda.fullname" . }}-sts-lifecycle
+            secretName: {{ trunc 50 (include "redpanda.fullname" .) }}-sts-lifecycle
             defaultMode: 0774
 {{- end }}
         - name: datadir
@@ -394,18 +384,14 @@ spec:
           requiredDuringSchedulingIgnoredDuringExecution:
             - topologyKey: {{ .Values.statefulset.podAntiAffinity.topologyKey }}
               labelSelector:
-                matchLabels:
-                  app.kubernetes.io/name: {{ template "redpanda.name" . }}
-                  app.kubernetes.io/instance: {{ .Release.Name | quote }}
+                matchLabels: {{ include "statefulset-pod-labels" . | nindent 18 }}
       {{- else if eq .Values.statefulset.podAntiAffinity.type "soft" }}
           preferredDuringSchedulingIgnoredDuringExecution:
             - weight: {{ .Values.statefulset.podAntiAffinity.weight | int64 }}
               podAffinityTerm:
                 topologyKey: {{ .Values.statefulset.podAntiAffinity.topologyKey }}
                 labelSelector:
-                  matchLabels:
-                    app.kubernetes.io/name: {{ template "redpanda.name" . }}
-                    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+                  matchLabels: {{ include "statefulset-pod-labels" . | nindent 20 }}
       {{- end }}
     {{- else }}
       {{- toYaml .Values.statefulset.podAntiAffinity | nindent 10 }}
@@ -415,9 +401,7 @@ spec:
 {{- if semverCompare ">=1.16-0" .Capabilities.KubeVersion.GitVersion }}
       topologySpreadConstraints:
       - labelSelector:
-          matchLabels:
-            app.kubernetes.io/name: {{ template "redpanda.name" . }}
-            app.kubernetes.io/instance: {{ .Release.Name | quote }}
+          matchLabels: {{ include "statefulset-pod-labels" . | nindent 12 }}
   {{- with .Values.statefulset.topologySpreadConstraints }}
         maxSkew: {{ .maxSkew }}
         topologyKey: {{ .topologyKey }}
