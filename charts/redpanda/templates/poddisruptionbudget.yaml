@@ -14,24 +14,30 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
+{{- $budget := .Values.statefulset.budget.maxUnavailable -}}
+{{- /* to maintain quorum, raft cannot lose more than half its members */ -}}
+{{- $minReplicas := divf .Values.statefulset.replicas 2 | floor -}}
+{{- /* the lowest we can go is 1 so allow that always */ -}}
+{{- if and (gt $budget (float64 1)) (gt $budget $minReplicas) -}}
+  {{ fail "statefulset.budget.maxUnavailable is set too high to maintain quorum: $budget > $minReplicas" }}
+{{- end -}}
 
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: {{ template "redpanda.fullname" . }}
-  namespace: {{ .Release.Namespace | quote }}
+  namespace: {{ .Release.Namespace }}
   labels:
     helm.sh/chart: {{ template "redpanda.chart" . }}
     app.kubernetes.io/name: {{ template "redpanda.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
     app.kubernetes.io/component: {{ template "redpanda.name" . }}
   {{- with .Values.commonLabels }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
+  maxUnavailable: {{ $budget | int64 }}
   selector:
-    matchLabels:
-      app.kubernetes.io/name: {{ template "redpanda.name" . }}
-      app.kubernetes.io/instance: {{ .Release.Name | quote }}
-  maxUnavailable: {{ .Values.statefulset.budget.maxUnavailable | int64 }}
+    matchLabels: {{ (include "statefulset-pod-labels" .) | nindent 6 }}
+      redpanda.com/poddisruptionbudget: {{ template "redpanda.name" . }}

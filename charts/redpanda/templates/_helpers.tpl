@@ -466,26 +466,15 @@ advertised-host returns a json sring with the data neded for configuring the adv
 {{- end -}}
 
 {{/*
-Set default path for tiered storage cache or use one provided
-*/}}
-{{- define "tieredStorage.cacheDirectory" -}}
-{{- if empty .Values.storage.tieredConfig.cloud_storage_cache_directory }}
-  {{- printf "/var/lib/redpanda/data/cloud_storage_cache" }}
-{{- else }}
-  {{- .Values.storage.tieredConfig.cloud_storage_cache_directory }}
-{{- end }}
-{{- end }}
-
-{{/*
 "warnings" is an aggregate that returns a list of warnings to be shown in NOTES.txt
 */}}
 {{- define "warnings" -}}
   {{- $result := list -}}
   {{- $warnings := list "redpanda-memory-warning" -}}
   {{- range $t := $warnings -}}
-    {{- $warning := printf "**Warning**: %s" (include $t $) -}}
+    {{- $warning := include $t $ -}}
       {{- if $warning -}}
-        {{- $result = append $result $warning -}}
+        {{- $result = append $result (printf "**Warning**: %s" $warning) -}}
       {{- end -}}
   {{- end -}}
   {{/* fromJson cannot decode list */}}
