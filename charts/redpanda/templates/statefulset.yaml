@@ -322,7 +322,7 @@ spec:
 {{- if gt ( .Values.statefulset.replicas | int64 ) 2 }}
         - name: lifecycle-scripts
           secret:
-            secretName: {{ trunc 50 (include "redpanda.fullname" .) }}-sts-lifecycle
+            secretName: {{ (include "redpanda.fullname" . | trunc 50 ) }}-sts-lifecycle
             defaultMode: 0774
 {{- end }}
         - name: datadir
