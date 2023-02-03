@@ -120,6 +120,35 @@ entries:
           url: https://helm.sh/docs/intro/install/
     apiVersion: v2
     appVersion: v22.3.10
+    created: "2023-02-03T22:34:05.972191608Z"
+    description: Redpanda is the real-time engine for modern apps.
+    digest: 0a4981e58eb4c42c046d101f38081989ee5061ce8ea4f775e733c32dd6771b44
+    icon: https://images.ctfassets.net/paqvtpyf8rwu/3cYHw5UzhXCbKuR24GDFGO/73fb682e6157d11c10d5b2b5da1d5af0/skate-stand-panda.svg
+    kubeVersion: ^1.21.0-0
+    maintainers:
+    - name: redpanda-data
+      url: https://github.com/orgs/redpanda-data/people
+    name: redpanda
+    sources:
+    - https://github.com/redpanda-data/helm-charts
+    type: application
+    urls:
+    - https://github.com/redpanda-data/helm-charts/releases/download/redpanda-2.6.5/redpanda-2.6.5.tgz
+    version: 2.6.5
+  - annotations:
+      artifacthub.io/images: |
+        - name: redpanda
+          image: vectorized/redpanda:v22.3.10
+        - name: busybox
+          image: busybox:latest
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://docs.redpanda.com
+        - name: "Helm (>= 3.6.0)"
+          url: https://helm.sh/docs/intro/install/
+    apiVersion: v2
+    appVersion: v22.3.10
     created: "2023-01-31T20:05:10.086886296Z"
     description: Redpanda is the real-time engine for modern apps.
     digest: 576cb46a87c589b30230d6a8a7ac2adb47cbd38386fd2ad95a9b8672c93b68fa
@@ -1723,4 +1752,4 @@ entries:
     urls:
     - https://charts.redpanda.com/redpanda-0.1.0.tgz
     version: 0.1.0
-generated: "2023-01-31T20:05:10.087080496Z"
+generated: "2023-02-03T22:34:05.972400514Z"
