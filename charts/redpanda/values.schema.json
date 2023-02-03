@@ -5,6 +5,24 @@
     "image"
   ],
   "properties": {
+    "nameOverride": {
+      "type": "string"
+    },
+    "fullnameOverride": {
+      "type": "string"
+    },
+    "clusterDomain": {
+      "type": "string"
+    },
+    "commonLabels": {
+      "type": "object"
+    },
+    "nodeSelector": {
+      "type": "object"
+    },
+    "tolerations": {
+      "type": "array"
+    },
     "image": {
       "description": "Values used to define the container image to be used for Redpanda",
       "type": "object",

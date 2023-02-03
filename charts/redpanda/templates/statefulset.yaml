@@ -409,14 +409,14 @@ spec:
         whenUnsatisfiable: {{ .whenUnsatisfiable }}
   {{- end }}
 {{- end }}
-{{- with .Values.statefulset.nodeSelector }}
-      nodeSelector: {{- toYaml . | nindent 8 }}
+{{- with ( include "statefulset-nodeSelectors" . ) }}
+      nodeSelector: {{- . | nindent 8 }}
 {{- end }}
 {{- if .Values.statefulset.priorityClassName }}
       priorityClassName: {{ .Values.statefulset.priorityClassName }}
 {{- end }}
-{{- with .Values.statefulset.tolerations }}
-      tolerations: {{- toYaml . | nindent 8 }}
+{{- with ( include "statefulset-tolerations" . ) }}
+      tolerations: {{- . | nindent 8 }}
 {{- end }}
 {{- if or .Values.storage.persistentVolume.enabled (and (include "is-licensed" . | fromJson).bool .Values.storage.tieredConfig.cloud_storage_enabled .Values.storage.tieredStoragePersistentVolume.enabled) }}
   volumeClaimTemplates:

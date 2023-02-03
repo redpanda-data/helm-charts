@@ -33,6 +33,13 @@ clusterDomain: cluster.local
 # Additional labels added to all Kubernetes objects
 commonLabels: {}
 
+# Node selection constraints for scheduling Pods, can override this for statefulsets.
+# https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
+nodeSelector: {}
+# Taints to be tolerated by Pods, can override this for statefulsets.
+# https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+tolerations: []
+
 # Redpanda parameters
 #
 image:
@@ -484,12 +491,14 @@ statefulset:
     # Does not apply for other anti-affinity types.
     weight: 100
   # Node selection constraints for scheduling Pods of this StatefulSet.
+  # these override the global nodeSelector value
   # https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
   nodeSelector: {}
   # PriorityClassName given to Pods of this StatefulSet
   # https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass
   priorityClassName: ""
   # Taints to be tolerated by Pods of this StatefulSet.
+  # these override the global tolerations value
   # https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
   tolerations: []
   # https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
