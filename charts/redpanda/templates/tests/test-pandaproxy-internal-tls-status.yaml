@@ -14,7 +14,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- if and (include "tls-enabled" . | fromJson).bool (not (include "sasl-enabled" . | fromJson).bool) -}}
+{{- if and (include "http-internal-tls-enabled" . | fromJson).bool (not (include "sasl-enabled" . | fromJson).bool) -}}
+{{- $service := .Values.listeners.http -}}
+{{- $cert := get .Values.tls.certs $service.tls.cert -}}
 apiVersion: v1
 kind: Pod
 metadata:
@@ -44,8 +46,10 @@ spec:
         - curl
         - -svm3
         - --ssl-reqd
+  {{- if $cert.caEnabled }}
         - --cacert
-        - /etc/tls/certs/{{ .Values.listeners.admin.tls.cert }}/ca.crt
+        - /etc/tls/certs/{{ $service.tls.cert }}/ca.crt
+  {{- end }}
         - https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.http.port }}/brokers
       volumeMounts:
         - name: config
