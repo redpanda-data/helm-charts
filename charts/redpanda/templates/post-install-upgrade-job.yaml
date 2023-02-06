@@ -79,7 +79,7 @@ spec:
         args:
           - |
             set -e
-        {{- if $sasl.enabled }}
+        {{- if and $sasl.enabled (not (empty $sasl.secretRef ))  }}
             USERS_FILE=$(find /etc/secrets/users/* -print)
             while read p; do
               IFS=":" read -r USER_NAME PASSWORD MECHANISM <<< $p
@@ -130,7 +130,7 @@ spec:
             mountPath: {{ printf "/etc/tls/certs/%s" $name }}
           {{- end }}
         {{- end }}
-          {{- if $sasl.enabled }}
+          {{- if and $sasl.enabled (not (empty $sasl.secretRef )) }}
           - name: {{ $sasl.secretRef }}
             mountPath: "/etc/secrets/users"
             readOnly: true
@@ -158,7 +158,7 @@ spec:
             secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
         {{- end }}
       {{- end -}}
-      {{- if $sasl.enabled }}
+      {{- if and $sasl.enabled (not (empty $sasl.secretRef )) }}
         - name: {{ $sasl.secretRef }}
           secret:
             secretName: {{ $sasl.secretRef }}

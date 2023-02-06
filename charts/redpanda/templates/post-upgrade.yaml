@@ -84,7 +84,7 @@ spec:
             mountPath: {{ printf "/etc/tls/certs/%s" $name }}
   {{- end }}
 {{- end }}
-          {{- if $sasl.enabled }}
+          {{- if and $sasl.enabled (not (empty $sasl.secretRef )) }}
           - name: {{ $sasl.secretRef }}
             mountPath: "/etc/secrets/users"
             readOnly: true
@@ -112,7 +112,7 @@ spec:
             secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
   {{- end }}
 {{- end -}}
-        {{- if $sasl.enabled }}
+        {{- if and $sasl.enabled (not (empty $sasl.secretRef )) }}
         - name: {{ $sasl.secretRef }}
           secret:
             secretName: {{ $sasl.secretRef }}
