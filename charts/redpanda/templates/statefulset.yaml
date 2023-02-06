@@ -44,7 +44,7 @@ spec:
   replicas: {{ .Values.statefulset.replicas | int64 }}
   updateStrategy:
     {{- toYaml .Values.statefulset.updateStrategy | nindent 4 }}
-  podManagementPolicy: {{ .Values.statefulset.podManagementPolicy }}
+  podManagementPolicy: "Parallel"
   template:
     metadata:
       labels: {{ (include "statefulset-pod-labels" .) | nindent 8 }}

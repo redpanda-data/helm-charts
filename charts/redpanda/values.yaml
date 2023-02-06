@@ -447,7 +447,6 @@ statefulset:
   replicas: 3
   updateStrategy:
     type: RollingUpdate
-  podManagementPolicy: Parallel
   budget:
     maxUnavailable: 1
   # Additional annotations to apply to the Pods of this StatefulSet.
