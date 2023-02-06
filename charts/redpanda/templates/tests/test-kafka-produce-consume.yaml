@@ -58,9 +58,11 @@ spec:
           - -c
           - |
             set -e
+          {{- if and (not $sasl.enabled) (and $sasl.enabled (not (empty $sasl.secretRef ))) }}
             rpk topic create produce.consume.test.$POD_NAME {{ include "rpk-topic-flags" . }}
             echo "Pandas are awesome!" | rpk topic produce produce.consume.test.$POD_NAME {{ include "rpk-topic-flags" . }}
             rpk topic consume produce.consume.test.$POD_NAME -n 1 {{ include "rpk-topic-flags" . }} | grep "Pandas are awesome!"
+          {{- end }}
           volumeMounts:
             - name: config
               mountPath: /etc/redpanda
@@ -70,7 +72,7 @@ spec:
               mountPath: {{ printf "/etc/tls/certs/%s" $name }}
   {{- end }}
 {{- end }}
-            {{- if $sasl.enabled }}
+            {{- if and $sasl.enabled (not (empty $sasl.secretRef )) }}
             - name: {{ $sasl.secretRef }}
               mountPath: "/etc/secrets/users"
               readOnly: true
@@ -82,7 +84,7 @@ spec:
             name: {{ template "redpanda.fullname" . }}
         - name: config
           emptyDir: {}
-        {{- if $sasl.enabled }}
+        {{- if and $sasl.enabled  (not (empty $sasl.secretRef )) }}
         - name: {{ $sasl.secretRef }}
           secret:
             secretName: {{ $sasl.secretRef }}
