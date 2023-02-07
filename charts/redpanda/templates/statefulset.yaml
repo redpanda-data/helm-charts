@@ -275,7 +275,7 @@ spec:
             - start
             - --smp={{ .Values.resources.cpu.cores }}
             - --memory={{ template "redpanda-memory" . }}M
-            - --reserve-memory={{ template "redpanda-reserve-memory" . }}
+            - --reserve-memory={{ template "redpanda-reserve-memory" . }}M
             - --default-log-level={{ .Values.logging.logLevel }}
             - --advertise-rpc-addr={{ $internalAdvertiseAddress }}:{{ .Values.listeners.rpc.port }}
           ports:
