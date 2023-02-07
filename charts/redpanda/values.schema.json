@@ -493,7 +493,6 @@
       "required": [
         "replicas",
         "updateStrategy",
-        "podManagementPolicy",
         "budget",
         "annotations",
         "startupProbe",
@@ -522,10 +521,6 @@
               "pattern": "^(RollingUpdate|OnDelete)$"
             }
           }
-        },
-        "podManagementPolicy": {
-          "type": "string",
-          "pattern": "^(OrderedReady|Parallel)$"
         },
         "budget": {
           "type": "object",
