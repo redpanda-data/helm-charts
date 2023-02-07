@@ -65,27 +65,30 @@ rackAwareness:
   # this if you have your own custom Node annotation to use instead.
   nodeAnnotation: topology.kubernetes.io/zone
 
-#
 # Authentication
 auth:
-  #
   # SASL configuration
   sasl:
+    # When enabling SASL, you are required to have a secret available and referenced in secretRef
     enabled: false
-    # user list
-    # TODO create user at startup
-    users:
-      - name: admin
-        # Password for the user. This will be used to generate a secret
-        # password: password
-        # If password isn't given, then the secretName must point to an already existing secret
-        # secretName: adminPassword
-        # if the mecanism is unspecified, it defaults to .Values.auth.sasl.mechanism
-        # mechanism: SCRAM-SHA-512
     # if unspecified, mechanism defaults to SCRAM-SHA-512
-    # mechanism: SCRAM-SHA-512
+    mechanism: SCRAM-SHA-512
+    # A secret is expected to exist to contain a file with users in the following format:
+    # <userName>:<password>:<mechanism>
+    # You can create these users in the following way:
+    # create a file with one entry per line in the following format:
+    # <username>:<password>:<mechanism>
+    # Ensure there is an empty line at the end of the file.
+    # kubectl -n redpanda create secret generic my-users --from-file=users.txt
+    # Then secretRef is required, regardless if created a users list (below) or not
+    secretRef: "redpanda-users"
+    # optional list of users
+    # If not an empty list, these users will be created in a secret whose name is defined in "secretRef"
+    users:
+    - name: admin
+      password: change-me
+      mechanism: SCRAM-SHA-512
 
-#
 # TLS configuration
 tls:
   # Enable global TLS, which turns on TLS by default for all listeners

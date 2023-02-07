@@ -90,65 +90,34 @@
         "sasl": {
           "type": "object",
           "required": [
-            "enabled",
-            "users"
+            "enabled"
           ],
-          "if": {
-            "properties": {
-              "enabled": {
-                "enum": [
-                  true
-                ]
-              }
-            }
-          },
-          "then": {
-            "properties": {
-              "enabled": {
-                "type": "boolean"
-              },
-              "users": {
-                "type": "array",
-                "minItems": 1,
-                "items": {
-                  "properties": {
-                    "name": {
-                      "type": "string"
-                    },
-                    "password": {
-                      "type": "string"
-                    },
-                    "mechanism": {
-                      "type": "string",
-                      "pattern": "^(SCRAM-SHA-512|SCRAM-SHA-256)$"
-                    }
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "mechanism": {
+              "type": "string"
+            },
+            "secretRef": {
+              "type": "string"
+            },
+            "users": {
+              "type": "array",
+              "minItems": 0,
+              "items": {
+                "properties": {
+                  "name": {
+                    "type": "string"
                   },
-                  "oneOf": [
-                    {
-                      "required": [
-                        "name",
-                        "password"
-                      ]
-                    },
-                    {
-                      "required": [
-                        "name",
-                        "secretName"
-                      ]
-                    }
-                  ]
+                  "password": {
+                    "type": "string"
+                  },
+                  "mechanism": {
+                    "type": "string",
+                    "pattern": "^(SCRAM-SHA-512|SCRAM-SHA-256)$"
+                  }
                 }
-              },
-              "mechanism": {
-                "type": "string",
-                "pattern": "^(SCRAM-SHA-512|SCRAM-SHA-256)$"
-              }
-            }
-          },
-          "else": {
-            "properties": {
-              "enabled": {
-                "type": "boolean"
               }
             }
           }

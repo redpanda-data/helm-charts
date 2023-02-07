@@ -1,6 +1,7 @@
 {{- if .Values.post_upgrade_job.enabled }}
 {{- if (include "redpanda-atleast-22-1-1" . | fromJson).bool }}
-{{- $rpkFlags := include "rpk-common-flags" . }}
+{{- $rpkFlags := include "rpk-flags-no-sasl" . }}
+{{- $sasl := .Values.auth.sasl }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -83,6 +84,11 @@ spec:
             mountPath: {{ printf "/etc/tls/certs/%s" $name }}
   {{- end }}
 {{- end }}
+          {{- if and $sasl.enabled (not (empty $sasl.secretRef )) }}
+          - name: {{ $sasl.secretRef }}
+            mountPath: "/etc/secrets/users"
+            readOnly: true
+          {{- end}}
       volumes:
         - name: {{ template "redpanda.fullname" . }}
           configMap:
@@ -106,5 +112,11 @@ spec:
             secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
   {{- end }}
 {{- end -}}
+        {{- if and $sasl.enabled (not (empty $sasl.secretRef )) }}
+        - name: {{ $sasl.secretRef }}
+          secret:
+            secretName: {{ $sasl.secretRef }}
+            optional: false
+        {{- end }}
 {{- end }}
 {{- end }}

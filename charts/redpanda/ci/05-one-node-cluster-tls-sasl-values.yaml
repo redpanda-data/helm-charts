@@ -19,9 +19,8 @@ tls:
 auth:
   sasl:
     enabled: true
-    users:
-      - name: admin
-        password: hunter2
+    secretRef: "redpanda-users"
+
 storage:
   persistentVolume:
     size: 3Gi
