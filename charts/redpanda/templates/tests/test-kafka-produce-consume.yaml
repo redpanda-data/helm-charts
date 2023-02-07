@@ -48,7 +48,7 @@ spec:
           image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}
           env:
             - name: REDPANDA_BROKERS
-              value: "{{ include "redpanda.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.listeners.kafka.port }}"
+              value: "{{ include "redpanda.fullname" . }}.{{ .Release.Namespace }}.svc.{{ .Values.clusterDomain | trimSuffix "." }}:{{ .Values.listeners.kafka.port }}"
             - name: POD_NAME
               valueFrom:
                 fieldRef:
