@@ -26,60 +26,55 @@ and tested in a test.
 {{ .rpk }} acl user create myuser --new-password changeme --mechanism {{ include "sasl-mechanism" . }} {{ include "rpk-flags-no-sasl" . }}
 {{- end -}}
 
+{{/* tested in tests/test-kafka-sasl-status.yaml */}}
 {{- define "rpk-acl-create" -}}
+{{- $dummySasl := .dummySasl -}}
+{{- if $dummySasl -}}
 {{ .rpk }} acl create --allow-principal 'myuser' --allow-host '*' --operation all --topic 'test-topic' {{ include "rpk-flags-no-admin-no-sasl" . }} {{ include "rpk-dummy-sasl" . }}
-{{- end -}}
-
-{{- define "rpk-cluster-info" -}}
-{{ .rpk }} cluster info {{ include "rpk-flags-no-admin-no-sasl" . }} {{ include "rpk-dummy-sasl" . }}
-{{- end -}}
-
-{{- define "rpk-topic-create" -}}
-{{- $flags := fromJson (include "rpk-flags" .) -}}
-{{ .rpk }} topic create test-topic {{ include "rpk-flags-no-admin-no-sasl" . }} {{ include "rpk-dummy-sasl" . }}
-{{- end -}}
-
-{{- define "rpk-topic-describe" -}}
-{{- $flags := fromJson (include "rpk-flags" .) -}}
-{{ .rpk }} topic describe test-topic {{ include "rpk-flags-no-admin-no-sasl" . }} {{ include "rpk-dummy-sasl" . }}
-{{- end -}}
-
-{{- define "rpk-topic-delete" -}}
-{{- $flags := fromJson (include "rpk-flags" .) -}}
-{{ .rpk }} topic delete test-topic {{ include "rpk-flags-no-admin-no-sasl" . }} {{ include "rpk-dummy-sasl" . }}
-{{- end -}}
-
-
-{{/* tested in tests/test-kafka-sasl-status.yaml */}}
-{{- define "rpk-acl-user-create-no-dummy-sasl" -}}
-{{ .rpk }} acl user create myuser --new-password changeme --mechanism {{ include "sasl-mechanism" . }} {{ include "rpk-flags-no-sasl" . }}
-{{- end -}}
-
-{{/* tested in tests/test-kafka-sasl-status.yaml */}}
-{{- define "rpk-acl-create-no-dummy-sasl" -}}
+{{- else -}}
 {{ .rpk }} acl create --allow-principal 'myuser' --allow-host '*' --operation all --topic 'test-topic' {{ include "rpk-flags-no-admin" . }}
 {{- end -}}
+{{- end -}}
 
 {{/* tested in tests/test-kafka-sasl-status.yaml */}}
-{{- define "rpk-cluster-info-no-dummy-sasl" -}}
+{{- define "rpk-cluster-info" -}}
+{{- $dummySasl := .dummySasl -}}
+{{- if $dummySasl -}}
+{{ .rpk }} cluster info {{ include "rpk-flags-no-admin-no-sasl" . }} {{ include "rpk-dummy-sasl" . }}
+{{- else -}}
 {{ .rpk }} cluster info {{ include "rpk-flags-no-admin" . }}
 {{- end -}}
+{{- end -}}
 
 {{/* tested in tests/test-kafka-sasl-status.yaml */}}
-{{- define "rpk-topic-create-no-dummy-sasl" -}}
+{{- define "rpk-topic-create" -}}
 {{- $flags := fromJson (include "rpk-flags" .) -}}
+{{- $dummySasl := .dummySasl -}}
+{{- if $dummySasl -}}
+{{ .rpk }} topic create test-topic {{ include "rpk-flags-no-admin-no-sasl" . }} {{ include "rpk-dummy-sasl" . }}
+{{- else -}}
 {{ .rpk }} topic create test-topic {{ include "rpk-flags-no-admin" . }}
 {{- end -}}
+{{- end -}}
 
 {{/* tested in tests/test-kafka-sasl-status.yaml */}}
-{{- define "rpk-topic-describe-no-dummy-sasl" -}}
+{{- define "rpk-topic-describe" -}}
 {{- $flags := fromJson (include "rpk-flags" .) -}}
+{{- $dummySasl := .dummySasl -}}
+{{- if $dummySasl -}}
+{{ .rpk }} topic describe test-topic {{ include "rpk-flags-no-admin-no-sasl" . }} {{ include "rpk-dummy-sasl" . }}
+{{- else -}}
 {{ .rpk }} topic describe test-topic {{ include "rpk-flags-no-admin" . }}
 {{- end -}}
-
-{{/* tested in tests/test-kafka-sasl-status.yaml */}}
-{{- define "rpk-topic-delete-no-dummy-sasl" -}}
-{{- $flags := fromJson (include "rpk-flags" .) -}}
-{{ .rpk }} topic delete test-topic {{ include "rpk-flags-no-admin" . }}
 {{- end -}}
 
+{{/* tested in tests/test-kafka-sasl-status.yaml */}}
+{{- define "rpk-topic-delete" -}}
+{{- $flags := fromJson (include "rpk-flags" .) -}}
+{{- $dummySasl := $.dummySasl -}}
+{{- if $dummySasl -}}
+{{ .rpk }} topic delete test-topic {{ include "rpk-flags-no-admin-no-sasl" . }} {{ include "rpk-dummy-sasl" . }}
+{{- else -}}
+{{ .rpk }} topic delete test-topic {{ include "rpk-flags-no-admin" . }}
+{{- end -}}
+{{- end -}}

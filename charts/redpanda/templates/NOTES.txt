@@ -52,6 +52,8 @@ The pods will rollout in a few seconds. To check the status:
 Try some sample commands:
 
 {{- if and $anySASL }}
+{{- $_ := set $rpk "dummySasl" true }}
+
 Create a user:
 
   {{ include "rpk-acl-user-create" $rpk }}
