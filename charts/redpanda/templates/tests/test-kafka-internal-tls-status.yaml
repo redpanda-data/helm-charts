@@ -14,7 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- if and (include "tls-enabled" . | fromJson).bool (not (include "sasl-enabled" . | fromJson).bool) -}}
+{{- if and (include "kafka-internal-tls-enabled" . | fromJson).bool (not (include "sasl-enabled" . | fromJson).bool) -}}
 apiVersion: v1
 kind: Pod
 metadata:
@@ -44,18 +44,32 @@ spec:
       - /bin/bash
       - -c
       - >
+  {{- $service := .Values.listeners.kafka -}}
+  {{- $cert := get .Values.tls.certs $service.tls.cert }}
+  {{- if (include "kafka-internal-tls-enabled" . | fromJson).bool }}
         rpk cluster info
         --brokers {{ include "redpanda.fullname" .}}-0.{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.kafka.port }}
-        --tls-enabled --tls-truststore /etc/tls/certs/{{ .Values.listeners.kafka.tls.cert }}/ca.crt
+        --tls-enabled
+    {{- if $cert.caEnabled }}
+        --tls-truststore /etc/tls/certs/{{ $service.tls.cert }}/ca.crt
+    {{- else }}
+        {{- /* This is a required field so we use the default in the redpanda debian container */}}
+        --tls-truststore /etc/ssl/certs/ca-certificates.crt
+    {{- end }}
+  {{- end }}
+      resources:
+{{- toYaml .Values.statefulset.resources | nindent 12 }}
       volumeMounts:
+        - name: {{ template "redpanda.fullname" . }}
+          mountPath: /tmp/base-config
         - name: config
           mountPath: /etc/redpanda
+{{- if (include "tls-enabled" . | fromJson).bool }}
   {{- range $name, $cert := .Values.tls.certs }}
         - name: redpanda-{{ $name }}-cert
           mountPath: {{ printf "/etc/tls/certs/%s" $name }}
   {{- end }}
-      resources:
-{{- toYaml .Values.statefulset.resources | nindent 12 }}
+{{- end }}
   volumes:
     - name: {{ template "redpanda.fullname" . }}
       configMap:

@@ -1,0 +1,60 @@
+tls:
+  certs:
+    cert2:
+      caEnabled: false
+listeners:
+  kafka:
+    tls:
+      enabled: false
+    external:
+      ext2:
+        port: 19094
+        advertisedPorts:
+          - 31292
+        tls:
+          enabled: true
+      ext3:
+        port: 29094
+        advertisedPorts:
+          - 31392
+        tls:
+          enabled: true
+          cert: cert2
+          requireClientAuth: true
+  schemaRegistry:
+    tls:
+      enabled: false
+    external:
+      ext2:
+        port: 18081
+        advertisedPorts:
+          - 30181
+        tls:
+          enabled: true
+      ext3:
+        port: 28081
+        advertisedPorts:
+          - 30281
+        tls:
+          enabled: true
+          cert: cert2
+          requireClientAuth: true
+  http:
+    tls:
+      enabled: false
+    external:
+      ext2:
+        port: 18083
+        advertisedPorts:
+          - 30183
+        tls:
+          enabled: true
+      ext3:
+        port: 28083
+        advertisedPorts:
+          - 30283
+        tls:
+          enabled: true
+          cert: cert2
+          requireClientAuth: true
+
