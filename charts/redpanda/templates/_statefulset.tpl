@@ -44,3 +44,26 @@ Set default path for tiered storage cache or use one provided
   {{- .Values.storage.tieredConfig.cloud_storage_cache_directory -}}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Set tolerations for statefulset, defaults to global tolerations if not defined in statefulset
+*/}}
+{{- define "statefulset-tolerations" -}}
+{{- $tolerations := .Values.tolerations -}}
+{{- if not ( empty .Values.statefulset.tolerations ) -}}
+{{- $tolerations = .Values.statefulset.tolerations -}}
+{{- end -}}
+{{- toYaml $tolerations -}}
+{{- end -}}
+
+{{/*
+Set nodeSelector for statefulset, defaults to global nodeSelector if not defined in statefulset
+*/}}
+{{- define "statefulset-nodeSelectors" -}}
+{{- $nodeSelectors := .Values.nodeSelector -}}
+{{- if not ( empty .Values.statefulset.nodeSelector ) -}}
+{{- $nodeSelectors = .Values.statefulset.nodeSelector -}}
+{{- end -}}
+{{- toYaml $nodeSelectors -}}
+{{- end -}}
+
