@@ -46,7 +46,6 @@ spec:
       - -c
       - |
         set -xe
-      {{- if or (not $sasl.enabled) (and $sasl.enabled (not (empty $sasl.secretRef ))) }}
         rpk acl user delete myuser {{ include "rpk-common-flags" . }}
         sleep 3
 
@@ -58,7 +57,6 @@ spec:
         {{ include "rpk-topic-describe" $rpk }}
         {{ include "rpk-topic-delete" $rpk }}
         rpk acl user delete myuser {{ include "rpk-common-flags" . }}
-      {{- end }}
       volumeMounts:
         - name: config
           mountPath: /etc/redpanda
@@ -68,7 +66,7 @@ spec:
           mountPath: {{ printf "/etc/tls/certs/%s" $name }}
   {{- end }}
 {{- end }}
-        {{- if and $sasl.enabled (not (empty $sasl.secretRef )) }}
+        {{- if (not (empty $sasl.secretRef )) }}
         - name: {{ $sasl.secretRef }}
           mountPath: "/etc/secrets/users"
           readOnly: true
@@ -81,7 +79,7 @@ spec:
         name: {{ template "redpanda.fullname" . }}
     - name: config
       emptyDir: {}
-    {{- if and $sasl.enabled (not (empty $sasl.secretRef )) }}
+    {{- if (not (empty $sasl.secretRef )) }}
     - name: {{ $sasl.secretRef }}
       secret:
         secretName: {{ $sasl.secretRef }}
