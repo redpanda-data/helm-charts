@@ -58,7 +58,7 @@ spec:
           - -c
           - |
             set -e
-          {{- if and (not $sasl.enabled) (and $sasl.enabled (not (empty $sasl.secretRef ))) }}
+          {{- if or (not $sasl.enabled) (and $sasl.enabled (not (empty $sasl.secretRef ))) }}
             rpk topic create produce.consume.test.$POD_NAME {{ include "rpk-topic-flags" . }}
             echo "Pandas are awesome!" | rpk topic produce produce.consume.test.$POD_NAME {{ include "rpk-topic-flags" . }}
             rpk topic consume produce.consume.test.$POD_NAME -n 1 {{ include "rpk-topic-flags" . }} | grep "Pandas are awesome!"
