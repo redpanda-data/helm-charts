@@ -1,4 +1,5 @@
 {{- if (include "tls-enabled" . | fromJson).bool }}
+  {{- $root := deepCopy . }}
   {{- $service := include "redpanda.fullname" . -}}
   {{- $ns := .Release.Namespace -}}
   {{- $domain := .Values.clusterDomain | trimSuffix "." -}}
@@ -13,7 +14,7 @@ metadata:
   name: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
   namespace: {{ $ns | quote }}
   labels:
-{{- with include "full.labels" . }}
+{{- with include "full.labels" $root }}
   {{- . | nindent 4 }}
 {{- end }}
 spec:
