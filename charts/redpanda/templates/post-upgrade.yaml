@@ -8,20 +8,13 @@ metadata:
   name: {{ template "redpanda.fullname" . }}-post-upgrade
   namespace: {{ .Release.Namespace | quote }}
   labels:
-    helm.sh/chart: {{ template "redpanda.chart" . }}
-    app.kubernetes.io/name: {{ template "redpanda.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/component: {{ template "redpanda.name" . }}
-{{- with .Values.commonLabels }}
-  {{- toYaml . | nindent 4 }}
+{{- with include "full.labels" . }}
+  {{- . | nindent 4 }}
 {{- end }}
 {{- with .Values.post_upgrade_job.labels }}
   {{- toYaml . | nindent 4 }}
 {{- end }}
   annotations:
-    # This is what defines this resource as a hook. Without this line, the
-    # job is considered part of the release.
     "helm.sh/hook": post-upgrade
     "helm.sh/hook-weight": "-5"
 {{- with .Values.post_upgrade_job.annotations }}
