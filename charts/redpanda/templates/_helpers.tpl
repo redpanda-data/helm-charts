@@ -34,6 +34,19 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 {{/*
+full helm labels + common labels
+*/}}
+{{- define "full.labels" -}}
+{{ $required := dict
+"helm.sh/chart" ( include "redpanda.chart" . )
+"app.kubernetes.io/name" ( include "redpanda.name" . )
+"app.kubernetes.io/instance" ( .Release.Name  )
+"app.kubernetes.io/managed-by" ( .Release.Service )
+"app.kubernetes.io/component" ( include "redpanda.name" . ) }}
+{{- toYaml ( merge $required .Values.commonLabels ) }}
+{{- end -}}
+
+{{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "redpanda.chart" -}}

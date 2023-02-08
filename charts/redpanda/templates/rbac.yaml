@@ -21,14 +21,9 @@ kind: ClusterRole
 metadata:
   name: {{ include "redpanda.fullname" . }}
   labels:
-    helm.sh/chart: {{ template "redpanda.chart" . }}
-    app.kubernetes.io/name: {{ template "redpanda.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/component: {{ template "redpanda.name" . }}
-  {{- with .Values.commonLabels }}
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+{{- with include "full.labels" . }}
+  {{- . | nindent 4 }}
+{{- end }}
   {{- with .Values.serviceAccount.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -47,14 +42,9 @@ kind: ClusterRole
 metadata:
   name: {{ include "redpanda.fullname" . }}-rpk-bundle
   labels:
-    helm.sh/chart: {{ template "redpanda.chart" . }}
-    app.kubernetes.io/name: {{ template "redpanda.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/component: {{ template "redpanda.name" . }}
-  {{- with .Values.commonLabels }}
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+{{- with include "full.labels" . }}
+  {{- . | nindent 4 }}
+{{- end }}
   {{- with .Values.serviceAccount.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -83,14 +73,9 @@ kind: ClusterRoleBinding
 metadata:
   name: {{ include "redpanda.fullname" . }}
   labels:
-    helm.sh/chart: {{ template "redpanda.chart" . }}
-    app.kubernetes.io/name: {{ template "redpanda.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/component: {{ template "redpanda.name" . }}
-  {{- with .Values.commonLabels }}
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+{{- with include "full.labels" . }}
+  {{- . | nindent 4 }}
+{{- end }}
   {{- with .Values.serviceAccount.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -109,14 +94,9 @@ kind: ClusterRoleBinding
 metadata:
   name: {{ include "redpanda.fullname" . }}-rpk-bundle
   labels:
-    helm.sh/chart: {{ template "redpanda.chart" . }}
-    app.kubernetes.io/name: {{ template "redpanda.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/component: {{ template "redpanda.name" . }}
-  {{- with .Values.commonLabels }}
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+{{- with include "full.labels" . }}
+  {{- . | nindent 4 }}
+{{- end }}
   {{- with .Values.serviceAccount.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}

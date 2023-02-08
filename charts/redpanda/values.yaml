@@ -31,8 +31,8 @@ fullnameOverride: ""
 # Default kubernetes cluster domain
 clusterDomain: cluster.local
 # Additional labels added to all Kubernetes objects
+# e.g., my.k8s.service: redpanda
 commonLabels: {}
-
 # Node selection constraints for scheduling Pods, can override this for statefulsets.
 # https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
 nodeSelector: {}

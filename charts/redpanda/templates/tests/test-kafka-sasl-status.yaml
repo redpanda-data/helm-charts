@@ -20,20 +20,16 @@ limitations under the License.
 {{- $rpk := deepCopy . }}
 {{- $sasl := .Values.auth.sasl }}
 {{- $_ := set $rpk "rpk" "rpk" }}
+{{- $_ := set $rpk "dummySasl" false }}
 apiVersion: v1
 kind: Pod
 metadata:
   name: "{{ include "redpanda.fullname" . }}-test-kafka-sasl-status"
   namespace: {{ .Release.Namespace | quote }}
   labels:
-    helm.sh/chart: {{ template "redpanda.chart" . }}
-    app.kubernetes.io/name: {{ template "redpanda.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/component: {{ template "redpanda.name" . }}
-  {{- with .Values.commonLabels }}
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+{{- with include "full.labels" . }}
+  {{- . | nindent 4 }}
+{{- end }}
   annotations:
     "helm.sh/hook": test
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
@@ -50,17 +46,17 @@ spec:
       - -c
       - |
         set -xe
-      {{- if and (not $sasl.enabled) (and $sasl.enabled (not (empty $sasl.secretRef ))) }}
+      {{- if or (not $sasl.enabled) (and $sasl.enabled (not (empty $sasl.secretRef ))) }}
         rpk acl user delete myuser {{ include "rpk-common-flags" . }}
         sleep 3
 
-        {{ include "rpk-cluster-info-no-dummy-sasl" $rpk }}
-        {{ include "rpk-acl-user-create-no-dummy-sasl" $rpk }}
-        {{ include "rpk-acl-create-no-dummy-sasl" $rpk }}
+        {{ include "rpk-cluster-info" $rpk }}
+        {{ include "rpk-acl-user-create" $rpk }}
+        {{ include "rpk-acl-create" $rpk }}
         sleep 3
-        {{ include "rpk-topic-create-no-dummy-sasl" $rpk }}
-        {{ include "rpk-topic-describe-no-dummy-sasl" $rpk }}
-        {{ include "rpk-topic-delete-no-dummy-sasl" $rpk }}
+        {{ include "rpk-topic-create" $rpk }}
+        {{ include "rpk-topic-describe" $rpk }}
+        {{ include "rpk-topic-delete" $rpk }}
         rpk acl user delete myuser {{ include "rpk-common-flags" . }}
       {{- end }}
       volumeMounts:

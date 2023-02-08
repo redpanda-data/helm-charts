@@ -29,13 +29,8 @@ kind: StatefulSet
 metadata:
   name: {{ template "redpanda.fullname" . }}
   labels:
-    helm.sh/chart: {{ template "redpanda.chart" . }}
-    app.kubernetes.io/name: {{ template "redpanda.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/component: {{ template "redpanda.name" . }}
-{{- with .Values.commonLabels }}
-  {{- toYaml . | nindent 4 }}
+{{- with include "full.labels" . }}
+  {{- . | nindent 4 }}
 {{- end }}
 spec:
   selector:

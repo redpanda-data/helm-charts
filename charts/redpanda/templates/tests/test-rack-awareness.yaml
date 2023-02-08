@@ -22,14 +22,9 @@ metadata:
   name: {{ include "redpanda.fullname" . }}-test-rack-awareness
   namespace: {{ .Release.Namespace | quote }}
   labels:
-    helm.sh/chart: {{ template "redpanda.chart" . }}
-    app.kubernetes.io/name: {{ template "redpanda.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-    app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-    app.kubernetes.io/component: {{ template "redpanda.name" . }}
-  {{- with .Values.commonLabels }}
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+{{- with include "full.labels" . }}
+  {{- . | nindent 4 }}
+{{- end }}
   annotations:
     "helm.sh/hook": test
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
