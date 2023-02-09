@@ -1,3 +1,5 @@
+{{- if .Values.configmap.create -}}
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -6,6 +8,7 @@ metadata:
     {{- include "console.labels" . | nindent 4 }}
 data:
   config.yaml: |
+    # from .Values.console.config
     {{- tpl (toYaml .Values.console.config) $ | nindent 4 }}
   {{- if .Values.console.roles }}
   roles.yaml: |
@@ -18,3 +21,4 @@ data:
     roleBindings:
       {{- tpl (toYaml .Values.console.roleBindings) $ | nindent 6 }}
   {{- end }}
+{{- end }}

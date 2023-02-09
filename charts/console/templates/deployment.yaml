@@ -1,3 +1,4 @@
+{{- if .Values.deployment.create -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -45,12 +46,18 @@ spec:
             {{- end }}
         {{- end }}
         {{- with .Values.extraVolumes }}
-        {{- tpl . $ | nindent 8 }}
+          {{- toYaml . | nindent 8 }}
         {{- end }}
       containers:
         - name: {{ .Chart.Name }}
+        {{- with .Values.deployment.command }}
+          command: {{ toJson . }}
+        {{- end }}
           args:
             - "--config.filepath=/etc/console/configs/config.yaml"
+        {{- with .Values.deployment.extraArgs }}
+            {{ . | toYaml | nindent 12 }}
+        {{- end }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ include "console.imageRegistry" . }}/{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -76,7 +83,7 @@ spec:
               {{- end }}
             {{- end }}
             {{- with .Values.extraVolumeMounts }}
-            {{- tpl . $ | nindent 12 }}
+              {{- toYaml . | nindent 12 }}
             {{- end }}
           livenessProbe:
             initialDelaySeconds: {{ .Values.livenessProbe.initialDelaySeconds }}
@@ -100,7 +107,7 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
             {{- with .Values.extraEnv }}
-            {{- tpl . $ | nindent 12 }}
+              {{- toYaml . | nindent 12 }}
             {{- end }}
             {{- if .Values.secret.create }}
             {{- if .Values.secret.kafka.saslPassword }}
@@ -233,13 +240,13 @@ spec:
               value: "/etc/console/secrets/redpanda-admin-api-tls-cert"
             {{- end }}
             {{- end }}
-          envFrom:
             {{- with .Values.extraEnvFrom }}
-            {{- tpl . $ | nindent 12 }}
+          envFrom:
+              {{- toYaml . | nindent 12 }}
             {{- end }}
         {{- with .Values.extraContainers }}
         {{- toYaml . | nindent 8 }}
-        {{- end }}           
+        {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -252,3 +259,4 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+{{- end -}}
