@@ -524,6 +524,9 @@ statefulset:
   securityContext:
     fsGroup: 101
     runAsUser: 101
+  initContainerImage:
+    repository: busybox
+    tag: latest
 
 # Service account management
 serviceAccount:
