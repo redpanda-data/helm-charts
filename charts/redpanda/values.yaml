@@ -178,6 +178,9 @@ resources:
     # Overprovisioned means Redpanda won't assume it has all of the provisioned CPU.
     # This should be true unless the container has CPU affinity (eg. min and max above are equal).
     # Equivalent to: --idle-poll-time-us 0 --thread-affinity 0 --poll-aio 0
+    #
+    # If the value of full cores in resources.cpu.cores is less than 1, this
+    # will be automatically set to true
     # overprovisioned: false
   #
   memory:

@@ -268,7 +268,7 @@ spec:
             - rpk
             - redpanda
             - start
-            - --smp={{ .Values.resources.cpu.cores }}
+            - --smp={{ include "redpanda-smp" . }}
             - --memory={{ template "redpanda-memory" . }}M
             - --reserve-memory={{ template "redpanda-reserve-memory" . }}M
             - --default-log-level={{ .Values.logging.logLevel }}
