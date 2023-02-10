@@ -265,14 +265,15 @@ spec:
             periodSeconds: {{ .Values.statefulset.readinessProbe.periodSeconds }}
             successThreshold: {{ .Values.statefulset.readinessProbe.initialDelaySeconds }}
           command:
-            - rpk
-            - redpanda
-            - start
-            - --smp={{ .Values.resources.cpu.cores }}
-            - --memory={{ template "redpanda-memory" . }}M
-            - --reserve-memory={{ template "redpanda-reserve-memory" . }}M
-            - --default-log-level={{ .Values.logging.logLevel }}
-            - --advertise-rpc-addr={{ $internalAdvertiseAddress }}:{{ .Values.listeners.rpc.port }}
+            - bash
+            - -c
+            - |
+              rpk redpanda start --smp={{ .Values.resources.cpu.cores }} \
+                --memory={{ template "redpanda-memory" . }}M \
+                --reserve-memory={{ template "redpanda-reserve-memory" . }}M \
+                --default-log-level={{ .Values.logging.logLevel }} \
+                --advertise-rpc-addr={{ $internalAdvertiseAddress }}:{{ .Values.listeners.rpc.port }} |
+              sed 's@RP_BOOTSTRAP_USER[^ ]\+@<censored>@g'
           ports:
 {{- range $name, $listener := .Values.listeners }}
             - name: {{ lower $name }}
@@ -304,6 +305,11 @@ spec:
               mountPath: {{ printf "/etc/tls/certs/%s" $name }}
   {{- end }}
 {{- end }}
+{{- if and .Values.auth.sasl.enabled (not (empty .Values.auth.sasl.secretRef )) }}
+            - name: {{ .Values.auth.sasl.secretRef }}
+              mountPath: /etc/secrets/users
+              readOnly: true
+{{- end}}
           resources:
 {{- if hasKey .Values.resources.memory "min" }}
             requests:
@@ -365,6 +371,12 @@ spec:
             secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
   {{- end }}
 {{- end }}
+        {{- if and .Values.auth.sasl.enabled (not (empty .Values.auth.sasl.secretRef )) }}
+        - name: {{ .Values.auth.sasl.secretRef }}
+          secret:
+            secretName: {{ .Values.auth.sasl.secretRef }}
+            optional: false
+        {{- end }}
 {{- if or .Values.statefulset.nodeAffinity .Values.statefulset.podAffinity .Values.statefulset.podAntiAffinity }}
       affinity:
   {{- with .Values.statefulset.nodeAffinity }}
