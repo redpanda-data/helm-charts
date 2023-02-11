@@ -309,7 +309,7 @@ Generate configuration needed for rpk
 Returns the value of "resources.cpu.cores" in millicores.
 */}}
 {{- define "redpanda-cores-in-millis" -}}
-  {{- $cores := .Values.resources.cpu.cores }}
+  {{- $cores := .Values.resources.cpu.cores -}}
   {{- if $cores -}}
     {{- if (hasSuffix "m" (toString $cores)) -}}
       {{- trimSuffix "m" .Values.resources.cpu.cores | int -}}
@@ -327,7 +327,7 @@ the "resources.cpu.cores" is less than 1 core.
 */}}
 {{- define "redpanda-smp" -}}
   {{- $coresInMillies := include "redpanda-cores-in-millis" . | int -}}
-  {{- if lt $coresInMillies 1000 }}
+  {{- if lt $coresInMillies 1000 -}}
     {{- $_ := set $.Values.resources.cpu "overprovisioned" true -}}
   {{- end -}}
   {{- if $coresInMillies -}}
