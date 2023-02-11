@@ -322,18 +322,19 @@ Returns the value of "resources.cpu.cores" in millicores.
 {{- end -}}
 
 {{/*
-Returns the SMP CPU count in whole cores, and sets "overprovisioned: true" when
-the "resources.cpu.cores" is less than 1 core.
+Returns the SMP CPU count in whole cores, with minimum of 1, and sets
+"resources.cpu.overprovisioned: true" when the "resources.cpu.cores" is less
+than 1 core.
 */}}
 {{- define "redpanda-smp" -}}
   {{- $coresInMillies := include "redpanda-cores-in-millis" . | int -}}
-  {{- if lt $coresInMillies 1000 -}}
-    {{- $_ := set $.Values.resources.cpu "overprovisioned" true -}}
-  {{- end -}}
   {{- if $coresInMillies -}}
-    {{- floor (divf $coresInMillies 1000) | int -}}
-  {{- else -}}
+    {{- if lt $coresInMillies 1000 -}}
+      {{- $_ := set $.Values.resources.cpu "overprovisioned" true -}}
+    {{- end -}}
     {{- int "1" -}}
+  {{- else -}}
+    {{- floor (divf $coresInMillies 1000) | int -}}
   {{- end -}}
 {{- end -}}
 
