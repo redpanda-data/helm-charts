@@ -312,12 +312,12 @@ Returns the value of "resources.cpu.cores" in millicores.
   {{- $cores := .Values.resources.cpu.cores -}}
   {{- if $cores -}}
     {{- if (hasSuffix "m" (toString $cores)) -}}
-      {{- trimSuffix "m" .Values.resources.cpu.cores | int -}}
+      {{- trimSuffix "m" .Values.resources.cpu.cores -}}
     {{- else -}}
-      {{- mulf 1000.0 ($cores | float64) | int -}}
+      {{- mulf 1000.0 ($cores | float64) -}}
     {{- end -}}
   {{- else -}}
-    {{ int "0" }}
+    {{ "0" }}
   {{- end -}}
 {{- end -}}
 
@@ -332,9 +332,9 @@ than 1 core.
     {{- if lt $coresInMillies 1000 -}}
       {{- $_ := set $.Values.resources.cpu "overprovisioned" true -}}
     {{- end -}}
-    {{- int "1" -}}
+    {{- "1" -}}
   {{- else -}}
-    {{- floor (divf $coresInMillies 1000) | int -}}
+    {{- floor (divf $coresInMillies 1000) -}}
   {{- end -}}
 {{- end -}}
 
