@@ -306,18 +306,20 @@ Generate configuration needed for rpk
 {{- end -}}
 
 {{/*
-Returns the value of "resources.cpu.cores" in millicores.
+Returns the value of "resources.cpu.cores" in millicores. And ensures CPU units
+are using known suffix (really only "m") or no suffix at all.
 */}}
 {{- define "redpanda-cores-in-millis" -}}
-  {{- $cores := .Values.resources.cpu.cores -}}
-  {{- if $cores -}}
-    {{- if (hasSuffix "m" (toString $cores)) -}}
-      {{- trimSuffix "m" .Values.resources.cpu.cores -}}
-    {{- else -}}
-      {{- mulf 1000.0 ($cores | float64) -}}
-    {{- end -}}
+  {{- $cores := .Values.resources.cpu.cores | toString -}}
+  {{- $coresSuffix := regexReplaceAll "^[0-9.]+(.*)" $cores "${1}" -}}
+  {{- if eq $coresSuffix "m" -}}
+    {{- trimSuffix $coresSuffix .Values.resources.cpu.cores -}}
   {{- else -}}
-    {{ "0" }}
+    {{- if eq $coresSuffix "" -}}
+      {{- mulf 1000.0 ($cores | float64) -}}
+    {{- else -}}
+      {{- printf "Unrecognized CPU unit '%s'" $coresSuffix | fail -}}
+    {{- end -}}
   {{- end -}}
 {{- end -}}
 
@@ -328,11 +330,9 @@ than 1 core.
 */}}
 {{- define "redpanda-smp" -}}
   {{- $coresInMillies := include "redpanda-cores-in-millis" . | int -}}
-  {{- if $coresInMillies -}}
-    {{- if lt $coresInMillies 1000 -}}
-      {{- $_ := set $.Values.resources.cpu "overprovisioned" true -}}
-    {{- end -}}
-    {{- "1" -}}
+  {{- if lt $coresInMillies 1000 -}}
+    {{- $_ := set $.Values.resources.cpu "overprovisioned" true -}}
+    {{- 1 -}}
   {{- else -}}
     {{- floor (divf $coresInMillies 1000) -}}
   {{- end -}}
