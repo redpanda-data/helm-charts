@@ -38,9 +38,7 @@ jobs:
 
       - name: Add Repositories for each chart
         run: |
-          for dir in $(ls -d charts/*/); do
-            helm dependency list $dir 2> /dev/null | tail +2 | head -n -1 | awk '{ print "helm repo add " $1 " " $3 }' | while read cmd; do $cmd; done
-          done
+          helm repo add redpanda https://charts.redpanda.com
 
       - name: Configure Git
         run: |
