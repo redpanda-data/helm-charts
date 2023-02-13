@@ -54,14 +54,14 @@ spec:
       serviceAccountName: {{ include "redpanda.serviceAccountName" . }}
       initContainers:
         - name: set-datadir-ownership
-          image: busybox:latest
+          image: {{ .Values.statefulset.initContainerImage.repository }}:{{ .Values.statefulset.initContainerImage.tag }}
           command: ["/bin/sh", "-c", "chown {{ $uid }}:{{ $gid }} -R /var/lib/redpanda/data"]
           volumeMounts:
             - name: datadir
               mountPath: /var/lib/redpanda/data
 {{- if and (include "is-licensed" . | fromJson).bool .Values.storage.tieredConfig.cloud_storage_enabled }}
         - name: set-tiered-storage-cache-dir-ownership
-          image: busybox:latest
+          image: {{ .Values.statefulset.initContainerImage.repository }}:{{ .Values.statefulset.initContainerImage.tag }}
           command: ["/bin/sh", "-c", 'chown {{ $uid }}:{{ $gid }} -R {{ template "tieredStorage.cacheDirectory" . }}']
           volumeMounts:
             - name: tiered-storage-dir
