@@ -174,7 +174,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.hostIP
-{{- if gt ( .Values.statefulset.replicas | int64 ) 2 }}
           lifecycle:
             postStart:
               exec:
@@ -182,7 +181,6 @@ spec:
             preStop:
               exec:
                 command: ["/bin/bash", "-c", "./var/lifecycle/preStop.sh"]
-{{- end }}
           startupProbe:
             exec:
               command:
@@ -287,10 +285,8 @@ spec:
 {{- end }}
           securityContext: {{ include "container-security-context" . | nindent 12 }}
           volumeMounts:
-{{- if gt ( .Values.statefulset.replicas | int64 ) 2 }}
             - name: lifecycle-scripts
               mountPath: /var/lifecycle
-{{- end }}
             - name: datadir
               mountPath: /var/lib/redpanda/data
 {{- if and (include "is-licensed" . | fromJson).bool .Values.storage.tieredConfig.cloud_storage_enabled }}
@@ -320,12 +316,10 @@ spec:
               cpu: {{ .Values.resources.cpu.cores }}
               memory: {{ .Values.resources.memory.container.max }}
       volumes:
-{{- if gt ( .Values.statefulset.replicas | int64 ) 2 }}
         - name: lifecycle-scripts
           secret:
             secretName: {{ (include "redpanda.fullname" . | trunc 50 ) }}-sts-lifecycle
             defaultMode: 0774
-{{- end }}
         - name: datadir
 {{- if .Values.storage.persistentVolume.enabled }}
           persistentVolumeClaim:

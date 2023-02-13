@@ -191,9 +191,9 @@ data:
   {{- end }}
 {{- end }}
       seed_servers:
-{{- range untilStep 0 (.Values.statefulset.replicas|int) 1 }}
+{{- range (include "seed-server-list" . | mustFromJson) }}
         - host:
-            address: "{{ template "redpanda.fullname" $ }}-{{ . }}.{{ template "redpanda.internal.domain" $ }}"
+            address: {{ . }}
             port: {{ $values.listeners.rpc.port }}
 {{- end }}
 {{- if and (include "is-licensed" . | fromJson).bool .Values.storage.tieredConfig.cloud_storage_enabled }}

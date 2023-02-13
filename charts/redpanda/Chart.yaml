@@ -23,7 +23,7 @@ type: application
 # The chart version and the app version are not the same and will not track
 # together. The chart version is a semver representation of changes to this
 # chart.
-version: 2.8.7
+version: 2.9.0
 
 # The app version is the default version of Redpanda to install.
 appVersion: v22.3.12
@@ -31,6 +31,13 @@ appVersion: v22.3.12
 # kubernetes versions like "v1.23.8-gke.1900". Their suffix is interpreted as a
 # pre-release. Our "-0" allows pre-releases to be matched.
 kubeVersion: "^1.21.0-0"
+
+dependencies:
+  - name: console
+    condition: console.enabled
+    version: ">=0.5 <1.0"
+    repository: https://charts.redpanda.com
+
 icon: https://images.ctfassets.net/paqvtpyf8rwu/3cYHw5UzhXCbKuR24GDFGO/73fb682e6157d11c10d5b2b5da1d5af0/skate-stand-panda.svg
 sources:
   - https://github.com/redpanda-data/helm-charts
