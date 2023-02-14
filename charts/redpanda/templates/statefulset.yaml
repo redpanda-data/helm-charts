@@ -266,7 +266,8 @@ spec:
             - bash
             - -c
             - |
-              rpk redpanda start --smp={{ .Values.resources.cpu.cores }} \
+              rpk redpanda start \
+                --smp={{ include "redpanda-smp" . }} \
                 --memory={{ template "redpanda-memory" . }}M \
                 --reserve-memory={{ template "redpanda-reserve-memory" . }}M \
                 --default-log-level={{ .Values.logging.logLevel }} \

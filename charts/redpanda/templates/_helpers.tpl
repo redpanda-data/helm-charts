@@ -305,6 +305,39 @@ Generate configuration needed for rpk
   {{- $result -}}
 {{- end -}}
 
+{{/*
+Returns the value of "resources.cpu.cores" in millicores. And ensures CPU units
+are using known suffix (really only "m") or no suffix at all.
+*/}}
+{{- define "redpanda-cores-in-millis" -}}
+  {{- $cores := .Values.resources.cpu.cores | toString -}}
+  {{- $coresSuffix := regexReplaceAll "^[0-9.]+(.*)" $cores "${1}" -}}
+  {{- if eq $coresSuffix "m" -}}
+    {{- trimSuffix $coresSuffix .Values.resources.cpu.cores -}}
+  {{- else -}}
+    {{- if eq $coresSuffix "" -}}
+      {{- mulf 1000.0 ($cores | float64) -}}
+    {{- else -}}
+      {{- printf "Unrecognized CPU unit '%s'" $coresSuffix | fail -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{/*
+Returns the SMP CPU count in whole cores, with minimum of 1, and sets
+"resources.cpu.overprovisioned: true" when the "resources.cpu.cores" is less
+than 1 core.
+*/}}
+{{- define "redpanda-smp" -}}
+  {{- $coresInMillies := include "redpanda-cores-in-millis" . | int -}}
+  {{- if lt $coresInMillies 1000 -}}
+    {{- $_ := set $.Values.resources.cpu "overprovisioned" true -}}
+    {{- 1 -}}
+  {{- else -}}
+    {{- floor (divf $coresInMillies 1000) -}}
+  {{- end -}}
+{{- end -}}
+
 {{- define "api-urls" -}}
 {{ template "redpanda.fullname" . }}-0.{{ include "redpanda.internal.domain" .}}:{{ .Values.listeners.admin.port }}
 {{- end -}}
@@ -505,7 +538,7 @@ advertised-host returns a json sring with the data neded for configuring the adv
 */}}
 {{- define "warnings" -}}
   {{- $result := list -}}
-  {{- $warnings := list "redpanda-memory-warning" -}}
+  {{- $warnings := list "redpanda-memory-warning" "redpanda-cpu-warning" -}}
   {{- range $t := $warnings -}}
     {{- $warning := include $t $ -}}
       {{- if $warning -}}
@@ -526,6 +559,15 @@ return a warning if the chart is configured with insufficient memory
   {{- end -}}
 {{- end -}}
 
+{{/*
+return a warning if the chart is configured with insufficient CPU
+*/}}
+{{- define "redpanda-cpu-warning" -}}
+  {{- $coresInMillies := include "redpanda-cores-in-millis" . | int -}}
+  {{- if lt $coresInMillies 1000 -}}
+    {{- printf "%dm is below the minimum recommended CPU value for Redpanda" $coresInMillies -}}
+  {{- end -}}
+{{- end -}}
 
 {{- define "seed-server-list" -}}
   {{- $brokers := list -}}
