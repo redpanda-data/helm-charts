@@ -54,14 +54,14 @@ spec:
       serviceAccountName: {{ include "redpanda.serviceAccountName" . }}
       initContainers:
         - name: set-datadir-ownership
-          image: busybox:latest
+          image: {{ .Values.statefulset.initContainerImage.repository }}:{{ .Values.statefulset.initContainerImage.tag }}
           command: ["/bin/sh", "-c", "chown {{ $uid }}:{{ $gid }} -R /var/lib/redpanda/data"]
           volumeMounts:
             - name: datadir
               mountPath: /var/lib/redpanda/data
 {{- if and (include "is-licensed" . | fromJson).bool .Values.storage.tieredConfig.cloud_storage_enabled }}
         - name: set-tiered-storage-cache-dir-ownership
-          image: busybox:latest
+          image: {{ .Values.statefulset.initContainerImage.repository }}:{{ .Values.statefulset.initContainerImage.tag }}
           command: ["/bin/sh", "-c", 'chown {{ $uid }}:{{ $gid }} -R {{ template "tieredStorage.cacheDirectory" . }}']
           volumeMounts:
             - name: tiered-storage-dir
@@ -174,7 +174,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.hostIP
-{{- if gt ( .Values.statefulset.replicas | int64 ) 2 }}
           lifecycle:
             postStart:
               exec:
@@ -182,7 +181,6 @@ spec:
             preStop:
               exec:
                 command: ["/bin/bash", "-c", "./var/lifecycle/preStop.sh"]
-{{- end }}
           startupProbe:
             exec:
               command:
@@ -265,14 +263,16 @@ spec:
             periodSeconds: {{ .Values.statefulset.readinessProbe.periodSeconds }}
             successThreshold: {{ .Values.statefulset.readinessProbe.initialDelaySeconds }}
           command:
-            - rpk
-            - redpanda
-            - start
-            - --smp={{ include "redpanda-smp" . }}
-            - --memory={{ template "redpanda-memory" . }}M
-            - --reserve-memory={{ template "redpanda-reserve-memory" . }}M
-            - --default-log-level={{ .Values.logging.logLevel }}
-            - --advertise-rpc-addr={{ $internalAdvertiseAddress }}:{{ .Values.listeners.rpc.port }}
+            - bash
+            - -c
+            - |
+              rpk redpanda start \
+                --smp={{ include "redpanda-smp" . }} \
+                --memory={{ template "redpanda-memory" . }}M \
+                --reserve-memory={{ template "redpanda-reserve-memory" . }}M \
+                --default-log-level={{ .Values.logging.logLevel }} \
+                --advertise-rpc-addr={{ $internalAdvertiseAddress }}:{{ .Values.listeners.rpc.port }} |
+              sed 's@RP_BOOTSTRAP_USER[^ ]\+@<censored>@g'
           ports:
 {{- range $name, $listener := .Values.listeners }}
             - name: {{ lower $name }}
@@ -286,10 +286,8 @@ spec:
 {{- end }}
           securityContext: {{ include "container-security-context" . | nindent 12 }}
           volumeMounts:
-{{- if gt ( .Values.statefulset.replicas | int64 ) 2 }}
             - name: lifecycle-scripts
               mountPath: /var/lifecycle
-{{- end }}
             - name: datadir
               mountPath: /var/lib/redpanda/data
 {{- if and (include "is-licensed" . | fromJson).bool .Values.storage.tieredConfig.cloud_storage_enabled }}
@@ -304,6 +302,11 @@ spec:
               mountPath: {{ printf "/etc/tls/certs/%s" $name }}
   {{- end }}
 {{- end }}
+{{- if and .Values.auth.sasl.enabled (not (empty .Values.auth.sasl.secretRef )) }}
+            - name: {{ .Values.auth.sasl.secretRef }}
+              mountPath: /etc/secrets/users
+              readOnly: true
+{{- end}}
           resources:
 {{- if hasKey .Values.resources.memory "min" }}
             requests:
@@ -314,12 +317,10 @@ spec:
               cpu: {{ .Values.resources.cpu.cores }}
               memory: {{ .Values.resources.memory.container.max }}
       volumes:
-{{- if gt ( .Values.statefulset.replicas | int64 ) 2 }}
         - name: lifecycle-scripts
           secret:
             secretName: {{ (include "redpanda.fullname" . | trunc 50 ) }}-sts-lifecycle
             defaultMode: 0774
-{{- end }}
         - name: datadir
 {{- if .Values.storage.persistentVolume.enabled }}
           persistentVolumeClaim:
@@ -365,6 +366,12 @@ spec:
             secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
   {{- end }}
 {{- end }}
+        {{- if and .Values.auth.sasl.enabled (not (empty .Values.auth.sasl.secretRef )) }}
+        - name: {{ .Values.auth.sasl.secretRef }}
+          secret:
+            secretName: {{ .Values.auth.sasl.secretRef }}
+            optional: false
+        {{- end }}
 {{- if or .Values.statefulset.nodeAffinity .Values.statefulset.podAffinity .Values.statefulset.podAntiAffinity }}
       affinity:
   {{- with .Values.statefulset.nodeAffinity }}

@@ -568,3 +568,15 @@ return a warning if the chart is configured with insufficient CPU
     {{- printf "%dm is below the minimum recommended CPU value for Redpanda" $coresInMillies -}}
   {{- end -}}
 {{- end -}}
+
+{{- define "seed-server-list" -}}
+  {{- $brokers := list -}}
+  {{- range $ordinal := until (.Values.statefulset.replicas | int) -}}
+    {{- $brokers = append $brokers (printf "%s-%d.%s"
+        (include "redpanda.fullname" $)
+        $ordinal
+        (include "redpanda.internal.domain" $))
+    -}}
+  {{- end -}}
+  {{- toJson $brokers -}}
+{{- end -}}
