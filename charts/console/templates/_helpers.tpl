@@ -31,6 +31,17 @@ Create chart name and version as used by the chart label.
 {{- end }}
 
 {{/*
+Console Image
+*/}}
+{{- define "console.container.image" -}}
+{{- if .Values.image.registry -}}
+{{- printf "%s/%s:%s" .Values.image.registry .Values.image.repository ( .Values.image.tag | default .Chart.AppVersion )  }}
+{{- else -}}
+{{- printf "%s:%s" .Values.image.repository ( .Values.image.tag | default .Chart.AppVersion )  }}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Common labels
 */}}
 {{- define "console.labels" -}}
