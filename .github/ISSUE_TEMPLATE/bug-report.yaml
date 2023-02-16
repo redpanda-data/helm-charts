@@ -40,6 +40,15 @@ body:
     attributes:
       label: Anything else we need to know?
 
+  - type: dropdown
+    id: Chart
+    attributes:
+      label: Which are the affected charts?
+      multiple: true
+      options:
+        - Console
+        - Redpanda
+
   - type: textarea
     id: chartVersion
     attributes:
