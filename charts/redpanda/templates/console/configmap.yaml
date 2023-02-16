@@ -1,7 +1,7 @@
 {{ $values := .Values }}
 
 {{/* if the console chart has the creation of the configmap disabled, create it here instead */}}
-{{ if not .Values.console.configmap.create }}
+{{ if and .Values.console.enabled (not .Values.console.configmap.create) }}
 {{ $consoleConfigmap := dict "create" true }}
 
 {{/* kafka section */}}

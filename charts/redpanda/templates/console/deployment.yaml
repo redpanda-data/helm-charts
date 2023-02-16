@@ -1,4 +1,4 @@
-{{ if (not .Values.console.deployment.create) }}
+{{ if and .Values.console.enabled (not .Values.console.deployment.create) }}
 
 {{ $extraVolumes := list }}
 {{ $extraVolumeMounts := list }}
