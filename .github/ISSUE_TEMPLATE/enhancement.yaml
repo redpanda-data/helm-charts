@@ -1,0 +1,20 @@
+name: Enhancement Tracking Issue
+description: Provide supporting details for a feature in development
+labels: kind/feature
+body:
+  - type: textarea
+    id: feature
+    attributes:
+      label: What would you like to be added?
+      description: |
+        Feature requests can take some time to accept and then implement, please be patient. In order to expedite 
+        possible acceptance please be as clear and detailed as possible.
+    validations:
+      required: true
+
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Why is this needed?
+    validations:
+      required: true
