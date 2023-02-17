@@ -21,7 +21,7 @@ limitations under the License.
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ template "redpanda.fullname" . }}-post-install
+  name: {{ template "redpanda.fullname" . }}-configuration
   namespace: {{ .Release.Namespace | quote }}
   labels:
 {{- with include "full.labels" . }}
