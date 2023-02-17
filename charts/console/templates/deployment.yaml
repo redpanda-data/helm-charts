@@ -60,7 +60,7 @@ spec:
         {{- end }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: {{ include "console.container.image" . | quote }}
+          image: {{ include "console.container.image" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
