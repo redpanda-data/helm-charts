@@ -53,6 +53,25 @@ spec:
       securityContext: {{ include "pod-security-context" . | nindent 8 }}
       serviceAccountName: {{ include "redpanda.serviceAccountName" . }}
       initContainers:
+{{- if and (hasKey $values.tuning "tune_aio_events") $values.tuning.tune_aio_events }}
+        - name: tuning
+          image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}
+          command:
+            - bash
+            - -c
+          args:
+            - |
+              rpk redpanda tune all
+          securityContext:
+            capabilities:
+              add: ["CAP_SYS_RESOURCE"]
+            privileged: true
+            runAsUser: 0
+            runAsGroup: 0
+          volumeMounts:
+            - name: {{ template "redpanda.fullname" . }}
+              mountPath: /etc/redpanda
+{{- end }}
 {{- if not .Values.statefulset.skipChown }}
         - name: set-datadir-ownership
           image: {{ .Values.statefulset.initContainerImage.repository }}:{{ .Values.statefulset.initContainerImage.tag }}
