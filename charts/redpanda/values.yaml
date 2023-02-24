@@ -549,13 +549,18 @@ rbac:
   # annotations to add to the rbac resources
   annotations: {}
 
-tuning: {}
+tuning:
   # This section contains Redpanda tuning parameters.
   # Each parameter below is set to their default values.
   # Remove the curly brackets above if you uncomment any parameters below.
   #
-  # Increases the number of allowed asynchronous IO events.
-  # tune_aio_events: false
+  # Increases the maximum number of outstanding asynchronous IO operations if the
+  # current value is below a certain threshold. This allows redpanda to make as many
+  # simultaneous IO requests as possible, increasing throughput.
+  #
+  # Enabling this option will create a privileged container. If your security profile does not allow this,
+  # see https://docs.redpanda.com/docs/deploy/deployment-option/self-hosted/kubernetes/kubernetes-tune-workers/ for tuning requirements.
+  tune_aio_events: true
   #
   # Syncs NTP
   # tune_clocksource: false
