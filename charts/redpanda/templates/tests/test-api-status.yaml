@@ -21,12 +21,12 @@ metadata:
   name: "{{ include "redpanda.fullname" . }}-test-api-status"
   namespace: {{ .Release.Namespace | quote }}
   labels:
-{{- with include "full.labels" . }}
-  {{- . | nindent 4 }}
-{{- end }}
+  {{- with include "full.labels" . }}
+    {{- . | nindent 4 }}
+  {{- end }}
   annotations:
     "helm.sh/hook": test
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   restartPolicy: Never
   securityContext:
@@ -34,13 +34,17 @@ spec:
     runAsGroup: 65535
   containers:
     - name: {{ template "redpanda.name" . }}
-      image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}
+      image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
       command:
-      - /bin/bash
+      - /usr/bin/timeout
+      - "120"
+      - bash
       - -c
-      - >
-        rpk cluster info
-        --brokers {{ include "redpanda.fullname" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.kafka.port }}
+      - |
+        until rpk cluster info \
+          --brokers {{ include "redpanda.fullname" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.kafka.port }}
+          do sleep 2
+        done
       volumeMounts:
         - name: {{ template "redpanda.fullname" . }}
           mountPath: /tmp/base-config

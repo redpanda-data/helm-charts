@@ -15,39 +15,33 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */}}
 {{- if .Values.rackAwareness.enabled -}}
-{{- if not (or (include "tls-enabled" . | fromJson).bool (include "sasl-enabled" .)) -}}
-apiVersion: batch/v1
-kind: Job
+  {{- if not (or (include "tls-enabled" . | fromJson).bool (include "sasl-enabled" .)) -}}
+apiVersion: v1
+kind: Pod
 metadata:
   name: {{ include "redpanda.fullname" . }}-test-rack-awareness
   namespace: {{ .Release.Namespace | quote }}
   labels:
-{{- with include "full.labels" . }}
-  {{- . | nindent 4 }}
-{{- end }}
+    {{- with include "full.labels" . }}
+        {{- . | nindent 4 }}
+    {{- end }}
   annotations:
     "helm.sh/hook": test
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    "helm.sh/hook-delete-policy": before-hook-creation
 spec:
-  backoffLimit: 2
-  completions: 1
-  parallelism: 1
-  ttlSecondsAfterFinished: 120
-  template:
-    spec:
-      restartPolicy: Never
-      securityContext:
-        runAsUser: 65535
-        runAsGroup: 65535
-      containers:
-        - name: {{ template "redpanda.name" . }}
-          image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}
-          command:
-          - /bin/bash
-          - -c
-          - |
-            set -e
-            curl --silent --fail http://{{ include "redpanda.fullname" . }}:{{ .Values.listeners.admin.port }}/v1/node_config | grep '"rack":"rack[1-4]"'
-            rpk redpanda admin config print --host {{ include "redpanda.fullname" . }}:{{ .Values.listeners.admin.port }} | grep '"enable_rack_awareness": true'
-{{- end -}}
+  restartPolicy: Never
+  securityContext:
+    runAsUser: 65535
+    runAsGroup: 65535
+  containers:
+    - name: {{ template "redpanda.name" . }}
+      image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
+      command:
+      - /bin/bash
+      - -c
+      - |
+        set -e
+        curl --silent --fail --retry 120 --retry-max-time 120 --retry-all-errors http://{{ include "redpanda.fullname" . }}:{{ .Values.listeners.admin.port }}/v1/node_config | grep '"rack":"rack[1-4]"'
+        rpk redpanda admin config print --host {{ include "redpanda.fullname" . }}:{{ .Values.listeners.admin.port }} | grep '"enable_rack_awareness": true'
+  {{- end -}}
 {{- end -}}

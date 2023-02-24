@@ -32,7 +32,7 @@ metadata:
 {{- end }}
   annotations:
     "helm.sh/hook": test
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   restartPolicy: Never
   securityContext:
@@ -40,23 +40,27 @@ spec:
     runAsGroup: 65535
   containers:
     - name: {{ template "redpanda.name" . }}
-      image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}
+      image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
       command:
-      - /bin/bash
-      - -c
-      - |
-        set -xe
-        rpk acl user delete myuser {{ include "rpk-common-flags" . }}
-        sleep 3
+        - /usr/bin/timeout
+        - "120"
+        - bash
+        - -c
+        - |
+          set -xe
+          until rpk acl user delete myuser {{ include "rpk-common-flags" . }}
+            do sleep 2
+          done
+          sleep 3
 
-        {{ include "rpk-cluster-info" $rpk }}
-        {{ include "rpk-acl-user-create" $rpk }}
-        {{ include "rpk-acl-create" $rpk }}
-        sleep 3
-        {{ include "rpk-topic-create" $rpk }}
-        {{ include "rpk-topic-describe" $rpk }}
-        {{ include "rpk-topic-delete" $rpk }}
-        rpk acl user delete myuser {{ include "rpk-common-flags" . }}
+          {{ include "rpk-cluster-info" $rpk }}
+          {{ include "rpk-acl-user-create" $rpk }}
+          {{ include "rpk-acl-create" $rpk }}
+          sleep 3
+          {{ include "rpk-topic-create" $rpk }}
+          {{ include "rpk-topic-describe" $rpk }}
+          {{ include "rpk-topic-delete" $rpk }}
+          rpk acl user delete myuser {{ include "rpk-common-flags" . }}
       volumeMounts:
         - name: config
           mountPath: /etc/redpanda
@@ -89,16 +93,7 @@ spec:
   {{- range $name, $cert := .Values.tls.certs }}
     - name: redpanda-{{ $name }}-cert
       secret:
-        defaultMode: 420
-        items:
-        - key: tls.key
-          path: tls.key
-        - key: tls.crt
-          path: tls.crt
-    {{- if $cert.caEnabled }}
-        - key: ca.crt
-          path: ca.crt
-    {{- end }}
+        defaultMode: 0644
         secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
   {{- end }}
 {{- end -}}

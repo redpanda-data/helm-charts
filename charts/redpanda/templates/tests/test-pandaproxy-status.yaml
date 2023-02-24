@@ -21,12 +21,12 @@ metadata:
   name: "{{ include "redpanda.fullname" . }}-test-pandaproxy-status"
   namespace: {{ .Release.Namespace | quote }}
   labels:
-{{- with include "full.labels" . }}
-  {{- . | nindent 4 }}
-{{- end }}
+  {{- with include "full.labels" . }}
+    {{- . | nindent 4 }}
+  {{- end }}
   annotations:
     "helm.sh/hook": test
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   restartPolicy: Never
   securityContext:
@@ -34,9 +34,15 @@ spec:
     runAsGroup: 65535
   containers:
     - name: {{ template "redpanda.name" . }}
-      image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}
+      image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
       command:
         - curl
         - -svm3
+        - --fail
+        - --retry
+        - "120"
+        - --retry-max-time
+        - "120"
+        - --retry-all-errors
         - http://{{ include "redpanda.fullname" . }}:{{ .Values.listeners.http.port }}/brokers
 {{- end }}

@@ -58,7 +58,7 @@ spec:
       securityContext: {{ include "pod-security-context" . | nindent 8 }}
       containers:
       - name: {{ template "redpanda.name" . }}-post-upgrade
-        image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}
+        image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
         command: ["/bin/sh", "-c"]
         args:
           - |

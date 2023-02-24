@@ -16,8 +16,8 @@ limitations under the License.
 */}}
 {{- $sasl := .Values.auth.sasl }}
 {{- $useSaslSecret := and $sasl.enabled (not (empty $sasl.secretRef )) }}
-apiVersion: batch/v1
-kind: Job
+apiVersion: v1
+kind: Pod
 metadata:
   name: {{ include "redpanda.fullname" . }}-test-kafka-produce-consume
   namespace: {{ .Release.Namespace | quote }}
@@ -27,79 +27,69 @@ metadata:
 {{- end }}
   annotations:
     "helm.sh/hook": test
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    "helm.sh/hook-delete-policy": before-hook-creation
 spec:
-  backoffLimit: 2
-  completions: 1
-  parallelism: 1
-  ttlSecondsAfterFinished: 120
-  template:
-    spec:
-      restartPolicy: Never
-      securityContext:
-        runAsUser: 65535
-        runAsGroup: 65535
-      containers:
-        - name: {{ template "redpanda.name" . }}
-          image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}
-          env:
-            - name: REDPANDA_BROKERS
-              value: "{{ include "redpanda.fullname" . }}.{{ .Release.Namespace }}.svc.{{ .Values.clusterDomain | trimSuffix "." }}:{{ .Values.listeners.kafka.port }}"
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-          command:
-          - /bin/bash
-          - -c
-          - |
-            set -e
-          {{- if or (not $sasl.enabled) $useSaslSecret }}
-            rpk topic create produce.consume.test.$POD_NAME {{ include "rpk-topic-flags" . }}
-            echo "Pandas are awesome!" | rpk topic produce produce.consume.test.$POD_NAME {{ include "rpk-topic-flags" . }}
-            rpk topic consume produce.consume.test.$POD_NAME -n 1 {{ include "rpk-topic-flags" . }} | grep "Pandas are awesome!"
-          {{- end }}
-          volumeMounts:
-            - name: config
-              mountPath: /etc/redpanda
+  restartPolicy: Never
+  securityContext:
+    runAsUser: 65535
+    runAsGroup: 65535
+  containers:
+    - name: {{ template "redpanda.name" . }}
+      image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
+      env:
+        - name: REDPANDA_BROKERS
+          value: "{{ include "redpanda.fullname" . }}.{{ .Release.Namespace }}.svc.{{ .Values.clusterDomain | trimSuffix "." }}:{{ .Values.listeners.kafka.port }}"
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+      command:
+        - /usr/bin/timeout
+        - "120"
+        - bash
+        - -c
+        - |
+          set -e
+{{- if or (not $sasl.enabled) $useSaslSecret }}
+          until rpk topic create produce.consume.test.$POD_NAME {{ include "rpk-topic-flags" . }}
+            do sleep 2
+          done
+          echo "Pandas are awesome!" | rpk topic produce produce.consume.test.$POD_NAME {{ include "rpk-topic-flags" . }}
+          rpk topic consume produce.consume.test.$POD_NAME -n 1 {{ include "rpk-topic-flags" . }} | grep "Pandas are awesome!"
+          rpk topic delete produce.consume.test.$POD_NAME {{ include "rpk-topic-flags" . }}
+{{- end }}
+      volumeMounts:
+        - name: config
+          mountPath: /etc/redpanda
 {{- if (include "tls-enabled" . | fromJson).bool -}}
   {{- range $name, $cert := .Values.tls.certs }}
-            - name: redpanda-{{ $name }}-cert
-              mountPath: {{ printf "/etc/tls/certs/%s" $name }}
+        - name: redpanda-{{ $name }}-cert
+          mountPath: {{ printf "/etc/tls/certs/%s" $name }}
   {{- end }}
 {{- end }}
-            {{- if $useSaslSecret }}
-            - name: {{ $sasl.secretRef }}
-              mountPath: "/etc/secrets/users"
-              readOnly: true
-            {{- end}}
-          resources: {{ toYaml .Values.statefulset.resources | nindent 12 }}
-      volumes:
-        - name: {{ template "redpanda.fullname" . }}
-          configMap:
-            name: {{ template "redpanda.fullname" . }}
-        - name: config
-          emptyDir: {}
-        {{- if $useSaslSecret }}
+{{- if $useSaslSecret }}
         - name: {{ $sasl.secretRef }}
-          secret:
-            secretName: {{ $sasl.secretRef }}
-            optional: false
-        {{- end }}
+          mountPath: "/etc/secrets/users"
+          readOnly: true
+{{- end}}
+      resources: {{ toYaml .Values.statefulset.resources | nindent 12 }}
+  volumes:
+    - name: {{ template "redpanda.fullname" . }}
+      configMap:
+        name: {{ template "redpanda.fullname" . }}
+    - name: config
+      emptyDir: {}
+{{- if $useSaslSecret }}
+    - name: {{ $sasl.secretRef }}
+      secret:
+        secretName: {{ $sasl.secretRef }}
+        optional: false
+{{- end }}
 {{- if (include "tls-enabled" . | fromJson).bool }}
   {{- range $name, $cert := .Values.tls.certs }}
-        - name: redpanda-{{ $name }}-cert
-          secret:
-            defaultMode: 420
-            items:
-            - key: tls.key
-              path: tls.key
-            - key: tls.crt
-              path: tls.crt
-        {{- if $cert.caEnabled }}
-            - key: ca.crt
-              path: ca.crt
-        {{- end }}
-            secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
+    - name: redpanda-{{ $name }}-cert
+      secret:
+        defaultMode: 0644
+        secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
   {{- end }}
 {{- end -}}
