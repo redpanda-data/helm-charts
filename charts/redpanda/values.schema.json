@@ -612,10 +612,13 @@
             },
             "type": {
               "type": "string",
-              "pattern": "^(hard|soft)$"
+              "pattern": "^(hard|soft|custom)$"
             },
             "weight": {
               "type": "integer"
+            },
+            "custom": {
+              "type": "object"
             }
           }
         },

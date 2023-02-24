@@ -403,7 +403,6 @@ spec:
   {{- end }}
   {{- if .Values.statefulset.podAntiAffinity }}
         podAntiAffinity:
-    {{- if .Values.statefulset.podAntiAffinity.type }}
       {{- if eq .Values.statefulset.podAntiAffinity.type "hard" }}
           requiredDuringSchedulingIgnoredDuringExecution:
             - topologyKey: {{ .Values.statefulset.podAntiAffinity.topologyKey }}
@@ -416,10 +415,9 @@ spec:
                 topologyKey: {{ .Values.statefulset.podAntiAffinity.topologyKey }}
                 labelSelector:
                   matchLabels: {{ include "statefulset-pod-labels" . | nindent 20 }}
+      {{- else if eq .Values.statefulset.podAntiAffinity.type "custom" }}
+          {{- toYaml .Values.statefulset.podAntiAffinity.custom | nindent 10 }}
       {{- end }}
-    {{- else }}
-      {{- toYaml .Values.statefulset.podAntiAffinity | nindent 10 }}
-    {{- end }}
   {{- end }}
 {{- end }}
 {{- if semverCompare ">=1.16-0" .Capabilities.KubeVersion.GitVersion }}
