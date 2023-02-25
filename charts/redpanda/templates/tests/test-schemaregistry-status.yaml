@@ -14,8 +14,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- /* TODO test fails if SASL is enabled */}}
-{{- /* TODO test expects the first listener to have TLS enabled */}}
 {{- if not (or (include "tls-enabled" . | fromJson).bool (include "sasl-enabled" . | fromJson).bool) }}
 apiVersion: v1
 kind: Pod
@@ -23,12 +21,12 @@ metadata:
   name: "{{ include "redpanda.fullname" . }}-test-schemaregistry-status"
   namespace: {{ .Release.Namespace | quote }}
   labels:
-{{- with include "full.labels" . }}
-  {{- . | nindent 4 }}
-{{- end }}
+  {{- with include "full.labels" . }}
+    {{- . | nindent 4 }}
+  {{- end }}
   annotations:
     "helm.sh/hook": test
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   restartPolicy: Never
   securityContext:
@@ -36,13 +34,15 @@ spec:
     runAsGroup: 65535
   containers:
     - name: {{ template "redpanda.name" . }}
-      image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}
+      image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
       command:
         - curl
         - -svm3
+        - --fail
         - --retry
-        - "300"
+        - "120"
         - --retry-max-time
         - "120"
+        - --retry-all-errors
         - http://{{ include "redpanda.fullname" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects
 {{- end }}

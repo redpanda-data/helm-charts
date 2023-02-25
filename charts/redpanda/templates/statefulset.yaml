@@ -55,7 +55,7 @@ spec:
       initContainers:
 {{- if and (hasKey $values.tuning "tune_aio_events") $values.tuning.tune_aio_events }}
         - name: tuning
-          image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}
+          image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
           command:
             - bash
             - -c
@@ -89,7 +89,7 @@ spec:
   {{- end }}
 {{- end }}
         - name: {{ (include "redpanda.name" .) | trunc 51 }}-configurator
-          image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}
+          image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
           command: ["/bin/bash", "-c"]
           env:
             - name: SERVICE_NAME

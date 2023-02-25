@@ -14,21 +14,21 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- if and (include "schemaRegistry-internal-tls-enabled" . | fromJson).bool (not (include "sasl-enabled" .|fromJson).bool) }}
 {{- $service := .Values.listeners.schemaRegistry -}}
 {{- $cert := get .Values.tls.certs $service.tls.cert -}}
+{{- if and (include "schemaRegistry-internal-tls-enabled" . | fromJson).bool (not (include "sasl-enabled" .|fromJson).bool) -}}
 apiVersion: v1
 kind: Pod
 metadata:
   name: {{ include "redpanda.fullname" . }}-test-schemaregistry-internal-tls-status
   namespace: {{ .Release.Namespace | quote }}
   labels:
-{{- with include "full.labels" . }}
-  {{- . | nindent 4 }}
-{{- end }}
+  {{- with include "full.labels" . }}
+    {{- . | nindent 4 }}
+  {{- end }}
   annotations:
     "helm.sh/hook": test
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   restartPolicy: Never
   securityContext:
@@ -36,10 +36,16 @@ spec:
     runAsGroup: 65535
   containers:
     - name: {{ template "redpanda.name" . }}
-      image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}
+      image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
       command:
         - curl
         - -svm3
+        - --fail
+        - --retry
+        - "120"
+        - --retry-max-time
+        - "120"
+        - --retry-all-errors
         - --ssl-reqd
   {{- if $cert.caEnabled }}
         - --cacert
@@ -53,8 +59,7 @@ spec:
         - name: redpanda-{{ $name }}-cert
           mountPath: {{ printf "/etc/tls/certs/%s" $name }}
   {{- end }}
-      resources:
-{{- toYaml .Values.statefulset.resources | nindent 12 }}
+      resources: {{ toYaml .Values.statefulset.resources | nindent 12 }}
   volumes:
     - name: {{ template "redpanda.fullname" . }}
       configMap:
@@ -64,16 +69,7 @@ spec:
   {{- range $name, $cert := .Values.tls.certs }}
     - name: redpanda-{{ $name }}-cert
       secret:
-        defaultMode: 420
-        items:
-        - key: tls.key
-          path: tls.key
-        - key: tls.crt
-          path: tls.crt
-    {{- if $cert.caEnabled }}
-        - key: ca.crt
-          path: ca.crt
-    {{- end }}
+        defaultMode: 0644
         secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
   {{- end }}
-{{- end }}
+{{- end -}}
