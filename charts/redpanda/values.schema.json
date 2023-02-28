@@ -180,13 +180,16 @@
         },
         "type": {
           "type": "string",
-          "pattern": "^NodePort$"
+          "pattern": "^(LoadBalancer|NodePort)$"
         },
         "domain": {
           "type": "string",
           "format": "idn-hostname"
         },
         "addresses": {
+          "type": "array"
+        },
+        "sourceRanges": {
           "type": "array"
         }
       }
