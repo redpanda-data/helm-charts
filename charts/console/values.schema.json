@@ -258,6 +258,16 @@
                 "port": {
                     "type": "integer"
                 },
+                "targetPort": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
                 "type": {
                     "type": "string"
                 }

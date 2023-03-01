@@ -44,6 +44,7 @@ securityContext:
 service:
   type: ClusterIP
   port: 8080
+  targetPort: # this will override using console.config.server.listenPort if defined
   annotations: {}
 
 ingress:
