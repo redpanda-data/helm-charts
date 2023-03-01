@@ -73,17 +73,17 @@ Create the name of the service account to use
 {{- end }}
 
 {{/*
-Server Listen Port for Console's HTTP server.
-The port can be overriden in the provided config, but
-it defaults to 8080.
+Console's HTTP server Port.
+The port is defined from the service targetPort bu can be overridden
+in the provided config and if that is missing defaults to 8080.
 */}}
-{{- define "console.server.listenPort" -}}
+{{- define "console.containerPort" -}}
+{{- $listenPort := 8080 -}}
 {{- if .Values.console.config.server -}}
-{{- .Values.console.config.server.listenPort | default 8080 }}
-{{- else -}}
-8080
-{{- end }}
-{{- end }}
+{{- $listenPort = .Values.console.config.server.listenPort -}}
+{{- end -}}
+{{- .Values.service.targetPort | default $listenPort -}}
+{{- end -}}
 
 {{/*
 Some umbrella charts may use a global registry variable.

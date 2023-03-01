@@ -65,7 +65,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: {{ include "console.server.listenPort" . }}
+              containerPort: {{ include "console.containerPort" . }}
               protocol: TCP
           volumeMounts:
             - name: configs
