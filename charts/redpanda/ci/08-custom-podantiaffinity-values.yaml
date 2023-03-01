@@ -14,12 +14,13 @@
 # limitations under the License.
 ---
 statefulset:
-  replicas: 1
-tls:
-  enabled: true
-auth:
-  sasl:
-    enabled: false
-storage:
-  persistentVolume:
-    size: 3Gi
+  replicas: 3
+  podAntiAffinity:
+    type: custom
+    custom:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - topologyKey: kubernetes.io/hostname
+        labelSelector:
+          matchLabels:
+            app.kubernetes.io/name: redpanda
+            app.kubernetes.io/instance: "redpanda"

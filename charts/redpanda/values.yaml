@@ -505,11 +505,16 @@ statefulset:
     # The topologyKey to be used.
     # Can be used to spread across different nodes, AZs, regions etc.
     topologyKey: kubernetes.io/hostname
-    # Type of anti-affinity rules: either `soft` or `hard`.
+    # The two type of anti-affinity rules are either `soft` or `hard`
+    # Here we define default values for either case. However, you can select
+    # `custom` if you wish to supply your own rules
+    # If you do not wish to use either of these configurations and sup
     type: hard
     # Weight for `soft` anti-affinity rules.
     # Does not apply for other anti-affinity types.
     weight: 100
+    # change type to custom and supply here to supply your own podAntiAffinity rules
+    custom: {}
   # Node selection constraints for scheduling Pods of this StatefulSet.
   # these override the global nodeSelector value
   # https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
