@@ -56,6 +56,7 @@ spec:
     {{- end }}
       restartPolicy: Never
       securityContext: {{ include "pod-security-context" . | nindent 8 }}
+      serviceAccountName: {{ include "redpanda.serviceAccountName" . }}
       containers:
       - name: {{ template "redpanda.name" . }}-post-upgrade
         image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
