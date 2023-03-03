@@ -83,7 +83,7 @@ spec:
             - name: datadir
               mountPath: /var/lib/redpanda/data
         {{- if .Values.statefulset.initContainers.set-datadir-ownership.resources }}
-          resources: {{- toYaml .Values.statefulset.initContainers.set-datadir-ownership.resources | nindent 12 }}
+          resources: {{- toYaml .Values.statefulset.initContainers.setDatadirOwnership.resources | nindent 12 }}
         {{- end }}
 {{- end }}
 {{- if and (include "is-licensed" . | fromJson).bool .Values.storage.tieredConfig.cloud_storage_enabled }}
@@ -93,8 +93,8 @@ spec:
           volumeMounts:
             - name: tiered-storage-dir
               mountPath: {{ template "tieredStorage.cacheDirectory" . }}
-        {{- if .Values.statefulset.initContainers.set-tiered-storage-cache-dir-ownership.resources }}
-          resources: {{- toYaml .Values.statefulset.initContainers.set-tiered-storage-cache-dir-ownership.resources | nindent 12 }}
+        {{- if .Values.statefulset.initContainers.setTieredStorageCacheDirOwnership.resources }}
+          resources: {{- toYaml .Values.statefulset.initContainers.setTieredStorageCacheDirOwnership.resources | nindent 12 }}
         {{- end }}
 {{- end }}
         - name: {{ (include "redpanda.name" .) | trunc 51 }}-configurator
