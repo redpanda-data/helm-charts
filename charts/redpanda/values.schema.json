@@ -711,6 +711,19 @@
     "tuning": {
       "type": "object",
       "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "mode": {
+          "type": "string",
+          "pattern": "^(dev|production)$"
+        },
+        "tuners": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "tune_aio_events": {
           "type": "boolean"
         },

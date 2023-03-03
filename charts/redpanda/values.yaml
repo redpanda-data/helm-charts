@@ -558,6 +558,20 @@ rbac:
   annotations: {}
 
 tuning:
+  # enabled will attempt to run autotune by first running
+  # `rpk redpanda mode production` and then running the set of enabled
+  # tuners via `rpk repdanda tune <enabled-tunner>`
+  # these will silently fail and
+  enabled: true
+  # What mode to enable, this sets default configurations for rpk
+  # default tuners not in this mode will be ignored
+  mode: production # acceptable values are dev,production
+
+  tuners:
+    - aio_events
+    - ballast_file
+    - cpu
+
   # This section contains Redpanda tuning parameters.
   # Each parameter below is set to their default values.
   # Remove the curly brackets above if you uncomment any parameters below.
@@ -568,7 +582,7 @@ tuning:
   #
   # Enabling this option will create a privileged container. If your security profile does not allow this,
   # see https://docs.redpanda.com/docs/deploy/deployment-option/self-hosted/kubernetes/kubernetes-tune-workers/ for tuning requirements.
-  tune_aio_events: true
+  tune_aio_events: false
   #
   # Syncs NTP
   # tune_clocksource: false
