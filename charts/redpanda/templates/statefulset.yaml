@@ -71,6 +71,9 @@ spec:
           volumeMounts:
             - name: {{ template "redpanda.fullname" . }}
               mountPath: /etc/redpanda
+        {{- if .Values.statefulset.initContainers.tuning.resources }}
+          resources: {{- toYaml .Values.statefulset.initContainers.tuning.resources | nindent 12 }}
+        {{- end }}
 {{- end }}
 {{- if not .Values.statefulset.skipChown }}
         - name: set-datadir-ownership
@@ -79,14 +82,20 @@ spec:
           volumeMounts:
             - name: datadir
               mountPath: /var/lib/redpanda/data
-  {{- if and (include "is-licensed" . | fromJson).bool .Values.storage.tieredConfig.cloud_storage_enabled }}
+        {{- if .Values.statefulset.initContainers.set-datadir-ownership.resources }}
+          resources: {{- toYaml .Values.statefulset.initContainers.set-datadir-ownership.resources | nindent 12 }}
+        {{- end }}
+{{- end }}
+{{- if and (include "is-licensed" . | fromJson).bool .Values.storage.tieredConfig.cloud_storage_enabled }}
         - name: set-tiered-storage-cache-dir-ownership
           image: {{ .Values.statefulset.initContainerImage.repository }}:{{ .Values.statefulset.initContainerImage.tag }}
           command: ["/bin/sh", "-c", 'chown {{ $uid }}:{{ $gid }} -R {{ template "tieredStorage.cacheDirectory" . }}']
           volumeMounts:
             - name: tiered-storage-dir
               mountPath: {{ template "tieredStorage.cacheDirectory" . }}
-  {{- end }}
+        {{- if .Values.statefulset.initContainers.set-tiered-storage-cache-dir-ownership.resources }}
+          resources: {{- toYaml .Values.statefulset.initContainers.set-tiered-storage-cache-dir-ownership.resources | nindent 12 }}
+        {{- end }}
 {{- end }}
         - name: {{ (include "redpanda.name" .) | trunc 51 }}-configurator
           image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
@@ -178,7 +187,9 @@ spec:
               mountPath: /tmp/base-config
             - name: config
               mountPath: /etc/redpanda
-          resources: {{ toYaml .Values.statefulset.resources | nindent 12 }}
+        {{- if .Values.statefulset.initContainers.configurator.resources }}
+          resources: {{- toYaml .Values.statefulset.initContainers.configurator.resources | nindent 12 }}
+        {{- end }}
       containers:
         - name: {{ template "redpanda.name" . }}
           image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}

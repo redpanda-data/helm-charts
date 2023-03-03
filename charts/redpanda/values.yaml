@@ -460,7 +460,6 @@ post_upgrade_job:
   # extraEnvFrom:
   #   - secretRef:
   #       name: redpanda-aws-secrets
-
 statefulset:
   # Number of Redpanda brokers (recommend setting this to the number of nodes in the cluster)
   replicas: 3
@@ -534,6 +533,15 @@ statefulset:
   securityContext:
     fsGroup: 101
     runAsUser: 101
+  initContainers:
+    tuning:
+      resources: {}
+    set-datadir-ownership:
+      resources: {}
+    set-tiered-storage-cache-dir-ownership:
+      resources: {}
+    configurator:
+      resources: {}
   initContainerImage:
     repository: busybox
     tag: latest

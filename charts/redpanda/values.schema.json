@@ -666,9 +666,44 @@
             }
           }
         },
-        "initContainer": {
-          "type": "string"
+        "initContainers": {
+          "type": "object",
+          "properties": {
+            "tuning": {
+              "type": "object",
+              "properties": {
+                "resources": {
+                  "type": "object"
+                }
+              }
+            },
+            "set-datadir-ownership": {
+              "type": "object",
+              "properties": {
+                "resources": {
+                  "type": "object"
+                }
+              }
+            },
+            "set-tiered-storage-cache-dir-ownership": {
+              "type": "object",
+              "properties": {
+                "resources": {
+                  "type": "object"
+                }
+              }
+            },
+            "configurator": {
+              "type": "object",
+              "properties": {
+                "resources": {
+                  "type": "object"
+                }
+              }
+            }
+          }
         },
+
         "skipChown": {
           "type": "boolean"
         }
