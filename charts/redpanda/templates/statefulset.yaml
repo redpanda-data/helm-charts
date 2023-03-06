@@ -82,7 +82,7 @@ spec:
           volumeMounts:
             - name: datadir
               mountPath: /var/lib/redpanda/data
-        {{- if .Values.statefulset.initContainers.set-datadir-ownership.resources }}
+        {{- if .Values.statefulset.initContainers.setDatadirOwnership.resources }}
           resources: {{- toYaml .Values.statefulset.initContainers.setDatadirOwnership.resources | nindent 12 }}
         {{- end }}
 {{- end }}
