@@ -666,9 +666,44 @@
             }
           }
         },
-        "initContainer": {
-          "type": "string"
+        "initContainers": {
+          "type": "object",
+          "properties": {
+            "tuning": {
+              "type": "object",
+              "properties": {
+                "resources": {
+                  "type": "object"
+                }
+              }
+            },
+            "setDatadirOwnership": {
+              "type": "object",
+              "properties": {
+                "resources": {
+                  "type": "object"
+                }
+              }
+            },
+            "setTieredStorageCacheDirOwnership": {
+              "type": "object",
+              "properties": {
+                "resources": {
+                  "type": "object"
+                }
+              }
+            },
+            "configurator": {
+              "type": "object",
+              "properties": {
+                "resources": {
+                  "type": "object"
+                }
+              }
+            }
+          }
         },
+
         "skipChown": {
           "type": "boolean"
         }
