@@ -655,7 +655,8 @@
           "type": "object",
           "required": [
             "fsGroup",
-            "runAsUser"
+            "runAsUser",
+            "fsGroupChangePolicy"
           ],
           "properties": {
             "fsGroup": {
@@ -663,6 +664,10 @@
             },
             "runAsUser": {
               "type": "integer"
+            },
+            "fsGroupChangePolicy": {
+              "type": "string",
+              "pattern": "^(OnRootMismatch|Always)$"
             }
           }
         },
@@ -670,14 +675,6 @@
           "type": "object",
           "properties": {
             "tuning": {
-              "type": "object",
-              "properties": {
-                "resources": {
-                  "type": "object"
-                }
-              }
-            },
-            "setDatadirOwnership": {
               "type": "object",
               "properties": {
                 "resources": {
@@ -702,10 +699,6 @@
               }
             }
           }
-        },
-
-        "skipChown": {
-          "type": "boolean"
         }
       }
     },

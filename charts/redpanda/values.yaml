@@ -533,10 +533,9 @@ statefulset:
   securityContext:
     fsGroup: 101
     runAsUser: 101
+    fsGroupChangePolicy: OnRootMismatch
   initContainers:
     tuning:
-      resources: {}
-    setDatadirOwnership:
       resources: {}
     setTieredStorageCacheDirOwnership:
       resources: {}
@@ -545,9 +544,6 @@ statefulset:
   initContainerImage:
     repository: busybox
     tag: latest
-  # in environments where root is not allowed, you cannot change the ownership of files and directories
-  # set this to skip this step
-  skipChown: false
 
 # Service account management
 serviceAccount:

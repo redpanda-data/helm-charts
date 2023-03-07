@@ -75,17 +75,6 @@ spec:
           resources: {{- toYaml .Values.statefulset.initContainers.tuning.resources | nindent 12 }}
         {{- end }}
 {{- end }}
-{{- if not .Values.statefulset.skipChown }}
-        - name: set-datadir-ownership
-          image: {{ .Values.statefulset.initContainerImage.repository }}:{{ .Values.statefulset.initContainerImage.tag }}
-          command: ["/bin/sh", "-c", "chown {{ $uid }}:{{ $gid }} -R /var/lib/redpanda/data"]
-          volumeMounts:
-            - name: datadir
-              mountPath: /var/lib/redpanda/data
-        {{- if .Values.statefulset.initContainers.setDatadirOwnership.resources }}
-          resources: {{- toYaml .Values.statefulset.initContainers.setDatadirOwnership.resources | nindent 12 }}
-        {{- end }}
-{{- end }}
 {{- if and (include "is-licensed" . | fromJson).bool .Values.storage.tieredConfig.cloud_storage_enabled }}
         - name: set-tiered-storage-cache-dir-ownership
           image: {{ .Values.statefulset.initContainerImage.repository }}:{{ .Values.statefulset.initContainerImage.tag }}
