@@ -22,7 +22,7 @@ limitations under the License.
   {{- $listeners := .Values.listeners -}}
   {{- $values := .Values }}
   {{- range $name, $data := .Values.tls.certs }}
-  {{- $d := $data.duration }}
+    {{- $d := $data.duration }}
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -59,15 +59,15 @@ spec:
   privateKey:
     algorithm: ECDSA
     size: 256
-  {{- if not (empty $data.issuerRef) }}
+    {{- if not (empty $data.issuerRef) }}
   issuerRef:
-  {{- toYaml $data.issuerRef | nindent 4 }}
+    {{- toYaml $data.issuerRef | nindent 4 }}
     group: cert-manager.io
-  {{- else }}
+    {{- else }}
   issuerRef:
     name: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-issuer
     kind: Issuer
     group: cert-manager.io
-  {{- end }}
+    {{- end }}
   {{- end }}
 {{- end }}
