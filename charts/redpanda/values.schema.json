@@ -658,7 +658,8 @@
           "type": "object",
           "required": [
             "fsGroup",
-            "runAsUser"
+            "runAsUser",
+            "fsGroupChangePolicy"
           ],
           "properties": {
             "fsGroup": {
@@ -666,14 +667,41 @@
             },
             "runAsUser": {
               "type": "integer"
+            },
+            "fsGroupChangePolicy": {
+              "type": "string",
+              "pattern": "^(OnRootMismatch|Always)$"
             }
           }
         },
-        "initContainer": {
-          "type": "string"
-        },
-        "skipChown": {
-          "type": "boolean"
+        "initContainers": {
+          "type": "object",
+          "properties": {
+            "tuning": {
+              "type": "object",
+              "properties": {
+                "resources": {
+                  "type": "object"
+                }
+              }
+            },
+            "setTieredStorageCacheDirOwnership": {
+              "type": "object",
+              "properties": {
+                "resources": {
+                  "type": "object"
+                }
+              }
+            },
+            "configurator": {
+              "type": "object",
+              "properties": {
+                "resources": {
+                  "type": "object"
+                }
+              }
+            }
+          }
         }
       }
     },

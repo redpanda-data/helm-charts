@@ -460,7 +460,6 @@ post_upgrade_job:
   # extraEnvFrom:
   #   - secretRef:
   #       name: redpanda-aws-secrets
-
 statefulset:
   # Number of Redpanda brokers (recommend setting this to the number of nodes in the cluster)
   replicas: 3
@@ -534,12 +533,17 @@ statefulset:
   securityContext:
     fsGroup: 101
     runAsUser: 101
+    fsGroupChangePolicy: OnRootMismatch
+  initContainers:
+    tuning:
+      resources: {}
+    setTieredStorageCacheDirOwnership:
+      resources: {}
+    configurator:
+      resources: {}
   initContainerImage:
     repository: busybox
     tag: latest
-  # in environments where root is not allowed, you cannot change the ownership of files and directories
-  # set this to skip this step
-  skipChown: false
 
 # Service account management
 serviceAccount:
