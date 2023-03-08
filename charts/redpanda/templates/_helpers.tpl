@@ -479,7 +479,7 @@ than 1 core.
 # manage backward compatibility with renaming podSecurityContext to securityContext
 {{- define "pod-security-context" -}}
 fsGroup: {{ dig "podSecurityContext" "fsGroup" .Values.statefulset.securityContext.fsGroup .Values.statefulset }}
-fsGroupChangePolicy: {{ dig "podSecurityContext" "fsGroupChangePolicy" .Values.statefulset.securityContext.fsGroupChangePolicy .Values.statefulset }}
+fsGroupChangePolicy: {{ dig "securityContext" "fsGroupChangePolicy" "OnRootMismatch" .Values.statefulset }}
 {{- end -}}
 
 # for backward compatibility, force a default on releases that didn't
