@@ -26,6 +26,10 @@ metadata:
 {{- with include "full.labels" . }}
   {{- . | nindent 4 }}
 {{- end }}
+{{- with $values.external.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+{{- end }}
 spec:
   type: NodePort
   externalTrafficPolicy: Local
