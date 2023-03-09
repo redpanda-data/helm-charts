@@ -29,6 +29,10 @@ metadata:
   {{- . | nindent 4 }}
 {{- end }}
     repdanda.com/type: "loadbalancer"
+{{- with $values.external.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+{{- end }}
 spec:
   type: LoadBalancer
 {{- if not ( empty $root.Values.external.sourceRanges ) }}

@@ -191,6 +191,9 @@
         },
         "sourceRanges": {
           "type": "array"
+        },
+        "annotations": {
+          "type": "object"
         }
       }
     },
@@ -655,8 +658,7 @@
           "type": "object",
           "required": [
             "fsGroup",
-            "runAsUser",
-            "fsGroupChangePolicy"
+            "runAsUser"
           ],
           "properties": {
             "fsGroup": {
