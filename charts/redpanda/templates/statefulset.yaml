@@ -71,7 +71,7 @@ spec:
           volumeMounts:
             - name: {{ template "redpanda.fullname" . }}
               mountPath: /etc/redpanda
-        {{- if .Values.statefulset.initContainers.tuning.resources }}
+        {{- if get .Values.statefulset.initContainers.tuning "resources" }}
           resources: {{- toYaml .Values.statefulset.initContainers.tuning.resources | nindent 12 }}
         {{- end }}
 {{- end }}
@@ -82,7 +82,7 @@ spec:
           volumeMounts:
             - name: tiered-storage-dir
               mountPath: {{ template "tieredStorage.cacheDirectory" . }}
-        {{- if .Values.statefulset.initContainers.setTieredStorageCacheDirOwnership.resources }}
+        {{- if get .Values.statefulset.initContainers.setTieredStorageCacheDirOwnership "resources" }}
           resources: {{- toYaml .Values.statefulset.initContainers.setTieredStorageCacheDirOwnership.resources | nindent 12 }}
         {{- end }}
 {{- end }}
@@ -176,7 +176,7 @@ spec:
               mountPath: /tmp/base-config
             - name: config
               mountPath: /etc/redpanda
-        {{- if .Values.statefulset.initContainers.configurator.resources }}
+        {{- if get .Values.statefulset.initContainers.configurator "resources" }}
           resources: {{- toYaml .Values.statefulset.initContainers.configurator.resources | nindent 12 }}
         {{- end }}
       containers:
