@@ -1,0 +1,39 @@
+version: '3'
+
+
+dotenv: [".env", '{{.ENV}}/.env.']
+
+# NOTE: Task doesn't allow to override environment variables. Thus, when an
+# environment variable is referenced in a taskfile, it is because we expect it
+# to be defined by the environment where Task is being invoked, in an `.env`
+# file, or in a task's `env:` attribute.
+
+
+# if a task is referenced multiple times, only run it once
+run: once
+
+tasks:
+  kind-create:
+    cmds:
+      - kind create cluster --config ./.github/kind.yaml
+      - helm install cert-manager jetstack/cert-manager --set installCRDs=true --namespace cert-manager --create-namespace
+
+  kind-delete:
+    cmds:
+      - kind delete cluster
+
+  install-redpanda-chart:
+    cmds:
+      - helm install redpanda ./charts/redpanda --namespace redpanda --create-namespace --debug
+
+  upgrade-redpanda-chart:
+    cmds:
+      - helm upgrade --install redpanda ./charts/redpanda --namespace redpanda --create-namespace --debug
+
+  uninstall-redpanda-chart:
+    cmds:
+      - helm uninstall redpanda -n redpanda || true
+      - kubectl -n redpanda delete pods redpanda-0 redpanda-1 redpanda-2 --grace-period=0 --force --wait=false || true
+      - kubectl -n redpanda delete pvc datadir-redpanda-0 datadir-redpanda-1 datadir-redpanda-2 --force --grace-period=0 --wait=false || true
+      - kubectl delete ns redpanda --wait=false || true
+
