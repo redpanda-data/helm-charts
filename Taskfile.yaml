@@ -15,12 +15,12 @@ run: once
 tasks:
   kind-create:
     cmds:
-      - kind create cluster --config ./.github/kind.yaml
+      - kind create cluster --name rp-helm --config ./.github/kind.yaml
       - helm install cert-manager jetstack/cert-manager --set installCRDs=true --namespace cert-manager --create-namespace
 
   kind-delete:
     cmds:
-      - kind delete cluster
+      - kind delete cluster --name rp-helm
 
   install-redpanda-chart:
     cmds:
