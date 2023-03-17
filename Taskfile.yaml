@@ -24,7 +24,7 @@ tasks:
 
   install-redpanda-chart:
     cmds:
-      - helm install redpanda ./charts/redpanda --namespace redpanda --create-namespace --debug
+      - helm install rp ./charts/redpanda --namespace rn --create-namespace --debug
 
   upgrade-redpanda-chart:
     cmds:
