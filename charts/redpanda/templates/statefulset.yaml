@@ -68,7 +68,7 @@ spec:
               rpk redpanda tune all
           securityContext:
             capabilities:
-              add: ["CAP_SYS_RESOURCE"]
+              add: ["SYS_RESOURCE"]
             privileged: true
             runAsUser: 0
             runAsGroup: 0
