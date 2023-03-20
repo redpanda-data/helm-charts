@@ -159,6 +159,5 @@ spec:
             secretName: {{ $sasl.secretRef }}
             optional: false
       {{- end }}
-      securityContext: {{ include "container-security-context" . | nindent 8 }}
       serviceAccountName: {{ include "redpanda.serviceAccountName" . }}
 {{- end -}}
