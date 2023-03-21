@@ -112,7 +112,7 @@ tls:
   # To allow you to enable TLS for individual listeners,
   # certificates in auth.tls.certs are always loaded, even if tls.enabled is false.
   # See listeners.<listener-name>.tls.enabled.
-  enabled: false
+  enabled: true
   # List all Certificates here, then you can reference a specific  Certificate's name in each listener's listeners.<listener name>.tls.cert setting.
   certs:
     # This is the Certificate name.
