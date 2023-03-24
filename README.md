@@ -1,6 +1,6 @@
 # Redpanda Kubernetes Helm Charts
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) ![Release Charts](https://github.com/Redpanda/helm-charts/workflows/Release%20Charts/badge.svg?branch=main) [![Releases downloads](https://img.shields.io/github/downloads/Redpanda/helm-charts/total.svg)](https://github.com/Redpanda/helm-charts/releases)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) Release Charts [![Releases downloads](https://img.shields.io/github/downloads/redpanda-data/helm-charts/total.svg)](https://github.com/redpanda-data/helm-charts/releases)
 
 The code is provided as-is with no warranties. 
 
@@ -23,9 +23,9 @@ You can then run `helm search repo redpanda` to see the charts.
 The source code of all [Redpanda](https://github.com/redpanda-data/) community [Helm](https://github.com/redpanda-data/helm-charts/) charts can be found on Github: <https://github.com/redpanda-data/helm-charts/>
 
 <!-- Keep full URL links to repo files because this README syncs from main to gh-pages.  -->
-We'd love to have you contribute! Please refer to our [contribution guidelines](https://github.com/redpanda/helm-charts/blob/main/CONTRIBUTING.md) for details.
+We'd love to have you contribute! Please refer to our [contribution guidelines](https://github.com/redpanda-data/helm-charts/blob/main/CONTRIBUTING.md) for details.
 
 ## License
 
 <!-- Keep full URL links to repo files because this README syncs from main to gh-pages.  -->
-[Apache 2.0 License](https://github.com/Redpanda/helm-charts/blob/main/LICENSE).
+[Apache 2.0 License](https://github.com/redpanda-data/helm-charts/blob/main/LICENSE).
