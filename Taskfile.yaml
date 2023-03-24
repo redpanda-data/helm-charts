@@ -13,6 +13,7 @@ dotenv: [".env", '{{.ENV}}/.env.']
 run: once
 
 tasks:
+
   kind-create:
     cmds:
       - kind create cluster --name rp-helm --config ./.github/kind.yaml
@@ -36,4 +37,16 @@ tasks:
       - kubectl -n redpanda delete pods redpanda-0 redpanda-1 redpanda-2 --grace-period=0 --force --wait=false || true
       - kubectl -n redpanda delete pvc datadir-redpanda-0 datadir-redpanda-1 datadir-redpanda-2 --force --grace-period=0 --wait=false || true
       - kubectl delete ns redpanda --wait=false || true
+
+  minikube-start:
+    cmds:
+      - minikube start --nodes=4 
+      - kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.23/deploy/local-path-storage.yaml 
+      - ./scripts/change-default-sc.sh
+      - helm install cert-manager jetstack/cert-manager --set installCRDs=true --namespace cert-manager --create-namespace
+
+
+  minikube-delete:
+    cmds:
+      - minikube delete
 
