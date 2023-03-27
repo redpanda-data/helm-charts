@@ -482,6 +482,11 @@ statefulset:
   initContainers:
     tuning:
       resources: {}
+    # In environments where root is not allowed, you cannot change the ownership of files and directories
+    # Please enable when using default minikube cluster configuration
+    setDataDirOwnership:
+      enabled: false
+      resources: {}
     setTieredStorageCacheDirOwnership:
       resources: {}
     configurator:
@@ -489,9 +494,6 @@ statefulset:
   initContainerImage:
     repository: busybox
     tag: latest
-  # In environments where root is not allowed, you cannot change the ownership of files and directories
-  # set this to true to skip this step.
-  skipChown: false
 
 # Service account management
 serviceAccount:
