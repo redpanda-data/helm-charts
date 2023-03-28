@@ -49,9 +49,9 @@ spec:
   - {{ printf "*.%s.%s.svc" $service $ns | quote }}
   - {{ printf "*.%s.%s" $service $ns | quote }}
 {{- end }}
-{{- if $values.external.domain }}
-  - "{{ $values.external.domain }}"
-  - "*.{{ $values.external.domain }}"
+{{- if (tpl $values.external.domain $) }}
+  - "{{ tpl $values.external.domain $ }}"
+  - "*.{{ tpl $values.external.domain $ }}"
 {{- end }}
   duration: {{ $d | default "43800h" }}
   isCA: false
