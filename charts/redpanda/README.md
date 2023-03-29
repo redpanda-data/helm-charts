@@ -1,6 +1,6 @@
 # Redpanda Helm Chart
 
-[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/redpanda-data)](https://artifacthub.io/packages/search?repo=redpanda-data)
+[![Nightly Test](https://github.com/redpanda-data/helm-charts/actions/workflows/nightly.yaml/badge.svg)](https://github.com/redpanda-data/helm-charts/actions/workflows/nightly.yaml) [![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/redpanda-data)](https://artifacthub.io/packages/search?repo=redpanda-data)
 
 The Redpanda Helm chart deploys a Redpanda cluster in Kubernetes, and provides the following features:
 
