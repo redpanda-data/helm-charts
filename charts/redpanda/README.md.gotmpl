@@ -20,12 +20,20 @@ For instructions on how to install and use the chart, including how to override 
 
 {{- range .Values }}
 
-### {{ .Key }}
-
-{{ $defaultValue := (default .Default .AutoDefault) }}
-**Default:** {{ $defaultValue }}
+### [{{ .Key }}](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path={{ .Key }})
 
 {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }}
+
+{{ $defaultValue := (default .Default .AutoDefault) }}
+{{ if gt (len $defaultValue) 30 -}}
+**Default:**
+
+```
+{{ $defaultValue | replace "`" "" }}
+```
+{{- else -}}
+**Default:** {{ $defaultValue }}
+{{- end }}
 
 {{- end }}
 {{ end }}
