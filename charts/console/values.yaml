@@ -4,24 +4,34 @@
 
 replicaCount: 1
 
+# -- Redpanda Console Docker image settings.
 image:
   registry: docker.redpanda.com
+  # -- Docker repository from which to pull the Redpanda Docker image.
   repository: vectorized/console
+  # -- The imagePullPolicy.
   pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
+  # -- The Redpanda Console version.
+  # See DockerHub for: 
+  # [All stable versions](https://hub.docker.com/r/redpandadata/console/tags) 
+  # and [all unstable versions](https://hub.docker.com/r/redpandadata/console-unstable/tags).
+  # @default -- `Chart.appVersion`
   tag: ""
 
 imagePullSecrets: []
+# -- Override `console.name` template.
 nameOverride: ""
+# -- Override `console.fullname` template.
 fullnameOverride: ""
 
 serviceAccount:
-  # Specifies whether a service account should be created
+  # -- Specifies whether a service account should be created.
   create: true
-  # Annotations to add to the service account
+  # -- Annotations to add to the service account.
   annotations: {}
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
+  # -- The name of the service account to use.
+  # If not set and `serviceAccount.create` is `true`, 
+  # a name is generated using the `console.fullname` template
   name: ""
 
 podAnnotations: {}
@@ -44,7 +54,7 @@ securityContext:
 service:
   type: ClusterIP
   port: 8080
-  # this will override the value in console.config.server.listenPort if not nil
+  # -- Override the value in `console.config.server.listenPort` if not `nil`
   targetPort:
   annotations: {}
 
@@ -67,7 +77,7 @@ ingress:
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # resources, such as minikube. If you want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
   # limits:
   #   cpu: 100m
@@ -90,23 +100,24 @@ tolerations: []
 affinity: {}
 
 console:
-  # Config.yaml is required for Console
-  # See reference config: https://docs.redpanda.com/docs/reference/console/config/
+  # -- Settings for the `Config.yaml` (required).
+  # For a reference of configuration settings, 
+  # see the [Redpanda Console documentation](https://docs.redpanda.com/docs/reference/console/config/).
   config: {}
   # roles:
   # roleBindings:
 
-# Additional environment variables for the Console Deployment
+# -- Additional environment variables for the Redpanda Console Deployment.
 extraEnv: []
   # - name: KAFKA_RACKID
   #   value: "1"
 
-# Additional environment variables for Console mapped from Secret or ConfigMap
+# -- Additional environment variables for Redpanda Console mapped from Secret or ConfigMap.
 extraEnvFrom: []
 # - secretRef:
 #     name: kowl-config-secret
 
-# Add additional volumes, e. g. for tls keys
+# -- Add additional volumes, such as for TLS keys.
 extraVolumes: []
 # - name: kafka-certs
 #   secret:
@@ -115,35 +126,35 @@ extraVolumes: []
 #   configMap:
 #     name: console-config
 
-# Add additional volumes mounts, e. g. for tls keys
+# -- Add additional volume mounts, such as for TLS keys.
 extraVolumeMounts: []
 # - name: kafka-certs # Must match the volume name
 #   mountPath: /etc/kafka/certs
 #   readOnly: true
 
-# Add additional containers, e. g. for oauth2-proxy
+# -- Add additional containers, such as for oauth2-proxy.
 extraContainers: []
 
-# SecretMounts is an abstraction to make a secret available in the container's filesystem.
-# Under the hood it creates a volume + volume mount for the Console container.
+# -- SecretMounts is an abstraction to make a Secret available in the container's filesystem.
+# Under the hood it creates a volume and a volume mount for the Redpanda Console container.
 secretMounts: []
 #  - name: kafka-certs
 #    secretName: kafka-certs
 #    path: /etc/console/certs
 #    defaultMode: 0755
 
-# Secret can be used to create a new Kubernetes secret for all sensitive config inputs.
-# Each provided secret will be mounted automatically and thus made available to the Console
-# pod.
-# If you want to use one or more existing secrets you can use "extraEnvFrom" to mount env
-# variables from string and secretMounts to mount files such as certificates from secrets.
+# -- Create a new Kubernetes Secret for all sensitive configuration inputs.
+# Each provided Secret is mounted automatically and made available to the
+# Pod.
+# If you want to use one or more existing Secrets, 
+# you can use the `extraEnvFrom` list to mount environment variables from string and secretMounts to mount files such as Certificates from Secrets.
 secret:
   create: true
 
-  # Secret values in case you want the chart to create a secret. All certificates will be mounted
-  # as a file and the path to that file will be configured via environment variables as well, so
-  # that Console will automatically pick them up.
-  # Kafka secrets
+  # Secret values in case you want the chart to create a Secret. All Certificates are mounted
+  # as files and the path to those files are configured through environment variables so
+  # that Console can automatically pick them up.
+  # -- Kafka Secrets.
   kafka: {}
     # saslPassword:
     # awsMskIamSecretKey:
@@ -157,7 +168,7 @@ secret:
     # schemaRegistryTlsKey:
     # protobufGitBasicAuthPassword
   # Enterprise version secrets
-  # SSO secrets (enterprise version)
+  # - SSO secrets (Enterprise version).
   login:
     google: {}
       # clientSecret:
@@ -181,8 +192,9 @@ secret:
       # tlsCert:
       # tlsKey:
 
-## Configure extra options for liveness and readiness probes
-## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes)
+# -- Settings for liveness and readiness probes.
+# For details, 
+# see the [Kubernetes documentation](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes).
 livenessProbe:
   initialDelaySeconds: 0
   periodSeconds: 10
@@ -191,7 +203,7 @@ livenessProbe:
   failureThreshold: 3
 
 readinessProbe:
-  # Grant 10s time to test connectivity to upstream services (Kafka, Schema Registry, ...)
+  # -- Grant time to test connectivity to upstream services such as Kafka and Schema Registry.
   initialDelaySeconds: 10
   periodSeconds: 10
   timeoutSeconds: 1

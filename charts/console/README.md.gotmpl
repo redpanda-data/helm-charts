@@ -1,0 +1,57 @@
+{{- define "chart.header" -}}
+---
+title: Redpanda Console Helm Chart Specification
+tags:
+  - Kubernetes
+  - Helm configuration
+description: Find the default values and descriptions of settings in the Redpanda Console Helm chart.
+---
+{{- end -}}
+
+{{ define "chart.description" -}}
+This page describes the official Redpanda Console Helm Chart. In particular, this page describes the contents of the chart’s [`values.yaml` file](https://github.com/redpanda-data/helm-charts/blob/main/charts/console/values.yaml). Each of the settings is listed and described on this page, along with any default values.
+
+For instructions on how to install and use the chart, including how to override and customize the chart’s values, refer to the [deployment documentation](https://docs.redpanda.com/docs/deploy/deployment-option/self-hosted/kubernetes/kubernetes-deploy/).
+{{ end -}}
+
+{{ define "chart.valuesTable" }}
+
+## Settings
+
+{{- range .Values }}
+
+### [{{ .Key }}](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path={{ .Key }})
+
+{{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }}
+
+{{ $defaultValue := (default .Default .AutoDefault) }}
+{{ if gt (len $defaultValue) 30 -}}
+**Default:**
+
+```
+{{ $defaultValue | replace "`" "" }}
+```
+{{- else -}}
+**Default:** {{ $defaultValue }}
+{{- end }}
+
+{{- end }}
+{{ end }}
+
+{{- template "chart.header" . -}}
+
+{{ template "chart.deprecationWarning" . }}
+
+{{ template "chart.badgesSection" . }}
+
+{{ template "chart.description" . }}
+
+{{ template "chart.homepageLine" . }}
+
+{{ template "chart.sourcesSection" . }}
+
+{{ template "chart.requirementsSection" . }}
+
+{{ template "chart.valuesTable" . }}
+
+{{ template "helm-docs.versionFooter" . }}
