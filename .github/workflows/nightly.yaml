@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Lint and Test Charts
+name: Nightly Lint and Test Charts
 
 on:
   schedule:
@@ -101,4 +101,4 @@ jobs:
         run: |
           ct install --config .github/ct.yaml --upgrade \
             --helm-extra-set-args="--set=image.tag=${{ matrix.version }}" \
-            --charts=redpanda
+            --charts=charts/redpanda
