@@ -20,8 +20,6 @@ The Redpanda Helm chart deploys a Redpanda cluster in Kubernetes, and provides t
 
 To get started, see the [Redpanda documentation][kubernetes-qs-dev].
 
-For examples of using the Helm chart, see the [`examples/` directory][examples]. Each example focuses on a specific feature.
-
 ## Configuration
 
 The Redpanda Helm chart is configured in the [`values.yaml`][values] file. To customize your deployment, you can override the default values in your own YAML file with the `--values` option or in the command line with the --set option. For example, you can do the following:
@@ -73,6 +71,5 @@ To contribute to the Helm chart, see our [contribution guidelines][contributing]
 [redpanda]: https://redpanda.com
 [helm]: https://helm.sh/docs/chart_template_guide/values_files/
 [values]: https://github.com/redpanda-data/helm-charts/blob/main/charts/redpanda/values.yaml
-[examples]: https://github.com/redpanda-data/helm-charts/blob/main/examples/README.md
 [contributing]: https://github.com/redpanda-data/helm-charts/blob/main/CONTRIBUTING.md
 [kubernetes-qs-dev]: https://docs.redpanda.com/docs/quickstart/kubernetes-qs-dev/
