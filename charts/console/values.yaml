@@ -12,8 +12,8 @@ image:
   # -- The imagePullPolicy.
   pullPolicy: IfNotPresent
   # -- The Redpanda Console version.
-  # See DockerHub for: 
-  # [All stable versions](https://hub.docker.com/r/redpandadata/console/tags) 
+  # See DockerHub for:
+  # [All stable versions](https://hub.docker.com/r/redpandadata/console/tags)
   # and [all unstable versions](https://hub.docker.com/r/redpandadata/console-unstable/tags).
   # @default -- `Chart.appVersion`
   tag: ""
@@ -30,7 +30,7 @@ serviceAccount:
   # -- Annotations to add to the service account.
   annotations: {}
   # -- The name of the service account to use.
-  # If not set and `serviceAccount.create` is `true`, 
+  # If not set and `serviceAccount.create` is `true`,
   # a name is generated using the `console.fullname` template
   name: ""
 
@@ -101,7 +101,7 @@ affinity: {}
 
 console:
   # -- Settings for the `Config.yaml` (required).
-  # For a reference of configuration settings, 
+  # For a reference of configuration settings,
   # see the [Redpanda Console documentation](https://docs.redpanda.com/docs/reference/console/config/).
   config: {}
   # roles:
@@ -146,7 +146,7 @@ secretMounts: []
 # -- Create a new Kubernetes Secret for all sensitive configuration inputs.
 # Each provided Secret is mounted automatically and made available to the
 # Pod.
-# If you want to use one or more existing Secrets, 
+# If you want to use one or more existing Secrets,
 # you can use the `extraEnvFrom` list to mount environment variables from string and secretMounts to mount files such as Certificates from Secrets.
 secret:
   create: true
@@ -193,7 +193,7 @@ secret:
       # tlsKey:
 
 # -- Settings for liveness and readiness probes.
-# For details, 
+# For details,
 # see the [Kubernetes documentation](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes).
 livenessProbe:
   initialDelaySeconds: 0
