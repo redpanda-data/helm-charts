@@ -49,7 +49,7 @@ spec:
   - {{ printf "*.%s.%s.svc" $service $ns | quote }}
   - {{ printf "*.%s.%s" $service $ns | quote }}
 {{- end }}
-{{- if (tpl $values.external.domain $) }}
+{{- if (tpl ($values.external.domain | default "") $) }}
   - "{{ tpl $values.external.domain $ }}"
   - "*.{{ tpl $values.external.domain $ }}"
 {{- end }}
