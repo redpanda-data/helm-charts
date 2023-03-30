@@ -18,7 +18,7 @@ limitations under the License.
 {{- $values := .Values }}
 {{- $internalAdvertiseAddress := printf "%s.%s" "$(SERVICE_NAME)" (include "redpanda.internal.domain" .) -}}
 {{- $externalAdvertiseAddress := printf "$(SERVICE_NAME)" -}}
-{{- if $values.external.domain -}}
+{{- if (tpl ($values.external.domain | default "") $) }}
   {{- $externalAdvertiseAddress = printf "$(SERVICE_NAME).%s" (tpl $values.external.domain $) -}}
 {{- end -}}
 {{- $uid := dig "podSecurityContext" "runAsUser" .Values.statefulset.securityContext.runAsUser .Values.statefulset -}}
