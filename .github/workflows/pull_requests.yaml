@@ -23,8 +23,9 @@ on:
       - .github/*.sh
       - .github/ct.yaml
       - .github/kind.yaml
-      - .github/workflows/**
+      - .github/workflows/pull_requests.yaml
       - charts/**
+      - '!**/*.md'
 jobs:
   lint:
     runs-on: ubuntu-22.04
