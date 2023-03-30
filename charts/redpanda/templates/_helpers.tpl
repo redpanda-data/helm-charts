@@ -534,7 +534,7 @@ advertised-host returns a json sring with the data neded for configuring the adv
 {{- define "advertised-host" -}}
   {{- $host := dict "name" .externalName "address" .externalAdvertiseAddress "port" .port -}}
   {{- if .values.external.addresses -}}
-    {{- if .values.external.domain -}}
+    {{- if (tpl ($values.external.domain | default "") $) }}
       {{- $host = dict "name" .externalName "address" (printf "%s.%s" (index .values.external.addresses .replicaIndex) (tpl .values.external.domain $)) "port" .port -}}
     {{- else -}}
       {{- $host = dict "name" .externalName  "address" (index .values.external.addresses .replicaIndex) "port" .port -}}
