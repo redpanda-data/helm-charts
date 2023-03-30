@@ -1,6 +1,5 @@
 version: '3'
 
-
 dotenv: [".env", '{{.ENV}}/.env.']
 
 vars:
@@ -8,12 +7,14 @@ vars:
   RELEASE: rp
   HELM_OPTIONS: ""
   KIND_CLUSTERNAME: rp-helm
+  CLUSTERCTL_VERSION: v1.4.1
+  CLUSTERAWSADM_VERSION: v2.0.2
+  BINDIR: .local/bin
 
 # NOTE: Task doesn't allow to override environment variables. Thus, when an
 # environment variable is referenced in a taskfile, it is because we expect it
 # to be defined by the environment where Task is being invoked, in an `.env`
 # file, or in a task's `env:` attribute.
-
 
 # if a task is referenced multiple times, only run it once
 run: once
@@ -29,7 +30,21 @@ tasks:
     cmds:
       - helm install cert-manager jetstack/cert-manager --set installCRDs=true --namespace cert-manager --create-namespace
 
+  mklocal:
+    internal: true
+    cmds:
+      - mkdir -p .local/bin
+    status:
+      - test -d .local
+      - test -d .local/bin
+
+  aws-check-login:
+    internal: true
+    cmds:
+      - aws sts get-caller-identity
+
   kind-create:
+    deps: [mklocal]
     cmds:
       - kind create cluster --name {{ .KIND_CLUSTERNAME }} --config ./.github/kind.yaml
       - task: install-cert-manager
@@ -54,13 +69,97 @@ tasks:
       - kubectl delete ns {{ .NAMESPACE }}
 
   minikube-start:
+    deps: [mklocal]
     cmds:
       - minikube start --nodes=4
       - kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.23/deploy/local-path-storage.yaml
       - ./scripts/change-default-sc.sh
       - task: install-cert-manager
 
-
   minikube-delete:
     cmds:
       - minikube delete
+
+  clusterctl:
+    deps: [mklocal]
+    cmds:
+      - mkdir -p {{.BINDIR}}
+      - curl -L https://github.com/kubernetes-sigs/cluster-api/releases/download/{{.CLUSTERCTL_VERSION}}/clusterctl-linux-amd64 -o {{.BINDIR}}/clusterctl-{{.CLUSTERCTL_VERSION}}
+      - chmod 0775 {{.BINDIR}}/clusterctl-{{.CLUSTERCTL_VERSION}}
+      - ln -sf clusterctl-{{.CLUSTERCTL_VERSION}} {{.BINDIR}}/clusterctl
+    status:
+      - test -f {{.BINDIR}}/clusterctl-{{.CLUSTERCTL_VERSION}}
+
+  clusterawsadm:
+    deps: [mklocal]
+    cmds:
+      - mkdir -p {{.BINDIR}}
+      - curl -L https://github.com/kubernetes-sigs/cluster-api-provider-aws/releases/download/{{.CLUSTERAWSADM_VERSION}}/clusterawsadm-linux-amd64 -o {{.BINDIR}}/clusterawsadm-{{.CLUSTERAWSADM_VERSION}}
+      - chmod 0775 {{.BINDIR}}/clusterawsadm-{{.CLUSTERAWSADM_VERSION}}
+      - ln -sf clusterawsadm-{{.CLUSTERAWSADM_VERSION}} {{.BINDIR}}/clusterawsadm
+    status:
+      - test -f {{.BINDIR}}/clusterawsadm-{{.CLUSTERAWSADM_VERSION}}
+
+  capi-create:
+    deps:
+      - mklocal
+      - clusterctl
+    env:
+      EXP_MACHINE_POOL: true
+      CAPA_EKS_ADD_ROLES: "{{.CAPA_EKS_ADD_ROLES}}"
+      CAPA_EKS_IAM: "{{.CAPA_EKS_IAM}}"
+      AWS_B64ENCODED_CREDENTIALS: "{{.AWS_B64ENCODED_CREDENTIALS}}"
+    vars:
+      CAPI_INFRASTRUCTURE: '{{ default "unknown" .CAPI_INFRASTRUCTURE }}'
+    cmds:
+      - task: kind-create
+        vars:
+          KIND_CLUSTERNAME: bootstrap
+      - "{{.BINDIR}}/clusterctl init -i {{ .CAPI_INFRASTRUCTURE }} -v7 --wait-providers"
+
+  capi-create-eks:
+    deps:
+      - aws-check-login
+      - mklocal
+      - clusterawsadm
+    env:
+      CAPA_EKS_IAM: true
+      CAPA_EKS_ADD_ROLES: true
+      AWS_B64ENCODED_CREDENTIALS:
+        sh: "{{.BINDIR}}/clusterawsadm bootstrap credentials encode-as-profile"
+    cmds:
+      - task: capi-create
+        vars:
+          CAPI_INFRASTRUCTURE: aws
+          CAPA_EKS_IAM: true
+          CAPA_EKS_ADD_ROLES: true
+          AWS_B64ENCODED_CREDENTIALS:
+            sh: "{{.BINDIR}}/clusterawsadm bootstrap credentials encode-as-profile"
+      - "{{.BINDIR}}/clusterawsadm bootstrap iam create-cloudformation-stack --config=.github/capi/eks-bootstrap.yaml"
+      - kubectl apply -f .github/capi/eks.yaml
+      - kubectl wait --for=condition=ready cluster capi-eks --timeout=20m
+      - kubectl wait --for=condition=Ready machinepool capi-eks-pool-0 --timeout=20m
+
+  capi-delete:
+    internal: true
+    cmds:
+      - kubectl delete -f {{.CLUSTERFILE}} --wait
+
+  capi-delete-eks:
+    env:
+      AWS_B64ENCODED_CREDENTIALS:
+        sh: "{{.BINDIR}}/clusterawsadm bootstrap credentials encode-as-profile"
+    cmds:
+      - "{{.BINDIR}}/clusterawsadm controller update-credentials"
+      - task: capi-delete
+        vars:
+          CLUSTERFILE: .github/capi/eks.yaml
+
+#   capi-create-gke:
+#       - task: capi-create
+#         vars:
+#           CAPI_PROVIDER: gcp
+#   capi-create-aks:
+#       - task: capi-create
+#         vars:
+#           CAPI_PROVIDER: azure
