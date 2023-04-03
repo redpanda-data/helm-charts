@@ -558,7 +558,6 @@ tuning:
   # simultaneous IO requests as possible, increasing throughput.
   #
   # When this option is enabled, Helm creates a privileged container. If your security profile does not allow this,
-  # For tuning requirements,
   # see the [tuning documentation](https://docs.redpanda.com/docs/deploy/deployment-option/self-hosted/kubernetes/kubernetes-tune-workers/).
   tune_aio_events: true
   #
