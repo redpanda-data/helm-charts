@@ -1,6 +1,6 @@
 # Redpanda Helm Chart
 
-[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/redpanda-data)](https://artifacthub.io/packages/search?repo=redpanda-data)
+[![Nightly Test](https://github.com/redpanda-data/helm-charts/actions/workflows/nightly.yaml/badge.svg)](https://github.com/redpanda-data/helm-charts/actions/workflows/nightly.yaml) [![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/redpanda-data)](https://artifacthub.io/packages/search?repo=redpanda-data)
 
 The Redpanda Helm chart deploys a Redpanda cluster in Kubernetes, and provides the following features:
 
@@ -19,8 +19,6 @@ The Redpanda Helm chart deploys a Redpanda cluster in Kubernetes, and provides t
 ## Installation
 
 To get started, see the [Redpanda documentation][kubernetes-qs-dev].
-
-For examples of using the Helm chart, see the [`examples/` directory][examples]. Each example focuses on a specific feature.
 
 ## Configuration
 
@@ -73,6 +71,5 @@ To contribute to the Helm chart, see our [contribution guidelines][contributing]
 [redpanda]: https://redpanda.com
 [helm]: https://helm.sh/docs/chart_template_guide/values_files/
 [values]: https://github.com/redpanda-data/helm-charts/blob/main/charts/redpanda/values.yaml
-[examples]: https://github.com/redpanda-data/helm-charts/blob/main/examples/README.md
 [contributing]: https://github.com/redpanda-data/helm-charts/blob/main/CONTRIBUTING.md
 [kubernetes-qs-dev]: https://docs.redpanda.com/docs/quickstart/kubernetes-qs-dev/

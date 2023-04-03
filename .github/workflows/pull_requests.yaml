@@ -23,8 +23,9 @@ on:
       - .github/*.sh
       - .github/ct.yaml
       - .github/kind.yaml
-      - .github/workflows/**
+      - .github/workflows/pull_requests.yaml
       - charts/**
+      - '!**/*.md'
 jobs:
   lint:
     runs-on: ubuntu-22.04
@@ -66,7 +67,7 @@ jobs:
       matrix:
         version:
           - ""
-          - v22.3.14
+          - v22.3.15
           # - v22.2.11 takes too long. Only run nightly.
         testvaluespattern:
           - '0[1-3]*'

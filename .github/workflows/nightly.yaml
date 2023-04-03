@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Lint and Test Charts
+name: Nightly Lint and Test Charts
 
 on:
   schedule:
@@ -45,7 +45,7 @@ jobs:
       matrix:
         version:
           - ""
-          - v22.3.14
+          - v22.3.15
           - v22.2.11
         testvaluespattern:
           - '0[1-3]*'
@@ -78,15 +78,12 @@ jobs:
         uses: helm/kind-action@v1.5.0
         with:
           config: .github/kind.yaml
-        if: steps.list-changed.outputs.changed == 'true'
 
       - name: Check kind config worked
         run: kubectl get nodes
-        if: steps.list-changed.outputs.changed == 'true'
 
       - name: Annotate nodes for rack awareness
         run: .github/annotate_kind_nodes.sh chart-testing
-        if: steps.list-changed.outputs.changed == 'true'
 
       - name: install cert-manager
         run: |
@@ -94,11 +91,10 @@ jobs:
           helm install cert-manager --namespace cert-manager \
             --create-namespace --version v1.11.0 jetstack/cert-manager \
             --set installCRDs=true --wait --wait-for-jobs
-        if: steps.list-changed.outputs.changed == 'true'
 
-      # we're excluding console from the install test until we have a way to test it with Redpanda
+      # we're testing console in the Redpanda chart
       - name: Run chart-testing (install and upgrade)
         run: |
           ct install --config .github/ct.yaml --upgrade \
             --helm-extra-set-args="--set=image.tag=${{ matrix.version }}" \
-            --charts=redpanda
+            --charts=charts/redpanda
