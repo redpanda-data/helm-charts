@@ -28,6 +28,8 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: {{ template "redpanda.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
+
   labels:
 {{- with include "full.labels" . }}
   {{- . | nindent 4 }}
