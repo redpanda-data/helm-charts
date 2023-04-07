@@ -1,0 +1,20 @@
+# This workflow triggers the actions in redpanda-data/documentation that publishes the Helm specification to the Redpanda documentation.
+
+name: Trigger Helm spec docs
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'charts/**'
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger generate-helm-spec-docs event
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.ACTIONS_BOT_TOKEN }}
+          repository: redpanda-data/documentation
+          event-type: generate-helm-spec-docs

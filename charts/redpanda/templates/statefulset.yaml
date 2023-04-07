@@ -18,8 +18,8 @@ limitations under the License.
 {{- $values := .Values }}
 {{- $internalAdvertiseAddress := printf "%s.%s" "$(SERVICE_NAME)" (include "redpanda.internal.domain" .) -}}
 {{- $externalAdvertiseAddress := printf "$(SERVICE_NAME)" -}}
-{{- if $values.external.domain -}}
-  {{- $externalAdvertiseAddress = printf "$(SERVICE_NAME).%s" $values.external.domain -}}
+{{- if (tpl ($values.external.domain | default "") $) }}
+  {{- $externalAdvertiseAddress = printf "$(SERVICE_NAME).%s" (tpl $values.external.domain $) -}}
 {{- end -}}
 {{- $uid := dig "podSecurityContext" "runAsUser" .Values.statefulset.securityContext.runAsUser .Values.statefulset -}}
 {{- $gid := dig "podSecurityContext" "fsGroup" .Values.statefulset.securityContext.fsGroup .Values.statefulset -}}
@@ -73,6 +73,17 @@ spec:
               mountPath: /etc/redpanda
         {{- if get .Values.statefulset.initContainers.tuning "resources" }}
           resources: {{- toYaml .Values.statefulset.initContainers.tuning.resources | nindent 12 }}
+        {{- end }}
+{{- end }}
+{{- if .Values.statefulset.initContainers.setDataDirOwnership.enabled }}
+        - name: set-datadir-ownership
+          image: {{ .Values.statefulset.initContainerImage.repository }}:{{ .Values.statefulset.initContainerImage.tag }}
+          command: ["/bin/sh", "-c", "chown {{ $uid }}:{{ $gid }} -R /var/lib/redpanda/data"]
+          volumeMounts:
+            - name: datadir
+              mountPath: /var/lib/redpanda/data
+        {{- if .Values.statefulset.initContainers.setDataDirOwnership.resources }}
+          resources: {{- toYaml .Values.statefulset.initContainers.setDataDirOwnership.resources | nindent 12 }}
         {{- end }}
 {{- end }}
 {{- if and (include "is-licensed" . | fromJson).bool .Values.storage.tieredConfig.cloud_storage_enabled }}
