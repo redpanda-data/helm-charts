@@ -24,57 +24,65 @@
 
 # Common settings
 #
-# Override redpanda.name template.
+# -- Override `redpanda.name` template.
 nameOverride: ""
-# Override redpanda.fullname template.
+# -- Override `redpanda.fullname` template.
 fullnameOverride: ""
-# Default kubernetes cluster domain.
+# -- Default Kubernetes cluster domain.
 clusterDomain: cluster.local
-# Additional labels added to all Kubernetes objects.
-# For example, my.k8s.service: redpanda
+# -- Additional labels to add to all Kubernetes objects.
+# For example, `my.k8s.service: redpanda`.
 commonLabels: {}
-# Node selection constraints for scheduling Pods, can override this for StatefulSets.
-# See https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
+# -- Node selection constraints for scheduling Pods, can override this for StatefulSets.
+# For details,
+# see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector).
 nodeSelector: {}
-# Taints to be tolerated by Pods, can override this for StatefulSets.
-# See https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+# -- Taints to be tolerated by Pods, can override this for StatefulSets.
+# For details,
+# see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/).
 tolerations: []
 
-# Redpanda settings
+# -- Redpanda Docker image settings.
 image:
+  # -- Docker repository from which to pull the Redpanda Docker image.
   repository: vectorized/redpanda
-  # Redpanda version. Defaults to Chart.appVersion.
-  # For all stable versions, see https://hub.docker.com/r/redpandadata/redpanda/tags
-  # For all unstable versions, see https://hub.docker.com/r/redpandadata/redpanda-unstable/tags
+  # -- The Redpanda version.
+  # See DockerHub for:
+  # [All stable versions](https://hub.docker.com/r/redpandadata/redpanda/tags)
+  # and [all unstable versions](https://hub.docker.com/r/redpandadata/redpanda-unstable/tags).
+  # @default -- `Chart.appVersion`.
   tag: ""
-  # The imagePullPolicy.
-  # If image.tag is 'latest', the default is Always.
+  # -- The imagePullPolicy.
+  # If `image.tag` is 'latest', the default is `Always`.
   pullPolicy: IfNotPresent
 
-# Enterprise license key (optional)
-# See https://docs.redpanda.com/docs/get-started/licenses/?platform=kubernetes#redpanda-enterprise-edition
+# -- Enterprise license key (optional).
+# For details,
+# see the [License documentation](https://docs.redpanda.com/docs/get-started/licenses/?platform=kubernetes#redpanda-enterprise-edition).
 license_key: ""
+# -- Secret name and secret key where the license key is stored.
 license_secret_ref: {}
-  # Secret name and secret key where the license key is stored.
   # secret_name: my-secret
   # secret_key: key-where-license-is-stored
 
-# Rack Awareness settings
-# See https://docs.redpanda.com/docs/manage/kubernetes/kubernetes-rack-awareness/
+# -- Rack Awareness settings.
+# For details,
+# see the [Rack Awareness documentation](https://docs.redpanda.com/docs/manage/kubernetes/kubernetes-rack-awareness/).
 rackAwareness:
-  # When running in multiple racks or availability zones, use a Kubernetes Node
+  # -- When running in multiple racks or availability zones, use a Kubernetes Node
   # annotation value as the Redpanda rack value.
   # Enabling this requires running with a service account with "get" Node permissions.
-  # To have the Helm chart configure that permission,
-  # set serviceAccount.create=true and rbac.enabled=true.
+  # To have the Helm chart configure these permissions,
+  # set `serviceAccount.create=true` and `rbac.enabled=true`.
   enabled: false
-  # This is the common well-known annotation to use as the rack ID.
+  # -- The common well-known annotation to use as the rack ID.
   # Override this only if you use a custom Node annotation.
   nodeAnnotation: topology.kubernetes.io/zone
 
 #
-# Console
-# See reference config: https://docs.redpanda.com/docs/reference/console/config/
+# -- Redpanda Console settings.
+# For a reference of configuration settings,
+# see the [Redpanda Console documentation](https://docs.redpanda.com/docs/reference/console/config/).
 console:
   enabled: true
   configmap:
@@ -85,61 +93,75 @@ console:
     create: false
   config: {}
 
-# Authentication
-# See https://docs.redpanda.com/docs/manage/kubernetes/security/sasl-kubernetes/
+# -- Authentication settings.
+# For details,
+# see the [SASL documentation](https://docs.redpanda.com/docs/manage/kubernetes/security/sasl-kubernetes/).
 auth:
   sasl:
-    # If you enable SASL, you must have a Secret referenced in auth.sasl.secretRef.
+    # -- Enable SASL authentication.
+    # If you enable SASL authentication, you must provide a Secret in `auth.sasl.secretRef`.
     enabled: false
+    # -- The authentication mechanism to use for the superuser. Options are `SCRAM-SHA-256` and `SCRAM-SHA-512`.
     mechanism: SCRAM-SHA-512
-    # The Secret that contains your superuser credentials.
-    # See https://docs.redpanda.com/docs/manage/kubernetes/security/sasl-kubernetes/#use-secrets
-    # Ensure there is an empty line at the end of the file.
+    # -- A Secret that contains your superuser credentials.
+    # The file must include an empty line at the end.
+    # For details,
+    # see the [SASL documentation](https://docs.redpanda.com/docs/manage/kubernetes/security/sasl-kubernetes/#use-secrets).
     secretRef: "redpanda-users"
-    # Optional list of superusers.
-    # These superusers will be created in a secret whose name is defined in auth.sasl.secretRef.
-    # If this list is empty, the Secret in auth.sasl.secretRef must already exist in the cluster before you deploy.
+    # -- Optional list of superusers.
+    # These superusers will be created in the Secret whose name is defined in `auth.sasl.secretRef`.
+    # If this list is empty,
+    # the Secret in `auth.sasl.secretRef` must already exist in the cluster before you deploy the chart.
     users:
     - name: admin
       password: change-me
       mechanism: SCRAM-SHA-512
 
-# TLS configuration
-# See https://docs.redpanda.com/docs/manage/kubernetes/security/kubernetes-tls/
+# -- TLS settings.
+# For details, see the [TLS documentation](https://docs.redpanda.com/docs/manage/kubernetes/security/kubernetes-tls/).
 tls:
-  # Enable TLS globally for all listeners.
-  # Each listener must include a certificate name in its <listener>.tls object.
+  # -- Enable TLS globally for all listeners.
+  # Each listener must include a Certificate name in its `<listener>.tls` object.
   # To allow you to enable TLS for individual listeners,
-  # certificates in auth.tls.certs are always loaded, even if tls.enabled is false.
-  # See listeners.<listener-name>.tls.enabled.
+  # Certificates in `auth.tls.certs` are always loaded, even if `tls.enabled` is `false`.
+  # See `listeners.<listener-name>.tls.enabled`.
   enabled: true
-  # List all Certificates here, then you can reference a specific  Certificate's name in each listener's listeners.<listener name>.tls.cert setting.
+  # -- List all Certificates here,
+  # then you can reference a specific Certificate's name
+  # in each listener's `listeners.<listener name>.tls.cert` setting.
   certs:
-    # This is the Certificate name.
+    # -- This key is the Certificate name.
     # To apply the Certificate to a specific listener,
-    # reference a Certificate's name in listeners.<listener-name>.tls.cert.
+    # reference the Certificate's name in `listeners.<listener-name>.tls.cert`.
     default:
-      # To use a custom pre-installed Issuer, add its name and kind here.
+      # -- To use a custom pre-installed Issuer,
+      # add its name and kind to the `issuerRef` object.
       # issuerRef:
       #   name: redpanda-default-root-issuer
       #   kind: Issuer   # Can be Issuer or ClusterIssuer
-      # Set the caEnabled flag for certificates that are not authenticated using public authorities.
+      # -- Set the `caEnabled` flag to `true` only for Certificates
+      # that are not authenticated using public authorities.
       caEnabled: true
       # duration: 43800h
 
-# External access configuration
-# See https://docs.redpanda.com/docs/manage/kubernetes/networking/networking-and-connectivity/
+# -- External access settings.
+# For details,
+# see the [Networking and Connectivity documentation](https://docs.redpanda.com/docs/manage/kubernetes/networking/networking-and-connectivity/).
 external:
-  # Default external access value for each Service.
-  # You can toggle external access for each listener in listeners.<service name>.external.<listener-name>.enabled.
+  # -- Enable external access for each Service.
+  # You can toggle external access for each listener in
+  # `listeners.<service name>.external.<listener-name>.enabled`.
   enabled: true
-  # External access type. Only `NodePort` and `LoadBalancer` are supported
-  # If undefined, then advertised listeners will be configured in Redpanda, but the helm chart will not create a Service. You must create a Service manually.
-  # Warning: If LoadBalancer is selected, you will likely experience higher latency and increased packet loss. NodePort is recommended in cases where latency is a priority.
+  # -- External access type. Only `NodePort` and `LoadBalancer` are supported.
+  # If undefined, then advertised listeners will be configured in Redpanda,
+  # but the helm chart will not create a Service.
+  # You must create a Service manually.
+  # Warning: If you use LoadBalancers, you will likely experience higher latency and increased packet loss.
+  # NodePort is recommended in cases where latency is a priority.
   type: NodePort
   # Optional source range for external access. Only applicable when external.type is LoadBalancer
   # sourceRanges: []
-  # Optional domain advertised to external clients
+  # -- Optional domain advertised to external clients
   # If specified, then it will be appended to the `external.addresses` values as each broker's advertised address
   # domain: local
   # Optional list of addresses that the Redpanda brokers advertise.
@@ -157,90 +179,88 @@ external:
     # cloud.google.com/load-balancer-type: "Internal"
     # service.beta.kubernetes.io/aws-load-balancer-type: nlb
 
-# Logging
+# -- Log-level settings.
 logging:
-  # Log level
-  # Valid values (from least to most logging) are:
-  # - warn
-  # - info
-  # - debug
-  # - trace
+  # -- Log level
+  # Valid values (from least to most verbose) are: `warn`, `info`, `debug`, and `trace`.
   logLevel: info
-  # Send usage stats back to Redpanda.
-  # See https://docs.redpanda.com/docs/cluster-administration/monitoring/#stats-reporting
+  # -- Send usage statistics back to Redpanda Data.
+  # For details,
+  # see the [stats reporting documentation](https://docs.redpanda.com/docs/cluster-administration/monitoring/#stats-reporting).
   usageStats:
-    # rpk.enable_usage_stats
+    # Enable the `rpk.enable_usage_stats` property.
     enabled: true
     # Your organization name (optional)
     # organization: your-org
     # Your cluster ID (optional)
     # clusterId: your-helm-cluster
 
-# Pod resource management
-# See https://docs.redpanda.com/docs/manage/kubernetes/manage-resources/
+# -- Pod resource management.
+# This section simplifies resource allocation
+# by providing a single location where resources are defined.
+# Helm sets these resource values within the `statefulset.yaml` and `configmap.yaml` templates.
+#
+# The default values are for a development environment.
+# Production-level values and other considerations are documented,
+# where those values are different from the default.
+# For details,
+# see the [Pod resources documentation](https://docs.redpanda.com/docs/manage/kubernetes/manage-resources/).
 resources:
-  # This section attempts to simplify allocating resources by providing a single location
-  # where resources are defined.
-  # Helm sets these resource values within the following templates:
-  # - statefulset.yaml
-  # - configmap.yaml
   #
-  # The default values are for a development environment.
-  # Production-level values and other considerations are provided in comments,
-  # where those values are different from the default.
-  #
-  # CPU resources
-  # See https://docs.redpanda.com/docs/manage/kubernetes/manage-resources/#configure-cpu-resources
+  # -- CPU resources.
+  # For details,
+  # see the [Pod resources documentation](https://docs.redpanda.com/docs/manage/kubernetes/manage-resources/#configure-cpu-resources).
   cpu:
-    # Redpanda makes use of a thread per core model described here:
-    # https://redpanda.com/blog/tpc-buffers
-    # For this reason, Redpanda should only be given full cores (cores parameter below).
+    # -- Redpanda makes use of a thread per core model.
+    # For details, see this [blog](https://redpanda.com/blog/tpc-buffers).
+    # For this reason, Redpanda should only be given full cores.
     #
-    # NOTE: You can increase cores, but decreasing cores is not currently supported:
-    # https://github.com/redpanda-data/redpanda/issues/350
+    # Note: You can increase cores, but decreasing cores is not currently supported.
+    # See the [GitHub issue](https://github.com/redpanda-data/redpanda/issues/350).
     #
-    # Equivalent to --smp, resources.requests.cpu, and resources.limits.cpu.
-    # For production, use 4 or greater.
+    # This setting is equivalent to `--smp`, `resources.requests.cpu`, and `resources.limits.cpu`.
+    # For production, use `4` or greater.
     cores: 1
     #
-    # Overprovisioned means Redpanda won't assume it has all of the provisioned CPU.
+    # -- Overprovisioned means Redpanda won't assume it has all of the provisioned CPU.
     # This should be true unless the container has CPU affinity.
-    # Equivalent to: --idle-poll-time-us 0 --thread-affinity 0 --poll-aio 0
+    # Equivalent to: `--idle-poll-time-us 0 --thread-affinity 0 --poll-aio 0`
     #
-    # If the value of full cores in resources.cpu.cores is less than 1, this
-    # setting is set to true.
+    # If the value of full cores in `resources.cpu.cores` is less than `1`, this
+    # setting is set to `true`.
     # overprovisioned: false
   #
-  # Memory resources
-  # See https://docs.redpanda.com/docs/manage/kubernetes/manage-resources/#configure-memory-resources
+  # -- Memory resources
+  # For details,
+  # see the [Pod resources documentation](https://docs.redpanda.com/docs/manage/kubernetes/manage-resources/#configure-memory-resources).
   memory:
     # Enables memory locking.
-    # For production, set to true.
+    # For production, set to `true`.
     # enable_memory_locking: false
     #
     # It is recommended to have at least 2Gi of memory per core for the Redpanda binary.
     # This memory is taken from the total memory given to each container.
-    # We allocate 80% of the container's memory to Redpanda, leaving the rest for
+    # The Helm chart allocates 80% of the container's memory to Redpanda, leaving the rest for
     # the Seastar subsystem (reserveMemory) and other container processes.
     # So at least 2.5Gi per core is recommended in order to ensure Redpanda has a full 2Gi.
     #
-    # These values affect --memory and --reserve-memory flags passed to Redpanda and the memory
+    # These values affect `--memory` and `--reserve-memory` flags passed to Redpanda and the memory
     # requests/limits in the StatefulSet.
     # Valid suffixes: B, K, M, G, Ki, Mi, and Gi
     #
     container:
       # Minimum memory count for each Redpanda broker.
-      # If omitted, the min value will equal the max value (requested resources defaults to limits).
-      # Equivalent to resources.requests.memory.
+      # If omitted, the `min` value is equal to the `max` value (requested resources defaults to limits).
+      # This setting is equivalent to `resources.requests.memory`.
       # For production, use 10Gi or greater.
       # min: 2.5Gi
       #
-      # Maximum memory count for each Redpanda broker.
-      # Equivalent to resources.limits.memory.
-      # For production, use 10Gi or greater.
+      # -- Maximum memory count for each Redpanda broker.
+      # Equivalent to `resources.limits.memory`.
+      # For production, use `10Gi` or greater.
       max: 2.5Gi
     #
-    # This optional redpanda section allows you to specify the memory size for both the Redpanda
+    # This optional `redpanda` object allows you to specify the memory size for both the Redpanda
     # process and the underlying reserved memory used by Seastar.
     # This section is omitted by default, and memory sizes are calculated automatically
     # based on container memory.
@@ -267,84 +287,96 @@ resources:
       # For production, use 1Gi.
       # reserveMemory: 200Mi
 
-# Persistence
-# See https://docs.redpanda.com/docs/manage/kubernetes/configure-storage/
+# -- Persistence settings.
+# For details, see the [storage documentation](https://docs.redpanda.com/docs/manage/kubernetes/configure-storage/).
 storage:
-  # Absolute path on the host to store Redpanda's data.
+  # -- Absolute path on the host to store Redpanda's data.
   # If unspecified, then an `emptyDir` volume is used.
-  # If specified but persistentVolume.enabled is true, storage.hostPath has no effect.
+  # If specified but `persistentVolume.enabled` is true, `storage.hostPath` has no effect.
   hostPath: ""
-  # If persistentVolume.enabled is true, a PersistentVolumeClaim is created and
-  # used to store Redpanda's data. Otherwise storage.hostPath is used.
+  # -- If `persistentVolume.enabled` is true, a PersistentVolumeClaim is created and
+  # used to store Redpanda's data. Otherwise `storage.hostPath` is used.
   persistentVolume:
     enabled: true
     size: 20Gi
-    # To disable dynamic provisioning, set to "-".
+    # -- To disable dynamic provisioning, set to "-".
     # If undefined or empty (default), then no storageClassName spec is set,
     # and the default dynamic provisioner is chosen (gp2 on AWS, standard on
     # GKE, AWS & OpenStack).
     storageClass: ""
-    # Additional labels to apply to the created PersistentVolumeClaims.
+    # -- Additional labels to apply to the created PersistentVolumeClaims.
     labels: {}
-    # Additional annotations to apply to the created PersistentVolumeClaims.
+    # -- Additional annotations to apply to the created PersistentVolumeClaims.
     annotations: {}
   #
   # Settings for the Tiered Storage cache.
-  # See https://docs.redpanda.com/docs/manage/kubernetes/tiered-storage/#caching
-  # For the maximum size of the disk cache, see tieredConfig.cloud_storage_cache_size.
+  # For details,
+  # see the [Tiered Storage documentation](https://docs.redpanda.com/docs/manage/kubernetes/tiered-storage/#caching).
+  # For the maximum size of the disk cache, see `tieredConfig.cloud_storage_cache_size`.
   #
-  # Absolute path on the host to store Redpanda's Tiered Storage cache.
+  # -- Absolute path on the host to store Redpanda's Tiered Storage cache.
   # If unspecified, then an `emptyDir` volume is used.
-  # If specified but tieredStoragePersistentVolume.enabled is true, storage.tieredStorageHostPath has no effect.
+  # If specified but `tieredStoragePersistentVolume.enabled` is `true`, `storage.tieredStorageHostPath` has no effect.
   tieredStorageHostPath: ""
-  # If tieredStoragePersistentVolume.enabled is true,
+  # If `tieredStoragePersistentVolume.enabled` is true,
   # a PersistentVolumeClaim is created for the Tiered Storage cache and
-  # used to store data retrieved from cloud storage, such as S3). Otherwise storage.tieredStorageHostPath is used.
+  # used to store data retrieved from cloud storage, such as S3). Otherwise `storage.tieredStorageHostPath` is used.
   tieredStoragePersistentVolume:
     enabled: false
-    # To disable dynamic provisioning, set to "-".
+    # -- To disable dynamic provisioning, set to "-".
     # If undefined or empty (default), then no storageClassName spec is set,
     # and the default dynamic provisioner is chosen (gp2 on AWS, standard on
     # GKE, AWS & OpenStack).
     storageClass: ""
-    # Additional labels to apply to the created PersistentVolumeClaims.
+    # -- Additional labels to apply to the created PersistentVolumeClaims.
     labels: {}
-    # Additional annotations to apply to the created PersistentVolumeClaims.
+    # -- Additional annotations to apply to the created PersistentVolumeClaims.
     annotations: {}
   #
-  # Tiered Storage settings
-  # Requires license_key or license_secret_ref
-  # See https://docs.redpanda.com/docs/manage/kubernetes/tiered-storage/
+  # -- Tiered Storage settings
+  # Requires `license_key` or `license_secret_ref`
+  # For details,
+  # see the [Tiered Storage documentation](https://docs.redpanda.com/docs/manage/kubernetes/tiered-storage/).
   tieredConfig:
-    # For descriptions of all Tiered Storage configuration settings,
-    # see https://docs.redpanda.com/docs/manage/kubernetes/tiered-storage/#tiered-storage-configuration-properties
-
-    # Global flag that enables Tiered Storage feature if a license key is provided.
+    # -- Global flag that enables Tiered Storage if a license key is provided.
+    # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_enabled).
     cloud_storage_enabled: false
+    # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#cloud_storage_enable_remote_write).
     cloud_storage_enable_remote_write: true
+    # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#cloud_storage_enable_remote_read).
     cloud_storage_enable_remote_read: true
 
-    # Required for AWS and GCS.
+    # -- Required for AWS and GCS.
+    # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_region).
     cloud_storage_region: ""
-    # Required for AWS and GCS.
+    # -- Required for AWS and GCS.
+    # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_bucket).
     cloud_storage_bucket: ""
-    # Required for AWS and GCS authentication with access keys
+    # -- Required for AWS and GCS authentication with access keys.
+    # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_access_key).
     cloud_storage_access_key: ""
-    # Required for AWS and GCS authentication with access keys
+    # -- Required for AWS and GCS authentication with access keys.
+    # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_secret_key).
     cloud_storage_secret_key: ""
+    # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_api_endpoint).
     cloud_storage_api_endpoint: ""
-    # Required for ABS.
+    # -- Required for ABS.
+    # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_azure_container).
     cloud_storage_azure_container: null
-    # Required for ABS.
+    # -- Required for ABS.
+    # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_azure_storage_account).
     cloud_storage_azure_storage_account: null
-    # Required for ABS.
+    # -- Required for ABS.
+    # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_azure_shared_key).
     cloud_storage_azure_shared_key: null
     # Available starting from 22.3.X
-    # Required for AWS and GCS authentication with IAM roles.
+    # -- Required for AWS and GCS authentication with IAM roles.
+    # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_credentials_source).
     cloud_storage_credentials_source: config_file
 
-    # Maximum size of the disk cache used by Tiered Storage.
+    # -- Maximum size of the disk cache used by Tiered Storage.
     # Default is 20 GiB.
+    # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_cache_size).
     cloud_storage_cache_size: 21474836480
     # cloud_storage_cache_directory: ""
     # cloud_storage_cache_check_interval: 30000
@@ -406,15 +438,17 @@ post_upgrade_job:
   #   - secretRef:
   #       name: redpanda-aws-secrets
 statefulset:
-  # Number of Redpanda brokers (recommend setting is the number of nodes in the cluster)
+  # -- Number of Redpanda brokers (Redpanda Data recommends setting this to the number of worker nodes in the cluster)
   replicas: 3
   updateStrategy:
     type: RollingUpdate
   budget:
     maxUnavailable: 1
-  # Additional annotations to apply to the Pods of this StatefulSet.
+  # -- Additional annotations to apply to the Pods of this StatefulSet.
   annotations: {}
-  # Adjust the period for your probes to meet your needs (see https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes)
+  # -- Adjust the period for your probes to meet your needs.
+  # For details,
+  # see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes).
   startupProbe:
     initialDelaySeconds: 1
     failureThreshold: 120
@@ -438,39 +472,43 @@ statefulset:
   # Kubernetes (mainly statefulset), Redpanda, and Seastar memory values are tightly coupled.
   # Adding a resource section here will be ignored.
   #
-  # Inter-Pod Affinity rules for scheduling Pods of this StatefulSet.
-  # https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#inter-pod-affinity-and-anti-affinity
+  # -- Inter-Pod Affinity rules for scheduling Pods of this StatefulSet.
+  # For details,
+  # see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#inter-pod-affinity-and-anti-affinity).
   podAffinity: {}
-  # Anti-affinity rules for scheduling Pods of this StatefulSet.
-  # https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#inter-pod-affinity-and-anti-affinity
-  # You may either toggle options below for default anti-affinity rules,
-  # or specify the whole set of anti-affinity rules instead of them.
+  # -- Anti-affinity rules for scheduling Pods of this StatefulSet.
+  # For details,
+  # see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#inter-pod-affinity-and-anti-affinity).
+  # You may either edit the default settings for anti-affinity rules,
+  # or specify new anti-affinity rules to use instead of the defaults.
   podAntiAffinity:
-    # The topologyKey to be used.
+    # -- The topologyKey to be used.
     # Can be used to spread across different nodes, AZs, regions etc.
     topologyKey: kubernetes.io/hostname
-    # The two type of anti-affinity rules are either `soft` or `hard`
-    # Here we define default values for either case. However, you can select
-    # `custom` if you wish to supply your own rules
-    # If you do not wish to use either of these configurations and sup
+    # -- Valid anti-affinity types are `soft`, `hard`, or `custom`.
+    # Use `custom` if you want to supply your own anti-affinity rules in the `podAntiAffinity.custom` object.
     type: hard
-    # Weight for `soft` anti-affinity rules.
+    # -- Weight for `soft` anti-affinity rules.
     # Does not apply for other anti-affinity types.
     weight: 100
-    # change type to custom and supply here to supply your own podAntiAffinity rules
+    # -- Change `podAntiAffinity.type` to `custom` and provide your own podAntiAffinity rules here.
     custom: {}
-  # Node selection constraints for scheduling Pods of this StatefulSet.
-  # these override the global nodeSelector value
-  # https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
+  # -- Node selection constraints for scheduling Pods of this StatefulSet.
+  # These constraints override the global nodeSelector value.
+  # For details,
+  # see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector).
   nodeSelector: {}
-  # PriorityClassName given to Pods of this StatefulSet
-  # https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass
+  # -- PriorityClassName given to Pods of this StatefulSet.
+  # For details,
+  # see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass).
   priorityClassName: ""
-  # Taints to be tolerated by Pods of this StatefulSet.
-  # these override the global tolerations value
-  # https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  # -- Taints to be tolerated by Pods of this StatefulSet.
+  # These tolerations override the global tolerations value.
+  # For details,
+  # see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/).
   tolerations: []
-  # https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/
+  # For details,
+  # see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/).
   topologySpreadConstraints:
     maxSkew: 1
     topologyKey: topology.kubernetes.io/zone
@@ -482,9 +520,9 @@ statefulset:
   initContainers:
     tuning:
       resources: {}
-    # In environments where root is not allowed, you cannot change the ownership of files and directories
-    # Please enable when using default minikube cluster configuration
     setDataDirOwnership:
+      # -- In environments where root is not allowed, you cannot change the ownership of files and directories.
+      # Enable `setDataDirOwnership` when using default minikube cluster configuration.
       enabled: false
       resources: {}
     setTieredStorageCacheDirOwnership:
@@ -495,33 +533,32 @@ statefulset:
     repository: busybox
     tag: latest
 
-# Service account management
+# -- Service account management.
 serviceAccount:
-  # Specifies whether a service account should be created
+  # -- Specifies whether a service account should be created.
   create: false
-  # Annotations to add to the service account
+  # -- Annotations to add to the service account.
   annotations: {}
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
+  # -- The name of the service account to use.
+  # If not set and `serviceAccount.create` is `true`,
+  # a name is generated using the `redpanda.fullname` template.
   name: ""
-# Role Based Access Control
+# -- Role Based Access Control.
 rbac:
-  # enable this for features that need extra privileges
+  # -- Enable for features that need extra privileges.
   enabled: false
-  # annotations to add to the rbac resources
+  # -- Annotations to add to the `rbac` resources.
   annotations: {}
 
+# -- Redpanda tuning settings.
+# Each is set to their default values in Redpanda.
 tuning:
-  # This section contains Redpanda tuning parameters.
-  # Each parameter below is set to their default values.
-  # Remove the curly brackets above if you uncomment any parameters below.
-  #
-  # Increases the maximum number of outstanding asynchronous IO operations if the
-  # current value is below a certain threshold. This allows redpanda to make as many
+  # -- Increase the maximum number of outstanding asynchronous IO operations if the
+  # current value is below a certain threshold. This allows Redpanda to make as many
   # simultaneous IO requests as possible, increasing throughput.
   #
-  # Enabling this option will create a privileged container. If your security profile does not allow this,
-  # see https://docs.redpanda.com/docs/deploy/deployment-option/self-hosted/kubernetes/kubernetes-tune-workers/ for tuning requirements.
+  # When this option is enabled, Helm creates a privileged container. If your security profile does not allow this,
+  # see the [tuning documentation](https://docs.redpanda.com/docs/deploy/deployment-option/self-hosted/kubernetes/kubernetes-tune-workers/).
   tune_aio_events: true
   #
   # Syncs NTP
@@ -556,39 +593,40 @@ tuning:
   #   tune_coredump
 
 
-# Listeners
+# -- Listener settings.
 #
-# This sections can be used to override global settings configured above for individual
+# Override global settings configured above for individual
 # listeners.
-# See https://docs.redpanda.com/docs/beta/manage/kubernetes/networking/configure-listeners/
+# For details,
+# see the [listeners documentation](https://docs.redpanda.com/docs/beta/manage/kubernetes/networking/configure-listeners/).
 listeners:
-  # Admin API listener (only one)
+  # -- Admin API listener (only one).
   admin:
-    # The port for both internal and external connections to the admin API.
+    # -- The port for both internal and external connections to the Admin API.
     port: 9644
-    # Optional external access section
+    # -- Optional external access settings.
     external:
-      # Name of the external listener
+      # -- Name of the external listener.
       default:
-        # This overrides external.enabled for only this listener
+        # Override the global `external.enabled` for only this listener.
         # enabled: true
-        # The port advertised to this listener's external clients.
+        # -- The port advertised to this listener's external clients.
         # List one port if you want to use the same port for each broker (would be the case when using NodePort service).
         # Otherwise, list the port you want to use for each broker in order of StatefulSet replicas.
-        # If undefined, listeners.admin.port is used.
+        # If undefined, `listeners.admin.port` is used.
         advertisedPorts:
         - 31644
-    # Optional TLS section (required if global TLS is enabled)
+    # -- Optional TLS section (required if global TLS is enabled)
     tls:
       # Optional flag to override the global TLS enabled flag.
       # enabled: true
-      # Name of the Certificate used for TLS (must match a Certificate name that is registered in tls.certs).
+      # -- Name of the Certificate used for TLS (must match a Certificate name that is registered in tls.certs).
       cert: default
-      # If true, the truststore file for this listener is included in the ConfigMap.
+      # -- If true, the truststore file for this listener is included in the ConfigMap.
       requireClientAuth: false
-  # Kafka API listeners
+  # -- Kafka API listeners.
   kafka:
-    # The port for internal client connections (10092 is default to avoid conflicts with the external default port 9092).
+    # -- The port for internal client connections.
     port: 9093
     tls:
       # enabled: true
@@ -597,12 +635,12 @@ listeners:
     external:
       default:
         # enabled: true
-        # The port used for external client connections
+        # -- The port used for external client connections.
         port: 9094
-        # If undefined, `listeners.kafka.external.default.port` is used
+        # -- If undefined, `listeners.kafka.external.default.port` is used.
         advertisedPorts:
         - 31092
-  # HTTP API listeners (aka PandaProxy)
+  # -- HTTP API listeners (aka PandaProxy).
   http:
     enabled: true
     port: 8082
@@ -617,14 +655,14 @@ listeners:
         port: 8083
         advertisedPorts:
         - 30082
-  # RPC listener (this is never externally accessible)
+  # -- RPC listener (this is never externally accessible).
   rpc:
     port: 33145
     tls:
       # enabled: true
       cert: default
       requireClientAuth: false
-  # Schema registry listeners
+  # -- Schema registry listeners.
   schemaRegistry:
     enabled: true
     port: 8081
@@ -641,16 +679,17 @@ listeners:
         - 30081
 
 # Expert Config
-
-# This section contains various settings supported by Redpanda that may not work
-# correctly in a kubernetes cluster. Changing these settings comes with some risk.
-#
 # Here be dragons!
 #
-# This section allows modifying various Redpanda settings not covered in other sections above.
-# These values do not pertain to the kubernetes objects created with helm.
-# Instead these parameters get passed directly to the Redpanda binary at startup.
-# See https://docs.redpanda.com/docs/cluster-administration/configuration/
+# -- This section contains various settings supported by Redpanda that may not work
+# correctly in a Kubernetes cluster. Changing these settings comes with some risk.
+#
+# Use these settings to customize various Redpanda configurations that are not covered in other sections.
+# These values have no impact on the configuration or behavior of the Kubernetes objects deployed by Helm,
+# and therefore should not be modified for the purpose of configuring those objects.
+# Instead, these settings get passed directly to the Redpanda binary at startup.
+# For descriptions of these properties,
+# see the [configuration documentation](https://docs.redpanda.com/docs/cluster-administration/configuration/).
 config:
   cluster: {}
     # auto_create_topics_enabled: true                             # Allow topic auto creation
@@ -677,15 +716,25 @@ config:
     # tm_sync_timeout_ms: 2000ms                                   # Time to wait state catch up before rejecting a request
     # tm_violation_recovery_policy: crash                          # Describes how to recover from an invariant violation happened on the transaction coordinator level
     # transactional_id_expiration_ms: 10080min                     # Producer ids are expired once this time has elapsed after the last write with the given producer ID
+  # -- Tunable cluster properties.
   tunable:
+    # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#log_segment_size).
     log_segment_size: 134217728                                    # 128 mb
+    # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#log_segment_size_min).
     log_segment_size_min: 16777216                                 # 16 mb
+    # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#log_segment_size_max).
     log_segment_size_max: 268435456                                # 256 mb
+    # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#kafka_batch_max_bytes).
     kafka_batch_max_bytes: 1048576                                 # 1 mb
+    # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#topic_partitions_per_shard).
     topic_partitions_per_shard: 1000
+    # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#compacted_log_segment_size).
     compacted_log_segment_size: 67108864                           # 64 mb
+    # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#max_compacted_log_segment_size).
     max_compacted_log_segment_size: 536870912                      # 512 mb
+    # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#kafka_connection_rate_limit).
     kafka_connection_rate_limit: 1000
+    # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#group_topic_partitions).
     group_topic_partitions: 16
     # cloud_storage_enable_remote_read: true                       # cluster wide configuration for read from remote cloud storage
     # cloud_storage_enable_remote_write: true                      # cluster wide configuration for writing to remote cloud storage
@@ -748,6 +797,8 @@ config:
     # replicate_append_timeout_ms: 3s                              # Timeout for append entries requests issued while replicating entries
     # segment_appender_flush_timeout_ms: 1ms                       # Maximum delay until buffered data is written
     # wait_for_leader_timeout_ms: 5000ms                           # Timeout (ms) to wait for leadership in metadata cache
+  # -- Node (broker) properties.
+  # See the [property reference documentation](https://docs.redpanda.com/docs/reference/node-properties/).
   node: {}
     # node_id:                                                     # Unique ID identifying a node in the cluster
     # data_directory:                                              # Place where redpanda will keep the data
