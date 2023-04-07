@@ -44,13 +44,7 @@ tasks:
     aliases:
       - upgrade-redpanda-chart
     cmds:
-      - >
-        helm upgrade --install {{ .RELEASE }} ./charts/redpanda
-          --namespace {{ .NAMESPACE }}
-          --create-namespace
-          --wait
-          --debug
-          {{ .HELM_OPTIONS }}
+      - helm upgrade --install {{ .RELEASE }} ./charts/redpanda --namespace {{ .NAMESPACE }} --create-namespace --wait --debug {{ .HELM_OPTIONS }}
 
   uninstall-redpanda-chart:
     cmds:
