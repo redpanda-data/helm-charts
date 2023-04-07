@@ -529,13 +529,13 @@ but not enough ports for the number of replicas requested.
 {{- end -}}
 
 {{- /*
-advertised-host returns a json sring with the data neded for configuring the advertised listener
+advertised-host returns a json string with the data needed for configuring the advertised listener
 */ -}}
 {{- define "advertised-host" -}}
   {{- $host := dict "name" .externalName "address" .externalAdvertiseAddress "port" .port -}}
   {{- if .values.external.addresses -}}
-    {{- if (tpl (.values.external.domain | default "") $) }}
-      {{- $host = dict "name" .externalName "address" (printf "%s.%s" (index .values.external.addresses .replicaIndex) (tpl .values.external.domain $)) "port" .port -}}
+    {{- if ( .values.external.domain | default "" ) }}
+      {{- $host = dict "name" .externalName "address" (printf "%s.%s" (index .values.external.addresses .replicaIndex) (.values.external.domain)) "port" .port -}}
     {{- else -}}
       {{- $host = dict "name" .externalName  "address" (index .values.external.addresses .replicaIndex) "port" .port -}}
     {{- end -}}
