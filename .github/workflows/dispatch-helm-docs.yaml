@@ -15,6 +15,6 @@ jobs:
       - name: Trigger generate-helm-spec-docs event
         uses: peter-evans/repository-dispatch@v2
         with:
-          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          token: ${{ secrets.ACTIONS_BOT_TOKEN }}
           repository: redpanda-data/documentation
           event-type: generate-helm-spec-docs
