@@ -295,16 +295,14 @@ spec:
             periodSeconds: {{ .Values.statefulset.readinessProbe.periodSeconds }}
             successThreshold: {{ .Values.statefulset.readinessProbe.initialDelaySeconds }}
           command:
-            - bash
-            - -c
-            - |
-              rpk redpanda start \
-                --smp={{ include "redpanda-smp" . }} \
-                --memory={{ template "redpanda-memory" . }}M \
-                --reserve-memory={{ template "redpanda-reserve-memory" . }}M \
-                --default-log-level={{ .Values.logging.logLevel }} \
-                --advertise-rpc-addr={{ $internalAdvertiseAddress }}:{{ .Values.listeners.rpc.port }} |
-              sed 's@RP_BOOTSTRAP_USER[^ ]\+@<censored>@g'
+            - rpk
+            - redpanda
+            - start
+            - --smp={{ include "redpanda-smp" . }}
+            - --memory={{ template "redpanda-memory" . }}M
+            - --reserve-memory={{ template "redpanda-reserve-memory" . }}M
+            - --default-log-level={{ .Values.logging.logLevel }}
+            - --advertise-rpc-addr={{ $internalAdvertiseAddress }}:{{ .Values.listeners.rpc.port }}
           ports:
 {{- range $name, $listener := .Values.listeners }}
             - name: {{ lower $name }}
