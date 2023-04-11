@@ -117,7 +117,7 @@ spec:
         {{- range $externalName, $externalVals := $listenerVals.external }}
           {{- $tmplVals := dict "listenerVals" $listenerVals "externalVals" $externalVals "replicaIndex" $replicaIndex "externalName" $externalName "externalAdvertiseAddress" $externalAdvertiseAddress "values" $values }}
           {{- $port := int (include "advertised-port" $tmplVals) }}
-          {{- $host := include "advertised-host" (mustMerge $tmplVals (dict "port" $port)) }}
+          {{- $host := tpl (include "advertised-host" (mustMerge $tmplVals (dict "port" $port)) ) $ }}
           {{- $listenerList = mustAppend $listenerList $host }}
         {{- end }}
     {{- end }}
