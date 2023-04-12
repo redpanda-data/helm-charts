@@ -464,16 +464,36 @@ than 1 core.
 {{- end -}}
 {{- end -}}
 
+{{- define "fail-on-insecure-sasl-logging" -}}
+{{- if (include "sasl-enabled" .|fromJson).bool -}}
+  {{- $check := list
+      (include "redpanda-atleast-23-1-1" .|fromJson).bool
+      (include "redpanda-22-3-atleast-22-3-13" .|fromJson).bool
+      (include "redpanda-22-2-atleast-22-2-10" .|fromJson).bool
+  -}}
+  {{- if not (mustHas true $check) -}}
+    {{- fail "SASL is enabled and the redpanda version specified leaks secrets to the logs. Please choose a newer version of redpanda." -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "redpanda-atleast-22-1-1" -}}
 {{- toJson (dict "bool" (or (not (eq .Values.image.repository "vectorized/redpanda")) (include "redpanda.semver" . | semverCompare ">=22.1.1"))) -}}
 {{- end -}}
-
 {{- define "redpanda-atleast-22-2-0" -}}
 {{- toJson (dict "bool" (or (not (eq .Values.image.repository "vectorized/redpanda")) (include "redpanda.semver" . | semverCompare ">=22.2.0"))) -}}
 {{- end -}}
-
 {{- define "redpanda-atleast-22-3-0" -}}
 {{- toJson (dict "bool" (or (not (eq .Values.image.repository "vectorized/redpanda")) (include "redpanda.semver" . | semverCompare ">=22.3.0"))) -}}
+{{- end -}}
+{{- define "redpanda-atleast-23-1-1" -}}
+{{- toJson (dict "bool" (or (not (eq .Values.image.repository "vectorized/redpanda")) (include "redpanda.semver" . | semverCompare ">=23.1.1"))) -}}
+{{- end -}}
+{{- define "redpanda-22-3-atleast-22-3-13" -}}
+{{- toJson (dict "bool" (or (not (eq .Values.image.repository "vectorized/redpanda")) (include "redpanda.semver" . | semverCompare ">=22.3.13,<22.4"))) -}}
+{{- end -}}
+{{- define "redpanda-22-2-atleast-22-2-10" -}}
+{{- toJson (dict "bool" (or (not (eq .Values.image.repository "vectorized/redpanda")) (include "redpanda.semver" . | semverCompare ">=22.2.10,<22.3"))) -}}
 {{- end -}}
 
 # manage backward compatibility with renaming podSecurityContext to securityContext
