@@ -70,10 +70,10 @@ jobs:
           - v22.3.15
           # - v22.2.11 takes too long. Only run nightly.
         testvaluespattern:
-          - '0[1-3]*'
-          - '0[4-6]*'
-          - '0[7-9]*'
-          - '1[0-2]*'
+          - 0[1-3]*
+          - 0[4-6]*
+          - 0[7-9]*
+          - 1[0-2]*
       fail-fast: true
     runs-on: ubuntu-22.04
     steps:
