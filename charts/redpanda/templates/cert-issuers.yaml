@@ -21,8 +21,8 @@ limitations under the License.
   {{- range $name, $data := $values.tls.certs }}
     {{/* If issuerRef is defined, use the specified issuer for the certs
          If it's not defined, create and use our own issuer. */}}
-    {{- $r := $data.issuerRef }}
-    {{- if not $r }}
+  {{- if and ( not (hasKey $data "issuerRef") ) ( not (hasKey $data "secretRef") ) }}
+
 ---
 # The self-signed issuer is used to create the self-signed CA
 apiVersion: cert-manager.io/v1
