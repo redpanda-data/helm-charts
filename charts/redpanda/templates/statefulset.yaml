@@ -215,83 +215,44 @@ spec:
             preStop:
               exec:
                 command: ["/bin/bash", "-c", "./var/lifecycle/preStop.sh"]
+          # the startupProbe checks to see that the admin api is listening and that the broker has a node_id assigned. This
+          # check is only used to delay the start of the liveness and readiness probes until it passes.
           startupProbe:
             exec:
               command:
                 - /bin/sh
                 - -c
-                {{- if (include "admin-internal-tls-enabled" . |fromJson).bool }}
-                - >
-                  curl https://localhost:{{ .Values.listeners.admin.port }}/v1/cluster/health_overview
-                  -svk --cacert /etc/tls/certs/{{ .Values.listeners.admin.tls.cert }}/ca.crt |
-                  awk '{
-                    id = $0; gsub(/.*"controller_id": /, "", id); gsub(/,.*/, "", id)
-                    nd_str = $0; gsub(/.*"nodes_down": \[/, "", nd_str); gsub(/\].*/, "", nd_str)
-                    FS=","
-                    split(nd_str, nd_list)
-                    for (i in nd_list) nodes_down[nd_list[i]]=""
-                    exit (id in nodes_down)
-                  }'
-                {{- else }}
-                - >
-                  curl -sv http://localhost:{{ .Values.listeners.admin.port }}/v1/cluster/health_overview |
-                  awk '{
-                    id = $0; gsub(/.*"controller_id": /, "", id); gsub(/,.*/, "", id)
-                    nd_str = $0; gsub(/.*"nodes_down": \[/, "", nd_str); gsub(/\].*/, "", nd_str)
-                    FS=","
-                    split(nd_str, nd_list)
-                    for (i in nd_list) nodes_down[nd_list[i]]=""
-                    exit (id in nodes_down)
-                  }'
-                {{- end }}
+                - |
+                  set -e
+                  RESULT=$(curl --silent --fail -k {{ include "admin-tls-curl-flags" . }} "{{ include "admin-http-protocol" . }}://localhost:{{ .Values.listeners.admin.port }}/v1/status/ready")
+                  echo $RESULT
+                  echo $RESULT | grep ready
             initialDelaySeconds: {{ .Values.statefulset.startupProbe.initialDelaySeconds }}
             failureThreshold: {{ .Values.statefulset.startupProbe.failureThreshold }}
             periodSeconds: {{ .Values.statefulset.startupProbe.periodSeconds }}
+          # the livenessProbe just checks to see that the admin api is listening and returning 200s.
           livenessProbe:
             exec:
               command:
                 - /bin/sh
                 - -c
-                {{- if (include "admin-internal-tls-enabled" . |fromJson).bool }}
-                - >
-                  curl https://localhost:{{ .Values.listeners.admin.port }}/v1/cluster/health_overview
-                  -svk --cacert /etc/tls/certs/{{ .Values.listeners.admin.tls.cert }}/ca.crt
-                {{- else }}
-                - >
-                  curl -sv http://localhost:{{ .Values.listeners.admin.port }}/v1/cluster/health_overview
-                {{- end }}
+                - curl --silent --fail -k {{ include "admin-tls-curl-flags" . }} "{{ include "admin-http-protocol" . }}://localhost:{{ .Values.listeners.admin.port }}/v1/status/ready"
             initialDelaySeconds: {{ .Values.statefulset.livenessProbe.initialDelaySeconds }}
             failureThreshold: {{ .Values.statefulset.livenessProbe.failureThreshold }}
             periodSeconds: {{ .Values.statefulset.livenessProbe.periodSeconds }}
+          # the readiness probe just checks that the cluster is healthy according to rpk cluster health.
+          # It's ok that this cluster-wide check affects all the pods as it's only used for the
+          # PodDisruptionBudget and we don't want to roll any pods if the Redpanda cluster isn't healthy.
+          # https://kubernetes.io/docs/concepts/workloads/pods/disruptions/#pod-disruption-budgets
           readinessProbe:
             exec:
               command:
                 - /bin/sh
                 - -c
-                {{- if (include "admin-internal-tls-enabled" . |fromJson).bool }}
-                - >
-                  curl https://localhost:{{ .Values.listeners.admin.port }}/v1/cluster/health_overview
-                  -svk --cacert /etc/tls/certs/{{ .Values.listeners.admin.tls.cert }}/ca.crt |
-                  awk '{
-                    id = $0; gsub(/.*"controller_id": /, "", id); gsub(/,.*/, "", id)
-                    nd_str = $0; gsub(/.*"nodes_down": \[/, "", nd_str); gsub(/\].*/, "", nd_str)
-                    FS=","
-                    split(nd_str, nd_list)
-                    for (i in nd_list) nodes_down[nd_list[i]]=""
-                    exit (id in nodes_down)
-                  }'
-                {{- else }}
-                - >
-                  curl -sv http://localhost:{{ .Values.listeners.admin.port }}/v1/cluster/health_overview |
-                  awk '{
-                    id = $0; gsub(/.*"controller_id": /, "", id); gsub(/,.*/, "", id)
-                    nd_str = $0; gsub(/.*"nodes_down": \[/, "", nd_str); gsub(/\].*/, "", nd_str)
-                    FS=","
-                    split(nd_str, nd_list)
-                    for (i in nd_list) nodes_down[nd_list[i]]=""
-                    exit (id in nodes_down)
-                  }'
-                {{- end }}
+                - |
+                  set -x
+                  rpk cluster health {{ (include "rpk-flags" . | fromJson).admin }}
+                  rpk cluster health {{ (include "rpk-flags" . | fromJson).admin }} | grep 'Healthy:.*true'
             initialDelaySeconds: {{ .Values.statefulset.readinessProbe.initialDelaySeconds }}
             failureThreshold: {{ .Values.statefulset.readinessProbe.failureThreshold }}
             periodSeconds: {{ .Values.statefulset.readinessProbe.periodSeconds }}
