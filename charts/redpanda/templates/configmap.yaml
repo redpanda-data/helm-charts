@@ -15,6 +15,38 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */}}
 {{- $values := .Values }}
+
+{{- /*
+  It's impossible to do a rolling upgrade from not-tls-enabled rpc to tls-enabled rpc.
+*/ -}}
+{{- $check := list
+    (include "redpanda-atleast-23-1-2" .|fromJson).bool
+    (include "redpanda-22-3-atleast-22-3-13" .|fromJson).bool
+    (include "redpanda-22-2-atleast-22-2-10" .|fromJson).bool
+-}}
+{{- $wantedRPCTLS := (include "rpc-tls-enabled" . | fromJson).bool -}}
+{{- if and (not (mustHas true $check)) $wantedRPCTLS -}}
+  {{- fail (printf "Redpanda version v%s does not support TLS on the RPC port. Please upgrade. See technical service bulletin 2023-01." (include "redpanda.semver" .)) -}}
+{{- end -}}
+{{- $cm := lookup "v1" "ConfigMap" .Release.Namespace (include "redpanda.fullname" .) -}}
+{{- $redpandaYAML := dig "data" "redpanda.yaml" "" $cm | fromYaml -}}
+{{- $currentRPCTLS := dig "redpanda" "rpc_server_tls" "enabled" false $redpandaYAML -}}
+{{- if .Release.IsUpgrade -}}
+  {{- if ne $currentRPCTLS $wantedRPCTLS -}}
+    {{- if eq (get .Values "force" | default false) false -}}
+      {{- fail (join "\n" (list
+          (printf "\n\nError: Cannot do a rolling restart to enable or disable tls at the RPC layer: changing listeners.rpc.tls.enabled (redpanda.yaml:repdanda.rpc_server_tls.enabled) from %v to %v" $currentRPCTLS $wantedRPCTLS)
+          "***WARNING The following instructions will result in a short period of downtime."
+          "To accept this risk, run the upgrade again adding `--set force=true` and do the following:\n"
+          "While helm is upgrading the release, manually delete ALL the pods:"
+          (printf "    kubectl -n %s delete pod -l app.kubernetes.io/component=redpanda-statefulset" .Release.Namespace)
+          "\nIf you got here thinking rpc tls was already enabled, see technical service bulletin 2023-01."
+          ))
+      -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
 {{- $users := list -}}
 {{- if .Values.auth.sasl.enabled -}}
   {{- range $user := .Values.auth.sasl.users -}}

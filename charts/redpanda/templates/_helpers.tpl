@@ -489,6 +489,9 @@ than 1 core.
 {{- define "redpanda-atleast-23-1-1" -}}
 {{- toJson (dict "bool" (or (not (eq .Values.image.repository "vectorized/redpanda")) (include "redpanda.semver" . | semverCompare ">=23.1.1"))) -}}
 {{- end -}}
+{{- define "redpanda-atleast-23-1-2" -}}
+{{- toJson (dict "bool" (or (not (eq .Values.image.repository "vectorized/redpanda")) (include "redpanda.semver" . | semverCompare ">=23.1.2"))) -}}
+{{- end -}}
 {{- define "redpanda-22-3-atleast-22-3-13" -}}
 {{- toJson (dict "bool" (or (not (eq .Values.image.repository "vectorized/redpanda")) (include "redpanda.semver" . | semverCompare ">=22.3.13,<22.4"))) -}}
 {{- end -}}
