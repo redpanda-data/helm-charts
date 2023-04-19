@@ -450,11 +450,20 @@ than 1 core.
 {{- $tunable := dig "tunable" dict .Values.config -}}
 {{- if (include "redpanda-atleast-22-3-0" . | fromJson).bool -}}
 {{- toYaml $tunable | nindent 4 -}}
+{{- range $key, $element := $tunable }}
+  {{- if $element }}
+    {{ $key }}: {{ $element | toYaml }}
+  {{- end }}
+{{- end }}
 {{- else if (include "redpanda-atleast-22-2-0" . | fromJson).bool -}}
 {{- $tunable = unset $tunable "log_segment_size_min" -}}
 {{- $tunable = unset $tunable "log_segment_size_max" -}}
 {{- $tunable = unset $tunable "kafka_batch_max_bytes" -}}
-{{- toYaml $tunable | nindent 4 -}}
+{{- range $key, $element := $tunable }}
+  {{- if $element }}
+    {{ $key }}: {{ $element | toYaml }}
+  {{- end }}
+{{- end }}
 {{- end -}}
 {{- end -}}
 
