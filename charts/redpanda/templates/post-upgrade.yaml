@@ -64,7 +64,9 @@ spec:
           - |
             rpk cluster config import -f /tmp/base-config/bootstrap.yaml {{ $rpkFlags }}
 {{- range $key, $value := .Values.config.cluster }}
+  {{- if $value }}
             rpk cluster config set {{ $key }} {{ $value }} {{ $rpkFlags }}
+  {{- end }}
 {{- end }}
 {{- if not (hasKey .Values.config.cluster "storage_min_free_bytes") }}
             rpk cluster config set storage_min_free_bytes {{ include "storage-min-free-bytes" . }} {{ $rpkFlags }}

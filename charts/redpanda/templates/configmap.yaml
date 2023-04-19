@@ -70,7 +70,11 @@ data:
     superusers: {{ toJson $users }}
   {{- end }}
   {{- with (dig "cluster" dict .Values.config) }}
-    {{- toYaml . | nindent 4 }}
+      {{- range $key, $element := .}}
+        {{- if $element }}
+    {{ $key }}: {{ $element | toYaml }}
+        {{- end }}
+      {{- end }}
   {{- end }}
   {{- include "tunable" . }}
   {{- if and (not (hasKey .Values.config.cluster "storage_min_free_bytes")) ((include "redpanda-atleast-22-2-0" . | fromJson).bool) }}
@@ -79,10 +83,13 @@ data:
 {{- if and (include "is-licensed" . | fromJson).bool .Values.storage.tieredConfig.cloud_storage_enabled }}
   {{- $tieredStorageConfig := deepCopy .Values.storage.tieredConfig }}
   {{- $tieredStorageConfig = unset $tieredStorageConfig "cloud_storage_cache_directory" }}
-  {{- if (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
-    {{- toYaml $tieredStorageConfig | nindent 4 }}
-  {{- else }}
-    {{- unset $tieredStorageConfig "cloud_storage_credentials_source" | toYaml | nindent 4 }}
+  {{- if not (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
+    {{- $tieredStorageConfig = unset $tieredStorageConfig "cloud_storage_credentials_source"}}
+  {{- end }}
+  {{- range $key, $element := $tieredStorageConfig}}
+    {{- if $element }}
+    {{ $key }}: {{ $element | toYaml }}
+    {{- end }}
   {{- end }}
 {{- end }}
   redpanda.yaml: |
@@ -107,16 +114,28 @@ data:
       superusers: {{ toJson $users }}
   {{- end }}
   {{- with (dig "cluster" dict .Values.config) }}
-      {{- toYaml . | nindent 6 }}
+      {{- range $key, $element := .}}
+        {{- if $element }}
+      {{ $key }}: {{ $element | toYaml }}
+        {{- end }}
+      {{- end }}
   {{- end }}
   {{- with (dig "tunable" dict .Values.config) }}
-      {{- toYaml . | nindent 6 }}
+      {{- range $key, $element := .}}
+        {{- if $element }}
+      {{ $key }}: {{ $element | toYaml }}
+        {{- end }}
+      {{- end }}
   {{- end }}
   {{- if not (hasKey .Values.config.cluster "storage_min_free_bytes") }}
       storage_min_free_bytes: {{ include "storage-min-free-bytes" . }}
   {{- end }}
       {{- with dig "node" dict .Values.config }}
-      {{- . | toYaml | nindent 6 }}
+      {{- range $key, $element := .}}
+        {{- if $element }}
+      {{ $key }}: {{ $element | toYaml }}
+        {{- end }}
+      {{- end }}
       {{- end }}
 {{- /* LISTENERS */}}
 {{- /* Admin API */}}
