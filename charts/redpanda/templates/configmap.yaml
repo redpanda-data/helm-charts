@@ -65,7 +65,7 @@ metadata:
 {{- end }}
 data:
   bootstrap.yaml: |
-    enable_sasl: {{ dig "sasl" "enabled" false .Values.auth }}
+    kafka_enable_authorization: {{ dig "sasl" "enabled" false .Values.auth }}
   {{- if $users }}
     superusers: {{ toJson $users }}
   {{- end }}
@@ -109,7 +109,7 @@ data:
       enable_rack_awareness: true
   {{- end }}
 {{- end }}
-      enable_sasl: {{ dig "sasl" "enabled" false .Values.auth }}
+      kafka_enable_authorization: {{ dig "sasl" "enabled" false .Values.auth }}
   {{- if $users }}
       superusers: {{ toJson $users }}
   {{- end }}
