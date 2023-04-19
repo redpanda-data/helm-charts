@@ -15,7 +15,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */}}
 {{- if .Values.post_upgrade_job.enabled }}
-{{- if (include "redpanda-atleast-22-1-1" . | fromJson).bool }}
 {{- $rpkFlags := include "rpk-flags-no-sasl" . }}
 {{- $sasl := .Values.auth.sasl }}
 apiVersion: batch/v1
@@ -128,5 +127,4 @@ spec:
             secretName: {{ $sasl.secretRef }}
             optional: false
         {{- end }}
-{{- end }}
 {{- end }}

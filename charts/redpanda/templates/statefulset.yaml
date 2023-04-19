@@ -145,9 +145,7 @@ spec:
 
               # Setup config files
               cp /tmp/base-config/redpanda.yaml "${CONFIG}"
-              {{- if (include "redpanda-atleast-22-1-1" . | fromJson).bool }}
               cp /tmp/base-config/bootstrap.yaml /etc/redpanda/.bootstrap.yaml
-              {{- end }}
 
               {{- if not (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
               # Configure bootstrap
