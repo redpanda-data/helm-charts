@@ -64,7 +64,6 @@ metadata:
   {{- . | nindent 4 }}
 {{- end }}
 data:
-{{- if (include "redpanda-atleast-22-1-1" . | fromJson).bool }}
   bootstrap.yaml: |
     enable_sasl: {{ dig "sasl" "enabled" false .Values.auth }}
   {{- if $users }}
@@ -77,7 +76,6 @@ data:
   {{- if and (not (hasKey .Values.config.cluster "storage_min_free_bytes")) ((include "redpanda-atleast-22-2-0" . | fromJson).bool) }}
     storage_min_free_bytes: {{ include "storage-min-free-bytes" . }}
   {{- end }}
-{{- end }}
 {{- if and (include "is-licensed" . | fromJson).bool .Values.storage.tieredConfig.cloud_storage_enabled }}
   {{- $tieredStorageConfig := deepCopy .Values.storage.tieredConfig }}
   {{- $tieredStorageConfig = unset $tieredStorageConfig "cloud_storage_cache_directory" }}
@@ -104,7 +102,6 @@ data:
       enable_rack_awareness: true
   {{- end }}
 {{- end }}
-{{- if not (include "redpanda-atleast-22-1-1" . | fromJson).bool }}
       enable_sasl: {{ dig "sasl" "enabled" false .Values.auth }}
   {{- if $users }}
       superusers: {{ toJson $users }}
@@ -118,7 +115,6 @@ data:
   {{- if not (hasKey .Values.config.cluster "storage_min_free_bytes") }}
       storage_min_free_bytes: {{ include "storage-min-free-bytes" . }}
   {{- end }}
-{{- end }}
       {{- with dig "node" dict .Values.config }}
       {{- . | toYaml | nindent 6 }}
       {{- end }}
