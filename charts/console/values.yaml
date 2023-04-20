@@ -177,6 +177,8 @@ secret:
   # Enterprise version secrets
   # - SSO secrets (Enterprise version).
   login:
+    # Configurable JWT value
+    jwtSecret: ""
     google: {}
       # clientSecret:
       # groupsServiceAccount:
