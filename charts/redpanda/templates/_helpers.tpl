@@ -617,3 +617,14 @@ return a warning if the chart is configured with insufficient CPU
   {{- end -}}
   {{- toJson $brokers -}}
 {{- end -}}
+
+{{/*
+return correct secretName to use based if secretRef exists
+*/}}
+{{- define "cert-secret-name" -}}
+  {{- if .tempCert.cert.secretRef -}}
+    {{- .tempCert.cert.secretRef.name -}}
+  {{- else }}
+    {{- include "redpanda.fullname" . }}-{{ .tempCert.name }}-cert
+  {{- end }}
+{{- end -}}

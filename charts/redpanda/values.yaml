@@ -139,9 +139,28 @@ tls:
       # issuerRef:
       #   name: redpanda-default-root-issuer
       #   kind: Issuer   # Can be Issuer or ClusterIssuer
+      # -- To use a secret with custom tls files,
+      # secretRef:
+      #  name: my-tls-secret
       # -- Set the `caEnabled` flag to `true` only for Certificates
       # that are not authenticated using public authorities.
       caEnabled: true
+      # duration: 43800h
+    # -- Example external tls configuration
+    # uncomment and set the right key to the listeners that require them
+    # also enable the tls setting for those listeners.
+    # external:
+      # -- To use a custom pre-installed Issuer,
+      # add its name and kind to the `issuerRef` object.
+      # issuerRef:
+      #   name: redpanda-default-root-issuer
+      #   kind: Issuer   # Can be Issuer or ClusterIssuer
+      # -- To use a secret with custom tls files,
+      # secretRef:
+      #   name: my-tls-secret
+      # -- Set the `caEnabled` flag to `true` only for Certificates
+      # that are not authenticated using public authorities.
+      # caEnabled: true
       # duration: 43800h
 
 # -- External access settings.
@@ -275,7 +294,7 @@ resources:
     # 3. Other container processes (whatever small amount remains)
     # redpanda:
       # Memory for the Redpanda process.
-      # This must be lower the container's memory (resources.memory.container.min if provided, otherwise
+      # This must be lower than the container's memory (resources.memory.container.min if provided, otherwise
       # resources.memory.container.max).
       # Equivalent to --memory.
       # For production, use 8Gi or greater.
@@ -295,7 +314,7 @@ storage:
   # If specified but `persistentVolume.enabled` is true, `storage.hostPath` has no effect.
   hostPath: ""
   # -- If `persistentVolume.enabled` is true, a PersistentVolumeClaim is created and
-  # used to store Redpanda's data. Otherwise `storage.hostPath` is used.
+  # used to store Redpanda's data. Otherwise, `storage.hostPath` is used.
   persistentVolume:
     enabled: true
     size: 20Gi
@@ -437,6 +456,7 @@ post_upgrade_job:
   # extraEnvFrom:
   #   - secretRef:
   #       name: redpanda-aws-secrets
+
 statefulset:
   # -- Number of Redpanda brokers (Redpanda Data recommends setting this to the number of worker nodes in the cluster)
   replicas: 3
@@ -543,6 +563,7 @@ serviceAccount:
   # If not set and `serviceAccount.create` is `true`,
   # a name is generated using the `redpanda.fullname` template.
   name: ""
+
 # -- Role Based Access Control.
 rbac:
   # -- Enable for features that need extra privileges.
@@ -629,6 +650,7 @@ listeners:
     # -- The port for internal client connections.
     port: 9093
     tls:
+      # Optional flag to override the global TLS enabled flag.
       # enabled: true
       cert: default
       requireClientAuth: false
@@ -640,25 +662,16 @@ listeners:
         # -- If undefined, `listeners.kafka.external.default.port` is used.
         advertisedPorts:
         - 31092
-  # -- HTTP API listeners (aka PandaProxy).
-  http:
-    enabled: true
-    port: 8082
-    kafkaEndpoint: default
-    tls:
-      # enabled: true
-      cert: default
-      requireClientAuth: false
-    external:
-      default:
-        # enabled: true
-        port: 8083
-        advertisedPorts:
-        - 30082
+        # -- Uncomment to define external tls
+        # tls:
+        #   # Optional flag to override the global TLS enabled flag.
+        #   # enabled: true
+        #   cert: external
   # -- RPC listener (this is never externally accessible).
   rpc:
     port: 33145
     tls:
+      # Optional flag to override the global TLS enabled flag.
       # enabled: true
       cert: default
       requireClientAuth: false
@@ -668,6 +681,7 @@ listeners:
     port: 8081
     kafkaEndpoint: default
     tls:
+      # Optional flag to override the global TLS enabled flag.
       # enabled: true
       cert: default
       requireClientAuth: false
@@ -677,6 +691,32 @@ listeners:
         port: 8084
         advertisedPorts:
         - 30081
+        # -- Uncomment to define external tls
+        # tls:
+        #   # Optional flag to override the global TLS enabled flag.
+        #   # enabled: true
+        #   cert: external
+  # -- HTTP API listeners (aka PandaProxy).
+  http:
+    enabled: true
+    port: 8082
+    kafkaEndpoint: default
+    tls:
+      # Optional flag to override the global TLS enabled flag.
+      # enabled: true
+      cert: default
+      requireClientAuth: false
+    external:
+      default:
+        # enabled: true
+        port: 8083
+        advertisedPorts:
+          - 30082
+        # -- Uncomment to define external tls
+        # tls:
+        # #  Optional flag to override the global TLS enabled flag.
+        # #  enabled: true
+        #   cert: external
 
 # Expert Config
 # Here be dragons!

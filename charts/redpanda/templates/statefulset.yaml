@@ -25,6 +25,7 @@ limitations under the License.
 {{- end -}}
 {{- $uid := dig "podSecurityContext" "runAsUser" .Values.statefulset.securityContext.runAsUser .Values.statefulset -}}
 {{- $gid := dig "podSecurityContext" "fsGroup" .Values.statefulset.securityContext.fsGroup .Values.statefulset -}}
+{{- $root := deepCopy . }}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -342,6 +343,7 @@ spec:
           emptyDir: {}
 {{- if (include "tls-enabled" . | fromJson).bool }}
   {{- range $name, $cert := .Values.tls.certs }}
+  {{- $r :=  set $root "tempCert" ( dict "name" $name "cert" $cert ) }}
         - name: redpanda-{{ $name }}-cert
           secret:
             defaultMode: 420
@@ -354,7 +356,7 @@ spec:
             - key: ca.crt
               path: ca.crt
     {{- end }}
-            secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
+            secretName: {{ template "cert-secret-name" $r }}
   {{- end }}
 {{- end }}
         {{- if and .Values.auth.sasl.enabled (not (empty .Values.auth.sasl.secretRef )) }}
