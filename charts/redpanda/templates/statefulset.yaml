@@ -265,6 +265,9 @@ spec:
             - --reserve-memory={{ template "redpanda-reserve-memory" . }}M
             - --default-log-level={{ .Values.logging.logLevel }}
             - --advertise-rpc-addr={{ $internalAdvertiseAddress }}:{{ .Values.listeners.rpc.port }}
+            {{- with .Values.statefulset.additionalRedpandaCmdFlags }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
           ports:
 {{- range $name, $listener := .Values.listeners }}
             - name: {{ lower $name }}
