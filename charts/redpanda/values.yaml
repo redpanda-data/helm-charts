@@ -552,6 +552,9 @@ statefulset:
   initContainerImage:
     repository: busybox
     tag: latest
+  # -- Additional flags to pass to redpanda,
+  additionalRedpandaCmdFlags: []
+#    - --unsafe-bypass-fsync
 
 # -- Service account management.
 serviceAccount:
