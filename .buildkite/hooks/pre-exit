@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -xeuo pipefail
+
+PATH="$PATH:$(realpath .local/bin)"
+
+task capi-delete-eks

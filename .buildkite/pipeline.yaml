@@ -1,0 +1,14 @@
+agents:
+  queue: "k8s-builders"
+
+steps:
+  - name: test eks cloud storage
+    command: .buildkite/scripts/eks-test.sh
+    plugins:
+      - docker#v5.4.0:
+          image: glrp/atgt:1.0.2
+          environment:
+            - DA_AWS_ACCESS_KEY_ID
+            - DA_AWS_SECRET_ACCESS_KEY
+            - AWS_DEFAULT_REGION
+            - PATH
