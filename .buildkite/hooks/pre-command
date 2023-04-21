@@ -1,0 +1,25 @@
+#!/bin/bash
+
+set -xeuo pipefail
+
+PATH="$PATH:$(realpath .local/bin)"
+
+# install task
+mkdir -p .local/bin
+curl -Ls https://github.com/go-task/task/releases/download/v3.24.0/task_linux_amd64.tar.gz | tar xzv -C .local/bin task
+
+# install aws cli
+TEMPDIR=$(mktemp -d)
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip"
+unzip -d "$TEMPDIR" /tmp/awscliv2.zip
+"$TEMPDIR"/aws/install --bin-dir .local/bin --install-dir .local/aws-cli
+
+AWS_ACCESS_KEY_ID="$DA_AWS_ACCESS_KEY_ID"
+AWS_SECRET_ACCESS_KEY="$DA_AWS_SECRET_ACCESS_KEY"
+export AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY
+
+# create gke cluster
+task capi-create-eks
+
+# install cert-manager
+task install-cert-manager
