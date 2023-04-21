@@ -125,6 +125,17 @@ jobs:
         run: .github/annotate_kind_nodes.sh chart-testing
         if: steps.list-changed.outputs.changed == 'true'
 
+      - name: Create tls helm templates
+        run: |
+          .github/create_tls.sh "random-domain"
+        if: steps.list-changed.outputs.changed == 'true'
+
+      - name: Move tls files to template
+        run: |
+          mv external-tls-secret.yaml charts/redpanda/templates/
+          cp .github/external-service.yaml charts/redpanda/templates/
+        if: steps.list-changed.outputs.changed == 'true'
+
       - name: install cert-manager
         run: |
           helm repo add jetstack https://charts.jetstack.io &&
