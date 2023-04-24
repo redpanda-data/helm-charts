@@ -40,6 +40,10 @@ limitations under the License.
 {{ if (include "kafka-internal-tls-enabled" . | fromJson).bool }}
   {{ $service := .Values.listeners.kafka }}
   {{ $cert := get .Values.tls.certs $service.tls.cert }}
+  {{- $secretName := (printf "%s-%s-cert" (include "redpanda.fullname" .) $service.tls.cert) }}
+  {{- if $cert.secretRef }}
+    {{- $secretName = $cert.secretRef.name }}
+  {{- end }}
   {{ if $cert.caEnabled }}
     {{ $kafkaTLS = append $kafkaTLS (dict
       "name" "KAFKA_TLS_CAFILEPATH"
@@ -50,7 +54,7 @@ limitations under the License.
         "secret" (dict
           "defaultMode" 0420
           "items" (list (dict "key" "ca.crt" "path" "ca.crt") )
-          "secretName" (printf "%s-%s-cert" (include "redpanda.fullname" .) $service.tls.cert)
+          "secretName" ( $secretName )
     ))}}
     {{ $extraVolumeMounts = append $extraVolumeMounts (dict
         "name" (printf "kafka-%s-cert" $service.tls.cert)
@@ -64,6 +68,10 @@ limitations under the License.
 {{ if (include "schemaRegistry-internal-tls-enabled" . | fromJson).bool }}
   {{ $service := .Values.listeners.schemaRegistry }}
   {{ $cert := get .Values.tls.certs $service.tls.cert }}
+  {{- $secretName := (printf "%s-%s-cert" (include "redpanda.fullname" .) $service.tls.cert) }}
+  {{- if $cert.secretRef }}
+  {{- $secretName = $cert.secretRef.name }}
+  {{- end }}
   {{ if $cert.caEnabled }}
     {{ $schemaRegistryTLS = append $schemaRegistryTLS (dict
       "name" "KAFKA_SCHEMAREGISTRY_TLS_CAFILEPATH"
@@ -74,7 +82,7 @@ limitations under the License.
         "secret" (dict
           "defaultMode" 0420
           "items" (list (dict "key" "ca.crt" "path" "ca.crt") )
-          "secretName" (printf "%s-%s-cert" (include "redpanda.fullname" .) $service.tls.cert)
+          "secretName" ( $secretName )
     ))}}
     {{ $extraVolumeMounts = append $extraVolumeMounts (dict
         "name" (printf "schemaregistry-%s-cert" $service.tls.cert)
@@ -88,6 +96,10 @@ limitations under the License.
 {{ if (include "admin-internal-tls-enabled" . | fromJson).bool }}
   {{ $service := .Values.listeners.admin }}
   {{ $cert := get .Values.tls.certs $service.tls.cert }}
+  {{- $secretName := (printf "%s-%s-cert" (include "redpanda.fullname" .) $service.tls.cert) }}
+  {{- if $cert.secretRef }}
+  {{- $secretName = $cert.secretRef.name }}
+  {{- end }}
   {{ if $cert.caEnabled }}
     {{ $adminTLS = append $adminTLS (dict
       "name" "REDPANDA_ADMINAPI_TLS_CAFILEPATH"
@@ -98,7 +110,7 @@ limitations under the License.
         "secret" (dict
           "defaultMode" 0420
           "items" (list (dict "key" "ca.crt" "path" "ca.crt") )
-          "secretName" (printf "%s-%s-cert" (include "redpanda.fullname" .) $service.tls.cert)
+          "secretName" ( $secretName )
     ))}}
     {{ $extraVolumeMounts = append $extraVolumeMounts (dict
         "name" (printf "adminapi-%s-cert" $service.tls.cert)
