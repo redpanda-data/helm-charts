@@ -98,4 +98,5 @@ jobs:
         run: |
           ct install --config .github/ct.yaml --upgrade \
             --helm-extra-set-args="--set=image.tag=${{ matrix.version }}" \
-            --charts=charts/redpanda
+            --charts=charts/redpanda \
+            --skip-missing-values

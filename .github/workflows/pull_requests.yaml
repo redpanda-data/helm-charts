@@ -131,5 +131,6 @@ jobs:
       - name: Run chart-testing (install and upgrade)
         run: |
           ct install --config .github/ct.yaml --upgrade \
-            --helm-extra-set-args="--set=image.tag=${{ matrix.version }}"
+            --helm-extra-set-args="--set=image.tag=${{ matrix.version }}" \
+            --skip-missing-values
         if: steps.list-changed.outputs.changed == 'true'
