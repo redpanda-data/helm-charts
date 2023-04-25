@@ -555,6 +555,7 @@ statefulset:
   # -- Additional flags to pass to redpanda,
   additionalRedpandaCmdFlags: []
 #    - --unsafe-bypass-fsync
+  terminationGracePeriodSeconds: 90
 
 # -- Service account management.
 serviceAccount:

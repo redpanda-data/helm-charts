@@ -53,6 +53,7 @@ spec:
         {{- toYaml . | nindent 8 }}
 {{- end }}
     spec:
+      terminationGracePeriodSeconds: {{ .Values.statefulset.terminationGracePeriodSeconds }}
       securityContext: {{ include "pod-security-context" . | nindent 8 }}
       serviceAccountName: {{ include "redpanda.serviceAccountName" . }}
       initContainers:
