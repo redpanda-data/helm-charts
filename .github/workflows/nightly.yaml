@@ -62,8 +62,8 @@ jobs:
 
       - name: Set up for matrix
         run: |
-          echo bash -O extglob -c "rm -v charts/redpanda/ci/!(${{ matrix.testvaluepattern }})"
-          bash -O extglob -c "rm -v charts/redpanda/ci/!(${{ matrix.testvaluepattern }})"
+          echo bash -O extglob -c "rm -v charts/redpanda/ci/!(${{ matrix.testvaluespattern }})"
+          bash -O extglob -c "rm -v charts/redpanda/ci/!(${{ matrix.testvaluespattern }})"
 
       - name: Set up Helm
         uses: azure/setup-helm@v3
