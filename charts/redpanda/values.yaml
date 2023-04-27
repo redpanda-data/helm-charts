@@ -149,7 +149,7 @@ tls:
     # -- Example external tls configuration
     # uncomment and set the right key to the listeners that require them
     # also enable the tls setting for those listeners.
-    # external:
+    external:
       # -- To use a custom pre-installed Issuer,
       # add its name and kind to the `issuerRef` object.
       # issuerRef:
@@ -160,7 +160,7 @@ tls:
       #   name: my-tls-secret
       # -- Set the `caEnabled` flag to `true` only for Certificates
       # that are not authenticated using public authorities.
-      # caEnabled: true
+      caEnabled: true
       # duration: 43800h
 
 # -- External access settings.
@@ -639,6 +639,9 @@ listeners:
         # List one port if you want to use the same port for each broker (would be the case when using NodePort service).
         # Otherwise, list the port you want to use for each broker in order of StatefulSet replicas.
         # If undefined, `listeners.admin.port` is used.
+        tls:
+          # enabled: true
+          cert: external
         advertisedPorts:
         - 31644
     # -- Optional TLS section (required if global TLS is enabled)
@@ -666,11 +669,9 @@ listeners:
         # -- If undefined, `listeners.kafka.external.default.port` is used.
         advertisedPorts:
         - 31092
-        # -- Uncomment to define external tls
-        # tls:
-        #   # Optional flag to override the global TLS enabled flag.
-        #   # enabled: true
-        #   cert: external
+        tls:
+          # enabled: true
+          cert: external
   # -- RPC listener (this is never externally accessible).
   rpc:
     port: 33145
@@ -695,11 +696,9 @@ listeners:
         port: 8084
         advertisedPorts:
         - 30081
-        # -- Uncomment to define external tls
-        # tls:
-        #   # Optional flag to override the global TLS enabled flag.
-        #   # enabled: true
-        #   cert: external
+        tls:
+          # enabled: true
+          cert: external
   # -- HTTP API listeners (aka PandaProxy).
   http:
     enabled: true
@@ -716,11 +715,9 @@ listeners:
         port: 8083
         advertisedPorts:
           - 30082
-        # -- Uncomment to define external tls
-        # tls:
-        # #  Optional flag to override the global TLS enabled flag.
-        # #  enabled: true
-        #   cert: external
+        tls:
+          # enabled: true
+          cert: external
 
 # Expert Config
 # Here be dragons!

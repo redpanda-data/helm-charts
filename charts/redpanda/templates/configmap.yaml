@@ -200,7 +200,7 @@ data:
     {{- $certPath := printf "/etc/tls/certs/%s" $certName }}
     {{- $cert := get $values.tls.certs $certName }}
     {{- if empty $cert }}
-      {{- fail (printf "Certificate, '%s', used but not defined")}}
+      {{- fail (printf "Certificate, '%s', used but not defined" $certName)}}
     {{- end }}
         - name: {{ $name }}
           enabled: true
