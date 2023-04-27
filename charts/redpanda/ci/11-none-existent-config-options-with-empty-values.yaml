@@ -13,40 +13,42 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
+license_key: "dGVzdAo=.dGVzdAo="
 
-# TODO cannot start redpanda cluster, this needs to be addressed.
+storage:
+  tieredConfig:
+    cloud_storage_enabled: true
+    cloud_storage_secret_key: test
+    cloud_storage_access_key: test
+    cloud_storage_region: test
+    cloud_storage_bucket: test
+    false_value: false
+    zero_value: 0
+    null_value: null
+    empty_array_value: []
+    empty_map_value: {}
+    empty_string_value: ""
 
-# license_key: "dGVzdAo=.dGVzdAo="
-
-# storage:
-#   tieredConfig:
-#     cloud_storage_enabled: true
-#     false_value: false
-#     zero_value: 0
-#     null_value: null
-#     empty_array_value: [] # redpanda does not start up with this config setup
-#     empty_map_value: {} # redpanda does not start up with this config setup
-#     empty_string_value: ""
-
-# config:
-#   cluster:
-#     false_value: false
-#     zero_value: 0
-#     null_value: null
-#     empty_array_value: [] # redpanda does not start up with this config setup
-#     empty_map_value: {} # redpanda does not start up with this config setup
-#     empty_string_value: ""
-#   tunable: {}
-#     false_value: false
-#     zero_value: 0
-#     null_value: null
-#     empty_array_value: []
-#     empty_map_value: {}
-#     empty_string_value: ""
-#   node: {}
-#     false_value: false
-#     zero_value: 0
-#     null_value: null
-#     empty_array_value: [] # redpanda does not start up with this config setup
-#     empty_map_value: {} # redpanda does not start up with this config setup
-#     empty_string_value: ""
+config:
+  cluster:
+    enable_idempotence: false
+    false_value: false
+    zero_value: 0
+    null_value: null
+    empty_array_value: []
+    empty_map_value: {}
+    empty_string_value: ""
+  tunable:
+    false_value: false
+    zero_value: 0
+    null_value: null
+    empty_array_value: []
+    empty_map_value: {}
+    empty_string_value: ""
+  node:
+    false_value: false
+    zero_value: 0
+    null_value: null
+    empty_array_value: []
+    empty_map_value: {}
+    empty_string_value: ""

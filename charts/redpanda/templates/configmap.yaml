@@ -53,6 +53,37 @@ limitations under the License.
     {{- $users = append $users $user.name -}}
   {{- end -}}
 {{- end -}}
+
+{{- $configurationBooleanProp := list "admin_api_require_auth"
+"aggregate_metrics"
+"auto_create_topics_enabled"
+"cloud_storage_disable_tls"
+"cloud_storage_enable_compacted_topic_reupload"
+"cloud_storage_enable_remote_read"
+"cloud_storage_enable_remote_write"
+"cloud_storage_enable_segment_merging"
+"cloud_storage_enabled"
+"disable_batch_cache"
+"disable_metrics"
+"disable_public_metrics"
+"enable_controller_log_rate_limiting"
+"enable_coproc"
+"enable_idempotence"
+"enable_leader_balancer"
+"enable_metrics_reporter"
+"enable_pid_file"
+"enable_rack_awareness"
+"enable_sasl"
+"enable_transactions"
+"enable_usage"
+"features_auto_enable"
+"kafka_enable_authorization"
+"kafka_enable_partition_reassignment"
+"kafka_qdc_enable"
+"legacy_group_offset_retention_enabled"
+"memory_abort_on_alloc_failure"
+"release_cache_on_segment_roll"
+"storage_strict_data_init" -}}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -71,7 +102,9 @@ data:
   {{- end }}
   {{- with (dig "cluster" dict .Values.config) }}
       {{- range $key, $element := .}}
-        {{- if $element }}
+        {{- if has $key $configurationBooleanProp }}
+    {{ $key }}: {{ $element | toYaml }}
+        {{- else if $element }}
     {{ $key }}: {{ $element | toYaml }}
         {{- end }}
       {{- end }}
@@ -87,7 +120,9 @@ data:
     {{- $tieredStorageConfig = unset $tieredStorageConfig "cloud_storage_credentials_source"}}
   {{- end }}
   {{- range $key, $element := $tieredStorageConfig}}
-    {{- if $element }}
+    {{- if has $key $configurationBooleanProp }}
+    {{ $key }}: {{ $element | toYaml }}
+    {{- else if $element }}
     {{ $key }}: {{ $element | toYaml }}
     {{- end }}
   {{- end }}
@@ -244,10 +279,16 @@ data:
             port: {{ $values.listeners.rpc.port }}
 {{- end }}
 {{- if and (include "is-licensed" . | fromJson).bool .Values.storage.tieredConfig.cloud_storage_enabled }}
-  {{- if (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
-    {{- toYaml .Values.storage.tieredConfig | nindent 6 }}
-  {{- else }}
-    {{- unset .Values.storage.tieredConfig "cloud_storage_credentials_source" | toYaml | nindent 6 }}
+  {{- $tieredStorageConfig := deepCopy .Values.storage.tieredConfig }}
+  {{- if not (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
+    {{- $tieredStorageConfig = unset $tieredStorageConfig "cloud_storage_credentials_source"}}
+  {{- end }}
+  {{- range $key, $element := $tieredStorageConfig}}
+    {{- if has $key $configurationBooleanProp }}
+    {{ $key }}: {{ $element | toYaml }}
+    {{- else if $element }}
+    {{ $key }}: {{ $element | toYaml }}
+    {{- end }}
   {{- end }}
 {{- end }}
 {{- /* Schema Registry API */}}
