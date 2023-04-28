@@ -62,6 +62,7 @@ jobs:
       - name: compare console values with main
         run: ./dyff --color=off -k between -s <(git show 'origin/main:charts/console/values.yaml') charts/console/values.yaml
   test:
+    needs: lint
     name: Run ct tests for ci values matching ${{ matrix.testvaluespattern }} for Redpanda version ${{ matrix.version }}
     strategy:
       matrix:
