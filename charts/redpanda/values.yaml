@@ -529,6 +529,7 @@ statefulset:
   tolerations: []
   # For details,
   # see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/).
+  # DELETE ME CHANGE
   topologySpreadConstraints:
     maxSkew: 1
     topologyKey: topology.kubernetes.io/zone
