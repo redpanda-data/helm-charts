@@ -30,7 +30,7 @@ limitations under the License.
 {{- if not (include "redpanda-atleast-22-2-0" . | fromJson).bool -}}
   {{- if eq (get .Values "force" | default false) false -}}
     {{- fail (
-    printf "\n\nError: The Redpanda version (%s) is not longer supported \nTo accept this risk, run the upgrade again adding `--set force=true`\n" (( include "redpanda.semver" . ))
+    printf "\n\nError: The Redpanda version (%s) is no longer supported \nTo accept this risk, run the upgrade again adding `--set force=true`\n" (( include "redpanda.semver" . ))
         )
     -}}
   {{- end -}}
