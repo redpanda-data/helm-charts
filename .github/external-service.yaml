@@ -1,0 +1,31 @@
+# This service is to help simulate calling external services but within the pod
+# In addition, it takes advantage of the dns properties of a cluster
+# where one could call <name-of-service>:<port> to contact an endpoint
+# thus dns can also be tested with this service.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.external.domain | default "random-domain" }}
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation
+    helm.sh/hook-weight: "-100"
+spec:
+  ports:
+    - name: kafka-default
+      protocol: TCP
+      targetPort: {{ .Values.listeners.kafka.external.default.port }}
+      port: {{ first .Values.listeners.kafka.external.default.advertisedPorts }}
+    - name: http-default
+      protocol: TCP
+      targetPort: {{ .Values.listeners.http.external.default.port }}
+      port: {{ first .Values.listeners.http.external.default.advertisedPorts }}
+    - name: schema-default
+      protocol: TCP
+      targetPort: {{ .Values.listeners.schemaRegistry.external.default.port }}
+      port: {{ first .Values.listeners.schemaRegistry.external.default.advertisedPorts }}
+  selector:
+    app.kubernetes.io/name: {{ template "redpanda.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+
