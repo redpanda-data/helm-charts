@@ -635,22 +635,20 @@
           "type": "array"
         },
         "topologySpreadConstraints": {
-          "type": "object",
-          "required": [
-            "maxSkew",
-            "topologyKey",
-            "whenUnsatisfiable"
-          ],
-          "properties": {
-            "maxSkew": {
-              "type": "integer"
-            },
-            "topologyKey": {
-              "type": "string"
-            },
-            "whenUnsatisfiable": {
-              "type": "string",
-              "pattern": "^(ScheduleAnyway|DoNotSchedule)$"
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "properties": {
+              "maxSkew": {
+                "type": "integer"
+              },
+              "topologyKey": {
+                "type": "string"
+              },
+              "whenUnsatisfiable": {
+                "type": "string",
+                "pattern": "^(ScheduleAnyway|DoNotSchedule)$"
+              }
             }
           }
         },

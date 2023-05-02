@@ -530,7 +530,7 @@ statefulset:
   # For details,
   # see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/).
   topologySpreadConstraints:
-    maxSkew: 1
+  - maxSkew: 1
     topologyKey: topology.kubernetes.io/zone
     whenUnsatisfiable: ScheduleAnyway
   securityContext:
