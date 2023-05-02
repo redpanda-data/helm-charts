@@ -17,6 +17,8 @@ limitations under the License.
 {{- if .Values.post_install_job.enabled }}
 {{- $values := .Values }}
 {{- $sasl := $values.auth.sasl }}
+{{- $root := deepCopy . }}
+
 ---
 apiVersion: batch/v1
 kind: Job
@@ -136,8 +138,9 @@ spec:
             name: {{ template "redpanda.fullname" . }}
         - name: config
           emptyDir: {}
-      {{- if (include "tls-enabled" . | fromJson).bool }}
-        {{- range $name, $cert := .Values.tls.certs }}
+{{- if (include "tls-enabled" . | fromJson).bool }}
+  {{- range $name, $cert := .Values.tls.certs }}
+      {{- $r :=  set $root "tempCert" ( dict "name" $name "cert" $cert ) }}
         - name: redpanda-{{ $name }}-cert
           secret:
             defaultMode: 420
@@ -146,13 +149,13 @@ spec:
               path: tls.key
             - key: tls.crt
               path: tls.crt
-          {{- if $cert.caEnabled }}
+      {{- if $cert.caEnabled }}
             - key: ca.crt
               path: ca.crt
-          {{- end }}
-            secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
-        {{- end }}
-      {{- end -}}
+      {{- end }}
+            secretName: {{ template "cert-secret-name" $r }}
+  {{- end }}
+{{- end -}}
       {{- if and $sasl.enabled (not (empty $sasl.secretRef )) }}
         - name: {{ $sasl.secretRef }}
           secret:

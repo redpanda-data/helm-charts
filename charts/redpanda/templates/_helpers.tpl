@@ -449,9 +449,8 @@ than 1 core.
 {{- define "tunable" -}}
 {{- $tunable := dig "tunable" dict .Values.config -}}
 {{- if (include "redpanda-atleast-22-3-0" . | fromJson).bool -}}
-{{- toYaml $tunable | nindent 4 -}}
 {{- range $key, $element := $tunable }}
-  {{- if $element }}
+  {{- if or (eq (typeOf $element) "bool") $element }}
     {{ $key }}: {{ $element | toYaml }}
   {{- end }}
 {{- end }}
@@ -460,7 +459,7 @@ than 1 core.
 {{- $tunable = unset $tunable "log_segment_size_max" -}}
 {{- $tunable = unset $tunable "kafka_batch_max_bytes" -}}
 {{- range $key, $element := $tunable }}
-  {{- if $element }}
+  {{- if or (eq (typeOf $element) "bool") $element }}
     {{ $key }}: {{ $element | toYaml }}
   {{- end }}
 {{- end }}
@@ -616,4 +615,15 @@ return a warning if the chart is configured with insufficient CPU
     -}}
   {{- end -}}
   {{- toJson $brokers -}}
+{{- end -}}
+
+{{/*
+return correct secretName to use based if secretRef exists
+*/}}
+{{- define "cert-secret-name" -}}
+  {{- if .tempCert.cert.secretRef -}}
+    {{- .tempCert.cert.secretRef.name -}}
+  {{- else }}
+    {{- include "redpanda.fullname" . }}-{{ .tempCert.name }}-cert
+  {{- end }}
 {{- end -}}

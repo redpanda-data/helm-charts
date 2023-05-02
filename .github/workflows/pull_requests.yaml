@@ -35,6 +35,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Run CI file name checker
+        run: .github/check-ci-files.sh charts/redpanda/ci
+
       - name: Set up Helm
         uses: azure/setup-helm@v3
         with:
@@ -47,6 +50,7 @@ jobs:
 
       - name: Run chart-testing (lint)
         run: ct lint --config .github/ct.yaml
+
   check-values:
     runs-on: ubuntu-22.04
     steps:
@@ -62,12 +66,13 @@ jobs:
       - name: compare console values with main
         run: ./dyff --color=off -k between -s <(git show 'origin/main:charts/console/values.yaml') charts/console/values.yaml
   test:
+    needs: lint
     name: Run ct tests for ci values matching ${{ matrix.testvaluespattern }} for Redpanda version ${{ matrix.version }}
     strategy:
       matrix:
         version:
           - ""
-          - v22.3.16
+          - v22.3.17
           # - v22.2.x takes too long. Only run nightly.
         testvaluespattern:
           - '0[1-3]*'
@@ -84,8 +89,8 @@ jobs:
 
       - name: Set up for matrix
         run: |
-          echo bash -O extglob -c "rm -v charts/redpanda/ci/!(${{ matrix.testvaluepattern }})"
-          bash -O extglob -c "rm -v charts/redpanda/ci/!(${{ matrix.testvaluepattern }})"
+          echo bash -O extglob -c "rm -v charts/redpanda/ci/!(${{ matrix.testvaluespattern }})"
+          bash -O extglob -c "rm -v charts/redpanda/ci/!(${{ matrix.testvaluespattern }})"
 
       - name: Set up Helm
         uses: azure/setup-helm@v3
@@ -120,6 +125,17 @@ jobs:
         run: .github/annotate_kind_nodes.sh chart-testing
         if: steps.list-changed.outputs.changed == 'true'
 
+      - name: Create tls helm templates
+        run: |
+          .github/create_tls.sh "random-domain"
+        if: steps.list-changed.outputs.changed == 'true'
+
+      - name: Move tls files to template
+        run: |
+          mv external-tls-secret.yaml charts/redpanda/templates/
+          cp .github/external-service.yaml charts/redpanda/templates/
+        if: steps.list-changed.outputs.changed == 'true'
+
       - name: install cert-manager
         run: |
           helm repo add jetstack https://charts.jetstack.io &&
@@ -131,5 +147,6 @@ jobs:
       - name: Run chart-testing (install and upgrade)
         run: |
           ct install --config .github/ct.yaml --upgrade \
-            --helm-extra-set-args="--set=image.tag=${{ matrix.version }}"
+            --helm-extra-set-args="--set=image.tag=${{ matrix.version }}" \
+            --skip-missing-values
         if: steps.list-changed.outputs.changed == 'true'

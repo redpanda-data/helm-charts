@@ -45,7 +45,7 @@ jobs:
       matrix:
         version:
           - ""
-          - v22.3.16
+          - v22.3.17
           - v22.2.11
         testvaluespattern:
           - '0[1-3]*'
@@ -62,8 +62,8 @@ jobs:
 
       - name: Set up for matrix
         run: |
-          echo bash -O extglob -c "rm -v charts/redpanda/ci/!(${{ matrix.testvaluepattern }})"
-          bash -O extglob -c "rm -v charts/redpanda/ci/!(${{ matrix.testvaluepattern }})"
+          echo bash -O extglob -c "rm -v charts/redpanda/ci/!(${{ matrix.testvaluespattern }})"
+          bash -O extglob -c "rm -v charts/redpanda/ci/!(${{ matrix.testvaluespattern }})"
 
       - name: Set up Helm
         uses: azure/setup-helm@v3
@@ -98,4 +98,5 @@ jobs:
         run: |
           ct install --config .github/ct.yaml --upgrade \
             --helm-extra-set-args="--set=image.tag=${{ matrix.version }}" \
-            --charts=charts/redpanda
+            --charts=charts/redpanda \
+            --skip-missing-values

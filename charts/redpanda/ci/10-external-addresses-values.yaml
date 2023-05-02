@@ -19,7 +19,8 @@ statefulset:
 
 external:
   enabled: true
-  type: LoadBalancer
+  # was LoadBalancer, here we are concerned with external addresses working so this is ok
+  type: NodePort
   domain: my-domain
   addresses:
     - redpanda-1

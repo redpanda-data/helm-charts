@@ -71,7 +71,7 @@ data:
   {{- end }}
   {{- with (dig "cluster" dict .Values.config) }}
       {{- range $key, $element := .}}
-        {{- if $element }}
+        {{- if or (eq (typeOf $element) "bool") $element }}
     {{ $key }}: {{ $element | toYaml }}
         {{- end }}
       {{- end }}
@@ -87,7 +87,7 @@ data:
     {{- $tieredStorageConfig = unset $tieredStorageConfig "cloud_storage_credentials_source"}}
   {{- end }}
   {{- range $key, $element := $tieredStorageConfig}}
-    {{- if $element }}
+    {{- if or (eq (typeOf $element) "bool") $element }}
     {{ $key }}: {{ $element | toYaml }}
     {{- end }}
   {{- end }}
@@ -115,14 +115,14 @@ data:
   {{- end }}
   {{- with (dig "cluster" dict .Values.config) }}
       {{- range $key, $element := .}}
-        {{- if $element }}
+        {{- if or (eq (typeOf $element) "bool") $element }}
       {{ $key }}: {{ $element | toYaml }}
         {{- end }}
       {{- end }}
   {{- end }}
   {{- with (dig "tunable" dict .Values.config) }}
       {{- range $key, $element := .}}
-        {{- if $element }}
+        {{- if or (eq (typeOf $element) "bool") $element }}
       {{ $key }}: {{ $element | toYaml }}
         {{- end }}
       {{- end }}
@@ -132,7 +132,7 @@ data:
   {{- end }}
       {{- with dig "node" dict .Values.config }}
       {{- range $key, $element := .}}
-        {{- if $element }}
+        {{- if or (eq (typeOf $element) "bool") $element }}
       {{ $key }}: {{ $element | toYaml }}
         {{- end }}
       {{- end }}
@@ -200,7 +200,7 @@ data:
     {{- $certPath := printf "/etc/tls/certs/%s" $certName }}
     {{- $cert := get $values.tls.certs $certName }}
     {{- if empty $cert }}
-      {{- fail (printf "Certificate, '%s', used but not defined")}}
+      {{- fail (printf "Certificate, '%s', used but not defined" $certName)}}
     {{- end }}
         - name: {{ $name }}
           enabled: true

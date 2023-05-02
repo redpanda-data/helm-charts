@@ -22,7 +22,9 @@ limitations under the License.
   {{- $listeners := .Values.listeners -}}
   {{- $values := .Values }}
   {{- range $name, $data := .Values.tls.certs }}
+  {{- if (empty $data.secretRef ) }}
     {{- $d := $data.duration }}
+
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -68,6 +70,7 @@ spec:
     name: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-issuer
     kind: Issuer
     group: cert-manager.io
+    {{- end }}
     {{- end }}
   {{- end }}
 {{- end }}
