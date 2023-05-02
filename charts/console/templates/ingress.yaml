@@ -39,7 +39,7 @@ spec:
   rules:
     {{- range .Values.ingress.hosts }}
     - {{- if .host }}
-      host: {{ .host }}
+      host: {{ tpl (.host) $ | quote }}
       {{- end}}
       http:
         paths:
