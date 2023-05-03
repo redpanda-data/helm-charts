@@ -26,6 +26,15 @@ limitations under the License.
 {{- $uid := dig "podSecurityContext" "runAsUser" .Values.statefulset.securityContext.runAsUser .Values.statefulset -}}
 {{- $gid := dig "podSecurityContext" "fsGroup" .Values.statefulset.securityContext.fsGroup .Values.statefulset -}}
 {{- $root := deepCopy . }}
+
+{{- if not (include "redpanda-atleast-22-2-0" . | fromJson).bool -}}
+  {{- if eq (get .Values "force" | default false) false -}}
+    {{- fail (
+    printf "\n\nError: The Redpanda version (%s) is no longer supported \nTo accept this risk, run the upgrade again adding `--set force=true`\n" (( include "redpanda.semver" . ))
+        )
+    -}}
+  {{- end -}}
+{{- end -}}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -398,13 +407,13 @@ spec:
 {{- end }}
 {{- if semverCompare ">=1.16-0" .Capabilities.KubeVersion.GitVersion }}
       topologySpreadConstraints:
-      - labelSelector:
-          matchLabels: {{ include "statefulset-pod-labels" . | nindent 12 }}
-  {{- with .Values.statefulset.topologySpreadConstraints }}
-        maxSkew: {{ .maxSkew }}
-        topologyKey: {{ .topologyKey }}
-        whenUnsatisfiable: {{ .whenUnsatisfiable }}
-  {{- end }}
+    {{- range $v := .Values.statefulset.topologySpreadConstraints }}
+        - maxSkew: {{ $v.maxSkew }}
+          topologyKey: {{ $v.topologyKey }}
+          whenUnsatisfiable: {{ $v.whenUnsatisfiable }}
+          labelSelector:
+            matchLabels: {{ include "statefulset-pod-labels" $ | nindent 14 }}
+    {{- end }}
 {{- end }}
 {{- with ( include "statefulset-nodeSelectors" . ) }}
       nodeSelector: {{- . | nindent 8 }}

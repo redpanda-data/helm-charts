@@ -15,6 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */}}
 {{- $sasl := .Values.auth.sasl }}
+{{- $root := deepCopy . }}
 {{- $useSaslSecret := and $sasl.enabled (not (empty $sasl.secretRef )) }}
 apiVersion: v1
 kind: Pod
@@ -87,9 +88,10 @@ spec:
 {{- end }}
 {{- if (include "tls-enabled" . | fromJson).bool }}
   {{- range $name, $cert := .Values.tls.certs }}
+    {{- $r :=  set $root "tempCert" ( dict "name" $name "cert" $cert ) }}
     - name: redpanda-{{ $name }}-cert
       secret:
         defaultMode: 0644
-        secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
+        secretName: {{ template "cert-secret-name" $r }}
   {{- end }}
 {{- end -}}

@@ -14,9 +14,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- $service := .Values.listeners.kafka -}}
-{{- $cert := get .Values.tls.certs $service.tls.cert -}}
 {{- if and (include "kafka-internal-tls-enabled" . | fromJson).bool (not (include "sasl-enabled" . | fromJson).bool) -}}
+  {{- $service := .Values.listeners.kafka -}}
+  {{- $cert := get .Values.tls.certs $service.tls.cert -}}
+  {{- $root := deepCopy . }}
 apiVersion: v1
 kind: Pod
 metadata:
@@ -71,9 +72,10 @@ spec:
     - name: config
       emptyDir: {}
   {{- range $name, $cert := .Values.tls.certs }}
+    {{- $r :=  set $root "tempCert" ( dict "name" $name "cert" $cert ) }}
     - name: redpanda-{{ $name }}-cert
       secret:
         defaultMode: 0644
-        secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
+        secretName: {{ template "cert-secret-name" $r }}
   {{- end }}
 {{- end }}
