@@ -1,6 +1,9 @@
 version: '3'
 
-
+# NOTE: Task doesn't allow to override environment variables. Thus, when an
+# environment variable is referenced in a taskfile, it is because we expect it
+# to be defined by the environment where Task is being invoked, in an `.env`
+# file, or in a task's `env:` attribute.
 dotenv: [".env", '{{.ENV}}/.env.']
 
 vars:
@@ -9,8 +12,13 @@ vars:
   # Configuration Defaults
   NAMESPACE: rn
   RELEASE: rp
-  HELM_OPTIONS: ""
   KIND_CLUSTERNAME: rp-helm
+  CLUSTER_NAME: '{{.CLUSTER_NAME | default "capi-eks"}}'
+  CLUSTER_NAMESPACE: '{{.CLUSTER_NAMESPACE | default "default"}}'
+
+  # Overridable task vars
+  HELM_OPTIONS: ""
+  KIND_FLAGS: "--config .github/kind.yaml"
 
 includes:
   tool:
@@ -39,18 +47,23 @@ tasks:
     deps:
       - add-jetstack-repo
     cmds:
-      - helm upgrade --install cert-manager jetstack/cert-manager --set installCRDs=true --namespace cert-manager --create-namespace
+      - helm install cert-manager jetstack/cert-manager --set installCRDs=true --namespace cert-manager --create-namespace
+
+  aws-check-login:
+    internal: true
+    cmds:
+      - aws sts get-caller-identity > /dev/null
 
   kind-create:
     cmds:
-      - kind create cluster --name {{ .KIND_CLUSTERNAME }} --config ./.github/kind.yaml
+      - kind create cluster --name {{.KIND_CLUSTERNAME}} {{.KIND_FLAGS}}
       - task: install-cert-manager
     status:
-      - "kind get clusters | grep {{ .KIND_CLUSTERNAME }}"
+      - "kind get clusters | grep {{.KIND_CLUSTERNAME}}"
 
   kind-delete:
     cmds:
-      - kind delete cluster --name {{ .KIND_CLUSTERNAME }}
+      - kind delete cluster --name {{.KIND_CLUSTERNAME}}
 
   install-redpanda-chart:
     aliases:
@@ -72,7 +85,56 @@ tasks:
       - ./scripts/change-default-sc.sh
       - task: install-cert-manager
 
-
   minikube-delete:
     cmds:
       - minikube delete
+
+  capi-bootstrap:
+    deps:
+      - tool:clusterctl
+    env:
+      EXP_MACHINE_POOL: true
+      CAPA_EKS_ADD_ROLES: "{{.CAPA_EKS_ADD_ROLES}}"
+      CAPA_EKS_IAM: "{{.CAPA_EKS_IAM}}"
+      AWS_B64ENCODED_CREDENTIALS: "{{.AWS_B64ENCODED_CREDENTIALS}}"
+    vars:
+      CAPI_INFRASTRUCTURE: '{{ default "unknown" .CAPI_INFRASTRUCTURE }}'
+    cmds:
+      - task: kind-create
+        vars:
+          KIND_CLUSTERNAME: bootstrap
+          KIND_FLAGS: ""
+      - "{{.BINDIR}}/clusterctl init -i {{ .CAPI_INFRASTRUCTURE }} -v7 --wait-providers"
+
+  capi-create-eks:
+    deps:
+      - aws-check-login
+      - tool:clusterawsadm
+    env:
+      CAPA_EKS_IAM: true
+      CAPA_EKS_ADD_ROLES: true
+    cmds:
+      - task: capi-bootstrap
+        vars:
+          CAPI_INFRASTRUCTURE: aws
+          CAPA_EKS_IAM: true
+          CAPA_EKS_ADD_ROLES: true
+          AWS_B64ENCODED_CREDENTIALS:
+            sh: "{{.BINDIR}}/clusterawsadm bootstrap credentials encode-as-profile 2>/dev/null"
+      - "{{.BINDIR}}/clusterawsadm bootstrap iam create-cloudformation-stack --config=.buildkite/capi/eks-bootstrap.yaml"
+      - helm install -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} .buildkite/capi/eks-cluster
+      - kubectl wait --for=condition=ready cluster {{.CLUSTER_NAME}}-eks-cluster --timeout=40m
+      - kubectl wait --for=condition=Ready machinepool {{.CLUSTER_NAME}}-eks-cluster-pool-0 --timeout=20m
+
+  capi-delete:
+    internal: true
+    cmds:
+      - kubectl delete -f {{.CLUSTERFILE}} --wait
+
+  capi-delete-eks:
+    env:
+      AWS_B64ENCODED_CREDENTIALS:
+        sh: "{{.BINDIR}}/clusterawsadm bootstrap credentials encode-as-profile 2> /dev/null"
+    cmds:
+      - "{{.BINDIR}}/clusterawsadm controller update-credentials"
+      - helm uninstall --wait -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} --timeout 60m

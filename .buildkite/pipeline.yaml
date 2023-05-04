@@ -1,0 +1,10 @@
+agents:
+  queue: "k8s-builders"
+
+steps:
+  - label: ":cloud: test eks cloud storage"
+    env:
+      CLOUD_PROVIDER: eks
+    command: .buildkite/scripts/cloud-test.sh
+    artifact_paths:
+      - ".local/artifacts/**/*"
