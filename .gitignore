@@ -1,11 +1,17 @@
+.vscode
+
 *.sw?
 */**/.terraform
 */**/*.tfstate*
 ansible/playbooks/grafana_dashboards/redpanda-grafana.json
 .idea/
 
+.local/
 charts/*/charts/*.tgz
 admin.conf
 
 # OSX files
 .DS_Store
+
+# templated ci values
+charts/redpanda/ci/21-eks-tiered-storage-with-creds-values.yaml
