@@ -87,11 +87,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up for matrix
-        run: |
-          echo bash -O extglob -c "rm -v charts/redpanda/ci/!(${{ matrix.testvaluespattern }})"
-          bash -O extglob -c "rm -v charts/redpanda/ci/!(${{ matrix.testvaluespattern }})"
-
       - name: Set up Helm
         uses: azure/setup-helm@v3
         with:
@@ -102,51 +97,62 @@ jobs:
         with:
           version: v3.7.1-2
 
-      # we're excluding console from the install test until we have a way to test it with Redpanda
+      # we're excluding console from testing until we have a way to test it with Redpanda
       - name: Run chart-testing (list-changed)
         id: list-changed
         run: |
-          changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }} --excluded-charts console)
+          changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }} --excluded-charts console )
+          echo $changed
           if [[ -n "$changed" ]]; then
-            echo "changed=true" >> $GITHUB_OUTPUT
+            echo changed="true" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Set up for matrix
+        if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          echo bash -O extglob -c "rm -v charts/redpanda/ci/!(${{ matrix.testvaluespattern }})"
+          bash -O extglob -c "rm -v charts/redpanda/ci/!(${{ matrix.testvaluespattern }})"
 
       - name: Create kind cluster
         uses: helm/kind-action@v1.5.0
+        if: steps.list-changed.outputs.changed == 'true'
         with:
           config: .github/kind.yaml
-        if: steps.list-changed.outputs.changed == 'true'
 
       - name: Check kind config worked
-        run: kubectl get nodes
         if: steps.list-changed.outputs.changed == 'true'
+        run: kubectl get nodes
 
       - name: Annotate nodes for rack awareness
-        run: .github/annotate_kind_nodes.sh chart-testing
         if: steps.list-changed.outputs.changed == 'true'
+        run: .github/annotate_kind_nodes.sh chart-testing
 
       - name: Create tls helm templates
+        if: steps.list-changed.outputs.changed == 'true'
         run: |
           .github/create_tls.sh "random-domain"
-        if: steps.list-changed.outputs.changed == 'true'
 
       - name: Move tls files to template
+        if: steps.list-changed.outputs.changed == 'true'
         run: |
           mv external-tls-secret.yaml charts/redpanda/templates/
           cp .github/external-service.yaml charts/redpanda/templates/
-        if: steps.list-changed.outputs.changed == 'true'
 
       - name: install cert-manager
+        if: steps.list-changed.outputs.changed == 'true'
         run: |
           helm repo add jetstack https://charts.jetstack.io &&
           helm install cert-manager --namespace cert-manager \
             --create-namespace --version v1.11.0 jetstack/cert-manager \
             --set installCRDs=true --wait --wait-for-jobs
-        if: steps.list-changed.outputs.changed == 'true'
 
       - name: Run chart-testing (install and upgrade)
-        run: |
-          ct install --config .github/ct.yaml --upgrade \
-            --helm-extra-set-args="--set=image.tag=${{ matrix.version }}" \
-            --skip-missing-values
         if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          ct install \
+            --upgrade \
+            --config .github/ct.yaml \
+            --helm-extra-set-args="--set=image.tag=${{ matrix.version }}" \
+            --skip-missing-values \
+            --excluded-charts console \
+            --target-branch ${{ github.event.repository.default_branch }}
