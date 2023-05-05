@@ -1,0 +1,17 @@
+agents:
+  queue: "k8s-builders"
+
+steps:
+  - label: ":cloud: test eks cloud storage"
+    env:
+      CLOUD_PROVIDER: eks
+    command: .buildkite/scripts/cloud-test.sh
+    artifact_paths:
+      - ".local/artifacts/**/*"
+    plugins:
+      - https://$GITHUB_API_TOKEN@github.com/redpanda-data/step-slack-notify-buildkite-plugin.git#main:
+          message: ":cloud: test eks cloud storage failed"
+          channel_name: "#kubernetes-tests"
+          slack_token_env_var_name: "SLACK_VBOT_TOKEN"
+          conditions:
+            failed: true
