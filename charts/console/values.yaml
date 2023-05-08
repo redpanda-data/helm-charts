@@ -101,6 +101,11 @@ affinity: {}
 
 topologySpreadConstraints: {}
 
+# -- PriorityClassName given to Pods.
+# For details,
+# see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass).
+priorityClassName: ""
+
 console:
   # -- Settings for the `Config.yaml` (required).
   # For a reference of configuration settings,
