@@ -1,0 +1,50 @@
+{{- if .Values.mock.enabled -}}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "console.fullname" . }}-mock-kafka
+  labels:
+    {{- include "console.labels" . | nindent 4 }}
+data:
+  kafka.yaml: |
+    - key: ping
+      kind: Behavior
+      expect:
+        http:
+          method: GET
+          path: /ping
+      actions:
+        - reply_http:
+            status_code: 200
+            body: OK
+            headers:
+              Content-Type: text/html
+
+    - key: hello
+      kind: Behavior
+      expect:
+        http:
+          method: GET
+          path: /hello
+      actions:
+        - reply_http:
+            status_code: 200
+            body: >
+              { "hello": "world" }
+
+    - key: test_kafka_1
+      kind: Behavior
+      expect:
+        kafka:
+          topic: hello_kafka_in_1
+      actions:
+        - publish_kafka:
+            topic: hello_kafka_out
+            payload: >
+              {
+                "kafka": "OK",
+                "data": 1
+              }
+
+{{- end -}}

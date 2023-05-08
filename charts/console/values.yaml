@@ -229,3 +229,12 @@ configmap:
   create: true
 deployment:
   create: true
+
+mock:
+  enabled: true
+  kafka:
+    image:
+      registry: docker.io
+      repository: checkr/openmock
+      pullPolicy: IfNotPresent
+      tag: latest

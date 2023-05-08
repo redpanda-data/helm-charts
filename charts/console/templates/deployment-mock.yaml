@@ -1,0 +1,39 @@
+{{- if .Values.mock.kafka }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "console.fullname" . }}-mock-kafka
+  labels:
+    app.kubernetes.io/name: {{ include "console.fullname" . }}-mock-kafka
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "console.fullname" . }}-mock-kafka
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap-mock.yaml") . | sha256sum }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        app.kubernetes.io/name: {{ include "console.fullname" . }}-mock-kafka
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ include "mock.kafka.image" . }}
+          imagePullPolicy: {{ .Values.mock.kafka.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 9999
+              protocol: TCP
+          volumeMounts:
+            - name: configs
+              mountPath: /data/templates
+      volumes:
+        - name: configs
+          configMap:
+            name: {{ include "console.fullname" . }}-mock-kafka
+{{- end }}
