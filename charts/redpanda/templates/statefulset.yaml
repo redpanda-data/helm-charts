@@ -321,6 +321,30 @@ spec:
             limits:
               cpu: {{ .Values.resources.cpu.cores }}
               memory: {{ .Values.resources.memory.container.max }}
+      {{- if .Values.statefulset.sideCars.configWatcher.enabled }}
+        - name: config-watcher
+          image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
+          command:
+            - /bin/bash # could be expanded for multiple scripts
+            - -c 
+            - /etc/secrets/config-watcher/scripts/sasl-user.sh
+          volumeMounts:
+            - name: {{ template "redpanda.fullname" . }}-config-watcher
+              mountPath: /etc/secrets/config-watcher/scripts
+              readOnly: true
+          {{- if and .Values.auth.sasl.enabled (not (empty .Values.auth.sasl.secretRef )) }}
+            - name: {{ .Values.auth.sasl.secretRef }}
+              mountPath: /etc/secrets/users
+              readOnly: true
+          {{- end }}
+          {{- if (include "tls-enabled" . | fromJson).bool }}
+            {{- range $name, $cert := .Values.tls.certs }}
+            - name: redpanda-{{ $name }}-cert
+              mountPath: {{ printf "/etc/tls/certs/%s" $name }}
+              readOnly: true
+            {{- end }}
+          {{- end }}
+      {{- end }}
       volumes:
         - name: lifecycle-scripts
           secret:
@@ -378,6 +402,11 @@ spec:
             secretName: {{ .Values.auth.sasl.secretRef }}
             optional: false
         {{- end }}
+        - name: {{ template "redpanda.fullname" . }}-config-watcher
+          secret:
+            secretName: {{ template "redpanda.fullname" . }}-config-watcher
+            optional: false
+            defaultMode: 0774
 {{- if or .Values.statefulset.nodeAffinity .Values.statefulset.podAffinity .Values.statefulset.podAntiAffinity }}
       affinity:
   {{- with .Values.statefulset.nodeAffinity }}

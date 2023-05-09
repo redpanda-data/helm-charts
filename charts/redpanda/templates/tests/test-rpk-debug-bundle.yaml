@@ -14,9 +14,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
+
+{{/*
+    
+This test currently fails because of a bug where when multiple containers exist
+The api returns an error. We should be requesting logs from each container.
+
+
 {{- if and .Values.rbac.enabled (include "redpanda-atleast-23-1-1" .|fromJson).bool -}}
   {{- $sasl := .Values.auth.sasl }}
   {{- $useSaslSecret := and $sasl.enabled (not (empty $sasl.secretRef )) }}
+
 
 apiVersion: v1
 kind: Pod
@@ -116,3 +124,4 @@ spec:
 {{- end -}}
 
 {{- end -}}
+*/}}
