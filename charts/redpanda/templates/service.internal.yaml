@@ -24,7 +24,7 @@ metadata:
   name: {{ include "redpanda.fullname" . }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
-    prometheus/scrape: "true"
+    monitoring/enabled: "{{ .Values.monitoring.enabled }}"
 {{- with include "full.labels" . }}
   {{- . | nindent 4 }}
 {{- end }}

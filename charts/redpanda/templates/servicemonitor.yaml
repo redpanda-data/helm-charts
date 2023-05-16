@@ -28,12 +28,12 @@ metadata:
 {{- end }}
 spec:
   endpoints:
-  - interval: 30s
+  - interval: {{ .Values.monitoring.scrape_interval }}
     path: /public_metrics
     targetPort: admin
   selector:
     matchLabels:
-      prometheus/scrape: "true"
+      monitoring/enabled: "true"
       app.kubernetes.io/name: {{ template "redpanda.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name | quote }}
 {{- end }}
