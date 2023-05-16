@@ -221,6 +221,22 @@
         }
       }
     },
+    "monitoring": {
+      "type": "object",
+      "required": [
+        "enabled",
+        "scrapeInterval"
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "scrapeInterval": {
+          "type": "duration",
+          "pattern": ".*[smh]$"
+        }
+      }
+    },
     "resources": {
       "type": "object",
       "required": [

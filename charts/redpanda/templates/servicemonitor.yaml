@@ -28,7 +28,7 @@ metadata:
 {{- end }}
 spec:
   endpoints:
-  - interval: {{ .Values.monitoring.scrape_interval }}
+  - interval: {{ .Values.monitoring.scrapeInterval }}
     path: /public_metrics
     targetPort: admin
   selector:
