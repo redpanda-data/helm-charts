@@ -33,7 +33,7 @@ spec:
     targetPort: admin
   selector:
     matchLabels:
-      monitoring/enabled: "true"
+      monitoring.redpanda.com/enabled: "true"
       app.kubernetes.io/name: {{ template "redpanda.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name | quote }}
 {{- end }}
