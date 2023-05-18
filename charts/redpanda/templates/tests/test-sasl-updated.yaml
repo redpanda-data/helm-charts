@@ -47,7 +47,14 @@ spec:
         - -c
         - |
           set -xe
-          sleep 30
+          # check that the users list did update
+          ready_result_exit_code=1
+          while [[ ${ready_result_exit_code} -ne 0 ]]; do
+            ready_result=$(rpk acl user list {{ (include "rpk-flags" . | fromJson).admin }} | grep anotheranotherme 2>&1) && ready_result_exit_code=$?
+            sleep 2
+          done
+          
+          # check that sasl is not broken
           {{ include "rpk-cluster-info" $rpk }}
       volumeMounts:
         - name: config
