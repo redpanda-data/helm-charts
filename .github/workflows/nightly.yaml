@@ -17,7 +17,8 @@ name: Nightly Lint and Test Charts
 
 on:
   schedule:
-    - cron: '0 1 * * 1-5' # 01:00 AM UTC Monday - Friday
+    - cron: '0 1 * * 1-5'  # 01:00 AM UTC Monday - Friday
+  workflow_dispatch: {}
 jobs:
   lint:
     runs-on: ubuntu-22.04
