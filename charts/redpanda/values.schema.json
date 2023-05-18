@@ -526,7 +526,8 @@
         "priorityClassName",
         "tolerations",
         "topologySpreadConstraints",
-        "securityContext"
+        "securityContext",
+        "sideCars"
       ],
       "properties": {
         "replicas": {
@@ -684,6 +685,22 @@
             "fsGroupChangePolicy": {
               "type": "string",
               "pattern": "^(OnRootMismatch|Always)$"
+            }
+          }
+        },
+        "sideCars": {
+          "type": "object",
+          "properties": {
+            "configWatcher": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "resources": {
+                  "type": "object"
+                }
+              }
             }
           }
         },

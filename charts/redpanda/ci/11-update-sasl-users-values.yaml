@@ -12,10 +12,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-debug: true
-remote: origin
-target-branch: main
-helm-extra-args: --timeout 900s
-chart-repos:
-  - redpanda=https://charts.redpanda.com
 
+# This relies on .github/create-sasl-secret.sh and moving those files into the redpanda template directory
+auth:
+  sasl:
+    enabled: true
+    secretRef: "some-users"
+    users: []

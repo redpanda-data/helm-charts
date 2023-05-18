@@ -543,6 +543,10 @@ statefulset:
     fsGroup: 101
     runAsUser: 101
     fsGroupChangePolicy: OnRootMismatch
+  sideCars:
+    configWatcher:
+      enabled: true
+      resources: {}
   initContainers:
     tuning:
       resources: {}
