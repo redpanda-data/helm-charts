@@ -1,3 +1,4 @@
+{{- if and (.Capabilities.APIVersions.Has "monitoring.coreos.com/v1") .Values.monitoring.enabled }}
 {{/*
 Licensed to the Apache Software Foundation (ASF) under one or more
 contributor license agreements.  See the NOTICE file distributed with
@@ -15,28 +16,24 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */}}
 ---
-# This service is only used to create the DNS enteries for each pod in
-# the stateful set and allow the serviceMonitor to target the pods.
-# This service should not be used by any client application
-apiVersion: v1
-kind: Service
+# This servicemonitor is used by Prometheus Operator to scrape the metrics
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
 metadata:
   name: {{ include "redpanda.fullname" . }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
-    monitoring.redpanda.com/enabled: {{ .Values.monitoring.enabled | quote }}
 {{- with include "full.labels" . }}
   {{- . | nindent 4 }}
 {{- end }}
 spec:
-  publishNotReadyAddresses: true
-  type: ClusterIP
-  clusterIP: None
+  endpoints:
+  - interval: {{ .Values.monitoring.scrapeInterval }}
+    path: /public_metrics
+    targetPort: admin
   selector:
-    app.kubernetes.io/name: {{ template "redpanda.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
-  ports:
-    - name: admin
-      protocol: TCP
-      targetPort: {{ .Values.listeners.admin.port }}
-      port: {{ .Values.listeners.admin.port }}
+    matchLabels:
+      monitoring.redpanda.com/enabled: "true"
+      app.kubernetes.io/name: {{ template "redpanda.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name | quote }}
+{{- end }}

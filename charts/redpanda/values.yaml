@@ -214,6 +214,12 @@ logging:
     # Your cluster ID (optional)
     # clusterId: your-helm-cluster
 
+# -- Monitoring.
+# This will create a ServiceMonitor that can be used by Prometheus-Operator or VictoriaMetrics-Operator to scrape the metrics.
+monitoring:
+  enabled: false
+  scrapeInterval: 30s
+
 # -- Pod resource management.
 # This section simplifies resource allocation
 # by providing a single location where resources are defined.
