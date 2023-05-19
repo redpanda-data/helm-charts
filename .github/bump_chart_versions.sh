@@ -37,7 +37,7 @@ if [[ "${APPVERSION}" == "${LATEST}" ]]; then
     exit 0
 fi
 
-echo "update redpanda appVersion from ${APPVERSION} to ${LATEST}"
+echo "update ${CHART} appVersion from ${APPVERSION} to ${LATEST}"
 bump_patch_version
 sed -i "s/^version: .*$/version: ${NEW_VERSION}/" "${CHARTFILE}"
 sed -i "s/^appVersion: .*$/appVersion: ${LATEST}/" "${CHARTFILE}"

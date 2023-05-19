@@ -44,4 +44,5 @@ jobs:
       - uses: peter-evans/create-pull-request@v5
         with:
           commit-message: ${{ steps.chartversion.outputs.MESSAGE }}
-
+          title: ${{ steps.chartversion.outputs.MESSAGE }}
+          branch: bump-appversion/${{ matrix.chart }}
