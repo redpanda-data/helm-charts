@@ -92,7 +92,7 @@ limitations under the License.
   {{ end }}
 {{ end }}
 
-{{ $adminTLS := list }}
+{{ $adminAPI := list }}
 {{ if (include "admin-internal-tls-enabled" . | fromJson).bool }}
   {{ $service := .Values.listeners.admin }}
   {{ $cert := get .Values.tls.certs $service.tls.cert }}
@@ -101,7 +101,11 @@ limitations under the License.
   {{- $secretName = $cert.secretRef.name }}
   {{- end }}
   {{ if $cert.caEnabled }}
-    {{ $adminTLS = append $adminTLS (dict
+    {{ $adminAPI = append $adminAPI (dict
+      "name" "REDPANDA_ADMINAPI_TLS_ENABLED"
+      "value" "true"
+    ) }}
+    {{ $adminAPI = append $adminAPI (dict
       "name" "REDPANDA_ADMINAPI_TLS_CAFILEPATH"
       "value" (printf "/mnt/cert/adminapi/%s/ca.crt" $service.tls.cert)
     )}}
@@ -119,8 +123,16 @@ limitations under the License.
     )}}
   {{ end }}
 {{ end }}
+{{ $adminAPI := append $adminAPI (dict
+  "name" "REDPANDA_ADMINAPI_ENABLED"
+  "value" "true"
+)}}
+{{ $adminAPI = append $adminAPI (dict
+  "name" "REDPANDA_ADMINAPI_URLS"
+  "value" (print (include "admin-http-protocol" .) "://" (include "api-urls" .))
+)}}
 
-{{ $extraEnv := concat $kafkaTLS $adminTLS $schemaRegistryTLS }}
+{{ $extraEnv := concat $kafkaTLS $schemaRegistryTLS $adminAPI}}
 {{ $consoleValues := dict "Values" (dict
   "extraVolumes" $extraVolumes
   "extraVolumeMounts" $extraVolumeMounts

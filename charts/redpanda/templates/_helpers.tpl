@@ -352,7 +352,7 @@ than 1 core.
 {{- end -}}
 
 {{- define "api-urls" -}}
-{{ template "redpanda.fullname" . }}-0.{{ include "redpanda.internal.domain" .}}:{{ .Values.listeners.admin.port }}
+{{ include "redpanda.internal.domain" .}}:{{ .Values.listeners.admin.port }}
 {{- end -}}
 
 {{- define "sasl-mechanism" -}}
