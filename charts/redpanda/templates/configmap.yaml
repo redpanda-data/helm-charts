@@ -244,10 +244,14 @@ data:
             port: {{ $values.listeners.rpc.port }}
 {{- end }}
 {{- if and (include "is-licensed" . | fromJson).bool .Values.storage.tieredConfig.cloud_storage_enabled }}
-  {{- if (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
-    {{- toYaml .Values.storage.tieredConfig | nindent 6 }}
-  {{- else }}
-    {{- unset .Values.storage.tieredConfig "cloud_storage_credentials_source" | toYaml | nindent 6 }}
+  {{- $tieredStorageConfig := deepCopy .Values.storage.tieredConfig }}
+  {{- if not (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
+    {{- $tieredStorageConfig = unset $tieredStorageConfig "cloud_storage_credentials_source"}}
+  {{- end }}
+  {{- range $key, $element := $tieredStorageConfig}}
+    {{- if or (eq (typeOf $element) "bool") $element }}
+    {{ $key }}: {{ $element | toYaml }}
+    {{- end }}
   {{- end }}
 {{- end }}
 {{- /* Schema Registry API */}}
