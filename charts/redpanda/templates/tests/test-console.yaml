@@ -41,7 +41,6 @@ spec:
       - bash
       - -c
       - |
-        set -x
         curl -svm3 --fail --retry 120 --retry-max-time 120 --retry-all-errors http://{{ include "redpanda.fullname" . }}-console.{{ .Release.Namespace }}.svc:{{ include "console.containerPort" (dict "Values" .Values.console) }}/api/cluster | grep 'Redpanda {{ include "redpanda.tag" . }}'
       volumeMounts:
         - name: {{ template "redpanda.fullname" . }}
