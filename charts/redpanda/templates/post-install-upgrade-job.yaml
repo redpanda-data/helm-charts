@@ -61,6 +61,9 @@ spec:
     {{- end }}
       restartPolicy: Never
       securityContext: {{ include "pod-security-context" . | nindent 8 }}
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets: {{- toYaml . | nindent 8 }}
+    {{- end }}
       containers:
       - name: {{ template "redpanda.name" . }}-post-install
         image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}

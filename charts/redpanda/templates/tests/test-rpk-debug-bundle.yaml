@@ -49,6 +49,9 @@ spec:
             matchLabels:
               statefulset.kubernetes.io/pod-name: {{ include "redpanda.fullname" . }}-0
           topologyKey: kubernetes.io/hostname
+  {{- with .Values.imagePullSecrets }}
+  imagePullSecrets: {{- toYaml . | nindent 4 }}
+  {{- end }}
   initContainers:
     - name: {{ template "redpanda.name" . }}
       image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}
