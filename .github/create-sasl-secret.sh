@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -xeuo pipefail
 
+# TODO the updated-sasl-users.txt was changed so admin password did not change.
+# This is to allow the <release>-console-test to pass since console does not auto
+# reload on sasl password changes. Once this is fixed, the updated-sasl-users.txt should
+# be changed so that full sasl changes can be observed and validated.
+
 SECRET_NAME=${1-"some-users"}
 
 # Create a secret object with initial user sasl data
