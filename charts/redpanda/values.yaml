@@ -120,6 +120,13 @@ auth:
     - name: admin
       password: change-me
       mechanism: SCRAM-SHA-512
+  mtls:
+    # -- Enable mTLS authentication.
+    enabled: false
+    # List of declared superusers by config
+    # A TLS cert will be created per user, for each CA certificate declared in tls.certs map
+    superusers: ["admin"]
+
 
 # -- TLS settings.
 # For details, see the [TLS documentation](https://docs.redpanda.com/docs/manage/kubernetes/security/kubernetes-tls/).
@@ -751,6 +758,11 @@ listeners:
           cert: external
         # default is "http_basic"
         authenticationMethod:
+
+
+# pandaProxyClient: {}
+# schemaRegistryClient: {}
+
 
 # Expert Config
 # Here be dragons!

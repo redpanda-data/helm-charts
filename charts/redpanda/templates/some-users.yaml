@@ -1,0 +1,11 @@
+apiVersion: v1
+data:
+  sasl-users.txt: YWRtaW46YmFkcGFzc3dvcmQ6U0NSQU0tU0hBLTUxMgp1c2VyMTpwYXNzMXdvcmQ6U0NSQU0tU0hBLTUxMgpzb21ldXNlcjpBQkMxMjNyOlNDUkFNLVNIQS01MTIKYW5vdGhlcm1lOmJsYWgyNzg0YTpTQ1JBTS1TSEEtNTEyCg==
+kind: Secret
+metadata:
+  annotations:
+    helm.sh/hook: pre-install
+    helm.sh/hook-delete-policy: before-hook-creation
+    helm.sh/hook-weight: "-100"
+  creationTimestamp: null
+  name: some-users

@@ -18,6 +18,10 @@ limitations under the License.
 {{- $rpkFlags := include "rpk-acl-user-flags" . }}
 {{- $sasl := .Values.auth.sasl }}
 {{- $root := deepCopy . }}
+{{- $adminUser := "" -}}
+{{- if (include "mtls-enabled" . | fromJson).bool  }}
+  {{- $adminUser = first (include "superusers" . | fromJson).users -}}
+{{- end }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -97,6 +101,10 @@ spec:
   {{- range $name, $cert := .Values.tls.certs }}
           - name: redpanda-{{ $name }}-cert
             mountPath: {{ printf "/etc/tls/certs/%s" $name }}
+          {{- if (include "mtls-enabled" $ | fromJson).bool }}
+          - name: redpanda-{{ $name }}-usercert-{{ $adminUser }}
+            mountPath: {{ printf "/etc/tls/user-certs/%s/%s" $name $adminUser }}
+          {{- end }}
   {{- end }}
 {{- end }}
           {{- if and $sasl.enabled (not (empty $sasl.secretRef )) }}
@@ -126,6 +134,17 @@ spec:
               path: ca.crt
     {{- end }}
             secretName: {{ template "cert-secret-name" $r }}
+    {{- if (include "mtls-enabled" $ | fromJson).bool }}
+        - name: redpanda-{{ $name }}-usercert-{{ $adminUser }}
+          secret:
+            secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-usercert-{{ $adminUser }}
+            defaultMode: 420
+            items:
+            - key: tls.key
+              path: tls.key
+            - key: tls.crt
+              path: tls.crt
+    {{- end }}
   {{- end }}
 {{- end -}}
         {{- if and $sasl.enabled (not (empty $sasl.secretRef )) }}
