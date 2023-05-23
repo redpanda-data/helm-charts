@@ -18,7 +18,10 @@ image:
   # @default -- `Chart.appVersion`
   tag: ""
 
+# -- Pull secrets may be used to provide credentials to image repositories
+# See https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
+
 # -- Override `console.name` template.
 nameOverride: ""
 # -- Override `console.fullname` template.
