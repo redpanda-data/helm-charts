@@ -89,7 +89,7 @@ tasks:
     cmds:
       - minikube delete
 
-  capi-bootstrap:
+  capi-bootstrap-aws:
     deps:
       - tool:clusterctl
     env:
@@ -114,7 +114,7 @@ tasks:
       CAPA_EKS_IAM: true
       CAPA_EKS_ADD_ROLES: true
     cmds:
-      - task: capi-bootstrap
+      - task: capi-bootstrap-aws
         vars:
           CAPI_INFRASTRUCTURE: aws
           CAPA_EKS_IAM: true
@@ -125,6 +125,13 @@ tasks:
       - helm install -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} .buildkite/capi/eks-cluster
       - kubectl wait --for=condition=ready cluster {{.CLUSTER_NAME}}-eks-cluster --timeout=40m
       - kubectl wait --for=condition=Ready machinepool {{.CLUSTER_NAME}}-eks-cluster-pool-0 --timeout=20m
+
+  capi-create-gke:
+    deps:
+      - tool:clustergkeadmk
+    cmd:
+      - task: capi-bootstrap-gke
+
 
   capi-delete:
     internal: true
