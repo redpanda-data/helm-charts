@@ -18,4 +18,16 @@ auth:
   sasl:
     enabled: true
     secretRef: "some-users"
-    users: []
+    users:
+      - name: admin
+        password: badpassword
+        mechanism: SCRAM-SHA-512
+      - name: user1
+        password: pass1word
+        mechanism: SCRAM-SHA-512
+      - name: someuser
+        password: ABC123r
+        mechanism: SCRAM-SHA-512
+      - name: anotherme
+        password: blah2784a
+        mechanism: SCRAM-SHA-512
