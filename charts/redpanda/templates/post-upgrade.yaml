@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */}}
 {{- if .Values.post_upgrade_job.enabled }}
-{{- $rpkFlags := include "rpk-flags-no-sasl" . }}
+{{- $rpkFlags := include "rpk-acl-user-flags" . }}
 {{- $sasl := .Values.auth.sasl }}
 {{- $root := deepCopy . }}
 apiVersion: batch/v1
