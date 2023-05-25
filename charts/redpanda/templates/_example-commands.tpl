@@ -23,7 +23,7 @@ and tested in a test.
 
 {{/* tested in tests/test-kafka-sasl-status.yaml */}}
 {{- define "rpk-acl-user-create" -}}
-{{ .rpk }} acl user create myuser --new-password changeme --mechanism {{ include "sasl-mechanism" . }} {{ include "rpk-flags-no-sasl" . }}
+{{ .rpk }} acl user create myuser --new-password changeme --mechanism {{ include "sasl-mechanism" . }} {{ include "rpk-acl-user-flags" . }}
 {{- end -}}
 
 {{/* tested in tests/test-kafka-sasl-status.yaml */}}

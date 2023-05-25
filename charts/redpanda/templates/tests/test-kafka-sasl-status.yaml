@@ -51,7 +51,7 @@ spec:
         - -c
         - |
           set -xe
-          until rpk acl user delete myuser {{ include "rpk-common-flags" . }}
+          until rpk acl user delete myuser {{ include "rpk-acl-user-flags" . }}
             do sleep 2
           done
           sleep 3
@@ -63,7 +63,7 @@ spec:
           {{ include "rpk-topic-create" $rpk }}
           {{ include "rpk-topic-describe" $rpk }}
           {{ include "rpk-topic-delete" $rpk }}
-          rpk acl user delete myuser {{ include "rpk-common-flags" . }}
+          rpk acl user delete myuser {{ include "rpk-acl-user-flags" . }}
       volumeMounts:
         - name: config
           mountPath: /etc/redpanda
