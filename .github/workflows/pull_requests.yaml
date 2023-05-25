@@ -142,7 +142,6 @@ jobs:
         run: |
           mv external-tls-secret.yaml charts/redpanda/templates/
           cp .github/external-service.yaml charts/redpanda/templates/
-          mv some-users.yaml charts/redpanda/templates
           mv some-users-updated.yaml charts/redpanda/templates
 
       - name: install cert-manager
