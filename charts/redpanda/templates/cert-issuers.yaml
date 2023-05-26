@@ -16,7 +16,7 @@ limitations under the License.
 */}}
 {{/*
 dummy change
-/*}}
+*/}}
 {{- if (include "tls-enabled" . | fromJson).bool }}
   {{- $root := deepCopy . }}
   {{- $release := .Release }}
