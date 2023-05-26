@@ -647,6 +647,7 @@ listeners:
     external:
       # -- Name of the external listener.
       default:
+        port: 9645
         # Override the global `external.enabled` for only this listener.
         # enabled: true
         # -- The port advertised to this listener's external clients.
@@ -670,6 +671,8 @@ listeners:
   kafka:
     # -- The port for internal client connections.
     port: 9093
+    # default is "sasl"
+    authenticationMethod:
     tls:
       # Optional flag to override the global TLS enabled flag.
       # enabled: true
@@ -686,6 +689,8 @@ listeners:
         tls:
           # enabled: true
           cert: external
+        # default is "sasl"
+        authenticationMethod:
   # -- RPC listener (this is never externally accessible).
   rpc:
     port: 33145
@@ -699,6 +704,8 @@ listeners:
     enabled: true
     port: 8081
     kafkaEndpoint: default
+    # default is "http_basic"
+    authenticationMethod:
     tls:
       # Optional flag to override the global TLS enabled flag.
       # enabled: true
@@ -713,11 +720,15 @@ listeners:
         tls:
           # enabled: true
           cert: external
+        # default is "http_basic"
+        authenticationMethod:
   # -- HTTP API listeners (aka PandaProxy).
   http:
     enabled: true
     port: 8082
     kafkaEndpoint: default
+    # default is "http_basic"
+    authenticationMethod:
     tls:
       # Optional flag to override the global TLS enabled flag.
       # enabled: true
@@ -732,6 +743,8 @@ listeners:
         tls:
           # enabled: true
           cert: external
+        # default is "http_basic"
+        authenticationMethod:
 
 # Expert Config
 # Here be dragons!
