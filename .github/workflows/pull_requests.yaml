@@ -127,6 +127,8 @@ jobs:
         if: steps.list-changed.outputs.changed == 'true'
         run: .github/annotate_kind_nodes.sh chart-testing
 
+    #===== Required Test Files === start
+
       - name: Create tls helm templates
         if: steps.list-changed.outputs.changed == 'true'
         run: |
@@ -143,6 +145,8 @@ jobs:
           mv external-tls-secret.yaml charts/redpanda/templates/
           cp .github/external-service.yaml charts/redpanda/templates/
           mv some-users-updated.yaml charts/redpanda/templates
+
+    #===== Required Test Files === end
 
       - name: install cert-manager
         if: steps.list-changed.outputs.changed == 'true'

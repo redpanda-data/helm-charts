@@ -13,7 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Nightly Lint and Test Charts
+# This is to test only the Redpanda Chart Nightly
+name: Nightly Lint and Test Redpanda Chart
 
 on:
   schedule:
@@ -87,6 +88,27 @@ jobs:
       - name: Annotate nodes for rack awareness
         run: .github/annotate_kind_nodes.sh chart-testing
 
+    #===== Required Test Files === start
+
+      - name: Create tls helm templates
+        if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          .github/create_tls.sh "random-domain"
+
+      - name: Create sasl secret templates
+        if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          .github/create-sasl-secret.sh "some-users"
+
+      - name: Move tls files to template
+        if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          mv external-tls-secret.yaml charts/redpanda/templates/
+          cp .github/external-service.yaml charts/redpanda/templates/
+          mv some-users-updated.yaml charts/redpanda/templates
+
+    #===== Required Test Files === end
+
       - name: install cert-manager
         run: |
           helm repo add jetstack https://charts.jetstack.io &&
@@ -97,7 +119,9 @@ jobs:
       # we're testing console in the Redpanda chart
       - name: Run chart-testing (install and upgrade)
         run: |
-          ct install --config .github/ct.yaml --upgrade \
+          ct install \
+            --upgrade \
+            --config .github/ct.yaml \
             --helm-extra-set-args="--set=image.tag=${{ matrix.version }}" \
-            --charts=charts/redpanda \
-            --skip-missing-values
+            --skip-missing-values \
+            --charts=charts/redpanda
