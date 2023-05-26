@@ -35,6 +35,8 @@ jobs:
         with:
           fetch-depth: 0
 
+      - run: git branch -a
+
       - name: Run CI file name checker
         run: .github/check-ci-files.sh charts/redpanda/ci
 
