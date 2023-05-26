@@ -46,10 +46,10 @@ jobs:
       - name: Set up chart-testing
         uses: joejulian/chart-testing-action@v2.3.1-1
         with:
-          version: v3.7.1-2
+          version: v3.8.0-setgroupingstrings
 
       - name: Run chart-testing (lint)
-        run: ct lint --config .github/ct.yaml
+        run: ct lint --config .github/ct.yaml --github-groups
 
   check-values:
     runs-on: ubuntu-22.04
@@ -95,7 +95,7 @@ jobs:
       - name: Set up chart-testing
         uses: joejulian/chart-testing-action@v2.3.1-1
         with:
-          version: v3.7.1-2
+          version: v3.8.0-setgroupingstrings
 
       # we're excluding console from testing until we have a way to test it with Redpanda
       - name: Run chart-testing (list-changed)
@@ -156,6 +156,7 @@ jobs:
         if: steps.list-changed.outputs.changed == 'true'
         run: |
           ct install \
+            --github-groups \
             --upgrade \
             --config .github/ct.yaml \
             --helm-extra-set-args="--set=image.tag=${{ matrix.version }}" \
