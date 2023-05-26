@@ -106,6 +106,22 @@ tasks:
           KIND_FLAGS: ""
       - "{{.BINDIR}}/clusterctl init -i {{ .CAPI_INFRASTRUCTURE }} -v7 --wait-providers"
 
+  capi-bootstrap-gke:
+    deps:
+      - tool:clusterctl
+    env:
+      GCP_B64ENCODED_CREDENTIALS: "{{.GCP_B64ENCODED_CREDENTIALS}}"
+      EXP_CAPG_GKE: true
+      EXP_MACHINE_POOL: true
+    vars:
+      CAPI_INFRASTRUCTURE: gcp
+    cmds:
+      - task: kind-create
+        vars:
+          KIND_CLUSTERNAME: bootstrap
+          KIND_FLAGS: ""
+      - "{{.BINDIR}}/clusterctl init -i {{ .CAPI_INFRASTRUCTURE }} -v7 --wait-providers"
+
   capi-create-eks:
     deps:
       - aws-check-login
@@ -127,10 +143,12 @@ tasks:
       - kubectl wait --for=condition=Ready machinepool {{.CLUSTER_NAME}}-eks-cluster-pool-0 --timeout=20m
 
   capi-create-gke:
-    cmd:
+    env:
+      GCP_B64ENCODED_CREDENTIALS: "{{.GCP_B64ENCODED_CREDENTIALS}}"
+    cmds:
       - task: capi-bootstrap-gke
         vars:
-          GCP_B64ENCODED_CREDENTIALS: {{.GCP_B64ENCODED_CREDENTIALS}}
+          CAPI_INFRASTRUCTURE: gcp
       - helm install -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} .buildkite/capi/gke-cluster --set project={{.PROJECT_NAME}}
       - kubectl wait --for=condition=ready cluster {{.CLUSTER_NAME}}-gke-cluster --timeout=40m
       - kubectl wait --for=condition=Ready machinepool {{.CLUSTER_NAME}}-gke-cluster-mp-0 --timeout=20m
@@ -148,8 +166,8 @@ tasks:
       - "{{.BINDIR}}/clusterawsadm controller update-credentials"
       - helm uninstall --wait -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} --timeout 60m
 
-  capi-delete-gke:
-    env:
-      GCP_B64ENCODED_CREDENTIALS: {{.GCP_B64ENCODED_CREDENTIALS}}
-    cmds:
-      - helm uninstall --wait -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} --timeout 60m
+#  capi-delete-gke:
+#    vars:
+#      GCP_B64ENCODED_CREDENTIALS: {{.GCP_B64ENCODED_CREDENTIALS}}
+#    cmds:
+#      - helm uninstall --wait -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} --timeout 60m
