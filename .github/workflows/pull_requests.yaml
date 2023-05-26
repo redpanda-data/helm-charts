@@ -166,7 +166,7 @@ jobs:
     if: always()
     needs:
       - test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Summarize the results of the test matrix pass/fail
         uses: re-actors/alls-green@release/v1
