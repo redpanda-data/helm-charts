@@ -127,11 +127,13 @@ tasks:
       - kubectl wait --for=condition=Ready machinepool {{.CLUSTER_NAME}}-eks-cluster-pool-0 --timeout=20m
 
   capi-create-gke:
-    deps:
-      - tool:clustergkeadmk
     cmd:
       - task: capi-bootstrap-gke
-
+        vars:
+          GCP_B64ENCODED_CREDENTIALS: {{.GCP_B64ENCODED_CREDENTIALS}}
+      - helm install -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} .buildkite/capi/gke-cluster --set project={{.PROJECT_NAME}}
+      - kubectl wait --for=condition=ready cluster {{.CLUSTER_NAME}}-gke-cluster --timeout=40m
+      - kubectl wait --for=condition=Ready machinepool {{.CLUSTER_NAME}}-gke-cluster-mp-0 --timeout=20m
 
   capi-delete:
     internal: true
@@ -144,4 +146,10 @@ tasks:
         sh: "{{.BINDIR}}/clusterawsadm bootstrap credentials encode-as-profile 2> /dev/null"
     cmds:
       - "{{.BINDIR}}/clusterawsadm controller update-credentials"
+      - helm uninstall --wait -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} --timeout 60m
+
+  capi-delete-gke:
+    env:
+      GCP_B64ENCODED_CREDENTIALS: {{.GCP_B64ENCODED_CREDENTIALS}}
+    cmds:
       - helm uninstall --wait -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} --timeout 60m
