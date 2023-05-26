@@ -91,17 +91,14 @@ jobs:
     #===== Required Test Files === start
 
       - name: Create tls helm templates
-        if: steps.list-changed.outputs.changed == 'true'
         run: |
           .github/create_tls.sh "random-domain"
 
       - name: Create sasl secret templates
-        if: steps.list-changed.outputs.changed == 'true'
         run: |
           .github/create-sasl-secret.sh "some-users"
 
       - name: Move tls files to template
-        if: steps.list-changed.outputs.changed == 'true'
         run: |
           mv external-tls-secret.yaml charts/redpanda/templates/
           cp .github/external-service.yaml charts/redpanda/templates/
