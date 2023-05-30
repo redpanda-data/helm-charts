@@ -27,7 +27,7 @@ metadata:
 spec:
   network:
     name: {{ .Values.networkName }}
-  project: {{ .Values.project }}
+  project: {{ .Values.projectID }}
   region: {{ .Values.region }}
 ---
 apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
@@ -38,7 +38,7 @@ metadata:
   labels: {{ include "gke-cluster.labels" . | nindent 4 }}
 spec:
   location: {{ .Values.region }}
-  project: {{ .Values.project }}
+  project: {{ .Values.projectID }}
 ---
 apiVersion: cluster.x-k8s.io/v1beta1
 kind: MachinePool

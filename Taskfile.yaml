@@ -13,7 +13,7 @@ vars:
   NAMESPACE: rn
   RELEASE: rp
   KIND_CLUSTERNAME: rp-helm
-  CLUSTER_NAME: '{{.CLUSTER_NAME | default "capi-eks"}}'
+  CLUSTER_NAME: '{{.CLUSTER_NAME | default "capi"}}'
   CLUSTER_NAMESPACE: '{{.CLUSTER_NAMESPACE | default "default"}}'
 
   # Overridable task vars
@@ -145,11 +145,12 @@ tasks:
   capi-create-gke:
     env:
       GCP_B64ENCODED_CREDENTIALS: "{{.GCP_B64ENCODED_CREDENTIALS}}"
+      GCP_PROJECT_ID: "{{.GCP_PROJECT_ID}}"
     cmds:
       - task: capi-bootstrap-gke
         vars:
           CAPI_INFRASTRUCTURE: gcp
-      - helm install -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} .buildkite/capi/gke-cluster --set project={{.PROJECT_NAME}}
+      - helm install -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} .buildkite/capi/gke-cluster --set projectID={{.GCP_PROJECT_ID}}
       - kubectl wait --for=condition=ready cluster {{.CLUSTER_NAME}}-gke-cluster --timeout=40m
       - kubectl wait --for=condition=Ready machinepool {{.CLUSTER_NAME}}-gke-cluster-mp-0 --timeout=20m
 
@@ -166,8 +167,8 @@ tasks:
       - "{{.BINDIR}}/clusterawsadm controller update-credentials"
       - helm uninstall --wait -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} --timeout 60m
 
-#  capi-delete-gke:
-#    vars:
-#      GCP_B64ENCODED_CREDENTIALS: {{.GCP_B64ENCODED_CREDENTIALS}}
-#    cmds:
-#      - helm uninstall --wait -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} --timeout 60m
+  capi-delete-gke:
+    env:
+      GCP_B64ENCODED_CREDENTIALS: "{{.GCP_B64ENCODED_CREDENTIALS}}"
+    cmds:
+      - helm uninstall --wait -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} --timeout 60m
