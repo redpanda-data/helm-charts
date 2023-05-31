@@ -61,6 +61,9 @@ spec:
     {{- end }}
       restartPolicy: Never
       securityContext: {{ include "pod-security-context" . | nindent 8 }}
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets: {{- toYaml . | nindent 8 }}
+    {{- end }}
       containers:
       - name: {{ template "redpanda.name" . }}-post-install
         image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
@@ -76,34 +79,6 @@ spec:
         args:
           - |
             set -e
-        {{- if and $sasl.enabled (not (empty $sasl.secretRef ))  }}
-            USERS_FILE=$(find /etc/secrets/users/* -print)
-            while read p; do
-              IFS=":" read -r USER_NAME PASSWORD MECHANISM <<< $p
-              # Do not process empty lines
-              if [ -z "$USER_NAME" ]; then
-                continue
-              fi
-              echo "Creating user ${USER_NAME}..."
-              MECHANISM=${MECHANISM:-{{- include "sasl-mechanism" . }}}
-              creation_result=$(rpk acl user create ${USER_NAME} --password=${PASSWORD} --mechanism ${MECHANISM} {{ template "rpk-flags-no-sasl" $ }} 2>&1) && creation_result_exit_code=$? || creation_result_exit_code=$?  # On a non-success exit code
-              if [[ $creation_result_exit_code -ne 0 ]]; then
-              # Check if the stderr contains "User already exists"
-                if [[ $creation_result == *"User already exists"* ]]; then
-                  # TODO: change user password instead in the future when api enables this.
-                  echo "the user ${USER_NAME} already exists, skipping creation."
-                else
-                  # Another error occurred, so output the original message and exit code
-                  echo "error creating user ${USER_NAME}: ${creation_result}"
-                  exit $creation_result_exit_code
-                fi
-              # On a success, the user was created so output that
-              else
-                echo "Created user ${USER_NAME}."
-              fi
-            done < $USERS_FILE
-        {{- end }}
-
         {{- if (include "redpanda-atleast-22-2-0" . | fromJson).bool }}
           {{- if not (empty .Values.license_secret_ref) }}
             rpk cluster license set "$REDPANDA_LICENSE" {{ template "rpk-flags-no-sasl" $ }}

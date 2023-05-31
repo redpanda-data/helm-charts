@@ -1,0 +1,98 @@
+{{/*
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/}}
+
+{{- if and (include "sasl-enabled" . | fromJson).bool (eq .Values.auth.sasl.secretRef "some-users") -}}
+    {{- $rpk := deepCopy . }}
+    {{- $sasl := .Values.auth.sasl }}
+    {{- $_ := set $rpk "rpk" "rpk" }}
+    {{- $_ := set $rpk "dummySasl" false }}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "redpanda.fullname" . }}-test-update-sasl-users"
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+{{- with include "full.labels" . }}
+  {{- . | nindent 4 }}
+{{- end }}
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  restartPolicy: Never
+  securityContext:
+    runAsUser: 65535
+    runAsGroup: 65535
+  {{- with .Values.imagePullSecrets }}
+  imagePullSecrets: {{- toYaml . | nindent 4 }}
+  {{- end }}
+  containers:
+    - name: {{ template "redpanda.name" . }}
+      image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
+      command:
+        - /usr/bin/timeout
+        - "120"
+        - bash
+        - -c
+        - |
+          set -xe
+          # check that the users list did update
+          ready_result_exit_code=1
+          while [[ ${ready_result_exit_code} -ne 0 ]]; do
+            ready_result=$(rpk acl user list {{ include "rpk-acl-user-flags" . }} | grep anotheranotherme 2>&1) && ready_result_exit_code=$?
+            sleep 2
+          done
+          
+          # check that sasl is not broken
+          {{ include "rpk-cluster-info" $rpk }}
+      volumeMounts:
+        - name: config
+          mountPath: /etc/redpanda
+{{- if (include "tls-enabled" . | fromJson).bool }}
+  {{- range $name, $cert := .Values.tls.certs }}
+        - name: redpanda-{{ $name }}-cert
+          mountPath: {{ printf "/etc/tls/certs/%s" $name }}
+  {{- end }}
+{{- end }}
+        {{- if (not (empty $sasl.secretRef )) }}
+        - name: {{ $sasl.secretRef }}
+          mountPath: "/etc/secrets/users"
+          readOnly: true
+        {{- end}}
+      resources:
+{{- toYaml .Values.statefulset.resources | nindent 12 }}
+  volumes:
+    - name: {{ template "redpanda.fullname" . }}
+      configMap:
+        name: {{ template "redpanda.fullname" . }}
+    - name: config
+      emptyDir: {}
+    {{- if (not (empty $sasl.secretRef )) }}
+    - name: {{ $sasl.secretRef }}
+      secret:
+        secretName: {{ $sasl.secretRef }}
+        optional: false
+    {{- end }}
+{{- if (include "tls-enabled" . | fromJson).bool }}
+  {{- range $name, $cert := .Values.tls.certs }}
+    - name: redpanda-{{ $name }}-cert
+      secret:
+        defaultMode: 0644
+        secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
+  {{- end }}
+{{- end -}}
+{{- end }}

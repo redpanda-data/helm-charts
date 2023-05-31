@@ -56,6 +56,10 @@ image:
   # If `image.tag` is 'latest', the default is `Always`.
   pullPolicy: IfNotPresent
 
+# -- Pull secrets may be used to provide credentials to image repositories
+# See https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+imagePullSecrets: []
+
 # -- Enterprise license key (optional).
 # For details,
 # see the [License documentation](https://docs.redpanda.com/docs/get-started/licenses/?platform=kubernetes#redpanda-enterprise-edition).
@@ -197,6 +201,11 @@ external:
     # For example:
     # cloud.google.com/load-balancer-type: "Internal"
     # service.beta.kubernetes.io/aws-load-balancer-type: nlb
+  # If you enable externalDns, each LoadBalancer service instance
+  # will be annotated with external-dns hostname
+  # matchine external.addresses + external.domain
+  # externalDns:
+  #   enabled: true
 
 # -- Log-level settings.
 logging:
@@ -213,6 +222,12 @@ logging:
     # organization: your-org
     # Your cluster ID (optional)
     # clusterId: your-helm-cluster
+
+# -- Monitoring.
+# This will create a ServiceMonitor that can be used by Prometheus-Operator or VictoriaMetrics-Operator to scrape the metrics.
+monitoring:
+  enabled: false
+  scrapeInterval: 30s
 
 # -- Pod resource management.
 # This section simplifies resource allocation
@@ -396,7 +411,7 @@ storage:
     # -- Maximum size of the disk cache used by Tiered Storage.
     # Default is 20 GiB.
     # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_cache_size).
-    cloud_storage_cache_size: 21474836480
+    cloud_storage_cache_size: 5368709120
     # cloud_storage_cache_directory: ""
     # cloud_storage_cache_check_interval: 30000
     # cloud_storage_initial_backoff_ms: 100
@@ -537,6 +552,10 @@ statefulset:
     fsGroup: 101
     runAsUser: 101
     fsGroupChangePolicy: OnRootMismatch
+  sideCars:
+    configWatcher:
+      enabled: true
+      resources: {}
   initContainers:
     tuning:
       resources: {}
@@ -633,6 +652,7 @@ listeners:
     external:
       # -- Name of the external listener.
       default:
+        port: 9645
         # Override the global `external.enabled` for only this listener.
         # enabled: true
         # -- The port advertised to this listener's external clients.
@@ -656,6 +676,8 @@ listeners:
   kafka:
     # -- The port for internal client connections.
     port: 9093
+    # default is "sasl"
+    authenticationMethod:
     tls:
       # Optional flag to override the global TLS enabled flag.
       # enabled: true
@@ -672,6 +694,8 @@ listeners:
         tls:
           # enabled: true
           cert: external
+        # default is "sasl"
+        authenticationMethod:
   # -- RPC listener (this is never externally accessible).
   rpc:
     port: 33145
@@ -685,6 +709,8 @@ listeners:
     enabled: true
     port: 8081
     kafkaEndpoint: default
+    # default is "http_basic"
+    authenticationMethod:
     tls:
       # Optional flag to override the global TLS enabled flag.
       # enabled: true
@@ -699,11 +725,15 @@ listeners:
         tls:
           # enabled: true
           cert: external
+        # default is "http_basic"
+        authenticationMethod:
   # -- HTTP API listeners (aka PandaProxy).
   http:
     enabled: true
     port: 8082
     kafkaEndpoint: default
+    # default is "http_basic"
+    authenticationMethod:
     tls:
       # Optional flag to override the global TLS enabled flag.
       # enabled: true
@@ -718,6 +748,8 @@ listeners:
         tls:
           # enabled: true
           cert: external
+        # default is "http_basic"
+        authenticationMethod:
 
 # Expert Config
 # Here be dragons!

@@ -1,0 +1,26 @@
+#!/bin/bash
+
+set -xeuo pipefail
+
+# do not run this during the pipeline upload
+if [ "$BUILDKITE_LABEL" == ":pipeline:" ]; then
+    exit 0
+fi
+
+source .env
+
+cleanup_eks(){
+AWS_ACCESS_KEY_ID="$HELMCHART_TEST_ACCOUNT_AWS_ACCESS_KEY_ID"
+AWS_SECRET_ACCESS_KEY="$HELMCHART_TEST_ACCOUNT_AWS_SECRET_ACCESS_KEY"
+AWS_REGION=us-west-2
+TEST_BUCKET="cloud-sandbox-buildkite-${BUILDKITE_BUILD_NUMBER}"
+export AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_REGION TEST_BUCKET
+
+task capi-delete-eks CLUSTER_NAME="buildkite-${BUILDKITE_BUILD_NUMBER}"
+
+aws s3 rm "s3://${TEST_BUCKET}" --recursive
+aws s3api delete-bucket --bucket "${TEST_BUCKET}" \
+    --region "${AWS_REGION}"
+}
+
+cleanup_"${CLOUD_PROVIDER}"

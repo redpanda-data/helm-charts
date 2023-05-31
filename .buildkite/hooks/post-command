@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -xeuo pipefail
+
+# do not run this during the pipeline upload
+if [ "$BUILDKITE_LABEL" == ":pipeline:" ]; then
+    exit 0
+fi
+
+mkdir -p .local/artifacts
+cp charts/redpanda/ci/21-eks-tiered-storage-with-creds-values.yaml .local/artifacts/
+support-bundle -o ".local/artifacts/${CLOUD_PROVIDER}-${BUILDKITE_BUILD_NUMBER}" .buildkite/scripts/bundle.yaml
+unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY

@@ -8,7 +8,7 @@ replicaCount: 1
 image:
   registry: docker.redpanda.com
   # -- Docker repository from which to pull the Redpanda Docker image.
-  repository: vectorized/console
+  repository: redpandadata/console
   # -- The imagePullPolicy.
   pullPolicy: IfNotPresent
   # -- The Redpanda Console version.
@@ -18,7 +18,10 @@ image:
   # @default -- `Chart.appVersion`
   tag: ""
 
+# -- Pull secrets may be used to provide credentials to image repositories
+# See https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
+
 # -- Override `console.name` template.
 nameOverride: ""
 # -- Override `console.fullname` template.
@@ -99,6 +102,13 @@ tolerations: []
 
 affinity: {}
 
+topologySpreadConstraints: {}
+
+# -- PriorityClassName given to Pods.
+# For details,
+# see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass).
+priorityClassName: ""
+
 console:
   # -- Settings for the `Config.yaml` (required).
   # For a reference of configuration settings,
@@ -170,6 +180,8 @@ secret:
   # Enterprise version secrets
   # - SSO secrets (Enterprise version).
   login:
+    # Configurable JWT value
+    jwtSecret: ""
     google: {}
       # clientSecret:
       # groupsServiceAccount:

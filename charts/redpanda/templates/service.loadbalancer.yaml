@@ -29,9 +29,14 @@ metadata:
   {{- . | nindent 4 }}
 {{- end }}
     repdanda.com/type: "loadbalancer"
-{{- with $values.external.annotations }}
+{{- if (or $values.external.annotations (dig "externalDns" "enabled" false $values.external) ) }}
   annotations:
+{{- with $values.external.annotations }}
     {{- toYaml . | nindent 4 }}
+{{- end }}
+{{- if (dig "externalDns" "enabled" false $values.external) }}
+    {{ printf "external-dns.alpha.kubernetes.io/hostname: %s.%s" (index $values.external.addresses $replicaIndex) (tpl $values.external.domain $) }}
+{{- end }}
 {{- end }}
 spec:
   type: LoadBalancer

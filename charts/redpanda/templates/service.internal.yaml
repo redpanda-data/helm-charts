@@ -16,14 +16,15 @@ limitations under the License.
 */}}
 ---
 # This service is only used to create the DNS enteries for each pod in
-# the stateful set. This service should not be used by any client
-# application
+# the stateful set and allow the serviceMonitor to target the pods.
+# This service should not be used by any client application
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "redpanda.fullname" . }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
+    monitoring.redpanda.com/enabled: {{ .Values.monitoring.enabled | quote }}
 {{- with include "full.labels" . }}
   {{- . | nindent 4 }}
 {{- end }}
@@ -34,3 +35,8 @@ spec:
   selector:
     app.kubernetes.io/name: {{ template "redpanda.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name | quote }}
+  ports:
+    - name: admin
+      protocol: TCP
+      targetPort: {{ .Values.listeners.admin.port }}
+      port: {{ .Values.listeners.admin.port }}

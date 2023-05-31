@@ -65,6 +65,9 @@ spec:
       terminationGracePeriodSeconds: {{ .Values.statefulset.terminationGracePeriodSeconds }}
       securityContext: {{ include "pod-security-context" . | nindent 8 }}
       serviceAccountName: {{ include "redpanda.serviceAccountName" . }}
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets: {{- toYaml . | nindent 8 }}
+    {{- end }}
       initContainers:
 {{- if and (hasKey $values.tuning "tune_aio_events") $values.tuning.tune_aio_events }}
         - name: tuning
@@ -233,7 +236,7 @@ spec:
                 - -c
                 - |
                   set -e
-                  RESULT=$(curl --silent --fail -k {{ include "admin-tls-curl-flags" . }} "{{ include "admin-http-protocol" . }}://localhost:{{ .Values.listeners.admin.port }}/v1/status/ready")
+                  RESULT=$(curl --silent --fail -k {{ include "admin-tls-curl-flags" . }} "{{ include "admin-http-protocol" . }}://{{ include "admin-api-urls" . }}/v1/status/ready")
                   echo $RESULT
                   echo $RESULT | grep ready
             initialDelaySeconds: {{ .Values.statefulset.startupProbe.initialDelaySeconds }}
@@ -245,7 +248,7 @@ spec:
               command:
                 - /bin/sh
                 - -c
-                - curl --silent --fail -k {{ include "admin-tls-curl-flags" . }} "{{ include "admin-http-protocol" . }}://localhost:{{ .Values.listeners.admin.port }}/v1/status/ready"
+                - curl --silent --fail -k {{ include "admin-tls-curl-flags" . }} "{{ include "admin-http-protocol" . }}://{{ include "admin-api-urls" . }}/v1/status/ready"
             initialDelaySeconds: {{ .Values.statefulset.livenessProbe.initialDelaySeconds }}
             failureThreshold: {{ .Values.statefulset.livenessProbe.failureThreshold }}
             periodSeconds: {{ .Values.statefulset.livenessProbe.periodSeconds }}
@@ -321,6 +324,30 @@ spec:
             limits:
               cpu: {{ .Values.resources.cpu.cores }}
               memory: {{ .Values.resources.memory.container.max }}
+      {{- if .Values.statefulset.sideCars.configWatcher.enabled }}
+        - name: config-watcher
+          image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
+          command:
+            - /bin/bash # could be expanded for multiple scripts
+            - -c 
+            - /etc/secrets/config-watcher/scripts/sasl-user.sh
+          volumeMounts:
+            - name: {{ template "redpanda.fullname" . }}-config-watcher
+              mountPath: /etc/secrets/config-watcher/scripts
+              readOnly: true
+          {{- if and .Values.auth.sasl.enabled (not (empty .Values.auth.sasl.secretRef )) }}
+            - name: {{ .Values.auth.sasl.secretRef }}
+              mountPath: /etc/secrets/users
+              readOnly: true
+          {{- end }}
+          {{- if (include "tls-enabled" . | fromJson).bool }}
+            {{- range $name, $cert := .Values.tls.certs }}
+            - name: redpanda-{{ $name }}-cert
+              mountPath: {{ printf "/etc/tls/certs/%s" $name }}
+              readOnly: true
+            {{- end }}
+          {{- end }}
+      {{- end }}
       volumes:
         - name: lifecycle-scripts
           secret:
@@ -378,6 +405,11 @@ spec:
             secretName: {{ .Values.auth.sasl.secretRef }}
             optional: false
         {{- end }}
+        - name: {{ template "redpanda.fullname" . }}-config-watcher
+          secret:
+            secretName: {{ template "redpanda.fullname" . }}-config-watcher
+            optional: false
+            defaultMode: 0774
 {{- if or .Values.statefulset.nodeAffinity .Values.statefulset.podAffinity .Values.statefulset.podAntiAffinity }}
       affinity:
   {{- with .Values.statefulset.nodeAffinity }}

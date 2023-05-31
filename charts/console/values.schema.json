@@ -34,12 +34,7 @@
             }
         },
         "console": {
-            "type": "object",
-            "properties": {
-                "config": {
-                    "type": "object"
-                }
-            }
+            "type": "object"
         },
         "deployment": {
             "type": "object",
@@ -214,6 +209,9 @@
                 "login": {
                     "type": "object",
                     "properties": {
+                        "jwtSecret": {
+                            "type": "string"
+                        },
                         "github": {
                             "type": "object"
                         },

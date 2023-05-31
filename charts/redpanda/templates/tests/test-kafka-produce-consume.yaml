@@ -16,7 +16,7 @@ limitations under the License.
 */}}
 {{- $sasl := .Values.auth.sasl }}
 {{- $root := deepCopy . }}
-{{- $useSaslSecret := and $sasl.enabled (not (empty $sasl.secretRef )) }}
+{{- $rpk := deepCopy . }}
 apiVersion: v1
 kind: Pod
 metadata:
@@ -34,6 +34,9 @@ spec:
   securityContext:
     runAsUser: 65535
     runAsGroup: 65535
+  {{- with .Values.imagePullSecrets }}
+  imagePullSecrets: {{- toYaml . | nindent 4 }}
+  {{- end }}
   containers:
     - name: {{ template "redpanda.name" . }}
       image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
@@ -51,11 +54,18 @@ spec:
         - -c
         - |
           set -e
-{{- if or (not $sasl.enabled) $useSaslSecret }}
-          until rpk topic create produce.consume.test.$POD_NAME {{ include "rpk-topic-flags" . }}
+{{- $cloudStorageFlags := "" }}
+{{- if and (include "is-licensed" . | fromJson).bool .Values.storage.tieredConfig.cloud_storage_enabled }}
+  {{- $cloudStorageFlags = "-c retention.bytes=80 -c segment.bytes=40 -c redpanda.remote.read=true -c redpanda.remote.write=true"}}
+{{- end }}
+{{- if $sasl.enabled }}
+          until rpk topic create produce.consume.test.$POD_NAME {{ include "rpk-topic-flags" . }} {{ $cloudStorageFlags }}
             do sleep 2
           done
-          echo "Pandas are awesome!" | rpk topic produce produce.consume.test.$POD_NAME {{ include "rpk-topic-flags" . }}
+          {{- range $i := until 100 }}
+          echo "Pandas are awesome!" | rpk topic produce produce.consume.test.$POD_NAME {{ include "rpk-topic-flags" $ }}
+          {{- end }}
+          sleep 2
           rpk topic consume produce.consume.test.$POD_NAME -n 1 {{ include "rpk-topic-flags" . }} | grep "Pandas are awesome!"
           rpk topic delete produce.consume.test.$POD_NAME {{ include "rpk-topic-flags" . }}
 {{- end }}
@@ -68,7 +78,7 @@ spec:
           mountPath: {{ printf "/etc/tls/certs/%s" $name }}
   {{- end }}
 {{- end }}
-{{- if $useSaslSecret }}
+{{- if $sasl.enabled }}
         - name: {{ $sasl.secretRef }}
           mountPath: "/etc/secrets/users"
           readOnly: true
@@ -80,7 +90,7 @@ spec:
         name: {{ template "redpanda.fullname" . }}
     - name: config
       emptyDir: {}
-{{- if $useSaslSecret }}
+{{- if $sasl.enabled }}
     - name: {{ $sasl.secretRef }}
       secret:
         secretName: {{ $sasl.secretRef }}
