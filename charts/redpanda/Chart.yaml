@@ -23,7 +23,7 @@ type: application
 # The chart version and the app version are not the same and will not track
 # together. The chart version is a semver representation of changes to this
 # chart.
-version: 4.0.27
+version: 4.0.28
 
 # The app version is the default version of Redpanda to install.
 appVersion: v23.1.10
@@ -50,6 +50,6 @@ annotations:
       url: https://helm.sh/docs/intro/install/
   artifacthub.io/images: |
     - name: redpanda
-      image: vectorized/redpanda:v23.1.8
+      image: docker.redpanda.com/redpandadata/redpanda:v23.1.10
     - name: busybox
       image: busybox:latest
