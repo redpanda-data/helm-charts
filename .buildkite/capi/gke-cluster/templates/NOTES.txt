@@ -23,6 +23,4 @@ Congratulations on installing {{ .Chart.Name }}!
 
 You can get the kubeconfig file by running:
 
-kubectl --namespace=default get {{ include "gke-cluster.fullname" . }}-user-kubeconfig \
-   -o jsonpath={.data.value} | base64 --decode \
-   > {{ include "gke-cluster.fullname" . }}.kubeconfig
+task gke-get-kubeconfig

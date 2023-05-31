@@ -138,19 +138,21 @@ tasks:
           AWS_B64ENCODED_CREDENTIALS:
             sh: "{{.BINDIR}}/clusterawsadm bootstrap credentials encode-as-profile 2>/dev/null"
       - "{{.BINDIR}}/clusterawsadm bootstrap iam create-cloudformation-stack --config=.buildkite/capi/eks-bootstrap.yaml"
-      - helm install -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} .buildkite/capi/eks-cluster
+      - helm install -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} .buildkite/capi/eks-cluster --create-namespace  --debug
       - kubectl wait --for=condition=ready cluster {{.CLUSTER_NAME}}-eks-cluster --timeout=40m
       - kubectl wait --for=condition=Ready machinepool {{.CLUSTER_NAME}}-eks-cluster-pool-0 --timeout=20m
 
   capi-create-gke:
     env:
+      # this is done by running the following:
+      # export GCP_B64ENCODED_CREDENTIALS=$(base64 < "${GOOGLE_APPLICATION_CREDENTIALS}" | tr -d '\n')
       GCP_B64ENCODED_CREDENTIALS: "{{.GCP_B64ENCODED_CREDENTIALS}}"
       GCP_PROJECT_ID: "{{.GCP_PROJECT_ID}}"
     cmds:
       - task: capi-bootstrap-gke
         vars:
           CAPI_INFRASTRUCTURE: gcp
-      - helm install -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} .buildkite/capi/gke-cluster --set projectID={{.GCP_PROJECT_ID}}
+      - helm install -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} .buildkite/capi/gke-cluster --create-namespace --set projectID={{.GCP_PROJECT_ID}} --debug
       - kubectl wait --for=condition=ready cluster {{.CLUSTER_NAME}}-gke-cluster --timeout=40m
       - kubectl wait --for=condition=Ready machinepool {{.CLUSTER_NAME}}-gke-cluster-mp-0 --timeout=20m
 
@@ -171,4 +173,30 @@ tasks:
     env:
       GCP_B64ENCODED_CREDENTIALS: "{{.GCP_B64ENCODED_CREDENTIALS}}"
     cmds:
-      - helm uninstall --wait -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} --timeout 60m
+      - kubectl delete cluster {{.CLUSTER_NAME}}-gke-cluster --timeout=40m || true
+      - helm uninstall --wait -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} --timeout 60m --debug
+
+  gke-auth-login:
+    deps:
+      - tool: gke-cloud
+    env:
+      PROJECT_ID: {{.GCP_PROJECT_ID}}
+      GOOGLE_APPLICATION_CREDENTIALS: {{.GOOGLE_APPLICATION_CREDENTIALS}}
+    cmds:
+      - gcloud auth login --cred-file={{.GOOGLE_APPLICATION_CREDENTIALS}}
+      - gcloud config set project {{.PROJECT_ID}}
+
+  gke-get-kubeconfig:
+    deps:
+      - tool: gke-cloud
+      - tool: gke-cloud-auth-plugin
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: {{.GOOGLE_APPLICATION_CREDENTIALS}}
+      PROJECT_ID: {{.GCP_PROJECT_ID}}
+      USE_GKE_GCLOUD_AUTH_PLUGIN: True
+    cmds:
+      - task: gke-auth-login
+        vars:
+          GOOGLE_APPLICATION_CREDENTIALS: {{.GOOGLE_APPLICATION_CREDENTIALS}}
+          PROJECT_ID: {{.GCP_PROJECT_ID}}
+      - gcloud container cluster get-credentials default-{{.CLUSTER_NAME}}-gke-cluster-control-plane --region=us-west1
