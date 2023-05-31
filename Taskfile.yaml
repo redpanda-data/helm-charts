@@ -173,30 +173,30 @@ tasks:
     env:
       GCP_B64ENCODED_CREDENTIALS: "{{.GCP_B64ENCODED_CREDENTIALS}}"
     cmds:
-      - kubectl delete cluster {{.CLUSTER_NAME}}-gke-cluster --timeout=40m || true
-      - helm uninstall --wait -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} --timeout 60m --debug
+      - kubectl delete cluster {{.CLUSTER_NAME}}-gke-cluster --timeout=20m
+      - helm uninstall --wait -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} --timeout 10m --debug
 
   gke-auth-login:
     deps:
       - tool: gke-cloud
     env:
-      PROJECT_ID: {{.GCP_PROJECT_ID}}
-      GOOGLE_APPLICATION_CREDENTIALS: {{.GOOGLE_APPLICATION_CREDENTIALS}}
+      PROJECT_ID: "{{.GCP_PROJECT_ID}}"
+      GOOGLE_APPLICATION_CREDENTIALS: "{{.GOOGLE_APPLICATION_CREDENTIALS}}"
     cmds:
       - gcloud auth login --cred-file={{.GOOGLE_APPLICATION_CREDENTIALS}}
       - gcloud config set project {{.PROJECT_ID}}
-
-  gke-get-kubeconfig:
-    deps:
-      - tool: gke-cloud
-      - tool: gke-cloud-auth-plugin
-    env:
-      GOOGLE_APPLICATION_CREDENTIALS: {{.GOOGLE_APPLICATION_CREDENTIALS}}
-      PROJECT_ID: {{.GCP_PROJECT_ID}}
-      USE_GKE_GCLOUD_AUTH_PLUGIN: True
-    cmds:
-      - task: gke-auth-login
-        vars:
-          GOOGLE_APPLICATION_CREDENTIALS: {{.GOOGLE_APPLICATION_CREDENTIALS}}
-          PROJECT_ID: {{.GCP_PROJECT_ID}}
-      - gcloud container cluster get-credentials default-{{.CLUSTER_NAME}}-gke-cluster-control-plane --region=us-west1
+#
+#  gke-get-kubeconfig:
+#    deps:
+#      - tool: gke-cloud
+#      - tool: gke-cloud-auth-plugin
+#    env:
+#      GOOGLE_APPLICATION_CREDENTIALS: {{.GOOGLE_APPLICATION_CREDENTIALS}}
+#      PROJECT_ID: {{.GCP_PROJECT_ID}}
+#      USE_GKE_GCLOUD_AUTH_PLUGIN: True
+#    cmds:
+#      - task: gke-auth-login
+#        vars:
+#          GOOGLE_APPLICATION_CREDENTIALS: {{.GOOGLE_APPLICATION_CREDENTIALS}}
+#          PROJECT_ID: {{.GCP_PROJECT_ID}}
+#      - gcloud container cluster get-credentials default-{{.CLUSTER_NAME}}-gke-cluster-control-plane --region=us-west1
