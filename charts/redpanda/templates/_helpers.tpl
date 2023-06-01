@@ -520,22 +520,22 @@ than 1 core.
 {{- end -}}
 
 {{- define "redpanda-atleast-22-2-0" -}}
-{{- toJson (dict "bool" (or (not (eq .Values.image.repository "vectorized/redpanda")) (include "redpanda.semver" . | semverCompare ">=22.2.0"))) -}}
+{{- toJson (dict "bool" (or (not (eq .Values.image.repository "docker.redpanda.com/redpandadata/redpanda")) (include "redpanda.semver" . | semverCompare ">=22.2.0-0 || <0.0.1-0"))) -}}
 {{- end -}}
 {{- define "redpanda-atleast-22-3-0" -}}
-{{- toJson (dict "bool" (or (not (eq .Values.image.repository "vectorized/redpanda")) (include "redpanda.semver" . | semverCompare ">=22.3.0"))) -}}
+{{- toJson (dict "bool" (or (not (eq .Values.image.repository "docker.redpanda.com/redpandadata/redpanda")) (include "redpanda.semver" . | semverCompare ">=22.3.0-0 || <0.0.1-0"))) -}}
 {{- end -}}
 {{- define "redpanda-atleast-23-1-1" -}}
-{{- toJson (dict "bool" (or (not (eq .Values.image.repository "vectorized/redpanda")) (include "redpanda.semver" . | semverCompare ">=23.1.1"))) -}}
+{{- toJson (dict "bool" (or (not (eq .Values.image.repository "docker.redpanda.com/redpandadata/redpanda")) (include "redpanda.semver" . | semverCompare ">=23.1.1-0 || <0.0.1-0"))) -}}
 {{- end -}}
 {{- define "redpanda-atleast-23-1-2" -}}
-{{- toJson (dict "bool" (or (not (eq .Values.image.repository "vectorized/redpanda")) (include "redpanda.semver" . | semverCompare ">=23.1.2"))) -}}
+{{- toJson (dict "bool" (or (not (eq .Values.image.repository "docker.redpanda.com/redpandadata/redpanda")) (include "redpanda.semver" . | semverCompare ">=23.1.2-0 || <0.0.1-0"))) -}}
 {{- end -}}
 {{- define "redpanda-22-3-atleast-22-3-13" -}}
-{{- toJson (dict "bool" (or (not (eq .Values.image.repository "vectorized/redpanda")) (include "redpanda.semver" . | semverCompare ">=22.3.13,<22.4"))) -}}
+{{- toJson (dict "bool" (or (not (eq .Values.image.repository "docker.redpanda.com/redpandadata/redpanda")) (include "redpanda.semver" . | semverCompare ">=22.3.13-0,<22.4"))) -}}
 {{- end -}}
 {{- define "redpanda-22-2-atleast-22-2-10" -}}
-{{- toJson (dict "bool" (or (not (eq .Values.image.repository "vectorized/redpanda")) (include "redpanda.semver" . | semverCompare ">=22.2.10,<22.3"))) -}}
+{{- toJson (dict "bool" (or (not (eq .Values.image.repository "docker.redpanda.com/redpandadata/redpanda")) (include "redpanda.semver" . | semverCompare ">=22.2.10-0,<22.3"))) -}}
 {{- end -}}
 
 # manage backward compatibility with renaming podSecurityContext to securityContext
