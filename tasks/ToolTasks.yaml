@@ -114,10 +114,10 @@ tasks:
     status:
       - test $(gcloud version &>/dev/null; echo $?)
 
-  gke-cloud-auth-plugin:
+  gcloud-auth-plugin:
     deps:
       - mklocal
-      - gke-cloud
+      - gcloud
     cmds:
       - gcloud components install gke-gcloud-auth-plugin
     status:

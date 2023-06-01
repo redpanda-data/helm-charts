@@ -8,6 +8,16 @@ if [ "$BUILDKITE_LABEL" == ":pipeline:" ]; then
 fi
 
 mkdir -p .local/artifacts
-cp charts/redpanda/ci/21-eks-tiered-storage-with-creds-values.yaml .local/artifacts/
-support-bundle -o ".local/artifacts/${CLOUD_PROVIDER}-${BUILDKITE_BUILD_NUMBER}" .buildkite/scripts/bundle.yaml
-unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY
+aws() {
+    cp charts/redpanda/ci/21-eks-tiered-storage-with-creds-values.yaml .local/artifacts/
+    support-bundle -o ".local/artifacts/${CLOUD_PROVIDER}-${BUILDKITE_BUILD_NUMBER}" .buildkite/scripts/bundle.yaml
+    unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY
+}
+
+gke() {
+      cp charts/redpanda/ci/22-gke-tiered-storage-with-creds-values.yaml .local/artifacts/
+      support-bundle -o ".local/artifacts/${CLOUD_PROVIDER}-${BUILDKITE_BUILD_NUMBER}" .buildkite/scripts/bundle.yaml
+      unset GOOGLE_APPLICATION_CREDENTIALS GCP_B64ENCODED_CREDENTIALS PROJECT_ID GCP_ACCESS_KEY_ID GCP_SECRET_ACCESS_KEY
+}
+
+$CLOUD_PROVIDER

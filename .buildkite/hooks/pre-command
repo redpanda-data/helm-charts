@@ -18,6 +18,7 @@ kind_dump() {
     local DUMP="/tmp/kind-${BUILDKITE_BUILD_NUMBER}"
     local TAR="${DUMP}.tar.gz"
     unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY
+    unset GCP_B64ENCODED_CREDENTIALS PROJECT_ID GOOGLE_APPLICATION_CREDENTIALS
     kind export logs -n bootstrap "${DUMP}"
     tar czf "${TAR}" -C "${DUMP}" .
     buildkite-agent artifact upload "${TAR}"
@@ -53,13 +54,26 @@ test_eks() {
 }
 
 test_gke() {
+    GOOGLE_APPLICATION_CREDENTIALS="$HELMCHART_TEST_ACCOUNT_GOOGLE_APPLICATION_CREDENTIALS"
+    PROJECT_ID="$HELMCHART_TEST_ACCOUNT_PROJECT_ID"
+    GCP_B64ENCODED_CREDENTIALS=$(base64 < "${GOOGLE_APPLICATION_CREDENTIALS}" | tr -d '\n')
+    GCP_ACCESS_KEY_ID="$HELMCHART_TEST_ACCOUNT_GCP_ACCESS_KEY_ID"
+    GCP_SECRET_ACCESS_KEY="$HELMCHART_TEST_ACCOUNT_GCP_SECRET_ACCESS_KEY"
+
+    TEST_BUCKET="cloud-sandbox-buildkite-${BUILDKITE_BUILD_NUMBER}"
+
+    export GOOGLE_APPLICATION_CREDENTIALS PROJECT_ID GCP_B64ENCODED_CREDENTIALS TEST_BUCKET GCP_ACCESS_KEY_ID GCP_SECRET_ACCESS_KEY
+
+    task tool:gcloud
+    gcloud storage buckets create gs://BUCKET_NAME --project ${PROJECT_ID} --location="US-WEST1"
+
+    trap kind_dump EXIT
 
     task capi-create-gke CLUSTER_NAME="buildkite-${BUILDKITE_BUILD_NUMBER}"
 
-
-    KUBECONFIG=.local/kubeconfig clusterctl get kubeconfig buildkite-${BUILDKITE_BUILD_NUMBER}-user-kubeconfig \
-         -o jsonpath={.data.value} | base64 --decode \
-         > .local/buildkite-${BUILDKITE_BUILD_NUMBER}-gke-cluster.conf
+    task gke-get-kubeconfig KUBECONFIG=$(realpath ".local/buildkite-${BUILDKITE_BUILD_NUMBER}-gke-cluster.conf")
+    KUBECONFIG=$(realpath ".local/buildkite-${BUILDKITE_BUILD_NUMBER}-gke-cluster.conf")
+    export KUBECONFIG
 }
 
 test_"${CLOUD_PROVIDER}"

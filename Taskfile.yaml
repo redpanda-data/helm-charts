@@ -178,7 +178,7 @@ tasks:
 
   gke-auth-login:
     deps:
-      - tool:gke-cloud
+      - tool:gcloud
     env:
       PROJECT_ID: "{{.PROJECT_ID}}"
       GOOGLE_APPLICATION_CREDENTIALS: "{{.GOOGLE_APPLICATION_CREDENTIALS}}"
@@ -188,13 +188,13 @@ tasks:
 
   gke-get-kubeconfig:
     deps:
-      - tool:gke-cloud
-      - tool:gke-cloud-auth-plugin
+      - tool:gcloud
+      - tool:gcloud-auth-plugin
     env:
       GOOGLE_APPLICATION_CREDENTIALS: "{{.GOOGLE_APPLICATION_CREDENTIALS}}"
       PROJECT_ID: "{{.PROJECT_ID}}"
       USE_GKE_GCLOUD_AUTH_PLUGIN: True
-      KUBECONFIG: "{{.CLUSTER_NAME}}-gke-cluster.conf"
+      KUBECONFIG: '{{ default "capi-gke-cluster.conf" .KUBECONFIG}}'
     cmds:
       - task: gke-auth-login
         vars:
