@@ -37,6 +37,7 @@ metadata:
   namespace: {{ .Release.namespace | default "default" }}
   labels: {{ include "gke-cluster.labels" . | nindent 4 }}
 spec:
+  clusterName: {{ include "gke-cluster.fullname" . }}
   location: {{ .Values.region }}
   project: {{ .Values.projectID }}
 ---

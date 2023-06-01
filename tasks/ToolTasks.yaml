@@ -103,7 +103,6 @@ tasks:
     status:
       - test -f {{.BINDIR}}/support-bundle-{{.SUPPORT_BUNDLE_VERSION}}
 
-
   gcloud:
     cmds:
       - echo '~~~ Installing gcloud'
@@ -115,3 +114,11 @@ tasks:
     status:
       - test $(gcloud version &>/dev/null; echo $?)
 
+  gke-cloud-auth-plugin:
+    deps:
+      - mklocal
+      - gke-cloud
+    cmds:
+      - gcloud components install gke-gcloud-auth-plugin
+    status:
+      - test $(gke-gcloud-auth-plugin --version &>/dev/null; echo $?)
