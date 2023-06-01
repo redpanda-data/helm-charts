@@ -32,7 +32,8 @@ limitations under the License.
 {{- $cm := lookup "v1" "ConfigMap" .Release.Namespace (include "redpanda.fullname" .) -}}
 {{- $redpandaYAML := dig "data" "redpanda.yaml" "" $cm | fromYaml -}}
 {{- $currentRPCTLS := dig "redpanda" "rpc_server_tls" "enabled" false $redpandaYAML -}}
-{{- if .Release.IsUpgrade -}}
+{{- /* Lookup will return an empty map when running `helm template` or when `--dry-run` is passed. */ -}}
+{{- if (and .Release.IsUpgrade $cm) -}}
   {{- if ne $currentRPCTLS $wantedRPCTLS -}}
     {{- if eq (get .Values "force" | default false) false -}}
       {{- fail (join "\n" (list
