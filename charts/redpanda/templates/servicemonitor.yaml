@@ -26,6 +26,9 @@ metadata:
 {{- with include "full.labels" . }}
   {{- . | nindent 4 }}
 {{- end }}
+{{- with .Values.monitoring.labels }}
+  {{- . | toYaml | nindent 4 }}
+{{- end }}
 spec:
   endpoints:
   - interval: {{ .Values.monitoring.scrapeInterval }}
