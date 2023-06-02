@@ -234,7 +234,7 @@ mock:
   enabled: true
   kafka:
     image:
-      registry: docker.io
-      repository: checkr/openmock
+      registry: docker.redpanda.com
+      repository: redpandadata/redpanda
       pullPolicy: IfNotPresent
       tag: latest
