@@ -17,7 +17,7 @@ aws() {
 gke() {
       cp charts/redpanda/ci/22-gke-tiered-storage-with-creds-values.yaml .local/artifacts/
       support-bundle -o ".local/artifacts/${CLOUD_PROVIDER}-${BUILDKITE_BUILD_NUMBER}" .buildkite/scripts/bundle.yaml
-      unset GOOGLE_APPLICATION_CREDENTIALS GCP_B64ENCODED_CREDENTIALS PROJECT_ID GCP_ACCESS_KEY_ID GCP_SECRET_ACCESS_KEY
+      unset CI PROJECT_ID TEST_BUCKET TEST_SA_NAME
 }
 
 $CLOUD_PROVIDER

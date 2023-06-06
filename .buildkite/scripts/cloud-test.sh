@@ -8,8 +8,6 @@ set
 PATH="$(realpath .local/bin):${PATH}"
 bash -O extglob -c "rm -v charts/redpanda/ci/!(2)[0-9]-*"
 
-envsubst < ./charts/redpanda/ci/21-eks-tiered-storage-with-creds-values.yaml.tpl > ./charts/redpanda/ci/21-eks-tiered-storage-with-creds-values.yaml
-
 ct install --config .github/ct.yaml --upgrade --skip-missing-values | sed 's/>>> /--- /'
 
 
