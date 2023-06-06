@@ -20,6 +20,9 @@ vars:
   HELM_OPTIONS: ""
   KIND_FLAGS: "--config .github/kind.yaml"
 
+  SRC_DIR:
+    sh: realpath {{default "." .SRC_DIR}}
+
 includes:
   tool:
     taskfile: tasks/ToolTasks.yaml
@@ -109,6 +112,7 @@ tasks:
   capi-bootstrap-gke:
     deps:
       - tool:clusterctl
+      - tool:auth-gcp
     env:
       GCP_B64ENCODED_CREDENTIALS: "{{.GCP_B64ENCODED_CREDENTIALS}}"
       EXP_CAPG_GKE: true
@@ -189,6 +193,7 @@ tasks:
   gke-get-kubeconfig:
     deps:
       - tool:gcloud
+      - tool:auth-gcp
       - tool:gcloud-auth-plugin
     env:
       GOOGLE_APPLICATION_CREDENTIALS: "{{.GOOGLE_APPLICATION_CREDENTIALS}}"
