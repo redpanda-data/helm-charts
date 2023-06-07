@@ -174,12 +174,15 @@ tasks:
       - helm uninstall --wait -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} --timeout 60m
 
   capi-delete-gke:
+    deps:
+      - tool:kubectl
     env:
       GCP_B64ENCODED_CREDENTIALS: "{{.GCP_B64ENCODED_CREDENTIALS}}"
     cmds:
       - kubectl delete cluster {{.CLUSTER_NAME}}-gke-cluster --timeout=20m
       - helm uninstall --wait -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} --timeout 10m --debug
 
+  # This is if you are running locally and not in CI
   gke-auth-login:
     deps:
       - tool:gcloud
@@ -188,7 +191,7 @@ tasks:
       GOOGLE_APPLICATION_CREDENTIALS: "{{.GOOGLE_APPLICATION_CREDENTIALS}}"
     cmds:
       - gcloud auth activate-service-account --key-file={{.GOOGLE_APPLICATION_CREDENTIALS}}
-      - gcloud config set project {{.PROJECT_ID}}
+      - gcloud config set project {{.PROJECT_ID}} --quiet
 
   gke-get-kubeconfig:
     deps:
@@ -201,8 +204,4 @@ tasks:
       USE_GKE_GCLOUD_AUTH_PLUGIN: True
       KUBECONFIG: '{{ default "capi-gke-cluster.conf" .KUBECONFIG}}'
     cmds:
-      - task: gke-auth-login
-        vars:
-          GOOGLE_APPLICATION_CREDENTIALS: "{{.GOOGLE_APPLICATION_CREDENTIALS}}"
-          PROJECT_ID: "{{.PROJECT_ID}}"
-      - gcloud container clusters get-credentials {{.CLUSTER_NAME}}-gke-cluster --region=us-west1
+      - gcloud container clusters get-credentials {{.CLUSTER_NAME}}-gke-cluster --region=us-west1 --project {{.PROJECT_ID}}
