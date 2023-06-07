@@ -88,7 +88,7 @@ test_gke() {
 
     task capi-create-gke CLUSTER_NAME="buildkite-${BUILDKITE_BUILD_NUMBER}"
 
-    task gke-get-kubeconfig KUBECONFIG=$(realpath ".local/buildkite-${BUILDKITE_BUILD_NUMBER}-gke-cluster.conf")
+    task gke-get-kubeconfig KUBECONFIG=$(realpath ".local/buildkite-${BUILDKITE_BUILD_NUMBER}-gke-cluster.conf") CLUSTER_NAME="buildkite-${BUILDKITE_BUILD_NUMBER}"
     KUBECONFIG=$(realpath ".local/buildkite-${BUILDKITE_BUILD_NUMBER}-gke-cluster.conf")
     export KUBECONFIG
 
