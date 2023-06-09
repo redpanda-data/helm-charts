@@ -30,6 +30,7 @@ jobs:
           - '0[4-6]*'
           - '0[7-9]*'
           - '1[0-2]*'
+          - '1[3-5]*'
       fail-fast: true
     runs-on: ubuntu-22.04
     steps:
@@ -94,6 +95,7 @@ jobs:
           mv external-tls-secret.yaml charts/redpanda/templates/
           cp .github/external-service.yaml charts/redpanda/templates/
           mv some-users-updated.yaml charts/redpanda/templates
+          cp .github/elevated-sa.yaml charts/redpanda/templates/
 
     #===== Required Test Files === end
 
@@ -103,6 +105,19 @@ jobs:
           helm install cert-manager --namespace cert-manager \
             --create-namespace --version v1.11.0 jetstack/cert-manager \
             --set installCRDs=true --wait --wait-for-jobs
+
+      - name: install cert-manager
+        run: |
+          helm repo add jetstack https://charts.jetstack.io &&
+          helm install cert-manager --namespace cert-manager \
+            --create-namespace --version v1.11.0 jetstack/cert-manager \
+            --set installCRDs=true --wait --wait-for-jobs
+
+      - name: install metallb
+        run: |
+          helm repo add metallb https://metallb.github.io/metallb &&
+          helm install metallb metallb/metallb -n metallb-system \
+            --create-namespace --version 0.13.10 --wait --wait-for-jobs
 
       - name: Run chart-testing install
         run: |
