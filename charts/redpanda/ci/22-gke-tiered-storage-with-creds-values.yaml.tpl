@@ -14,4 +14,4 @@ resources:
     cores: 400m
   memory:
     container:
-      max: 2.0Gi
+      max: 2.3Gi
