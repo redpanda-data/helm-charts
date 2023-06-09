@@ -119,12 +119,13 @@ tasks:
       EXP_MACHINE_POOL: true
     vars:
       CAPI_INFRASTRUCTURE: gcp
+      GCP_PROVIDER_VERSION: v1.3.0
     cmds:
       - task: kind-create
         vars:
           KIND_CLUSTERNAME: bootstrap
           KIND_FLAGS: ""
-      - "{{.BINDIR}}/clusterctl init -i {{ .CAPI_INFRASTRUCTURE }} -v7 --wait-providers"
+      - "{{.BINDIR}}/clusterctl init -i {{ .CAPI_INFRASTRUCTURE }}:{{ .GCP_PROVIDER_VERSION }} -v7 --wait-providers"
 
   capi-create-eks:
     deps:
