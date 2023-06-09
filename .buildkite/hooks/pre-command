@@ -92,7 +92,7 @@ test_gke() {
     KUBECONFIG=$(realpath ".local/buildkite-${BUILDKITE_BUILD_NUMBER}-gke-cluster.conf")
     export KUBECONFIG
 
-    envsubst < ./charts/redpanda/ci/22-eks-tiered-storage-with-creds-values.yaml.tpl > ./charts/redpanda/ci/22-eks-tiered-storage-with-creds-values.yaml
+    envsubst < ./charts/redpanda/ci/22-gke-tiered-storage-with-creds-values.yaml.tpl > ./charts/redpanda/ci/22-gke-tiered-storage-with-creds-values.yaml
 }
 
 test_"${CLOUD_PROVIDER}"

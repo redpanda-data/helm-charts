@@ -177,6 +177,7 @@ tasks:
   capi-delete-gke:
     deps:
       - tool:kubectl
+      - tool:helm
     env:
       GCP_B64ENCODED_CREDENTIALS: "{{.GCP_B64ENCODED_CREDENTIALS}}"
     cmds:
