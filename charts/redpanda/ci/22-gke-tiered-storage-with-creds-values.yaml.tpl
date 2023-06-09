@@ -11,7 +11,7 @@ license_key: "${REDPANDA_SAMPLE_LICENSE}"
 
 resources:
   cpu:
-    cores: 1
+    cores: 400m
   memory:
     container:
-      max: 1Gi
+      max: 2.0Gi
