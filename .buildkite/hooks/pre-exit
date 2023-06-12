@@ -40,7 +40,7 @@ cleanup_gke(){
     task capi-delete-gke CLUSTER_NAME="buildkite-${BUILDKITE_BUILD_NUMBER}"
 
     gcloud storage rm --recursive gs://${TEST_BUCKET}/
-    gcloud iam service-accounts delete "${TEST_SA_NAME}"
+    gcloud iam service-accounts delete "${TEST_SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" -q
 }
 
 cleanup_"${CLOUD_PROVIDER}"

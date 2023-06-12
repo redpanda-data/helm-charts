@@ -84,6 +84,15 @@ test_gke() {
         --member="serviceAccount:${TEST_SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" --role=roles/storage.objectAdmin \
         --project "${PROJECT_ID}"
 
+    gsutil hmac create -p "${PROJECT_ID}" "${TEST_SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" > hmac.result
+
+    GCP_ACCESS_KEY_ID=$(cat hmac.result | head -n 1 | awk '{ print $3 }')
+    GCP_SECRET_ACCESS_KEY=$(cat hmac.result | tail -n 1 | awk '{ print $2 }')
+
+    export GCP_ACCESS_KEY_ID GCP_SECRET_ACCESS_KEY
+
+    rm hmac.result
+
     trap kind_dump EXIT
 
     task capi-create-gke CLUSTER_NAME="buildkite-${BUILDKITE_BUILD_NUMBER}"
