@@ -16,5 +16,5 @@ resources:
     container:
       max: 2.0Gi
     redpanda:
-      memory: 2Gi
-      reserveMemory: 200Mi
+      memory: 1Gi
+      reserveMemory: 100Mi
