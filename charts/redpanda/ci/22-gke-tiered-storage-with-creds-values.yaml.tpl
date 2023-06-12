@@ -14,4 +14,7 @@ resources:
     cores: 400m
   memory:
     container:
-      max: 2.4Gi
+      max: 2.0Gi
+    redpanda:
+      memory: 2Gi
+      reserveMemory: 200Mi
