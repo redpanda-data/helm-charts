@@ -15,9 +15,9 @@ eks() {
 }
 
 gke() {
-      cp charts/redpanda/ci/22-gke-tiered-storage-with-creds-values.yaml .local/artifacts/
-      support-bundle -o ".local/artifacts/${CLOUD_PROVIDER}-${BUILDKITE_BUILD_NUMBER}" .buildkite/scripts/bundle.yaml
-      unset CI PROJECT_ID TEST_BUCKET TEST_SA_NAME
+    cp charts/redpanda/ci/22-gke-tiered-storage-with-creds-values.yaml .local/artifacts/
+    support-bundle -o ".local/artifacts/${CLOUD_PROVIDER}-${BUILDKITE_BUILD_NUMBER}" .buildkite/scripts/bundle.yaml
+    unset CI PROJECT_ID TEST_BUCKET TEST_SA_NAME
 }
 
 $CLOUD_PROVIDER
