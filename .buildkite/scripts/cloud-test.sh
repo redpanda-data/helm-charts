@@ -22,7 +22,7 @@ aws() {
 
 gke() {
   echo '--- testing that there is data in the gcloud bucket'
-  if (gsutil ls -lR gs://${TEST_BUCKET} | tail -n 1 | grep 'TOTAL: 0 objects'); then
+  if (gsutil du -s gs://${TEST_BUCKET} | tail -n 1 | grep "0            gs://${TEST_BUCKET}"); then
         echo "0 objects in the bucket. Cloud-storage failed."
         exit 1
   fi
