@@ -12,7 +12,7 @@ ct install --config .github/ct.yaml --upgrade --skip-missing-values | sed 's/>>>
 
 
 
-aws() {
+eks() {
     echo '--- testing that there is data in the s3 bucket'
     if (aws s3 ls "s3://${TEST_BUCKET}" --recursive --summarize | grep 'Total Objects: 0'); then
         echo "0 Objects in the bucket. Cloud-storage failed."
