@@ -296,7 +296,7 @@ data:
   {{- end }}
 {{- end }}
 {{- /* Schema Registry API */}}
-{{- if .Values.listeners.schemaRegistry.enabled }}
+{{- if and .Values.listeners.schemaRegistry.enabled (include "redpanda-22-2-x-without-sasl" $root | fromJson).bool }}
   {{- $schemaRegistryService := .Values.listeners.schemaRegistry }}
     schema_registry:
       schema_registry_api:
@@ -365,7 +365,7 @@ data:
   {{- end }}
 {{- end }}
 {{- /* HTTP Proxy */}}
-{{- if .Values.listeners.http.enabled }}
+{{- if and .Values.listeners.http.enabled (include "redpanda-22-2-x-without-sasl" $root | fromJson).bool }}
   {{- $HTTPService := .Values.listeners.http }}
     pandaproxy:
       pandaproxy_api:

@@ -14,7 +14,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- if not (or (include "tls-enabled" . | fromJson).bool (include "sasl-enabled" . | fromJson).bool) }}
+{{- if and (not (include "schemaRegistry-internal-tls-enabled" . | fromJson).bool) .Values.listeners.schemaRegistry.enabled (include "redpanda-22-2-x-without-sasl" . | fromJson).bool }}
+  {{- $sasl := .Values.auth.sasl }}
 apiVersion: v1
 kind: Pod
 metadata:
@@ -38,14 +39,52 @@ spec:
   containers:
     - name: {{ template "redpanda.name" . }}
       image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
-      command:
-        - curl
-        - -svm3
-        - --fail
-        - --retry
-        - "120"
-        - --retry-max-time
-        - "120"
-        - --retry-all-errors
-        - http://{{ include "redpanda.fullname" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects
+      command: [ "/bin/bash", "-c" ]
+      args:
+        - |
+          {{- if $sasl.enabled }}
+          USERNAME=$(find /etc/secrets/users/* -print | sed -n 1p | xargs cat | sed -n 1p | tr ':' '\n' | sed -n 1p )
+          PASSWORD=$(find /etc/secrets/users/* -print | sed -n 1p | xargs cat | sed -n 1p | tr ':' '\n' | sed -n 2p )
+          {{- end }}
+
+          schemaCurl () {
+            curl -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors \
+            {{- if or (include "sasl-enabled" .|fromJson).bool .Values.listeners.schemaRegistry.authenticationMethod }}
+            -u $USERNAME:$PASSWORD \
+            {{- end }}
+            $*
+          }
+
+          schemaCurl http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/schemas/types
+
+          curl -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors \
+          -X POST -H 'Content-Type:application/vnd.schemaregistry.v1+json' \
+          -d '{"schema":"{\"type\":\"record\",\"name\":\"sensor_sample\",\"fields\":[{\"name\":\"timestamp\",\"type\":\"long\",\"logicalType\":\"timestamp-millis\"},{\"name\":\"identifier\",\"type\":\"string\",\"logicalType\":\"uuid\"},{\"name\":\"value\",\"type\":\"long\"}]}"}' \
+          {{- if or (include "sasl-enabled" .|fromJson).bool .Values.listeners.schemaRegistry.authenticationMethod }}
+          -u $USERNAME:$PASSWORD \
+          {{- end }}
+          http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-value/versions
+
+          schemaCurl http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/schemas/ids/1
+
+          schemaCurl http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects
+
+          schemaCurl -X DELETE \
+          http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-value/versions/1
+
+          schemaCurl -X DELETE \
+          http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-value/versions/1?permanent=true
+      volumeMounts:
+      {{- if $sasl.enabled }}
+        - name: {{ $sasl.secretRef }}
+          mountPath: "/etc/secrets/users"
+          readOnly: true
+      {{- end}}
+  volumes:
+  {{- if $sasl.enabled }}
+    - name: {{ $sasl.secretRef }}
+      secret:
+        secretName: {{ $sasl.secretRef }}
+        optional: false
+  {{- end }}
 {{- end }}
