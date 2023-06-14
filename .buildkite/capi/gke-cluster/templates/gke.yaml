@@ -1,0 +1,69 @@
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  name: {{ include "gke-cluster.fullname" . }}
+  namespace: {{ .Release.namespace | default "default" }}
+  labels: {{ include "gke-cluster.labels" . | nindent 4 }}
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks:
+        - 192.168.0.0/16
+  controlPlaneRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+    kind: GCPManagedControlPlane
+    name: {{ include "gke-cluster.fullname" . }}-control-plane
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+    kind: GCPManagedCluster
+    name: {{ include "gke-cluster.fullname" . }}
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: GCPManagedCluster
+metadata:
+  name: {{ include "gke-cluster.fullname" . }}
+  namespace: {{ .Release.namespace | default "default" }}
+  labels: {{ include "gke-cluster.labels" . | nindent 4 }}
+spec:
+  network:
+    name: {{ .Values.networkName }}
+  project: {{ .Values.projectID }}
+  region: {{ .Values.region }}
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: GCPManagedControlPlane
+metadata:
+  name: {{ include "gke-cluster.fullname" . }}-control-plane
+  namespace: {{ .Release.namespace | default "default" }}
+  labels: {{ include "gke-cluster.labels" . | nindent 4 }}
+spec:
+  clusterName: {{ include "gke-cluster.fullname" . }}
+  location: {{ .Values.region }}
+  project: {{ .Values.projectID }}
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: MachinePool
+metadata:
+  name: {{ include "gke-cluster.fullname" . }}-mp-0
+  namespace: {{ .Release.namespace | default "default" }}
+  labels: {{ include "gke-cluster.labels" . | nindent 4 }}
+spec:
+  clusterName: {{ include "gke-cluster.fullname" . }}
+  replicas: {{ .Values.nodeCount }}
+  template:
+    spec:
+      bootstrap:
+        dataSecretName: ""
+      clusterName: {{ include "gke-cluster.fullname" . }}
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+        kind: GCPManagedMachinePool
+        name: {{ include "gke-cluster.fullname" . }}-mp-0
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: GCPManagedMachinePool
+metadata:
+  name: {{ include "gke-cluster.fullname" . }}-mp-0
+  namespace: {{ .Release.namespace | default "default" }}
+  labels: {{ include "gke-cluster.labels" . | nindent 4 }}
+spec: {}

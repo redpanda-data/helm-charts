@@ -10,17 +10,37 @@ fi
 source .env
 
 cleanup_eks(){
-AWS_ACCESS_KEY_ID="$HELMCHART_TEST_ACCOUNT_AWS_ACCESS_KEY_ID"
-AWS_SECRET_ACCESS_KEY="$HELMCHART_TEST_ACCOUNT_AWS_SECRET_ACCESS_KEY"
-AWS_REGION=us-west-2
-TEST_BUCKET="cloud-sandbox-buildkite-${BUILDKITE_BUILD_NUMBER}"
-export AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_REGION TEST_BUCKET
+    echo ~~~ Cleanup EKS variant
 
-task capi-delete-eks CLUSTER_NAME="buildkite-${BUILDKITE_BUILD_NUMBER}"
+    AWS_ACCESS_KEY_ID="$HELMCHART_TEST_ACCOUNT_AWS_ACCESS_KEY_ID"
+    AWS_SECRET_ACCESS_KEY="$HELMCHART_TEST_ACCOUNT_AWS_SECRET_ACCESS_KEY"
+    AWS_REGION=us-west-2
+    TEST_BUCKET="cloud-sandbox-buildkite-${BUILDKITE_BUILD_NUMBER}"
+    export AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_REGION TEST_BUCKET
 
-aws s3 rm "s3://${TEST_BUCKET}" --recursive
-aws s3api delete-bucket --bucket "${TEST_BUCKET}" \
-    --region "${AWS_REGION}"
+    task capi-delete-eks CLUSTER_NAME="buildkite-${BUILDKITE_BUILD_NUMBER}"
+
+    aws s3 rm "s3://${TEST_BUCKET}" --recursive
+    aws s3api delete-bucket --bucket "${TEST_BUCKET}" \
+        --region "${AWS_REGION}"
+}
+
+
+cleanup_gke(){
+    echo ~~~ Cleanup GKE variant
+
+    CI=true
+    PROJECT_ID="$HELMCHART_TEST_PROJECT_ID"
+
+    TEST_BUCKET="cloud-sandbox-buildkite-${BUILDKITE_BUILD_NUMBER}"
+    TEST_SA_NAME="redpanda-bucket-sa-${BUILDKITE_BUILD_NUMBER}"
+
+    export CI PROJECT_ID TEST_BUCKET TEST_SA_NAME
+
+    task capi-delete-gke CLUSTER_NAME="buildkite-${BUILDKITE_BUILD_NUMBER}"
+
+    gcloud storage rm --recursive gs://${TEST_BUCKET}/
+    gcloud iam service-accounts delete "${TEST_SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" -q
 }
 
 cleanup_"${CLOUD_PROVIDER}"

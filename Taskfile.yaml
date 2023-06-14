@@ -13,12 +13,15 @@ vars:
   NAMESPACE: rn
   RELEASE: rp
   KIND_CLUSTERNAME: rp-helm
-  CLUSTER_NAME: '{{.CLUSTER_NAME | default "capi-eks"}}'
+  CLUSTER_NAME: '{{.CLUSTER_NAME | default "capi"}}'
   CLUSTER_NAMESPACE: '{{.CLUSTER_NAMESPACE | default "default"}}'
 
   # Overridable task vars
   HELM_OPTIONS: ""
   KIND_FLAGS: "--config .github/kind.yaml"
+
+  SRC_DIR:
+    sh: realpath {{default "." .SRC_DIR}}
 
 includes:
   tool:
@@ -89,7 +92,7 @@ tasks:
     cmds:
       - minikube delete
 
-  capi-bootstrap:
+  capi-bootstrap-aws:
     deps:
       - tool:clusterctl
     env:
@@ -106,6 +109,24 @@ tasks:
           KIND_FLAGS: ""
       - "{{.BINDIR}}/clusterctl init -i {{ .CAPI_INFRASTRUCTURE }} -v7 --wait-providers"
 
+  capi-bootstrap-gke:
+    deps:
+      - tool:clusterctl
+      - tool:auth-gcp
+    env:
+      GCP_B64ENCODED_CREDENTIALS: "{{.GCP_B64ENCODED_CREDENTIALS}}"
+      EXP_CAPG_GKE: true
+      EXP_MACHINE_POOL: true
+    vars:
+      CAPI_INFRASTRUCTURE: gcp
+      GCP_PROVIDER_VERSION: v1.3.0
+    cmds:
+      - task: kind-create
+        vars:
+          KIND_CLUSTERNAME: bootstrap
+          KIND_FLAGS: ""
+      - "{{.BINDIR}}/clusterctl init -i {{ .CAPI_INFRASTRUCTURE }}:{{ .GCP_PROVIDER_VERSION }} -v7 --wait-providers"
+
   capi-create-eks:
     deps:
       - aws-check-login
@@ -114,7 +135,7 @@ tasks:
       CAPA_EKS_IAM: true
       CAPA_EKS_ADD_ROLES: true
     cmds:
-      - task: capi-bootstrap
+      - task: capi-bootstrap-aws
         vars:
           CAPI_INFRASTRUCTURE: aws
           CAPA_EKS_IAM: true
@@ -122,9 +143,23 @@ tasks:
           AWS_B64ENCODED_CREDENTIALS:
             sh: "{{.BINDIR}}/clusterawsadm bootstrap credentials encode-as-profile 2>/dev/null"
       - "{{.BINDIR}}/clusterawsadm bootstrap iam create-cloudformation-stack --config=.buildkite/capi/eks-bootstrap.yaml"
-      - helm install -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} .buildkite/capi/eks-cluster
+      - helm install -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} .buildkite/capi/eks-cluster --create-namespace  --debug
       - kubectl wait --for=condition=ready cluster {{.CLUSTER_NAME}}-eks-cluster --timeout=40m
       - kubectl wait --for=condition=Ready machinepool {{.CLUSTER_NAME}}-eks-cluster-pool-0 --timeout=20m
+
+  capi-create-gke:
+    env:
+      # this is done by running the following:
+      # export GCP_B64ENCODED_CREDENTIALS=$(base64 < "${GOOGLE_APPLICATION_CREDENTIALS}" | tr -d '\n')
+      GCP_B64ENCODED_CREDENTIALS: "{{.GCP_B64ENCODED_CREDENTIALS}}"
+      PROJECT_ID: "{{.PROJECT_ID}}"
+    cmds:
+      - task: capi-bootstrap-gke
+        vars:
+          CAPI_INFRASTRUCTURE: gcp
+      - helm install -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} .buildkite/capi/gke-cluster --create-namespace --set projectID={{.PROJECT_ID}} --debug
+      - kubectl wait --for=condition=ready cluster {{.CLUSTER_NAME}}-gke-cluster --timeout=40m
+      - kubectl wait --for=condition=Ready machinepool {{.CLUSTER_NAME}}-gke-cluster-mp-0 --timeout=20m
 
   capi-delete:
     internal: true
@@ -138,3 +173,37 @@ tasks:
     cmds:
       - "{{.BINDIR}}/clusterawsadm controller update-credentials"
       - helm uninstall --wait -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} --timeout 60m
+
+  capi-delete-gke:
+    deps:
+      - tool:kubectl
+      - tool:helm
+    env:
+      GCP_B64ENCODED_CREDENTIALS: "{{.GCP_B64ENCODED_CREDENTIALS}}"
+    cmds:
+      - kubectl delete cluster {{.CLUSTER_NAME}}-gke-cluster --timeout=20m
+      - helm uninstall --wait -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} --timeout 10m --debug
+
+  # This is if you are running locally and not in CI
+  gke-auth-login:
+    deps:
+      - tool:gcloud
+    env:
+      PROJECT_ID: "{{.PROJECT_ID}}"
+      GOOGLE_APPLICATION_CREDENTIALS: "{{.GOOGLE_APPLICATION_CREDENTIALS}}"
+    cmds:
+      - gcloud auth activate-service-account --key-file={{.GOOGLE_APPLICATION_CREDENTIALS}}
+      - gcloud config set project {{.PROJECT_ID}} --quiet
+
+  gke-get-kubeconfig:
+    deps:
+      - tool:gcloud
+      - tool:auth-gcp
+      - tool:gcloud-auth-plugin
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: "{{.GOOGLE_APPLICATION_CREDENTIALS}}"
+      PROJECT_ID: "{{.PROJECT_ID}}"
+      USE_GKE_GCLOUD_AUTH_PLUGIN: True
+      KUBECONFIG: '{{ default "capi-gke-cluster.conf" .KUBECONFIG}}'
+    cmds:
+      - gcloud container clusters get-credentials {{.CLUSTER_NAME}}-gke-cluster --region=us-west1 --project {{.PROJECT_ID}}
