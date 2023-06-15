@@ -23,6 +23,7 @@ auth:
     users:
       - name: admin
         password: hunter2
+        mechanism: SCRAM-SHA-256
 
 storage:
   persistentVolume:

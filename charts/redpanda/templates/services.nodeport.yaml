@@ -32,6 +32,7 @@ metadata:
 {{- end }}
 spec:
   type: NodePort
+  publishNotReadyAddresses: true
   externalTrafficPolicy: Local
   sessionAffinity: None
   ports:

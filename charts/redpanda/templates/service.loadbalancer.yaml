@@ -40,6 +40,7 @@ metadata:
 {{- end }}
 spec:
   type: LoadBalancer
+  publishNotReadyAddresses: true
 {{- if not ( empty $root.Values.external.sourceRanges ) }}
   loadBalancerSourceRanges:
   {{- range $values.external.sourceRanges }}
