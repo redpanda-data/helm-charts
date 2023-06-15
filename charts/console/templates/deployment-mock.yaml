@@ -1,4 +1,4 @@
-{{- if .Values.mock-kafka-broker.enabled }}
+{{- if .Values.mockKafkaBroker.enabled }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -19,7 +19,7 @@ spec:
       initContainers:
         - name: {{ .Chart.Name }}-mock-redpanda-configurator
           image: {{ include "mock.image" . }}
-          imagePullPolicy: {{ .Values.mock.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.mockKafkaBroker.image.pullPolicy }}
           command: ["/bin/bash", "-c"]
           env:
             - name: SERVICE_NAME
@@ -68,7 +68,7 @@ spec:
       containers:
         - name: redpanda
           image: {{ include "mock.image" . }}
-          imagePullPolicy: {{ .Values.mock.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.mockKafkaBroker.image.pullPolicy }}
           env:
             - name: SERVICE_NAME
               valueFrom:

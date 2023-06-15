@@ -42,10 +42,10 @@ Console Image
 {{- end -}}
 
 {{- define "mock.image" -}}
-{{- if .Values.mock.image.registry -}}
-{{- printf "%s/%s:%s" .Values.mock.image.registry .Values.mock.image.repository ( .Values.mock.image.tag | default "latest" )  }}
+{{- if .Values.mockKafkaBroker.image.registry -}}
+{{- printf "%s/%s:%s" .Values.mockKafkaBroker.image.registry .Values.mockKafkaBroker.image.repository ( .Values.mockKafkaBroker.image.tag | default "latest" )  }}
 {{- else -}}
-{{- printf "%s:%s" .Values.mock.image.repository ( .Values.mock.image.tag | default "latest" )  }}
+{{- printf "%s:%s" .Values.mockKafkaBroker.image.repository ( .Values.mockKafkaBroker.image.tag | default "latest" )  }}
 {{- end -}}
 {{- end -}}
 
