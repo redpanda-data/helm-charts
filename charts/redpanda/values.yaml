@@ -106,7 +106,7 @@ auth:
     # If you enable SASL authentication, you must provide a Secret in `auth.sasl.secretRef`.
     enabled: false
     # -- The authentication mechanism to use for the superuser. Options are `SCRAM-SHA-256` and `SCRAM-SHA-512`.
-    mechanism: SCRAM-SHA-512
+    mechanism: SCRAM-SHA-256
     # -- A Secret that contains your superuser credentials.
     # The file must include an empty line at the end.
     # For details,
@@ -119,7 +119,7 @@ auth:
     users:
     - name: admin
       password: change-me
-      mechanism: SCRAM-SHA-512
+      mechanism: SCRAM-SHA-256
 
 # -- TLS settings.
 # For details, see the [TLS documentation](https://docs.redpanda.com/docs/manage/kubernetes/security/kubernetes-tls/).

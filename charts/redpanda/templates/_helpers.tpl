@@ -368,7 +368,7 @@ than 1 core.
 {{- end -}}
 
 {{- define "sasl-mechanism" -}}
-{{- dig "sasl" "mechanism" "SCRAM-SHA-512" .Values.auth -}}
+{{- dig "sasl" "mechanism" "SCRAM-SHA-256" .Values.auth -}}
 {{- end -}}
 
 {{- define "rpk-flags" -}}
