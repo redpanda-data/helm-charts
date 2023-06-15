@@ -1,30 +1,74 @@
-{{- if .Values.mock.kafka }}
+{{- if .Values.mock.enabled }}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "console.fullname" . }}-mock-redpanda
   labels:
-    app.kubernetes.io/name: {{ include "console.fullname" . }}-mock-kafka
+    app.kubernetes.io/name: {{ include "console.fullname" . }}-mock-redpanda
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "console.fullname" . }}-mock-kafka
+      app.kubernetes.io/name: {{ include "console.fullname" . }}-mock-redpanda
   template:
     metadata:
-      annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/configmap-mock.yaml") . | sha256sum }}
-        {{- with .Values.podAnnotations }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
       labels:
-        app.kubernetes.io/name: {{ include "console.fullname" . }}-mock-kafka
+        app.kubernetes.io/name: {{ include "console.fullname" . }}-mock-redpanda
     spec:
+      initContainers:
+        - name: {{ .Chart.Name }}-mock-redpanda-configurator
+          image: {{ include "mock.image" . }}
+          imagePullPolicy: {{ .Values.mock.image.pullPolicy }}
+          command: ["/bin/bash", "-c"]
+          env:
+            - name: SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: ADVERTISED_KAFKA_ADDRESSES
+              value: '{"address":"{{ include "console.fullname" . }}-mock-redpanda.{{ .Release.Namespace }}.svc.cluster.local.","name":"internal","port":9093};{"address":"{{ include "console.fullname" . }}-mock-redpanda","name":"default","port":31092}'
+            - name: ADVERTISED_HTTP_ADDRESSES
+              value: '{"address":"{{ include "console.fullname" . }}-mock-redpanda.{{ .Release.Namespace }}.svc.cluster.local.","name":"internal","port":8082};{"address":"{{ include "console.fullname" . }}-mock-redpanda","name":"default","port":30082}'
+            - name: KUBERNETES_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          args:
+            - |
+              set -xe
+              CONFIG=/etc/redpanda/redpanda.yaml
+              POD_ORDINAL=0
+              
+              # Setup config files
+              cp /tmp/base-config/redpanda.yaml "${CONFIG}"
+              cp /tmp/base-config/bootstrap.yaml /etc/redpanda/.bootstrap.yaml
+              
+              NODE_INDEX=`expr $POD_ORDINAL + 1`
+              
+              LISTENER_INDEX=1
+              LISTENER=`echo $ADVERTISED_KAFKA_ADDRESSES | cut -d ' ' -f $NODE_INDEX | cut -d ';' -f $LISTENER_INDEX`
+              rpk redpanda config --config "$CONFIG" set redpanda.advertised_kafka_api[$(($LISTENER_INDEX-1))] "$LISTENER"
+              let "LISTENER_INDEX+=1"
+              LISTENER=`echo $ADVERTISED_KAFKA_ADDRESSES | cut -d ' ' -f $NODE_INDEX | cut -d ';' -f $LISTENER_INDEX`
+              
+              LISTENER_INDEX=1
+              LISTENER=`echo $ADVERTISED_HTTP_ADDRESSES | cut -d ' ' -f $NODE_INDEX | cut -d ';' -f $LISTENER_INDEX`
+              rpk redpanda config --config "$CONFIG" set pandaproxy.advertised_pandaproxy_api[$(($LISTENER_INDEX-1))] "$LISTENER"
+              let "LISTENER_INDEX+=1"
+              LISTENER=`echo $ADVERTISED_HTTP_ADDRESSES | cut -d ' ' -f $NODE_INDEX | cut -d ';' -f $LISTENER_INDEX`
+          securityContext:
+            runAsUser: 101
+            runAsGroup: 101
+          volumeMounts:
+            - name: redpanda
+              mountPath: /tmp/base-config
+            - name: config
+              mountPath: /etc/redpanda
       containers:
-        - name: {{ .Chart.Name }}
-          image: {{ include "mock.kafka.image" . }}
-          imagePullPolicy: {{ .Values.mock.kafka.image.pullPolicy }}
+        - name: redpanda
+          image: {{ include "mock.image" . }}
+          imagePullPolicy: {{ .Values.mock.image.pullPolicy }}
           env:
             - name: SERVICE_NAME
               valueFrom:
@@ -45,7 +89,7 @@ spec:
                 - -c
                 - |
                   set -e
-                  RESULT=$(curl --silent --fail -k  "http://${SERVICE_NAME}.{{.Release.Namespace}}.svc.cluster.local.:9644/v1/status/ready")
+                  RESULT=$(curl --silent --fail -k  "http://{{ include "console.fullname" . }}-mock-redpanda.{{.Release.Namespace}}.svc.cluster.local.:9644/v1/status/ready")
                   echo $RESULT
                   echo $RESULT | grep ready
           livenessProbe:
@@ -53,7 +97,7 @@ spec:
               command:
                 - /bin/sh
                 - -c
-                - curl --silent --fail -k  "http://${SERVICE_NAME}.{{.Release.Namespace}}.svc.cluster.local.:9644/v1/status/ready"
+                - curl --silent --fail -k  "http://{{ include "console.fullname" . }}-mock-redpanda.{{.Release.Namespace}}.svc.cluster.local.:9644/v1/status/ready"
             initialDelaySeconds: 10
             failureThreshold: 3
             periodSeconds: 10
@@ -68,8 +112,8 @@ spec:
                 - -c
                 - |
                   set -x
-                  rpk cluster health --api-urls ${SERVICE_NAME}.{{.Release.Namespace}}.svc.cluster.local.:9644
-                  rpk cluster health --api-urls ${SERVICE_NAME}.{{.Release.Namespace}}.svc.cluster.local.:9644 | grep 'Healthy:.*true'
+                  rpk cluster health --api-urls {{ include "console.fullname" . }}-mock-redpanda.{{.Release.Namespace}}.svc.cluster.local.:9644
+                  rpk cluster health --api-urls {{ include "console.fullname" . }}-mock-redpanda.{{.Release.Namespace}}.svc.cluster.local.:9644 | grep 'Healthy:.*true'
             initialDelaySeconds: 1
             failureThreshold: 3
             periodSeconds: 10
@@ -120,7 +164,7 @@ spec:
             claimName: mock-redpanda-datadir
         - name: redpanda
           configMap:
-            name: redpanda
+            name: mock-redpanda
         - name: config
           emptyDir: {}
 
@@ -130,7 +174,7 @@ apiVersion: v1
 metadata:
   name: mock-redpanda-datadir
   labels:
-    app.kubernetes.io/name: {{ include "console.fullname" . }}-mock-kafka
+    app.kubernetes.io/name: {{ include "console.fullname" . }}-mock-redpanda
 spec:
   accessModes:
     - ReadWriteOnce

@@ -1,50 +1,81 @@
-{{- if .Values.mock.enabled -}}
----
+{{- if .Values.mock.enabled }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "console.fullname" . }}-mock-kafka
-  labels:
-    {{- include "console.labels" . | nindent 4 }}
+  name: mock-redpanda
 data:
-  kafka.yaml: |
-    - key: ping
-      kind: Behavior
-      expect:
-        http:
-          method: GET
-          path: /ping
-      actions:
-        - reply_http:
-            status_code: 200
-            body: OK
-            headers:
-              Content-Type: text/html
+  bootstrap.yaml: |
+    kafka_enable_authorization: false
+    enable_sasl: false
+    compacted_log_segment_size: 67108864
+    group_topic_partitions: 16
+    kafka_batch_max_bytes: 1048576
+    kafka_connection_rate_limit: 1000
+    log_segment_size: 134217728
+    log_segment_size_max: 268435456
+    log_segment_size_min: 16777216
+    max_compacted_log_segment_size: 536870912
+    topic_partitions_per_shard: 1000
+    storage_min_free_bytes: 1073741824
+  redpanda.yaml: |
+    config_file: /etc/redpanda/redpanda.yaml
+    redpanda:
+      empty_seed_starts_cluster: true
+      kafka_enable_authorization: false
+      enable_sasl: false
+      compacted_log_segment_size: 67108864
+      group_topic_partitions: 16
+      kafka_batch_max_bytes: 1048576
+      kafka_connection_rate_limit: 1000
+      log_segment_size: 134217728
+      log_segment_size_max: 268435456
+      log_segment_size_min: 16777216
+      max_compacted_log_segment_size: 536870912
+      topic_partitions_per_shard: 1000
+      storage_min_free_bytes: 1073741824
+      admin:
+        - name: internal
+          address: 0.0.0.0
+          port: 9644
+        - name: default
+          address: 0.0.0.0
+          port: 9645
+      admin_api_tls:
+      kafka_api:
+        - name: internal
+          address: 0.0.0.0
+          port: 9093
+        - name: default
+          address: 0.0.0.0
+          port: 9094
+      kafka_api_tls:
+      rpc_server:
+        address: 0.0.0.0
+        port: 33145
+      rpc_server_tls:
+      seed_servers:
+    schema_registry:
+      schema_registry_api:
+        - name: internal
+          address: 0.0.0.0
+          port: 8081
+        - name: default
+          address: 0.0.0.0
+          port: 8084
+      schema_registry_api_tls:
+    pandaproxy:
+      pandaproxy_api:
+        - name: internal
+          address: 0.0.0.0
+          port: 8082
+        - name: default
+          address: 0.0.0.0
+          port: 8083
+      pandaproxy_api_tls:
 
-    - key: hello
-      kind: Behavior
-      expect:
-        http:
-          method: GET
-          path: /hello
-      actions:
-        - reply_http:
-            status_code: 200
-            body: >
-              { "hello": "world" }
-
-    - key: test_kafka_1
-      kind: Behavior
-      expect:
-        kafka:
-          topic: hello_kafka_in_1
-      actions:
-        - publish_kafka:
-            topic: hello_kafka_out
-            payload: >
-              {
-                "kafka": "OK",
-                "data": 1
-              }
-
-{{- end -}}
+    rpk:
+      enable_usage_stats: true
+      overprovisioned: false
+      enable_memory_locking: false
+      tune_aio_events: true
+{{- end }}

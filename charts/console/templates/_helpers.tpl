@@ -41,11 +41,11 @@ Console Image
 {{- end -}}
 {{- end -}}
 
-{{- define "mock.kafka.image" -}}
-{{- if .Values.image.registry -}}
-{{- printf "%s/%s:%s" .Values.mock.kafka.image.registry .Values.mock.kafka.image.repository ( .Values.mock.kafka.image.tag | default "latest" )  }}
+{{- define "mock.image" -}}
+{{- if .Values.mock.image.registry -}}
+{{- printf "%s/%s:%s" .Values.mock.image.registry .Values.mock.image.repository ( .Values.mock.image.tag | default "latest" )  }}
 {{- else -}}
-{{- printf "%s:%s" .Values.mock.kafka.image.repository ( .Values.mock.kafka.image.tag | default "latest" )  }}
+{{- printf "%s:%s" .Values.mock.image.repository ( .Values.mock.image.tag | default "latest" )  }}
 {{- end -}}
 {{- end -}}
 

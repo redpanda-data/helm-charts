@@ -232,9 +232,8 @@ deployment:
 
 mock:
   enabled: true
-  kafka:
-    image:
-      registry: docker.redpanda.com
-      repository: redpandadata/redpanda
-      pullPolicy: IfNotPresent
-      tag: latest
+  image:
+    registry: docker.redpanda.com
+    repository: redpandadata/redpanda
+    pullPolicy: IfNotPresent
+    tag: v23.1.12

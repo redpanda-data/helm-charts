@@ -1,4 +1,4 @@
-{{- if .Values.configmap.create -}}
+{{- if and .Values.configmap.create (not .Values.mock.enabled ) -}}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -21,4 +21,30 @@ data:
     roleBindings:
       {{- tpl (toYaml .Values.console.roleBindings) $ | nindent 6 }}
   {{- end }}
+{{- end }}
+
+{{- if and .Values.configmap.create .Values.mock.enabled -}}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "console.fullname" . }}
+  labels:
+    {{- include "console.labels" . | nindent 4 }}
+data:
+  config.yaml: |
+    # from .Values.console.config
+    kafka:
+      sasl:
+        enabled: false
+      tls:
+        enabled: false
+      brokers:
+      - {{ include "console.fullname" . }}-mock-redpanda.{{ .Release.Namespace }}.svc.cluster.local.:9093
+      schemaRegistry:
+        enabled: true
+        tls:
+          enabled: false
+        urls:
+        - http://{{ include "console.fullname" . }}-mock-redpanda.{{ .Release.Namespace }}.svc.cluster.local.:8081
 {{- end }}

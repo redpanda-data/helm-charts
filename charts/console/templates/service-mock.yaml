@@ -1,0 +1,26 @@
+{{- if .Values.mock.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "console.fullname" . }}-mock-redpanda
+spec:
+  publishNotReadyAddresses: true
+  type: ClusterIP
+  clusterIP: None
+  selector:
+    app.kubernetes.io/name: {{ include "console.fullname" . }}-mock-redpanda
+  ports:
+    - name: admin
+      protocol: TCP
+      targetPort: 9644
+      port: 9644
+    - name: schema-registry
+      protocol: TCP
+      targetPort: 8081
+      port: 8081
+    - name: kafka-api
+      protocol: TCP
+      targetPort: 9093
+      port: 9093
+{{- end }}
