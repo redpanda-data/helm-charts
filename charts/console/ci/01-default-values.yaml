@@ -15,13 +15,8 @@
 ---
 # This is left empty to test the default values
 
-console:
-  config:
-    kafka:
-      brokers:
-        - console-mock-kafka:9092
-
-
-# required to get console to deploy,
-mock:
+# Required to get console to deploy since there needs to be a
+# kafka broker for console to start. This will complicate the ability to test
+# console as you will need to adapt the mock broker and console to its new dials,
+mock-kafka-broker:
   enabled: true

@@ -1,4 +1,4 @@
-{{- if and .Values.configmap.create (not .Values.mock.enabled ) -}}
+{{- if and .Values.configmap.create (not .Values.mock-kafka-broker.enabled ) -}}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -23,7 +23,7 @@ data:
   {{- end }}
 {{- end }}
 
-{{- if and .Values.configmap.create .Values.mock.enabled -}}
+{{- if and .Values.configmap.create .Values.mock-kafka-broker.enabled -}}
 ---
 apiVersion: v1
 kind: ConfigMap

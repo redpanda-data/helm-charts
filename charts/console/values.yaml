@@ -230,8 +230,8 @@ configmap:
 deployment:
   create: true
 
-mock:
-  enabled: true
+mock-kafka-broker:
+  enabled: false
   image:
     registry: docker.redpanda.com
     repository: redpandadata/redpanda
