@@ -29,8 +29,8 @@ metadata:
   {{- . | nindent 4 }}
 {{- end }}
 spec:
-  publishNotReadyAddresses: true
   type: ClusterIP
+  publishNotReadyAddresses: true
   clusterIP: None
   selector:
     app.kubernetes.io/name: {{ template "redpanda.name" . }}
