@@ -20,6 +20,10 @@ auth:
   sasl:
     enabled: true
     secretRef: "redpanda-users"
+    users:
+      - name: admin
+        password: change-me
+        mechanism: SCRAM-SHA-256
 
 storage:
   persistentVolume:
