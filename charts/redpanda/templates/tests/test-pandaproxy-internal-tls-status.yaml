@@ -14,10 +14,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- if and (include "http-internal-tls-enabled" . | fromJson).bool (not (include "sasl-enabled" . | fromJson).bool) -}}
+{{- if and (include "http-internal-tls-enabled" . | fromJson).bool .Values.listeners.http.enabled (include "redpanda-22-2-x-without-sasl" . | fromJson).bool -}}
   {{- $service := .Values.listeners.http -}}
   {{- $cert := get .Values.tls.certs $service.tls.cert -}}
   {{- $root := deepCopy . }}
+  {{- $sasl := .Values.auth.sasl }}
 apiVersion: v1
 kind: Pod
 metadata:
@@ -41,35 +42,49 @@ spec:
   containers:
     - name: {{ template "redpanda.name" . }}
       image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
-      command:
-        - curl
-        - -svm3
-        - --fail
-        - --retry
-        - "120"
-        - --retry-max-time
-        - "120"
-        - --retry-all-errors
-        - --ssl-reqd
-  {{- if $cert.caEnabled }}
-        - --cacert
-        - /etc/tls/certs/{{ $service.tls.cert }}/ca.crt
-  {{- end }}
-        - https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.http.port }}/brokers
+      command: [ "/bin/bash", "-c" ]
+      args:
+        - |
+          {{- if $sasl.enabled }}
+          USERNAME=$(find /etc/secrets/users/* -print | sed -n 1p | xargs cat | sed -n 1p | tr ':' '\n' | sed -n 1p )
+          PASSWORD=$(find /etc/secrets/users/* -print | sed -n 1p | xargs cat | sed -n 1p | tr ':' '\n' | sed -n 2p )
+          {{- end }}
+
+          curl -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors --ssl-reqd \
+          {{- if or (include "sasl-enabled" .|fromJson).bool .Values.listeners.http.authenticationMethod }}
+          -u $USERNAME:$PASSWORD \
+          {{- end }}
+          {{- if $cert.caEnabled }}
+          --cacert /etc/tls/certs/{{ $service.tls.cert }}/ca.crt \
+          {{- end }}
+          https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.http.port }}/brokers
+
+          curl -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors --ssl-reqd \
+          {{- if or (include "sasl-enabled" .|fromJson).bool .Values.listeners.http.authenticationMethod }}
+          -u $USERNAME:$PASSWORD \
+          {{- end }}
+          {{- if $cert.caEnabled }}
+          --cacert /etc/tls/certs/{{ $service.tls.cert }}/ca.crt \
+          {{- end }}
+          https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.http.port }}/topics
       volumeMounts:
-        - name: config
-          mountPath: /etc/redpanda
-  {{- range $name, $cert := .Values.tls.certs }}
+      {{- range $name, $cert := .Values.tls.certs }}
         - name: redpanda-{{ $name }}-cert
           mountPath: {{ printf "/etc/tls/certs/%s" $name }}
-  {{- end }}
+      {{- end }}
+      {{- if $sasl.enabled }}
+        - name: {{ $sasl.secretRef }}
+          mountPath: "/etc/secrets/users"
+          readOnly: true
+      {{- end}}
       resources: {{ toYaml .Values.statefulset.resources | nindent 12 }}
   volumes:
-    - name: {{ template "redpanda.fullname" . }}
-      configMap:
-        name: {{ template "redpanda.fullname" . }}
-    - name: config
-      emptyDir: {}
+  {{- if $sasl.enabled }}
+    - name: {{ $sasl.secretRef }}
+      secret:
+        secretName: {{ $sasl.secretRef }}
+        optional: false
+  {{- end }}
   {{- if (include "tls-enabled" . | fromJson).bool }}
     {{- range $name, $cert := .Values.tls.certs }}
       {{- $r :=  set $root "tempCert" ( dict "name" $name "cert" $cert ) }}

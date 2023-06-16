@@ -538,6 +538,14 @@ than 1 core.
 {{- toJson (dict "bool" (or (not (eq .Values.image.repository "docker.redpanda.com/redpandadata/redpanda")) (include "redpanda.semver" . | semverCompare ">=22.2.10-0,<22.3"))) -}}
 {{- end -}}
 
+{{- define "redpanda-22-2-x-without-sasl" -}}
+{{- $result :=  (include "redpanda-atleast-22-3-0" . | fromJson).bool -}}
+{{- if or (include "sasl-enabled" . | fromJson).bool .Values.listeners.kafka.authenticationMethod -}}
+{{-   $result := false -}}
+{{- end -}}
+{{- toJson (dict "bool" $result) -}}
+{{- end -}}
+
 # manage backward compatibility with renaming podSecurityContext to securityContext
 {{- define "pod-security-context" -}}
 fsGroup: {{ dig "podSecurityContext" "fsGroup" .Values.statefulset.securityContext.fsGroup .Values.statefulset }}
