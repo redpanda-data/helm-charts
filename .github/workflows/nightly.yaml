@@ -123,6 +123,7 @@ jobs:
       - name: Run chart-testing (install and upgrade)
         run: |
           ct install \
+            --github-groups \
             --upgrade \
             --config .github/ct.yaml \
             --helm-extra-set-args="--set=image.tag=${{ matrix.version }}" \

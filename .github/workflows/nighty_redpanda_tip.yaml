@@ -107,6 +107,7 @@ jobs:
       - name: Run chart-testing install
         run: |
           ct install \
+            --github-groups \
             --config .github/ct.yaml \
             --helm-extra-set-args="--set=image.tag=${{ steps.latestTag.outputs.TAG }} --set=image.repository=redpandadata/redpanda-nightly" \
             --skip-missing-values \
