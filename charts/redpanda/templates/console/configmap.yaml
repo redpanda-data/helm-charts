@@ -51,7 +51,7 @@ limitations under the License.
 {{ $schemaRegistryTLS := dict "enabled" (include "schemaRegistry-internal-tls-enabled" . | fromJson).bool }}
 
 {{ $kafkaSchemaRegistry := dict
-      "enabled" .Values.listeners.schemaRegistry.enabled
+      "enabled" (and .Values.listeners.schemaRegistry.enabled (include "redpanda-22-2-x-without-sasl" . | fromJson).bool)
       "urls" $urls
       "tls" $schemaRegistryTLS
 }}
