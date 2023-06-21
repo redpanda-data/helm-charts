@@ -82,7 +82,7 @@ spec:
   {{- if $enabled }}
     - name: schema-{{ $name }}
       protocol: TCP
-      targetPort: {{ $values.listeners.schemaRegistry.port }}
+      targetPort: {{ $listener.port }}
       port: {{ dig "nodePort" (first (dig "advertisedPorts" (list $listener.port) $listener)) $listener }}
   {{- end }}
 {{- end }}

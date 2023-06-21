@@ -23,7 +23,7 @@ type: application
 # The chart version and the app version are not the same and will not track
 # together. The chart version is a semver representation of changes to this
 # chart.
-version: 4.0.42
+version: 4.0.43
 
 # The app version is the default version of Redpanda to install.
 appVersion: v23.1.12
@@ -53,3 +53,5 @@ annotations:
       image: docker.redpanda.com/redpandadata/redpanda:v23.1.10
     - name: busybox
       image: busybox:latest
+    - name: mintel/docker-alpine-bash-curl-jq
+      image: mintel/docker-alpine-bash-curl-jq:latest

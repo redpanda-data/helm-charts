@@ -12,21 +12,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-statefulset:
-  replicas: 1
+---
+external:
+  enabled: true
+  type: LoadBalancer
+    # If specified, then it will be appended to the `external.addresses` values as each broker's advertised address
+  domain: random-domain
 
 tls:
   enabled: true
-
-auth:
-  sasl:
-    enabled: true
-    secretRef: "redpanda-users"
-    users:
-      - name: admin
-        password: change-me
-        mechanism: SCRAM-SHA-256
-
-storage:
-  persistentVolume:
-    size: 3Gi
+  certs:
+    default:
+      caEnabled: true
+    external:
+      secretRef:
+        name: external-tls-secret
+      caEnabled: true
