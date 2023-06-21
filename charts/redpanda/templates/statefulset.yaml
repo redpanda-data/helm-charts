@@ -331,6 +331,9 @@ spec:
             - /bin/bash # could be expanded for multiple scripts
             - -c 
             - /etc/secrets/config-watcher/scripts/sasl-user.sh
+          {{- if get .Values.statefulset.sideCars.configWatcher "resources" }}
+          resources: {{- toYaml .Values.statefulset.sideCars.configWatcher.resources | nindent 12 }}
+          {{- end }}
           volumeMounts:
             - name: {{ template "redpanda.fullname" . }}-config-watcher
               mountPath: /etc/secrets/config-watcher/scripts
