@@ -40,7 +40,7 @@ spec:
   {{- end }}
   containers:
     - name: {{ template "redpanda.name" . }}
-      image: jorgeandrada/alpine-jq:latest
+      image: mintel/docker-alpine-bash-curl-jq:latest
       command:
         - bash
         - -c
