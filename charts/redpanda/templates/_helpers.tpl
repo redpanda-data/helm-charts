@@ -539,7 +539,7 @@ than 1 core.
 {{- end -}}
 
 {{- define "redpanda-22-2-x-without-sasl" -}}
-{{- $result :=  (include "redpanda-atleast-22-2-0" . | fromJson).bool -}}
+{{- $result :=  (include "redpanda-atleast-22-3-0" . | fromJson).bool -}}
 {{- if or (include "sasl-enabled" . | fromJson).bool .Values.listeners.kafka.authenticationMethod -}}
 {{-   $result := false -}}
 {{- end -}}
