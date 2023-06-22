@@ -84,7 +84,6 @@ spec:
       {{- if eq $values.listeners.kafka.external.default.tls.cert $name }}
           echo "-----> testing external tls: kafka api"
           {{- $port := ( first $values.listeners.kafka.external.default.advertisedPorts ) }}
-          # for now static list of ips, limited by what we have in metallb-config
 
           for ip in $ip_list
           do
@@ -96,6 +95,7 @@ spec:
           done
       {{- end }}
 
+    {{- if (include "redpanda-22-2-x-without-sasl" $root | fromJson).bool }}
       {{- if eq $values.listeners.schemaRegistry.external.default.tls.cert $name }}
           echo "-----> testing external tls: schema registry"
           {{- $port := ( first $values.listeners.schemaRegistry.external.default.advertisedPorts ) }}
@@ -121,6 +121,7 @@ spec:
               -key {{ printf "/etc/tls/certs/%s" $name }}/tls.key -connect $ip:{{ $port }}
           done
       {{- end }}
+    {{- end }}
 
     {{- end }}
   {{- end }}
