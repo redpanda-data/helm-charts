@@ -106,18 +106,15 @@ jobs:
             --create-namespace --version v1.11.0 jetstack/cert-manager \
             --set installCRDs=true --wait --wait-for-jobs
 
-      - name: install cert-manager
-        run: |
-          helm repo add jetstack https://charts.jetstack.io &&
-          helm install cert-manager --namespace cert-manager \
-            --create-namespace --version v1.11.0 jetstack/cert-manager \
-            --set installCRDs=true --wait --wait-for-jobs
-
       - name: install metallb
         run: |
           helm repo add metallb https://metallb.github.io/metallb &&
           helm install metallb metallb/metallb -n metallb-system \
             --create-namespace --version 0.13.10 --wait --wait-for-jobs
+
+      - name: apply metallb resources
+        run: |
+          kubectl -n metallb-system apply -f .github/metallb-config.yaml
 
       - name: Run chart-testing install
         run: |
