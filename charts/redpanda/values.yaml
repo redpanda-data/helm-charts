@@ -765,6 +765,8 @@ listeners:
 # For descriptions of these properties,
 # see the [configuration documentation](https://docs.redpanda.com/docs/cluster-administration/configuration/).
 config:
+  rpk: {}
+    # additional_start_flags:                                      # List of flags to pass to rpk, e.g., ` "--idle-poll-time-us=0"`
   cluster: {}
     # auto_create_topics_enabled: true                             # Allow topic auto creation
     # transaction_coordinator_replication: 1                       # Replication factor for a transaction coordinator topic
