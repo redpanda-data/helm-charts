@@ -105,7 +105,7 @@ jobs:
         run: |
           .github/create-sasl-secret.sh "some-users"
 
-      - name: Move tls files to template
+      - name: Move files to redpanda template dir
         run: |
           mv external-tls-secret.yaml charts/redpanda/templates/
           cp .github/external-service.yaml charts/redpanda/templates/
