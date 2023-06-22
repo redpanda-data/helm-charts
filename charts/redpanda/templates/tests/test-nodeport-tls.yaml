@@ -94,6 +94,7 @@ spec:
           done
           {{- end }}
 
+    {{- if (include "redpanda-22-2-x-without-sasl" $root | fromJson).bool }}
           {{- if eq $values.listeners.schemaRegistry.external.default.tls.cert $name }}
           echo "-----> testing external tls: schema registry"
           {{- $port := ( first $values.listeners.schemaRegistry.external.default.advertisedPorts ) }}
@@ -121,6 +122,7 @@ spec:
             -connect ${ip}:{{ $port }}
           done
           {{- end }}
+    {{- end }}
 
     {{- end }}
     {{- end }}
