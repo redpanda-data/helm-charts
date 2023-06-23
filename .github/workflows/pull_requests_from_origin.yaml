@@ -108,15 +108,6 @@ jobs:
           
           mv redpanda-license.yaml ./charts/redpanda/templates/
 
-      #===== Required Test Files === start
-
-      - name: Move files to redpanda template dir
-        if: steps.list-changed.outputs.changed == 'true'
-        run: |
-          cp .github/elevated-sa.yaml charts/redpanda/templates/
-
-      #===== Required Test Files === end
-
       - name: install cert-manager
         if: steps.list-changed.outputs.changed == 'true'
         run: |

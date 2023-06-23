@@ -95,7 +95,6 @@ jobs:
           mv external-tls-secret.yaml charts/redpanda/templates/
           cp .github/external-service.yaml charts/redpanda/templates/
           mv some-users-updated.yaml charts/redpanda/templates
-          cp .github/elevated-sa.yaml charts/redpanda/templates/
 
     #===== Required Test Files === end
 

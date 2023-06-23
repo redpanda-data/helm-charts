@@ -30,7 +30,7 @@ metadata:
     "helm.sh/hook": test
     "helm.sh/hook-delete-policy": before-hook-creation
 spec:
-  serviceAccountName: redpanda-user
+  serviceAccountName: test-nodeport-tls-redpanda
   restartPolicy: Never
   securityContext:
     runAsUser: 65535
@@ -149,5 +149,49 @@ spec:
         {{- end }}
       secretName: {{ template "cert-secret-name" $r }}
   {{- end }}
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: test-nodeport-tls-redpanda
+  annotations:
+    helm.sh/hook-weight: "-100"
+    helm.sh/hook: test
+    helm.sh/hook-delete-policy: before-hook-creation
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: test-nodeport-tls-redpanda
+  annotations:
+    helm.sh/hook-weight: "-100"
+    helm.sh/hook: test
+    helm.sh/hook-delete-policy: before-hook-creation
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: test-nodeport-tls-redpanda
+subjects:
+  - kind: ServiceAccount
+    name: test-nodeport-tls-redpanda
+    namespace: {{ .Release.Namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: test-nodeport-tls-redpanda
+  annotations:
+    helm.sh/hook-weight: "-100"
+    helm.sh/hook: test
+    helm.sh/hook-delete-policy: before-hook-creation
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - services
+    verbs:
+      - get
 
 {{- end -}}
