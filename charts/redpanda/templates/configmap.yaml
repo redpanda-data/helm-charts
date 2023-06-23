@@ -118,7 +118,7 @@ data:
       superusers: {{ toJson $users }}
   {{- end }}
   {{- with (dig "cluster" dict .Values.config) }}
-      {{- range $key, $element := .}}
+      {{- range $key, $element := . }}
         {{- if or (eq (typeOf $element) "bool") $element }}
       {{ $key }}: {{ $element | toYaml }}
         {{- end }}
@@ -429,6 +429,9 @@ data:
 {{- /* END LISTENERS */}}
 
     rpk:
+{{- with (dig "rpk" dict .Values.config) }}
+  {{- . | toYaml | nindent 6}}
+{{- end }}
       enable_usage_stats: {{ .Values.logging.usageStats.enabled }}
       overprovisioned: {{ dig "cpu" "overprovisioned" false .Values.resources }}
       enable_memory_locking: {{ dig "memory" "enable_memory_locking" false .Values.resources }}
