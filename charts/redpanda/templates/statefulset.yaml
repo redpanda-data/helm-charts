@@ -389,17 +389,18 @@ spec:
           {{- end }}
       {{- end }}
       {{- if .Values.statefulset.sideCars.brokerWatcher.enabled }}
-        - name: config-watcher
+        - name: broker-watcher
           image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
           command:
             - /bin/bash # could be expanded for multiple scripts
             - -c
-            - /etc/secrets/broker-watcher/scripts/sasl-user.sh
-          {{- if get .Values.statefulset.sideCars.brokerWatcher "resources" }}
-          resources: {{- toYaml .Values.statefulset.sideCars.configWatcher.resources | nindent 12 }}
-          {{- end }}
+            - sleep 50000
+            - /etc/secrets/broker-watcher/scripts/decommission-broker.sh
+        {{- if get .Values.statefulset.sideCars.brokerWatcher "resources" }}
+          resources: {{- toYaml .Values.statefulset.sideCars.brokerWatcher.resources | nindent 12 }}
+        {{- end }}
           volumeMounts:
-            - name: {{ template "redpanda.fullname" . }}-broker-watcher
+            - name: {{ template "redpanda.fullname" . }}-config-watcher
               mountPath: /etc/secrets/broker-watcher/scripts
               readOnly: true
           {{- if and .Values.auth.sasl.enabled (not (empty .Values.auth.sasl.secretRef )) }}
