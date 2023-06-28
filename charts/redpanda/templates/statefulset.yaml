@@ -388,6 +388,33 @@ spec:
             {{- end }}
           {{- end }}
       {{- end }}
+      {{- if .Values.statefulset.sideCars.brokerWatcher.enabled }}
+        - name: config-watcher
+          image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
+          command:
+            - /bin/bash # could be expanded for multiple scripts
+            - -c
+            - /etc/secrets/broker-watcher/scripts/sasl-user.sh
+          {{- if get .Values.statefulset.sideCars.brokerWatcher "resources" }}
+          resources: {{- toYaml .Values.statefulset.sideCars.configWatcher.resources | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: {{ template "redpanda.fullname" . }}-broker-watcher
+              mountPath: /etc/secrets/broker-watcher/scripts
+              readOnly: true
+          {{- if and .Values.auth.sasl.enabled (not (empty .Values.auth.sasl.secretRef )) }}
+            - name: {{ .Values.auth.sasl.secretRef }}
+              mountPath: /etc/secrets/users
+              readOnly: true
+          {{- end }}
+          {{- if (include "tls-enabled" . | fromJson).bool }}
+            {{- range $name, $cert := .Values.tls.certs }}
+            - name: redpanda-{{ $name }}-cert
+              mountPath: {{ printf "/etc/tls/certs/%s" $name }}
+              readOnly: true
+            {{- end }}
+          {{- end }}
+      {{- end }}
       volumes:
 {{- if dig "extraVolumes" false .Values.statefulset -}}
 {{ tpl .Values.statefulset.extraVolumes . | nindent 8 }}

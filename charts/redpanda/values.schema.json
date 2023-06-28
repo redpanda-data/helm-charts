@@ -721,6 +721,17 @@
                   "type": "string"
                 }
               }
+            },
+            "brokerWatcher": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "resources": {
+                  "type": "object"
+                }
+              }
             }
           }
         },

@@ -570,6 +570,10 @@ statefulset:
       resources: {}
       securityContext: {}
       extraVolumeMounts: |-
+    brokerWatcher:
+      enabled: true
+      resources: {}
+      extraVolumeMounts: |-
   initContainers:
     tuning:
       resources: {}
