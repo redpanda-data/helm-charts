@@ -69,6 +69,7 @@ data:
   bootstrap.yaml: |
     kafka_enable_authorization: {{ (include "sasl-enabled" . | fromJson).bool }}
     enable_sasl: {{ (include "sasl-enabled" . | fromJson).bool }}
+    enable_rack_awareness: {{ .Values.rackAwareness.enabled }}
   {{- if $users }}
     superusers: {{ toJson $users }}
   {{- end }}
@@ -108,9 +109,6 @@ data:
     redpanda:
 {{- if (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
       empty_seed_starts_cluster: false
-  {{- if .Values.rackAwareness.enabled }}
-      enable_rack_awareness: true
-  {{- end }}
 {{- end }}
       kafka_enable_authorization: {{ (include "sasl-enabled" . | fromJson).bool }}
       enable_sasl: {{ (include "sasl-enabled" . | fromJson).bool }}
