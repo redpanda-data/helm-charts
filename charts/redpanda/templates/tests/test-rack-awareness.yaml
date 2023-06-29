@@ -14,8 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- if .Values.rackAwareness.enabled -}}
-  {{- if not (or (include "tls-enabled" . | fromJson).bool (include "sasl-enabled" .)) -}}
+{{- $root := deepCopy . }}
 apiVersion: v1
 kind: Pod
 metadata:
@@ -44,7 +43,52 @@ spec:
       - -c
       - |
         set -e
-        curl --silent --fail --retry 120 --retry-max-time 120 --retry-all-errors http://{{ include "redpanda.fullname" . }}:{{ .Values.listeners.admin.port }}/v1/node_config | grep '"rack":"rack[1-4]"'
-        rpk redpanda admin config print --host {{ include "redpanda.fullname" . }}:{{ .Values.listeners.admin.port }} | grep '"enable_rack_awareness": true'
-  {{- end -}}
-{{- end -}}
+    {{- if .Values.rackAwareness.enabled }}
+        curl --silent --fail --retry 120 \
+          --retry-max-time 120 --retry-all-errors \
+      {{- if (include "tls-enabled" . | fromJson).bool }}
+        {{- range $name, $cert := .Values.tls.certs }}
+          {{- if and $cert.caEnabled (eq $name "default") }}
+          --cacert {{ printf "/etc/tls/certs/%s/ca.crt" $name }} \
+          {{- end }}
+        {{- end }}
+        https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.admin.port }}/v1/node_config | grep '"rack":"rack[1-4]"'
+      {{- else }}
+        http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.admin.port }}/v1/node_config | grep '"rack":"rack[1-4]"'
+      {{- end }}
+    {{- end }}
+
+        rpk redpanda admin config print \
+      {{- if (include "tls-enabled" . | fromJson).bool }}
+        {{- range $name, $cert := .Values.tls.certs }}
+          {{- if and $cert.caEnabled (eq $name "default") }}
+          --admin-api-tls-enabled \
+          --admin-api-tls-truststore {{ printf "/etc/tls/certs/%s/ca.crt" $name }} \
+          {{- end }}
+        {{- end }}
+      {{- end }}
+          --host {{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.admin.port }} | grep '"enable_rack_awareness": {{ .Values.rackAwareness.enabled }}'
+
+        rpk cluster config get enable_rack_awareness {{ template "rpk-acl-user-flags" $ }} | grep '{{ .Values.rackAwareness.enabled }}'
+{{- if (include "tls-enabled" . | fromJson).bool }}
+      volumeMounts:
+  {{- range $name, $cert := .Values.tls.certs }}
+    {{- if and $cert.caEnabled (eq $name "default") }}
+        - name: redpanda-{{ $name }}-cert
+          mountPath: {{ printf "/etc/tls/certs/%s" $name }}
+    {{- end }}
+  {{- end }}
+  volumes:
+  {{- range $name, $cert := .Values.tls.certs }}
+  {{- $r :=  set $root "tempCert" ( dict "name" $name "cert" $cert ) }}
+    {{- if and $cert.caEnabled (eq $name "default") }}
+    - name: redpanda-{{ $name }}-cert
+      secret:
+        defaultMode: 420
+        items:
+        - key: ca.crt
+          path: ca.crt
+        secretName: {{ template "cert-secret-name" $r }}
+    {{- end }}
+  {{- end }}
+{{- end }}
