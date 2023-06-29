@@ -69,11 +69,54 @@ spec:
 
           schemaCurl http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects
 
-          schemaCurl -X DELETE \
-          http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-value/versions/1
+          max_iteration=10
 
-          schemaCurl -X DELETE \
-          http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-value/versions/1?permanent=true
+          for i in $(seq 1 $max_iteration)
+          do
+            curl -vv -X DELETE \
+              {{- if or (include "sasl-enabled" .|fromJson).bool .Values.listeners.schemaRegistry.authenticationMethod }}
+              -u $USERNAME:$PASSWORD \
+              {{- end }}
+              http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-value/versions/1
+            result=$?
+            if [[ $result -eq 0 ]]
+            then
+              echo "Result successful"
+              break
+            else
+              echo "Result unsuccessful"
+              sleep 1
+            fi
+          done
+
+          if [[ $result -ne 0 ]]
+          then
+            echo "All of the trials failed to delete schema!!!"
+          fi
+
+          for i in $(seq 1 $max_iteration)
+          do
+            curl -vv -X DELETE \
+              {{- if or (include "sasl-enabled" .|fromJson).bool .Values.listeners.schemaRegistry.authenticationMethod }}
+              -u $USERNAME:$PASSWORD \
+              {{- end }}
+              http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-value/versions/1?permanent=true
+            result=$?
+            if [[ $result -eq 0 ]]
+            then
+              echo "Result successful"
+              break
+            else
+              echo "Result unsuccessful"
+              sleep 1
+            fi
+          done
+
+          if [[ $result -ne 0 ]]
+          then
+            echo "All of the trials failed to permanently delete schema!!!"
+            exit 1
+          fi
       volumeMounts:
       {{- if $sasl.enabled }}
         - name: {{ $sasl.secretRef }}
