@@ -43,7 +43,7 @@ spec:
       - -c
       - |
         set -e
-    {{- if .Values.rackAwareness.enabled }}
+    {{- if and .Values.rackAwareness.enabled (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
         curl --silent --fail --retry 120 \
           --retry-max-time 120 --retry-all-errors \
       {{- if (include "tls-enabled" . | fromJson).bool }}
