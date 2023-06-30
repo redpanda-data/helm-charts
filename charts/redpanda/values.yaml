@@ -557,6 +557,7 @@ statefulset:
     configWatcher:
       enabled: true
       resources: {}
+      securityContext: {}
   initContainers:
     tuning:
       resources: {}

@@ -336,6 +336,9 @@ spec:
           {{- if get .Values.statefulset.sideCars.configWatcher "resources" }}
           resources: {{- toYaml .Values.statefulset.sideCars.configWatcher.resources | nindent 12 }}
           {{- end }}
+          {{- if get .Values.statefulset.sideCars.configWatcher "securityContext" }}
+          securityContext: {{- toYaml .Values.statefulset.sideCars.configWatcher.securityContext | nindent 12 }}
+          {{- end }}
           volumeMounts:
             - name: {{ template "redpanda.fullname" . }}-config-watcher
               mountPath: /etc/secrets/config-watcher/scripts
