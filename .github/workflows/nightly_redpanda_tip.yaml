@@ -18,7 +18,7 @@ name: Nightly - Lint/Test Redpanda-Chart With Nightly Redpanda
 
 on:
   schedule:
-    - cron: '0 1 * * 1-5'  # 01:00 AM UTC Monday - Friday
+    - cron: '0 2 * * 1-5'  # 01:00 AM UTC Monday - Friday
   workflow_dispatch: {}
 jobs:
   test-redpanda-nightly:
