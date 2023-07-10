@@ -16,79 +16,84 @@ limitations under the License.
 */}}
 {{- if (include "external-loadbalancer-enabled" . | fromJson).bool }}
   {{- $values := .Values }}
-  {{- $root := . -}}
+  {{- $root := . }}
+  {{- $addresses := dig "addresses" list $values.external }}
   {{- range $replicaIndex := untilStep 0 ($values.statefulset.replicas|int) 1 }}
+    {{- $podName := printf "%s-%d" (include "redpanda.fullname" $root) $replicaIndex }}
+    {{- $address := printf "%s.%s" $podName (tpl $values.external.domain $) }}
+    {{- if ge (len $addresses) (add $replicaIndex 1) }}
+      {{- $address = printf "%s.%s" (default $podName (index $addresses $replicaIndex)) (tpl $values.external.domain $) }}
+    {{- end }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: lb-{{ include "redpanda.fullname" $root }}-{{ $replicaIndex }}
-  namespace: {{ $root.Release.Namespace | quote }}
+  name: lb-{{ $podName }}
+  namespace: {{ $root.Release.Namespace }}
   labels:
-{{- with include "full.labels" $root }}
-  {{- . | nindent 4 }}
-{{- end }}
+    {{- with include "full.labels" $root }}
+      {{- . | nindent 4 }}
+    {{- end }}
     repdanda.com/type: "loadbalancer"
-{{- if (or $values.external.annotations (dig "externalDns" "enabled" false $values.external) ) }}
+    {{- if (or $values.external.annotations (dig "externalDns" "enabled" false $values.external) ) }}
   annotations:
-{{- with $values.external.annotations }}
-    {{- toYaml . | nindent 4 }}
-{{- end }}
-{{- if (dig "externalDns" "enabled" false $values.external) }}
-    {{ printf "external-dns.alpha.kubernetes.io/hostname: %s.%s" (index $values.external.addresses $replicaIndex) (tpl $values.external.domain $) }}
-{{- end }}
-{{- end }}
+      {{- with $values.external.annotations }}
+          {{- toYaml . | nindent 4 }}
+      {{- end }}
+      {{- if (dig "externalDns" "enabled" false $values.external) }}
+          {{- printf "external-dns.alpha.kubernetes.io/hostname: %s" $address | nindent 4}}
+      {{- end }}
+    {{- end }}
 spec:
   type: LoadBalancer
   publishNotReadyAddresses: true
-{{- if not ( empty $root.Values.external.sourceRanges ) }}
+    {{- with $root.Values.external.sourceRanges }}
   loadBalancerSourceRanges:
-  {{- range $values.external.sourceRanges }}
-  - {{ . }}
-  {{- end }}
-{{- end }}
+      {{- toYaml $values.external.sourceRanges | nindent 4}}
+    {{- end }}
   externalTrafficPolicy: Local
   sessionAffinity: None
   ports:
-{{- range $name, $listener := $values.listeners.admin.external }}
-  {{- $enabled := dig "enabled" $values.external.enabled $listener }}
-  {{- if $enabled }}
+    {{- range $name, $listener := $values.listeners.admin.external }}
+      {{- $enabled := dig "enabled" $values.external.enabled $listener }}
+      {{- if $enabled }}
     - name: admin-{{ $name }}
       protocol: TCP
       targetPort: {{ $values.listeners.admin.port }}
       port: {{ dig "nodePort" (first (dig "advertisedPorts" (list $values.listeners.admin.port) $listener)) $listener }}
-  {{- end }}
-{{- end }}
-{{- range $name, $listener := $values.listeners.kafka.external }}
-  {{- $enabled := dig "enabled" $values.external.enabled $listener }}
-  {{- if $enabled }}
+      {{- end }}
+    {{- end }}
+    {{- range $name, $listener := $values.listeners.kafka.external }}
+      {{- $enabled := dig "enabled" $values.external.enabled $listener }}
+      {{- if $enabled }}
     - name: kafka-{{ $name }}
       protocol: TCP
       targetPort: {{ $listener.port }}
       port: {{ dig "nodePort" (first (dig "advertisedPorts" (list $listener.port) $listener)) $listener }}
-  {{- end }}
-{{- end }}
-{{- range $name, $listener := $values.listeners.http.external }}
-  {{- $enabled := dig "enabled" $values.external.enabled $listener }}
-  {{- if $enabled }}
+      {{- end }}
+    {{- end }}
+    {{- range $name, $listener := $values.listeners.http.external }}
+      {{- $enabled := dig "enabled" $values.external.enabled $listener }}
+      {{- if $enabled }}
     - name: http-{{ $name }}
       protocol: TCP
       targetPort: {{ $listener.port }}
       port: {{ dig "nodePort" (first (dig "advertisedPorts" (list $listener.port) $listener)) $listener }}
-  {{- end }}
-{{- end }}
-{{- range $name, $listener := $values.listeners.schemaRegistry.external }}
-  {{- $enabled := dig "enabled" $values.external.enabled $listener }}
-  {{- if $enabled }}
+      {{- end }}
+    {{- end }}
+    {{- range $name, $listener := $values.listeners.schemaRegistry.external }}
+      {{- $enabled := dig "enabled" $values.external.enabled $listener }}
+      {{- if $enabled }}
     - name: schema-{{ $name }}
       protocol: TCP
       targetPort: {{ $listener.port }}
       port: {{ dig "nodePort" (first (dig "advertisedPorts" (list $listener.port) $listener)) $listener }}
-  {{- end }}
-{{- end }}
+      {{- end }}
+    {{- end }}
   selector:
     app.kubernetes.io/name: {{ template "redpanda.name" $root }}
-    app.kubernetes.io/instance: {{ $root.Release.Name | quote }}
-    statefulset.kubernetes.io/pod-name: {{ include "redpanda.fullname" $root }}-{{ $replicaIndex }}
+    app.kubernetes.io/instance: {{ $root.Release.Name }}
+    statefulset.kubernetes.io/pod-name: {{ $podName }}
   {{- end }}
 {{- end }}
+
