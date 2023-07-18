@@ -9,7 +9,7 @@ fi
 
 source .env
 
-cleanup_eks(){
+cleanup_eks() {
     echo ~~~ Cleanup EKS variant
 
     AWS_ACCESS_KEY_ID="$HELMCHART_TEST_ACCOUNT_AWS_ACCESS_KEY_ID"
@@ -25,8 +25,7 @@ cleanup_eks(){
         --region "${AWS_REGION}"
 }
 
-
-cleanup_gke(){
+cleanup_gke() {
     echo ~~~ Cleanup GKE variant
 
     CI=true
@@ -41,6 +40,32 @@ cleanup_gke(){
 
     gcloud storage rm --recursive gs://${TEST_BUCKET}/
     gcloud iam service-accounts delete "${TEST_SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" -q
+}
+
+cleanup_aks() {
+    echo ~~~ Cleanup AKS variant
+
+    CI=true
+
+    TEST_STORAGE_ACCOUNT="tieredstoragetest${BUILDKITE_BUILD_NUMBER}"
+    TEST_RESOURCE_GROUP="k8s-team-rg-${BUILDKITE_BUILD_NUMBER}"
+
+    export CI TEST_STORAGE_ACCOUNT TEST_RESOURCE_GROUP
+
+    docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.50.0 \
+      az login --service-principal \
+      --username 918839a6-3e96-4950-8bf2-f56d0a2e7447 \
+      --password $AZURE_CLIENT_SECRET \
+      --tenant 9a95fd9e-005d-487a-9a01-d08c1eab2757 || true
+
+    docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.50.0 \
+      az storage account delete \
+      --name $TEST_STORAGE_ACCOUNT \
+      --resource-group $TEST_RESOURCE_GROUP \
+      --yes
+
+    docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.50.0 \
+      az group delete --resource-group $TEST_RESOURCE_GROUP --yes --debug
 }
 
 cleanup_"${CLOUD_PROVIDER}"

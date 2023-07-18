@@ -21,6 +21,7 @@ kind_dump() {
     local TAR="${DUMP}.tar.gz"
     unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY
     unset GCP_B64ENCODED_CREDENTIALS PROJECT_ID GOOGLE_APPLICATION_CREDENTIALS
+    unset AZURE_CLIENT_SECRET
     kind export logs -n bootstrap "${DUMP}"
     tar czf "${TAR}" -C "${DUMP}" .
     buildkite-agent artifact upload "${TAR}"
@@ -101,7 +102,76 @@ test_gke() {
     KUBECONFIG=$(realpath ".local/buildkite-${BUILDKITE_BUILD_NUMBER}-gke-cluster.conf")
     export KUBECONFIG
 
+    buildkite-agent artifact upload $KUBECONFIG
+
     envsubst < ./charts/redpanda/ci/22-gke-tiered-storage-with-creds-values.yaml.tpl > ./charts/redpanda/ci/22-gke-tiered-storage-with-creds-values.yaml
+}
+
+test_aks() {
+    echo ~~~ Start AKS variant
+
+    CI=true
+
+    TEST_STORAGE_ACCOUNT="tieredstoragetest${BUILDKITE_BUILD_NUMBER}"
+    TEST_STORAGE_CONTAINER="testcontainer${BUILDKITE_BUILD_NUMBER}"
+    TEST_RESOURCE_GROUP="k8s-team-rg-${BUILDKITE_BUILD_NUMBER}"
+
+    # Taken from https://github.com/kubernetes-sigs/cluster-api/blob/ab50d0bc33ccaeb01bde978cd0d25e93efed95ba/docs/book/src/user/quick-start.md?plain=1#L450-L470
+    export AZURE_TENANT_ID="9a95fd9e-005d-487a-9a01-d08c1eab2757"
+    export AZURE_CLIENT_ID="918839a6-3e96-4950-8bf2-f56d0a2e7447"
+    export AZURE_SUBSCRIPTION_ID="6d88ea35-36ad-4a17-88f8-7ba935e900b0"
+
+    # Base64 encode the variables
+    export AZURE_SUBSCRIPTION_ID_B64="$(echo -n "$AZURE_SUBSCRIPTION_ID" | base64 | tr -d '\n')"
+    export AZURE_TENANT_ID_B64="$(echo -n "$AZURE_TENANT_ID" | base64 | tr -d '\n')"
+    export AZURE_CLIENT_ID_B64="$(echo -n "$AZURE_CLIENT_ID" | base64 | tr -d '\n')"
+    export AZURE_CLIENT_SECRET_B64="$(echo -n "$AZURE_CLIENT_SECRET" | base64 | tr -d '\n')"
+
+    # Settings needed for AzureClusterIdentity used by the AzureCluster
+    export AZURE_CLUSTER_IDENTITY_SECRET_NAME="cluster-identity-secret"
+    export AZURE_CLUSTER_IDENTITY_SECRET_NAMESPACE="default"
+
+    export TEST_STORAGE_ACCOUNT TEST_RESOURCE_GROUP TEST_STORAGE_CONTAINER
+
+    docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.50.0 \
+      az login --service-principal \
+      --username $AZURE_CLIENT_ID \
+      --password $AZURE_CLIENT_SECRET \
+      --tenant $AZURE_TENANT_ID
+
+    # the westus2 is used as buildkite is deployed in us-west-2 which is close to Azure westus2 (Maybe in the same city)
+    docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.50.0 \
+      az group create \
+      --name $TEST_RESOURCE_GROUP \
+      --location westus2
+
+    docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.50.0 \
+      az storage account create \
+      --name $TEST_STORAGE_ACCOUNT \
+      --resource-group $TEST_RESOURCE_GROUP \
+      --location westus2 \
+      --sku Standard_RAGRS \
+      --kind StorageV2
+
+    docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.50.0 \
+      az storage container create \
+      --name $TEST_STORAGE_CONTAINER \
+      --account-name $TEST_STORAGE_ACCOUNT
+
+
+    TEST_AZURE_SHARED_KEY=$(docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.50.0 az storage account keys list -g $TEST_RESOURCE_GROUP -n $TEST_STORAGE_ACCOUNT --query '[0].value' -o tsv)
+    export TEST_AZURE_SHARED_KEY
+
+    trap kind_dump EXIT
+
+    task capi-create-aks CLUSTER_NAME="buildkite-${BUILDKITE_BUILD_NUMBER}" CLUSTER_KUBECONFIG_PATH=".local/buildkite-${BUILDKITE_BUILD_NUMBER}-aks-cluster.conf"
+
+    KUBECONFIG=$(realpath ".local/buildkite-${BUILDKITE_BUILD_NUMBER}-aks-cluster.conf")
+    export KUBECONFIG
+
+    buildkite-agent artifact upload $KUBECONFIG
+
+    envsubst < ./charts/redpanda/ci/23-aks-tiered-storage-with-creds-values.yaml.tpl > ./charts/redpanda/ci/23-aks-tiered-storage-with-creds-values.yaml
 }
 
 test_"${CLOUD_PROVIDER}"
