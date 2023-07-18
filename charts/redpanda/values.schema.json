@@ -2,7 +2,6 @@
   "$schema": "http://json-schema.org/schema#",
   "type": "object",
   "required": [
-    "image"
   ],
   "properties": {
     "nameOverride": {
@@ -527,21 +526,7 @@
     "statefulset": {
       "type": "object",
       "required": [
-        "replicas",
-        "updateStrategy",
-        "budget",
-        "annotations",
-        "startupProbe",
-        "livenessProbe",
-        "readinessProbe",
-        "podAffinity",
-        "podAntiAffinity",
-        "nodeSelector",
-        "priorityClassName",
-        "tolerations",
-        "topologySpreadConstraints",
-        "securityContext",
-        "sideCars"
+        "replicas"
       ],
       "properties": {
         "replicas": {
@@ -791,8 +776,7 @@
     "rbac": {
       "type": "object",
       "required": [
-        "enabled",
-        "annotations"
+        "enabled"
       ],
       "properties": {
         "enabled": {
@@ -829,11 +813,6 @@
     "listeners": {
       "type": "object",
       "required": [
-        "admin",
-        "kafka",
-        "http",
-        "rpc",
-        "schemaRegistry"
       ],
       "properties": {
         "admin": {
@@ -892,8 +871,7 @@
           "type": "object",
           "required": [
             "port",
-            "external",
-            "tls"
+            "external"
           ],
           "properties": {
             "port": {
@@ -906,7 +884,6 @@
                 "^[A-Za-z_][A-Za-z0-9_]*$": {
                   "type": "object",
                   "required": [
-                    "port"
                   ],
                   "properties": {
                     "enabled": {
@@ -957,11 +934,8 @@
         "http": {
           "type": "object",
           "required": [
-            "enabled",
             "port",
-            "kafkaEndpoint",
-            "external",
-            "tls"
+            "external"
           ],
           "properties": {
             "enabled": {
@@ -985,7 +959,6 @@
                 "^[A-Za-z_][A-Za-z0-9_]*$": {
                   "type": "object",
                   "required": [
-                    "port"
                   ],
                   "properties": {
                     "enabled": {
