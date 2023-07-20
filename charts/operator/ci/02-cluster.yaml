@@ -12,25 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-name: Lint and Test Charts
-
-on:
-  pull_request:
-    branches:
-      - "**"
-    paths-ignore:
-      - .github/*.sh
-      - .github/ct.yaml
-      - .github/kind.yaml
-      - .github/workflows/pull_requests.yaml
-      - charts/**
-jobs:
-  lint:
-    runs-on: ubuntu-22.04
-    steps:
-      - run: true
-  summary:
-    runs-on: ubuntu-22.04
-    steps:
-      - run: true
+---
+scope: Cluster
+webhook:
+  enabled: true
