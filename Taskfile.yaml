@@ -127,6 +127,23 @@ tasks:
           KIND_FLAGS: ""
       - "{{.BINDIR}}/clusterctl init -i {{ .CAPI_INFRASTRUCTURE }}:{{ .GCP_PROVIDER_VERSION }} -v7 --wait-providers"
 
+  capi-bootstrap-aks:
+    deps:
+      - tool:clusterctl
+    env:
+      EXP_MACHINE_POOL: true
+    vars:
+      CAPI_INFRASTRUCTURE: '{{ default "unknown" .CAPI_INFRASTRUCTURE }}'
+      AKS_PROVIDER_VERSION: v1.10.0
+    cmds:
+      - echo ~~~ Create kind cluster
+      - task: kind-create
+        vars:
+          KIND_CLUSTERNAME: bootstrap
+          KIND_FLAGS: ""
+      - echo ~~~ Initialize cluster API core controllers
+      - "{{.BINDIR}}/clusterctl init -i {{ .CAPI_INFRASTRUCTURE }}:{{ .AKS_PROVIDER_VERSION }} -v7 --wait-providers"
+
   capi-create-eks:
     deps:
       - aws-check-login
@@ -143,7 +160,7 @@ tasks:
           AWS_B64ENCODED_CREDENTIALS:
             sh: "{{.BINDIR}}/clusterawsadm bootstrap credentials encode-as-profile 2>/dev/null"
       - "{{.BINDIR}}/clusterawsadm bootstrap iam create-cloudformation-stack --config=.buildkite/capi/eks-bootstrap.yaml"
-      - helm install -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} .buildkite/capi/eks-cluster --create-namespace  --debug
+      - helm install -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} .buildkite/capi/eks-cluster --create-namespace --debug
       - kubectl wait --for=condition=ready cluster {{.CLUSTER_NAME}}-eks-cluster --timeout=40m
       - kubectl wait --for=condition=Ready machinepool {{.CLUSTER_NAME}}-eks-cluster-pool-0 --timeout=20m
 
@@ -160,6 +177,65 @@ tasks:
       - helm install -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} .buildkite/capi/gke-cluster --create-namespace --set projectID={{.PROJECT_ID}} --debug
       - kubectl wait --for=condition=ready cluster {{.CLUSTER_NAME}}-gke-cluster --timeout=40m
       - kubectl wait --for=condition=Ready machinepool {{.CLUSTER_NAME}}-gke-cluster-mp-0 --timeout=20m
+
+  capi-create-aks:
+    cmds:
+      - task: capi-bootstrap-aks
+        vars:
+          CAPI_INFRASTRUCTURE: azure
+      # Create a secret to include the password of the Service Principal identity created in Azure
+      # This secret will be referenced by the AzureClusterIdentity used by the AzureCluster
+      - echo ~~~ Install Azure cluster API controllers
+      - kubectl create ns "{{.AZURE_CLUSTER_IDENTITY_SECRET_NAMESPACE}}" || true
+      - kubectl delete secret "{{.AZURE_CLUSTER_IDENTITY_SECRET_NAME}}" --namespace "{{.AZURE_CLUSTER_IDENTITY_SECRET_NAMESPACE}}" || true
+      - kubectl create secret generic "{{.AZURE_CLUSTER_IDENTITY_SECRET_NAME}}" --from-literal=clientSecret="{{.AZURE_CLIENT_SECRET}}" --namespace "{{.AZURE_CLUSTER_IDENTITY_SECRET_NAMESPACE}}"
+      - |
+        helm install -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} .buildkite/capi/aks-cluster \
+          --create-namespace \
+          --set clientID={{.AZURE_CLIENT_ID}} \
+          --set tenantID={{.AZURE_TENANT_ID}} \
+          --set resourceGroup={{.TEST_RESOURCE_GROUP}} \
+          --set subscriptionID={{.AZURE_SUBSCRIPTION_ID}} \
+          --set workerReplicas=3 \
+          --set clientSecret.name={{.AZURE_CLUSTER_IDENTITY_SECRET_NAME}} \
+          --set clientSecret.namespace={{.AZURE_CLUSTER_IDENTITY_SECRET_NAMESPACE}} \
+          --debug
+      - echo ~~~ Wait for Azure infra to be provisioned
+      - kubectl wait --for=condition=ready cluster {{.CLUSTER_NAME}}-aks-cluster --timeout=40m -n {{.CLUSTER_NAMESPACE}}
+      - kubectl wait --for=condition=Ready azuremachines --all --timeout=40m -n {{.CLUSTER_NAMESPACE}}
+      - "{{.BINDIR}}/clusterctl get kubeconfig --namespace {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}}-aks-cluster > {{.CLUSTER_KUBECONFIG_PATH}}"
+      - echo ~~~ Azure K8S cluster
+      - echo ~~~ Install Azure Cloud Controller Manager
+      - |
+        helm install \
+          --kubeconfig={{.CLUSTER_KUBECONFIG_PATH}} \
+          --repo https://raw.githubusercontent.com/kubernetes-sigs/cloud-provider-azure/master/helm/repo cloud-provider-azure \
+          --generate-name \
+          --set infra.clusterName={{.CLUSTER_NAME}} \
+          --set cloudControllerManager.clusterCIDR="192.168.0.0/16" \
+          --debug
+      - echo "~~~ Install project calico - CNI"
+      - |
+        helm repo add projectcalico https://docs.tigera.io/calico/charts \
+          --kubeconfig={{.CLUSTER_KUBECONFIG_PATH}}
+      - |
+        helm install calico projectcalico/tigera-operator \
+          --kubeconfig={{.CLUSTER_KUBECONFIG_PATH}} \
+          -f https://raw.githubusercontent.com/kubernetes-sigs/cluster-api-provider-azure/main/templates/addons/calico/values.yaml \
+          --namespace tigera-operator --create-namespace
+      - echo ~~~ Installing azure disk csi driver
+      - curl -skSLo install-driver.sh https://raw.githubusercontent.com/kubernetes-sigs/azuredisk-csi-driver/v1.28.1/deploy/install-driver.sh
+      - chmod +x ./install-driver.sh
+      - KUBECONFIG={{.CLUSTER_KUBECONFIG_PATH}} ./install-driver.sh v1.28.1 snapshot
+      - rm ./install-driver.sh
+      - echo ~~~ Installing azure storage class
+      - KUBECONFIG={{.CLUSTER_KUBECONFIG_PATH}} kubectl create -f https://raw.githubusercontent.com/kubernetes-sigs/azuredisk-csi-driver/master/deploy/example/storageclass-azuredisk-csi.yaml
+      - echo ~~~ Wait for all nodes to become ready
+      - KUBECONFIG={{.CLUSTER_KUBECONFIG_PATH}} kubectl get pod -A
+      - KUBECONFIG={{.CLUSTER_KUBECONFIG_PATH}} kubectl get nodes
+      - KUBECONFIG={{.CLUSTER_KUBECONFIG_PATH}} kubectl wait --for=condition=ready nodes --all --timeout=10m
+      - KUBECONFIG={{.CLUSTER_KUBECONFIG_PATH}} kubectl get nodes
+      - echo ~~~ Azure K8S cluster created
 
   capi-delete:
     internal: true
@@ -183,6 +259,12 @@ tasks:
     cmds:
       - kubectl delete cluster {{.CLUSTER_NAME}}-gke-cluster --timeout=20m
       - helm uninstall --wait -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} --timeout 10m --debug
+
+  capi-delete-aks:
+    deps:
+      - tool:helm
+    cmds:
+      - helm uninstall --wait -n {{.CLUSTER_NAMESPACE}} {{.CLUSTER_NAME}} --timeout 60m --debug
 
   # This is if you are running locally and not in CI
   gke-auth-login:
