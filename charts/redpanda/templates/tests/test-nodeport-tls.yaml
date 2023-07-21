@@ -27,8 +27,8 @@ metadata:
   {{- . | nindent 4 }}
   {{- end }}
   annotations:
-    "helm.sh/hook": test
-    "helm.sh/hook-delete-policy": before-hook-creation
+    helm.sh/hook: test
+    helm.sh/hook-delete-policy: before-hook-creation
 spec:
   serviceAccountName: test-nodeport-tls-redpanda-no-a-test
   restartPolicy: Never
@@ -156,16 +156,18 @@ kind: ServiceAccount
 metadata:
   name: test-nodeport-tls-redpanda-no-a-test
   annotations:
-    helm.sh/hook-weight: "-100"
+    helm.sh/hook: test
     helm.sh/hook-delete-policy: before-hook-creation
+    helm.sh/hook-weight: "-100"
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: test-nodeport-tls-redpanda-no-a-test
   annotations:
-    helm.sh/hook-weight: "-100"
+    helm.sh/hook: test
     helm.sh/hook-delete-policy: before-hook-creation
+    helm.sh/hook-weight: "-100"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -180,8 +182,9 @@ kind: Role
 metadata:
   name: test-nodeport-tls-redpanda-no-a-test
   annotations:
-    helm.sh/hook-weight: "-100"
+    helm.sh/hook: test
     helm.sh/hook-delete-policy: before-hook-creation
+    helm.sh/hook-weight: "-100"
 rules:
   - apiGroups:
       - ""
