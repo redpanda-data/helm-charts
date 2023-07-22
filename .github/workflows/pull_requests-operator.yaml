@@ -24,8 +24,7 @@ on:
       - .github/ct.yaml
       - .github/kind.yaml
       - .github/workflows/pull_requests-operator.yaml
-      - '!charts/**'
-      - 'charts/operator'
+      - 'charts/operator/**'
       - '!**/*.md'
 jobs:
   lint:
@@ -53,7 +52,7 @@ jobs:
           version: v3.8.0-1
 
       - name: Run chart-testing (lint)
-        run: ct lint --config .github/ct.yaml --github-groups
+        run: ct lint --config .github/ct.yaml --github-groups --excluded-charts console,redpanda
 
   check-values:
     runs-on: ubuntu-22.04
@@ -134,7 +133,7 @@ jobs:
       - name: Install CRDs
         if: steps.list-changed.outputs.changed == 'true'
         run: |
-          kubectl kustomize https://github.com/redpanda-data/redpanda//src/go/k8s/config/crd | kubectl apply -f -        
+          kubectl kustomize https://github.com/redpanda-data/redpanda//src/go/k8s/config/crd | kubectl apply -f -
 
       - name: Run chart-testing (install and upgrade)
         if: steps.list-changed.outputs.changed == 'true'
