@@ -23,13 +23,14 @@ on:
       - .github/*.sh
       - .github/ct.yaml
       - .github/kind.yaml
-      - .github/workflows/pull_requests.yaml
+      - .github/workflows/pull_requests_from_origin.yaml
       - charts/**
+      - '!charts/operator/**'
       - '!**/*.md'
 jobs:
   test:
     if: ${{ github.event.pull_request.head.repo.full_name == 'redpanda-data/helm-charts' }}
-    name: Run ct tests for ci values matching ${{ matrix.testvaluespattern }} for Redpanda version ${{ matrix.version }}
+    name: "${{ matrix.version }}/${{ matrix.testvaluespattern }}: Run ct tests"
     strategy:
       matrix:
         version:
@@ -63,7 +64,7 @@ jobs:
       - name: Run chart-testing (list-changed)
         id: list-changed
         run: |
-          changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }} --excluded-charts console )
+          changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }} --excluded-charts console,operator )
           echo $changed
           if [[ -n "$changed" ]]; then
             echo changed="true" >> "$GITHUB_OUTPUT"
@@ -137,5 +138,5 @@ jobs:
             --config .github/ct.yaml \
             --helm-extra-set-args="--set=image.tag=${{ matrix.version }}" \
             --skip-missing-values \
-            --excluded-charts console \
+            --excluded-charts console,operator \
             --target-branch ${{ github.event.repository.default_branch }}

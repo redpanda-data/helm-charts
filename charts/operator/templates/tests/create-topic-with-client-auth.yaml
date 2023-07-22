@@ -1,0 +1,71 @@
+{{- $file := "files/three_node_redpanda.yaml" -}}
+{{- $resourceType := "redpanda" -}}
+{{- if and .Values.webhook.enabled (eq .Values.scope "Cluster" ) -}}
+  {{- $file = "files/three_node_cluster.yaml" -}}
+  {{- $resourceType := "cluster" -}}
+{{- else if ne .Values.scope "Namespace" -}}
+  {{ fail "invalid combination of scope and webhook.enabled" }}
+{{- end -}}
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: create-test-topic-tls
+  annotations:
+    helm.sh/hook: test
+    helm.sh/hook-delete-policy: before-hook-creation
+    helm.sh/hook-weight: "2"
+spec:
+  serviceAccount: {{ include "redpanda-operator.fullname" . }}
+  containers:
+    - name: rpk
+      image: docker.redpanda.com/redpandadata/redpanda:latest
+      env:
+        - name: KUBECTL_VERSION
+          value: v1.27.4
+      command:
+        - /bin/bash
+        - -c
+        - |
+          set -xeuo pipefail
+
+          # Setup for the test
+          mkdir -p /etc/redpanda
+          cat > /etc/redpanda/redpanda.yaml << EOF
+          redpanda:
+          rpk:
+            kafka_api:
+              brokers:
+                - cluster-tls-0.cluster-tls.{{ .Release.Namespace }}.svc.cluster.local:9092
+              tls:
+                enabled: true
+                key_file: /tmp/tls.key
+                cert_file: /tmp/tls.crt
+                truststore_file: /tmp/ca.crt
+          EOF
+          curl -Ls https://dl.k8s.io/${KUBECTL_VERSION}/bin/linux/amd64/kubectl -o /tmp/kubectl-${KUBECTL_VERSION}
+          echo "$(curl -Ls https://dl.k8s.io/${KUBECTL_VERSION}/bin/linux/amd64/kubectl.sha256) /tmp/kubectl-${KUBECTL_VERSION}" | sha256sum --check
+          chmod +x /tmp/kubectl-${KUBECTL_VERSION}
+          KUBECTL=/tmp/kubectl-${KUBECTL_VERSION}
+
+          # Create the Redpanda resource
+          $KUBECTL -n {{ .Release.Namespace }} apply -f - <<EOF
+{{- .Files.Get $file | nindent 10 }}
+          EOF
+
+          # Wait for things to be ready
+          $KUBECTL -n {{ .Release.Namespace }} wait --for=condition=Ready --timeout=10m {{ $resourceType }}/cluster-tls
+          $KUBECTL -n {{ .Release.Namespace }} wait --for=jsonpath='{.metadata.name}'=cluster-tls-user-client --timeout=10m secret/cluster-tls-user-client
+          $KUBECTL -n {{ .Release.Namespace }} get secret cluster-tls-user-client -o go-template='{{ `{{ base64decode (index .data "tls.crt") }}` }}' > /tmp/tls.crt
+          $KUBECTL -n {{ .Release.Namespace }} get secret cluster-tls-user-client -o go-template='{{ `{{ base64decode (index .data "tls.key") }}` }}' > /tmp/tls.key
+          $KUBECTL -n {{ .Release.Namespace }} get secret cluster-tls-user-client -o go-template='{{ `{{ base64decode (index .data "ca.crt") }}` }}' > /tmp/ca.crt
+
+          # Make sure Redpanda works
+          rpk topic create test -v
+
+          # Clean up
+          $KUBECTL -n {{ .Release.Namespace }} delete -f - <<EOF
+{{- .Files.Get $file | nindent 10 }}
+          EOF
+          $KUBECTL -n {{ .Release.Namespace }} delete pvc --all
+  restartPolicy: Never

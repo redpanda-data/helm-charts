@@ -28,8 +28,7 @@ tasks:
     deps: [mklocal]
     cmds:
       - echo "~~~ Installing clusterawsadm"
-      - mkdir -p {{.BINDIR}}
-      - curl -Ls https://github.com/kubernetes-sigs/cluster-api-provider-aws/releases/download/{{.CLUSTERAWSADM_VERSION}}/clusterawsadm-linux-amd64 -o {{.BINDIR}}/clusterawsadm-{{.CLUSTERAWSADM_VERSION}}
+      - curl -Ls https://github.com/kubernetes-sigs/cluster-api-provider-aws/releases/download/{{.CLUSTERAWSADM_VERSION}}/clusterawsadm-{{OS}}-{{ARCH}} -o {{.BINDIR}}/clusterawsadm-{{.CLUSTERAWSADM_VERSION}}
       - chmod 0775 {{.BINDIR}}/clusterawsadm-{{.CLUSTERAWSADM_VERSION}}
       - ln -sf clusterawsadm-{{.CLUSTERAWSADM_VERSION}} {{.BINDIR}}/clusterawsadm
     status:
@@ -39,8 +38,7 @@ tasks:
     deps: [mklocal]
     cmds:
       - echo "~~~ Installing clusterctl"
-      - mkdir -p {{.BINDIR}}
-      - curl -Ls https://github.com/kubernetes-sigs/cluster-api/releases/download/{{.CLUSTERCTL_VERSION}}/clusterctl-linux-amd64 -o {{.BINDIR}}/clusterctl-{{.CLUSTERCTL_VERSION}}
+      - curl -Ls https://github.com/kubernetes-sigs/cluster-api/releases/download/{{.CLUSTERCTL_VERSION}}/clusterctl-{{OS}}-{{ARCH}} -o {{.BINDIR}}/clusterctl-{{.CLUSTERCTL_VERSION}}
       - chmod 0775 {{.BINDIR}}/clusterctl-{{.CLUSTERCTL_VERSION}}
       - ln -sf clusterctl-{{.CLUSTERCTL_VERSION}} {{.BINDIR}}/clusterctl
     status:
@@ -50,7 +48,7 @@ tasks:
     deps: [mklocal]
     cmds:
       - echo '~~~ Installing helm'
-      - curl -Ls https://get.helm.sh/helm-{{.HELM_VERSION}}-linux-amd64.tar.gz | tar xz -C {{.BINDIR}} linux-amd64/helm --strip 1 --transform 's@$@-{{.HELM_VERSION}}@'
+      - curl -Ls https://get.helm.sh/helm-{{.HELM_VERSION}}-{{OS}}-{{ARCH}}.tar.gz | tar xz -C {{.BINDIR}} {{OS}}-{{ARCH}}/helm --strip 1 --transform 's@$@-{{.HELM_VERSION}}@'
       - ln -s helm-{{.HELM_VERSION}} {{.BINDIR}}/helm
     status:
       - test -f {{.BINDIR}}/helm-{{.HELM_VERSION}}
@@ -59,7 +57,7 @@ tasks:
     deps: [mklocal]
     cmds:
       - echo '~~~ Installing kind'
-      - curl -Ls https://github.com/kubernetes-sigs/kind/releases/download/{{.KIND_VERSION}}/kind-linux-amd64 -o {{.BINDIR}}/kind-{{.KIND_VERSION}}
+      - curl -Ls https://github.com/kubernetes-sigs/kind/releases/download/{{.KIND_VERSION}}/kind-{{OS}}-{{ARCH}} -o {{.BINDIR}}/kind-{{.KIND_VERSION}}
       - chmod +x {{.BINDIR}}/kind-{{.KIND_VERSION}}
       - ln -s kind-{{.KIND_VERSION}} {{.BINDIR}}/kind
     status:
@@ -72,8 +70,8 @@ tasks:
         sh: curl -Ls -s https://dl.k8s.io/release/stable.txt
     cmds:
       - echo '~~~ Installing kubectl'
-      - curl -Ls https://dl.k8s.io/{{.KUBECTL_VERSION}}/bin/linux/amd64/kubectl -o {{.BINDIR}}/kubectl-{{.KUBECTL_VERSION}}
-      - echo "$(curl -Ls https://dl.k8s.io/{{.KUBECTL_VERSION}}/bin/linux/amd64/kubectl.sha256) {{.BINDIR}}/kubectl-{{.KUBECTL_VERSION}}" | sha256sum --check
+      - curl -Ls https://dl.k8s.io/{{.KUBECTL_VERSION}}/bin/{{OS}}/{{ARCH}}/kubectl -o {{.BINDIR}}/kubectl-{{.KUBECTL_VERSION}}
+      - echo "$(curl -Ls https://dl.k8s.io/{{.KUBECTL_VERSION}}/bin/{{OS}}/{{ARCH}}/kubectl.sha256) {{.BINDIR}}/kubectl-{{.KUBECTL_VERSION}}" | sha256sum --check
       - chmod +x {{.BINDIR}}/kubectl-{{.KUBECTL_VERSION}}
       - ln -s kubectl-{{.KUBECTL_VERSION}} {{.BINDIR}}/kubectl
     status:
@@ -83,7 +81,7 @@ tasks:
     deps: [mklocal]
     cmds:
       - echo '~~~ Installing chart testing'
-      - curl -Ls https://github.com/joejulian/chart-testing/releases/download/v{{.CT_VERSION}}/chart-testing_{{.CT_VERSION}}_linux_amd64.tar.gz | tar xz -C {{.BINDIR}} ct --transform 's@$@-{{.CT_VERSION}}@'
+      - curl -Ls https://github.com/joejulian/chart-testing/releases/download/v{{.CT_VERSION}}/chart-testing_{{.CT_VERSION}}_{{OS}}_{{ARCH}}.tar.gz | tar xz -C {{.BINDIR}} ct --transform 's@$@-{{.CT_VERSION}}@'
       - ln -s ct-{{.CT_VERSION}} {{.BINDIR}}/ct
     status:
       - test -f {{.BINDIR}}/ct-{{.CT_VERSION}}
@@ -95,7 +93,7 @@ tasks:
         sh: mktemp -d
     cmds:
       - echo '~~~ Installing aws cli'
-      - curl -Ls "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip"
+      - curl -Ls "https://awscli.amazonaws.com/awscli-exe-{{OS}}-x86_64.zip" -o "/tmp/awscliv2.zip"
       - unzip -q -d "$TEMPDIR" /tmp/awscliv2.zip
       - "${TEMPDIR}/aws/install --bin-dir $(realpath .local/bin) --install-dir $(realpath .local/aws-cli)"
     status:
@@ -105,7 +103,7 @@ tasks:
     deps: [mklocal]
     cmds:
       - echo '~~~ Installing support bundle'
-      - curl -Ls https://github.com/replicatedhq/troubleshoot/releases/download/{{.SUPPORT_BUNDLE_VERSION}}/support-bundle_linux_amd64.tar.gz | tar xz -C {{.BINDIR}} support-bundle  --transform 's@$@-{{.SUPPORT_BUNDLE_VERSION}}@'
+      - curl -Ls https://github.com/replicatedhq/troubleshoot/releases/download/{{.SUPPORT_BUNDLE_VERSION}}/support-bundle_{{OS}}_{{ARCH}}.tar.gz | tar xz -C {{.BINDIR}} support-bundle  --transform 's@$@-{{.SUPPORT_BUNDLE_VERSION}}@'
       - ln -s support-bundle-{{.SUPPORT_BUNDLE_VERSION}} {{.BINDIR}}/support-bundle
     status:
       - test -f {{.BINDIR}}/support-bundle-{{.SUPPORT_BUNDLE_VERSION}}
@@ -113,8 +111,8 @@ tasks:
   gcloud:
     cmds:
       - echo '~~~ Installing gcloud'
-      - curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-433.0.0-linux-x86_64.tar.gz
-      - tar -xf google-cloud-cli-433.0.0-linux-x86_64.tar.gz
+      - curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-433.0.0-{{OS}}-x86_64.tar.gz
+      - tar -xf google-cloud-cli-433.0.0-{{OS}}-x86_64.tar.gz
       - ./google-cloud-sdk/install.sh --usage-reporting=false --quiet --path-update=true
       - "ln -s $(realpath ./google-cloud-sdk/bin/gcloud) {{.BINDIR}}/gcloud"
       - "ln -s $(realpath ./google-cloud-sdk/bin/gsutil) {{.BINDIR}}/gsutil"

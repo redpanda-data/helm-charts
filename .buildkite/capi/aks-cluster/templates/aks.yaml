@@ -1,0 +1,214 @@
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: Cluster
+metadata:
+  name: {{ include "aks-cluster.fullname" . }}
+  namespace: {{ .Release.namespace | default "default" }}
+  labels: {{ include "aks-cluster.labels" . | nindent 4 }}
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks:
+        - 192.168.0.0/16
+  controlPlaneRef:
+    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    kind: KubeadmControlPlane
+    name: {{ include "aks-cluster.fullname" . }}-control-plane
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+    kind: AzureCluster
+    name: {{ include "aks-cluster.fullname" . }}
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: AzureCluster
+metadata:
+  name: {{ include "aks-cluster.fullname" . }}
+  namespace: {{ .Release.namespace | default "default" }}
+  labels: {{ include "aks-cluster.labels" . | nindent 4 }}
+spec:
+  identityRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+    kind: AzureClusterIdentity
+    name: {{ include "aks-cluster.fullname" . }}
+  location: {{ .Values.location }}
+  networkSpec:
+    subnets:
+      - name: control-plane-subnet
+        role: control-plane
+      - name: node-subnet
+        role: node
+    vnet:
+      name: {{ include "aks-cluster.fullname" . }}-vnet
+  resourceGroup: {{ .Values.resourceGroup }}
+  subscriptionID: {{ .Values.subscriptionID }}
+---
+apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+kind: KubeadmControlPlane
+metadata:
+  name: {{ include "aks-cluster.fullname" . }}-control-plane
+  namespace: {{ .Release.namespace | default "default" }}
+  labels: {{ include "aks-cluster.labels" . | nindent 4 }}
+spec:
+  kubeadmConfigSpec:
+    clusterConfiguration:
+      apiServer:
+        extraArgs:
+          cloud-provider: external
+        timeoutForControlPlane: 20m
+      controllerManager:
+        extraArgs:
+          allocate-node-cidrs: "false"
+          cloud-provider: external
+          cluster-name: {{ include "aks-cluster.fullname" . }}
+      etcd:
+        local:
+          dataDir: /var/lib/etcddisk/etcd
+          extraArgs:
+            quota-backend-bytes: "8589934592"
+    diskSetup:
+      filesystems:
+        - device: /dev/disk/azure/scsi1/lun0
+          extraOpts:
+            - -E
+            - lazy_itable_init=1,lazy_journal_init=1
+          filesystem: ext4
+          label: etcd_disk
+        - device: ephemeral0.1
+          filesystem: ext4
+          label: ephemeral0
+          replaceFS: ntfs
+      partitions:
+        - device: /dev/disk/azure/scsi1/lun0
+          layout: true
+          overwrite: false
+          tableType: gpt
+    files:
+      - contentFrom:
+          secret:
+            key: control-plane-azure.json
+            name: {{ include "aks-cluster.fullname" . }}-control-plane-azure-json
+        owner: root:root
+        path: /etc/kubernetes/azure.json
+        permissions: "0644"
+    initConfiguration:
+      nodeRegistration:
+        kubeletExtraArgs:
+          azure-container-registry-config: /etc/kubernetes/azure.json
+          cloud-provider: external
+        name: {{ printf "'{{ ds.meta_data[\"local_hostname\"] }}'" }}
+    joinConfiguration:
+      nodeRegistration:
+        kubeletExtraArgs:
+          azure-container-registry-config: /etc/kubernetes/azure.json
+          cloud-provider: external
+        name: {{ printf "'{{ ds.meta_data[\"local_hostname\"] }}'" }}
+    mounts:
+      - - LABEL=etcd_disk
+        - /var/lib/etcddisk
+    postKubeadmCommands: []
+    preKubeadmCommands: []
+  machineTemplate:
+    infrastructureRef:
+      apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+      kind: AzureMachineTemplate
+      name: {{ include "aks-cluster.fullname" . }}-control-plane
+  replicas: {{ .Values.controlPlaneReplicas }}
+  version: {{ .Values.kubernetesVersion }}
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: AzureMachineTemplate
+metadata:
+  name: {{ include "aks-cluster.fullname" . }}-control-plane
+  namespace: {{ .Release.namespace | default "default" }}
+  labels: {{ include "aks-cluster.labels" . | nindent 4 }}
+spec:
+  template:
+    spec:
+      dataDisks:
+        - diskSizeGB: 256
+          lun: 0
+          nameSuffix: etcddisk
+      osDisk:
+        diskSizeGB: 128
+        osType: Linux
+      sshPublicKey: ""
+      vmSize: Standard_B2s
+---
+apiVersion: cluster.x-k8s.io/v1beta1
+kind: MachineDeployment
+metadata:
+  name: {{ include "aks-cluster.fullname" . }}
+  namespace: {{ .Release.namespace | default "default" }}
+  labels: {{ include "aks-cluster.labels" . | nindent 4 }}
+spec:
+  clusterName: {{ include "aks-cluster.fullname" . }}
+  replicas: {{ .Values.workerReplicas }}
+  selector:
+    matchLabels: null
+  template:
+    spec:
+      bootstrap:
+        configRef:
+          apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+          kind: KubeadmConfigTemplate
+          name: {{ include "aks-cluster.fullname" . }}-workers
+      clusterName: {{ include "aks-cluster.fullname" . }}
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+        kind: AzureMachineTemplate
+        name: {{ include "aks-cluster.fullname" . }}-workers
+      version: {{ .Values.kubernetesVersion }}
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: AzureMachineTemplate
+metadata:
+  name: {{ include "aks-cluster.fullname" . }}-workers
+  namespace: {{ .Release.namespace | default "default" }}
+  labels: {{ include "aks-cluster.labels" . | nindent 4 }}
+spec:
+  template:
+    spec:
+      osDisk:
+        diskSizeGB: 128
+        osType: Linux
+      sshPublicKey: ""
+      vmSize: Standard_B2s
+---
+apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
+kind: KubeadmConfigTemplate
+metadata:
+  name: {{ include "aks-cluster.fullname" . }}-workers
+  namespace: {{ .Release.namespace | default "default" }}
+  labels: {{ include "aks-cluster.labels" . | nindent 4 }}
+spec:
+  template:
+    spec:
+      files:
+        - contentFrom:
+            secret:
+              key: worker-node-azure.json
+              name: {{ include "aks-cluster.fullname" . }}-workers-azure-json
+          owner: root:root
+          path: /etc/kubernetes/azure.json
+          permissions: "0644"
+      joinConfiguration:
+        nodeRegistration:
+          kubeletExtraArgs:
+            azure-container-registry-config: /etc/kubernetes/azure.json
+            cloud-provider: external
+          name: {{ printf "'{{ ds.meta_data[\"local_hostname\"] }}'" }}
+      preKubeadmCommands: []
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+kind: AzureClusterIdentity
+metadata:
+  name: {{ include "aks-cluster.fullname" . }}
+  namespace: {{ .Release.namespace | default "default" }}
+  labels: {{ include "aks-cluster.labels" . | nindent 4 }}
+spec:
+  allowedNamespaces: {}
+  clientID: {{ .Values.clientID }}
+  clientSecret:
+    name: {{ .Values.clientSecret.name }}
+    namespace: {{ .Values.clientSecret.namespace }}
+  tenantID: {{ .Values.tenantID }}
+  type: ServicePrincipal

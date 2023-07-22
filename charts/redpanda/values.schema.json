@@ -946,7 +946,7 @@
             },
             "kafkaEndpoint": {
               "type": "string",
-              "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+              "pattern": "^[A-Za-z_-][A-Za-z0-9_-]*$"
             },
             "authenticationMethod": {
               "type": ["string", "null"],
@@ -1050,7 +1050,7 @@
             },
             "kafkaEndpoint": {
               "type": "string",
-              "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+              "pattern": "^[A-Za-z_-][A-Za-z0-9_-]*$"
             },
             "authenticationMethod": {
               "type": ["string", "null"],

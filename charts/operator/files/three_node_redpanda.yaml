@@ -1,0 +1,80 @@
+apiVersion: cluster.redpanda.com/v1alpha1
+kind: Redpanda
+metadata:
+  name: cluster-tls
+spec:
+  chartRef:
+    chartVersion: ">4.0.0"
+  clusterSpec:
+    console:
+      enabled: false
+    image:
+      repository: docker.redpanda.com/redpandadata/redpanda
+      tag: v23.2.2
+    listeners:
+      admin:
+        external: {}
+        port: 9644
+        tls:
+          cert: ""
+          enabled: false
+          requireClientAuth: false
+      http:
+        authenticationMethod: none
+        enabled: true
+        external: {}
+        kafkaEndpoint: kafka-default
+        port: 8082
+        tls:
+          cert: ""
+          enabled: false
+          requireClientAuth: false
+      kafka:
+        authenticationMethod: none
+        external: {}
+        port: 9092
+        tls:
+          cert: kafka-internal-0
+          enabled: true
+          requireClientAuth: true
+      rpc:
+        port: 33145
+    logging:
+      logLevel: trace
+      usageStats:
+        enabled: false
+    resources:
+      cpu:
+        cores: 1
+      memory:
+        container:
+          max: 2Gi
+          min: 2Gi
+    statefulset:
+      replicas: 3
+    storage:
+      persistentVolume:
+        enabled: true
+        size: 100Gi
+    tls:
+      certs:
+        kafka-internal-0:
+          caEnabled: true
+      enabled: true
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: cluster-tls-user-client
+spec:
+  emailAddresses:
+    - test@domain.dom
+  duration: 43800h0m0s
+  issuerRef:
+    group: cert-manager.io
+    kind: Issuer
+    name: cluster-tls-kafka-internal-0-root-issuer
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  secretName: cluster-tls-user-client

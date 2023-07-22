@@ -28,3 +28,16 @@ steps:
           slack_token_env_var_name: "SLACK_VBOT_TOKEN"
           conditions:
             failed: true
+  - label: ":cloud: test aks cloud storage"
+    env:
+      CLOUD_PROVIDER: aks
+    command: .buildkite/scripts/cloud-test.sh
+    artifact_paths:
+      - ".local/artifacts/**/*"
+    plugins:
+      - https://$GITHUB_API_TOKEN@github.com/redpanda-data/step-slack-notify-buildkite-plugin.git#main:
+          message: ":cloud: test aks cloud storage failed"
+          channel_name: "kubernetes-tests"
+          slack_token_env_var_name: "SLACK_VBOT_TOKEN"
+          conditions:
+            failed: true
