@@ -522,6 +522,48 @@ entries:
     - https://github.com/redpanda-data/helm-charts/releases/download/console-0.3.2/console-0.3.2.tgz
     version: 0.3.2
   operator:
+  - annotations:
+      artifacthub.io/crds: |
+        - kind: Redpanda
+          version: v1alpha1
+          name: redpanda
+          displayName: Redpanda
+          description: Define a Redpanda cluster
+      artifacthub.io/images: |
+        - name: redpanda-operator
+          image: docker.redpanda.com/redpandadata/redpanda-operator:v23.2.1
+        - name: redpanda
+          image: docker.redpanda.com/redpandadata/redpanda:v23.2.1
+        - name: gco.io/kubebuilder/kube-rbac-proxy:v0.8.0
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://docs.redpanda.com
+        - name: "Helm (>= 3.6.0)"
+          url: https://helm.sh/docs/intro/install/
+      artifacthub.io/operator: "true"
+      artifacthub.io/operatorCapabilities: Basic Install
+    apiVersion: v2
+    appVersion: v23.2.2
+    created: "2023-07-22T14:05:35.792793004Z"
+    dependencies:
+    - condition: monitoring.enabled
+      name: kube-prometheus-stack
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 13.13.1
+    description: Redpanda operator helm chart
+    digest: eb1909f5837beb2683e0202082d6e2446a47081f5ca83cc8ac0f4d24217b5026
+    home: https://vectorized.io
+    maintainers:
+    - email: support@vectorized.io
+      name: Vectorizedio
+    name: operator
+    sources:
+    - https://github.com/redpanda-data/helm-charts
+    type: application
+    urls:
+    - https://github.com/redpanda-data/helm-charts/releases/download/operator-0.3.2/operator-0.3.2.tgz
+    version: 0.3.2
   - apiVersion: v2
     appVersion: v23.2.1-rc9
     created: "2023-07-22T02:51:39.864547769Z"
@@ -5502,4 +5544,4 @@ entries:
     urls:
     - https://charts.redpanda.com/redpanda-0.1.0.tgz
     version: 0.1.0
-generated: "2023-07-22T02:51:39.864944871Z"
+generated: "2023-07-22T14:05:35.793070432Z"
