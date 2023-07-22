@@ -6,6 +6,7 @@ You can install the chart by running the following commands:
 ```shell
 helm repo add redpanda 'https://charts.redpanda.com/' 
 helm repo update
+kubectl kustomize https://github.com/redpanda-data/redpanda/src/go/k8s/config/crd | kubectl apply -f -
 helm install redpanda/console -f myvalues.yaml
 ```
 
