@@ -534,6 +534,49 @@ entries:
           image: docker.redpanda.com/redpandadata/redpanda-operator:v23.2.1
         - name: redpanda
           image: docker.redpanda.com/redpandadata/redpanda:v23.2.1
+        - name: kube-rbac-proxy
+          image: gco.io/kubebuilder/kube-rbac-proxy:v0.8.0
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://docs.redpanda.com
+        - name: "Helm (>= 3.6.0)"
+          url: https://helm.sh/docs/intro/install/
+      artifacthub.io/operator: "true"
+      artifacthub.io/operatorCapabilities: Basic Install
+    apiVersion: v2
+    appVersion: v23.2.2
+    created: "2023-07-23T09:33:37.06870135Z"
+    dependencies:
+    - condition: monitoring.enabled
+      name: kube-prometheus-stack
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 13.13.1
+    description: Redpanda operator helm chart
+    digest: 7293bb35c5ccc7d97fca8214b2719dbbdf14330a0747e00c4aa27390c4323cae
+    home: https://vectorized.io
+    maintainers:
+    - email: support@vectorized.io
+      name: Vectorizedio
+    name: operator
+    sources:
+    - https://github.com/redpanda-data/helm-charts
+    type: application
+    urls:
+    - https://github.com/redpanda-data/helm-charts/releases/download/operator-0.3.3/operator-0.3.3.tgz
+    version: 0.3.3
+  - annotations:
+      artifacthub.io/crds: |
+        - kind: Redpanda
+          version: v1alpha1
+          name: redpanda
+          displayName: Redpanda
+          description: Define a Redpanda cluster
+      artifacthub.io/images: |
+        - name: redpanda-operator
+          image: docker.redpanda.com/redpandadata/redpanda-operator:v23.2.1
+        - name: redpanda
+          image: docker.redpanda.com/redpandadata/redpanda:v23.2.1
         - name: gco.io/kubebuilder/kube-rbac-proxy:v0.8.0
       artifacthub.io/license: Apache-2.0
       artifacthub.io/links: |
@@ -5616,4 +5659,4 @@ entries:
     urls:
     - https://charts.redpanda.com/redpanda-0.1.0.tgz
     version: 0.1.0
-generated: "2023-07-22T16:38:06.059657243Z"
+generated: "2023-07-23T09:33:37.069159452Z"
