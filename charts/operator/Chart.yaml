@@ -4,7 +4,7 @@ description: Redpanda operator helm chart
 type: application
 
 # This is the chart version. This is only placeholder that will be set during release process
-version: 0.3.2
+version: 0.3.3
 
 # This is the version number of the application being deployed. This is only placeholder that
 # will be set during release process.
@@ -35,7 +35,8 @@ annotations:
       image: docker.redpanda.com/redpandadata/redpanda-operator:v23.2.1
     - name: redpanda
       image: docker.redpanda.com/redpandadata/redpanda:v23.2.1
-    - name: gco.io/kubebuilder/kube-rbac-proxy:v0.8.0
+    - name: kube-rbac-proxy
+      image: gco.io/kubebuilder/kube-rbac-proxy:v0.8.0
   artifacthub.io/crds: |
     - kind: Redpanda
       version: v1alpha1
