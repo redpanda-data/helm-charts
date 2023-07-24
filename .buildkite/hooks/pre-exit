@@ -66,6 +66,9 @@ cleanup_aks() {
 
     docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.50.0 \
       az group delete --resource-group $TEST_RESOURCE_GROUP --yes --debug
+
+    docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.50.0 \
+      az group delete --resource-group $TEST_RESOURCE_GROUP --yes --debug || true
 }
 
 cleanup_"${CLOUD_PROVIDER}"
