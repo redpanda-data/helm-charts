@@ -6,10 +6,6 @@
 
 ### Prerequisite
 
-To deploy operator with webhooks (enabled by default) please install
-cert manager. Please follow
-[the installation guide](https://cert-manager.io/docs/installation/)
-
 The cert manager needs around 1 minute to be ready. The helm chart
 will create Issuer and Certificate custom resource. The
 webhook of cert-manager will prevent from creating mentioned
@@ -23,30 +19,21 @@ discovered.
 1. Install Redpanda operator CRDs:
 
 ```sh
-kubectl apply -k 'https://github.com/redpanda-data/redpanda/src/go/k8s/config/crd?ref=v21.3.4'
+kubectl kustomize https://github.com/redpanda-data/redpanda//src/go/k8s/config/crd | kubectl apply -f -
 ```
 
-> The CRDs are decoupled from helm chart, so that helm release can be
-> removed without cascading deletion of underling custom resources.
-> Other argument for decoupling is that helm cli can incorrectly
-> patch the Custom Resource Definition.
+> The CRDs are decoupled from helm chart, so that helm release can be managed with fewer privileges.
+> The CRDs need to be installed by someone with cluster-level privileges, but once installed the
+> user only needs access to a namespace.
 
 ### Helm installation
 
 1. Install the Redpanda operator:
 
-> The example command should be invoked from `src/go/k8s/helm-chart/charts`
-
 ```sh
-helm install --namespace redpanda-system --create-namespace redpanda-system ./redpanda-operator
-```
-
-Alternative installation with kube-prometheus-stack that includes prometheus operator CRD
-```sh
-helm install --dependency-update \
---namespace redpanda-system \
---set monitoring.enabled=true \
---create-namespace redpanda-operator ./redpanda-operator
+helm repo add redpanda https://charts.redpanda.com
+helm repo update redpanda
+helm install --namespace redpanda --create-namespace redpanda-operator operator
 ```
 
 Other instruction will be visible after installation.
