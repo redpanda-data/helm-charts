@@ -557,6 +557,50 @@ entries:
           description: Define a Redpanda cluster
       artifacthub.io/images: |
         - name: redpanda-operator
+          image: docker.redpanda.com/redpandadata/redpanda-operator:v23.2.2
+        - name: redpanda
+          image: docker.redpanda.com/redpandadata/redpanda:v23.2.2
+        - name: kube-rbac-proxy
+          image: gcr.io/kubebuilder/kube-rbac-proxy:v0.8.0
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://docs.redpanda.com
+        - name: "Helm (>= 3.6.0)"
+          url: https://helm.sh/docs/intro/install/
+      artifacthub.io/operator: "true"
+      artifacthub.io/operatorCapabilities: Basic Install
+    apiVersion: v2
+    appVersion: v23.2.2
+    created: "2023-07-24T17:32:45.497171263Z"
+    dependencies:
+    - condition: monitoring.enabled
+      name: kube-prometheus-stack
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 13.13.1
+    description: Redpanda operator helm chart
+    digest: e6f1db7c304f517f37716e81e2244883fbfdaaf145cc90bcda1a08b6bda600a0
+    home: https://vectorized.io
+    icon: https://go.redpanda.com/hubfs/Redpandas/operator-panda.png
+    maintainers:
+    - email: support@vectorized.io
+      name: Vectorizedio
+    name: operator
+    sources:
+    - https://github.com/redpanda-data/helm-charts
+    type: application
+    urls:
+    - https://github.com/redpanda-data/helm-charts/releases/download/operator-0.3.4/operator-0.3.4.tgz
+    version: 0.3.4
+  - annotations:
+      artifacthub.io/crds: |
+        - kind: Redpanda
+          version: v1alpha1
+          name: redpanda
+          displayName: Redpanda
+          description: Define a Redpanda cluster
+      artifacthub.io/images: |
+        - name: redpanda-operator
           image: docker.redpanda.com/redpandadata/redpanda-operator:v23.2.1
         - name: redpanda
           image: docker.redpanda.com/redpandadata/redpanda:v23.2.1
@@ -5685,4 +5729,4 @@ entries:
     urls:
     - https://charts.redpanda.com/redpanda-0.1.0.tgz
     version: 0.1.0
-generated: "2023-07-23T14:36:38.456559996Z"
+generated: "2023-07-24T17:32:45.497580472Z"
