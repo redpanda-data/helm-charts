@@ -1,0 +1,149 @@
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Lint and Test KMinion Chart
+
+on:
+  pull_request:
+    branches:
+      - "**"
+    paths:
+      - .github/*.sh
+      - .github/ct.yaml
+      - .github/kind.yaml
+      - .github/workflows/pull_requests_kminion.yaml
+      - 'charts/kminion/**'
+      - '!**/*.md'
+jobs:
+  lint:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - run: |
+          git checkout main
+          git checkout -
+
+      - name: Run CI file name checker
+        run: .github/check-ci-files.sh charts/kminion/ci
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.12.2
+
+      - name: Set up chart-testing
+        uses: joejulian/chart-testing-action@v2.3.1-1
+        with:
+          version: v3.8.0-1
+
+      - name: Run chart-testing (lint)
+        run: ct lint --config .github/ct.yaml --github-groups --excluded-charts console,redpanda,operator
+
+  check-values:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - run: |
+          git checkout main
+          git checkout -
+
+      - name: install dyff
+        run: curl -Ls https://github.com/homeport/dyff/releases/download/v1.5.6/dyff_1.5.6_linux_amd64.tar.gz | tar xzv dyff
+      - name: compare kminion values with main
+        run: ./dyff --color=off -k between -s <(git show 'origin/main:charts/kminion/values.yaml') charts/kminion/values.yaml
+
+  test:
+    needs: lint
+    name: Run ct tests for kminion chart
+    strategy:
+      fail-fast: true
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - run: |
+          git checkout main
+          git checkout -
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.11.1
+
+      - name: Set up chart-testing
+        uses: joejulian/chart-testing-action@v2.3.1-1
+        with:
+          version: v3.8.0-1
+
+      - name: Run chart-testing (list-changed)
+        id: list-changed
+        run: |
+          changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }} --excluded-charts console,redpanda,kminion )
+          echo $changed
+          if [[ -n "$changed" ]]; then
+            echo changed="true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create kind cluster
+        uses: helm/kind-action@v1.5.0
+        if: steps.list-changed.outputs.changed == 'true'
+        with:
+          config: .github/kind.yaml
+
+      - name: Check kind config worked
+        if: steps.list-changed.outputs.changed == 'true'
+        run: kubectl get nodes
+
+      - name: install cert-manager
+        if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          helm repo add jetstack https://charts.jetstack.io &&
+          helm install cert-manager --namespace cert-manager \
+            --create-namespace --version v1.11.0 jetstack/cert-manager \
+            --set installCRDs=true --wait --wait-for-jobs
+
+      - name: install Redpanda
+        if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          helm dependency build charts/redpanda
+          helm install --namespace redpanda --create-namespace redpanda charts/redpanda --wait --wait-for-jobs
+
+      - name: Copy Redpanda tls cert to kminion chart
+        if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          kubectl -n redpanda wait --for=condition=Ready --timeout=10m certificates/redpanda-default-cert
+          kubectl -n redpanda get secret -o yaml redpanda-default-cert | \
+            sed -e '/namespace/d' | \
+            sed -e '/resourceVersion/d' | \
+            sed -e '/uid/d'  > charts/kminion/templates/redpanda-tls.yaml
+
+      - name: Run chart-testing (install and upgrade)
+        if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          ct install \
+            --github-groups \
+            --upgrade \
+            --config .github/ct.yaml \
+            --skip-missing-values \
+            --excluded-charts console,redpanda,operator \
+            --target-branch ${{ github.event.repository.default_branch }}
