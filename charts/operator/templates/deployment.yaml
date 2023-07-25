@@ -41,7 +41,7 @@ spec:
       serviceAccountName: {{ include "redpanda-operator.serviceAccountName" . }}
       containers:
       - name: manager
-        image: "{{ .Values.image.repository }}:{{ include "operator.tag" . }}"
+        image: {{ include "operator.container.image" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         args:
         - --health-probe-bind-address=:8081

@@ -65,16 +65,13 @@ Create the name of the service account to use
 {{ default (include "redpanda-operator.fullname" .) .Values.serviceAccount.name }}
 {{- end -}}
 
-{{- define "operator.tag" -}}
-{{- $tag := default .Chart.AppVersion .Values.image.tag -}}
-{{- $matchString := "^v(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$|^latest$" -}}
-{{- $match := mustRegexMatch $matchString $tag -}} 
-{{- if not $match -}}
-  {{/*
-  This error message is for end users. This can also occur if
-  AppVersion doesn't start with a 'v' in Chart.yaml.
-  */}}
-  {{ fail "image.tag must start with a 'v' and be valid semver" }}
-{{- end -}} 
-{{- $tag -}}
+{{/*
+Operator Image
+*/}}
+{{- define "operator.container.image" -}}
+{{- if .Values.image.repository -}}
+{{- printf "%s/%s:%s" .Values.image.repository .Values.image.repository ( .Values.image.tag | default .Chart.AppVersion )  }}
+{{- else -}}
+{{- printf "%s:%s" .Values.image.repository ( .Values.image.tag | default .Chart.AppVersion )  }}
+{{- end -}}
 {{- end -}}

@@ -17,8 +17,10 @@ clusterDomain: cluster.local
 image:
   # image.repository -- Repository that Redpanda Operator image is available
   repository: docker.redpanda.com/redpandadata/redpanda-operator
-  # image.tag -- Define the Redpanda Operator container tag
-  # tag:
+  # -- The Redpanda Console version.
+  # See DockerHub for [All versions](https://hub.docker.com/r/redpandadata/redpanda-operator/tags)
+  # @default -- `Chart.appVersion`
+  tag: ""
   # image.pullPolicy -- Define the pullPolicy for Redpanda Operator image
   pullPolicy: IfNotPresent
 
