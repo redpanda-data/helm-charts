@@ -1,6 +1,6 @@
 # Redpanda Operator
 
-![Version: 0.3.5](https://img.shields.io/badge/Version-0.3.5-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v23.2.2](https://img.shields.io/badge/AppVersion-v23.2.2-informational?style=flat-square)
+![Version: 0.3.7](https://img.shields.io/badge/Version-0.3.7-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v23.2.2](https://img.shields.io/badge/AppVersion-v23.2.2-informational?style=flat-square)
 
 ## Installation
 
@@ -23,7 +23,7 @@ discovered.
 1. Install Redpanda operator CRDs:
 
 ```sh
-kubectl apply -k 'https://github.com/redpanda-data/redpanda/src/go/k8s/config/crd?ref=v23.2.2'
+kubectl kustomize https://github.com/redpanda-data/redpanda//src/go/k8s/config/crd | kubectl apply -f -
 ```
 
 > The CRDs are decoupled from helm chart, so that helm release can be managed with fewer privileges.
