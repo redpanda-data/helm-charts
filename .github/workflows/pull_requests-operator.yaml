@@ -39,7 +39,7 @@ jobs:
           git checkout -
 
       - name: Run CI file name checker
-        run: .github/check-ci-files.sh charts/redpanda/ci
+        run: .github/check-ci-files.sh charts/operator/ci
 
       - name: Set up Helm
         uses: azure/setup-helm@v3
