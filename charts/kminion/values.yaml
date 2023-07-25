@@ -49,10 +49,12 @@ securityContext:
 
 service:
   type: ClusterIP
-  port: 8080 # This port is also used as exposed container port
-  annotations: {} # # Annotations to add to the service
-  extraPorts: [] # when []extraContainers expose additional metrics, make
-                 # discoverable for servicemontors
+  # -- The port for kminion metrics endpoint
+  port: 8080
+  # -- Annotations to add to the service
+  annotations: {}
+  # -- The extraPorts can be used to make discoverable ports for Prometheus ServiceMonitors
+  extraPorts: []
     # - port: 8443
     #   targetPort: 8443
     #   protocol: TCP
