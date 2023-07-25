@@ -1,6 +1,6 @@
 # Redpanda Operator
 
-![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v21.3.4](https://img.shields.io/badge/AppVersion-v21.3.4-informational?style=flat-square)
+![Version: 0.3.5](https://img.shields.io/badge/Version-0.3.5-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v23.2.2](https://img.shields.io/badge/AppVersion-v23.2.2-informational?style=flat-square)
 
 ## Installation
 
@@ -23,30 +23,21 @@ discovered.
 1. Install Redpanda operator CRDs:
 
 ```sh
-kubectl apply -k 'https://github.com/redpanda-data/redpanda/src/go/k8s/config/crd?ref=v21.3.4'
+kubectl apply -k 'https://github.com/redpanda-data/redpanda/src/go/k8s/config/crd?ref=v23.2.2'
 ```
 
-> The CRDs are decoupled from helm chart, so that helm release can be
-> removed without cascading deletion of underling custom resources.
-> Other argument for decoupling is that helm cli can incorrectly
-> patch the Custom Resource Definition.
+> The CRDs are decoupled from helm chart, so that helm release can be managed with fewer privileges.
+> The CRDs need to be installed by someone with cluster-level privileges, but once installed the
+> user only needs access to a namespace.
 
 ### Helm installation
 
 1. Install the Redpanda operator:
 
-> The example command should be invoked from `src/go/k8s/helm-chart/charts`
-
 ```sh
-helm install --namespace redpanda-system --create-namespace redpanda-system ./redpanda-operator
-```
-
-Alternative installation with kube-prometheus-stack that includes prometheus operator CRD
-```sh
-helm install --dependency-update \
---namespace redpanda-system \
---set monitoring.enabled=true \
---create-namespace redpanda-operator ./redpanda-operator
+helm repo add redpanda https://charts.redpanda.com
+helm repo update redpanda
+helm install --namespace redpanda --create-namespace redpanda-operator operator
 ```
 
 Other instruction will be visible after installation.
@@ -56,6 +47,7 @@ Other instruction will be visible after installation.
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` | Allows to specify affinity for Redpanda Operator PODs |
+| clusterDomain | string | `"cluster.local"` |  |
 | config.apiVersion | string | `"controller-runtime.sigs.k8s.io/v1alpha1"` |  |
 | config.health.healthProbeBindAddress | string | `":8081"` |  |
 | config.kind | string | `"ControllerManagerConfig"` |  |
@@ -63,14 +55,11 @@ Other instruction will be visible after installation.
 | config.leaderElection.resourceName | string | `"aa9fc693.vectorized.io"` |  |
 | config.metrics.bindAddress | string | `"127.0.0.1:8080"` |  |
 | config.webhook.port | int | `9443` |  |
-| configurator.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Redpanda configurator image |
-| configurator.repository | string | `"vectorized/configurator"` | Repository that Redpanda configurator image is available |
-| configurator.tag | string | `"{{ .Chart.AppVersion }}"` | Define the Redpanda configurator container tag |
-| clusterDomain | string | `cluster.local` | Defines Kubernetes Cluster Domain |
+| configurator.pullPolicy | string | `"IfNotPresent"` |  |
+| configurator.repository | string | `"docker.redpanda.com/redpandadata/configurator"` | Repository that Redpanda configurator image is available |
 | fullnameOverride | string | `""` | Override the fully qualified app name |
-| image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for Redpanda Operator image |
-| image.repository | string | `"vectorized/redpanda-operator"` | Repository that Redpanda Operator image is available |
-| image.tag | string | `"{{ .Chart.AppVersion }}"` | Define the Redpanda Operator container tag |
+| image.pullPolicy | string | `"IfNotPresent"` |  |
+| image.repository | string | `"docker.redpanda.com/redpandadata/redpanda-operator"` | Repository that Redpanda Operator image is available |
 | imagePullSecrets | list | `[]` | Redpanda Operator container registry pullSecret (ex: specify docker registry credentials) |
 | labels | string | `nil` | Allows to assign labels to the resources created by this helm chart |
 | logLevel | string | `"info"` | Set Redpanda Operator log level (debug, info, error, panic, fatal) |
@@ -82,7 +71,9 @@ Other instruction will be visible after installation.
 | rbac.create | bool | `true` | Specifies whether the RBAC resources should be created |
 | replicaCount | int | `1` | Number of instances of Redpanda Operator |
 | resources | object | `{}` | Set resources requests/limits for Redpanda Operator PODs |
+| scope | string | `"Namespace"` | change the scope and therefore the resource the controller will manage only "Cluster" and "Namespace" supported |
 | serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
 | serviceAccount.name | string | `nil` | The name of the service account to use. If not set name is generated using the fullname template |
 | tolerations | list | `[]` | Allows to schedule Redpanda Operator on tainted nodes |
-| webhook.enabled | bool | `true` |  |
+| webhook.enabled | bool | `false` |  |
+| webhookSecretName | string | `"webhook-server-cert"` |  |
