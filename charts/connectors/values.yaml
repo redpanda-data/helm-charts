@@ -1,0 +1,256 @@
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# This file contains values for variables referenced from yaml files in the templates directory.
+#
+# For further information on Helm templating see the documentation at:
+#  https://helm.sh/docs/chart_template_guide/values_files/
+
+#
+# >>> This chart requires Helm version 3.6.0 or greater <<<
+#
+
+# Common settings
+#
+# -- Override `connectors.name` template.
+nameOverride: ""
+# -- Override `connectors.fullname` template.
+fullnameOverride: ""
+# -- Additional labels to add to all Kubernetes objects.
+# For example, `my.k8s.service: redpanda`.
+commonLabels: {}
+# -- Taints to be tolerated by Pods, can override this for StatefulSets.
+# For details,
+# see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/).
+tolerations: []
+
+# -- Redpanda Docker image settings.
+image:
+  # -- Docker repository from which to pull the Redpanda Docker image.
+  repository: docker.redpanda.com/redpandadata/connectors
+  # -- The Redpanda version.
+  # See DockerHub for:
+  # [All stable versions](https://hub.docker.com/r/redpandadata/redpanda/tags)
+  # and [all unstable versions](https://hub.docker.com/r/redpandadata/redpanda-unstable/tags).
+  # @default -- `Chart.appVersion`.
+  tag: ""
+  # -- The imagePullPolicy.
+  # If `image.tag` is 'latest', the default is `Always`.
+  pullPolicy: IfNotPresent
+
+# -- Pull secrets may be used to provide credentials to image repositories
+# See https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+imagePullSecrets: []
+
+connectors:
+  # -- Bootstrap servers list is coma separated list of individual Redpanda brokers as single line string
+  bootstrapServers: ""
+  # -- List of Redpanda IP:Port or DNS:Port separated by coma.
+  schemaRegistryURL: ""
+  # -- TODO the schema
+  additionalConfiguration: ""
+  secretManager:
+    enabled: false
+    region: ""
+    consolePrefix: ""
+    connectorsPrefix: ""
+  producerBatchSize: 131072
+  producerLingerMS: 1
+  storage:
+    replicationFactor:
+      offset: -1
+      config: -1
+      status: -1
+    remote:
+      read:
+        offset: false
+        config: false
+        status: false
+      write:
+        offset: false
+        config: false
+        status: false
+    topic:
+      offset: _internal_connectors_offsets
+      config: _internal_connectors_configs
+      status: _internal_connectors_status
+  groupID: connectors-cluster
+
+# -- Authentication settings.
+# For details,
+# see the [SASL documentation](https://docs.redpanda.com/docs/manage/kubernetes/security/sasl-kubernetes/).
+auth:
+  sasl:
+    # -- The authentication mechanism to use for the superuser. Options are `scram-sha-256` and `scram-sha-512`.
+    mechanism: scram-sha-512
+    # -- A Secret that contains your SASL user password.
+    secretRef: ""
+    userName: ""
+
+# -- Log-level settings.
+logging:
+  # -- Log level
+  # Valid values (from least to most verbose) are: `warn`, `info`, `debug`, and `trace`.
+  level: info
+
+# -- Monitoring.
+# This will create a ServiceMonitor that can be used by Prometheus-Operator or VictoriaMetrics-Operator to scrape the metrics.
+monitoring:
+  enabled: false
+  scrapeInterval: 30s
+  labels: {}
+  annotations: {}
+  namespaceSelector:
+    any: true
+
+container:
+  #
+  # -- Security context for managed Connectors container.
+  # See also deployment.securityContext for pod level.
+  securityContext:
+    allowPrivilegeEscalation: false
+  # -- Pod resource management.
+  resources:
+    request:
+      cpu: 1
+      memory: 2Gi
+    limits:
+      cpu: 1
+      memory: 2Gi
+    # -- Java maximum heap size can not be greater than $container.resources.limits.memory
+    javaMaxHeapSize: 2G
+  javaGCLogEnabled: "false"
+
+deployment:
+  schedulerName: ""
+  updateStrategy:
+    type: RollingUpdate
+  budget:
+    maxUnavailable: 1
+  # -- Additional annotations to apply to the Pods of this StatefulSet.
+  annotations: {}
+  # -- Adjust the period for your probes to meet your needs.
+  # For details,
+  # see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes).
+  livenessProbe:
+    initialDelaySeconds: 10
+    failureThreshold: 3
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 1
+  readinessProbe:
+    initialDelaySeconds: 60
+    failureThreshold: 3
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 5
+
+  # -- The maximum time in seconds for a deployment to make progress before it is
+  #    considered to be failed. The deployment controller will continue to process
+  #    failed deployments and a condition with a ProgressDeadlineExceeded reason
+  #    will be surfaced in the deployment status. Note that progress will not be
+  #    estimated during the time a deployment is paused. Defaults to 600s.
+  progressDeadlineSeconds: 600
+
+  # -- The number of old ReplicaSets to retain to allow rollback. This is a pointer
+  #    to distinguish between explicit zero and not specified. Defaults to 10.
+  revisionHistoryLimit: 10
+
+  # -- Inter-Pod Affinity rules for scheduling Pods of this Deployment.
+  # For details,
+  # see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#inter-pod-affinity-and-anti-affinity).
+  podAffinity: {}
+  # -- Node Affinity rules for scheduling Pods of this Deployment.
+  # The suggestion would be to spread Pods according to topology zone.
+  # For details,
+  # see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity).
+  nodeAffinity: {}
+  # -- Anti-affinity rules for scheduling Pods of this Deployment.
+  # For details,
+  # see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#inter-pod-affinity-and-anti-affinity).
+  # You may either edit the default settings for anti-affinity rules,
+  # or specify new anti-affinity rules to use instead of the defaults.
+  podAntiAffinity:
+    # -- The topologyKey to be used.
+    # Can be used to spread across different nodes, AZs, regions etc.
+    topologyKey: kubernetes.io/hostname
+    # -- Valid anti-affinity types are `soft`, `hard`, or `custom`.
+    # Use `custom` if you want to supply your own anti-affinity rules in the `podAntiAffinity.custom` object.
+    type: hard
+    # -- Weight for `soft` anti-affinity rules.
+    # Does not apply for other anti-affinity types.
+    weight: 100
+    # -- Change `podAntiAffinity.type` to `custom` and provide your own podAntiAffinity rules here.
+    custom: {}
+  # -- Node selection constraints for scheduling Pods of this StatefulSet.
+  # These constraints override the global nodeSelector value.
+  # For details,
+  # see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector).
+  nodeSelector: {}
+  # -- PriorityClassName given to Pods of this StatefulSet.
+  # For details,
+  # see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass).
+  priorityClassName: ""
+  # -- Taints to be tolerated by Pods of this StatefulSet.
+  # These tolerations override the global tolerations value.
+  # For details,
+  # see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/).
+  tolerations: []
+  # For details,
+  # see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/workloads/pods/pod-topology-spread-constraints/).
+  topologySpreadConstraints:
+  - maxSkew: 1
+    topologyKey: topology.kubernetes.io/zone
+    whenUnsatisfiable: ScheduleAnyway
+  securityContext:
+    fsGroup: 101
+    runAsUser: 101
+    fsGroupChangePolicy: OnRootMismatch
+  terminationGracePeriodSeconds: 30
+  restartPolicy: Always
+
+storage:
+  volume:
+  - emptyDir:
+      medium: Memory
+      sizeLimit: 5Mi
+    name: rp-connect-tmp
+  volumeMounts:
+  - mountPath: /tmp
+    name: rp-connect-tmp
+
+# -- Service account management.
+serviceAccount:
+  # -- Specifies whether a service account should be created.
+  create: false
+  # -- Annotations to add to the service account.
+  annotations: {}
+  # -- The name of the service account to use.
+  # If not set and `serviceAccount.create` is `true`,
+  # a name is generated using the `connectors.fullname` template.
+  name: ""
+
+# -- Service management.
+service:
+  # -- Annotations to add to the service.
+  annotations: {}
+  # -- The name of the service to use.
+  # If not set, a name is generated using the `connectors.fullname` template.
+  name: ""
+  ports:
+    - name: rest-api
+      port: 8083
+    - name: prometheus
+      port: 9404
