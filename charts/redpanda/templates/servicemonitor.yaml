@@ -34,6 +34,11 @@ spec:
   - interval: {{ .Values.monitoring.scrapeInterval }}
     path: /public_metrics
     targetPort: admin
+  {{- if .Values.tls.enabled }}
+    scheme: https
+    tlsConfig:
+      insecureSkipVerify: true
+  {{- end }}
   selector:
     matchLabels:
       monitoring.redpanda.com/enabled: "true"
