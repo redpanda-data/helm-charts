@@ -547,6 +547,34 @@ entries:
     urls:
     - https://github.com/redpanda-data/helm-charts/releases/download/console-0.3.2/console-0.3.2.tgz
     version: 0.3.2
+  kminion:
+  - annotations:
+      artifacthub.io/images: |
+        - name: redpanda
+          image: docker.redpanda.com/redpandadata/kminion:v23.2.2
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://docs.redpanda.com
+        - name: "Helm (>= 3.6.0)"
+          url: https://helm.sh/docs/intro/install/
+    apiVersion: v2
+    appVersion: v2.2.5
+    created: "2023-07-26T16:38:19.177566584Z"
+    description: A Helm chart to deploy KMinion - a Prometheus Exporter for Apache
+      Kafka
+    digest: 82c4041ab08280079c5bb9bb31b154cbd91c436771164c4c55b63e0c857f52ff
+    icon: https://images.ctfassets.net/paqvtpyf8rwu/3cYHw5UzhXCbKuR24GDFGO/73fb682e6157d11c10d5b2b5da1d5af0/skate-stand-panda.svg
+    maintainers:
+    - name: redpanda-data
+      url: https://github.com/orgs/redpanda-data/people
+    name: kminion
+    sources:
+    - https://github.com/redpanda-data/helm-charts
+    type: application
+    urls:
+    - https://github.com/redpanda-data/helm-charts/releases/download/kminion-0.12.0/kminion-0.12.0.tgz
+    version: 0.12.0
   operator:
   - annotations:
       artifacthub.io/crds: |
@@ -5933,4 +5961,4 @@ entries:
     urls:
     - https://charts.redpanda.com/redpanda-0.1.0.tgz
     version: 0.1.0
-generated: "2023-07-26T00:56:36.56291403Z"
+generated: "2023-07-26T16:38:19.178550697Z"
