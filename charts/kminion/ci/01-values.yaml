@@ -1,0 +1,63 @@
+redpanda:
+  enabled: true
+
+deployment:
+  volumes:
+    secrets:
+    - secretName: redpanda-default-cert
+      mountPath: /redpanda/tls
+
+kminion:
+  config:
+    kafka:
+      brokers:
+      - redpanda-0.redpanda.redpanda.svc.cluster.local.:9093
+      - redpanda-1.redpanda.redpanda.svc.cluster.local.:9093
+      - redpanda-2.redpanda.redpanda.svc.cluster.local.:9093
+      sasl:
+        enabled: false
+      tls:
+        enabled: true
+        caFilepath: /redpanda/tls/ca.crt
+    minion:
+      endToEnd:
+        enabled: true
+        probeInterval: 1s
+        topicManagement:
+          # You can disable topic management, without disabling the testing feature.
+          # Only makes sense if you have multiple kminion instances, and for some reason only want one of them to create/configure the topic
+          enabled: true
+          # Name of the topic kminion uses to send its test messages
+          # You do *not* need to change this if you are running multiple kminion instances on the same cluster.
+          # Different instances are perfectly fine with sharing the same topic!
+          name: ci-test
+          # How often kminion checks its topic to validate configuration, partition count, and partition assignments
+          reconciliationInterval: 10m
+          # Depending on the desired monitoring (e.g. you want to alert on broker failure vs. cluster that is not writable)
+          # you may choose replication factor 1 or 3 most commonly.
+          replicationFactor: 3
+          # Rarely makes sense to change this, but maybe if you want some sort of cheap load test?
+          # By default (1) every broker gets one partition
+          partitionsPerBroker: 1
+        producer:
+          # This defines:
+          # - Maximum time to wait for an ack response after producing a message
+          # - Upper bound for histogram buckets in "produce_latency_seconds"
+          ackSla: 3s
+          # Can be to "all" (default) so kafka only reports an end-to-end test message as acknowledged if
+          # the message was written to all in-sync replicas of the partition.
+          # Or can be set to "leader" to only require to have written the message to its log.
+          requiredAcks: all
+        consumer:
+          # Prefix kminion uses when creating its consumer groups. Current kminion instance id will be appended automatically
+          groupIdPrefix: kminion-helm-test
+          # Whether KMinion should try to delete empty consumer groups with the same prefix. This can be used if you want
+          # KMinion to cleanup it's old consumer groups. It should only be used if you use a unique prefix for KMinion.
+          deleteStaleConsumerGroups: false
+          # This defines:
+          # - Upper bound for histogram buckets in "roundtrip_latency"
+          # - Time limit beyond which a message is considered "lost" (failed the roundtrip)
+          roundtripSla: 20s
+          # - Upper bound for histogram buckets in "commit_latency_seconds"
+          # - Maximum time an offset commit is allowed to take before considering it failed
+          commitSla: 10s
