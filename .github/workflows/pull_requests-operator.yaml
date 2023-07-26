@@ -142,7 +142,6 @@ jobs:
             --github-groups \
             --upgrade \
             --config .github/ct.yaml \
-            --helm-extra-set-args="--set=image.tag=${{ matrix.version }}" \
             --skip-missing-values \
             --excluded-charts console,redpanda,kminion \
             --target-branch ${{ github.event.repository.default_branch }}
