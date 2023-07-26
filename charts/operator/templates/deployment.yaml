@@ -47,6 +47,8 @@ spec:
         - --health-probe-bind-address=:8081
         - --metrics-bind-address=127.0.0.1:8080
         - --leader-elect
+        - --configurator-tag={{ include "configurator.tag" . }}
+        - --configurator-base-image={{ .Values.configurator.repository }}
         {{- if and .Values.webhook.enabled (eq .Values.scope "Cluster" ) }}
         - --webhook-enabled=true
         {{- else }}

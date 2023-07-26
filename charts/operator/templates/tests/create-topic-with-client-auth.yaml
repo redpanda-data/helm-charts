@@ -2,7 +2,7 @@
 {{- $resourceType := "redpanda" -}}
 {{- if and .Values.webhook.enabled (eq .Values.scope "Cluster" ) -}}
   {{- $file = "files/three_node_cluster.yaml" -}}
-  {{- $resourceType := "cluster" -}}
+  {{- $resourceType = "cluster" -}}
 {{- else if ne .Values.scope "Namespace" -}}
   {{ fail "invalid combination of scope and webhook.enabled" }}
 {{- end -}}
@@ -54,7 +54,13 @@ spec:
           EOF
 
           # Wait for things to be ready
+          {{- if and .Values.webhook.enabled (eq .Values.scope "Cluster" ) }}
+          $KUBECTL -n {{ .Release.Namespace }} wait --for=condition=ClusterConfigured --timeout=10m {{ $resourceType }}/cluster-tls
+          $KUBECTL -n {{ .Release.Namespace }} wait --for=jsonpath='{{ `{.status.restarting}` }}'=false --timeout=10m {{ $resourceType }}/cluster-tls
+          $KUBECTL -n {{ .Release.Namespace }} wait --for=jsonpath='{{ `{.status.upgrading}` }}'=false --timeout=10m {{ $resourceType }}/cluster-tls
+          {{- else }}
           $KUBECTL -n {{ .Release.Namespace }} wait --for=condition=Ready --timeout=10m {{ $resourceType }}/cluster-tls
+          {{- end }}
           $KUBECTL -n {{ .Release.Namespace }} wait --for=jsonpath='{.metadata.name}'=cluster-tls-user-client --timeout=10m secret/cluster-tls-user-client
           $KUBECTL -n {{ .Release.Namespace }} get secret cluster-tls-user-client -o go-template='{{ `{{ base64decode (index .data "tls.crt") }}` }}' > /tmp/tls.crt
           $KUBECTL -n {{ .Release.Namespace }} get secret cluster-tls-user-client -o go-template='{{ `{{ base64decode (index .data "tls.key") }}` }}' > /tmp/tls.key

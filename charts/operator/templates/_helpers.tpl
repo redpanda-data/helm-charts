@@ -78,3 +78,17 @@ Create the name of the service account to use
 {{- end -}} 
 {{- $tag -}}
 {{- end -}}
+
+{{- define "configurator.tag" -}}
+{{- $tag := default .Chart.AppVersion .Values.configurator.tag -}}
+{{- $matchString := "^v(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$|^latest$|^dev$" -}}
+{{- $match := mustRegexMatch $matchString $tag -}}
+{{- if not $match -}}
+  {{/*
+  This error message is for end users. This can also occur if
+  AppVersion doesn't start with a 'v' in Chart.yaml.
+  */}}
+  {{ fail "configurator.tag must start with a 'v' and be valid semver" }}
+{{- end -}}
+{{- $tag -}}
+{{- end -}}
