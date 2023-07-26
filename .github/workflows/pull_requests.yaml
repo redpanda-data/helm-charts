@@ -114,7 +114,7 @@ jobs:
       - name: Run chart-testing (list-changed)
         id: list-changed
         run: |
-          changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }} --excluded-charts console,operator,kminion )
+          changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }} --chart-dirs=charts/redpanda )
           echo $changed
           if [[ -n "$changed" ]]; then
             echo changed="true" >> "$GITHUB_OUTPUT"
@@ -190,7 +190,7 @@ jobs:
             --config .github/ct.yaml \
             --helm-extra-set-args="--set=image.tag=${{ matrix.version }}" \
             --skip-missing-values \
-            --excluded-charts console,operator,kminion \
+            --chart-dirs=charts/redpanda \
             --target-branch ${{ github.event.repository.default_branch }}
   summary:
     if: always()
