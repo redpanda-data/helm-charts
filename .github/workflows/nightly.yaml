@@ -120,6 +120,14 @@ jobs:
             --create-namespace --version v1.11.0 jetstack/cert-manager \
             --set installCRDs=true --wait --wait-for-jobs
 
+      - name: install prometheus-operator
+        run: |
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts &&
+          helm install prometheus prometheus-community/kube-prometheus-stack \
+            --set nodeExporter.enabled=false \
+            --set grafana.enabled=false --set kubeStateMetrics.enabled=false --set alertmanager.enabled=false \
+            --wait --wait-for-jobs
+
       - name: install metallb
         run: |
           helm repo add metallb https://metallb.github.io/metallb &&
