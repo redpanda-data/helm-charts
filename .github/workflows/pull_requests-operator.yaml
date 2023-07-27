@@ -39,7 +39,7 @@ jobs:
           git checkout -
 
       - name: Run CI file name checker
-        run: .github/check-ci-files.sh charts/redpanda/ci
+        run: .github/check-ci-files.sh charts/operator/ci
 
       - name: Set up Helm
         uses: azure/setup-helm@v3
@@ -142,7 +142,6 @@ jobs:
             --github-groups \
             --upgrade \
             --config .github/ct.yaml \
-            --helm-extra-set-args="--set=image.tag=${{ matrix.version }}" \
             --skip-missing-values \
             --excluded-charts console,redpanda,kminion \
             --target-branch ${{ github.event.repository.default_branch }}
