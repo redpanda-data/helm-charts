@@ -43,7 +43,7 @@ jobs:
           version: v3.8.0-1
 
       - name: Run chart-testing (lint)
-        run: ct lint --all --config .github/ct.yaml
+        run: ct lint --all --config .github/ct-redpanda.yaml
   test:
     name: Run ct tests for ci values matching ${{ matrix.testvaluespattern }} for Redpanda version ${{ matrix.version }}
     strategy:
@@ -136,7 +136,6 @@ jobs:
           ct install \
             --github-groups \
             --upgrade \
-            --config .github/ct.yaml \
+            --config .github/ct-redpanda.yaml \
             --helm-extra-set-args="--set=image.tag=${{ matrix.version }}" \
-            --skip-missing-values \
-            --charts=charts/redpanda
+            --skip-missing-values

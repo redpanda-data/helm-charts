@@ -52,7 +52,7 @@ jobs:
           version: v3.8.0-1
 
       - name: Run chart-testing (lint)
-        run: ct lint --config .github/ct.yaml --github-groups --chart-dirs=charts/kminion
+        run: ct lint --config .github/ct-kminion.yaml --github-groups
 
   check-values:
     runs-on: ubuntu-22.04
@@ -98,7 +98,7 @@ jobs:
       - name: Run chart-testing (list-changed)
         id: list-changed
         run: |
-          changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }} --chart-dirs=charts/kminion )
+          changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }})
           echo $changed
           if [[ -n "$changed" ]]; then
             echo changed="true" >> "$GITHUB_OUTPUT"
@@ -143,7 +143,6 @@ jobs:
           ct install \
             --github-groups \
             --upgrade \
-            --config .github/ct.yaml \
+            --config .github/ct-kminion.yaml \
             --skip-missing-values \
-            --chart-dirs=charts/kminion \
             --target-branch ${{ github.event.repository.default_branch }}
