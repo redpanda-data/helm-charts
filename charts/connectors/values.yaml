@@ -55,6 +55,7 @@ image:
 imagePullSecrets: []
 
 connectors:
+  restPort: 8083
   # -- Bootstrap servers list is coma separated list of individual Redpanda brokers as single line string
   bootstrapServers: ""
   # -- List of Redpanda IP:Port or DNS:Port separated by coma.
@@ -87,6 +88,26 @@ connectors:
       config: _internal_connectors_configs
       status: _internal_connectors_status
   groupID: connectors-cluster
+  brokerTLS:
+    enabled: false
+    ca:
+      # -- The name of the secret where ca.crt is located
+      secretRef: ""
+      # -- If secretRef points to secret where Certificate Authority is not under
+      # ca.crt key then please use secretNameOverwrite to overwrite it e.g. corp-ca.crt
+      secretNameOverwrite: ""
+    cert:
+      # -- The name of the secret where client signed certificate is located
+      secretRef: ""
+      # -- If secretRef points to secret where client signed certificate is not under
+      # tls.crt key then please use secretNameOverwrite to overwrite it e.g. corp-tls.crt
+      secretNameOverwrite: ""
+    key:
+      # -- The name of the secret where client private key is located
+      secretRef: ""
+      # -- If secretRef points to secret where client private key is not under
+      # tls.key key then please use secretNameOverwrite to overwrite it e.g. corp-tls.key
+      secretNameOverwrite: ""
 
 # -- Authentication settings.
 # For details,
@@ -134,6 +155,8 @@ container:
   javaGCLogEnabled: "false"
 
 deployment:
+  strategy:
+    type: RollingUpdate
   schedulerName: ""
   updateStrategy:
     type: RollingUpdate
@@ -250,7 +273,5 @@ service:
   # If not set, a name is generated using the `connectors.fullname` template.
   name: ""
   ports:
-    - name: rest-api
-      port: 8083
     - name: prometheus
       port: 9404

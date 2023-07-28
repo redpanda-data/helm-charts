@@ -18,7 +18,7 @@ limitations under the License.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "connectors.fullname" . }}
+  name: {{ include "connectors.fullname" . }}
   labels:
 {{- with include "full.labels" . }}
   {{- . | nindent 4 }}
@@ -31,11 +31,7 @@ spec:
   revisionHistoryLimit: {{ .Values.deployment.revisionHistoryLimit }}
   selector:
     matchLabels: {{ (include "connectors-pod-labels" .) | nindent 6 }}
-  strategy:
-    rollingUpdate:
-      maxSurge: 0
-      maxUnavailable: 1
-    type: RollingUpdate
+  strategy: {{- toYaml .Values.deployment.strategy | nindent 4 }}
   template:
     metadata:
   {{- with $.Values.deployment.annotations }}
@@ -74,10 +70,10 @@ spec:
           {{- toYaml .Values.deployment.podAntiAffinity.custom | nindent 10 }}
       {{- end }}
   {{- end }}
-      serviceAccountName: {{ template "connectors.fullname" . }}
+      serviceAccountName: {{ include "connectors.serviceAccountName" . }}
       containers:
         - name: connectors-cluster
-          image: {{ .Values.image.repository }}:{{ template "connectors.tag" . }}
+          image: {{ .Values.image.repository }}:{{ include "connectors.tag" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           securityContext:
   {{- with .Values.container.securityContext }}
@@ -86,6 +82,8 @@ spec:
           env:
             - name: CONNECT_CONFIGURATION
               value: |
+                rest.advertised.port={{ .Values.connectors.restPort }}
+                rest.port={{ .Values.connectors.restPort }}
                 key.converter=org.apache.kafka.connect.converters.ByteArrayConverter
                 value.converter=org.apache.kafka.connect.converters.ByteArrayConverter
                 group.id={{ .Values.connectors.groupID }}
@@ -132,6 +130,20 @@ spec:
             - name: CONNECT_SASL_PASSWORD_FILE
               value: rc-credentials/password
             {{- end }}
+            - name: CONNECT_TLS_ENABLED
+              value: {{ .Values.connectors.brokerTLS.enabled | quote }}
+            {{- if .Values.connectors.brokerTLS.ca.secretRef }}
+            - name: CONNECT_TRUSTED_CERTS
+              value: {{ printf "ca/%s" (default "ca.crt" .Values.connectors.brokerTLS.ca.secretNameOverwrite) }}
+            {{- end }}
+            {{- if .Values.connectors.brokerTLS.cert.secretRef }}
+            - name: CONNECT_TLS_AUTH_CERT
+              value: {{ printf "cert/%s" (default "tls.crt" .Values.connectors.brokerTLS.cert.secretNameOverwrite) }}
+            {{- end }}
+            {{- if .Values.connectors.brokerTLS.key.secretRef }}
+            - name: CONNECT_TLS_AUTH_KEY
+              value: {{ printf "key/%s" (default "tls.key" .Values.connectors.brokerTLS.key.secretNameOverwrite) }}
+            {{- end }}
           livenessProbe:
             httpGet:
               path: /
@@ -153,6 +165,9 @@ spec:
             successThreshold: {{ .Values.deployment.readinessProbe.successThreshold }}
             timeoutSeconds: {{ .Values.deployment.readinessProbe.timeoutSeconds }}
           ports:
+            - containerPort: {{ .Values.connectors.restPort }}
+              name: rest-api
+              protocol: TCP
           {{- range $port := .Values.service.ports }}
             - containerPort: {{ $port.port }}
               name: {{ $port.name }}
@@ -167,6 +182,21 @@ spec:
           {{- if and .Values.auth.sasl.userName .Values.auth.sasl.mechanism .Values.auth.sasl.secretRef }}
             - mountPath: /opt/kafka/connect-password/rc-credentials
               name: rc-credentials
+          {{- end }}
+          {{- if .Values.connectors.brokerTLS.ca.secretRef }}
+            - name: truststore
+              # The /opt/kafka/connect-certs is fixed path within Connectors
+              mountPath: /opt/kafka/connect-certs/ca
+          {{- end }}
+          {{- if .Values.connectors.brokerTLS.cert.secretRef }}
+            - name: cert
+              # The /opt/kafka/connect-certs is fixed path within Connectors
+              mountPath: /opt/kafka/connect-certs/cert
+          {{- end }}
+          {{- if .Values.connectors.brokerTLS.key.secretRef }}
+            - name: key
+              # The /opt/kafka/connect-certs is fixed path within Connectors
+              mountPath: /opt/kafka/connect-certs/key
           {{- end }}
           {{- toYaml .Values.storage.volumeMounts | nindent 12 }}
       dnsPolicy: ClusterFirst
@@ -195,10 +225,28 @@ spec:
           whenUnsatisfiable: {{ $spread.whenUnsatisfiable }}
     {{- end }}
       volumes:
+      {{- if .Values.connectors.brokerTLS.ca.secretRef }}
+        - name: truststore
+          secret:
+            defaultMode: 0o444
+            secretName: {{ .Values.connectors.brokerTLS.ca.secretRef }}
+      {{- end }}
+      {{- if .Values.connectors.brokerTLS.cert.secretRef }}
+        - name: truststore
+          secret:
+            defaultMode: 0o444
+            secretName: {{ .Values.connectors.brokerTLS.cert.secretRef }}
+      {{- end }}
+      {{- if .Values.connectors.brokerTLS.key.secretRef }}
+        - name: truststore
+          secret:
+            defaultMode: 0o444
+            secretName: {{ .Values.connectors.brokerTLS.key.secretRef }}
+      {{- end }}
       {{- if and .Values.auth.sasl.userName .Values.auth.sasl.mechanism .Values.auth.sasl.secretRef }}
         - name: rc-credentials
           secret:
-            defaultMode: 0444
+            defaultMode: 0o444
             secretName: {{ .Values.auth.sasl.secretRef }}
       {{- end }}
       {{- toYaml .Values.storage.volume | nindent 8 }}

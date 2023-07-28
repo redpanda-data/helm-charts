@@ -17,7 +17,7 @@ limitations under the License.
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "connectors.serviceName" . }}
+  name: {{ include "connectors.serviceName" . }}
   labels:
 {{- with include "full.labels" . }}
   {{- . | nindent 4 }}
@@ -30,6 +30,10 @@ spec:
     - IPv4
   ipFamilyPolicy: SingleStack
   ports:
+    - name: rest-api
+      port: {{ .Values.connectors.restPort }}
+      targetPort: {{ .Values.connectors.restPort }}
+      protocol: TCP
   {{- range $port := .Values.service.ports }}
     - name: {{ $port.name }}
       port: {{ $port.port }}
