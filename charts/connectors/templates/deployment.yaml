@@ -70,7 +70,7 @@ spec:
           {{- toYaml .Values.deployment.podAntiAffinity.custom | nindent 10 }}
       {{- end }}
   {{- end }}
-      serviceAccountName: {{ template "connectors.fullname" . }}
+      serviceAccountName: {{ include "connectors.serviceAccountName" . }}
       containers:
         - name: connectors-cluster
           image: {{ .Values.image.repository }}:{{ include "connectors.tag" . }}
