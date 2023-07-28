@@ -17,7 +17,7 @@ limitations under the License.
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "connectors.serviceName" . }}
+  name: {{ include "connectors.serviceName" . }}
   labels:
 {{- with include "full.labels" . }}
   {{- . | nindent 4 }}

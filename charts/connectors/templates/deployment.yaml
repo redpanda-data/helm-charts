@@ -18,7 +18,7 @@ limitations under the License.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "connectors.fullname" . }}
+  name: {{ include "connectors.fullname" . }}
   labels:
 {{- with include "full.labels" . }}
   {{- . | nindent 4 }}
@@ -77,7 +77,7 @@ spec:
       serviceAccountName: {{ template "connectors.fullname" . }}
       containers:
         - name: connectors-cluster
-          image: {{ .Values.image.repository }}:{{ template "connectors.tag" . }}
+          image: {{ .Values.image.repository }}:{{ include "connectors.tag" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           securityContext:
   {{- with .Values.container.securityContext }}
