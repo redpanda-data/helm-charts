@@ -55,6 +55,7 @@ image:
 imagePullSecrets: []
 
 connectors:
+  restPort: 8083
   # -- Bootstrap servers list is coma separated list of individual Redpanda brokers as single line string
   bootstrapServers: ""
   # -- List of Redpanda IP:Port or DNS:Port separated by coma.
@@ -250,7 +251,5 @@ service:
   # If not set, a name is generated using the `connectors.fullname` template.
   name: ""
   ports:
-    - name: rest-api
-      port: 8083
     - name: prometheus
       port: 9404
