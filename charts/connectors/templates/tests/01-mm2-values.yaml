@@ -1,0 +1,91 @@
+{{/*
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/}}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ include "connectors.fullname" . }}-mm2-test
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+{{- with include "full.labels" . }}
+  {{- . | nindent 4 }}
+{{- end }}
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  restartPolicy: Never
+  {{- with .Values.imagePullSecrets }}
+  imagePullSecrets: {{- toYaml . | nindent 4 }}
+  {{- end }}
+  containers:
+    - name: create-mm2
+      image: docker.redpanda.com/redpandadata/redpanda:latest
+      command:
+        - /bin/bash
+        - -c
+        - |
+          set -x
+
+          curl http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors
+          curl -H 'Content-Type: application/json' http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors --data-raw '{
+            "name": "mm2",
+            "config": {
+              "connector.class": "org.apache.kafka.connect.mirror.MirrorSourceConnector",
+              "topics": "test-topic",
+              "replication.factor": "1",
+              "tasks.max": "1",
+              "source.cluster.bootstrap.servers": {{ .Values.connectors.bootstrapServers | quote }},
+              "target.cluster.bootstrap.servers": {{ .Values.connectors.bootstrapServers | quote }},
+              "source.cluster.alias": "source",
+              "key.converter": "org.apache.kafka.connect.converters.ByteArrayConverter",
+              "value.converter": "org.apache.kafka.connect.converters.ByteArrayConverter",
+              "source->target.enabled": "true",
+              "target->source.enabled": "false",
+              "sync.topic.configs.interval.seconds": "5",
+              "sync.topics.configs.enabled": "true",
+              "source.cluster.ssl.truststore.type": "PEM",
+              "target.cluster.ssl.truststore.type": "PEM",
+              "source.cluster.ssl.truststore.location": {{ printf "/opt/kafka/connect-certs/ca/%s" (default "ca.crt" .Values.connectors.brokerTLS.ca.secretNameOverwrite) | quote }},
+              "target.cluster.ssl.truststore.location": {{ printf "/opt/kafka/connect-certs/ca/%s" (default "ca.crt" .Values.connectors.brokerTLS.ca.secretNameOverwrite) | quote }},
+              "source.cluster.security.protocol": {{ ternary "SSL" "PLAINTEXT" .Values.connectors.brokerTLS.enabled | quote }},
+              "target.cluster.security.protocol": {{ ternary "SSL" "PLAINTEXT" .Values.connectors.brokerTLS.enabled | quote }},
+              "source.cluster.sasl.mechanism": "PLAIN",
+              "target.cluster.sasl.mechanism": "PLAIN"
+            }
+          }'
+          rpk profile create test
+          rpk profile set tls.enabled={{.Values.connectors.brokerTLS.enabled}} brokers={{ .Values.connectors.bootstrapServers }}
+          {{- if .Values.connectors.brokerTLS.ca.secretRef }}
+          rpk profile set tls.ca={{ printf "/redpanda-certs/%s" (default "ca.crt" .Values.connectors.brokerTLS.ca.secretNameOverwrite) }}
+          {{- end }}
+          rpk topic list
+          rpk topic create test-topic
+          rpk topic list
+          echo "Test message!" | rpk topic produce test-topic
+          rpk topic consume source.test-topic -n 1 | grep "Test message!"
+          curl -X DELETE http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors/mm2
+          rpk topic delete test-topic
+  {{- if .Values.connectors.brokerTLS.ca.secretRef }}
+      volumeMounts:
+        - mountPath: /redpanda-certs
+          name: redpanda-ca
+  volumes:
+    - name: redpanda-ca
+      secret:
+        defaultMode: 0444
+        secretName: {{ .Values.connectors.brokerTLS.ca.secretRef }}
+  {{- end }}
