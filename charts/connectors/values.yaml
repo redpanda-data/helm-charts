@@ -102,8 +102,8 @@ auth:
 # -- Log-level settings.
 logging:
   # -- Log level
-  # Valid values (from least to most verbose) are: `warn`, `info`, `debug`, and `trace`.
-  level: info
+  # Valid values (from least to most verbose) are: `error`, `warn`, `info` and `debug`.
+  level: warn
 
 # -- Monitoring.
 # This will create a ServiceMonitor that can be used by Prometheus-Operator or VictoriaMetrics-Operator to scrape the metrics.
