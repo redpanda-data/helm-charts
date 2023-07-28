@@ -130,6 +130,20 @@ spec:
             - name: CONNECT_SASL_PASSWORD_FILE
               value: rc-credentials/password
             {{- end }}
+            - name: CONNECT_TLS_ENABLED
+              value: {{ .Values.connectors.brokerTLS.enabled | quote }}
+            {{- if .Values.connectors.brokerTLS.ca.secretRef }}
+            - name: CONNECT_TRUSTED_CERTS
+              value: {{ printf "ca/%s" (default "ca.crt" .Values.connectors.brokerTLS.ca.secretNameOverwrite) }}
+            {{- end }}
+            {{- if .Values.connectors.brokerTLS.cert.secretRef }}
+            - name: CONNECT_TLS_AUTH_CERT
+              value: {{ printf "cert/%s" (default "tls.crt" .Values.connectors.brokerTLS.cert.secretNameOverwrite) }}
+            {{- end }}
+            {{- if .Values.connectors.brokerTLS.key.secretRef }}
+            - name: CONNECT_TLS_AUTH_KEY
+              value: {{ printf "key/%s" (default "tls.key" .Values.connectors.brokerTLS.key.secretNameOverwrite) }}
+            {{- end }}
           livenessProbe:
             httpGet:
               path: /
@@ -169,6 +183,21 @@ spec:
             - mountPath: /opt/kafka/connect-password/rc-credentials
               name: rc-credentials
           {{- end }}
+          {{- if .Values.connectors.brokerTLS.ca.secretRef }}
+            - name: truststore
+              # The /opt/kafka/connect-certs is fixed path within Connectors
+              mountPath: /opt/kafka/connect-certs/ca
+          {{- end }}
+          {{- if .Values.connectors.brokerTLS.cert.secretRef }}
+            - name: cert
+              # The /opt/kafka/connect-certs is fixed path within Connectors
+              mountPath: /opt/kafka/connect-certs/cert
+          {{- end }}
+          {{- if .Values.connectors.brokerTLS.key.secretRef }}
+            - name: key
+              # The /opt/kafka/connect-certs is fixed path within Connectors
+              mountPath: /opt/kafka/connect-certs/key
+          {{- end }}
           {{- toYaml .Values.storage.volumeMounts | nindent 12 }}
       dnsPolicy: ClusterFirst
       restartPolicy: {{ .Values.deployment.restartPolicy }}
@@ -196,10 +225,28 @@ spec:
           whenUnsatisfiable: {{ $spread.whenUnsatisfiable }}
     {{- end }}
       volumes:
+      {{- if .Values.connectors.brokerTLS.ca.secretRef }}
+        - name: truststore
+          secret:
+            defaultMode: 0o444
+            secretName: {{ .Values.connectors.brokerTLS.ca.secretRef }}
+      {{- end }}
+      {{- if .Values.connectors.brokerTLS.cert.secretRef }}
+        - name: truststore
+          secret:
+            defaultMode: 0o444
+            secretName: {{ .Values.connectors.brokerTLS.cert.secretRef }}
+      {{- end }}
+      {{- if .Values.connectors.brokerTLS.key.secretRef }}
+        - name: truststore
+          secret:
+            defaultMode: 0o444
+            secretName: {{ .Values.connectors.brokerTLS.key.secretRef }}
+      {{- end }}
       {{- if and .Values.auth.sasl.userName .Values.auth.sasl.mechanism .Values.auth.sasl.secretRef }}
         - name: rc-credentials
           secret:
-            defaultMode: 0444
+            defaultMode: 0o444
             secretName: {{ .Values.auth.sasl.secretRef }}
       {{- end }}
       {{- toYaml .Values.storage.volume | nindent 8 }}

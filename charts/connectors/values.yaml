@@ -88,6 +88,26 @@ connectors:
       config: _internal_connectors_configs
       status: _internal_connectors_status
   groupID: connectors-cluster
+  brokerTLS:
+    enabled: false
+    ca:
+      # -- The name of the secret where ca.crt is located
+      secretRef: ""
+      # -- If secretRef points to secret where Certificate Authority is not under
+      # ca.crt key then please use secretNameOverwrite to overwrite it e.g. corp-ca.crt
+      secretNameOverwrite: ""
+    cert:
+      # -- The name of the secret where client signed certificate is located
+      secretRef: ""
+      # -- If secretRef points to secret where client signed certificate is not under
+      # tls.crt key then please use secretNameOverwrite to overwrite it e.g. corp-tls.crt
+      secretNameOverwrite: ""
+    key:
+      # -- The name of the secret where client private key is located
+      secretRef: ""
+      # -- If secretRef points to secret where client private key is not under
+      # tls.key key then please use secretNameOverwrite to overwrite it e.g. corp-tls.key
+      secretNameOverwrite: ""
 
 # -- Authentication settings.
 # For details,
