@@ -135,6 +135,8 @@ container:
   javaGCLogEnabled: "false"
 
 deployment:
+  strategy:
+    type: RollingUpdate
   schedulerName: ""
   updateStrategy:
     type: RollingUpdate

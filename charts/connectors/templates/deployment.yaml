@@ -31,11 +31,7 @@ spec:
   revisionHistoryLimit: {{ .Values.deployment.revisionHistoryLimit }}
   selector:
     matchLabels: {{ (include "connectors-pod-labels" .) | nindent 6 }}
-  strategy:
-    rollingUpdate:
-      maxSurge: 0
-      maxUnavailable: 1
-    type: RollingUpdate
+  strategy: {{- toYaml .Values.deployment.strategy | nindent 4 }}
   template:
     metadata:
   {{- with $.Values.deployment.annotations }}
