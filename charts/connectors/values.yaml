@@ -54,6 +54,9 @@ image:
 # See https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
 
+test:
+  create: true
+
 connectors:
   restPort: 8083
   # -- Bootstrap servers list is coma separated list of individual Redpanda brokers as single line string
@@ -155,6 +158,7 @@ container:
   javaGCLogEnabled: "false"
 
 deployment:
+  create: true
   strategy:
     type: RollingUpdate
   schedulerName: ""
