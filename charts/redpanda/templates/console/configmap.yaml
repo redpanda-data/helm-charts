@@ -50,6 +50,34 @@ limitations under the License.
 {{/* the rest of tls is configured through the secret */}}
 {{ $schemaRegistryTLS := dict "enabled" (include "schemaRegistry-internal-tls-enabled" . | fromJson).bool }}
 
+{{ $connectConfig := dict }}
+{{ if .Values.connectors.enabled }}
+{{ $connectorsValues := deepCopy .Subcharts.connectors }}
+{{ $connectorsValues = merge $connectorsValues .Values.connectors }}
+{{/* Connector */}}
+{{/* Currently Kafka connect helm chart does not support TLS configuraiton. That's why tls enabled is set explicitly to false*/}}
+{{/* Currently Kafka connect helm chart does not support basic auth. That's why username and password is set explicitly to empty string*/}}
+{{ $connectConfig = dict
+  "enabled" $values.connectors.enabled
+  "clusters" (list
+    (dict
+      "url" (printf "http://%s.%s.svc.cluster.local:%s" (include "connectors.serviceName" $connectorsValues) .Release.Namespace ($values.connectors.connectors.restPort | toString ))
+      "name" "connectors"
+      "tls" (dict
+        "enabled" "false"
+        "caFilepath" ""
+        "certFilepath" ""
+        "keyFilepath" ""
+        "insecureSkipTlsVerify" "false"
+      )
+      "username" ""
+      "password" ""
+      "token" ""
+    )
+  )
+}}
+{{ end }}
+
 {{ $kafkaSchemaRegistry := dict
       "enabled" (and .Values.listeners.schemaRegistry.enabled (include "redpanda-22-2-x-without-sasl" . | fromJson).bool)
       "urls" $urls
@@ -61,7 +89,10 @@ limitations under the License.
       "tls" $kafkaTLS
       "schemaRegistry" $kafkaSchemaRegistry
 }}
-{{ $consoleConfig := dict "kafka" $consoleConfigKafka }}
+{{ $consoleConfig := dict
+      "kafka" $consoleConfigKafka
+      "connect" $connectConfig
+}}
 {{ $config := dict
     "Values" (dict
       "console" (dict "config" $consoleConfig)
@@ -70,7 +101,7 @@ limitations under the License.
 }}
 
 {{ $console := deepCopy .Subcharts.console }}
-{{ $console := merge $config $console }}
+{{ $console = merge $config $console }}
 
 {{ include (print .Subcharts.console.Template.BasePath "/configmap.yaml") $console }}
 {{ end }}
