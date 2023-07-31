@@ -37,7 +37,7 @@ kubectl kustomize https://github.com/redpanda-data/redpanda//src/go/k8s/config/c
 ```sh
 helm repo add redpanda https://charts.redpanda.com
 helm repo update redpanda
-helm install --namespace redpanda --create-namespace redpanda-operator operator
+helm install --namespace redpanda --create-namespace redpanda-operator redpanda/operator
 ```
 
 Other instruction will be visible after installation.
