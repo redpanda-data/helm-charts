@@ -78,7 +78,7 @@ spec:
           echo "Test message!" | rpk topic produce test-topic
           rpk topic consume source.test-topic -n 1 | grep "Test message!"
           curl -X DELETE http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors/mm2
-          rpk topic delete test-topic
+          rpk topic delete test-topic source.test-topic mm2-offset-syncs.target.internal
   {{- if .Values.connectors.brokerTLS.ca.secretRef }}
       volumeMounts:
         - mountPath: /redpanda-certs
