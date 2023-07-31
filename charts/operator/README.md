@@ -1,6 +1,6 @@
 # Redpanda Operator
 
-![Version: 0.3.7](https://img.shields.io/badge/Version-0.3.7-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v23.2.2](https://img.shields.io/badge/AppVersion-v23.2.2-informational?style=flat-square)
+![Version: 0.3.8](https://img.shields.io/badge/Version-0.3.8-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v23.2.2](https://img.shields.io/badge/AppVersion-v23.2.2-informational?style=flat-square)
 
 ## Installation
 
@@ -37,7 +37,7 @@ kubectl kustomize https://github.com/redpanda-data/redpanda//src/go/k8s/config/c
 ```sh
 helm repo add redpanda https://charts.redpanda.com
 helm repo update redpanda
-helm install --namespace redpanda --create-namespace redpanda-operator operator
+helm install --namespace redpanda --create-namespace redpanda-operator redpanda/operator
 ```
 
 Other instruction will be visible after installation.
