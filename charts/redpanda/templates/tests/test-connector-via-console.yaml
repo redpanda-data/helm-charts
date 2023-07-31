@@ -50,6 +50,9 @@ spec:
   containers:
     - name: {{ template "redpanda.name" . }}
       image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
+      env:
+        - name: TLS_ENABLED
+          value: {{ (include "kafka-internal-tls-enabled" . | fromJson).bool | quote }}
       command:
         - /usr/bin/timeout
         - "120"
@@ -60,6 +63,32 @@ spec:
           rpk topic create {{ $testTopic }} {{ include "rpk-topic-flags" . }}
           rpk topic list {{ include "rpk-topic-flags" . }}
           echo "Test message!" | rpk topic produce {{ $testTopic }} {{ include "rpk-topic-flags" . }}
+
+          SASL_MECHANISM="PLAIN"
+          {{- if .Values.auth.sasl.enabled }}
+          set -e
+          set +x
+
+          IFS=: read -r CONNECT_SASL_USERNAME KAFKA_SASL_PASSWORD CONNECT_SASL_MECHANISM < $(find /etc/secrets/users/* -print)
+          CONNECT_SASL_MECHANISM=${CONNECT_SASL_MECHANISM:-{{ .Values.auth.sasl.mechanism | upper }}}
+          if [[ -n "$CONNECT_SASL_USERNAME" && -n "$KAFKA_SASL_PASSWORD" && -n "$CONNECT_SASL_MECHANISM" ]]; then
+            SASL_MECHANISM=$CONNECT_SASL_MECHANISM
+            JAAS_CONFIG_SOURCE="\"source.cluster.sasl.jaas.config\": \"org.apache.kafka.common.security.scram.ScramLoginModule required username=\\\\"\"${CONNECT_SASL_USERNAME}\\\\"\" password=\\\\"\"${KAFKA_SASL_PASSWORD}\\\\"\";\","
+            JAAS_CONFIG_TARGET="\"target.cluster.sasl.jaas.config\": \"org.apache.kafka.common.security.scram.ScramLoginModule required username=\\\\"\"${CONNECT_SASL_USERNAME}\\\\"\" password=\\\\"\"${KAFKA_SASL_PASSWORD}\\\\"\";\","
+          fi
+
+          set -x
+          set +e
+          {{- end }}
+
+          SECURITY_PROTOCOL=PLAINTEXT
+          if [[ -n "$CONNECT_SASL_MECHANISM" && $TLS_ENABLED == "true" ]]; then
+            SECURITY_PROTOCOL="SASL_SSL"
+          elif [[ -n "$CONNECT_SASL_MECHANISM" ]]; then
+            SECURITY_PROTOCOL="SASL_PLAINTEXT"
+          elif [[ $TLS_ENABLED == "true" ]]; then
+            SECURITY_PROTOCOL="SSL"
+          fi
 
           CONNECTOR_NAME=mm2-$RANDOM
           cat << 'EOF' > /tmp/mm2-conf.json
@@ -84,15 +113,23 @@ spec:
               "target.cluster.ssl.truststore.type": "PEM",
               "source.cluster.ssl.truststore.location": "/opt/kafka/connect-certs/ca/ca.crt",
               "target.cluster.ssl.truststore.location": "/opt/kafka/connect-certs/ca/ca.crt",
-              "source.cluster.security.protocol": {{ ternary "SSL" "PLAINTEXT" (include "kafka-internal-tls-enabled" . | fromJson).bool | quote }},
-              "target.cluster.security.protocol": {{ ternary "SSL" "PLAINTEXT" (include "kafka-internal-tls-enabled" . | fromJson).bool | quote }},
-              "source.cluster.sasl.mechanism": "PLAIN",
-              "target.cluster.sasl.mechanism": "PLAIN"
+              JAAS_CONFIG_SOURCE
+              JAAS_CONFIG_TARGET
+              "source.cluster.security.protocol": "SECURITY_PROTOCOL",
+              "target.cluster.security.protocol": "SECURITY_PROTOCOL",
+              "source.cluster.sasl.mechanism": "SASL_MECHANISM",
+              "target.cluster.sasl.mechanism": "SASL_MECHANISM"
             }
           }
           EOF
 
           sed -i "s/CONNECTOR_NAME/$CONNECTOR_NAME/g" /tmp/mm2-conf.json
+          sed -i "s/SASL_MECHANISM/$SASL_MECHANISM/g" /tmp/mm2-conf.json
+          sed -i "s/SECURITY_PROTOCOL/$SECURITY_PROTOCOL/g" /tmp/mm2-conf.json
+          set +x
+          sed -i "s/JAAS_CONFIG_SOURCE/$JAAS_CONFIG_SOURCE/g" /tmp/mm2-conf.json
+          sed -i "s/JAAS_CONFIG_TARGET/$JAAS_CONFIG_TARGET/g" /tmp/mm2-conf.json
+          set -x
 
           max_iteration=10
           for i in $(seq 1 $max_iteration)
