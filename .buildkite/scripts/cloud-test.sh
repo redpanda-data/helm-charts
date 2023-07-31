@@ -8,7 +8,7 @@ set
 PATH="$(realpath .local/bin):${PATH}"
 bash -O extglob -c "rm -v charts/redpanda/ci/!(2)[0-9]-*"
 
-ct install --config .github/ct.yaml --upgrade --skip-missing-values | sed 's/>>> /~~~ /'
+ct install --config .github/ct-redpanda.yaml --upgrade --skip-missing-values | sed 's/>>> /~~~ /'
 
 eks() {
   echo '--- testing that there is data in the s3 bucket'
