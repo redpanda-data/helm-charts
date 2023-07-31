@@ -31,7 +31,7 @@ limitations under the License.
         "brokerTLS" (dict
           "enabled" (include "kafka-internal-tls-enabled" . | fromJson).bool
           "ca" (dict
-            "secretRef" (printf "%s-default-cert" (include "redpanda.fullname" .))
+            "secretRef" (ternary (printf "%s-default-cert" (include "redpanda.fullname" .)) "" (include "kafka-internal-tls-enabled" . | fromJson).bool)
           )
         )
       )
