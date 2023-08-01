@@ -52,35 +52,42 @@ spec:
           rpk topic list
           echo "Test message!" | rpk topic produce test-topic
 
+          CONNECTOR_NAME=mm2-$RANDOM
+          cat << 'EOF' > /tmp/mm2-conf.json
+          {
+            "name": "CONNECTOR_NAME",
+            "config": {
+              "connector.class": "org.apache.kafka.connect.mirror.MirrorSourceConnector",
+              "topics": "test-topic",
+              "replication.factor": "1",
+              "tasks.max": "1",
+              "source.cluster.bootstrap.servers": {{ .Values.connectors.bootstrapServers | quote }},
+              "target.cluster.bootstrap.servers": {{ .Values.connectors.bootstrapServers | quote }},
+              "source.cluster.alias": "source",
+              "key.converter": "org.apache.kafka.connect.converters.ByteArrayConverter",
+              "value.converter": "org.apache.kafka.connect.converters.ByteArrayConverter",
+              "source->target.enabled": "true",
+              "target->source.enabled": "false",
+              "sync.topic.configs.interval.seconds": "5",
+              "sync.topics.configs.enabled": "true",
+              "source.cluster.ssl.truststore.type": "PEM",
+              "target.cluster.ssl.truststore.type": "PEM",
+              "source.cluster.ssl.truststore.location": {{ printf "/opt/kafka/connect-certs/ca/%s" (default "ca.crt" .Values.connectors.brokerTLS.ca.secretNameOverwrite) | quote }},
+              "target.cluster.ssl.truststore.location": {{ printf "/opt/kafka/connect-certs/ca/%s" (default "ca.crt" .Values.connectors.brokerTLS.ca.secretNameOverwrite) | quote }},
+              "source.cluster.security.protocol": {{ ternary "SSL" "PLAINTEXT" .Values.connectors.brokerTLS.enabled | quote }},
+              "target.cluster.security.protocol": {{ ternary "SSL" "PLAINTEXT" .Values.connectors.brokerTLS.enabled | quote }},
+              "source.cluster.sasl.mechanism": "PLAIN",
+              "target.cluster.sasl.mechanism": "PLAIN"
+            }
+          }
+          EOF
+
+          sed -i "s/CONNECTOR_NAME/$CONNECTOR_NAME/g" /tmp/mm2-conf.json
+
           max_iteration=10
           for i in $(seq 1 $max_iteration)
           do
-            curl -H 'Content-Type: application/json' http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors --data-raw '{
-              "name": "mm2",
-              "config": {
-                "connector.class": "org.apache.kafka.connect.mirror.MirrorSourceConnector",
-                "topics": "test-topic",
-                "replication.factor": "1",
-                "tasks.max": "1",
-                "source.cluster.bootstrap.servers": {{ .Values.connectors.bootstrapServers | quote }},
-                "target.cluster.bootstrap.servers": {{ .Values.connectors.bootstrapServers | quote }},
-                "source.cluster.alias": "source",
-                "key.converter": "org.apache.kafka.connect.converters.ByteArrayConverter",
-                "value.converter": "org.apache.kafka.connect.converters.ByteArrayConverter",
-                "source->target.enabled": "true",
-                "target->source.enabled": "false",
-                "sync.topic.configs.interval.seconds": "5",
-                "sync.topics.configs.enabled": "true",
-                "source.cluster.ssl.truststore.type": "PEM",
-                "target.cluster.ssl.truststore.type": "PEM",
-                "source.cluster.ssl.truststore.location": {{ printf "/opt/kafka/connect-certs/ca/%s" (default "ca.crt" .Values.connectors.brokerTLS.ca.secretNameOverwrite) | quote }},
-                "target.cluster.ssl.truststore.location": {{ printf "/opt/kafka/connect-certs/ca/%s" (default "ca.crt" .Values.connectors.brokerTLS.ca.secretNameOverwrite) | quote }},
-                "source.cluster.security.protocol": {{ ternary "SSL" "PLAINTEXT" .Values.connectors.brokerTLS.enabled | quote }},
-                "target.cluster.security.protocol": {{ ternary "SSL" "PLAINTEXT" .Values.connectors.brokerTLS.enabled | quote }},
-                "source.cluster.sasl.mechanism": "PLAIN",
-                "target.cluster.sasl.mechanism": "PLAIN"
-              }
-            }'
+            curl -v -H 'Content-Type: application/json' http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors -d @/tmp/mm2-conf.json
             result=$?
             if [[ $result -eq 0 ]]
             then
@@ -102,7 +109,7 @@ spec:
 
           for i in $(seq 1 $max_iteration)
           do
-            curl -X DELETE http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors/mm2
+            curl -X DELETE http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors/$CONNECTOR_NAME
             result=$?
             if [[ $result -eq 0 ]]
             then
