@@ -156,7 +156,7 @@ spec:
             timeoutSeconds: {{ .Values.deployment.livenessProbe.timeoutSeconds }}
           readinessProbe:
             httpGet:
-              path: /
+              path: /connectors
               port: rest-api
               scheme: HTTP
             initialDelaySeconds: {{ .Values.deployment.readinessProbe.initialDelaySeconds }}
