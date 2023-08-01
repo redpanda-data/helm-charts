@@ -175,7 +175,7 @@ deployment:
     timeoutSeconds: 1
   readinessProbe:
     initialDelaySeconds: 60
-    failureThreshold: 3
+    failureThreshold: 2
     periodSeconds: 10
     successThreshold: 3
     timeoutSeconds: 5
