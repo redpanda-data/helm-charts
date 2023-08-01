@@ -122,6 +122,8 @@ jobs:
         run: |
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts &&
           helm install prometheus prometheus-community/kube-prometheus-stack \
+            --namespace prometheus --create-namespace \
+            --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false \
             --set nodeExporter.enabled=false \
             --set grafana.enabled=false --set kubeStateMetrics.enabled=false --set alertmanager.enabled=false \
             --wait --wait-for-jobs

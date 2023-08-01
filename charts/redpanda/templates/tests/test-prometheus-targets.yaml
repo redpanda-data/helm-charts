@@ -49,7 +49,7 @@ spec:
 
             # Run the command, and save the exit code
             # from: https://prometheus.io/docs/prometheus/latest/querying/api/
-            local RESULT=$( curl --fail http://prometheus-operated.{{ .Release.Namespace }}.svc.cluster.local:9090/api/v1/targets?scrapePool="serviceMonitor/{{ .Release.Namespace }}/{{ .Release.Namespace }}/0" | jq . | grep '"health": "up"' | wc -l  )
+            local RESULT=$( curl --fail http://prometheus-operated.prometheus.svc.cluster.local:9090/api/v1/targets?scrapePool=serviceMonitor/{{ .Release.Namespace }}/{{ .Release.Namespace }}/0 | jq . | grep '"health": "up"' | wc -l  )
             local exit_code=$?
 
             # If the exit code is non-zero (i.e. command failed), and we have not
@@ -64,88 +64,9 @@ spec:
           }
           RESULT=$(curl_prometheus_retry 20)
           set +x
-          if [ $RESULT != {{ .Values.statefulset.replicas }} ]; then 
+          if [ $RESULT != {{ .Values.statefulset.replicas }} ]; then
+              curl --fail http://prometheus-operated.prometheus.svc.cluster.local:9090/api/v1/targets?scrapePool=serviceMonitor/{{ .Release.Namespace }}/{{ .Release.Namespace }}/0 | jq .
               echo "the number of targets unexpected; got ${RESULT} targets 'up', but was expecting {{ .Values.statefulset.replicas }} "
               exit 1
           fi
----
-apiVersion: monitoring.coreos.com/v1
-kind: Prometheus
-metadata:
-  name: prometheus
-  namespace: {{ .Release.Namespace }}
-  annotations:
-    helm.sh/hook: test
-    helm.sh/hook-delete-policy: before-hook-creation
-    helm.sh/hook-weight: "-100"
-spec:
-  replicas: 1
-  scrapeInterval: 10s
-  serviceAccountName: prometheus
-  serviceMonitorNamespaceSelector:
-    matchLabels:
-      name: {{ .Release.Namespace }}
-  serviceMonitorSelector:
-    matchLabels:
-      app.kubernetes.io/name: redpanda
-  resources:
-    requests:
-      memory: 400Mi
-  enableAdminAPI: false
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: prometheus
-  namespace: {{ .Release.Namespace }}
-  annotations:
-    helm.sh/hook: test
-    helm.sh/hook-delete-policy: before-hook-creation
-    helm.sh/hook-weight: "-100"
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: prometheus
-  annotations:
-    helm.sh/hook: test
-    helm.sh/hook-delete-policy: before-hook-creation
-    helm.sh/hook-weight: "-100"
-rules:
-  - apiGroups: [""]
-    resources:
-      - nodes
-      - nodes/metrics
-      - services
-      - endpoints
-      - pods
-    verbs: ["get", "list", "watch"]
-  - apiGroups: [""]
-    resources:
-      - configmaps
-    verbs: ["get"]
-  - apiGroups:
-      - networking.k8s.io
-    resources:
-      - ingresses
-    verbs: ["get", "list", "watch"]
-  - nonResourceURLs: ["/metrics"]
-    verbs: ["get"]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: prometheus
-  annotations:
-    helm.sh/hook: test
-    helm.sh/hook-delete-policy: before-hook-creation
-    helm.sh/hook-weight: "-100"
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: prometheus
-subjects:
-  - kind: ServiceAccount
-    name: prometheus
-    namespace: {{ .Release.Namespace }}
 {{- end }}
