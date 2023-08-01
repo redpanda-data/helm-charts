@@ -40,7 +40,7 @@ spec:
         - |
           set -x
 
-          curl http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors
+          curl http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors && echo
 
           rpk profile create test
           rpk profile set tls.enabled={{.Values.connectors.brokerTLS.enabled}} brokers={{ .Values.connectors.bootstrapServers }}
@@ -87,7 +87,7 @@ spec:
           max_iteration=10
           for i in $(seq 1 $max_iteration)
           do
-            curl -v -H 'Content-Type: application/json' http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors -d @/tmp/mm2-conf.json
+            curl -v -H 'Content-Type: application/json' http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors -d @/tmp/mm2-conf.json && echo
             result=$?
             if [[ $result -eq 0 ]]
             then
@@ -109,7 +109,7 @@ spec:
 
           for i in $(seq 1 $max_iteration)
           do
-            curl -X DELETE http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors/$CONNECTOR_NAME
+            curl -X DELETE http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors/$CONNECTOR_NAME && echo
             result=$?
             if [[ $result -eq 0 ]]
             then
@@ -127,7 +127,7 @@ spec:
             exit 1
           fi
 
-          curl http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors
+          curl http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors && echo
 
           rpk topic delete test-topic source.test-topic mm2-offset-syncs.target.internal
   {{- if .Values.connectors.brokerTLS.ca.secretRef }}
