@@ -17,7 +17,7 @@ limitations under the License.
 apiVersion: v1
 kind: Pod
 metadata:
-  name: {{ include "connectors.fullname" . }}-mm2-test
+  name: {{ include "connectors.fullname" . }}-mm2-test-{{ randNumeric 3 }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
 {{- with include "full.labels" . }}
