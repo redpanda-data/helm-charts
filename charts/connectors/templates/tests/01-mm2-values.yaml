@@ -17,7 +17,7 @@ limitations under the License.
 apiVersion: v1
 kind: Pod
 metadata:
-  name: {{ include "connectors.fullname" . }}-mm2-test
+  name: {{ include "connectors.fullname" . }}-mm2-test-{{ randNumeric 3 }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
 {{- with include "full.labels" . }}
@@ -40,9 +40,22 @@ spec:
         - |
           set -x
 
-          curl http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors
-          curl -H 'Content-Type: application/json' http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors --data-raw '{
-            "name": "mm2",
+          curl http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors && echo
+
+          rpk profile create test
+          rpk profile set tls.enabled={{.Values.connectors.brokerTLS.enabled}} brokers={{ .Values.connectors.bootstrapServers }}
+          {{- if .Values.connectors.brokerTLS.ca.secretRef }}
+          rpk profile set tls.ca={{ printf "/redpanda-certs/%s" (default "ca.crt" .Values.connectors.brokerTLS.ca.secretNameOverwrite) }}
+          {{- end }}
+          rpk topic list
+          rpk topic create test-topic
+          rpk topic list
+          echo "Test message!" | rpk topic produce test-topic
+
+          CONNECTOR_NAME=mm2-$RANDOM
+          cat << 'EOF' > /tmp/mm2-conf.json
+          {
+            "name": "CONNECTOR_NAME",
             "config": {
               "connector.class": "org.apache.kafka.connect.mirror.MirrorSourceConnector",
               "topics": "test-topic",
@@ -66,19 +79,57 @@ spec:
               "source.cluster.sasl.mechanism": "PLAIN",
               "target.cluster.sasl.mechanism": "PLAIN"
             }
-          }'
-          rpk profile create test
-          rpk profile set tls.enabled={{.Values.connectors.brokerTLS.enabled}} brokers={{ .Values.connectors.bootstrapServers }}
-          {{- if .Values.connectors.brokerTLS.ca.secretRef }}
-          rpk profile set tls.ca={{ printf "/redpanda-certs/%s" (default "ca.crt" .Values.connectors.brokerTLS.ca.secretNameOverwrite) }}
-          {{- end }}
-          rpk topic list
-          rpk topic create test-topic
-          rpk topic list
-          echo "Test message!" | rpk topic produce test-topic
+          }
+          EOF
+
+          sed -i "s/CONNECTOR_NAME/$CONNECTOR_NAME/g" /tmp/mm2-conf.json
+
+          max_iteration=10
+          for i in $(seq 1 $max_iteration)
+          do
+            curl -v -H 'Content-Type: application/json' http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors -d @/tmp/mm2-conf.json && echo
+            result=$?
+            if [[ $result -eq 0 ]]
+            then
+              echo "Result successful"
+              break
+            else
+              echo "Result unsuccessful"
+              sleep 1
+            fi
+          done
+
+          if [[ $result -ne 0 ]]
+          then
+            echo "mm2 connector can not be destroyed!!!"
+            exit 1
+          fi
+
           rpk topic consume source.test-topic -n 1 | grep "Test message!"
-          curl -X DELETE http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors/mm2
-          rpk topic delete test-topic
+
+          for i in $(seq 1 $max_iteration)
+          do
+            curl -X DELETE http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors/$CONNECTOR_NAME && echo
+            result=$?
+            if [[ $result -eq 0 ]]
+            then
+              echo "Result successful"
+              break
+            else
+              echo "Result unsuccessful"
+              sleep 1
+            fi
+          done
+
+          if [[ $result -ne 0 ]]
+          then
+            echo "mm2 connector can not be destroyed!!!"
+            exit 1
+          fi
+
+          curl http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors && echo
+
+          rpk topic delete test-topic source.test-topic mm2-offset-syncs.target.internal
   {{- if .Values.connectors.brokerTLS.ca.secretRef }}
       volumeMounts:
         - mountPath: /redpanda-certs

@@ -175,9 +175,9 @@ deployment:
     timeoutSeconds: 1
   readinessProbe:
     initialDelaySeconds: 60
-    failureThreshold: 3
+    failureThreshold: 2
     periodSeconds: 10
-    successThreshold: 1
+    successThreshold: 3
     timeoutSeconds: 5
 
   # -- The maximum time in seconds for a deployment to make progress before it is
