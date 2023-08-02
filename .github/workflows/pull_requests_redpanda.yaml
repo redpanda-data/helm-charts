@@ -13,18 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Lint and Test Operator Chart
+name: Lint and Test Redpanda Charts
 
 on:
   pull_request:
     branches:
       - "**"
     paths:
+      - .buildkite/*
       - .github/*.sh
-      - .github/ct.yaml
+      - .github/ct-redpanda.yaml
       - .github/kind.yaml
-      - .github/workflows/pull_requests-operator.yaml
-      - 'charts/operator/**'
+      - .github/workflows/pull_requests.yaml
+      - charts/**
+      - '!charts/operator/**'
       - '!**/*.md'
 jobs:
   lint:
@@ -39,7 +41,7 @@ jobs:
           git checkout -
 
       - name: Run CI file name checker
-        run: .github/check-ci-files.sh charts/operator/ci
+        run: .github/check-ci-files.sh charts/redpanda/ci
 
       - name: Set up Helm
         uses: azure/setup-helm@v3
@@ -52,7 +54,7 @@ jobs:
           version: v3.8.0-1
 
       - name: Run chart-testing (lint)
-        run: ct lint --config .github/ct-operator.yaml --github-groups
+        run: ct lint --config .github/ct-redpanda.yaml --github-groups
 
   check-values:
     runs-on: ubuntu-22.04
@@ -68,12 +70,25 @@ jobs:
 
       - name: install dyff
         run: curl -Ls https://github.com/homeport/dyff/releases/download/v1.5.6/dyff_1.5.6_linux_amd64.tar.gz | tar xzv dyff
-      - name: compare operator values with main
-        run: ./dyff --color=off -k between -s <(git show 'origin/main:charts/operator/values.yaml') charts/operator/values.yaml
+      - name: compare redpanda values with main
+        run: ./dyff --color=off -k between -s <(git show 'origin/main:charts/redpanda/values.yaml') charts/redpanda/values.yaml
+      - name: compare console values with main
+        run: ./dyff --color=off -k between -s <(git show 'origin/main:charts/console/values.yaml') charts/console/values.yaml
   test:
     needs: lint
-    name: Run ct tests for operator chart
+    name: "${{ matrix.version }}/${{ matrix.testvaluespattern }}: Run ct tests"
     strategy:
+      matrix:
+        version:
+          - ""
+          - v22.3.17
+          # - v22.2.x takes too long. Only run nightly.
+        testvaluespattern:
+          - '0[1-3]*'
+          - '0[4-6]*'
+          - '0[7-9]*'
+          - '1[0-2]*'
+          - '1[3-5]*'
       fail-fast: true
     runs-on: ubuntu-22.04
     steps:
@@ -100,11 +115,17 @@ jobs:
       - name: Run chart-testing (list-changed)
         id: list-changed
         run: |
-          changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }} --config .github/ct-operator.yaml)
+          changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }} --config .github/ct-redpanda.yaml)
           echo $changed
           if [[ -n "$changed" ]]; then
             echo changed="true" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Set up for matrix
+        if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          echo bash -O extglob -c "rm -v charts/redpanda/ci/!(${{ matrix.testvaluespattern }})"
+          bash -O extglob -c "rm -v charts/redpanda/ci/!(${{ matrix.testvaluespattern }})"
 
       - name: Create kind cluster
         uses: helm/kind-action@v1.5.0
@@ -120,6 +141,27 @@ jobs:
         if: steps.list-changed.outputs.changed == 'true'
         run: .github/annotate_kind_nodes.sh chart-testing
 
+    #===== Required Test Files === start
+
+      - name: Create tls helm templates
+        if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          .github/create_tls.sh "random-domain"
+
+      - name: Create sasl secret templates
+        if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          .github/create-sasl-secret.sh "some-users"
+
+      - name: Move files to redpanda template dir
+        if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          mv external-tls-secret.yaml charts/redpanda/templates/
+          cp .github/external-service.yaml charts/redpanda/templates/
+          mv some-users-updated.yaml charts/redpanda/templates/
+
+    #===== Required Test Files === end
+
       - name: install cert-manager
         if: steps.list-changed.outputs.changed == 'true'
         run: |
@@ -128,10 +170,28 @@ jobs:
             --create-namespace --version v1.11.0 jetstack/cert-manager \
             --set installCRDs=true --wait --wait-for-jobs
 
-      - name: Install CRDs
+      - name: install prometheus-operator
         if: steps.list-changed.outputs.changed == 'true'
         run: |
-          kubectl kustomize https://github.com/redpanda-data/redpanda//src/go/k8s/config/crd | kubectl apply -f -
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts &&
+          helm install prometheus prometheus-community/kube-prometheus-stack \
+            --namespace prometheus --create-namespace \
+            --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false \
+            --set nodeExporter.enabled=false \
+            --set grafana.enabled=false --set kubeStateMetrics.enabled=false --set alertmanager.enabled=false \
+            --wait --wait-for-jobs
+
+      - name: install metallb
+        if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          helm repo add metallb https://metallb.github.io/metallb &&
+          helm install metallb metallb/metallb -n metallb-system \
+            --create-namespace --version 0.13.10 --wait --wait-for-jobs
+
+      - name: apply metallb resources
+        if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          kubectl -n metallb-system apply -f .github/metallb-config.yaml
 
       - name: Run chart-testing (install and upgrade)
         if: steps.list-changed.outputs.changed == 'true'
@@ -139,8 +199,10 @@ jobs:
           ct install \
             --github-groups \
             --upgrade \
-            --config .github/ct-operator.yaml \
+            --config .github/ct-redpanda.yaml \
+            --helm-extra-set-args="--set=image.tag=${{ matrix.version }}" \
             --skip-missing-values \
+            --chart-dirs=charts/redpanda \
             --target-branch ${{ github.event.repository.default_branch }}
   summary:
     if: always()
