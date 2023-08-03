@@ -20,7 +20,7 @@ limitations under the License.
 {{ $extraVolumeMounts := list }}
 {{ $command := list }}
 {{ if (include "sasl-enabled" . | fromJson).bool }}
-  {{ $command = concat $command (list "sh" "-xc") }}
+  {{ $command = concat $command (list "sh" "-c") }}
   {{ $consoleSASLConfig := (printf "set -e; IFS=: read -r KAFKA_SASL_USERNAME KAFKA_SASL_PASSWORD KAFKA_SASL_MECHANISM < $(find /mnt/users/* -print); KAFKA_SASL_MECHANISM=${KAFKA_SASL_MECHANISM:-%s}; export KAFKA_SASL_USERNAME KAFKA_SASL_PASSWORD KAFKA_SASL_MECHANISM;" ( include "sasl-mechanism" . )) }}
   {{ $consoleSASLConfig = cat $consoleSASLConfig " export KAFKA_SCHEMAREGISTRY_USERNAME=$KAFKA_SASL_USERNAME;" }}
   {{ $consoleSASLConfig = cat $consoleSASLConfig " export KAFKA_SCHEMAREGISTRY_PASSWORD=$KAFKA_SASL_PASSWORD;" }}
