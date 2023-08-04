@@ -124,6 +124,13 @@ rules:
   verbs:
   - update
 - apiGroups:
+    - ""
+  resources:
+    - pods/status
+  verbs:
+    - patch
+    - update
+- apiGroups:
   - ""
   resources:
   - secrets
