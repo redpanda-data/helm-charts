@@ -793,6 +793,50 @@ entries:
       artifacthub.io/operatorCapabilities: Basic Install
     apiVersion: v2
     appVersion: v23.2.2
+    created: "2023-08-04T14:13:45.509533162Z"
+    dependencies:
+    - condition: monitoring.enabled
+      name: kube-prometheus-stack
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 13.13.1
+    description: Redpanda operator helm chart
+    digest: f63726a92d540366215ed68097d6e34b6a8d84f60c38cfd02a8d23ffea97e3c2
+    home: https://vectorized.io
+    icon: https://go.redpanda.com/hubfs/Redpandas/operator-panda.png
+    maintainers:
+    - email: support@vectorized.io
+      name: Vectorizedio
+    name: operator
+    sources:
+    - https://github.com/redpanda-data/helm-charts
+    type: application
+    urls:
+    - https://github.com/redpanda-data/helm-charts/releases/download/operator-0.3.9/operator-0.3.9.tgz
+    version: 0.3.9
+  - annotations:
+      artifacthub.io/crds: |
+        - kind: Redpanda
+          version: v1alpha1
+          name: redpanda
+          displayName: Redpanda
+          description: Define a Redpanda cluster
+      artifacthub.io/images: |
+        - name: redpanda-operator
+          image: docker.redpanda.com/redpandadata/redpanda-operator:v23.2.2
+        - name: redpanda
+          image: docker.redpanda.com/redpandadata/redpanda:v23.2.2
+        - name: kube-rbac-proxy
+          image: gcr.io/kubebuilder/kube-rbac-proxy:v0.8.0
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://docs.redpanda.com
+        - name: "Helm (>= 3.6.0)"
+          url: https://helm.sh/docs/intro/install/
+      artifacthub.io/operator: "true"
+      artifacthub.io/operatorCapabilities: Basic Install
+    apiVersion: v2
+    appVersion: v23.2.2
     created: "2023-07-27T00:32:49.559632271Z"
     dependencies:
     - condition: monitoring.enabled
@@ -6342,4 +6386,4 @@ entries:
     urls:
     - https://charts.redpanda.com/redpanda-0.1.0.tgz
     version: 0.1.0
-generated: "2023-08-02T07:49:10.514764651Z"
+generated: "2023-08-04T14:13:45.510057665Z"
