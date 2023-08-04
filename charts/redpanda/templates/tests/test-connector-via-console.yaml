@@ -28,7 +28,7 @@ limitations under the License.
 apiVersion: v1
 kind: Pod
 metadata:
-  name: {{ include "redpanda.fullname" . | trunc 54 }}-test-{{ randNumeric 3 }}
+  name: {{ include "redpanda.fullname" . | trunc 54 }}-test-connectors-via-console
   namespace: {{ .Release.Namespace | quote }}
   labels:
   {{- with include "full.labels" . }}

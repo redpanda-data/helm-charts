@@ -237,13 +237,24 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.hostIP
+          # finish the lifecycle scripts with "true" to prevent them from terminating the pod prematurely
           lifecycle:
             postStart:
               exec:
-                command: ["/bin/bash", "-c", "./var/lifecycle/postStart.sh"]
+                command:
+                  - /bin/bash
+                  - -c
+                  - |
+                    timeout -v {{ div .Values.statefulset.terminationGracePeriodSeconds 2 }} bash -x /var/lifecycle/postStart.sh
+                    true
             preStop:
               exec:
-                command: ["/bin/bash", "-c", "./var/lifecycle/preStop.sh"]
+                command:
+                  - /bin/bash
+                  - -c
+                  - |
+                    timeout -v {{ div .Values.statefulset.terminationGracePeriodSeconds 2 }} bash -x /var/lifecycle/preStop.sh
+                    true # do not fail and cause the pod to terminate
           # the startupProbe checks to see that the admin api is listening and that the broker has a node_id assigned. This
           # check is only used to delay the start of the liveness and readiness probes until it passes.
           startupProbe:
@@ -384,7 +395,7 @@ spec:
         - name: lifecycle-scripts
           secret:
             secretName: {{ (include "redpanda.fullname" . | trunc 50 ) }}-sts-lifecycle
-            defaultMode: 0774
+            defaultMode: 0o775
         - name: datadir
 {{- if .Values.storage.persistentVolume.enabled }}
           persistentVolumeClaim:
@@ -441,7 +452,7 @@ spec:
           secret:
             secretName: {{ template "redpanda.fullname" . }}-config-watcher
             optional: false
-            defaultMode: 0774
+            defaultMode: 0o775
 {{- if or .Values.statefulset.nodeAffinity .Values.statefulset.podAffinity .Values.statefulset.podAntiAffinity }}
       affinity:
   {{- with .Values.statefulset.nodeAffinity }}
