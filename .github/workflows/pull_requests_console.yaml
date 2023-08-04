@@ -169,7 +169,7 @@ jobs:
           --set=console.config.kafka.sasl.enabled=false \
           --set=console.config.kafka.schemaRegistry.enabled=true \
           --set=console.config.kafka.schemaRegistry.tls.enabled=false \
-          --set=console.config.kafka.schemaRegistry.urls={http://redpanda-0.redpanda.redpanda.svc.cluster.local.:8081, http://redpanda-1.redpanda.redpanda.svc.cluster.local.:8081, http://redpanda-2.redpanda.redpanda.svc.cluster.local.:8081}" \
+          --set=console.config.kafka.schemaRegistry.urls={http://redpanda-0.redpanda.redpanda.svc.cluster.local.:8081,http://redpanda-1.redpanda.redpanda.svc.cluster.local.:8081,http://redpanda-2.redpanda.redpanda.svc.cluster.local.:8081}" \
             --skip-missing-values \
             --chart-dirs=charts/console \
             --target-branch ${{ github.event.repository.default_branch }}
