@@ -1,0 +1,61 @@
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+---
+statefulset:
+  sideCars:
+    configWatcher:
+      extraVolumeMounts: |-
+        - name: test-extra-volume
+          mountPath: /fake/lifecycle
+  initContainers:
+    configurator:
+      resources:
+        requests:
+          memory: "20Mi"
+          cpu: "100m"
+        limits:
+          memory: "60Mi"
+          cpu: "200m"
+      extraVolumeMounts: |-
+        - name: test-extra-volume
+          mountPath: /fake/lifecycle
+    tuning:
+      extraVolumeMounts: |-
+        - name: test-extra-volume
+          mountPath: /fake/lifecycle
+    setDataDirOwnership:
+      extraVolumeMounts: |-
+        - name: test-extra-volume
+          mountPath: /fake/lifecycle
+    setTieredStorageCacheDirOwnership:
+      extraVolumeMounts: |-
+        - name: test-extra-volume
+          mountPath: /fake/lifecycle
+    extraInitContainers: |-
+      - name: "test-init-container"
+        image: "mintel/docker-alpine-bash-curl-jq:latest"
+        command: [ "/bin/bash", "-c" ]
+        args:
+          - |
+            set -xe
+            echo "Hello World!"
+  extraVolumes: |-
+    - name: test-extra-volume
+      secret:
+        secretName: {{ (include "redpanda.fullname" . | trunc 50 ) }}-sts-lifecycle
+        defaultMode: 0774
+  extraVolumeMounts: |-
+    - name: test-extra-volume
+      mountPath: /fake/lifecycle
