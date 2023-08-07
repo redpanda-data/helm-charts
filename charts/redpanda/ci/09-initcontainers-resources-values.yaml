@@ -14,6 +14,11 @@
 # limitations under the License.
 ---
 statefulset:
+  sideCars:
+    configWatcher:
+      extraVolumeMounts: |-
+        - name: test-extra-volume
+          mountPath: /fake/lifecycle
   initContainers:
     configurator:
       resources:
@@ -23,3 +28,34 @@ statefulset:
         limits:
           memory: "60Mi"
           cpu: "200m"
+      extraVolumeMounts: |-
+        - name: test-extra-volume
+          mountPath: /fake/lifecycle
+    tuning:
+      extraVolumeMounts: |-
+        - name: test-extra-volume
+          mountPath: /fake/lifecycle
+    setDataDirOwnership:
+      extraVolumeMounts: |-
+        - name: test-extra-volume
+          mountPath: /fake/lifecycle
+    setTieredStorageCacheDirOwnership:
+      extraVolumeMounts: |-
+        - name: test-extra-volume
+          mountPath: /fake/lifecycle
+    extraInitContainers: |-
+      - name: "test-init-container"
+        image: "mintel/docker-alpine-bash-curl-jq:latest"
+        command: [ "/bin/bash", "-c" ]
+        args:
+          - |
+            set -xe
+            echo "Hello World!"
+  extraVolumes: |-
+    - name: test-extra-volume
+      secret:
+        secretName: {{ (include "redpanda.fullname" . | trunc 50 ) }}-sts-lifecycle
+        defaultMode: 0774
+  extraVolumeMounts: |-
+    - name: test-extra-volume
+      mountPath: /fake/lifecycle
