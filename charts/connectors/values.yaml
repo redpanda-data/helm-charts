@@ -160,6 +160,8 @@ container:
 
 deployment:
   create: true
+  # Command could be used to change the entrypoint for connectors deployment.
+  # command: []
   strategy:
     type: RollingUpdate
   schedulerName: ""

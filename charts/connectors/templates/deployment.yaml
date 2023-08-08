@@ -80,6 +80,9 @@ spec:
   {{- with .Values.container.securityContext }}
     {{- toYaml . | nindent 12 }}
   {{- end }}
+        {{- with .Values.deployment.command }}
+          command: {{ toJson . }}
+        {{- end }}
           env:
             - name: CONNECT_CONFIGURATION
               value: |
