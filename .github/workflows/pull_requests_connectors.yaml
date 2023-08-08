@@ -126,7 +126,8 @@ jobs:
         if: steps.list-changed.outputs.changed == 'true'
         run: |
           helm dependency build charts/redpanda
-          helm install --namespace redpanda --create-namespace redpanda charts/redpanda --wait --wait-for-jobs
+          helm install --namespace redpanda --create-namespace redpanda charts/redpanda --wait --wait-for-jobs \
+            --set connectors.enabled=false
 
       - name: Copy Redpanda tls cert to connectors chart
         if: steps.list-changed.outputs.changed == 'true'
