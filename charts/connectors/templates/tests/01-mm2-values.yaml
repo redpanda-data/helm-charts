@@ -48,6 +48,39 @@ spec:
           {{- if .Values.connectors.brokerTLS.ca.secretRef }}
           rpk profile set tls.ca={{ printf "/redpanda-certs/%s" (default "ca.crt" .Values.connectors.brokerTLS.ca.secretNameOverwrite) }}
           {{- end }}
+
+          SASL_MECHANISM="PLAIN"
+          {{- if .Values.auth.sasl.enabled }}
+          set -e
+          set +x
+
+          IFS=: read -r CONNECT_SASL_USERNAME KAFKA_SASL_PASSWORD CONNECT_SASL_MECHANISM < $(find /mnt/users/* -print)
+          CONNECT_SASL_MECHANISM=${CONNECT_SASL_MECHANISM:-{{ .Values.auth.sasl.mechanism | upper }}}
+          if [[ -n "$CONNECT_SASL_USERNAME" && -n "$KAFKA_SASL_PASSWORD" && -n "$CONNECT_SASL_MECHANISM" ]]; then
+            rpk profile set user=$CONNECT_SASL_USERNAME pass=$KAFKA_SASL_PASSWORD sasl.mechanism=$CONNECT_SASL_MECHANISM
+            SASL_MECHANISM=$CONNECT_SASL_MECHANISM
+            JAAS_CONFIG_SOURCE="\"source.cluster.sasl.jaas.config\": \"org.apache.kafka.common.security.scram.ScramLoginModule required username=\\\\"\"${CONNECT_SASL_USERNAME}\\\\"\" password=\\\\"\"${KAFKA_SASL_PASSWORD}\\\\"\";\","
+            JAAS_CONFIG_TARGET="\"target.cluster.sasl.jaas.config\": \"org.apache.kafka.common.security.scram.ScramLoginModule required username=\\\\"\"${CONNECT_SASL_USERNAME}\\\\"\" password=\\\\"\"${KAFKA_SASL_PASSWORD}\\\\"\";\","
+          fi
+
+          set -x
+          set +e
+          {{- end }}
+
+          {{- if .Values.connectors.brokerTLS.enabled }}
+          CONNECT_TLS_ENABLED=true
+          {{- else }}
+          CONNECT_TLS_ENABLED=false
+          {{- end }}
+          SECURITY_PROTOCOL=PLAINTEXT
+          if [[ -n "$CONNECT_SASL_MECHANISM" && $CONNECT_TLS_ENABLED == "true" ]]; then
+            SECURITY_PROTOCOL="SASL_SSL"
+          elif [[ -n "$CONNECT_SASL_MECHANISM" ]]; then
+            SECURITY_PROTOCOL="SASL_PLAINTEXT"
+          elif [[ $CONNECT_TLS_ENABLED == "true" ]]; then
+            SECURITY_PROTOCOL="SSL"
+          fi
+
           rpk topic list
           rpk topic create test-topic
           rpk topic list
@@ -76,16 +109,24 @@ spec:
               "target.cluster.ssl.truststore.type": "PEM",
               "source.cluster.ssl.truststore.location": {{ printf "/opt/kafka/connect-certs/ca/%s" (default "ca.crt" .Values.connectors.brokerTLS.ca.secretNameOverwrite) | quote }},
               "target.cluster.ssl.truststore.location": {{ printf "/opt/kafka/connect-certs/ca/%s" (default "ca.crt" .Values.connectors.brokerTLS.ca.secretNameOverwrite) | quote }},
-              "source.cluster.security.protocol": {{ ternary "SSL" "PLAINTEXT" .Values.connectors.brokerTLS.enabled | quote }},
-              "target.cluster.security.protocol": {{ ternary "SSL" "PLAINTEXT" .Values.connectors.brokerTLS.enabled | quote }},
-              "source.cluster.sasl.mechanism": "PLAIN",
-              "target.cluster.sasl.mechanism": "PLAIN",
+              JAAS_CONFIG_SOURCE
+              JAAS_CONFIG_TARGET
+              "source.cluster.security.protocol": "SECURITY_PROTOCOL",
+              "target.cluster.security.protocol": "SECURITY_PROTOCOL",
+              "source.cluster.sasl.mechanism": "SASL_MECHANISM",
+              "target.cluster.sasl.mechanism": "SASL_MECHANISM",
               "offset-syncs.topic.replication.factor": 1
             }
           }
           EOF
 
           sed -i "s/CONNECTOR_NAME/$CONNECTOR_NAME/g" /tmp/mm2-conf.json
+          sed -i "s/SASL_MECHANISM/$SASL_MECHANISM/g" /tmp/mm2-conf.json
+          sed -i "s/SECURITY_PROTOCOL/$SECURITY_PROTOCOL/g" /tmp/mm2-conf.json
+          set +x
+          sed -i "s/JAAS_CONFIG_SOURCE/$JAAS_CONFIG_SOURCE/g" /tmp/mm2-conf.json
+          sed -i "s/JAAS_CONFIG_TARGET/$JAAS_CONFIG_TARGET/g" /tmp/mm2-conf.json
+          set -x
 
           max_iteration=10
           for i in $(seq 1 $max_iteration)

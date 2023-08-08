@@ -117,6 +117,7 @@ connectors:
 # see the [SASL documentation](https://docs.redpanda.com/docs/manage/kubernetes/security/sasl-kubernetes/).
 auth:
   sasl:
+    enabled: false
     # -- The authentication mechanism to use for the superuser. Options are `scram-sha-256` and `scram-sha-512`.
     mechanism: scram-sha-512
     # -- A Secret that contains your SASL user password.
@@ -183,6 +184,11 @@ deployment:
     periodSeconds: 10
     successThreshold: 3
     timeoutSeconds: 5
+
+  # -- Additional environment variables for the Connectors Deployment.
+  extraEnv: []
+  # - name: RACK_ID
+  #   value: "1"
 
   # -- The maximum time in seconds for a deployment to make progress before it is
   #    considered to be failed. The deployment controller will continue to process
