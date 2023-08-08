@@ -149,10 +149,10 @@ container:
   resources:
     request:
       cpu: 1
-      memory: 2Gi
+      memory: 2350Mi
     limits:
       cpu: 1
-      memory: 2Gi
+      memory: 2350Mi
     # -- Java maximum heap size can not be greater than $container.resources.limits.memory
     javaMaxHeapSize: 2G
   javaGCLogEnabled: "false"
