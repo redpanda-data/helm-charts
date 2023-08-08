@@ -64,6 +64,7 @@ spec:
               "tasks.max": "1",
               "source.cluster.bootstrap.servers": {{ .Values.connectors.bootstrapServers | quote }},
               "target.cluster.bootstrap.servers": {{ .Values.connectors.bootstrapServers | quote }},
+              "target.cluster.alias": "test-only",
               "source.cluster.alias": "source",
               "key.converter": "org.apache.kafka.connect.converters.ByteArrayConverter",
               "value.converter": "org.apache.kafka.connect.converters.ByteArrayConverter",
@@ -130,7 +131,7 @@ spec:
 
           curl http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors && echo
 
-          rpk topic delete test-topic source.test-topic mm2-offset-syncs.target.internal
+          rpk topic delete test-topic source.test-topic mm2-offset-syncs.test-only.internal
   {{- if .Values.connectors.brokerTLS.ca.secretRef }}
       volumeMounts:
         - mountPath: /redpanda-certs
