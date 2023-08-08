@@ -79,7 +79,8 @@ spec:
               "source.cluster.security.protocol": {{ ternary "SSL" "PLAINTEXT" .Values.connectors.brokerTLS.enabled | quote }},
               "target.cluster.security.protocol": {{ ternary "SSL" "PLAINTEXT" .Values.connectors.brokerTLS.enabled | quote }},
               "source.cluster.sasl.mechanism": "PLAIN",
-              "target.cluster.sasl.mechanism": "PLAIN"
+              "target.cluster.sasl.mechanism": "PLAIN",
+              "offset-syncs.topic.replication.factor": 1
             }
           }
           EOF
