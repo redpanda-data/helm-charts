@@ -174,14 +174,18 @@ spec:
           curl http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors && echo
 
           rpk topic delete test-topic source.test-topic mm2-offset-syncs.test-only.internal
-  {{- if .Values.connectors.brokerTLS.ca.secretRef }}
       volumeMounts:
+  {{- if .Values.connectors.brokerTLS.ca.secretRef }}
         - mountPath: /redpanda-certs
           name: redpanda-ca
+  {{- end }}
+  {{- toYaml .Values.storage.volumeMounts | nindent 8 }}
   volumes:
+  {{- if .Values.connectors.brokerTLS.ca.secretRef }}
     - name: redpanda-ca
       secret:
         defaultMode: 0444
         secretName: {{ .Values.connectors.brokerTLS.ca.secretRef }}
   {{- end }}
+  {{- toYaml .Values.storage.volume | nindent 4 }}
 {{- end }}
