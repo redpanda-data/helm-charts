@@ -80,6 +80,9 @@ spec:
   {{- with .Values.container.securityContext }}
     {{- toYaml . | nindent 12 }}
   {{- end }}
+        {{- with .Values.deployment.command }}
+          command: {{ toJson . }}
+        {{- end }}
           env:
             - name: CONNECT_CONFIGURATION
               value: |
@@ -144,6 +147,9 @@ spec:
             {{- if .Values.connectors.brokerTLS.key.secretRef }}
             - name: CONNECT_TLS_AUTH_KEY
               value: {{ printf "key/%s" (default "tls.key" .Values.connectors.brokerTLS.key.secretNameOverwrite) }}
+            {{- end }}
+            {{- with .Values.deployment.extraEnv }}
+              {{- toYaml . | nindent 12 }}
             {{- end }}
           livenessProbe:
             httpGet:

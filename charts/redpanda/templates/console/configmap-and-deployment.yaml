@@ -14,6 +14,99 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
+{{ $values := .Values }}
+{{ $configmap := dict }}
+{{/* if the console chart has the creation of the configmap disabled, create it here instead */}}
+{{ if and .Values.console.enabled (not .Values.console.configmap.create) }}
+{{ $consoleConfigmap := dict "create" true }}
+
+{{/* kafka section */}}
+
+{{/* brokers */}}
+{{ $kafkaBrokers := list }}
+{{ range (include "seed-server-list" . | mustFromJson) }}
+  {{ $kafkaBrokers = append $kafkaBrokers (printf "%s:%d" . (int $values.listeners.kafka.port)) }}
+{{ end }}
+
+{{/* sasl */}}
+{{/* the rest of sasl is configured through the secret */}}
+{{ $kafkaSASL := dict "enabled" (include "sasl-enabled" . | fromJson).bool }}
+
+{{/* tls */}}
+{{/* the rest of tls is configured through the secret */}}
+{{ $kafkaTLS := dict "enabled" (include "kafka-internal-tls-enabled" . | fromJson).bool }}
+
+{{/* schemaRegistry */}}
+{{- $urls := list -}}
+{{ $proto := "http" }}
+{{ if (include "schemaRegistry-internal-tls-enabled" . | fromJson).bool }}
+  {{ $proto = "https" }}
+{{ end }}
+{{ $port := int $values.listeners.schemaRegistry.port }}
+{{ range (include "seed-server-list" . | mustFromJson) }}
+  {{ $urls = append $urls (printf "%s://%s:%d" $proto . $port) }}
+{{ end }}
+{{/* tls */}}
+{{/* the rest of tls is configured through the secret */}}
+{{ $schemaRegistryTLS := dict "enabled" (include "schemaRegistry-internal-tls-enabled" . | fromJson).bool }}
+
+{{ $connectConfig := dict }}
+{{ if .Values.connectors.enabled }}
+{{ $connectorsValues := deepCopy .Subcharts.connectors }}
+{{ $connectorsValues = merge $connectorsValues .Values.connectors }}
+{{/* Connector */}}
+{{/* Currently Kafka connect helm chart does not support TLS configuraiton. That's why tls enabled is set explicitly to false*/}}
+{{/* Currently Kafka connect helm chart does not support basic auth. That's why username and password is set explicitly to empty string*/}}
+{{ $connectConfig = dict
+  "enabled" $values.connectors.enabled
+  "clusters" (list
+    (dict
+      "url" (printf "http://%s.%s.svc.cluster.local:%s" (include "connectors.serviceName" $connectorsValues) .Release.Namespace ($values.connectors.connectors.restPort | toString ))
+      "name" "connectors"
+      "tls" (dict
+        "enabled" "false"
+        "caFilepath" ""
+        "certFilepath" ""
+        "keyFilepath" ""
+        "insecureSkipTlsVerify" "false"
+      )
+      "username" ""
+      "password" ""
+      "token" ""
+    )
+  )
+}}
+{{ end }}
+
+{{ $kafkaSchemaRegistry := dict
+      "enabled" (and .Values.listeners.schemaRegistry.enabled (include "redpanda-22-2-x-without-sasl" . | fromJson).bool)
+      "urls" $urls
+      "tls" $schemaRegistryTLS
+}}
+{{ $consoleConfigKafka := dict
+      "brokers" $kafkaBrokers
+      "sasl" $kafkaSASL
+      "tls" $kafkaTLS
+      "schemaRegistry" $kafkaSchemaRegistry
+}}
+{{ $consoleConfig := dict
+      "kafka" $consoleConfigKafka
+      "connect" $connectConfig
+}}
+{{ $config := dict
+    "Values" (dict
+      "console" (dict "config" $consoleConfig)
+      "configmap" $consoleConfigmap
+    )
+}}
+
+{{ $console := deepCopy .Subcharts.console }}
+{{ $console = merge $config $console }}
+
+{{ include (print .Subcharts.console.Template.BasePath "/configmap.yaml") $console }}
+{{ $configmap = include (print .Subcharts.console.Template.BasePath "/configmap.yaml") $console }}
+{{ end }}
+{{/* Deployment */}}
 {{ if and .Values.console.enabled (not .Values.console.deployment.create) }}
 
 {{ $extraVolumes := list }}
@@ -146,7 +239,13 @@ limitations under the License.
   {{ $consoleValues := merge $consoleValues (dict "Values" (dict "deployment" (dict "command" $command))) }}
 {{ end }}
 {{ $consoleValues := merge $consoleValues (dict "Values" (dict "deployment" (dict "create" (not .Values.console.deployment.create)))) }}
+
+{{ if and .Values.console.enabled (not .Values.console.configmap.create) }}
+{{ $consoleValues := merge $consoleValues (dict "Values" (dict "podAnnotations" (dict "checksum-redpanda-chart/config" ( $configmap | toYaml | sha256sum )))) }}
+{{ end }}
+
 {{ $helmVars := deepCopy .Subcharts.console }}
 {{ $helmVars := merge $consoleValues $helmVars }}
+---
 {{ include (print .Subcharts.console.Template.BasePath "/deployment.yaml") $helmVars }}
 {{ end }}

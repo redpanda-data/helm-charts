@@ -97,6 +97,17 @@ console:
     create: false
   config: {}
 
+#
+# -- Redpanda Managed Connectors settings
+# For a reference of configuration settings,
+# see the [Redpanda Connectors documentation](https://docs.redpanda.com/docs/deploy/deployment-option/cloud/managed-connectors/).
+connectors:
+  enabled: false
+  deployment:
+    create: false
+  test:
+    create: false
+
 # -- Authentication settings.
 # For details,
 # see the [SASL documentation](https://docs.redpanda.com/docs/manage/kubernetes/security/sasl-kubernetes/).
@@ -558,18 +569,32 @@ statefulset:
       enabled: true
       resources: {}
       securityContext: {}
+      extraVolumeMounts: |-
   initContainers:
     tuning:
       resources: {}
+      extraVolumeMounts: |-
     setDataDirOwnership:
       # -- In environments where root is not allowed, you cannot change the ownership of files and directories.
       # Enable `setDataDirOwnership` when using default minikube cluster configuration.
       enabled: false
       resources: {}
+      extraVolumeMounts: |-
     setTieredStorageCacheDirOwnership:
       resources: {}
+      extraVolumeMounts: |-
     configurator:
       resources: {}
+      extraVolumeMounts: |-
+    ## Additional init containers
+    extraInitContainers: |-
+#      - name: "test-init-container"
+#        image: "mintel/docker-alpine-bash-curl-jq:latest"
+#        command: [ "/bin/bash", "-c" ]
+#        args:
+#          - |
+#            set -xe
+#            echo "Hello World!"
   initContainerImage:
     repository: busybox
     tag: latest
@@ -577,6 +602,10 @@ statefulset:
   additionalRedpandaCmdFlags: []
 #    - --unsafe-bypass-fsync
   terminationGracePeriodSeconds: 90
+  ## Additional Volumes that you mount
+  extraVolumes: |-
+  ## Additional Volume mounts for redpanda container
+  extraVolumeMounts: |-
 
 # -- Service account management.
 serviceAccount:

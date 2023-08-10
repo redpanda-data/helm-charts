@@ -716,6 +716,9 @@
                 },
                 "securityContext": {
                   "type": "object"
+                },
+                "extraVolumeMounts": {
+                  "type": "string"
                 }
               }
             }
@@ -729,6 +732,9 @@
               "properties": {
                 "resources": {
                   "type": "object"
+                },
+                "extraVolumeMounts": {
+                  "type": "string"
                 }
               }
             },
@@ -740,6 +746,9 @@
                 },
                 "enabled": {
                   "type": "boolean"
+                },
+                "extraVolumeMounts": {
+                  "type": "string"
                 }
               }
             },
@@ -748,6 +757,9 @@
               "properties": {
                 "resources": {
                   "type": "object"
+                },
+                "extraVolumeMounts": {
+                  "type": "string"
                 }
               }
             },
@@ -756,16 +768,28 @@
               "properties": {
                 "resources": {
                   "type": "object"
+                },
+                "extraVolumeMounts": {
+                  "type": "string"
                 }
               }
             }
           }
+        },
+        "extraInitContainers": {
+          "type": "object"
         },
         "additionalRedpandaCmdFlags": {
           "type": "array"
         },
         "terminationGracePeriodSeconds": {
           "type": "integer"
+        },
+        "extraVolumes": {
+          "type": "string"
+        },
+        "extraVolumeMounts": {
+          "type": "string"
         }
       }
     },

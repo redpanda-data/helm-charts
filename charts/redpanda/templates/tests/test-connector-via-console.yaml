@@ -14,50 +14,64 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- if .Values.test.create -}}
+{{- if and .Values.connectors.enabled .Values.console.enabled }}
+{{- $sasl := .Values.auth.sasl }}
+{{- $root := deepCopy . }}
+{{- $values := .Values }}
+{{ $consoleValues := dict "Values" (deepCopy .Values.console) "Release" .Release "Chart" .Subcharts.console.Chart }}
+{{/* brokers */}}
+{{- $kafkaBrokers := list }}
+{{- range (include "seed-server-list" . | mustFromJson) }}
+  {{- $kafkaBrokers = append $kafkaBrokers (printf "%s:%s" . ($values.listeners.kafka.port | toString)) }}
+{{- end }}
+{{- $brokersString := join "," $kafkaBrokers}}
 apiVersion: v1
 kind: Pod
 metadata:
-  name: {{ include "connectors.fullname" . }}-mm2-test-{{ randNumeric 3 }}
+  name: {{ include "redpanda.fullname" . | trunc 54 }}-test-connectors-via-console
   namespace: {{ .Release.Namespace | quote }}
   labels:
-{{- with include "full.labels" . }}
-  {{- . | nindent 4 }}
-{{- end }}
+  {{- with include "full.labels" . }}
+    {{- . | nindent 4 }}
+  {{- end }}
+    test-name: test-connectors-via-console
   annotations:
+    test-name: test-connectors-via-console
     "helm.sh/hook": test
     "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   restartPolicy: Never
+  securityContext:
+    runAsUser: 65535
+    runAsGroup: 65535
   {{- with .Values.imagePullSecrets }}
   imagePullSecrets: {{- toYaml . | nindent 4 }}
   {{- end }}
   containers:
-    - name: create-mm2
-      image: docker.redpanda.com/redpandadata/redpanda:latest
+    - name: {{ template "redpanda.name" . }}
+      image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
+      env:
+        - name: TLS_ENABLED
+          value: {{ (include "kafka-internal-tls-enabled" . | fromJson).bool | quote }}
       command:
-        - /bin/bash
+        - /usr/bin/timeout
+        - "120"
+        - bash
         - -c
         - |
-          set -x
-
-          curl http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors && echo
-
-          rpk profile create test
-          rpk profile set tls.enabled={{.Values.connectors.brokerTLS.enabled}} brokers={{ .Values.connectors.bootstrapServers }}
-          {{- if .Values.connectors.brokerTLS.ca.secretRef }}
-          rpk profile set tls.ca={{ printf "/redpanda-certs/%s" (default "ca.crt" .Values.connectors.brokerTLS.ca.secretNameOverwrite) }}
-          {{- end }}
+          {{- $testTopic := printf "test-topic-%s" (randNumeric 3) }}
+          rpk topic create {{ $testTopic }} {{ include "rpk-topic-flags" . }}
+          rpk topic list {{ include "rpk-topic-flags" . }}
+          echo "Test message!" | rpk topic produce {{ $testTopic }} {{ include "rpk-topic-flags" . }}
 
           SASL_MECHANISM="PLAIN"
           {{- if .Values.auth.sasl.enabled }}
           set -e
           set +x
 
-          IFS=: read -r CONNECT_SASL_USERNAME KAFKA_SASL_PASSWORD CONNECT_SASL_MECHANISM < $(find /mnt/users/* -print)
+          IFS=: read -r CONNECT_SASL_USERNAME KAFKA_SASL_PASSWORD CONNECT_SASL_MECHANISM < $(find /etc/secrets/users/* -print)
           CONNECT_SASL_MECHANISM=${CONNECT_SASL_MECHANISM:-{{ .Values.auth.sasl.mechanism | upper }}}
           if [[ -n "$CONNECT_SASL_USERNAME" && -n "$KAFKA_SASL_PASSWORD" && -n "$CONNECT_SASL_MECHANISM" ]]; then
-            rpk profile set user=$CONNECT_SASL_USERNAME pass=$KAFKA_SASL_PASSWORD sasl.mechanism=$CONNECT_SASL_MECHANISM
             SASL_MECHANISM=$CONNECT_SASL_MECHANISM
             JAAS_CONFIG_SOURCE="\"source.cluster.sasl.jaas.config\": \"org.apache.kafka.common.security.scram.ScramLoginModule required username=\\\\"\"${CONNECT_SASL_USERNAME}\\\\"\" password=\\\\"\"${KAFKA_SASL_PASSWORD}\\\\"\";\","
             JAAS_CONFIG_TARGET="\"target.cluster.sasl.jaas.config\": \"org.apache.kafka.common.security.scram.ScramLoginModule required username=\\\\"\"${CONNECT_SASL_USERNAME}\\\\"\" password=\\\\"\"${KAFKA_SASL_PASSWORD}\\\\"\";\","
@@ -67,37 +81,27 @@ spec:
           set +e
           {{- end }}
 
-          {{- if .Values.connectors.brokerTLS.enabled }}
-          CONNECT_TLS_ENABLED=true
-          {{- else }}
-          CONNECT_TLS_ENABLED=false
-          {{- end }}
           SECURITY_PROTOCOL=PLAINTEXT
-          if [[ -n "$CONNECT_SASL_MECHANISM" && $CONNECT_TLS_ENABLED == "true" ]]; then
+          if [[ -n "$CONNECT_SASL_MECHANISM" && $TLS_ENABLED == "true" ]]; then
             SECURITY_PROTOCOL="SASL_SSL"
           elif [[ -n "$CONNECT_SASL_MECHANISM" ]]; then
             SECURITY_PROTOCOL="SASL_PLAINTEXT"
-          elif [[ $CONNECT_TLS_ENABLED == "true" ]]; then
+          elif [[ $TLS_ENABLED == "true" ]]; then
             SECURITY_PROTOCOL="SSL"
           fi
-
-          rpk topic list
-          rpk topic create test-topic
-          rpk topic list
-          echo "Test message!" | rpk topic produce test-topic
 
           CONNECTOR_NAME=mm2-$RANDOM
           cat << 'EOF' > /tmp/mm2-conf.json
           {
-            "name": "CONNECTOR_NAME",
+            "connectorName": "CONNECTOR_NAME",
             "config": {
               "connector.class": "org.apache.kafka.connect.mirror.MirrorSourceConnector",
-              "topics": "test-topic",
+              "topics": "{{ $testTopic }}",
               "replication.factor": "1",
               "tasks.max": "1",
-              "source.cluster.bootstrap.servers": {{ .Values.connectors.bootstrapServers | quote }},
-              "target.cluster.bootstrap.servers": {{ .Values.connectors.bootstrapServers | quote }},
-              "target.cluster.alias": "test-only",
+              "source.cluster.bootstrap.servers": {{ $brokersString | quote }},
+              "target.cluster.bootstrap.servers": {{ $brokersString | quote }},
+              "target.cluster.alias": "test-only-redpanda",
               "source.cluster.alias": "source",
               "key.converter": "org.apache.kafka.connect.converters.ByteArrayConverter",
               "value.converter": "org.apache.kafka.connect.converters.ByteArrayConverter",
@@ -107,15 +111,14 @@ spec:
               "sync.topics.configs.enabled": "true",
               "source.cluster.ssl.truststore.type": "PEM",
               "target.cluster.ssl.truststore.type": "PEM",
-              "source.cluster.ssl.truststore.location": {{ printf "/opt/kafka/connect-certs/ca/%s" (default "ca.crt" .Values.connectors.brokerTLS.ca.secretNameOverwrite) | quote }},
-              "target.cluster.ssl.truststore.location": {{ printf "/opt/kafka/connect-certs/ca/%s" (default "ca.crt" .Values.connectors.brokerTLS.ca.secretNameOverwrite) | quote }},
+              "source.cluster.ssl.truststore.location": "/opt/kafka/connect-certs/ca/ca.crt",
+              "target.cluster.ssl.truststore.location": "/opt/kafka/connect-certs/ca/ca.crt",
               JAAS_CONFIG_SOURCE
               JAAS_CONFIG_TARGET
               "source.cluster.security.protocol": "SECURITY_PROTOCOL",
               "target.cluster.security.protocol": "SECURITY_PROTOCOL",
               "source.cluster.sasl.mechanism": "SASL_MECHANISM",
-              "target.cluster.sasl.mechanism": "SASL_MECHANISM",
-              "offset-syncs.topic.replication.factor": 1
+              "target.cluster.sasl.mechanism": "SASL_MECHANISM"
             }
           }
           EOF
@@ -131,7 +134,9 @@ spec:
           max_iteration=10
           for i in $(seq 1 $max_iteration)
           do
-            curl -v -H 'Content-Type: application/json' http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors -d @/tmp/mm2-conf.json && echo
+            curl -v -H 'Content-Type: application/json' http://{{ include "console.fullname" $consoleValues }}:{{ include "console.containerPort" $consoleValues }}/api/kafka-connect/clusters/connectors/connectors \
+            -d @/tmp/mm2-conf.json && echo
+
             result=$?
             if [[ $result -eq 0 ]]
             then
@@ -149,11 +154,12 @@ spec:
             exit 1
           fi
 
-          rpk topic consume source.test-topic -n 1 | grep "Test message!"
+          rpk topic consume source.{{ $testTopic }} -n 1 {{ include "rpk-topic-flags" . }}
 
           for i in $(seq 1 $max_iteration)
           do
-            curl -X DELETE http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors/$CONNECTOR_NAME && echo
+            curl -v -X DELETE http://{{ include "console.fullname" $consoleValues }}:{{ include "console.containerPort" $consoleValues }}/api/kafka-connect/clusters/connectors/connectors/$CONNECTOR_NAME && echo
+
             result=$?
             if [[ $result -eq 0 ]]
             then
@@ -171,21 +177,34 @@ spec:
             exit 1
           fi
 
-          curl http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors && echo
-
-          rpk topic delete test-topic source.test-topic mm2-offset-syncs.test-only.internal
+          rpk topic list {{ include "rpk-topic-flags" . }}
+          rpk topic delete {{ $testTopic }} source.{{ $testTopic }} mm2-offset-syncs.test-only-redpanda.internal {{ include "rpk-topic-flags" . }}
       volumeMounts:
-  {{- if .Values.connectors.brokerTLS.ca.secretRef }}
-        - mountPath: /redpanda-certs
-          name: redpanda-ca
+{{- if (include "tls-enabled" . | fromJson).bool -}}
+  {{- range $name, $cert := .Values.tls.certs }}
+        - name: redpanda-{{ $name }}-cert
+          mountPath: {{ printf "/etc/tls/certs/%s" $name }}
   {{- end }}
-  {{- toYaml .Values.storage.volumeMounts | nindent 8 }}
+{{- end }}
+{{- if $sasl.enabled }}
+        - name: {{ $sasl.secretRef }}
+          mountPath: "/etc/secrets/users"
+          readOnly: true
+{{- end}}
   volumes:
-  {{- if .Values.connectors.brokerTLS.ca.secretRef }}
-    - name: redpanda-ca
+{{- if $sasl.enabled }}
+    - name: {{ $sasl.secretRef }}
       secret:
-        defaultMode: 0444
-        secretName: {{ .Values.connectors.brokerTLS.ca.secretRef }}
+        secretName: {{ $sasl.secretRef }}
+        optional: false
+{{- end }}
+{{- if (include "tls-enabled" . | fromJson).bool }}
+  {{- range $name, $cert := .Values.tls.certs }}
+    {{- $r :=  set $root "tempCert" ( dict "name" $name "cert" $cert ) }}
+    - name: redpanda-{{ $name }}-cert
+      secret:
+        defaultMode: 0644
+        secretName: {{ template "cert-secret-name" $r }}
   {{- end }}
-  {{- toYaml .Values.storage.volume | nindent 4 }}
+{{- end -}}
 {{- end }}
