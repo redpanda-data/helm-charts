@@ -39,7 +39,7 @@ limitations under the License.
       {{- fail (join "\n" (list
           (printf "\n\nError: Cannot do a rolling restart to enable or disable tls at the RPC layer: changing listeners.rpc.tls.enabled (redpanda.yaml:repdanda.rpc_server_tls.enabled) from %v to %v" $currentRPCTLS $wantedRPCTLS)
           "***WARNING The following instructions will result in a short period of downtime."
-          "To accept this risk, run the upgrade again adding `--set force=true` and do the following:\n"
+          "To accept this risk, run the upgrade again adding `--force=true` and do the following:\n"
           "While helm is upgrading the release, manually delete ALL the pods:"
           (printf "    kubectl -n %s delete pod -l app.kubernetes.io/component=redpanda-statefulset" .Release.Namespace)
           "\nIf you got here thinking rpc tls was already enabled, see technical service bulletin 2023-01."
