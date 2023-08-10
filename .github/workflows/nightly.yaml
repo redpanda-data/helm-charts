@@ -147,5 +147,5 @@ jobs:
             --github-groups \
             --upgrade \
             --config .github/ct-redpanda.yaml \
-            --helm-extra-set-args="--set=image.tag=${{ matrix.version }}" \
+            --helm-extra-set-args="--set=image.tag=${{ matrix.version }} --set=connectors.enabled=true" \
             --skip-missing-values

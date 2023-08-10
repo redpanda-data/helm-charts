@@ -130,5 +130,5 @@ jobs:
           ct install \
             --github-groups \
             --config .github/ct-redpanda.yaml \
-            --helm-extra-set-args="--set=image.tag=${{ steps.latestTag.outputs.TAG }} --set=image.repository=redpandadata/redpanda-nightly" \
+            --helm-extra-set-args="--set=image.tag=${{ steps.latestTag.outputs.TAG }} --set=connectors.enabled=true --set=image.repository=redpandadata/redpanda-nightly" \
             --skip-missing-values
