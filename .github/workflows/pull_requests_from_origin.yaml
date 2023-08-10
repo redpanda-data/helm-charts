@@ -58,7 +58,7 @@ jobs:
       - name: Set up chart-testing
         uses: joejulian/chart-testing-action@v2.3.1-1
         with:
-          version: v3.8.0-1
+          version: v3.9.0-1
 
       # we're excluding console from testing until we have a way to test it with Redpanda
       - name: Run chart-testing (list-changed)
@@ -150,3 +150,13 @@ jobs:
             --helm-extra-set-args="--set=image.tag=${{ matrix.version }} --set=connectors.enabled=true" \
             --skip-missing-values \
             --target-branch ${{ github.event.repository.default_branch }}
+  summary:
+    if: always()
+    needs:
+      - test
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Summarize the results of the test matrix pass/fail
+        uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs)}}

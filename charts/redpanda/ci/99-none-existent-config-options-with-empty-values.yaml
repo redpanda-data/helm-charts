@@ -50,3 +50,7 @@ config:
     node_empty_array_value: []
     node_empty_map_value: {}
     node_empty_string_value: ""
+
+statefulset:
+  additionalRedpandaCmdFlags:
+    - --logger-log-level=kafka=debug

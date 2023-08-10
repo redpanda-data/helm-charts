@@ -57,12 +57,12 @@ spec:
         - /usr/bin/timeout
         - "120"
         - bash
-        - -c
+        - -cx
         - |
           {{- $testTopic := printf "test-topic-%s" (randNumeric 3) }}
-          rpk topic create {{ $testTopic }} {{ include "rpk-topic-flags" . }}
-          rpk topic list {{ include "rpk-topic-flags" . }}
-          echo "Test message!" | rpk topic produce {{ $testTopic }} {{ include "rpk-topic-flags" . }}
+          rpk topic create {{ $testTopic }} -v {{ include "rpk-topic-flags" . }}
+          rpk topic list -v {{ include "rpk-topic-flags" . }}
+          echo "Test message!" | rpk topic produce {{ $testTopic }} -v {{ include "rpk-topic-flags" . }}
 
           SASL_MECHANISM="PLAIN"
           {{- if .Values.auth.sasl.enabled }}
