@@ -30,12 +30,12 @@ jobs:
       contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
         with:
           fetch-depth: 0
 
       - name: Set up Helm
-        uses: azure/setup-helm@v3
+        uses: azure/setup-helm@5119fcb9089d432beecbf79bb2c7915207344b78 # v3.5
         with:
           version: v3.11.1
 
@@ -49,9 +49,45 @@ jobs:
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
       - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.4.1
-        with:
-          charts_repo_url: https://charts.redpanda.com
+        uses: helm/chart-releaser-action@98bccfd32b0f76149d188912ac8e45ddd3f8695f # v1.4.1
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           CR_SKIP_EXISTING: true
+
+      - name: Checkout kustomize
+        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9 # v3.5.3
+        with:
+          ref: kustomize
+          path: kustomize
+
+      - name: Configure Git for gh-pages
+        run: |
+          git -C kustomize config user.name "$GITHUB_ACTOR"
+          git -C kustomize config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+
+      - name: Install kustomize
+        uses: imranismail/setup-kustomize@6691bdeb1b0a3286fb7f70fd1423c10e81e5375f # v2.0.0
+        with:
+          kustomize-version: v5.1.1
+
+      - name: Build dependencies for the operator chart
+        run: |
+          mkdir -p kustomize/operator
+          helm repo add prometheus https://prometheus-community.github.io/helm-charts
+          helm dependency build charts/operator
+
+      - name: Template the operator chart
+        run: |
+          helm template -n redpanda operator charts/operator --no-hooks > kustomize/operator/resources.yaml
+
+      - name: Build kustomization for operator
+        run: |
+          cd kustomize/operator
+          kustomize create --resources resources.yaml
+          cd ..
+          if [[ $(git status --porcelain) ]] ; then
+            git add .
+            git commit -m 'update kustomize/operator'
+            git push
+          fi
