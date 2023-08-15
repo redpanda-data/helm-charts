@@ -1,0 +1,518 @@
+---
+# Source: operator/templates/service_account.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: operator
+  labels:
+    app.kubernetes.io/name: operator
+    helm.sh/chart: operator-0.3.10
+    app.kubernetes.io/instance: operator
+    app.kubernetes.io/version: "v23.2.4"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: operator/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: operator-config
+  labels:
+    app.kubernetes.io/name: operator
+    helm.sh/chart: operator-0.3.10
+    app.kubernetes.io/instance: operator
+    app.kubernetes.io/version: "v23.2.4"
+    app.kubernetes.io/managed-by: Helm
+data:
+  controller_manager_config.yaml: |
+    map[apiVersion:controller-runtime.sigs.k8s.io/v1alpha1 health:map[healthProbeBindAddress::8081] kind:ControllerManagerConfig leaderElection:map[leaderElect:true resourceName:aa9fc693.vectorized.io] metrics:map[bindAddress:127.0.0.1:8080] webhook:map[port:9443]]
+---
+# Source: operator/templates/extra_role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: operator-pvc
+  labels:
+    app.kubernetes.io/name: operator
+    helm.sh/chart: operator-0.3.10
+    app.kubernetes.io/instance: operator
+    app.kubernetes.io/version: "v23.2.4"
+    app.kubernetes.io/managed-by: Helm
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - persistentvolumeclaims
+  verbs:
+  - list
+  - delete
+---
+# Source: operator/templates/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: operator-election-role
+  labels:
+    app.kubernetes.io/name: operator
+    helm.sh/chart: operator-0.3.10
+    app.kubernetes.io/instance: operator
+    app.kubernetes.io/version: "v23.2.4"
+    app.kubernetes.io/managed-by: Helm
+rules:
+- apiGroups:
+  - ""
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+---
+# Source: operator/templates/role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: operator
+  labels:
+    app.kubernetes.io/name: operator
+    helm.sh/chart: operator-0.3.10
+    app.kubernetes.io/instance: operator
+    app.kubernetes.io/version: "v23.2.4"
+    app.kubernetes.io/managed-by: Helm
+rules:
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+    verbs:
+      - create
+      - delete
+      - get
+      - patch
+      - update
+  - apiGroups:
+      - apps
+    resources:
+      - replicasets
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - apps
+    resources:
+      - statefulsets
+    verbs:
+      - create
+      - delete
+      - get
+      - patch
+      - update
+  - apiGroups:
+      - batch
+    resources:
+      - jobs
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - cert-manager.io
+    resources:
+      - certificates
+    verbs:
+      - create
+      - delete
+      - get
+      - patch
+      - update
+  - apiGroups:
+      - cert-manager.io
+    resources:
+      - issuers
+    verbs:
+      - create
+      - delete
+      - get
+      - patch
+      - update
+  - apiGroups:
+      - cluster.redpanda.com
+    resources:
+      - redpandas
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - cluster.redpanda.com
+    resources:
+      - redpandas/finalizers
+    verbs:
+      - update
+  - apiGroups:
+      - cluster.redpanda.com
+    resources:
+      - redpandas/status
+    verbs:
+      - get
+      - patch
+      - update
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - create
+      - patch
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - serviceaccounts
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - services
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - helm.toolkit.fluxcd.io
+    resources:
+      - helmreleases
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - helm.toolkit.fluxcd.io
+    resources:
+      - helmreleases/finalizers
+    verbs:
+      - update
+  - apiGroups:
+      - helm.toolkit.fluxcd.io
+    resources:
+      - helmreleases/status
+    verbs:
+      - get
+      - patch
+      - update
+  - apiGroups:
+      - policy
+    resources:
+      - poddisruptionbudgets
+    verbs:
+      - create
+      - delete
+      - get
+      - patch
+      - update
+  - apiGroups:
+      - source.toolkit.fluxcd.io
+    resources:
+      - buckets
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - source.toolkit.fluxcd.io
+    resources:
+      - gitrepositories
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - source.toolkit.fluxcd.io
+    resources:
+      - helmcharts
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - source.toolkit.fluxcd.io
+    resources:
+      - helmcharts/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - patch
+      - update
+  - apiGroups:
+      - source.toolkit.fluxcd.io
+    resources:
+      - helmcharts/status
+    verbs:
+      - get
+      - patch
+      - update
+  - apiGroups:
+      - source.toolkit.fluxcd.io
+    resources:
+      - helmrepositories
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - source.toolkit.fluxcd.io
+    resources:
+      - helmrepositories/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - patch
+      - update
+  - apiGroups:
+      - source.toolkit.fluxcd.io
+    resources:
+      - helmrepositories/status
+    verbs:
+      - get
+      - patch
+      - update
+---
+# Source: operator/templates/extra_role.yaml
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: operator-pvc
+  labels:
+    app.kubernetes.io/name: operator
+    helm.sh/chart: operator-0.3.10
+    app.kubernetes.io/instance: operator
+    app.kubernetes.io/version: "v23.2.4"
+    app.kubernetes.io/managed-by: Helm
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: operator-pvc
+subjects:
+  - kind: ServiceAccount
+    name: operator
+    namespace: redpanda
+---
+# Source: operator/templates/role_binding.yaml
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: operator-election-rolebinding
+  labels:
+    app.kubernetes.io/name: operator
+    helm.sh/chart: operator-0.3.10
+    app.kubernetes.io/instance: operator
+    app.kubernetes.io/version: "v23.2.4"
+    app.kubernetes.io/managed-by: Helm
+subjects:
+- kind: ServiceAccount
+  name: operator
+  namespace: redpanda
+roleRef:
+  kind: Role
+  name: operator-election-role
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: operator/templates/role_binding.yaml
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: operator
+  labels:
+    app.kubernetes.io/name: operator
+    helm.sh/chart: operator-0.3.10
+    app.kubernetes.io/instance: operator
+    app.kubernetes.io/version: "v23.2.4"
+    app.kubernetes.io/managed-by: Helm
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: operator
+subjects:
+  - kind: ServiceAccount
+    name: operator
+    namespace: redpanda
+---
+# Source: operator/templates/service_metrics.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: operator-metrics-service
+  labels:
+    app.kubernetes.io/name: operator
+    helm.sh/chart: operator-0.3.10
+    app.kubernetes.io/instance: operator
+    app.kubernetes.io/version: "v23.2.4"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  ports:
+  - name: https
+    port: 8443
+    targetPort: https
+  selector:
+    app.kubernetes.io/name: operator
+    app.kubernetes.io/instance: operator
+---
+# Source: operator/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: operator
+  labels:
+    
+    app.kubernetes.io/name: operator
+    helm.sh/chart: operator-0.3.10
+    app.kubernetes.io/instance: operator
+    app.kubernetes.io/version: "v23.2.4"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: operator
+      app.kubernetes.io/instance: operator
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: operator
+        app.kubernetes.io/instance: operator
+      annotations:
+    spec:
+      serviceAccountName: operator
+      containers:
+      - name: manager
+        image: "docker.redpanda.com/redpandadata/redpanda-operator:v23.2.4"
+        imagePullPolicy: IfNotPresent
+        args:
+        - --health-probe-bind-address=:8081
+        - --metrics-bind-address=127.0.0.1:8080
+        - --leader-elect
+        - --configurator-tag=v23.2.4
+        - --configurator-base-image=docker.redpanda.com/redpandadata/configurator
+        - --webhook-enabled=false
+        - --namespace=redpanda
+        - --log-level=info
+        command:
+        - /manager
+        ports:
+        - containerPort: 9443
+          name: webhook-server
+          protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /healthz/
+            port: 8081
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        securityContext:
+          allowPrivilegeEscalation: false
+        resources:
+            {}
+      - name: kube-rbac-proxy
+        args:
+        - --secure-listen-address=0.0.0.0:8443
+        - --upstream=http://127.0.0.1:8080/
+        - --logtostderr=true
+        - --v=10
+        image: gcr.io/kubebuilder/kube-rbac-proxy:v0.8.0
+        ports:
+        - containerPort: 8443
+          name: https
+      securityContext:
+        runAsUser: 65532
+      terminationGracePeriodSeconds: 10
