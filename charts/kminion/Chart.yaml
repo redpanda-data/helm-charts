@@ -20,27 +20,16 @@ maintainers:
   - name: redpanda-data
     url: https://github.com/orgs/redpanda-data/people
 
-
-# A chart can be either an 'application' or a 'library' chart.
-#
-# Application charts are a collection of templates that can be packaged into versioned archives
-# to be deployed.
-#
-# Library charts provide useful utilities or functions for the chart developer. They're included as
-# a dependency of application charts to inject those utilities and functions into the rendering
-# pipeline. Library charts do not define any templates and therefore cannot be deployed.
 type: application
 
-# This is the chart version. This version number should be incremented each time you make changes
-# to the chart and its templates, including the app version.
-# Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 0.12.2
+# The chart version and the app version are not the same and will not track
+# together. The chart version is a semver representation of changes to this
+# chart.
+version: 0.12.3
 
-# This is the version number of the application being deployed. This version number should be
-# incremented each time you make changes to the application. Versions are not expected to
-# follow Semantic Versioning. They should reflect the version the application is using.
-# It is recommended to use it with quotes.
-appVersion: "v2.2.5"
+# The app version is the default version of Redpanda to install.
+# ** NOTE for maintainers: please ensure the artifacthub image annotation is updated before merging
+appVersion: v2.2.5
 
 icon: https://images.ctfassets.net/paqvtpyf8rwu/3cYHw5UzhXCbKuR24GDFGO/73fb682e6157d11c10d5b2b5da1d5af0/skate-stand-panda.svg
 sources:
@@ -53,5 +42,5 @@ annotations:
     - name: "Helm (>= 3.6.0)"
       url: https://helm.sh/docs/intro/install/
   artifacthub.io/images: |
-    - name: redpanda
+    - name: kminion
       image: docker.redpanda.com/redpandadata/kminion:v2.2.5
