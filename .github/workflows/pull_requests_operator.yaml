@@ -47,9 +47,7 @@ jobs:
           version: v3.11.1
 
       - name: Set up chart-testing
-        uses: joejulian/chart-testing-action@v2.3.1-1
-        with:
-          version: v3.8.0-1
+        uses: joejulian/chart-testing-action@728cdcd81b836949aa41a363db3e712c3e3c88d2 # v2.4.0-2
 
       - name: Run chart-testing (lint)
         run: ct lint --config .github/ct-operator.yaml --github-groups
@@ -92,9 +90,7 @@ jobs:
           version: v3.11.1
 
       - name: Set up chart-testing
-        uses: joejulian/chart-testing-action@v2.3.1-1
-        with:
-          version: v3.8.0-1
+        uses: joejulian/chart-testing-action@728cdcd81b836949aa41a363db3e712c3e3c88d2 # v2.4.0-2
 
       # we're excluding console from testing until we have a way to test it with Redpanda
       - name: Run chart-testing (list-changed)
