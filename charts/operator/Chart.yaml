@@ -3,20 +3,21 @@ name: operator
 description: Redpanda operator helm chart
 type: application
 
-# This is the chart version. This is only placeholder that will be set during release process
-version: 0.3.10
+# The chart version and the app version are not the same and will not track
+# together. The chart version is a semver representation of changes to this
+# chart.
+version: 0.3.11
 
-# This is the version number of the application being deployed. This is only placeholder that
-# will be set during release process.
-appVersion: v23.2.4
+# This is the default version of the operator being deployed.
+# ** NOTE for maintainers: please ensure the artifacthub image annotation is updated before merging
+appVersion: v23.2.5
 
-home: https://vectorized.io
 sources:
   - https://github.com/redpanda-data/helm-charts
 icon: https://go.redpanda.com/hubfs/Redpandas/operator-panda.png
 maintainers:
-  - name: Vectorizedio
-    email: support@vectorized.io
+  - name: redpanda-data
+    url: https://github.com/orgs/redpanda-data/people
 
 dependencies:
 - name: kube-prometheus-stack
@@ -33,9 +34,9 @@ annotations:
       url: https://helm.sh/docs/intro/install/
   artifacthub.io/images: |
     - name: redpanda-operator
-      image: docker.redpanda.com/redpandadata/redpanda-operator:v23.2.2
+      image: docker.redpanda.com/redpandadata/redpanda-operator:v23.2.5
     - name: redpanda
-      image: docker.redpanda.com/redpandadata/redpanda:v23.2.2
+      image: docker.redpanda.com/redpandadata/redpanda:v23.2.5
     - name: kube-rbac-proxy
       image: gcr.io/kubebuilder/kube-rbac-proxy:v0.8.0
   artifacthub.io/crds: |
@@ -45,4 +46,4 @@ annotations:
       displayName: Redpanda
       description: Define a Redpanda cluster
   artifacthub.io/operator: "true"
-  artifacthub.io/operatorCapabilities: Basic Install
+  artifacthub.io/operatorCapabilities: Seamless Upgrades
