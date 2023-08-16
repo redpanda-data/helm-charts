@@ -750,6 +750,51 @@
                 "extraVolumeMounts": {
                   "type": "string"
                 }
+              },
+              "controllers": {
+                "type": "object",
+                "properties": {
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "resources": {
+                    "type": "object"
+                  },
+                  "securityContext": {
+                    "type": "object"
+                  },
+                  "run": {
+                    "type": "array"
+                  },
+                  "healthProbeAddress": {
+                    "type": "string"
+                  },
+                  "metricsAddress": {
+                    "type": "string"
+                  },
+                  "image": {
+                    "description": "Values used to define the container image to be used for Redpanda",
+                    "type": "object",
+                    "required": [
+                      "repository",
+                      "tag"
+                    ],
+                    "properties": {
+                      "repository": {
+                        "description": "container image repository",
+                        "default": "docker.redpanda.com/redpandadata/redpanda-operator",
+                        "type": "string",
+                        "pattern": "^[a-z0-9-_/.]+$"
+                      },
+                      "tag": {
+                        "description": "The container image tag. Use the Redpanda release version. Must be a valid semver prefixed with a 'v'.",
+                        "default": "Chart.appVersion",
+                        "type": "string",
+                        "pattern": "^v(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$|^$"
+                      }
+                    }
+                  }
+                }
               }
             }
           }
