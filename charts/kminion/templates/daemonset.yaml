@@ -46,7 +46,7 @@ spec:
       {{- end}}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8}}
-      serviceAccountName: {{ .Values.serviceAccount.name }}
+      serviceAccountName: {{ include "kminion.serviceAccountName" . }}
       volumes:
         - name: config
           configMap:
