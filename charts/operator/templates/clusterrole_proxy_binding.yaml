@@ -22,6 +22,6 @@ roleRef:
   name: {{ include "redpanda-operator.fullname" . }}-proxy-role
 subjects:
 - kind: ServiceAccount
-  name: {{ template "redpanda-operator.serviceAccountName" . }}
+  name: {{ include "redpanda-operator.serviceAccountName" . }}
   namespace: {{ .Release.Namespace }}
 {{- end -}}

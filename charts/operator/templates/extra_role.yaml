@@ -41,6 +41,6 @@ roleRef:
   name: {{ include "redpanda-operator.fullname" . }}-pvc
 subjects:
   - kind: ServiceAccount
-    name: {{ template "redpanda-operator.serviceAccountName" . }}
+    name: {{ include "redpanda-operator.serviceAccountName" . }}
     namespace: {{ .Release.Namespace }}
 {{ end }}
