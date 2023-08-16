@@ -70,6 +70,11 @@ bootstrap.yaml: |
 {{- end }}
 {{- with (dig "cluster" dict .Values.config) }}
     {{- range $key, $element := .}}
+      {{- if eq $key "default_topic_replications" }}
+        {{/* "sub (add $i (mod $i 2)) 1" calculates the closest odd number less than or equal to $element: 1=1, 2=1, 3=3, ... */}}
+        {{- $r := $.Values.statefulset.replicas }}
+        {{- $element = min $element (sub (add $r (mod $r 2)) 1) }}
+      {{- end }}
       {{- if or (eq (typeOf $element) "bool") $element }}
         {{- dict $key $element | toYaml | nindent 2 }}
       {{- end }}
