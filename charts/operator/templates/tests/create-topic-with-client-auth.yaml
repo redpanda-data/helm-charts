@@ -16,7 +16,7 @@ metadata:
     helm.sh/hook-delete-policy: before-hook-creation
     helm.sh/hook-weight: "2"
 spec:
-  serviceAccount: {{ include "redpanda-operator.fullname" . }}
+  serviceAccount: {{ include "redpanda-operator.serviceAccountName" . }}
   containers:
     - name: rpk
       image: docker.redpanda.com/redpandadata/redpanda:latest
