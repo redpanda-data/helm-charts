@@ -196,7 +196,7 @@ jobs:
             --github-groups \
             --upgrade \
             --config .github/ct-redpanda.yaml \
-            --helm-extra-set-args="--set=image.tag=${{ matrix.version }} --set=connectors.enabled=true" \
+            --helm-extra-set-args="--set=image.tag=${{ matrix.version }}" \
             --skip-missing-values \
             --chart-dirs=charts/redpanda \
             --target-branch ${{ github.event.repository.default_branch }}
