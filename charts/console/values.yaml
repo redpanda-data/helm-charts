@@ -240,6 +240,16 @@ readinessProbe:
   successThreshold: 1
   failureThreshold: 3
 
+initContainers:
+  extraInitContainers: |-
+#    - name: "test-init-container"
+#      image: "mintel/docker-alpine-bash-curl-jq:latest"
+#      command: [ "/bin/bash", "-c" ]
+#      args:
+#        - |
+#          set -xe
+#          echo "Hello World!"
+
 configmap:
   create: true
 deployment:
