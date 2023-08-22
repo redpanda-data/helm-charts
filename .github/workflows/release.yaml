@@ -84,6 +84,7 @@ jobs:
       - name: Build kustomization for operator
         run: |
           cd kustomize/operator
+          rm kustomization.yaml
           kustomize create --resources resources.yaml
           cd ..
           if [[ $(git status --porcelain) ]] ; then
