@@ -6,9 +6,9 @@ metadata:
   name: operator
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.10
+    helm.sh/chart: operator-0.3.11
     app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v23.2.4"
+    app.kubernetes.io/version: "v23.2.5"
     app.kubernetes.io/managed-by: Helm
 ---
 # Source: operator/templates/configmap.yaml
@@ -18,9 +18,9 @@ metadata:
   name: operator-config
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.10
+    helm.sh/chart: operator-0.3.11
     app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v23.2.4"
+    app.kubernetes.io/version: "v23.2.5"
     app.kubernetes.io/managed-by: Helm
 data:
   controller_manager_config.yaml: |
@@ -33,9 +33,9 @@ metadata:
   name: operator-pvc
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.10
+    helm.sh/chart: operator-0.3.11
     app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v23.2.4"
+    app.kubernetes.io/version: "v23.2.5"
     app.kubernetes.io/managed-by: Helm
 rules:
 - apiGroups:
@@ -53,9 +53,9 @@ metadata:
   name: operator-election-role
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.10
+    helm.sh/chart: operator-0.3.11
     app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v23.2.4"
+    app.kubernetes.io/version: "v23.2.5"
     app.kubernetes.io/managed-by: Helm
 rules:
 - apiGroups:
@@ -79,9 +79,9 @@ metadata:
   name: operator
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.10
+    helm.sh/chart: operator-0.3.11
     app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v23.2.4"
+    app.kubernetes.io/version: "v23.2.5"
     app.kubernetes.io/managed-by: Helm
 rules:
   - apiGroups:
@@ -369,9 +369,9 @@ metadata:
   name: operator-pvc
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.10
+    helm.sh/chart: operator-0.3.11
     app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v23.2.4"
+    app.kubernetes.io/version: "v23.2.5"
     app.kubernetes.io/managed-by: Helm
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -389,9 +389,9 @@ metadata:
   name: operator-election-rolebinding
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.10
+    helm.sh/chart: operator-0.3.11
     app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v23.2.4"
+    app.kubernetes.io/version: "v23.2.5"
     app.kubernetes.io/managed-by: Helm
 subjects:
 - kind: ServiceAccount
@@ -409,9 +409,9 @@ metadata:
   name: operator
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.10
+    helm.sh/chart: operator-0.3.11
     app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v23.2.4"
+    app.kubernetes.io/version: "v23.2.5"
     app.kubernetes.io/managed-by: Helm
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -429,9 +429,9 @@ metadata:
   name: operator-metrics-service
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.10
+    helm.sh/chart: operator-0.3.11
     app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v23.2.4"
+    app.kubernetes.io/version: "v23.2.5"
     app.kubernetes.io/managed-by: Helm
 spec:
   ports:
@@ -450,9 +450,9 @@ metadata:
   labels:
     
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.10
+    helm.sh/chart: operator-0.3.11
     app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v23.2.4"
+    app.kubernetes.io/version: "v23.2.5"
     app.kubernetes.io/managed-by: Helm
 spec:
   replicas: 1
@@ -470,13 +470,13 @@ spec:
       serviceAccountName: operator
       containers:
       - name: manager
-        image: "docker.redpanda.com/redpandadata/redpanda-operator:v23.2.4"
+        image: "docker.redpanda.com/redpandadata/redpanda-operator:v23.2.5"
         imagePullPolicy: IfNotPresent
         args:
         - --health-probe-bind-address=:8081
         - --metrics-bind-address=127.0.0.1:8080
         - --leader-elect
-        - --configurator-tag=v23.2.4
+        - --configurator-tag=v23.2.5
         - --configurator-base-image=docker.redpanda.com/redpandadata/configurator
         - --webhook-enabled=false
         - --namespace=redpanda
