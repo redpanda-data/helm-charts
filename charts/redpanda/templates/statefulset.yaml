@@ -359,9 +359,10 @@ spec:
         - name: config-watcher
           image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
           command:
-            - /bin/bash # could be expanded for multiple scripts
-            - -c 
-            - /etc/secrets/config-watcher/scripts/sasl-user.sh
+            - /bin/sh
+          args:
+            - -c
+            - 'trap "exit 0" TERM; exec /etc/secrets/config-watcher/scripts/sasl-user.sh & wait $!'
           {{- if get .Values.statefulset.sideCars.configWatcher "resources" }}
           resources: {{- toYaml .Values.statefulset.sideCars.configWatcher.resources | nindent 12 }}
           {{- end }}
