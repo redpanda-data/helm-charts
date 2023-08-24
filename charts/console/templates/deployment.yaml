@@ -70,6 +70,10 @@ spec:
         {{- with .Values.extraVolumes }}
           {{- toYaml . | nindent 8 }}
         {{- end }}
+{{- if dig "extraInitContainers" false .Values.initContainers  }}
+      initContainers:
+{{- tpl .Values.initContainers.extraInitContainers . | nindent 8 }}
+{{- end }}
       containers:
         - name: {{ .Chart.Name }}
         {{- with .Values.deployment.command }}

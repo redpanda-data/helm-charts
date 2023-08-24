@@ -163,6 +163,18 @@ extraVolumeMounts: []
 # -- Add additional containers, such as for oauth2-proxy.
 extraContainers: []
 
+# -- Any initContainers defined should be written here
+initContainers:
+  # -- Additional set of init containers
+  extraInitContainers: |-
+#    - name: "test-init-container"
+#      image: "mintel/docker-alpine-bash-curl-jq:latest"
+#      command: [ "/bin/bash", "-c" ]
+#      args:
+#        - |
+#          set -xe
+#          echo "Hello World!"
+
 # -- SecretMounts is an abstraction to make a Secret available in the container's filesystem.
 # Under the hood it creates a volume and a volume mount for the Redpanda Console container.
 secretMounts: []
