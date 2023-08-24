@@ -37,7 +37,11 @@ spec:
   clusterIP: None
   selector: {{ (include "statefulset-pod-labels" .) | nindent 4 }}
   ports:
-    - name: admin
+  {{- range $name, $listener := .Values.listeners }}
+    {{- if dig "enabled" true $listener}}
+    - name: {{ lower $name }}
       protocol: TCP
-      targetPort: {{ .Values.listeners.admin.port }}
-      port: {{ .Values.listeners.admin.port }}
+      port: {{ $listener.port }}
+      targetPort: {{ $listener.port }}
+    {{- end }}
+  {{- end }}
