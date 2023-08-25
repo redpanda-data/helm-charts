@@ -51,13 +51,13 @@ spec:
           {{- if or (include "sasl-enabled" .|fromJson).bool .Values.listeners.http.authenticationMethod }}
           -u $USERNAME:$PASSWORD \
           {{- end }}
-          http://{{ include "redpanda.fullname" . }}:{{ .Values.listeners.http.port }}/brokers
+          http://{{ include "redpanda.servicename" . }}:{{ .Values.listeners.http.port }}/brokers
 
           curl -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors \
           {{- if or (include "sasl-enabled" .|fromJson).bool .Values.listeners.http.authenticationMethod }}
           -u $USERNAME:$PASSWORD \
           {{- end }}
-          http://{{ include "redpanda.fullname" . }}:{{ .Values.listeners.http.port }}/topics
+          http://{{ include "redpanda.servicename" . }}:{{ .Values.listeners.http.port }}/topics
       volumeMounts:
       {{- if $sasl.enabled }}
         - name: {{ $sasl.secretRef }}
