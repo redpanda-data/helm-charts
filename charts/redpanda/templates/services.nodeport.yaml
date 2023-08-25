@@ -20,7 +20,7 @@ limitations under the License.
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "redpanda.fullname" . }}-external
+  name: {{ include "redpanda.servicename" . }}-external
   namespace: {{ .Release.Namespace | quote }}
   labels:
 {{- with include "full.labels" . }}

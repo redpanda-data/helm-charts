@@ -47,7 +47,7 @@ metadata:
 spec:
   selector:
     matchLabels: {{ (include "statefulset-pod-labels" .) | nindent 6 }}
-  serviceName: {{ template "redpanda.fullname" . }}
+  serviceName: {{ template "redpanda.servicename" . }}
   replicas: {{ .Values.statefulset.replicas | int64 }}
   updateStrategy:
     {{- toYaml .Values.statefulset.updateStrategy | nindent 4 }}
