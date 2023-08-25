@@ -34,6 +34,17 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- end -}}
 
 {{/*
+Create a default service name
+*/}}
+{{- define "redpanda.servicename" -}}
+{{- if dig "service" "name" false .Values.AsMap -}}
+{{- .Values.service.name | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{ include "redpanda.fullname" . | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 full helm labels + common labels
 */}}
 {{- define "full.labels" -}}
@@ -93,7 +104,7 @@ Generate configuration needed for rpk
 */}}
 
 {{- define "redpanda.internal.domain" -}}
-{{- $service := include "redpanda.fullname" . -}}
+{{- $service := include "redpanda.servicename" . -}}
 {{- $ns := .Release.Namespace -}}
 {{- $domain := .Values.clusterDomain | trimSuffix "." -}}
 {{- printf "%s.%s.svc.%s." $service $ns $domain -}}

@@ -56,6 +56,11 @@ image:
   # If `image.tag` is 'latest', the default is `Always`.
   pullPolicy: IfNotPresent
 
+# -- Redpanda Service settings.
+# service:
+#   -- set service.name to override the default service name
+#   name: redpanda
+
 # -- Pull secrets may be used to provide credentials to image repositories
 # See https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
