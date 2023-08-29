@@ -55,6 +55,14 @@
       "properties": {
         "name": {
           "type": "string"
+        },
+        "internal": {
+          "type": "object",
+          "properties": {
+            "annotations": {
+              "type": "object"
+            }
+          }
         }
       }
     },

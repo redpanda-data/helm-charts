@@ -28,6 +28,9 @@ metadata:
 {{- with include "full.labels" . }}
   {{- . | nindent 4 }}
 {{- end }}
+{{- with dig "service" "internal" "annotations" dict .Values.AsMap }}
+  annotations: {{ toYaml . | nindent 4 }}
+{{- end }}
 spec:
   type: ClusterIP
   publishNotReadyAddresses: true
