@@ -60,6 +60,15 @@ image:
 # service:
 #   -- set service.name to override the default service name
 #   name: redpanda
+#   -- internal Service
+#   internal:
+#     -- add annotations to the internal Service
+#     annotations: {}
+#
+#     -- eg. for a bare metal install using external-dns
+#     annotations:
+#       "external-dns.alpha.kubernetes.io/hostname": redpanda.domain.dom
+#       "external-dns.alpha.kubernetes.io/endpoints-type": HostIP
 
 # -- Pull secrets may be used to provide credentials to image repositories
 # See https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
