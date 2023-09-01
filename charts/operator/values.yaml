@@ -85,8 +85,12 @@ affinity: {}
 
 # podAnnotations -- Allows setting additional annotations for Redpanda Operator PODs
 podAnnotations: {}
-# podLabels -- Allows setting additional labels for for Redpanda Operator PODs
+# podLabels -- Allows setting additional labels for Redpanda Operator PODs
 podLabels: {}
+
+# additionalCmdFlags -- Allows setting additional flags to the operator command
+additionalCmdFlags: []
+# - --some-flag
 
 # labels -- Allows to assign labels to the resources created by this helm chart
 labels:

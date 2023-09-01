@@ -58,6 +58,9 @@ spec:
         - --namespace={{ .Release.Namespace }}
         - --log-level={{ .Values.logLevel }}
         {{- end }}
+        {{- with .Values.additionalCmdFlags }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
         command:
         - /manager
         ports:
