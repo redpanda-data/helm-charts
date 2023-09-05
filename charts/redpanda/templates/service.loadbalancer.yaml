@@ -14,7 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- if (include "external-loadbalancer-enabled" . | fromJson).bool }}
+{{- if and (include "external-loadbalancer-enabled" . | fromJson).bool (dig "service" "enabled" true .Values.external)}}
   {{- $values := .Values }}
   {{- $root := . }}
   {{- $addresses := dig "addresses" list $values.external }}

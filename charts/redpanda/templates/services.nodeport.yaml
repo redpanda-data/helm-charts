@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */}}
 {{- $values := .Values }}
-{{- if (include "external-nodeport-enabled" . | fromJson).bool }}
+{{- if and (include "external-nodeport-enabled" . | fromJson).bool (dig "service" "enabled" true $values.external) }}
 ---
 apiVersion: v1
 kind: Service

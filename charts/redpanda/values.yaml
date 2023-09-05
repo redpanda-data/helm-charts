@@ -196,6 +196,12 @@ tls:
 # For details,
 # see the [Networking and Connectivity documentation](https://docs.redpanda.com/docs/manage/kubernetes/networking/networking-and-connectivity/).
 external:
+  # -- Service allows you to manage the creation of an external kubernetes service object
+  service:
+    # -- Enabled if set to false will not create the external service type
+    # You can still set your cluster with external access but not create the supporting service (NodePort/LoadBalander).
+    # Set this to false if you rather manage your own service.
+    enabled: true
   # -- Enable external access for each Service.
   # You can toggle external access for each listener in
   # `listeners.<service name>.external.<listener-name>.enabled`.
