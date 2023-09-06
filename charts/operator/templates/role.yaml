@@ -375,5 +375,8 @@ rules:
       - get
       - patch
       - update
+  {{- with .Values.additionalNamespacedRoleRules }}
+    {{- toYaml . | nindent 2 }}
+  {{- end }}
   {{- end }}
 {{- end}}

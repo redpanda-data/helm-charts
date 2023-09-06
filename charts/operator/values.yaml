@@ -104,3 +104,17 @@ webhookSecretName: webhook-server-cert
 # scope -- change the scope and therefore the resource the controller will manage
 # only "Cluster" and "Namespace" supported
 scope: Namespace
+
+additionalNamespacedRoleRules: {}
+#  - apiGroups:
+#      - cluster.redpanda.com
+#    resources:
+#      - topics
+#    verbs:
+#      - create
+#      - delete
+#      - get
+#      - list
+#      - patch
+#      - update
+#      - watch
