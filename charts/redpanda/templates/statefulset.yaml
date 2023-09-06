@@ -19,10 +19,6 @@ limitations under the License.
 
 {{- $values := .Values }}
 {{- $internalAdvertiseAddress := printf "%s.%s" "$(SERVICE_NAME)" (include "redpanda.internal.domain" .) -}}
-{{- $externalAdvertiseAddress := printf "$(SERVICE_NAME)" -}}
-{{- if (tpl ($values.external.domain | default "") $) }}
-  {{- $externalAdvertiseAddress = printf "$(SERVICE_NAME).%s" (tpl $values.external.domain $) -}}
-{{- end -}}
 {{- $uid := dig "podSecurityContext" "runAsUser" .Values.statefulset.securityContext.runAsUser .Values.statefulset -}}
 {{- $gid := dig "podSecurityContext" "fsGroup" .Values.statefulset.securityContext.fsGroup .Values.statefulset -}}
 {{- $root := deepCopy . }}
@@ -73,11 +69,9 @@ spec:
         - name: tuning
           image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
           command:
-            - bash
+            - /bin/bash
             - -c
-          args:
-            - |
-              rpk redpanda tune all
+            - rpk redpanda tune all
           securityContext:
             capabilities:
               add: ["SYS_RESOURCE"]
@@ -124,88 +118,21 @@ spec:
 {{- end }}
         - name: {{ (include "redpanda.name" .) | trunc 51 }}-configurator
           image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
-          command: ["/bin/bash", "-c"]
+          command:
+            - /bin/bash
+            - -c
+            - 'trap "exit 0" TERM; exec $CONFIGURATOR_SCRIPT "${SERVICE_NAME}" "${KUBERNETES_NODE_NAME}" & wait $!'
           env:
+            - name: CONFIGURATOR_SCRIPT
+              value: /etc/secrets/configurator/scripts/configurator.sh
             - name: SERVICE_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-{{- range $listenerName := (list "kafka" "http") }}
-{{- $listenerVals := get $values.listeners $listenerName }}
-  {{- $ordList := list }}
-  {{- /* do this for each pod in the statefulset */}}
-  {{- range $replicaIndex := until ($values.statefulset.replicas | int) }}
-    {{- /* build a list of listeners */}}
-    {{- $listenerList := list (toJson (dict "name" "internal" "address" $internalAdvertiseAddress "port" $listenerVals.port)) }}
-    {{- if $listenerVals.external }}
-        {{- /* add each external listener */}}
-        {{- range $externalName, $externalVals := $listenerVals.external }}
-          {{- $tmplVals := dict "listenerVals" $listenerVals "externalVals" $externalVals "replicaIndex" $replicaIndex "externalName" $externalName "externalAdvertiseAddress" $externalAdvertiseAddress "values" $values }}
-          {{- $port := int (include "advertised-port" $tmplVals) }}
-          {{- $host := tpl (include "advertised-host" (mustMerge $tmplVals (dict "port" $port)) ) $ }}
-          {{- $listenerList = mustAppend $listenerList $host }}
-        {{- end }}
-    {{- end }}
-    {{- /*
-    This is making a semicolon list of listeners, one list for each pod.
-    We can safely remove all the spaces as there cannot be a space in a name, address, or port, and this fixes
-    a problem where a user can feed in a trailing space on a hostname.
-    */}}
-    {{- $ordList = mustAppend $ordList (nospace (join ";" $listenerList)) }}
-  {{- end }}
-            - name: ADVERTISED_{{ upper $listenerName }}_ADDRESSES
-              value: {{ squote (join " " $ordList) }}
-{{- end }}
             - name: KUBERNETES_NODE_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
-          args:
-            - |
-              set -xe
-              CONFIG=/etc/redpanda/redpanda.yaml
-              POD_ORDINAL=${SERVICE_NAME##*-}
-
-              # Setup config files
-              cp /tmp/base-config/redpanda.yaml "${CONFIG}"
-              cp /tmp/base-config/bootstrap.yaml /etc/redpanda/.bootstrap.yaml
-
-              {{- if not (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
-              # Configure bootstrap
-              ## Not used for Redpanda v22.3.0+
-              rpk --config "${CONFIG}" redpanda config set redpanda.node_id "${POD_ORDINAL}"
-              if [ "${POD_ORDINAL}" = "0" ]; then
-                rpk --config "${CONFIG}" redpanda config set redpanda.seed_servers '[]' --format yaml
-              fi
-              {{- end }}
-
-              NODE_INDEX=`expr $POD_ORDINAL + 1`
-
-              LISTENER_INDEX=1
-              LISTENER=`echo $ADVERTISED_KAFKA_ADDRESSES | cut -d ' ' -f $NODE_INDEX | cut -d ';' -f $LISTENER_INDEX`
-              until [ "$LISTENER" == "" ]; do
-                rpk redpanda config --config "$CONFIG" set redpanda.advertised_kafka_api[$(($LISTENER_INDEX-1))] "$LISTENER"
-                let "LISTENER_INDEX+=1"
-                LISTENER=`echo $ADVERTISED_KAFKA_ADDRESSES | cut -d ' ' -f $NODE_INDEX | cut -d ';' -f $LISTENER_INDEX`
-              done
-
-              LISTENER_INDEX=1
-              LISTENER=`echo $ADVERTISED_HTTP_ADDRESSES | cut -d ' ' -f $NODE_INDEX | cut -d ';' -f $LISTENER_INDEX`
-              until [ "$LISTENER" == "" ]; do
-                rpk redpanda config --config "$CONFIG" set pandaproxy.advertised_pandaproxy_api[$(($LISTENER_INDEX-1))] "$LISTENER"
-                let "LISTENER_INDEX+=1"
-                LISTENER=`echo $ADVERTISED_HTTP_ADDRESSES | cut -d ' ' -f $NODE_INDEX | cut -d ';' -f $LISTENER_INDEX`
-              done
-
-              {{- if (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
-                {{- if .Values.rackAwareness.enabled }}
-                # Configure Rack Awareness
-                set +x
-                RACK=$(curl --silent --cacert /run/secrets/kubernetes.io/serviceaccount/ca.crt --fail -H 'Authorization: Bearer '$(cat /run/secrets/kubernetes.io/serviceaccount/token) "https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS}/api/v1/nodes/${KUBERNETES_NODE_NAME}?pretty=true" | grep {{ .Values.rackAwareness.nodeAnnotation | quote | squote }} | grep -v '\"key\":' | sed 's/.*": "\([^"]\+\).*/\1/')
-                set -x
-                rpk --config "$CONFIG" redpanda config set redpanda.rack "${RACK}"
-                {{- end }}
-              {{- end }}
           securityContext: {{ include "container-security-context" . | nindent 12 }}
           volumeMounts:
 {{- if dig "initContainers" "configurator" "extraVolumeMounts" false .Values.statefulset -}}
@@ -215,6 +142,8 @@ spec:
               mountPath: /tmp/base-config
             - name: config
               mountPath: /etc/redpanda
+            - name: {{ (include "redpanda.name" .) | trunc 51 }}-configurator
+              mountPath: /etc/secrets/configurator/scripts/
         {{- if get .Values.statefulset.initContainers.configurator "resources" }}
           resources: {{- toYaml .Values.statefulset.initContainers.configurator.resources | nindent 12 }}
         {{- end }}
@@ -449,6 +378,11 @@ spec:
             secretName: {{ .Values.auth.sasl.secretRef }}
             optional: false
         {{- end }}
+        - name: {{ (include "redpanda.name" .) | trunc 51 }}-configurator
+          secret:
+            secretName: {{ (include "redpanda.name" .) | trunc 51 }}-configurator
+            optional: false
+            defaultMode: 0o775
         - name: {{ template "redpanda.fullname" . }}-config-watcher
           secret:
             secretName: {{ template "redpanda.fullname" . }}-config-watcher
