@@ -16,5 +16,5 @@ jobs:
         uses: peter-evans/repository-dispatch@v2
         with:
           token: ${{ secrets.ACTIONS_BOT_TOKEN }}
-          repository: redpanda-data/documentation
+          repository: redpanda-data/documentation-private
           event-type: generate-helm-spec-docs
