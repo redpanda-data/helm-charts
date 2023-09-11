@@ -54,6 +54,9 @@ spec:
     {{- with .Values.tolerations }}
       tolerations: {{- toYaml . | nindent 8 }}
     {{- end }}
+    {{- with .Values.affinity }}
+      affinity: {{- toYaml . | nindent 8 }}
+    {{- end }}
       restartPolicy: Never
       securityContext: {{ include "pod-security-context" . | nindent 8 }}
       serviceAccountName: {{ include "redpanda.serviceAccountName" . }}

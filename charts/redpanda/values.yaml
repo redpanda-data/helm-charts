@@ -41,6 +41,10 @@ nodeSelector: {}
 # For details,
 # see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/).
 tolerations: []
+# -- Allows to specify affinity for Jobs.
+# For details,
+# see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity).
+affinity: {}
 
 # -- Redpanda Docker image settings.
 image:
