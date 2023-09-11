@@ -42,7 +42,7 @@ spec:
     - name: admin-{{ $name }}
       protocol: TCP
       port: {{ $values.listeners.admin.port }}
-      nodePort: {{ dig "nodePort" (first (dig "advertisedPorts" (list $values.listeners.admin.port) $listener)) $listener }}
+      nodePort: {{ first (dig "advertisedPorts" (list $listener.port) $listener) }}
   {{- end }}
 {{- end }}
 {{- range $name, $listener := $values.listeners.kafka.external }}
@@ -51,7 +51,7 @@ spec:
     - name: kafka-{{ $name }}
       protocol: TCP
       port: {{ $listener.port }}
-      nodePort: {{ dig "nodePort" (first (dig "advertisedPorts" (list $values.listeners.kafka.port) $listener)) $listener }}
+      nodePort: {{ first (dig "advertisedPorts" (list $listener.port) $listener) }}
   {{- end }}
 {{- end }}
 {{- range $name, $listener := $values.listeners.http.external }}
@@ -60,7 +60,7 @@ spec:
     - name: http-{{ $name }}
       protocol: TCP
       port: {{ $listener.port }}
-      nodePort: {{ dig "nodePort" (first (dig "advertisedPorts" (list $values.listeners.http.port) $listener)) $listener }}
+      nodePort: {{ first (dig "advertisedPorts" (list $listener.port) $listener) }}
   {{- end }}
 {{- end }}
 {{- range $name, $listener := $values.listeners.schemaRegistry.external }}
@@ -69,7 +69,7 @@ spec:
     - name: schema-{{ $name }}
       protocol: TCP
       port: {{ dig "port" $values.listeners.schemaRegistry.port $listener }}
-      nodePort: {{ dig "nodePort" (first (dig "advertisedPorts" (list $values.listeners.schemaRegistry.port) $listener)) $listener }}
+      nodePort: {{ first (dig "advertisedPorts" (list $listener.port) $listener) }}
   {{- end }}
 {{- end }}
   selector:
