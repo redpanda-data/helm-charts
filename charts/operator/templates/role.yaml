@@ -94,6 +94,8 @@ rules:
       - get
       - patch
       - update
+      - list
+      - watch
   - apiGroups:
       - batch
     resources:
@@ -206,6 +208,14 @@ rules:
       - list
       - patch
       - update
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
       - watch
   - apiGroups:
       - ""
@@ -381,6 +391,11 @@ rules:
       - topics
     verbs:
       - create
+  - apiGroups:
+      - ""
+    resources:
+      - persistentvolumeclaims
+    verbs:
       - delete
       - get
       - list
