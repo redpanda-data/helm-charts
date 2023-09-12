@@ -54,7 +54,7 @@ spec:
     {{- with .Values.tolerations }}
       tolerations: {{- toYaml . | nindent 8 }}
     {{- end }}
-    {{- with .Values.affinity }}
+    {{- with .Values.post_upgrade_job.affinity }}
       affinity: {{- toYaml . | nindent 8 }}
     {{- end }}
       restartPolicy: Never

@@ -23,9 +23,6 @@
     "tolerations": {
       "type": "array"
     },
-    "affinity": {
-      "type": "object"
-    },
     "image": {
       "description": "Values used to define the container image to be used for Redpanda",
       "type": "object",
@@ -508,6 +505,9 @@
               }
             }
           }
+        },
+        "affinity": {
+          "type": "object"
         }
       }
     },
@@ -548,6 +548,9 @@
         },
         "extraEnvFrom": {
           "type": ["array", "string"]
+        },
+        "affinity": {
+          "type": "object"
         }
       }
     },
