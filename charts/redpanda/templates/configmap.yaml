@@ -24,5 +24,19 @@ metadata:
 {{- with include "full.labels" . }}
   {{- . | nindent 4 }}
 {{- end }}
+data: {{ include "full-configmap" . | nindent 2 }}
+
+{{- if .Values.external.enabled }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "redpanda.fullname" . }}-rpk
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+{{- with include "full.labels" . }}
+  {{- . | nindent 4 }}
+{{- end }}
 data:
-  {{ include "configmap-with-server-list" . | trim }}
+  profile: | {{ include "rpk-config-external" . | nindent 4 }}
+{{- end }}

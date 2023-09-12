@@ -47,11 +47,21 @@ spec:
         - bash
         - -c
         - |
-          set -xe
+          set -e
+          IFS=: read -r {{ include "rpk-sasl-environment-variables" . }} < $(find /etc/secrets/users/* -print)
+          {{- if (include "redpanda-atleast-23-2-1" . | fromJson).bool }}
+          RPK_SASL_MECHANISM=${RPK_SASL_MECHANISM:-{{ .Values.auth.sasl.mechanism | upper }}}
+          {{- else }}
+          REDPANDA_SASL_MECHANISM=${REDPANDA_SASL_MECHANISM:-{{ .Values.auth.sasl.mechanism | upper }}}
+          {{- end }}
+          export {{ include "rpk-sasl-environment-variables" . }}
+
+          set -x
+
           # check that the users list did update
           ready_result_exit_code=1
           while [[ ${ready_result_exit_code} -ne 0 ]]; do
-            ready_result=$(rpk acl user list {{ include "rpk-acl-user-flags" . }} | grep anotheranotherme 2>&1) && ready_result_exit_code=$?
+            ready_result=$(rpk acl user list | grep anotheranotherme 2>&1) && ready_result_exit_code=$?
             sleep 2
           done
 

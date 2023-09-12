@@ -73,4 +73,32 @@ spec:
       {{- end }}
     {{- end }}
   {{- end }}
+---
+  {{- $name := .Values.listeners.kafka.tls.cert }}
+  {{- $data := get .Values.tls.certs $name }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ template "redpanda.fullname" $ }}-client
+  namespace: {{ $ns | quote }}
+  {{- with include "full.labels" $root }}
+  labels: {{- . | nindent 4 }}
+  {{- end }}
+spec:
+  commonName: {{ template "redpanda.fullname" $ }}-client
+  duration: {{ $data.duration | default "43800h" }}
+  isCA: false
+  secretName: {{ template "redpanda.fullname" $ }}-client
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  {{- if not (empty $data.issuerRef) }}
+  issuerRef: {{- toYaml $data.issuerRef | nindent 4 }}
+    group: cert-manager.io
+  {{- else }}
+  issuerRef:
+    name: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-issuer
+    kind: Issuer
+    group: cert-manager.io
+  {{- end }}
 {{- end }}

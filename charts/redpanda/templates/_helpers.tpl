@@ -99,10 +99,7 @@ Use AppVersion if image.tag is not set
 {{- $tag -}}
 {{- end -}}
 
-{{/*
-Generate configuration needed for rpk
-*/}}
-
+{{/* Generate internal fqdn */}}
 {{- define "redpanda.internal.domain" -}}
 {{- $service := include "redpanda.servicename" . -}}
 {{- $ns := .Release.Namespace -}}
@@ -382,112 +379,6 @@ than 1 core.
 {{- dig "sasl" "mechanism" "SCRAM-SHA-512" .Values.auth -}}
 {{- end -}}
 
-{{- define "rpk-flags" -}}
-  {{- $root := . -}}
-  {{- $admin := list -}}
-  {{- $admin = concat $admin (list "--api-urls" (include "admin-api-urls" . )) -}}
-  {{- if (include "admin-internal-tls-enabled" . | fromJson).bool -}}
-    {{- $admin = concat $admin (list
-      "--admin-api-tls-enabled"
-      "--admin-api-tls-truststore"
-      (printf "/etc/tls/certs/%s/ca.crt" .Values.listeners.admin.tls.cert))
-    -}}
-  {{- end -}}
-  {{- $kafka := list -}}
-  {{- if (include "kafka-internal-tls-enabled" . | fromJson).bool -}}
-    {{- $kafka = concat $kafka (list
-      "--tls-enabled"
-      "--tls-truststore"
-      (printf "/etc/tls/certs/%s/ca.crt" .Values.listeners.kafka.tls.cert))
-    -}}
-  {{- end -}}
-  {{- $sasl := list -}}
-  {{- if (include "sasl-enabled" . | fromJson).bool -}}
-    {{- $sasl = concat $sasl (list
-      "--user" ( print "$(find /etc/secrets/users/* -print | sed -n 1p | xargs cat | sed -n 1p | tr ':' '\n' | sed -n 1p )" | quote )
-      "--password" ( print "$(find /etc/secrets/users/* -print | sed -n 1p | xargs cat | sed -n 1p | tr ':' '\n' | sed -n 2p )" | quote )
-      "--sasl-mechanism" ( printf "$(find /etc/secrets/users/* -print | sed -n 1p | xargs cat | sed -n 1p | tr ':' '\n' | sed -n 3p | grep . || echo %s )" (include "sasl-mechanism" .) | quote )
-    )
-    -}}
-  {{- end -}}
-  {{- $brokers := list -}}
-  {{- range $i := untilStep 0 (.Values.statefulset.replicas|int) 1 -}}
-    {{- $brokers = concat $brokers (list (printf "%s-%d.%s:%d"
-      (include "redpanda.fullname" $root)
-      $i
-      (include "redpanda.internal.domain" $root)
-      (int $root.Values.listeners.kafka.port)))
-    -}}
-  {{- end -}}
-  {{- $brokersFlag := printf "--brokers %s" (join "," $brokers) -}}
-{{- toJson (dict "admin" (join " " $admin) "kafka" (join " " $kafka) "sasl" (join " " $sasl) "brokers" $brokersFlag) -}}
-{{- end -}}
-
-{{- define "rpk-common-flags" -}}
-{{- $flags := fromJson (include "rpk-flags" .) -}}
-{{ join " " (list $flags.brokers $flags.admin $flags.sasl $flags.kafka)}}
-{{- end -}}
-
-{{- define "rpk-flags-no-admin" -}}
-{{- $flags := fromJson (include "rpk-flags" .) -}}
-{{ join " " (list $flags.brokers $flags.kafka $flags.sasl)}}
-{{- end -}}
-
-{{- define "rpk-flags-no-sasl" -}}
-{{- $flags := fromJson (include "rpk-flags" .) -}}
-{{ join " " (list $flags.brokers $flags.admin $flags.kafka)}}
-{{- end -}}
-
-{{- define "rpk-flags-no-brokers-no-sasl" -}}
-{{- $flags := fromJson (include "rpk-flags" .) -}}
-{{ $flags.admin }}
-{{- end -}}
-
-{{- define "rpk-acl-user-flags" }}
-{{- $root := . -}}
-{{- $admin := list -}}
-  {{- $apiUrls := list -}}
-  {{- range $i := untilStep 0 (.Values.statefulset.replicas|int) 1 -}}
-    {{- $apiUrls = concat $apiUrls (list (printf "%s-%d.%s:%d"
-      (include "redpanda.fullname" $root)
-      $i
-      (include "redpanda.internal.domain" $root)
-      (int $root.Values.listeners.admin.port)))
-    -}}
-  {{- end -}}
-  {{- $admin = concat $admin (list "--api-urls" (join "," $apiUrls)) -}}
-  {{- if (include "admin-internal-tls-enabled" . | fromJson).bool -}}
-    {{- $admin = concat $admin (list
-      "--admin-api-tls-enabled"
-      "--admin-api-tls-truststore"
-      (printf "/etc/tls/certs/%s/ca.crt" .Values.listeners.admin.tls.cert))
-    -}}
-  {{- end -}}
-{{ join " " $admin }}
-{{- end -}}
-
-{{- define "rpk-flags-no-admin-no-sasl" -}}
-{{- $flags := fromJson (include "rpk-flags" .) -}}
-{{ join " " (list $flags.brokers $flags.kafka)}}
-{{- end -}}
-
-{{- define "rpk-dummy-sasl" -}}
-{{- if (include "sasl-enabled" . | fromJson).bool -}}
-{{ "--user <admin-user-in-secret> --password <admin-password-in-secret> --sasl-mechanism <mechanism-in-secret>" -}}
-{{- else -}}
-{{ "" }}
-{{- end -}}
-{{- end -}}
-
-{{- define "rpk-topic-flags" -}}
-{{- $flags := fromJson (include "rpk-flags" .) -}}
-    {{- if (include "sasl-enabled" . | fromJson).bool -}}
-        {{- join " " (list $flags.brokers $flags.kafka $flags.sasl) -}}
-    {{- else -}}
-        {{- join " " (list $flags.brokers $flags.kafka) -}}
-    {{- end -}}
-{{- end -}}
-
 {{- define "storage-min-free-bytes" -}}
 {{- $fiveGiB := 5368709120 -}}
 {{- if dig "enabled" false .Values.storage.persistentVolume -}}
@@ -498,23 +389,23 @@ than 1 core.
 {{- end -}}
 
 {{- define "tunable" -}}
-{{- $tunable := dig "tunable" dict .Values.config -}}
-{{- if (include "redpanda-atleast-22-3-0" . | fromJson).bool -}}
-{{- range $key, $element := $tunable }}
-  {{- if or (eq (typeOf $element) "bool") $element }}
-    {{ $key }}: {{ $element | toYaml }}
+  {{- $tunable := dig "tunable" dict .Values.config -}}
+  {{- if (include "redpanda-atleast-22-3-0" . | fromJson).bool -}}
+  {{- range $key, $element := $tunable }}
+    {{- if or (eq (typeOf $element) "bool") $element }}
+{{ $key }}: {{ $element | toYaml }}
+    {{- end }}
   {{- end }}
-{{- end }}
-{{- else if (include "redpanda-atleast-22-2-0" . | fromJson).bool -}}
-{{- $tunable = unset $tunable "log_segment_size_min" -}}
-{{- $tunable = unset $tunable "log_segment_size_max" -}}
-{{- $tunable = unset $tunable "kafka_batch_max_bytes" -}}
-{{- range $key, $element := $tunable }}
-  {{- if or (eq (typeOf $element) "bool") $element }}
-    {{ $key }}: {{ $element | toYaml }}
+  {{- else if (include "redpanda-atleast-22-2-0" . | fromJson).bool -}}
+  {{- $tunable = unset $tunable "log_segment_size_min" -}}
+  {{- $tunable = unset $tunable "log_segment_size_max" -}}
+  {{- $tunable = unset $tunable "kafka_batch_max_bytes" -}}
+  {{- range $key, $element := $tunable }}
+    {{- if or (eq (typeOf $element) "bool") $element }}
+{{ $key }}: {{ $element | toYaml }}
+    {{- end }}
   {{- end }}
-{{- end }}
-{{- end -}}
+  {{- end -}}
 {{- end -}}
 
 {{- define "fail-on-insecure-sasl-logging" -}}
@@ -547,6 +438,9 @@ than 1 core.
 {{- end -}}
 {{- define "redpanda-22-2-atleast-22-2-10" -}}
 {{- toJson (dict "bool" (or (not (eq .Values.image.repository "docker.redpanda.com/redpandadata/redpanda")) (include "redpanda.semver" . | semverCompare ">=22.2.10-0,<22.3"))) -}}
+{{- end -}}
+{{- define "redpanda-atleast-23-2-1" -}}
+{{- toJson (dict "bool" (or (not (eq .Values.image.repository "docker.redpanda.com/redpandadata/redpanda")) (include "redpanda.semver" . | semverCompare ">=23.2.1-0 || <0.0.1-0"))) -}}
 {{- end -}}
 
 {{- define "redpanda-22-2-x-without-sasl" -}}
@@ -743,6 +637,8 @@ return licenseSecretRef.key checks deprecated values entry if current values emp
 - name: redpanda-{{ $name }}-cert
   mountPath: {{ printf "/etc/tls/certs/%s" $name }}
     {{- end }}
+- name: mtls-client
+  mountPath: /etc/ls/certs/{{ template "redpanda.fullname" $ }}-client
   {{- end }}
 {{- end -}}
 
@@ -763,6 +659,10 @@ return licenseSecretRef.key checks deprecated values entry if current values emp
     secretName: {{ template "cert-secret-name" $r }}
     defaultMode: 0o440
     {{- end }}
+- name: mtls-client
+  secret:
+    secretName: {{ template "redpanda.fullname" $ }}-client
+    defaultMode: 0o440
   {{- end -}}
   {{- if and .Values.auth.sasl.enabled (not (empty .Values.auth.sasl.secretRef )) }}
 - name: users
@@ -803,4 +703,18 @@ hostPath
 {{/* support legacy storage.tieredConfig */}}
 {{- define "storage-tiered-config" -}}
 {{- dig "tieredConfig" .Values.storage.tiered.config .Values.storage | toJson -}}
+{{- end -}}
+
+{{/*
+  rpk sasl environment variables
+
+  this will return a string with the correct environment variables to use for SASL based on the
+  version of the redpada container being used
+*/}}
+{{- define "rpk-sasl-environment-variables" -}}
+{{- if (include "redpanda-atleast-23-2-1" . | fromJson).bool -}}
+RPK_USER RPK_PASS RPK_SASL_MECHANISM
+{{- else -}}
+REDPANDA_SASL_USERNAME REDPANDA_SASL_PASSWORD REDPANDA_SASL_MECHANISM
+{{- end -}}
 {{- end -}}

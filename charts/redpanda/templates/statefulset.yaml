@@ -224,8 +224,8 @@ spec:
                 - -c
                 - |
                   set -x
-                  rpk cluster health {{ (include "rpk-flags" . | fromJson).admin }}
-                  rpk cluster health {{ (include "rpk-flags" . | fromJson).admin }} | grep 'Healthy:.*true'
+                  rpk cluster health
+                  rpk cluster health | grep 'Healthy:.*true'
             initialDelaySeconds: {{ .Values.statefulset.readinessProbe.initialDelaySeconds }}
             failureThreshold: {{ .Values.statefulset.readinessProbe.failureThreshold }}
             periodSeconds: {{ .Values.statefulset.readinessProbe.periodSeconds }}
@@ -234,14 +234,7 @@ spec:
             - rpk
             - redpanda
             - start
-            - --smp={{ include "redpanda-smp" . }}
-            - --memory={{ template "redpanda-memory" . }}M
-            - --reserve-memory={{ template "redpanda-reserve-memory" . }}M
-            - --default-log-level={{ .Values.logging.logLevel }}
-            - --advertise-rpc-addr={{ $internalAdvertiseAddress }}:{{ .Values.listeners.rpc.port }}
-            {{- with .Values.statefulset.additionalRedpandaCmdFlags }}
-              {{- toYaml . | nindent 12 }}
-            {{- end }}
+            - "--advertise-rpc-addr={{ $internalAdvertiseAddress }}:{{ .Values.listeners.rpc.port }}"
           ports:
 {{- range $name, $listener := .Values.listeners }}
             - name: {{ lower $name }}
@@ -294,12 +287,13 @@ spec:
           securityContext: {{- toYaml .Values.statefulset.sideCars.configWatcher.securityContext | nindent 12 }}
   {{- end }}
           volumeMounts: {{ include "common-mounts" . | nindent 12 }}
+            - name: config
+              mountPath: /etc/redpanda
+            - name: {{ template "redpanda.fullname" . }}-config-watcher
+              mountPath: /etc/secrets/config-watcher/scripts
   {{- if dig "sideCars" "configWatcher" "extraVolumeMounts" false .Values.statefulset -}}
     {{ tpl .Values.statefulset.sideCars.configWatcher.extraVolumeMounts . | nindent 12 }}
   {{- end }}
-            - name: {{ template "redpanda.fullname" . }}-config-watcher
-              mountPath: /etc/secrets/config-watcher/scripts
-              readOnly: true
 {{- end }}
       {{- if and .Values.rbac.enabled .Values.statefulset.sideCars.controllers.enabled }}
         - name: redpanda-controllers
@@ -364,12 +358,10 @@ spec:
         - name: {{ (include "redpanda.name" .) | trunc 51 }}-configurator
           secret:
             secretName: {{ (include "redpanda.name" .) | trunc 51 }}-configurator
-            optional: false
             defaultMode: 0o775
         - name: {{ template "redpanda.fullname" . }}-config-watcher
           secret:
             secretName: {{ template "redpanda.fullname" . }}-config-watcher
-            optional: false
             defaultMode: 0o775
 {{- if or .Values.statefulset.nodeAffinity .Values.statefulset.podAffinity .Values.statefulset.podAntiAffinity }}
       affinity:

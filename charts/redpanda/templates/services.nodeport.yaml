@@ -41,7 +41,7 @@ spec:
   {{- if $enabled }}
     - name: admin-{{ $name }}
       protocol: TCP
-      port: {{ $values.listeners.admin.port }}
+      port: {{ $listener.port }}
       nodePort: {{ first (dig "advertisedPorts" (list $listener.port) $listener) }}
   {{- end }}
 {{- end }}

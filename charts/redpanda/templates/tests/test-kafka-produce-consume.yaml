@@ -34,7 +34,7 @@ spec:
   securityContext: {{ include "pod-security-context" . | nindent 4 }}
   {{- with .Values.imagePullSecrets }}
   imagePullSecrets: {{- toYaml . | nindent 4 }}
-  {{- end }}
+{{- end }}
   containers:
     - name: {{ template "redpanda.name" . }}
       image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
@@ -56,17 +56,27 @@ spec:
 {{- if and (include "is-licensed" . | fromJson).bool (include "storage-tiered-config" .|fromJson).cloud_storage_enabled }}
   {{- $cloudStorageFlags = "-c retention.bytes=80 -c segment.bytes=40 -c redpanda.remote.read=true -c redpanda.remote.write=true"}}
 {{- end }}
-{{- if $sasl.enabled }}
-          until rpk topic create produce.consume.test.$POD_NAME {{ include "rpk-topic-flags" . }} {{ $cloudStorageFlags }}
+{{- if .Values.auth.sasl.enabled }}
+          old_setting=${-//[^x]/}
+          set +x
+          IFS=: read -r {{ include "rpk-sasl-environment-variables" . }} < $(find /etc/secrets/users/* -print)
+          {{- if (include "redpanda-atleast-23-2-1" . | fromJson).bool }}
+          RPK_SASL_MECHANISM=${RPK_SASL_MECHANISM:-{{ .Values.auth.sasl.mechanism | upper }}}
+          {{- else }}
+          REDPANDA_SASL_MECHANISM=${REDPANDA_SASL_MECHANISM:-{{ .Values.auth.sasl.mechanism | upper }}}
+          {{- end }}
+          export {{ include "rpk-sasl-environment-variables" . }}
+          if [[ -n "$old_setting" ]]; then set -x; fi
+{{- end }}
+          until rpk topic create produce.consume.test.$POD_NAME {{ $cloudStorageFlags }}
             do sleep 2
           done
           {{- range $i := until 100 }}
-          echo "Pandas are awesome!" | rpk topic produce produce.consume.test.$POD_NAME {{ include "rpk-topic-flags" $ }}
+          echo "Pandas are awesome!" | rpk topic produce produce.consume.test.$POD_NAME
           {{- end }}
           sleep 2
-          rpk topic consume produce.consume.test.$POD_NAME -n 1 {{ include "rpk-topic-flags" . }} | grep "Pandas are awesome!"
-          rpk topic delete produce.consume.test.$POD_NAME {{ include "rpk-topic-flags" . }}
-{{- end }}
+          rpk topic consume produce.consume.test.$POD_NAME -n 1 | grep "Pandas are awesome!"
+          rpk topic delete produce.consume.test.$POD_NAME
       volumeMounts: {{ include "default-mounts" . | nindent 8 }}
       resources: {{ toYaml .Values.statefulset.resources | nindent 12 }}
       securityContext: {{ include "container-security-context" . | nindent 8 }}

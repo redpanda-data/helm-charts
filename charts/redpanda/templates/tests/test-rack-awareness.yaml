@@ -14,25 +14,23 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- $root := deepCopy . }}
 apiVersion: v1
 kind: Pod
 metadata:
   name: {{ include "redpanda.fullname" . }}-test-rack-awareness
   namespace: {{ .Release.Namespace | quote }}
-  labels:
-    {{- with include "full.labels" . }}
-        {{- . | nindent 4 }}
-    {{- end }}
+{{- with include "full.labels" . }}
+  labels: {{- . | nindent 4 }}
+{{- end }}
   annotations:
     "helm.sh/hook": test
     "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   restartPolicy: Never
   securityContext: {{ include "pod-security-context" . | nindent 4 }}
-  {{- with .Values.imagePullSecrets }}
+{{- with .Values.imagePullSecrets }}
   imagePullSecrets: {{- toYaml . | nindent 4 }}
-  {{- end }}
+{{- end }}
   containers:
     - name: {{ template "redpanda.name" . }}
       image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
@@ -41,33 +39,22 @@ spec:
       - -c
       - |
         set -e
-    {{- if and .Values.rackAwareness.enabled (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
+{{- if and .Values.rackAwareness.enabled (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
         curl --silent --fail --retry 120 \
           --retry-max-time 120 --retry-all-errors \
-      {{- if (include "tls-enabled" . | fromJson).bool }}
-        {{- range $name, $cert := .Values.tls.certs }}
-          {{- if and $cert.caEnabled (eq $name "default") }}
-          --cacert {{ printf "/etc/tls/certs/%s/ca.crt" $name }} \
-          {{- end }}
-        {{- end }}
-        https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.admin.port }}/v1/node_config | grep '"rack":"rack[1-4]"'
-      {{- else }}
-        http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.admin.port }}/v1/node_config | grep '"rack":"rack[1-4]"'
-      {{- end }}
+  {{- if (include "tls-enabled" . | fromJson).bool }}
+    {{- if (dig "default" "caEnabled" false .Values.tls.certs) }}
+          --cacert "/etc/tls/certs/default/ca.crt" \
     {{- end }}
+        https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.admin.port }}/v1/node_config | grep '"rack":"rack[1-4]"'
+  {{- else }}
+        http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.admin.port }}/v1/node_config | grep '"rack":"rack[1-4]"'
+  {{- end }}
+{{- end }}
 
-        rpk redpanda admin config print \
-      {{- if (include "tls-enabled" . | fromJson).bool }}
-        {{- range $name, $cert := .Values.tls.certs }}
-          {{- if and $cert.caEnabled (eq $name "default") }}
-          --admin-api-tls-enabled \
-          --admin-api-tls-truststore {{ printf "/etc/tls/certs/%s/ca.crt" $name }} \
-          {{- end }}
-        {{- end }}
-      {{- end }}
-          --host {{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.admin.port }} | grep '"enable_rack_awareness": {{ .Values.rackAwareness.enabled }}'
+        rpk redpanda admin config print --host {{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.admin.port }} | grep '"enable_rack_awareness": {{ .Values.rackAwareness.enabled }}'
 
-        rpk cluster config get enable_rack_awareness {{ template "rpk-acl-user-flags" $ }} | grep '{{ .Values.rackAwareness.enabled }}'
+        rpk cluster config get enable_rack_awareness
       volumeMounts: {{ include "default-mounts" . | nindent 8 }}
       securityContext: {{ include "container-security-context" . | nindent 8 }}
   volumes: {{ include "default-volumes" . | nindent 4 }}
