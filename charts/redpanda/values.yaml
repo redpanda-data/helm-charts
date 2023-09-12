@@ -479,6 +479,7 @@ post_install_job:
   #     memory: 1024Mi
   # labels: {}
   # annotations: {}
+  affinity: {}
 
 post_upgrade_job:
   enabled: true
@@ -503,6 +504,7 @@ post_upgrade_job:
   # extraEnvFrom:
   #   - secretRef:
   #       name: redpanda-aws-secrets
+  affinity: {}
 
 statefulset:
   # -- Number of Redpanda brokers (Redpanda Data recommends setting this to the number of worker nodes in the cluster)

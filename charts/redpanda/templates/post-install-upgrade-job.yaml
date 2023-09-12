@@ -59,6 +59,9 @@ spec:
     {{- with .Values.tolerations }}
       tolerations: {{- toYaml . | nindent 8 }}
     {{- end }}
+    {{- with .Values.post_install_job.affinity }}
+      affinity: {{- toYaml . | nindent 8 }}
+    {{- end }}
       restartPolicy: Never
       securityContext: {{ include "pod-security-context" . | nindent 8 }}
     {{- with .Values.imagePullSecrets }}
