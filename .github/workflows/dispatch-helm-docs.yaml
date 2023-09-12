@@ -1,4 +1,4 @@
-# This workflow triggers the actions in redpanda-data/documentation that publishes the Helm specification to the Redpanda documentation.
+# This workflow triggers the actions in redpanda-data/docs that publishes the Helm specifications to the Redpanda documentation.
 
 name: Trigger Helm spec docs
 
@@ -16,5 +16,5 @@ jobs:
         uses: peter-evans/repository-dispatch@v2
         with:
           token: ${{ secrets.ACTIONS_BOT_TOKEN }}
-          repository: redpanda-data/documentation-private
+          repository: redpanda-data/docs
           event-type: generate-helm-spec-docs
