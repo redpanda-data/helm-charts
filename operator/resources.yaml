@@ -458,17 +458,21 @@ rules:
     - patch
     - update
 - apiGroups:
-    - cluster.redpanda.com
-  resources:
-    - topics
-  verbs:
-    - create
-- apiGroups:
     - ""
   resources:
     - persistentvolumeclaims
   verbs:
     - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - cluster.redpanda.com
+  resources:
+    - topics
+  verbs:
     - get
     - list
     - patch
