@@ -6,7 +6,7 @@ metadata:
   name: operator
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.15
+    helm.sh/chart: operator-0.3.16
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v23.2.7"
     app.kubernetes.io/managed-by: Helm
@@ -18,45 +18,13 @@ metadata:
   name: operator-config
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.15
+    helm.sh/chart: operator-0.3.16
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v23.2.7"
     app.kubernetes.io/managed-by: Helm
 data:
   controller_manager_config.yaml: |
     map[apiVersion:controller-runtime.sigs.k8s.io/v1alpha1 health:map[healthProbeBindAddress::8081] kind:ControllerManagerConfig leaderElection:map[leaderElect:true resourceName:aa9fc693.vectorized.io] metrics:map[bindAddress:127.0.0.1:8080] webhook:map[port:9443]]
----
-# Source: operator/templates/clusterrole.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: operator
-  labels:
-    app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.15
-    app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v23.2.7"
-    app.kubernetes.io/managed-by: Helm
-rules:
-  - apiGroups:
-      - ""
-    resources:
-      - nodes
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - ""
-    resources:
-      - persistentvolumes
-    verbs:
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
 ---
 # Source: operator/templates/clusterrole_binding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -65,7 +33,7 @@ metadata:
   name: operator
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.15
+    helm.sh/chart: operator-0.3.16
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v23.2.7"
     app.kubernetes.io/managed-by: Helm
@@ -85,7 +53,7 @@ metadata:
   name: operator-pvc
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.15
+    helm.sh/chart: operator-0.3.16
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v23.2.7"
     app.kubernetes.io/managed-by: Helm
@@ -105,7 +73,7 @@ metadata:
   name: operator-election-role
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.15
+    helm.sh/chart: operator-0.3.16
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v23.2.7"
     app.kubernetes.io/managed-by: Helm
@@ -131,388 +99,395 @@ metadata:
   name: operator
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.15
+    helm.sh/chart: operator-0.3.16
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v23.2.7"
     app.kubernetes.io/managed-by: Helm
 rules:
-  - apiGroups:
-      - ""
-    resources:
-      - persistentvolumeclaims
-    verbs:
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
-      - ""
-    resources:
-      - pods
-    verbs:
-      - create
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
-      - apps
-    resources:
-      - deployments
-    verbs:
-      - create
-      - delete
-      - get
-      - patch
-      - update
-  - apiGroups:
-      - apps
-    resources:
-      - replicasets
-    verbs:
-      - create
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
-      - apps
-    resources:
-      - statefulsets
-    verbs:
-      - create
-      - delete
-      - get
-      - patch
-      - update
-      - list
-      - watch
-  - apiGroups:
-      - batch
-    resources:
-      - jobs
-    verbs:
-      - create
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
-      - cert-manager.io
-    resources:
-      - certificates
-    verbs:
-      - create
-      - delete
-      - get
-      - patch
-      - update
-  - apiGroups:
-      - cert-manager.io
-    resources:
-      - issuers
-    verbs:
-      - create
-      - delete
-      - get
-      - patch
-      - update
-  - apiGroups:
-      - cluster.redpanda.com
-    resources:
-      - redpandas
-    verbs:
-      - create
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
-      - cluster.redpanda.com
-    resources:
-      - redpandas/finalizers
-    verbs:
-      - update
-  - apiGroups:
-      - cluster.redpanda.com
-    resources:
-      - redpandas/status
-    verbs:
-      - get
-      - patch
-      - update
-  - apiGroups:
-      - coordination.k8s.io
-    resources:
-      - leases
-    verbs:
-      - create
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
-      - ""
-    resources:
-      - configmaps
-    verbs:
-      - create
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
-      - ""
-    resources:
-      - events
-    verbs:
-      - create
-      - patch
-  - apiGroups:
-      - ""
-    resources:
-      - secrets
-    verbs:
-      - create
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
-      - ""
-    resources:
-      - serviceaccounts
-    verbs:
-      - create
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
-      - ""
-    resources:
-      - pods
-    verbs:
-      - get
-      - list
-      - watch
-  - apiGroups:
-      - ""
-    resources:
-      - services
-    verbs:
-      - create
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
-      - helm.toolkit.fluxcd.io
-    resources:
-      - helmreleases
-    verbs:
-      - create
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
-      - helm.toolkit.fluxcd.io
-    resources:
-      - helmreleases/finalizers
-    verbs:
-      - update
-  - apiGroups:
-      - helm.toolkit.fluxcd.io
-    resources:
-      - helmreleases/status
-    verbs:
-      - get
-      - patch
-      - update
-  - apiGroups:
-      - monitoring.coreos.com
-    resources:
-      - servicemonitors
-    verbs:
-      - create
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
-      - policy
-    resources:
-      - poddisruptionbudgets
-    verbs:
-      - create
-      - delete
-      - get
-      - patch
-      - update
-  - apiGroups:
-      - rbac.authorization.k8s.io
-    resources:
-      - rolebindings
-    verbs:
-      - create
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
-      - rbac.authorization.k8s.io
-    resources:
-      - roles
-    verbs:
-      - create
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
-      - source.toolkit.fluxcd.io
-    resources:
-      - buckets
-    verbs:
-      - create
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
-      - source.toolkit.fluxcd.io
-    resources:
-      - gitrepositories
-    verbs:
-      - create
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
-      - source.toolkit.fluxcd.io
-    resources:
-      - helmcharts
-    verbs:
-      - create
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
-      - source.toolkit.fluxcd.io
-    resources:
-      - helmcharts/finalizers
-    verbs:
-      - create
-      - delete
-      - get
-      - patch
-      - update
-  - apiGroups:
-      - source.toolkit.fluxcd.io
-    resources:
-      - helmcharts/status
-    verbs:
-      - get
-      - patch
-      - update
-  - apiGroups:
-      - source.toolkit.fluxcd.io
-    resources:
-      - helmrepositories
-    verbs:
-      - create
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
-      - source.toolkit.fluxcd.io
-    resources:
-      - helmrepositories/finalizers
-    verbs:
-      - create
-      - delete
-      - get
-      - patch
-      - update
-  - apiGroups:
-      - source.toolkit.fluxcd.io
-    resources:
-      - helmrepositories/status
-    verbs:
-      - get
-      - patch
-      - update
-  - apiGroups:
-      - cluster.redpanda.com
-    resources:
-      - topics
-    verbs:
-      - create
-  - apiGroups:
-      - ""
-    resources:
-      - persistentvolumeclaims
-    verbs:
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
-      - cluster.redpanda.com
-    resources:
-      - topics/finalizers
-    verbs:
-      - update
-  - apiGroups:
-      - cluster.redpanda.com
-    resources:
-      - topics/status
-    verbs:
-      - get
-      - patch
-      - update
+- apiGroups:
+    - ""
+  resources:
+    - persistentvolumeclaims
+  verbs:
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - ""
+  resources:
+    - pods
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - apps
+  resources:
+    - deployments
+  verbs:
+    - create
+    - delete
+    - get
+    - patch
+    - update
+- apiGroups:
+    - apps
+  resources:
+    - replicasets
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - apps
+  resources:
+    - statefulsets
+  verbs:
+    - create
+    - delete
+    - get
+    - patch
+    - update
+    - list
+    - watch
+- apiGroups:
+    - apps
+  resources:
+    - statefulsets/status
+  verbs:
+    - patch
+    - update
+- apiGroups:
+    - batch
+  resources:
+    - jobs
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - cert-manager.io
+  resources:
+    - certificates
+  verbs:
+    - create
+    - delete
+    - get
+    - patch
+    - update
+- apiGroups:
+    - cert-manager.io
+  resources:
+    - issuers
+  verbs:
+    - create
+    - delete
+    - get
+    - patch
+    - update
+- apiGroups:
+    - cluster.redpanda.com
+  resources:
+    - redpandas
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - cluster.redpanda.com
+  resources:
+    - redpandas/finalizers
+  verbs:
+    - update
+- apiGroups:
+    - cluster.redpanda.com
+  resources:
+    - redpandas/status
+  verbs:
+    - get
+    - patch
+    - update
+- apiGroups:
+    - coordination.k8s.io
+  resources:
+    - leases
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - ""
+  resources:
+    - configmaps
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - ""
+  resources:
+    - events
+  verbs:
+    - create
+    - patch
+- apiGroups:
+    - ""
+  resources:
+    - secrets
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - ""
+  resources:
+    - serviceaccounts
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - ""
+  resources:
+    - pods
+  verbs:
+    - get
+    - list
+    - watch
+- apiGroups:
+    - ""
+  resources:
+    - services
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - helm.toolkit.fluxcd.io
+  resources:
+    - helmreleases
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - helm.toolkit.fluxcd.io
+  resources:
+    - helmreleases/finalizers
+  verbs:
+    - update
+- apiGroups:
+    - helm.toolkit.fluxcd.io
+  resources:
+    - helmreleases/status
+  verbs:
+    - get
+    - patch
+    - update
+- apiGroups:
+    - monitoring.coreos.com
+  resources:
+    - servicemonitors
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - policy
+  resources:
+    - poddisruptionbudgets
+  verbs:
+    - create
+    - delete
+    - get
+    - patch
+    - update
+- apiGroups:
+    - rbac.authorization.k8s.io
+  resources:
+    - rolebindings
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - rbac.authorization.k8s.io
+  resources:
+    - roles
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - source.toolkit.fluxcd.io
+  resources:
+    - buckets
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - source.toolkit.fluxcd.io
+  resources:
+    - gitrepositories
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - source.toolkit.fluxcd.io
+  resources:
+    - helmcharts
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - source.toolkit.fluxcd.io
+  resources:
+    - helmcharts/finalizers
+  verbs:
+    - create
+    - delete
+    - get
+    - patch
+    - update
+- apiGroups:
+    - source.toolkit.fluxcd.io
+  resources:
+    - helmcharts/status
+  verbs:
+    - get
+    - patch
+    - update
+- apiGroups:
+    - source.toolkit.fluxcd.io
+  resources:
+    - helmrepositories
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - source.toolkit.fluxcd.io
+  resources:
+    - helmrepositories/finalizers
+  verbs:
+    - create
+    - delete
+    - get
+    - patch
+    - update
+- apiGroups:
+    - source.toolkit.fluxcd.io
+  resources:
+    - helmrepositories/status
+  verbs:
+    - get
+    - patch
+    - update
+- apiGroups:
+    - cluster.redpanda.com
+  resources:
+    - topics
+  verbs:
+    - create
+- apiGroups:
+    - ""
+  resources:
+    - persistentvolumeclaims
+  verbs:
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - cluster.redpanda.com
+  resources:
+    - topics/finalizers
+  verbs:
+    - update
+- apiGroups:
+    - cluster.redpanda.com
+  resources:
+    - topics/status
+  verbs:
+    - get
+    - patch
+    - update
 ---
 # Source: operator/templates/extra_role.yaml
 kind: RoleBinding
@@ -521,7 +496,7 @@ metadata:
   name: operator-pvc
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.15
+    helm.sh/chart: operator-0.3.16
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v23.2.7"
     app.kubernetes.io/managed-by: Helm
@@ -541,7 +516,7 @@ metadata:
   name: operator-election-rolebinding
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.15
+    helm.sh/chart: operator-0.3.16
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v23.2.7"
     app.kubernetes.io/managed-by: Helm
@@ -561,7 +536,7 @@ metadata:
   name: operator
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.15
+    helm.sh/chart: operator-0.3.16
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v23.2.7"
     app.kubernetes.io/managed-by: Helm
@@ -581,7 +556,7 @@ metadata:
   name: operator-metrics-service
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.15
+    helm.sh/chart: operator-0.3.16
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v23.2.7"
     app.kubernetes.io/managed-by: Helm
@@ -602,7 +577,7 @@ metadata:
   labels:
     
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.15
+    helm.sh/chart: operator-0.3.16
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v23.2.7"
     app.kubernetes.io/managed-by: Helm
