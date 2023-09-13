@@ -234,6 +234,13 @@ secret:
       # tlsCert:
       # tlsKey:
 
+# -- Settings for license key, as an alternative to secret.enterprise when
+# a license secret is available
+enterprise:
+  licenseSecretRef:
+    name: ""
+    key: ""
+
 # -- Settings for liveness and readiness probes.
 # For details,
 # see the [Kubernetes documentation](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes).
