@@ -74,14 +74,25 @@ image:
 # See https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
 
-# -- Enterprise license key (optional).
+# -- DEPRECATED Enterprise license key (optional).
 # For details,
 # see the [License documentation](https://docs.redpanda.com/docs/get-started/licenses/?platform=kubernetes#redpanda-enterprise-edition).
 license_key: ""
-# -- Secret name and secret key where the license key is stored.
+# -- DEPRECATED Secret name and secret key where the license key is stored.
 license_secret_ref: {}
   # secret_name: my-secret
   # secret_key: key-where-license-is-stored
+
+# -- Enterprise (optional)
+# For details,
+# see the [License documentation](https://docs.redpanda.com/docs/get-started/licenses/?platform=kubernetes#redpanda-enterprise-edition).
+enterprise:
+  # -- license (optional).
+  license: ""
+  # -- Secret name and key where the license key is stored.
+  licenseSecretRef: {}
+    # name: my-secret
+    # key: key-where-license-is-stored
 
 # -- Rack Awareness settings.
 # For details,
@@ -400,7 +411,7 @@ storage:
     annotations: {}
   #
   # -- Tiered Storage settings
-  # Requires `license_key` or `license_secret_ref`
+  # Requires `enterprise.licenseKey` or `enterprised.licenseSecretRef`
   # For details,
   # see the [Tiered Storage documentation](https://docs.redpanda.com/docs/manage/kubernetes/tiered-storage/).
   tieredConfig:
