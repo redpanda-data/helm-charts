@@ -52,6 +52,9 @@ logLevel: "info"
 rbac:
   # rbac.create -- Specifies whether the RBAC resources should be created
   create: true
+  # rbac.create -- Specified whether to create additional rbac cluster roles
+  # needed to run additional-controllers, set to true to opt-in
+  createAdditionalControllerCRs: false
 
 webhook:
   # webhook.create -- Specifies whether the Webhook resources should configured
