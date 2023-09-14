@@ -592,6 +592,19 @@ statefulset:
       resources: {}
       securityContext: {}
       extraVolumeMounts: |-
+    controllers:
+      image:
+        tag: v23.2.8
+        repository: docker.redpanda.com/redpandadata/redpanda-operator
+      # You must enable, this feature is experimental, and so you must opt in
+      enabled: false
+      resources: {}
+      securityContext: {}
+      healthProbeAddress: ":8085"
+      metricsAddress: ":9082"
+      run:
+        - all
+      createRBAC: true
   initContainers:
     tuning:
       resources: {}

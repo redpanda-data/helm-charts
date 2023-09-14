@@ -318,6 +318,27 @@ spec:
             {{- end }}
           {{- end }}
       {{- end }}
+      {{- if and .Values.rbac.enabled .Values.statefulset.sideCars.controllers.enabled }}
+        - name: redpanda-controllers
+          image: {{ .Values.statefulset.sideCars.controllers.image.repository }}:{{ .Values.statefulset.sideCars.controllers.image.tag }}
+          command:
+            - /manager
+          args:
+            - --operator-mode=false
+            - --namespace={{ .Release.Namespace }}
+            - --health-probe-bind-address={{ .Values.statefulset.sideCars.controllers.healthProbeAddress | quote }}
+            - --metrics-bind-address={{ .Values.statefulset.sideCars.controllers.metricsAddress | quote }}
+            - --additional-controllers={{ join "," .Values.statefulset.sideCars.controllers.run }}
+          env:
+            - name: REDPANDA_HELM_RELEASE_NAME
+              value: {{ .Release.Name }}
+          {{- if get .Values.statefulset.sideCars.controllers "resources" }}
+          resources: {{- toYaml .Values.statefulset.sideCars.controllers.resources | nindent 12 }}
+          {{- end }}
+          {{- if get .Values.statefulset.sideCars.controllers "securityContext" }}
+          securityContext: {{- toYaml .Values.statefulset.sideCars.controllers.securityContext | nindent 12 }}
+          {{- end }}
+      {{- end }}
       volumes:
 {{- if dig "extraVolumes" false .Values.statefulset -}}
 {{ tpl .Values.statefulset.extraVolumes . | nindent 8 }}
