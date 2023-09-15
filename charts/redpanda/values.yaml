@@ -940,7 +940,19 @@ config:
     # wait_for_leader_timeout_ms: 5000ms                           # Timeout (ms) to wait for leadership in metadata cache
   # -- Node (broker) properties.
   # See the [property reference documentation](https://docs.redpanda.com/docs/reference/node-properties/).
-  node: {}
+  node:
+    # -- Crash loop limit
+    # A limit on the number of consecutive times a broker can crash within one hour before its crash-tracking logic is reset.
+    # This limit prevents a broker from getting stuck in an infinite cycle of crashes.
+    # User can disable this crash loop limit check by the following action:
+    #
+    # * One hour elapses since the last crash
+    # * The node configuration file, redpanda.yaml, is updated via config.cluster or config.node or config.tunable objects
+    # * The startup_log file in the node’s data_directory is manually deleted
+    #
+    # Default to 5
+    # REF: https://docs.redpanda.com/current/reference/node-properties/#crash_loop_limit
+    crash_loop_limit: 5
     # node_id:                                                     # Unique ID identifying a node in the cluster
     # data_directory:                                              # Place where redpanda will keep the data
     # admin_api_doc_dir: /usr/share/redpanda/admin-api-doc         # Admin API doc directory

@@ -129,7 +129,7 @@ limitations under the License.
   {{- end }}
       {{- with dig "node" dict .Values.config }}
       {{- range $key, $element := .}}
-        {{- if or (eq (typeOf $element) "bool") $element }}
+        {{- if and (or (eq (typeOf $element) "bool") $element) (and (eq $key "crash_loop_limit") (include "redpanda-atleast-23-1-1" $root | fromJson).bool) }}
       {{ $key }}: {{ $element | toYaml }}
         {{- end }}
       {{- end }}
