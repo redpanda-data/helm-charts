@@ -41,3 +41,4 @@ echo "update ${CHART} appVersion from ${APPVERSION} to ${LATEST}"
 bump_patch_version
 sed -i "s/^version: .*$/version: ${NEW_VERSION}/" "${CHARTFILE}"
 sed -i "s/^appVersion: .*$/appVersion: ${LATEST}/" "${CHARTFILE}"
+sed -i "s/${APPVERSION}/${LATEST}/" "${CHARTFILE}"
