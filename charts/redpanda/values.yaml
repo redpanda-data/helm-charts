@@ -435,6 +435,10 @@ storage:
     # -- Required for ABS.
     # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_azure_shared_key).
     cloud_storage_azure_shared_key: null
+    # -- Required for ABS hierarchical namespace
+    # Available starting from 23.2.8
+    # cloud_storage_azure_adls_endpoint: ""
+    # cloud_storage_azure_adls_port: ""
     # Available starting from 22.3.X
     # -- Required for AWS and GCS authentication with IAM roles.
     # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_credentials_source).
