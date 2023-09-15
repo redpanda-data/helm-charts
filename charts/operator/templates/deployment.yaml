@@ -48,7 +48,7 @@ spec:
         - --metrics-bind-address=127.0.0.1:8080
         - --leader-elect
         - --configurator-tag={{ include "configurator.tag" . }}
-        - --configurator-base-image={{ .Values.configurator.repository }}
+        - --configurator-base-image={{ .Values.configurator.containerRegistry }}
         {{- if and .Values.webhook.enabled (eq .Values.scope "Cluster" ) }}
         - --webhook-enabled=true
         {{- else }}
