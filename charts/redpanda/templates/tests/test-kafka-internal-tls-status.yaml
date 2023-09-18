@@ -59,26 +59,6 @@ spec:
         do sleep 2
         done
       resources: {{ toYaml .Values.statefulset.resources | nindent 12 }}
-      volumeMounts:
-        - name: {{ template "redpanda.fullname" . }}
-          mountPath: /tmp/base-config
-        - name: config
-          mountPath: /etc/redpanda
-  {{- range $name, $cert := .Values.tls.certs }}
-        - name: redpanda-{{ $name }}-cert
-          mountPath: {{ printf "/etc/tls/certs/%s" $name }}
-  {{- end }}
-  volumes:
-    - name: {{ template "redpanda.fullname" . }}
-      configMap:
-        name: {{ template "redpanda.fullname" . }}
-    - name: config
-      emptyDir: {}
-  {{- range $name, $cert := .Values.tls.certs }}
-    {{- $r :=  set $root "tempCert" ( dict "name" $name "cert" $cert ) }}
-    - name: redpanda-{{ $name }}-cert
-      secret:
-        defaultMode: 0644
-        secretName: {{ template "cert-secret-name" $r }}
-  {{- end }}
+      volumeMounts: {{ include "default-mounts" . | nindent 8 }}
+  volumes: {{ include "default-volumes" . | nindent 4 }}
 {{- end }}

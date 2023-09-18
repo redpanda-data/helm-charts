@@ -48,13 +48,6 @@ spec:
           --brokers {{ include "redpanda.fullname" . }}-0.{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.kafka.port }}
           do sleep 2
         done
-      volumeMounts:
-        - name: {{ template "redpanda.fullname" . }}
-          mountPath: /tmp/base-config
-  volumes:
-    - name: {{ template "redpanda.fullname" . }}
-      configMap:
-        name: {{ template "redpanda.fullname" . }}
-    - name: config
-      emptyDir: {}
+      volumeMounts: {{ include "default-mounts" . | nindent 8 }}
+  volumes: {{ include "default-volumes" . | nindent 4 }}
 {{- end }}

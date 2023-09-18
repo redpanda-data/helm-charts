@@ -55,24 +55,11 @@ spec:
   initContainers:
     - name: {{ template "redpanda.name" . }}
       image: {{ .Values.image.repository}}:{{ template "redpanda.tag" . }}
-      volumeMounts:
+      volumeMounts: {{ include "default-mounts" . | nindent 8 }}
         - name: shared-data
           mountPath: /usr/share/redpanda/test
-        - name: config
-          mountPath: /etc/redpanda
         - name: datadir
           mountPath: /var/lib/redpanda/data
-{{- if (include "tls-enabled" . | fromJson).bool -}}
-  {{- range $name, $cert := .Values.tls.certs }}
-        - name: redpanda-{{ $name }}-cert
-          mountPath: {{ printf "/etc/tls/certs/%s" $name }}
-  {{- end }}
-{{- end }}
-{{- if $useSaslSecret }}
-        - name: {{ $sasl.secretRef }}
-          mountPath: "/etc/secrets/users"
-          readOnly: true
-{{- end}}
       command:
       - /bin/bash
       - -c
@@ -82,7 +69,7 @@ spec:
   containers:
     - name: {{ template "redpanda.name" . }}-tester
       image: busybox:latest
-      volumeMounts:
+      volumeMounts: {{ include "default-mounts" . | nindent 8 }}
         - name: shared-data
           mountPath: /test
       command:
@@ -95,36 +82,11 @@ spec:
         test -f /tmp/bundle/logs/{{ .Release.Namespace }}-0.txt
         test -f /tmp/bundle/logs/{{ .Release.Namespace }}-1.txt
         test -f /tmp/bundle/logs/{{ .Release.Namespace }}-2.txt
-        
+
         test -d /tmp/bundle/controller
 
         test -f /tmp/bundle/k8s/pods.json
         test -f /tmp/bundle/k8s/configmaps.json
-  volumes:
-    - name: shared-data
-      emptyDir: {}  
-    - name: config
-      emptyDir: {}
-    - name: {{ template "redpanda.fullname" . }}
-      configMap:
-        name: {{ template "redpanda.fullname" . }}
-    - name: datadir
-      persistentVolumeClaim:
-        claimName: datadir-{{ include "redpanda.fullname" . }}-0     
-{{- if $useSaslSecret }}
-    - name: {{ $sasl.secretRef }}
-      secret:
-        secretName: {{ $sasl.secretRef }}
-        optional: false
-{{- end }}
-{{- if (include "tls-enabled" . | fromJson).bool }}
-  {{- range $name, $cert := .Values.tls.certs }}
-    - name: redpanda-{{ $name }}-cert
-      secret:
-        defaultMode: 0644
-        secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
-  {{- end }}
-{{- end -}}
-
+  volumes: {{ include "default-volumes" . | nindent 4 }}
 {{- end -}}
 */}}

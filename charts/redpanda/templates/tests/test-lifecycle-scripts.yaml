@@ -42,7 +42,7 @@ spec:
           value: {{ include "redpanda.fullname" . }}-0
       command:
         - /bin/timeout
-        - "{{ mul .Values.statefulset.terminationGracePeriodSecond 2 }}"
+        - "{{ mul .Values.statefulset.terminationGracePeriodSeconds 2 }}"
         - bash
         - -xec
         - |
@@ -55,36 +55,11 @@ spec:
           ls -l /tmp/postStart*
           test -f /tmp/postStartHookStarted
           test -f /tmp/postStartHookFinished
-      volumeMounts:
+      volumeMounts: {{ include "default-mounts" . | nindent 8 }}
         - name: lifecycle-scripts
           mountPath: /var/lifecycle
-{{- if (include "tls-enabled" . | fromJson).bool }}
-  {{- range $name, $cert := .Values.tls.certs }}
-        - name: redpanda-{{ $name }}-cert
-          mountPath: {{ printf "/etc/tls/certs/%s" $name }}
-          readOnly: true
-  {{- end }}
-{{- end }}
-  volumes:
+  volumes: {{ include "default-volumes" . | nindent 4 }}
     - name: lifecycle-scripts
       secret:
         secretName: {{ (include "redpanda.fullname" . | trunc 50 ) }}-sts-lifecycle
         defaultMode: 0o775
-{{- if (include "tls-enabled" . | fromJson).bool }}
-  {{- range $name, $cert := .Values.tls.certs }}
-  {{- $r :=  set $ "tempCert" ( dict "name" $name "cert" $cert ) }}
-    - name: redpanda-{{ $name }}-cert
-      secret:
-        defaultMode: 420
-        items:
-        - key: tls.key
-          path: tls.key
-        - key: tls.crt
-          path: tls.crt
-    {{- if $cert.caEnabled }}
-        - key: ca.crt
-          path: ca.crt
-    {{- end }}
-        secretName: {{ template "cert-secret-name" $r }}
-  {{- end }}
-{{- end }}

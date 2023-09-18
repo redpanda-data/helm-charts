@@ -117,17 +117,6 @@ spec:
             echo "All of the trials failed to permanently delete schema!!!"
             exit 1
           fi
-      volumeMounts:
-      {{- if $sasl.enabled }}
-        - name: {{ $sasl.secretRef }}
-          mountPath: "/etc/secrets/users"
-          readOnly: true
-      {{- end}}
-  volumes:
-  {{- if $sasl.enabled }}
-    - name: {{ $sasl.secretRef }}
-      secret:
-        secretName: {{ $sasl.secretRef }}
-        optional: false
-  {{- end }}
+      volumeMounts: {{ include "default-mounts" . | nindent 8 }}
+  volumes: {{ include "default-volumes" . | nindent 4 }}
 {{- end }}

@@ -58,17 +58,6 @@ spec:
           -u $USERNAME:$PASSWORD \
           {{- end }}
           http://{{ include "redpanda.servicename" . }}:{{ .Values.listeners.http.port }}/topics
-      volumeMounts:
-      {{- if $sasl.enabled }}
-        - name: {{ $sasl.secretRef }}
-          mountPath: "/etc/secrets/users"
-          readOnly: true
-      {{- end}}
-  volumes:
-  {{- if $sasl.enabled }}
-    - name: {{ $sasl.secretRef }}
-      secret:
-        secretName: {{ $sasl.secretRef }}
-        optional: false
-  {{- end }}
+      volumeMounts: {{ include "default-mounts" . | nindent 8 }}
+  volumes: {{ include "default-volumes" . | nindent 4 }}
 {{- end }}
