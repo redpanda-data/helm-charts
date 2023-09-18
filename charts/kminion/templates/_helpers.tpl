@@ -116,7 +116,7 @@ Return if ingress supports pathType.
 Return the appropriate apiVersion for podDisruptionBudget.
 */}}
 {{- define "kminion.podDisruptionBudget.apiVersion" -}}
-{{- if $.Capabilities.APIVersions.Has "policy/v1/PodDisruptionBudget" }}
+{{- if $.Capabilities.APIVersions.Has "policy/v1" }}
 {{- print "policy/v1" }}
 {{- else }}
 {{- print "policy/v1beta1" }}
