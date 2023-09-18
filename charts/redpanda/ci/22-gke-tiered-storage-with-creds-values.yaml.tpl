@@ -23,7 +23,8 @@ storage:
     cloud_storage_segment_max_upload_interval_sec: 1
     cloud_storage_access_key: "${GCP_ACCESS_KEY_ID}"
     cloud_storage_secret_key: "${GCP_SECRET_ACCESS_KEY}"
-license_key: "${REDPANDA_SAMPLE_LICENSE}"
+enterprise:
+  license: "${REDPANDA_SAMPLE_LICENSE}"
 
 
 resources:

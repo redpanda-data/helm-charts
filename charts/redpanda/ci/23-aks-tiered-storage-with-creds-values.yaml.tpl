@@ -23,7 +23,8 @@ storage:
     cloud_storage_azure_storage_account: ${TEST_STORAGE_ACCOUNT}
     cloud_storage_azure_container: ${TEST_STORAGE_CONTAINER}
     cloud_storage_azure_shared_key: ${TEST_AZURE_SHARED_KEY}
-license_key: "${REDPANDA_SAMPLE_LICENSE}"
+enterprise:
+    license: "${REDPANDA_SAMPLE_LICENSE}"
 
 resources:
   cpu:
