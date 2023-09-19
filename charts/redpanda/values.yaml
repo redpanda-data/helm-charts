@@ -640,6 +640,19 @@ statefulset:
   # -- Additional flags to pass to redpanda,
   additionalRedpandaCmdFlags: []
 #    - --unsafe-bypass-fsync
+  # -- Termination grace period in seconds is time required to execute preStop hook
+  # which puts particular Redpanda Pod (process/container) into maintenance mode.
+  # Before settle down on particular value please put Redpanda under load and perform
+  # rolling upgrade or rolling restart. That value needs to accommodate two processes:
+  # * preStop hook needs to put Redpanda into maintenance mode
+  # * after preStop hook Redpanda needs to handle gracefully SIGTERM signal
+  #
+  # Both processes are executed sequentially where preStop hook has hard deadline in the
+  # middle of terminationGracePeriodSeconds.
+  #
+  # REF:
+  # https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/#hook-handler-execution
+  # https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination
   terminationGracePeriodSeconds: 90
   ## Additional Volumes that you mount
   extraVolumes: |-
