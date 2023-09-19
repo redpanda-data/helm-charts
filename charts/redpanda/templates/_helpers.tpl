@@ -564,10 +564,10 @@ fsGroupChangePolicy: {{ dig "securityContext" "fsGroupChangePolicy" "OnRootMisma
 {{- end -}}
 
 # for backward compatibility, force a default on releases that didn't
-# set the podSecurityContext.runAsUser before
+
 {{- define "container-security-context" -}}
-runAsUser: {{ dig "podSecurityContext" "runAsUser" .Values.statefulset.securityContext.runAsUser .Values.statefulset }}
-runAsGroup: {{ dig "podSecurityContext" "fsGroup" .Values.statefulset.securityContext.fsGroup .Values.statefulset }}
+
+
 {{- end -}}
 
 {{- define "admin-tls-curl-flags" -}}
