@@ -22,4 +22,5 @@ storage:
     cloud_storage_region: "${AWS_REGION}"
     cloud_storage_bucket: "${TEST_BUCKET}"
     cloud_storage_segment_max_upload_interval_sec: 1
-license_key: "${REDPANDA_SAMPLE_LICENSE}"
+enterprise:
+  license: "${REDPANDA_SAMPLE_LICENSE}"

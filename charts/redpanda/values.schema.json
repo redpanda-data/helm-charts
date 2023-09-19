@@ -73,12 +73,32 @@
     },
     "license_secret_ref": {
       "type": "object",
+      "deprecated": true,
       "properties": {
         "secret_name": {
           "type": "string"
         },
         "secret_key": {
           "type": "string"
+        }
+      }
+    },
+    "enterprise": {
+      "type": "object",
+      "properties": {
+        "license": {
+          "type": "string"
+        },
+        "licenseSecretRef": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "key": {
+              "type": "string"
+            }
+          }
         }
       }
     },

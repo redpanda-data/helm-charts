@@ -13,9 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
-license_secret_ref:
-  secret_name: redpanda-license
-  secret_key: license-key
+enterprise:
+  licenseSecretRef:
+    name: redpanda-license
+    key: license-key
 
 storage:
   tieredConfig:

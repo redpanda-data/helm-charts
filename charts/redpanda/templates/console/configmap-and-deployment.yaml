@@ -15,6 +15,28 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */}}
 {{ $values := .Values }}
+
+{{/* Secret */}}
+{{ $secretConfig := dict }}
+{{ if and .Values.console.enabled (not .Values.console.secret.create) }}
+{{ $licenseKey := ( include "enterprise-license" .  ) }}
+{{ $secretConfig = ( dict
+  "create" true
+  "enterprise" ( dict "license" $licenseKey)
+  )
+}}
+
+{{ $config := dict
+  "Values" (dict
+  "secret" $secretConfig
+  )}}
+
+{{ $console := deepCopy .Subcharts.console }}
+{{ $console = merge $config $console }}
+---
+{{ include (print .Subcharts.console.Template.BasePath "/secret.yaml") $console }}
+{{ end }}
+
 {{ $configmap := dict }}
 {{/* if the console chart has the creation of the configmap disabled, create it here instead */}}
 {{ if and .Values.console.enabled (not .Values.console.configmap.create) }}
@@ -93,19 +115,22 @@ limitations under the License.
       "kafka" $consoleConfigKafka
       "connect" $connectConfig
 }}
+
 {{ $config := dict
     "Values" (dict
       "console" (dict "config" $consoleConfig)
       "configmap" $consoleConfigmap
+      "secret" $secretConfig
     )
 }}
 
 {{ $console := deepCopy .Subcharts.console }}
 {{ $console = merge $config $console }}
-
+---
 {{ include (print .Subcharts.console.Template.BasePath "/configmap.yaml") $console }}
 {{ $configmap = include (print .Subcharts.console.Template.BasePath "/configmap.yaml") $console }}
 {{ end }}
+
 {{/* Deployment */}}
 {{ if and .Values.console.enabled (not .Values.console.deployment.create) }}
 
@@ -229,12 +254,26 @@ limitations under the License.
   "value" (print (include "admin-http-protocol" .) "://" (include "admin-api-service-url" .))
 )}}
 
+{{ $enterprise := dict }}
+{{ if ( include "enterprise-secret" .) }}
+  {{ $enterprise = dict
+    "licenseSecretRef" ( dict
+       "name" ( include "enterprise-secret-name" . )
+       "key" ( include "enterprise-secret-key" . )
+     )
+  }}
+{{ end }}
+
 {{ $extraEnv := concat $kafkaTLS $schemaRegistryTLS $adminAPI}}
-{{ $consoleValues := dict "Values" (dict
+{{ $consoleValues := dict
+  "Values" (dict
   "extraVolumes" $extraVolumes
   "extraVolumeMounts" $extraVolumeMounts
   "extraEnv" $extraEnv
+  "secret" $secretConfig
+  "enterprise" $enterprise
 )}}
+
 {{ if not (empty $command) }}
   {{ $consoleValues := merge $consoleValues (dict "Values" (dict "deployment" (dict "command" $command))) }}
 {{ end }}
@@ -246,6 +285,7 @@ limitations under the License.
 
 {{ $helmVars := deepCopy .Subcharts.console }}
 {{ $helmVars := merge $consoleValues $helmVars }}
+
 ---
 {{ include (print .Subcharts.console.Template.BasePath "/deployment.yaml") $helmVars }}
 {{ end }}
