@@ -564,10 +564,10 @@ fsGroupChangePolicy: {{ dig "securityContext" "fsGroupChangePolicy" "OnRootMisma
 {{- end -}}
 
 # for backward compatibility, force a default on releases that didn't
-# set the podSecurityContext.runAsUser before
+
 {{- define "container-security-context" -}}
-runAsUser: {{ dig "podSecurityContext" "runAsUser" .Values.statefulset.securityContext.runAsUser .Values.statefulset }}
-runAsGroup: {{ dig "podSecurityContext" "fsGroup" .Values.statefulset.securityContext.fsGroup .Values.statefulset }}
+
+
 {{- end -}}
 
 {{- define "admin-tls-curl-flags" -}}
@@ -729,4 +729,52 @@ return licenseSecretRef.key checks deprecated values entry if current values emp
 {{- else if not (empty .Values.license_secret_ref ) -}}
   {{- dig "secret_key" "" .Values.license_secret_ref -}}
 {{- end -}}
+{{- end -}}
+
+{{/* mounts that are common to all containers */}}
+{{- define "common-mounts" -}}
+  {{- if and .Values.auth.sasl.enabled (not (empty .Values.auth.sasl.secretRef )) }}
+- name: users
+  mountPath: /etc/secrets/users
+  readOnly: true
+  {{- end }}
+  {{- if (include "tls-enabled" . | fromJson).bool }}
+    {{- range $name, $cert := .Values.tls.certs }}
+- name: redpanda-{{ $name }}-cert
+  mountPath: {{ printf "/etc/tls/certs/%s" $name }}
+    {{- end }}
+  {{- end }}
+{{- end -}}
+
+{{/* mounts that are common to most containers */}}
+{{- define "default-mounts" -}}
+- name: config
+  mountPath: /etc/redpanda
+{{- include "common-mounts" . }}
+{{- end -}}
+
+{{/* volumes that are common to all pods */}}
+{{- define "common-volumes" -}}
+  {{- if (include "tls-enabled" . | fromJson).bool -}}
+    {{- range $name, $cert := .Values.tls.certs }}
+      {{- $r :=  set $ "tempCert" ( dict "name" $name "cert" $cert ) }}
+- name: redpanda-{{ $name }}-cert
+  secret:
+    secretName: {{ template "cert-secret-name" $r }}
+    defaultMode: 0o440
+    {{- end }}
+  {{- end -}}
+  {{- if and .Values.auth.sasl.enabled (not (empty .Values.auth.sasl.secretRef )) }}
+- name: users
+  secret:
+    secretName: {{ .Values.auth.sasl.secretRef }}
+  {{- end }}
+{{- end -}}
+
+{{/* the default set of volumes for most pods, except the sts pod */}}
+{{- define "default-volumes" -}}
+- name: config
+  configMap:
+    name: {{ include "redpanda.fullname" . }}
+{{- include "common-volumes" . }}
 {{- end -}}

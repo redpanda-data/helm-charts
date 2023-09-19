@@ -30,9 +30,7 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   restartPolicy: Never
-  securityContext:
-    runAsUser: 65535
-    runAsGroup: 65535
+  securityContext: {{ include "pod-security-context" . | nindent 4 }}
   {{- with .Values.imagePullSecrets }}
   imagePullSecrets: {{- toYaml . | nindent 4 }}
   {{- end }}
@@ -117,17 +115,7 @@ spec:
             echo "All of the trials failed to permanently delete schema!!!"
             exit 1
           fi
-      volumeMounts:
-      {{- if $sasl.enabled }}
-        - name: {{ $sasl.secretRef }}
-          mountPath: "/etc/secrets/users"
-          readOnly: true
-      {{- end}}
-  volumes:
-  {{- if $sasl.enabled }}
-    - name: {{ $sasl.secretRef }}
-      secret:
-        secretName: {{ $sasl.secretRef }}
-        optional: false
-  {{- end }}
+      volumeMounts: {{ include "default-mounts" . | nindent 8 }}
+      securityContext: {{ include "container-security-context" . }}
+  volumes: {{ include "default-volumes" . | nindent 4 }}
 {{- end }}

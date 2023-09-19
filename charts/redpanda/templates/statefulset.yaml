@@ -76,45 +76,43 @@ spec:
             capabilities:
               add: ["SYS_RESOURCE"]
             privileged: true
-            runAsUser: 0
-            runAsGroup: 0
-          volumeMounts:
-{{- if dig "initContainers" "tuning" "extraVolumeMounts" false .Values.statefulset -}}
-{{ tpl .Values.statefulset.initContainers.tuning.extraVolumeMounts . | nindent 12 }}
-{{- end }}
+          volumeMounts: {{ include "common-mounts" . | nindent 12 }}
+  {{- if dig "initContainers" "tuning" "extraVolumeMounts" false .Values.statefulset -}}
+    {{ tpl .Values.statefulset.initContainers.tuning.extraVolumeMounts . | nindent 12 }}
+  {{- end }}
             - name: {{ template "redpanda.fullname" . }}
               mountPath: /etc/redpanda
-        {{- if get .Values.statefulset.initContainers.tuning "resources" }}
+  {{- if get .Values.statefulset.initContainers.tuning "resources" }}
           resources: {{- toYaml .Values.statefulset.initContainers.tuning.resources | nindent 12 }}
-        {{- end }}
+  {{- end }}
 {{- end }}
 {{- if .Values.statefulset.initContainers.setDataDirOwnership.enabled }}
         - name: set-datadir-ownership
           image: {{ .Values.statefulset.initContainerImage.repository }}:{{ .Values.statefulset.initContainerImage.tag }}
           command: ["/bin/sh", "-c", "chown {{ $uid }}:{{ $gid }} -R /var/lib/redpanda/data"]
-          volumeMounts:
-{{- if dig "initContainers" "setDataDirOwnership" "extraVolumeMounts" false .Values.statefulset -}}
-{{ tpl .Values.statefulset.initContainers.setDataDirOwnership.extraVolumeMounts . | nindent 12 }}
-{{- end }}
+          volumeMounts: {{ include "common-mounts" . | nindent 12 }}
+  {{- if dig "initContainers" "setDataDirOwnership" "extraVolumeMounts" false .Values.statefulset -}}
+    {{ tpl .Values.statefulset.initContainers.setDataDirOwnership.extraVolumeMounts . | nindent 12 }}
+  {{- end }}
             - name: datadir
               mountPath: /var/lib/redpanda/data
-        {{- if .Values.statefulset.initContainers.setDataDirOwnership.resources }}
+  {{- if .Values.statefulset.initContainers.setDataDirOwnership.resources }}
           resources: {{- toYaml .Values.statefulset.initContainers.setDataDirOwnership.resources | nindent 12 }}
-        {{- end }}
+  {{- end }}
 {{- end }}
 {{- if and (include "is-licensed" . | fromJson).bool .Values.storage.tieredConfig.cloud_storage_enabled }}
         - name: set-tiered-storage-cache-dir-ownership
           image: {{ .Values.statefulset.initContainerImage.repository }}:{{ .Values.statefulset.initContainerImage.tag }}
           command: ["/bin/sh", "-c", 'chown {{ $uid }}:{{ $gid }} -R {{ template "tieredStorage.cacheDirectory" . }}']
-          volumeMounts:
-{{- if dig "initContainers" "setTieredStorageCacheDirOwnership" "extraVolumeMounts" false .Values.statefulset -}}
-{{ tpl .Values.statefulset.initContainers.setTieredStorageCacheDirOwnership.extraVolumeMounts . | nindent 12 }}
-{{- end }}
+          volumeMounts: {{ include "common-mounts" . | nindent 12 }}
+  {{- if dig "initContainers" "setTieredStorageCacheDirOwnership" "extraVolumeMounts" false .Values.statefulset -}}
+    {{ tpl .Values.statefulset.initContainers.setTieredStorageCacheDirOwnership.extraVolumeMounts . | nindent 12 }}
+  {{- end }}
             - name: tiered-storage-dir
               mountPath: {{ template "tieredStorage.cacheDirectory" . }}
-        {{- if get .Values.statefulset.initContainers.setTieredStorageCacheDirOwnership "resources" }}
+  {{- if get .Values.statefulset.initContainers.setTieredStorageCacheDirOwnership "resources" }}
           resources: {{- toYaml .Values.statefulset.initContainers.setTieredStorageCacheDirOwnership.resources | nindent 12 }}
-        {{- end }}
+  {{- end }}
 {{- end }}
         - name: {{ (include "redpanda.name" .) | trunc 51 }}-configurator
           image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
@@ -134,21 +132,21 @@ spec:
                 fieldRef:
                   fieldPath: spec.nodeName
           securityContext: {{ include "container-security-context" . | nindent 12 }}
-          volumeMounts:
+          volumeMounts: {{ include "common-mounts" . | nindent 12 }}
 {{- if dig "initContainers" "configurator" "extraVolumeMounts" false .Values.statefulset -}}
-{{ tpl .Values.statefulset.initContainers.configurator.extraVolumeMounts . | nindent 12 }}
+  {{ tpl .Values.statefulset.initContainers.configurator.extraVolumeMounts . | nindent 12 }}
 {{- end }}
-            - name: {{ template "redpanda.fullname" . }}
-              mountPath: /tmp/base-config
             - name: config
               mountPath: /etc/redpanda
+            - name: {{ template "redpanda.fullname" . }}
+              mountPath: /tmp/base-config
             - name: {{ (include "redpanda.name" .) | trunc 51 }}-configurator
               mountPath: /etc/secrets/configurator/scripts/
-        {{- if get .Values.statefulset.initContainers.configurator "resources" }}
+{{- if get .Values.statefulset.initContainers.configurator "resources" }}
           resources: {{- toYaml .Values.statefulset.initContainers.configurator.resources | nindent 12 }}
-        {{- end }}
+{{- end }}
 {{- if dig "initContainers" "extraInitContainers" false .Values.statefulset -}}
-{{ tpl .Values.statefulset.initContainers.extraInitContainers . | nindent 8 }}
+  {{ tpl .Values.statefulset.initContainers.extraInitContainers . | nindent 8 }}
 {{- end }}
       containers:
         - name: {{ template "redpanda.name" . }}
@@ -250,10 +248,14 @@ spec:
   {{- end }}
 {{- end }}
           securityContext: {{ include "container-security-context" . | nindent 12 }}
-          volumeMounts:
+          volumeMounts: {{ include "common-mounts" . | nindent 12 }}
 {{- if dig "extraVolumeMounts" false .Values.statefulset -}}
-{{ tpl .Values.statefulset.extraVolumeMounts . | nindent 12 }}
+  {{ tpl .Values.statefulset.extraVolumeMounts . | nindent 12 }}
 {{- end }}
+            - name: config
+              mountPath: /etc/redpanda
+            - name: {{ template "redpanda.fullname" . }}
+              mountPath: /tmp/base-config
             - name: lifecycle-scripts
               mountPath: /var/lifecycle
             - name: datadir
@@ -262,19 +264,6 @@ spec:
             - name: tiered-storage-dir
               mountPath: {{ template "tieredStorage.cacheDirectory" . }}
 {{- end }}
-            - name: config
-              mountPath: /etc/redpanda
-{{- if (include "tls-enabled" . | fromJson).bool }}
-  {{- range $name, $cert := .Values.tls.certs }}
-            - name: redpanda-{{ $name }}-cert
-              mountPath: {{ printf "/etc/tls/certs/%s" $name }}
-  {{- end }}
-{{- end }}
-{{- if and .Values.auth.sasl.enabled (not (empty .Values.auth.sasl.secretRef )) }}
-            - name: {{ .Values.auth.sasl.secretRef }}
-              mountPath: /etc/secrets/users
-              readOnly: true
-{{- end}}
           resources:
 {{- if hasKey .Values.resources.memory "min" }}
             requests:
@@ -284,7 +273,7 @@ spec:
             limits:
               cpu: {{ .Values.resources.cpu.cores }}
               memory: {{ .Values.resources.memory.container.max }}
-      {{- if .Values.statefulset.sideCars.configWatcher.enabled }}
+{{- if .Values.statefulset.sideCars.configWatcher.enabled }}
         - name: config-watcher
           image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
           command:
@@ -292,32 +281,20 @@ spec:
           args:
             - -c
             - 'trap "exit 0" TERM; exec /etc/secrets/config-watcher/scripts/sasl-user.sh & wait $!'
-          {{- if get .Values.statefulset.sideCars.configWatcher "resources" }}
+  {{- if get .Values.statefulset.sideCars.configWatcher "resources" }}
           resources: {{- toYaml .Values.statefulset.sideCars.configWatcher.resources | nindent 12 }}
-          {{- end }}
-          {{- if get .Values.statefulset.sideCars.configWatcher "securityContext" }}
+  {{- end }}
+  {{- if get .Values.statefulset.sideCars.configWatcher "securityContext" }}
           securityContext: {{- toYaml .Values.statefulset.sideCars.configWatcher.securityContext | nindent 12 }}
-          {{- end }}
-          volumeMounts:
-{{- if dig "sideCars" "configWatcher" "extraVolumeMounts" false .Values.statefulset -}}
-{{ tpl .Values.statefulset.sideCars.configWatcher.extraVolumeMounts . | nindent 12 }}
-{{- end }}
+  {{- end }}
+          volumeMounts: {{ include "common-mounts" . | nindent 12 }}
+  {{- if dig "sideCars" "configWatcher" "extraVolumeMounts" false .Values.statefulset -}}
+    {{ tpl .Values.statefulset.sideCars.configWatcher.extraVolumeMounts . | nindent 12 }}
+  {{- end }}
             - name: {{ template "redpanda.fullname" . }}-config-watcher
               mountPath: /etc/secrets/config-watcher/scripts
               readOnly: true
-          {{- if and .Values.auth.sasl.enabled (not (empty .Values.auth.sasl.secretRef )) }}
-            - name: {{ .Values.auth.sasl.secretRef }}
-              mountPath: /etc/secrets/users
-              readOnly: true
-          {{- end }}
-          {{- if (include "tls-enabled" . | fromJson).bool }}
-            {{- range $name, $cert := .Values.tls.certs }}
-            - name: redpanda-{{ $name }}-cert
-              mountPath: {{ printf "/etc/tls/certs/%s" $name }}
-              readOnly: true
-            {{- end }}
-          {{- end }}
-      {{- end }}
+{{- end }}
       {{- if and .Values.rbac.enabled .Values.statefulset.sideCars.controllers.enabled }}
         - name: redpanda-controllers
           image: {{ .Values.statefulset.sideCars.controllers.image.repository }}:{{ .Values.statefulset.sideCars.controllers.image.tag }}
@@ -339,66 +316,42 @@ spec:
           securityContext: {{- toYaml .Values.statefulset.sideCars.controllers.securityContext | nindent 12 }}
           {{- end }}
       {{- end }}
-      volumes:
-{{- if dig "extraVolumes" false .Values.statefulset -}}
-{{ tpl .Values.statefulset.extraVolumes . | nindent 8 }}
-{{- end }}
+      volumes: {{ include "common-volumes" . | nindent 8 }}
+      {{- if dig "extraVolumes" false .Values.statefulset -}}
+        {{ tpl .Values.statefulset.extraVolumes . | nindent 8 }}
+      {{- end }}
         - name: lifecycle-scripts
           secret:
             secretName: {{ (include "redpanda.fullname" . | trunc 50 ) }}-sts-lifecycle
             defaultMode: 0o775
         - name: datadir
-{{- if .Values.storage.persistentVolume.enabled }}
+      {{- if .Values.storage.persistentVolume.enabled }}
           persistentVolumeClaim:
             claimName: datadir
-{{- else if .Values.storage.hostPath }}
+      {{- else if .Values.storage.hostPath }}
           hostPath:
             path: {{ .Values.storage.hostPath | quote }}
-{{- else }}
+      {{- else }}
           emptyDir: {}
-{{- end }}
-{{- if and (include "is-licensed" . | fromJson).bool .Values.storage.tieredConfig.cloud_storage_enabled }}
+      {{- end }}
+      {{- if and (include "is-licensed" . | fromJson).bool .Values.storage.tieredConfig.cloud_storage_enabled }}
         - name: tiered-storage-dir
-{{- if .Values.storage.tieredStoragePersistentVolume.enabled }}
+        {{- if .Values.storage.tieredStoragePersistentVolume.enabled }}
           persistentVolumeClaim:
             claimName: tiered-storage-dir
-{{- else if .Values.storage.tieredStorageHostPath }}
+        {{- else if .Values.storage.tieredStorageHostPath }}
           hostPath:
             path: {{ .Values.storage.tieredStorageHostPath | quote }}
-{{- else }}
+        {{- else }}
           emptyDir:
             sizeLimit: {{ .Values.storage.tieredConfig.cloud_storage_cache_size }}
-{{- end }}
-{{- end }}
+        {{- end }}
+      {{- end }}
         - name: {{ template "redpanda.fullname" . }}
           configMap:
             name: {{ template "redpanda.fullname" . }}
         - name: config
           emptyDir: {}
-{{- if (include "tls-enabled" . | fromJson).bool }}
-  {{- range $name, $cert := .Values.tls.certs }}
-  {{- $r :=  set $root "tempCert" ( dict "name" $name "cert" $cert ) }}
-        - name: redpanda-{{ $name }}-cert
-          secret:
-            defaultMode: 420
-            items:
-            - key: tls.key
-              path: tls.key
-            - key: tls.crt
-              path: tls.crt
-    {{- if $cert.caEnabled }}
-            - key: ca.crt
-              path: ca.crt
-    {{- end }}
-            secretName: {{ template "cert-secret-name" $r }}
-  {{- end }}
-{{- end }}
-        {{- if and .Values.auth.sasl.enabled (not (empty .Values.auth.sasl.secretRef )) }}
-        - name: {{ .Values.auth.sasl.secretRef }}
-          secret:
-            secretName: {{ .Values.auth.sasl.secretRef }}
-            optional: false
-        {{- end }}
         - name: {{ (include "redpanda.name" .) | trunc 51 }}-configurator
           secret:
             secretName: {{ (include "redpanda.name" .) | trunc 51 }}-configurator

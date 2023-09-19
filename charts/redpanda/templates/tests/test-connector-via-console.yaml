@@ -41,9 +41,7 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   restartPolicy: Never
-  securityContext:
-    runAsUser: 65535
-    runAsGroup: 65535
+  securityContext: {{ include "pod-security-context" . | nindent 4 }}
   {{- with .Values.imagePullSecrets }}
   imagePullSecrets: {{- toYaml . | nindent 4 }}
   {{- end }}
@@ -179,32 +177,7 @@ spec:
 
           rpk topic list {{ include "rpk-topic-flags" . }}
           rpk topic delete {{ $testTopic }} source.{{ $testTopic }} mm2-offset-syncs.test-only-redpanda.internal {{ include "rpk-topic-flags" . }}
-      volumeMounts:
-{{- if (include "tls-enabled" . | fromJson).bool -}}
-  {{- range $name, $cert := .Values.tls.certs }}
-        - name: redpanda-{{ $name }}-cert
-          mountPath: {{ printf "/etc/tls/certs/%s" $name }}
-  {{- end }}
-{{- end }}
-{{- if $sasl.enabled }}
-        - name: {{ $sasl.secretRef }}
-          mountPath: "/etc/secrets/users"
-          readOnly: true
-{{- end}}
-  volumes:
-{{- if $sasl.enabled }}
-    - name: {{ $sasl.secretRef }}
-      secret:
-        secretName: {{ $sasl.secretRef }}
-        optional: false
-{{- end }}
-{{- if (include "tls-enabled" . | fromJson).bool }}
-  {{- range $name, $cert := .Values.tls.certs }}
-    {{- $r :=  set $root "tempCert" ( dict "name" $name "cert" $cert ) }}
-    - name: redpanda-{{ $name }}-cert
-      secret:
-        defaultMode: 0644
-        secretName: {{ template "cert-secret-name" $r }}
-  {{- end }}
-{{- end -}}
+      volumeMounts: {{ include "default-mounts" . | nindent 8 }}
+      securityContext: {{ include "container-security-context" . }}
+  volumes: {{ include "default-volumes" . | nindent 4 }}
 {{- end }}
