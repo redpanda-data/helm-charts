@@ -69,5 +69,5 @@ spec:
 {{- end }}
       volumeMounts: {{ include "default-mounts" . | nindent 8 }}
       resources: {{ toYaml .Values.statefulset.resources | nindent 12 }}
-      securityContext: {{ include "container-security-context" . }}
+      securityContext: {{ include "container-security-context" . | nindent 8 }}
   volumes: {{ include "default-volumes" . | nindent 4 }}

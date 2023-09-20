@@ -56,7 +56,7 @@ spec:
       volumeMounts: {{ include "default-mounts" . | nindent 8 }}
         - name: lifecycle-scripts
           mountPath: /var/lifecycle
-      securityContext: {{ include "container-security-context" . }}
+      securityContext: {{ include "container-security-context" . | nindent 8 }}
   volumes: {{ include "default-volumes" . | nindent 4 }}
     - name: lifecycle-scripts
       secret:
