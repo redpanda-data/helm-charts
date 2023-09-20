@@ -76,6 +76,8 @@ spec:
             capabilities:
               add: ["SYS_RESOURCE"]
             privileged: true
+            runAsUser: 0
+            runAsGroup: 0
           volumeMounts: {{ include "common-mounts" . | nindent 12 }}
   {{- if dig "initContainers" "tuning" "extraVolumeMounts" false .Values.statefulset -}}
     {{ tpl .Values.statefulset.initContainers.tuning.extraVolumeMounts . | nindent 12 }}
