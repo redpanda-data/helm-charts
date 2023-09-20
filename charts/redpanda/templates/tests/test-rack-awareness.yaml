@@ -70,5 +70,25 @@ spec:
           --host {{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.admin.port }} | grep '"enable_rack_awareness": {{ .Values.rackAwareness.enabled }}'
 
         rpk cluster config get enable_rack_awareness {{ template "rpk-acl-user-flags" $ }} | grep '{{ .Values.rackAwareness.enabled }}'
-      volumeMounts: {{ include "default-mounts" . | nindent 8 }}
-  volumes: {{ include "default-volumes" . | nindent 4 }}
+{{- if (include "tls-enabled" . | fromJson).bool }}
+      volumeMounts:
+  {{- range $name, $cert := .Values.tls.certs }}
+    {{- if and $cert.caEnabled (eq $name "default") }}
+        - name: redpanda-{{ $name }}-cert
+          mountPath: {{ printf "/etc/tls/certs/%s" $name }}
+    {{- end }}
+  {{- end }}
+  volumes:
+  {{- range $name, $cert := .Values.tls.certs }}
+  {{- $r :=  set $root "tempCert" ( dict "name" $name "cert" $cert ) }}
+    {{- if and $cert.caEnabled (eq $name "default") }}
+    - name: redpanda-{{ $name }}-cert
+      secret:
+        defaultMode: 420
+        items:
+        - key: ca.crt
+          path: ca.crt
+        secretName: {{ template "cert-secret-name" $r }}
+    {{- end }}
+  {{- end }}
+{{- end }}

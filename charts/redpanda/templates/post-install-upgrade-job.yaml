@@ -94,7 +94,51 @@ spec:
           {{- toYaml . | nindent 10 }}
         {{- end }}
         securityContext: {{ include "container-security-context" . | nindent 10 }}
-        volumeMounts: {{- include "default-mounts" . | nindent 10 }}
-      volumes: {{ include "default-volumes" . | nindent 8 }}
+        volumeMounts:
+          - name: {{ template "redpanda.fullname" . }}
+            mountPath: /tmp/base-config
+          - name: config
+            mountPath: /etc/redpanda
+        {{- if (include "tls-enabled" . | fromJson).bool }}
+          {{- range $name, $cert := .Values.tls.certs }}
+          - name: redpanda-{{ $name }}-cert
+            mountPath: {{ printf "/etc/tls/certs/%s" $name }}
+          {{- end }}
+        {{- end }}
+          {{- if and $sasl.enabled (not (empty $sasl.secretRef )) }}
+          - name: {{ $sasl.secretRef }}
+            mountPath: "/etc/secrets/users"
+            readOnly: true
+          {{- end}}
+      volumes:
+        - name: {{ template "redpanda.fullname" . }}
+          configMap:
+            name: {{ template "redpanda.fullname" . }}
+        - name: config
+          emptyDir: {}
+{{- if (include "tls-enabled" . | fromJson).bool }}
+  {{- range $name, $cert := .Values.tls.certs }}
+      {{- $r :=  set $root "tempCert" ( dict "name" $name "cert" $cert ) }}
+        - name: redpanda-{{ $name }}-cert
+          secret:
+            defaultMode: 420
+            items:
+            - key: tls.key
+              path: tls.key
+            - key: tls.crt
+              path: tls.crt
+      {{- if $cert.caEnabled }}
+            - key: ca.crt
+              path: ca.crt
+      {{- end }}
+            secretName: {{ template "cert-secret-name" $r }}
+  {{- end }}
+{{- end -}}
+      {{- if and $sasl.enabled (not (empty $sasl.secretRef )) }}
+        - name: {{ $sasl.secretRef }}
+          secret:
+            secretName: {{ $sasl.secretRef }}
+            optional: false
+      {{- end }}
       serviceAccountName: {{ include "redpanda.serviceAccountName" . }}
 {{- end -}}

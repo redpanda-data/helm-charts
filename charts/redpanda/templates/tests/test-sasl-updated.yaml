@@ -56,11 +56,43 @@ spec:
             ready_result=$(rpk acl user list {{ include "rpk-acl-user-flags" . }} | grep anotheranotherme 2>&1) && ready_result_exit_code=$?
             sleep 2
           done
-
+          
           # check that sasl is not broken
           {{ include "rpk-cluster-info" $rpk }}
-      volumeMounts: {{ include "default-mounts" . | nindent 8 }}
+      volumeMounts:
+        - name: config
+          mountPath: /etc/redpanda
+{{- if (include "tls-enabled" . | fromJson).bool }}
+  {{- range $name, $cert := .Values.tls.certs }}
+        - name: redpanda-{{ $name }}-cert
+          mountPath: {{ printf "/etc/tls/certs/%s" $name }}
+  {{- end }}
+{{- end }}
+        {{- if (not (empty $sasl.secretRef )) }}
+        - name: {{ $sasl.secretRef }}
+          mountPath: "/etc/secrets/users"
+          readOnly: true
+        {{- end}}
       resources:
 {{- toYaml .Values.statefulset.resources | nindent 12 }}
-  volumes: {{ include "default-volumes" . | nindent 4 }}
+  volumes:
+    - name: {{ template "redpanda.fullname" . }}
+      configMap:
+        name: {{ template "redpanda.fullname" . }}
+    - name: config
+      emptyDir: {}
+    {{- if (not (empty $sasl.secretRef )) }}
+    - name: {{ $sasl.secretRef }}
+      secret:
+        secretName: {{ $sasl.secretRef }}
+        optional: false
+    {{- end }}
+{{- if (include "tls-enabled" . | fromJson).bool }}
+  {{- range $name, $cert := .Values.tls.certs }}
+    - name: redpanda-{{ $name }}-cert
+      secret:
+        defaultMode: 0644
+        secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-cert
+  {{- end }}
+{{- end -}}
 {{- end }}
