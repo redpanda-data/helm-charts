@@ -251,7 +251,7 @@ Generate configuration needed for rpk
     {{- $result = .Values.resources.memory.container.max | include "redpanda-memoryToMi" -}}
   {{- end -}}
   {{- if eq $result "" -}}
-    {{- "unable to get memory value" | fail -}}
+    {{- "unable to get memory value from container" | fail -}}
   {{- end -}}
   {{- $result -}}
 {{- end -}}
@@ -329,7 +329,7 @@ Generate configuration needed for rpk
     {{- $result = mulf (include "container-memory" .) 0.8 | int64 -}}
   {{- end -}}
   {{- if eq $result 0 -}}
-    {{- "unable to get memory value" | fail -}}
+    {{- "unable to get memory value redpanda-memory" | fail -}}
   {{- end -}}
   {{- if lt $result 256 -}}
     {{- printf "\n%d is below the minimum value for Redpanda" $result | fail -}}
