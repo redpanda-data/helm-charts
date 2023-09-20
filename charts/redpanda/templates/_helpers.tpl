@@ -203,6 +203,7 @@ Generate configuration needed for rpk
   {{/*
   This template converts the incoming SI value to whole number bytes.
   Input can be: b | B | k | K | m | M | g | G | Ki | Mi | Gi
+  Or number without suffix
   */}}
   {{- $si := . -}}
   {{- $bytes := 0 -}}
@@ -226,8 +227,10 @@ Generate configuration needed for rpk
   {{- else if hasSuffix "Gi" $si -}}
     {{- $raw := $si | trimSuffix "Gi" | float64 -}}
     {{- $bytes = mulf $raw (mul 1024 1024 1024) | floor -}}
+  {{- else if (mustRegexMatch "^[0-9]+$" $si) -}}
+    {{- $bytes = $si -}}
   {{- else -}}
-    {{- printf "\n%s is invalid SI quantity\nSuffixes can be: b | B | k | K | m | M | g | G | Ki | Mi | Gi" $si | fail -}}
+    {{- printf "\n%s is invalid SI quantity\nSuffixes can be: b | B | k | K | m | M | g | G | Ki | Mi | Gi or without any Suffixes" $si | fail -}}
   {{- end -}}
   {{- $bytes | int64 -}}
 {{- end -}}
