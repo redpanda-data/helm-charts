@@ -56,11 +56,11 @@ spec:
     {{- with .Values.nodeSelector }}
       nodeSelector: {{- toYaml . | nindent 8 }}
     {{- end }}
+    {{- with ( include "post-install-job-affinity" . ) }}
+      affinity: {{- . | nindent 8 }}
+    {{- end }}
     {{- with .Values.tolerations }}
       tolerations: {{- toYaml . | nindent 8 }}
-    {{- end }}
-    {{- with .Values.post_install_job.affinity }}
-      affinity: {{- toYaml . | nindent 8 }}
     {{- end }}
       restartPolicy: Never
       securityContext: {{ include "pod-security-context" . | nindent 8 }}

@@ -363,33 +363,6 @@ spec:
           secret:
             secretName: {{ template "redpanda.fullname" . }}-config-watcher
             defaultMode: 0o775
-{{- if or .Values.statefulset.nodeAffinity .Values.statefulset.podAffinity .Values.statefulset.podAntiAffinity }}
-      affinity:
-  {{- with .Values.statefulset.nodeAffinity }}
-        nodeAffinity: {{- toYaml . | nindent 10 }}
-  {{- end }}
-  {{- with .Values.statefulset.podAffinity }}
-        podAffinity: {{- toYaml . | nindent 10 }}
-  {{- end }}
-  {{- if .Values.statefulset.podAntiAffinity }}
-        podAntiAffinity:
-      {{- if eq .Values.statefulset.podAntiAffinity.type "hard" }}
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - topologyKey: {{ .Values.statefulset.podAntiAffinity.topologyKey }}
-              labelSelector:
-                matchLabels: {{ include "statefulset-pod-labels" . | nindent 18 }}
-      {{- else if eq .Values.statefulset.podAntiAffinity.type "soft" }}
-          preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: {{ .Values.statefulset.podAntiAffinity.weight | int64 }}
-              podAffinityTerm:
-                topologyKey: {{ .Values.statefulset.podAntiAffinity.topologyKey }}
-                labelSelector:
-                  matchLabels: {{ include "statefulset-pod-labels" . | nindent 20 }}
-      {{- else if eq .Values.statefulset.podAntiAffinity.type "custom" }}
-          {{- toYaml .Values.statefulset.podAntiAffinity.custom | nindent 10 }}
-      {{- end }}
-  {{- end }}
-{{- end }}
 {{- if semverCompare ">=1.16-0" .Capabilities.KubeVersion.GitVersion }}
       topologySpreadConstraints:
     {{- range $v := .Values.statefulset.topologySpreadConstraints }}
@@ -402,6 +375,9 @@ spec:
 {{- end }}
 {{- with ( include "statefulset-nodeSelectors" . ) }}
       nodeSelector: {{- . | nindent 8 }}
+{{- end }}
+{{- with ( include "statefulset-affinity" . ) }}
+      affinity: {{- . | nindent 8 }}
 {{- end }}
 {{- if .Values.statefulset.priorityClassName }}
       priorityClassName: {{ .Values.statefulset.priorityClassName }}

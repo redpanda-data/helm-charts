@@ -20,6 +20,20 @@
     "nodeSelector": {
       "type": "object"
     },
+    "affinity": {
+      "type": "object",
+      "properties": {
+        "nodeAffinity": {
+          "type": "object"
+        },
+        "podAffinity": {
+          "type": "object"
+        },
+        "podAntiAffinity": {
+          "type": "object"
+        }
+      }
+    },
     "tolerations": {
       "type": "array"
     },
