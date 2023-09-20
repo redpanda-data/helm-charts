@@ -40,7 +40,7 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
   restartPolicy: Never
-  securityContext: {{ include "pod-security-context" . | nindent 4 }}
+  securityContext:
     fsGroup: 101
   affinity:
     podAffinity:
@@ -87,7 +87,6 @@ spec:
 
         test -f /tmp/bundle/k8s/pods.json
         test -f /tmp/bundle/k8s/configmaps.json
-      securityContext: {{ include "container-security-context" . }}
   volumes: {{ include "default-volumes" . | nindent 4 }}
 {{- end -}}
 */}}

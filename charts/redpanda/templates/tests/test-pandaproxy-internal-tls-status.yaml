@@ -33,7 +33,9 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   restartPolicy: Never
-  securityContext: {{ include "pod-security-context" . | nindent 4 }}
+  securityContext:
+    runAsUser: 65535
+    runAsGroup: 65535
   {{- with .Values.imagePullSecrets }}
   imagePullSecrets: {{- toYaml . | nindent 4 }}
   {{- end }}
@@ -67,6 +69,5 @@ spec:
           https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.http.port }}/topics
       volumeMounts: {{ include "default-mounts" . | nindent 8 }}
       resources: {{ toYaml .Values.statefulset.resources | nindent 12 }}
-      securityContext: {{ include "container-security-context" . }}
   volumes: {{ include "default-volumes" . | nindent 4 }}
 {{- end -}}
