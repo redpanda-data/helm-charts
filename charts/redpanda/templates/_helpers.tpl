@@ -306,9 +306,6 @@ Generate configuration needed for rpk
       {{- $result = 1000 -}}
     {{- end -}}
   {{- end -}}
-  {{- if eq $result 0 -}}
-    {{- "unable to get memory value" | fail -}}
-  {{- end -}}
   {{- $result -}}
 {{- end -}}
 
