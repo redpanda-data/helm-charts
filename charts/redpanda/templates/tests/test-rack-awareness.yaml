@@ -69,5 +69,5 @@ spec:
 
         rpk cluster config get enable_rack_awareness {{ template "rpk-acl-user-flags" $ }} | grep '{{ .Values.rackAwareness.enabled }}'
       volumeMounts: {{ include "default-mounts" . | nindent 8 }}
-      securityContext: {{ include "container-security-context" . }}
+      securityContext: {{ include "container-security-context" . | nindent 8 }}
   volumes: {{ include "default-volumes" . | nindent 4 }}
