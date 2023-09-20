@@ -87,7 +87,7 @@ spec:
 
         test -f /tmp/bundle/k8s/pods.json
         test -f /tmp/bundle/k8s/configmaps.json
-      securityContext: {{ include "container-security-context" . }}
+      securityContext: {{ include "container-security-context" . | nindent 8 }}
   volumes: {{ include "default-volumes" . | nindent 4 }}
 {{- end -}}
 */}}

@@ -178,6 +178,6 @@ spec:
           rpk topic list {{ include "rpk-topic-flags" . }}
           rpk topic delete {{ $testTopic }} source.{{ $testTopic }} mm2-offset-syncs.test-only-redpanda.internal {{ include "rpk-topic-flags" . }}
       volumeMounts: {{ include "default-mounts" . | nindent 8 }}
-      securityContext: {{ include "container-security-context" . }}
+      securityContext: {{ include "container-security-context" . | nindent 8 }}
   volumes: {{ include "default-volumes" . | nindent 4 }}
 {{- end }}
