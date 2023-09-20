@@ -37,6 +37,8 @@ spec:
             kafka_api:
               brokers:
                 - cluster-tls-0.cluster-tls.{{ .Release.Namespace }}.svc.cluster.local:9092
+                - cluster-tls-1.cluster-tls.{{ .Release.Namespace }}.svc.cluster.local:9092
+                - cluster-tls-2.cluster-tls.{{ .Release.Namespace }}.svc.cluster.local:9092
               tls:
                 enabled: true
                 key_file: /tmp/tls.key
