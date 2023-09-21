@@ -113,6 +113,8 @@ rackAwareness:
 # For a reference of configuration settings,
 # see the [Redpanda Console documentation](https://docs.redpanda.com/docs/reference/console/config/).
 console:
+  # -- Console defines configurations for console, like config: {} values
+  console: {}
   enabled: true
   configmap:
     create: false
@@ -120,6 +122,7 @@ console:
     create: false
   deployment:
     create: false
+  # -- Deprecated, use console: {} to define config
   config: {}
 
 #
