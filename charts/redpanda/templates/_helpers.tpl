@@ -203,6 +203,7 @@ Generate configuration needed for rpk
   {{/*
   This template converts the incoming SI value to whole number bytes.
   Input can be: b | B | k | K | m | M | g | G | Ki | Mi | Gi
+  Or number without suffix
   */}}
   {{- $si := . -}}
   {{- $bytes := 0 -}}
@@ -226,8 +227,10 @@ Generate configuration needed for rpk
   {{- else if hasSuffix "Gi" $si -}}
     {{- $raw := $si | trimSuffix "Gi" | float64 -}}
     {{- $bytes = mulf $raw (mul 1024 1024 1024) | floor -}}
+  {{- else if (mustRegexMatch "^[0-9]+$" $si) -}}
+    {{- $bytes = $si -}}
   {{- else -}}
-    {{- printf "\n%s is invalid SI quantity\nSuffixes can be: b | B | k | K | m | M | g | G | Ki | Mi | Gi" $si | fail -}}
+    {{- printf "\n%s is invalid SI quantity\nSuffixes can be: b | B | k | K | m | M | g | G | Ki | Mi | Gi or without any Suffixes" $si | fail -}}
   {{- end -}}
   {{- $bytes | int64 -}}
 {{- end -}}
@@ -248,7 +251,7 @@ Generate configuration needed for rpk
     {{- $result = .Values.resources.memory.container.max | include "redpanda-memoryToMi" -}}
   {{- end -}}
   {{- if eq $result "" -}}
-    {{- "unable to get memory value" | fail -}}
+    {{- "unable to get memory value from container" | fail -}}
   {{- end -}}
   {{- $result -}}
 {{- end -}}
@@ -303,9 +306,6 @@ Generate configuration needed for rpk
       {{- $result = 1000 -}}
     {{- end -}}
   {{- end -}}
-  {{- if eq $result 0 -}}
-    {{- "unable to get memory value" | fail -}}
-  {{- end -}}
   {{- $result -}}
 {{- end -}}
 
@@ -326,7 +326,7 @@ Generate configuration needed for rpk
     {{- $result = mulf (include "container-memory" .) 0.8 | int64 -}}
   {{- end -}}
   {{- if eq $result 0 -}}
-    {{- "unable to get memory value" | fail -}}
+    {{- "unable to get memory value redpanda-memory" | fail -}}
   {{- end -}}
   {{- if lt $result 256 -}}
     {{- printf "\n%d is below the minimum value for Redpanda" $result | fail -}}
