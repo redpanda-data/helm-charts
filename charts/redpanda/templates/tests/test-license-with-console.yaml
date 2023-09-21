@@ -37,13 +37,13 @@ spec:
   {{- end }}
   containers:
     - name: {{ template "redpanda.name" . }}
-      image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
+      image: mintel/docker-alpine-bash-curl-jq:latest
       command: [ "/bin/bash", "-c" ]
       args:
         - |
           echo "testing that we do NOT have an open source license"
           set -xe
-          type=$(curl -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors http://{{ include "redpanda.fullname" . }}-console.{{ .Release.Namespace }}.svc:{{ include "console.containerPort" (dict "Values" .Values.console) }}/api/cluster/overview | jq -r .console.license.type)
+          type=$(curl -svm3 --fail --retry "120" --retry-max-time "120" http://{{ include "redpanda.fullname" . }}-console.{{ .Release.Namespace }}.svc:{{ include "console.containerPort" (dict "Values" .Values.console) }}/api/cluster/overview | jq -r .console.license.type)
           if [[ "$type" == "open_source" || "$type" == "" ]]; then
             exit 1 
           fi
