@@ -275,6 +275,13 @@ monitoring:
   enabled: false
   scrapeInterval: 30s
   labels: {}
+  # Enables http2 for scraping metrics for prometheus. Used when Istio's mTLS is enabled and using tlsConfig.
+  # enableHttp2: true
+  tlsConfig: {}
+    # caFile: /etc/prom-certs/root-cert.pem
+    # certFile: /etc/prom-certs/cert-chain.pem
+    # insecureSkipVerify: true
+    # keyFile: /etc/prom-certs/key.pem
 
 # -- Pod resource management.
 # This section simplifies resource allocation
