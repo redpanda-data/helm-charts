@@ -13,22 +13,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
-statefulset:
-  replicas: 1
-tls:
-  enabled: false
-auth:
-  sasl:
-    enabled: true
-    secretRef: "redpanda-users"
-    users:
-      - name: admin
-        password: hunter2
-        mechanism: SCRAM-SHA-256
-
-storage:
-  persistentVolume:
-    size: 3Gi
-
-connectors:
-  enabled: true
+enterprise:
+  license: "${REDPANDA_LICENSE}"

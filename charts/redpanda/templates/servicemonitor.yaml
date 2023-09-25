@@ -14,7 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- if and (.Capabilities.APIVersions.Has "monitoring.coreos.com/v1") .Values.monitoring.enabled }}
+{{- if .Values.monitoring.enabled }}
 ---
 # This servicemonitor is used by Prometheus Operator to scrape the metrics
 apiVersion: monitoring.coreos.com/v1
