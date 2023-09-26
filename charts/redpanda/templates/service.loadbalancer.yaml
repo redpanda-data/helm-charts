@@ -90,9 +90,7 @@ spec:
       port: {{ dig "nodePort" (first (dig "advertisedPorts" (list $listener.port) $listener)) $listener }}
       {{- end }}
     {{- end }}
-  selector:
-    app.kubernetes.io/name: {{ template "redpanda.name" $root }}
-    app.kubernetes.io/instance: {{ $root.Release.Name }}
+  selector: {{ (include "statefulset-pod-labels" $root ) | nindent 4 }}
     statefulset.kubernetes.io/pod-name: {{ $podName }}
   {{- end }}
 {{- end }}
