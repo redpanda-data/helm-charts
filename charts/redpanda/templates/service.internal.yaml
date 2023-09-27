@@ -35,9 +35,7 @@ spec:
   type: ClusterIP
   publishNotReadyAddresses: true
   clusterIP: None
-  selector:
-    app.kubernetes.io/name: {{ template "redpanda.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+  selector: {{ (include "statefulset-pod-labels" .) | nindent 4 }}
   ports:
     - name: admin
       protocol: TCP
