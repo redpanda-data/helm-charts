@@ -389,98 +389,106 @@ storage:
   # Settings for the Tiered Storage cache.
   # For details,
   # see the [Tiered Storage documentation](https://docs.redpanda.com/docs/manage/kubernetes/tiered-storage/#caching).
-  # For the maximum size of the disk cache, see `tieredConfig.cloud_storage_cache_size`.
-  #
-  # -- Absolute path on the host to store Redpanda's Tiered Storage cache.
-  # If unspecified, then an `emptyDir` volume is used.
-  # If specified but `tieredStoragePersistentVolume.enabled` is `true`, `storage.tieredStorageHostPath` has no effect.
-  tieredStorageHostPath: ""
-  # If `tieredStoragePersistentVolume.enabled` is true,
-  # a PersistentVolumeClaim is created for the Tiered Storage cache and
-  # used to store data retrieved from cloud storage, such as S3). Otherwise `storage.tieredStorageHostPath` is used.
-  tieredStoragePersistentVolume:
-    enabled: false
-    # -- To disable dynamic provisioning, set to "-".
-    # If undefined or empty (default), then no storageClassName spec is set,
-    # and the default dynamic provisioner is chosen (gp2 on AWS, standard on
-    # GKE, AWS & OpenStack).
-    storageClass: ""
-    # -- Additional labels to apply to the created PersistentVolumeClaims.
-    labels: {}
-    # -- Additional annotations to apply to the created PersistentVolumeClaims.
-    annotations: {}
-  #
-  # -- Tiered Storage settings
-  # Requires `enterprise.licenseKey` or `enterprised.licenseSecretRef`
-  # For details,
-  # see the [Tiered Storage documentation](https://docs.redpanda.com/docs/manage/kubernetes/tiered-storage/).
-  tieredConfig:
-    # -- Global flag that enables Tiered Storage if a license key is provided.
-    # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_enabled).
-    cloud_storage_enabled: false
-    # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#cloud_storage_enable_remote_write).
-    cloud_storage_enable_remote_write: true
-    # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#cloud_storage_enable_remote_read).
-    cloud_storage_enable_remote_read: true
 
-    # -- Required for AWS and GCS.
-    # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_region).
-    cloud_storage_region: ""
-    # -- Required for AWS and GCS.
-    # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_bucket).
-    cloud_storage_bucket: ""
-    # -- Required for AWS and GCS authentication with access keys.
-    # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_access_key).
-    cloud_storage_access_key: ""
-    # -- Required for AWS and GCS authentication with access keys.
-    # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_secret_key).
-    cloud_storage_secret_key: ""
-    # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_api_endpoint).
-    cloud_storage_api_endpoint: ""
-    # -- Required for ABS.
-    # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_azure_container).
-    cloud_storage_azure_container: null
-    # -- Required for ABS.
-    # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_azure_storage_account).
-    cloud_storage_azure_storage_account: null
-    # -- Required for ABS.
-    # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_azure_shared_key).
-    cloud_storage_azure_shared_key: null
-    # -- Required for ABS hierarchical namespace
-    # Available starting from 23.2.8
-    # cloud_storage_azure_adls_endpoint: ""
-    # cloud_storage_azure_adls_port: ""
-    # Available starting from 22.3.X
-    # -- Required for AWS and GCS authentication with IAM roles.
-    # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_credentials_source).
-    cloud_storage_credentials_source: config_file
+  tiered:
+    # mountType can be one of:
+    # - none: does not mount a volume. Tiered storage will use the data directory.
+    # - hostPath: will allow you to chose a path on the Node the pod is running on
+    # - emptyDir: will mount a fresh empty directory every time the pod starts
+    # - persistentVolume: creates and mounts a PersistentVolumeClaim
+    mountType: emptyDir
 
-    # -- Maximum size of the disk cache used by Tiered Storage.
-    # Default is 20 GiB.
-    # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_cache_size).
-    cloud_storage_cache_size: 5368709120
-    # cloud_storage_cache_directory: ""
-    # cloud_storage_cache_check_interval: 30000
-    # cloud_storage_initial_backoff_ms: 100
-    # cloud_storage_max_connections: 20
-    # cloud_storage_segment_upload_timeout_ms: 30000
-    # cloud_storage_manifest_upload_timeout_ms: 10000
-    # cloud_storage_max_connection_idle_time_ms: 5000
-    # cloud_storage_idle_timeout_ms: 10000
-    # cloud_storage_segment_max_upload_interval_sec: 1
-    # cloud_storage_trust_file: ""
-    # cloud_storage_upload_ctrl_update_interval_ms: 60000
-    # cloud_storage_upload_ctrl_p_coeff: -2
-    # cloud_storage_upload_ctrl_d_coeff: 0
-    # cloud_storage_upload_ctrl_min_shares: 100
-    # cloud_storage_upload_ctrl_max_shares: 1000
-    # DEPRECATED: cloud_storage_reconciliation_interval_ms: 10000
-    # cloud_storage_disable_tls: false
-    # cloud_storage_api_endpoint_port: 443
-    # cloud_storage_idle_threshold_rps: 1
-    # cloud_storage_enable_segment_merging: true
-    # cloud_storage_segment_size_target: # The default segment size is controlled by log_segment_size
-    # cloud_storage_segment_size_min: # Default is 50% of log segment size
+    # For the maximum size of the disk cache, see `tieredConfig.cloud_storage_cache_size`.
+    #
+    # -- Absolute path on the host to store Redpanda's Tiered Storage cache.
+    hostPath: ""
+    # PersistentVolumeClaim to be created for the Tiered Storage cache and
+    # used to store data retrieved from cloud storage, such as S3).
+    persistentVolume:
+      # -- To disable dynamic provisioning, set to "-".
+      # If undefined or empty (default), then no storageClassName spec is set,
+      # and the default dynamic provisioner is chosen (gp2 on AWS, standard on
+      # GKE, AWS & OpenStack).
+      storageClass: ""
+      # -- Additional labels to apply to the created PersistentVolumeClaims.
+      labels: {}
+      # -- Additional annotations to apply to the created PersistentVolumeClaims.
+      annotations: {}
+    #
+    # -- Tiered Storage settings
+    # Requires `enterprise.licenseKey` or `enterprised.licenseSecretRef`
+    # For details,
+    # see the [Tiered Storage documentation](https://docs.redpanda.com/docs/manage/kubernetes/tiered-storage/).
+    config:
+      # -- Global flag that enables Tiered Storage if a license key is provided.
+      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_enabled).
+      cloud_storage_enabled: false
+      # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#cloud_storage_enable_remote_write).
+      cloud_storage_enable_remote_write: true
+      # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#cloud_storage_enable_remote_read).
+      cloud_storage_enable_remote_read: true
+
+      # -- Required for AWS and GCS.
+      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_region).
+      cloud_storage_region: ""
+      # -- Required for AWS and GCS.
+      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_bucket).
+      cloud_storage_bucket: ""
+      # -- Required for AWS and GCS authentication with access keys.
+      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_access_key).
+      cloud_storage_access_key: ""
+      # -- Required for AWS and GCS authentication with access keys.
+      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_secret_key).
+      cloud_storage_secret_key: ""
+      # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_api_endpoint).
+      cloud_storage_api_endpoint: ""
+      # -- Required for ABS.
+      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_azure_container).
+      cloud_storage_azure_container: null
+      # -- Required for ABS.
+      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_azure_storage_account).
+      cloud_storage_azure_storage_account: null
+      # -- Required for ABS.
+      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_azure_shared_key).
+      cloud_storage_azure_shared_key: null
+      # -- Required for ABS hierarchical namespace
+      # Available starting from 23.2.8
+      # cloud_storage_azure_adls_endpoint: ""
+      # cloud_storage_azure_adls_port: ""
+      # Available starting from 22.3.X
+      # -- Required for AWS and GCS authentication with IAM roles.
+      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_credentials_source).
+      cloud_storage_credentials_source: config_file
+
+      # -- Maximum size of the disk cache used by Tiered Storage.
+      # Default is 20 GiB.
+      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_cache_size).
+      cloud_storage_cache_size: 5368709120
+      # cloud_storage_cache_directory: ""
+      # cloud_storage_cache_check_interval: 30000
+      # cloud_storage_initial_backoff_ms: 100
+      # cloud_storage_max_connections: 20
+      # cloud_storage_segment_upload_timeout_ms: 30000
+      # cloud_storage_manifest_upload_timeout_ms: 10000
+      # cloud_storage_max_connection_idle_time_ms: 5000
+      # cloud_storage_idle_timeout_ms: 10000
+      # cloud_storage_segment_max_upload_interval_sec: 1
+      # cloud_storage_trust_file: ""
+      # cloud_storage_upload_ctrl_update_interval_ms: 60000
+      # cloud_storage_upload_ctrl_p_coeff: -2
+      # cloud_storage_upload_ctrl_d_coeff: 0
+      # cloud_storage_upload_ctrl_min_shares: 100
+      # cloud_storage_upload_ctrl_max_shares: 1000
+      # DEPRECATED: cloud_storage_reconciliation_interval_ms: 10000
+      # cloud_storage_disable_tls: false
+      # cloud_storage_api_endpoint_port: 443
+      # cloud_storage_idle_threshold_rps: 1
+      # cloud_storage_enable_segment_merging: true
+      # cloud_storage_segment_size_target: # The default segment size is controlled by log_segment_size
+      # cloud_storage_segment_size_min: # Default is 50% of log segment size
+  # storage.tieredStorageHostPath has been deprecated. Use storage.tiered.hostPath and configure storage.tiered.mountType instead.
+  # storage.tieredStoragePersistentVolume has been deprecated. Use storage.tiered.persistentVolume and configure storage.tiered.mountType instead.
+  # storage.tieredConfig has been deprecated. Use storage.tiered.config instead.
 
 post_install_job:
   enabled: true
