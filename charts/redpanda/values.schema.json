@@ -349,16 +349,142 @@
       "type": "object",
       "required": [
         "hostPath",
-        "persistentVolume"
+        "persistentVolume",
+        "tiered"
       ],
       "properties": {
         "hostPath": {
           "type": "string"
         },
+        "tiered": {
+          "type": "object",
+          "required": [
+            "mountType"
+          ],
+          "properties": {
+            "mountType": {
+              "type": "string",
+              "pattern": "^(none|hostPath|emptyDir|persistentVolume)$"
+            },
+            "hostPath": {
+              "type": "string"
+            },
+            "persistentVolume": {
+              "type": "object",
+              "required": [
+                "storageClass",
+                "labels",
+                "annotations"
+              ],
+              "properties": {
+                "storageClass": {
+                  "type": "string"
+                },
+                "labels": {
+                  "type": "object"
+                },
+                "annotations": {
+                  "type": "object"
+                }
+              }
+            },
+            "config":{
+              "type": "object",
+              "required": [
+                "cloud_storage_enabled",
+                "cloud_storage_region",
+                "cloud_storage_bucket"
+              ],
+              "properties": {
+                "cloud_storage_enable_remote_write": {
+                  "type": "boolean"
+                },
+                "cloud_storage_enable_remote_read": {
+                  "type": "boolean"
+                },
+                "cloud_storage_credentials_source": {
+                  "type": "string",
+                  "pattern": "^(config_file|aws_instance_metadata|sts|gcp_instance_metadata)$"
+                },
+                "cloud_storage_region": {
+                  "type": "string"
+                },
+                "cloud_storage_bucket": {
+                  "type": "string"
+                },
+                "cloud_storage_api_endpoint": {
+                  "type": "string"
+                },
+                "cloud_storage_cache_size": {
+                  "type": "integer"
+                },
+                "cloud_storage_cache_directory": {
+                  "type": "string"
+                },
+                "cloud_storage_cache_check_interval": {
+                  "type": "integer"
+                },
+                "cloud_storage_initial_backoff_ms": {
+                  "type": "integer"
+                },
+                "cloud_storage_max_connections": {
+                  "type": "integer"
+                },
+                "cloud_storage_segment_upload_timeout_ms": {
+                  "type": "integer"
+                },
+                "cloud_storage_manifest_upload_timeout_ms": {
+                  "type": "integer"
+                },
+                "cloud_storage_max_connection_idle_time_ms": {
+                  "type": "integer"
+                },
+                "cloud_storage_segment_max_upload_interval_sec": {
+                  "type": "integer"
+                },
+                "cloud_storage_trust_file": {
+                  "type": "string"
+                },
+                "cloud_storage_upload_ctrl_update_interval_ms": {
+                  "type": "integer"
+                },
+                "cloud_storage_upload_ctrl_p_coeff": {
+                  "type": "integer"
+                },
+                "cloud_storage_upload_ctrl_d_coeff": {
+                  "type": "integer"
+                },
+                "cloud_storage_upload_ctrl_min_shares": {
+                  "type": "integer"
+                },
+                "cloud_storage_upload_ctrl_max_shares": {
+                  "type": "integer"
+                },
+                "cloud_storage_reconciliation_interval_ms": {
+                  "type": "integer"
+                },
+                "cloud_storage_disable_tls": {
+                  "type": "boolean"
+                },
+                "cloud_storage_api_endpoint_port": {
+                  "type": "integer"
+                },
+                "cloud_storage_azure_adls_endpoint": {
+                  "type": "string"
+                },
+                "cloud_storage_azure_adls_port": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
         "tieredStorageHostPath": {
+          "deprecated": true,
           "type": "string"
         },
         "persistentVolume": {
+          "deprecated": true,
           "type": "object",
           "required": [
             "enabled",
@@ -387,6 +513,7 @@
           }
         },
         "tieredStoragePersistentVolume": {
+          "deprecated": true,
           "type": "object",
           "required": [
             "enabled",
@@ -410,6 +537,7 @@
           }
         },
         "tieredConfig":{
+          "deprecated": true,
           "type": "object",
           "required": [
             "cloud_storage_enabled",

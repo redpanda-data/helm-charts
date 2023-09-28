@@ -102,16 +102,18 @@ spec:
           resources: {{- toYaml .Values.statefulset.initContainers.setDataDirOwnership.resources | nindent 12 }}
   {{- end }}
 {{- end }}
-{{- if and (include "is-licensed" . | fromJson).bool .Values.storage.tieredConfig.cloud_storage_enabled }}
+{{- if and (include "is-licensed" . | fromJson).bool (include "storage-tiered-config" .|fromJson).cloud_storage_enabled }}
         - name: set-tiered-storage-cache-dir-ownership
           image: {{ .Values.statefulset.initContainerImage.repository }}:{{ .Values.statefulset.initContainerImage.tag }}
-          command: ["/bin/sh", "-c", 'chown {{ $uid }}:{{ $gid }} -R {{ template "tieredStorage.cacheDirectory" . }}']
+          command: ["/bin/sh", "-c", 'mkdir -p {{ include "tieredStorage.cacheDirectory" . }}; chown {{ $uid }}:{{ $gid }} -R {{ include "tieredStorage.cacheDirectory" . }}']
           volumeMounts: {{ include "common-mounts" . | nindent 12 }}
   {{- if dig "initContainers" "setTieredStorageCacheDirOwnership" "extraVolumeMounts" false .Values.statefulset -}}
     {{ tpl .Values.statefulset.initContainers.setTieredStorageCacheDirOwnership.extraVolumeMounts . | nindent 12 }}
   {{- end }}
+  {{- if ne (include "storage-tiered-mountType" .) "none" }}
             - name: tiered-storage-dir
-              mountPath: {{ template "tieredStorage.cacheDirectory" . }}
+              mountPath: {{ include "tieredStorage.cacheDirectory" . }}
+  {{- end }}
   {{- if get .Values.statefulset.initContainers.setTieredStorageCacheDirOwnership "resources" }}
           resources: {{- toYaml .Values.statefulset.initContainers.setTieredStorageCacheDirOwnership.resources | nindent 12 }}
   {{- end }}
@@ -262,9 +264,9 @@ spec:
               mountPath: /var/lifecycle
             - name: datadir
               mountPath: /var/lib/redpanda/data
-{{- if and (include "is-licensed" . | fromJson).bool .Values.storage.tieredConfig.cloud_storage_enabled }}
+{{- if and (include "is-licensed" . | fromJson).bool (include "storage-tiered-config" .|fromJson).cloud_storage_enabled (ne (include "storage-tiered-mountType" .) "none") }}
             - name: tiered-storage-dir
-              mountPath: {{ template "tieredStorage.cacheDirectory" . }}
+              mountPath: {{ include "tieredStorage.cacheDirectory" . }}
 {{- end }}
           resources:
 {{- if hasKey .Values.resources.memory "min" }}
@@ -336,17 +338,20 @@ spec:
       {{- else }}
           emptyDir: {}
       {{- end }}
-      {{- if and (include "is-licensed" . | fromJson).bool .Values.storage.tieredConfig.cloud_storage_enabled }}
+      {{- if and (include "is-licensed" . | fromJson).bool (include "storage-tiered-config" .|fromJson).cloud_storage_enabled }}
+        {{- $tieredType := include "storage-tiered-mountType" . }}
+        {{- if ne $tieredType "none" }}
         - name: tiered-storage-dir
-        {{- if .Values.storage.tieredStoragePersistentVolume.enabled }}
+          {{- if eq $tieredType "persistentVolume" }}
           persistentVolumeClaim:
             claimName: tiered-storage-dir
-        {{- else if .Values.storage.tieredStorageHostPath }}
+          {{- else if eq $tieredType "hostPath" }}
           hostPath:
-            path: {{ .Values.storage.tieredStorageHostPath | quote }}
-        {{- else }}
+            path: {{ include "storage-tiered-hostpath" . }}
+          {{- else }}
           emptyDir:
-            sizeLimit: {{ .Values.storage.tieredConfig.cloud_storage_cache_size }}
+            sizeLimit: {{ (include "storage-tiered-config" . | fromJson).cloud_storage_cache_size }}
+          {{- end }}
         {{- end }}
       {{- end }}
         - name: {{ template "redpanda.fullname" . }}
@@ -410,7 +415,7 @@ spec:
 {{- with ( include "statefulset-tolerations" . ) }}
       tolerations: {{- . | nindent 8 }}
 {{- end }}
-{{- if or .Values.storage.persistentVolume.enabled (and (include "is-licensed" . | fromJson).bool .Values.storage.tieredConfig.cloud_storage_enabled .Values.storage.tieredStoragePersistentVolume.enabled) }}
+{{- if or .Values.storage.persistentVolume.enabled (and (include "is-licensed" . | fromJson).bool (include "storage-tiered-config" .|fromJson).cloud_storage_enabled (eq (include "storage-tiered-mountType" .) "persistentVolume" )) }}
   volumeClaimTemplates:
 {{- if .Values.storage.persistentVolume.enabled }}
     - metadata:
@@ -441,33 +446,33 @@ spec:
           requests:
             storage: {{ .Values.storage.persistentVolume.size | quote }}
 {{- end }}
-{{- if and (include "is-licensed" . | fromJson).bool .Values.storage.tieredConfig.cloud_storage_enabled .Values.storage.tieredStoragePersistentVolume.enabled }}
+{{- if and (include "is-licensed" . | fromJson).bool (include "storage-tiered-config" .|fromJson).cloud_storage_enabled (eq (include "storage-tiered-mountType" .) "persistentVolume") }}
     - metadata:
         name: tiered-storage-dir
         labels:
           app.kubernetes.io/name: {{ template "redpanda.name" . }}
           app.kubernetes.io/instance: {{ .Release.Name | quote }}
           app.kubernetes.io/component: {{ template "redpanda.name" . }}
-  {{- with .Values.storage.tieredStoragePersistentVolume.labels }}
-    {{- toYaml . | nindent 10 }}
+  {{- with (include "storage-tiered-persistentvolume" . | fromJson).labels }}
+    {{ toYaml . | nindent 10 }}
   {{- end }}
   {{- with .Values.commonLabels }}
     {{- toYaml . | nindent 10 }}
   {{- end }}
-  {{- with .Values.storage.tieredStoragePersistentVolume.annotations }}
-        annotations: {{- toYaml . | nindent 10 }}
+  {{- with (include "storage-tiered-persistentvolume" . | fromJson).annotations }}
+        annotations: {{ toYaml . | nindent 10 }}
   {{- end }}
       spec:
         accessModes: ["ReadWriteOnce"]
-  {{- if .Values.storage.tieredStoragePersistentVolume.storageClass }}
-    {{- if (eq "-" .Values.storage.tieredStoragePersistentVolume.storageClass) }}
+  {{- with (include "storage-tiered-persistentvolume" . | fromJson).storageClass }}
+    {{- if eq "-" . }}
         storageClassName: ""
     {{- else }}
-        storageClassName: {{ .Values.storage.tieredStoragePersistentVolume.storageClass | quote }}
+        storageClassName: {{ . }}
     {{- end }}
   {{- end }}
         resources:
           requests:
-            storage: {{ .Values.storage.tieredConfig.cloud_storage_cache_size }}
+            storage: {{ (include "storage-tiered-config" .|fromJson).cloud_storage_cache_size }}
 {{- end }}
 {{- end }}
