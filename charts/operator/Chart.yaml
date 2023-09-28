@@ -6,7 +6,7 @@ type: application
 # The chart version and the app version are not the same and will not track
 # together. The chart version is a semver representation of changes to this
 # chart.
-version: 0.3.20
+version: 0.3.21
 
 # This is the default version of the operator being deployed.
 # ** NOTE for maintainers: please ensure the artifacthub image annotation is updated before merging
@@ -21,8 +21,8 @@ maintainers:
 
 dependencies:
 - name: kube-prometheus-stack
-  condition: monitoring.enabled
-  version: 13.13.1
+  condition: monitoring.deployPrometheusKubeStack
+  version: 51.2.0
   repository: https://prometheus-community.github.io/helm-charts
 
 annotations:
