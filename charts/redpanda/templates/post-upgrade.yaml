@@ -69,7 +69,8 @@ spec:
         command: ["/bin/sh", "-c"]
         args:
           - |
-            rpk cluster config import -f /tmp/base-config/bootstrap.yaml {{ $rpkFlags }}
+            set -e
+            rpk cluster config import -f /etc/redpanda/bootstrap.yaml {{ $rpkFlags }}
 {{- range $key, $value := .Values.config.cluster }}
   {{- if $value }}
             rpk cluster config set {{ $key }} {{ $value }} {{ $rpkFlags }}

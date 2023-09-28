@@ -51,9 +51,9 @@ and tested in a test.
 {{- $flags := fromJson (include "rpk-flags" .) -}}
 {{- $dummySasl := .dummySasl -}}
 {{- if $dummySasl -}}
-{{ .rpk }} topic create test-topic {{ include "rpk-flags-no-admin-no-sasl" . }} {{ include "rpk-dummy-sasl" . }}
+{{ .rpk }} topic create test-topic -p 3 -r {{ .Values.statefulset.replicas | int64 }} {{ include "rpk-flags-no-admin-no-sasl" . }} {{ include "rpk-dummy-sasl" . }}
 {{- else -}}
-{{ .rpk }} topic create test-topic {{ include "rpk-flags-no-admin" . }}
+{{ .rpk }} topic create test-topic -p 3 -r {{ .Values.statefulset.replicas | int64 }} {{ include "rpk-flags-no-admin" . }}
 {{- end -}}
 {{- end -}}
 

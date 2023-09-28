@@ -1405,6 +1405,76 @@
         },
         "rpk": {
           "type": "object"
+        },
+        "schema_registry_client": {
+          "type": "object",
+          "properties": {
+            "retries": {
+              "type": "integer"
+            },
+            "retry_base_backoff_ms": {
+              "type": "integer"
+            },
+            "produce_batch_record_count": {
+              "type": "integer"
+            },
+            "produce_batch_size_bytes": {
+              "type": "integer"
+            },
+            "produce_batch_delay_ms": {
+              "type": "integer"
+            },
+            "consumer_request_timeout_ms": {
+              "type": "integer"
+            },
+            "consumer_request_max_bytes": {
+              "type": "integer"
+            },
+            "consumer_session_timeout_ms": {
+              "type": "integer"
+            },
+            "consumer_rebalance_timeout_ms": {
+              "type": "integer"
+            },
+            "consumer_heartbeat_interval_ms": {
+              "type": "integer"
+            }
+          }
+        },
+        "pandaproxy_client": {
+          "type": "object",
+          "properties": {
+            "retries": {
+              "type": "integer"
+            },
+            "retry_base_backoff_ms": {
+              "type": "integer"
+            },
+            "produce_batch_record_count": {
+              "type": "integer"
+            },
+            "produce_batch_size_bytes": {
+              "type": "integer"
+            },
+            "produce_batch_delay_ms": {
+              "type": "integer"
+            },
+            "consumer_request_timeout_ms": {
+              "type": "integer"
+            },
+            "consumer_request_max_bytes": {
+              "type": "integer"
+            },
+            "consumer_session_timeout_ms": {
+              "type": "integer"
+            },
+            "consumer_rebalance_timeout_ms": {
+              "type": "integer"
+            },
+            "consumer_heartbeat_interval_ms": {
+              "type": "integer"
+            }
+          }
         }
       }
     }
