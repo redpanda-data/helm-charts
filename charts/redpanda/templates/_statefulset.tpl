@@ -38,10 +38,10 @@ app.kubernetes.io/component: {{ (include "redpanda.name" .) | trunc 51 }}-statef
 Set default path for tiered storage cache or use one provided
 */}}
 {{- define "tieredStorage.cacheDirectory" -}}
-{{- if empty .Values.storage.tieredConfig.cloud_storage_cache_directory -}}
+{{- if empty (include "storage-tiered-config" . | fromJson).cloud_storage_cache_directory -}}
   {{- printf "/var/lib/redpanda/data/cloud_storage_cache" -}}
 {{- else -}}
-  {{- .Values.storage.tieredConfig.cloud_storage_cache_directory -}}
+  {{- (include "storage-tiered-config" . | fromJson).cloud_storage_cache_directory -}}
 {{- end -}}
 {{- end -}}
 

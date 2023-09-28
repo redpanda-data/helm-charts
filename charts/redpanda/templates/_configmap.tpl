@@ -79,8 +79,8 @@ limitations under the License.
   {{- if and (not (hasKey .Values.config.cluster "storage_min_free_bytes")) ((include "redpanda-atleast-22-2-0" . | fromJson).bool) }}
     storage_min_free_bytes: {{ include "storage-min-free-bytes" . }}
   {{- end }}
-{{- if and (include "is-licensed" . | fromJson).bool .Values.storage.tieredConfig.cloud_storage_enabled }}
-  {{- $tieredStorageConfig := deepCopy .Values.storage.tieredConfig }}
+{{- if and (include "is-licensed" . | fromJson).bool (include "storage-tiered-config" .|fromJson).cloud_storage_enabled }}
+  {{- $tieredStorageConfig := (include "storage-tiered-config" .|fromJson) }}
   {{- $tieredStorageConfig = unset $tieredStorageConfig "cloud_storage_cache_directory" }}
   {{- if not (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
     {{- $tieredStorageConfig = unset $tieredStorageConfig "cloud_storage_credentials_source"}}
@@ -275,8 +275,8 @@ limitations under the License.
 {{- with $root.tempConfigMapServerList -}}
   {{- . | trim | nindent 8 }}
 {{- end -}}
-{{- if and (include "is-licensed" . | fromJson).bool .Values.storage.tieredConfig.cloud_storage_enabled }}
-  {{- $tieredStorageConfig := deepCopy .Values.storage.tieredConfig }}
+{{- if and (include "is-licensed" . | fromJson).bool (include "storage-tiered-config" .|fromJson).cloud_storage_enabled }}
+  {{- $tieredStorageConfig := (include "storage-tiered-config" .|fromJson) }}
   {{- if not (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
     {{- $tieredStorageConfig = unset $tieredStorageConfig "cloud_storage_credentials_source"}}
   {{- end }}

@@ -778,3 +778,29 @@ return licenseSecretRef.key checks deprecated values entry if current values emp
     name: {{ include "redpanda.fullname" . }}
 {{- include "common-volumes" . }}
 {{- end -}}
+
+{{/* support legacy tiered storage type selection */}}
+{{- define "storage-tiered-mountType" -}}
+{{- if dig "tieredStoragePersistentVolume" "enabled" false .Values.storage -}}
+persistentVolume
+{{- else if dig "tieredStorageHostPath" false .Values.storage -}}
+hostPath
+{{- else -}}
+{{- .Values.storage.tiered.mountType -}}
+{{- end -}}
+{{- end -}}
+
+{{/* support legacy storage.tieredStoragePersistentVolume */}}
+{{- define "storage-tiered-persistentvolume" -}}
+{{- dig "tieredStoragePersistentVolume" .Values.storage.tiered.persistentVolume .Values.storage | toJson -}}
+{{- end -}}
+
+{{/* support legacy storage.tieredStorageHostPath */}}
+{{- define "storage-tiered-hostpath" -}}
+{{- dig "tieredStorageHostPath" .Values.storage.tiered.hostPath .Values.storage -}}
+{{- end -}}
+
+{{/* support legacy storage.tieredConfig */}}
+{{- define "storage-tiered-config" -}}
+{{- dig "tieredConfig" .Values.storage.tiered.config .Values.storage | toJson -}}
+{{- end -}}
