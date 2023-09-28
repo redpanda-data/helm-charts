@@ -289,6 +289,32 @@ limitations under the License.
 {{- /* Schema Registry API */}}
 {{- if and .Values.listeners.schemaRegistry.enabled (include "redpanda-22-2-x-without-sasl" $root | fromJson).bool }}
   {{- $schemaRegistryService := .Values.listeners.schemaRegistry }}
+    schema_registry_client:
+      brokers:
+      {{- range (include "seed-server-list" $root | mustFromJson) }}
+      - address: {{ . }}
+        port: {{  $kafkaService.port }}
+      {{- end }}
+    {{- if (include "kafka-internal-tls-enabled" . | fromJson).bool }}
+      broker_tls:
+        enabled: true
+        require_client_auth: {{ $kafkaService.tls.requireClientAuth }}
+        cert_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/tls.crt
+        key_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/tls.key
+      {{- $cert := get .Values.tls.certs $kafkaService.tls.cert }}
+      {{- if empty $cert }}
+        {{- fail (printf "Certificate, '%s', used but not defined")}}
+      {{- end }}
+      {{- if $cert.caEnabled }}
+        truststore_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/ca.crt
+      {{- else }}
+          {{- /* This is a required field so we use the default in the redpanda debian container */}}
+          truststore_file: /etc/ssl/certs/ca-certificates.crt
+      {{- end }}
+    {{- end }}
+      {{- with .Values.config.schema_registry_client }}
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
     schema_registry:
       schema_registry_api:
         - name: internal
