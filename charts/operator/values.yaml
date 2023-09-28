@@ -101,6 +101,7 @@ labels:
 # monitoring -- Add service monitor to the deployment
 monitoring:
   enabled: false
+  deployPrometheusKubeStack: false
 
 webhookSecretName: webhook-server-cert
 
