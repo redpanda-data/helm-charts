@@ -105,7 +105,7 @@ spec:
 {{- if and (include "is-licensed" . | fromJson).bool (include "storage-tiered-config" .|fromJson).cloud_storage_enabled }}
         - name: set-tiered-storage-cache-dir-ownership
           image: {{ .Values.statefulset.initContainerImage.repository }}:{{ .Values.statefulset.initContainerImage.tag }}
-          command: ["/bin/sh", "-c", 'chown {{ $uid }}:{{ $gid }} -R {{ include "tieredStorage.cacheDirectory" . }}']
+          command: ["/bin/sh", "-c", 'mkdir -p {{ include "tieredStorage.cacheDirectory" . }}; chown {{ $uid }}:{{ $gid }} -R {{ include "tieredStorage.cacheDirectory" . }}']
           volumeMounts: {{ include "common-mounts" . | nindent 12 }}
   {{- if dig "initContainers" "setTieredStorageCacheDirOwnership" "extraVolumeMounts" false .Values.statefulset -}}
     {{ tpl .Values.statefulset.initContainers.setTieredStorageCacheDirOwnership.extraVolumeMounts . | nindent 12 }}
