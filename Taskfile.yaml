@@ -34,9 +34,45 @@ run: once
 
 tasks:
 
+  create-test-rack-awareness:
+    cmds:
+      - .github/annotate_kind_nodes.sh {{.KIND_CLUSTERNAME}}
+
+  create-test-metallb-resources:
+    cmds:
+      - kubectl -n metallb-system apply -f .github/metallb-config.yaml
+
+  create-test-tls-template:
+    cmds:
+      - .github/create_tls.sh "random-domain"
+
+  create-test-sasl-secret-template:
+    cmds:
+      - .github/create-sasl-secret.sh "some-users"
+
+  create-test-license-secret-template:
+    cmds:
+      - .github/create-license-secret.sh "redpanda-license"
+
+  create-test-mv-files:
+    cmds:
+      - mv external-tls-secret.yaml charts/redpanda/templates/
+      - cp .github/external-service.yaml charts/redpanda/templates/
+      - mv some-users-updated.yaml charts/redpanda/templates/
+
+  setup-test-files:
+    cmds:
+      - task: create-test-rack-awareness
+      - task: create-test-tls-template
+      - task: create-test-sasl-secret-template
+      - task: create-test-license-secret-template
+      - task: create-test-mv-files
+      - task: create-test-metallb-resources
+
   up:
     cmds:
       - task: kind-create
+      - task: setup-test-files
       - task: install-redpanda-chart
 
   add-jetstack-repo:
@@ -46,11 +82,37 @@ tasks:
     status:
       - helm search repo -r '\vjetstack/cert-manager\v' | grep cert-manager
 
+  add-metallb-repo:
+    cmds:
+      - helm repo add metallb https://metallb.github.io/metallb
+      - helm repo update
+    status:
+      - helm search repo -r '\vmetallb/metallb\v' | grep metallb
+
+  add-prometheus-community-repo:
+    cmds:
+      - helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+      - helm repo update
+    status:
+      - helm search repo -r '\vprometheus-community/kube-prometheus-stack\v' | grep metallb
+
+  install-metallb:
+    deps:
+      - add-metallb-repo
+    cmds:
+      - helm install metallb metallb/metallb -n metallb-system --create-namespace --version 0.13.10 --wait --wait-for-jobs
+
   install-cert-manager:
     deps:
       - add-jetstack-repo
     cmds:
       - helm install cert-manager jetstack/cert-manager --set installCRDs=true --namespace cert-manager --create-namespace
+
+  install-kube-prometheus-stack:
+    deps:
+      - add-prometheus-community-repo
+    cmds:
+      - helm install prometheus prometheus-community/kube-prometheus-stack --namespace prometheus --create-namespace --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false --set nodeExporter.enabled=false --set grafana.enabled=false --set kubeStateMetrics.enabled=false --set alertmanager.enabled=false --wait --wait-for-jobs
 
   aws-check-login:
     internal: true
@@ -61,6 +123,8 @@ tasks:
     cmds:
       - kind create cluster --name {{.KIND_CLUSTERNAME}} {{.KIND_FLAGS}}
       - task: install-cert-manager
+      - task: install-metallb
+      - task: install-kube-prometheus-stack
     status:
       - "kind get clusters | grep {{.KIND_CLUSTERNAME}}"
 
