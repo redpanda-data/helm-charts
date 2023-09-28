@@ -683,28 +683,36 @@ return licenseSecretRef.key checks deprecated values entry if current values emp
 
 {{/* support legacy tiered storage type selection */}}
 {{- define "storage-tiered-mountType" -}}
-{{- if dig "tieredStoragePersistentVolume" "enabled" false .Values.storage -}}
-persistentVolume
-{{- else if dig "tieredStorageHostPath" false .Values.storage -}}
-hostPath
-{{- else -}}
-{{- .Values.storage.tiered.mountType -}}
-{{- end -}}
+  {{- $mountType := .Values.storage.tiered.mountType -}}
+  {{- if dig "tieredStoragePersistentVolume" "enabled" false .Values.storage -}}
+    {{- $mountType = "persistentVolume" -}}
+  {{- else if dig "tieredStorageHostPath" false .Values.storage -}}
+    {{- $mountType = "hostPath" -}}
+  {{- end -}}
+  {{- $mountType -}}
 {{- end -}}
 
 {{/* support legacy storage.tieredStoragePersistentVolume */}}
 {{- define "storage-tiered-persistentvolume" -}}
-{{- dig "tieredStoragePersistentVolume" .Values.storage.tiered.persistentVolume .Values.storage | toJson -}}
+  {{- $pv := dig "tieredStoragePersistentVolume" .Values.storage.tiered.persistentVolume .Values.storage | toJson -}}
+  {{- if empty $pv -}}
+    {{- fail "storage.tiered.mountType is \"persistentVolume\" but storage.tiered.persistentVolume is not configured" -}}
+  {{- end -}}
+  {{- $pv -}}
 {{- end -}}
 
 {{/* support legacy storage.tieredStorageHostPath */}}
 {{- define "storage-tiered-hostpath" -}}
-{{- dig "tieredStorageHostPath" .Values.storage.tiered.hostPath .Values.storage -}}
+  {{- $hp := dig "tieredStorageHostPath" .Values.storage.tiered.hostPath .Values.storage -}}
+  {{- if empty $hp -}}
+    {{- fail "storage.tiered.mountType is \"hostPath\" but storage.tiered.hostPath is empty" -}}
+  {{- end -}}
+  {{- $hp -}}
 {{- end -}}
 
 {{/* support legacy storage.tieredConfig */}}
 {{- define "storage-tiered-config" -}}
-{{- dig "tieredConfig" .Values.storage.tiered.config .Values.storage | toJson -}}
+  {{- dig "tieredConfig" .Values.storage.tiered.config .Values.storage | toJson -}}
 {{- end -}}
 
 {{/*
