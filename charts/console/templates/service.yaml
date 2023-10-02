@@ -30,4 +30,7 @@ spec:
       targetPort: {{ include "console.containerPort" . }}
       protocol: TCP
       name: http
+      {{- if and (contains "NodePort" .Values.service.type) .Values.service.nodePort }}
+      nodePort: {{ .Values.service.nodePort }}
+      {{- end }}
   selector: {{- include "console.selectorLabels" . | nindent 4 }}

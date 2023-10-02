@@ -75,6 +75,7 @@ securityContext:
 service:
   type: ClusterIP
   port: 8080
+  # nodePort: 30001
   # -- Override the value in `console.config.server.listenPort` if not `nil`
   targetPort:
   annotations: {}
