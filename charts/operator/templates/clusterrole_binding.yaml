@@ -9,7 +9,8 @@ the Business Source License, use of this software will be governed
 by the Apache License, Version 2.0
 */}}
 
-{{- if .Values.rbac.create -}}
+{{- if and .Values.rbac.create ( eq .Values.scope "Cluster" ) }}
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -24,4 +25,38 @@ subjects:
 - kind: ServiceAccount
   name: {{ include "redpanda-operator.serviceAccountName" . }}
   namespace: {{ .Release.Namespace }}
-{{- end -}}
+{{- end }}
+{{- if and .Values.rbac.create ( and ( eq .Values.scope "Namespace" ) .Values.rbac.createAdditionalControllerCRs ) }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "redpanda-operator.fullname" . }}-additional-controllers
+  labels:
+{{ include "redpanda-operator.labels" . | indent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "redpanda-operator.fullname" . }}-additional-controllers
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "redpanda-operator.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+{{- end }}
+{{- if and .Values.rbac.create ( and ( eq .Values.scope "Namespace" ) .Values.rbac.createRPKBundleCRs ) }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "redpanda-operator.fullname" . }}-rpk-bundle
+  labels:
+{{ include "redpanda-operator.labels" . | indent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "redpanda-operator.fullname" . }}-rpk-bundle
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "redpanda-operator.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+{{- end }}
