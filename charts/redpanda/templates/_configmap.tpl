@@ -26,9 +26,9 @@ limitations under the License.
   It's impossible to do a rolling upgrade from not-tls-enabled rpc to tls-enabled rpc.
 */ -}}
 {{- $check := list
-    (include "redpanda-atleast-23-1-2" .|fromJson).bool
-    (include "redpanda-22-3-atleast-22-3-13" .|fromJson).bool
-    (include "redpanda-22-2-atleast-22-2-10" .|fromJson).bool
+  (include "redpanda-atleast-23-1-2" .|fromJson).bool
+  (include "redpanda-22-3-atleast-22-3-13" .|fromJson).bool
+  (include "redpanda-22-2-atleast-22-2-10" .|fromJson).bool
 -}}
 {{- $wantedRPCTLS := (include "rpc-tls-enabled" . | fromJson).bool -}}
 {{- if and (not (mustHas true $check)) $wantedRPCTLS -}}
@@ -61,23 +61,23 @@ limitations under the License.
   {{- end -}}
 {{- end -}}
 
-  bootstrap.yaml: |
-    kafka_enable_authorization: {{ (include "sasl-enabled" . | fromJson).bool }}
-    enable_sasl: {{ (include "sasl-enabled" . | fromJson).bool }}
-    enable_rack_awareness: {{ .Values.rackAwareness.enabled }}
-  {{- if $users }}
-    superusers: {{ toJson $users }}
-  {{- end }}
-  {{- with (dig "cluster" dict .Values.config) }}
-      {{- range $key, $element := .}}
-        {{- if or (eq (typeOf $element) "bool") $element }}
-    {{ $key }}: {{ $element | toYaml }}
-        {{- end }}
+bootstrap.yaml: |
+  kafka_enable_authorization: {{ (include "sasl-enabled" . | fromJson).bool }}
+  enable_sasl: {{ (include "sasl-enabled" . | fromJson).bool }}
+  enable_rack_awareness: {{ .Values.rackAwareness.enabled }}
+{{- with $users }}
+  superusers: {{ toYaml . | nindent 4 }}
+{{- end }}
+{{- with (dig "cluster" dict .Values.config) }}
+    {{- range $key, $element := .}}
+      {{- if or (eq (typeOf $element) "bool") $element }}
+        {{- dict $key $element | toYaml | nindent 2 }}
       {{- end }}
+    {{- end }}
   {{- end }}
-  {{- include "tunable" . }}
+  {{- include "tunable" . | nindent 2 }}
   {{- if and (not (hasKey .Values.config.cluster "storage_min_free_bytes")) ((include "redpanda-atleast-22-2-0" . | fromJson).bool) }}
-    storage_min_free_bytes: {{ include "storage-min-free-bytes" . }}
+  storage_min_free_bytes: {{ include "storage-min-free-bytes" . }}
   {{- end }}
 {{- if and (include "is-licensed" . | fromJson).bool (include "storage-tiered-config" .|fromJson).cloud_storage_enabled }}
   {{- $tieredStorageConfig := (include "storage-tiered-config" .|fromJson) }}
@@ -87,83 +87,84 @@ limitations under the License.
   {{- end }}
   {{- range $key, $element := $tieredStorageConfig}}
     {{- if or (eq (typeOf $element) "bool") $element }}
+      {{- dict $key $element | toYaml | nindent 2 }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+
+redpanda.yaml: |
+  config_file: /etc/redpanda/redpanda.yaml
+{{- if .Values.logging.usageStats.enabled }}
+  {{- with (dig "usageStats" "organization" "" .Values.logging) }}
+  organization: {{ . }}
+  {{- end }}
+  {{- with (dig "usageStats" "clusterId" "" .Values.logging) }}
+  cluster_id: {{ . }}
+  {{- end }}
+{{- end }}
+  redpanda:
+{{- if (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
+    empty_seed_starts_cluster: false
+{{- end }}
+    kafka_enable_authorization: {{ (include "sasl-enabled" . | fromJson).bool }}
+    enable_sasl: {{ (include "sasl-enabled" . | fromJson).bool }}
+{{- if $users }}
+    superusers: {{ toJson $users }}
+{{- end }}
+{{- with (dig "cluster" dict .Values.config) }}
+  {{- range $key, $element := . }}
+    {{- if or (eq (typeOf $element) "bool") $element }}
     {{ $key }}: {{ $element | toYaml }}
     {{- end }}
   {{- end }}
 {{- end }}
-  redpanda.yaml: |
-    config_file: /etc/redpanda/redpanda.yaml
-{{- if .Values.logging.usageStats.enabled }}
-  {{- with (dig "usageStats" "organization" "" .Values.logging) }}
-    organization: {{ . }}
-  {{- end }}
-  {{- with (dig "usageStats" "clusterId" "" .Values.logging) }}
-    cluster_id: {{ . }}
+{{- with (dig "tunable" dict .Values.config) }}
+  {{- range $key, $element := .}}
+    {{- if or (eq (typeOf $element) "bool") $element }}
+    {{ $key }}: {{ $element | toYaml }}
+    {{- end }}
   {{- end }}
 {{- end }}
-    redpanda:
-{{- if (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
-      empty_seed_starts_cluster: false
+{{- if not (hasKey .Values.config.cluster "storage_min_free_bytes") }}
+    storage_min_free_bytes: {{ include "storage-min-free-bytes" . }}
 {{- end }}
-      kafka_enable_authorization: {{ (include "sasl-enabled" . | fromJson).bool }}
-      enable_sasl: {{ (include "sasl-enabled" . | fromJson).bool }}
-  {{- if $users }}
-      superusers: {{ toJson $users }}
+{{- with dig "node" dict .Values.config }}
+  {{- range $key, $element := .}}
+    {{- if and (or (eq (typeOf $element) "bool") $element) (and (eq $key "crash_loop_limit") (include "redpanda-atleast-23-1-1" $root | fromJson).bool) }}
+    {{ $key }}: {{ $element | toYaml }}
+    {{- end }}
   {{- end }}
-  {{- with (dig "cluster" dict .Values.config) }}
-      {{- range $key, $element := . }}
-        {{- if or (eq (typeOf $element) "bool") $element }}
-      {{ $key }}: {{ $element | toYaml }}
-        {{- end }}
-      {{- end }}
-  {{- end }}
-  {{- with (dig "tunable" dict .Values.config) }}
-      {{- range $key, $element := .}}
-        {{- if or (eq (typeOf $element) "bool") $element }}
-      {{ $key }}: {{ $element | toYaml }}
-        {{- end }}
-      {{- end }}
-  {{- end }}
-  {{- if not (hasKey .Values.config.cluster "storage_min_free_bytes") }}
-      storage_min_free_bytes: {{ include "storage-min-free-bytes" . }}
-  {{- end }}
-      {{- with dig "node" dict .Values.config }}
-      {{- range $key, $element := .}}
-        {{- if and (or (eq (typeOf $element) "bool") $element) (and (eq $key "crash_loop_limit") (include "redpanda-atleast-23-1-1" $root | fromJson).bool) }}
-      {{ $key }}: {{ $element | toYaml }}
-        {{- end }}
-      {{- end }}
-      {{- end }}
-{{- /* LISTENERS */}}
-{{- /* Admin API */}}
+{{- end -}}
+{{/* LISTENERS */}}
+{{/* Admin API */}}
 {{- $service := .Values.listeners.admin }}
-      admin:
-        - name: internal
-          address: 0.0.0.0
-          port: {{ $service.port }}
+    admin:
+      - name: internal
+        address: 0.0.0.0
+        port: {{ $service.port }}
 {{- range $name, $listener := $service.external }}
-{{- if and $listener.port $name }}
-        - name: {{ $name }}
-          address: 0.0.0.0
-          port: {{ $listener.port }}
+  {{- if and $listener.port $name }}
+      - name: {{ $name }}
+        address: 0.0.0.0
+        port: {{ $listener.port }}
+  {{- end }}
 {{- end }}
-{{- end }}
-      admin_api_tls:
+    admin_api_tls:
 {{- if (include "admin-internal-tls-enabled" . | fromJson).bool }}
-        - name: internal
-          enabled: true
-          cert_file: /etc/tls/certs/{{ $service.tls.cert }}/tls.crt
-          key_file: /etc/tls/certs/{{ $service.tls.cert }}/tls.key
-          require_client_auth: {{ $service.tls.requireClientAuth }}
+      - name: internal
+        enabled: true
+        cert_file: /etc/tls/certs/{{ $service.tls.cert }}/tls.crt
+        key_file: /etc/tls/certs/{{ $service.tls.cert }}/tls.key
+        require_client_auth: {{ $service.tls.requireClientAuth }}
   {{- $cert := get .Values.tls.certs $service.tls.cert }}
   {{- if empty $cert }}
     {{- fail (printf "Certificate, '%s', used but not defined")}}
   {{- end }}
   {{- if $cert.caEnabled }}
-          truststore_file: /etc/tls/certs/{{ $service.tls.cert }}/ca.crt
+        truststore_file: /etc/tls/certs/{{ $service.tls.cert }}/ca.crt
   {{- else }}
-        {{- /* This is a required field so we use the default in the redpanda debian container */}}
-          truststore_file: /etc/ssl/certs/ca-certificates.crt
+        {{/* This is a required field so we use the default in the redpanda debian container */}}
+        truststore_file: /etc/ssl/certs/ca-certificates.crt
   {{- end }}
 {{- end }}
 {{- range $name, $listener := $service.external }}
@@ -177,52 +178,52 @@ limitations under the License.
     {{- if empty $cert }}
       {{- fail (printf "Certificate, '%s', used but not defined" $certName)}}
     {{- end }}
-        - name: {{ $name }}
-          enabled: true
-          cert_file: {{ $certPath }}/tls.crt
-          key_file: {{ $certPath }}/tls.key
-          require_client_auth: {{ $mtls }}
+      - name: {{ $name }}
+        enabled: true
+        cert_file: {{ $certPath }}/tls.crt
+        key_file: {{ $certPath }}/tls.key
+        require_client_auth: {{ $mtls }}
     {{- if $cert.caEnabled }}
-          truststore_file: {{ $certPath }}/ca.crt
+        truststore_file: {{ $certPath }}/ca.crt
     {{- else }}
-          {{- /* This is a required field so we use the default in the redpanda debian container */}}
-          truststore_file: /etc/ssl/certs/ca-certificates.crt
+        {{- /* This is a required field so we use the default in the redpanda debian container */}}
+        truststore_file: /etc/ssl/certs/ca-certificates.crt
     {{- end }}
   {{- end }}
-{{- end }}
-{{- /* Kafka API */}}
+{{- end -}}
+{{/* Kafka API */}}
 {{- $kafkaService := .Values.listeners.kafka }}
-      kafka_api:
-        - name: internal
-          address: 0.0.0.0
-          port: {{ $kafkaService.port }}
-          {{- if or (include "sasl-enabled" $root | fromJson).bool $kafkaService.authenticationMethod }}
-          authentication_method: {{ default "sasl" $kafkaService.authenticationMethod }}
-          {{- end }}
-{{- range $name, $listener := $kafkaService.external }}
-        - name: {{ $name }}
-          address: 0.0.0.0
-          port: {{ $listener.port }}
-          {{- if or (include "sasl-enabled" $root | fromJson).bool $listener.authenticationMethod }}
-          authentication_method: {{ default "sasl" $listener.authenticationMethod }}
-          {{- end }}
+    kafka_api:
+      - name: internal
+        address: 0.0.0.0
+        port: {{ $kafkaService.port }}
+{{- if or (include "sasl-enabled" $root | fromJson).bool $kafkaService.authenticationMethod }}
+        authentication_method: {{ default "sasl" $kafkaService.authenticationMethod }}
 {{- end }}
-      kafka_api_tls:
+{{- range $name, $listener := $kafkaService.external }}
+      - name: {{ $name }}
+        address: 0.0.0.0
+        port: {{ $listener.port }}
+  {{- if or (include "sasl-enabled" $root | fromJson).bool $listener.authenticationMethod }}
+        authentication_method: {{ default "sasl" $listener.authenticationMethod }}
+  {{- end }}
+{{- end }}
+    kafka_api_tls:
 {{- if (include "kafka-internal-tls-enabled" . | fromJson).bool }}
-        - name: internal
-          enabled: true
-          cert_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/tls.crt
-          key_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/tls.key
-          require_client_auth: {{ $kafkaService.tls.requireClientAuth }}
+      - name: internal
+        enabled: true
+        cert_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/tls.crt
+        key_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/tls.key
+        require_client_auth: {{ $kafkaService.tls.requireClientAuth }}
   {{- $cert := get .Values.tls.certs $kafkaService.tls.cert }}
   {{- if empty $cert }}
     {{- fail (printf "Certificate, '%s', used but not defined")}}
   {{- end }}
   {{- if $cert.caEnabled }}
-          truststore_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/ca.crt
+        truststore_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/ca.crt
   {{- else }}
-          {{- /* This is a required field so we use the default in the redpanda debian container */}}
-          truststore_file: /etc/ssl/certs/ca-certificates.crt
+        {{/* This is a required field so we use the default in the redpanda debian container */}}
+        truststore_file: /etc/ssl/certs/ca-certificates.crt
   {{- end }}
 {{- end }}
 {{- range $name, $listener := $kafkaService.external }}
@@ -236,96 +237,95 @@ limitations under the License.
     {{- if empty $cert }}
       {{- fail (printf "Certificate, '%s', used but not defined" $certName)}}
     {{- end }}
-        - name: {{ $name }}
-          enabled: true
-          cert_file: {{ $certPath }}/tls.crt
-          key_file: {{ $certPath }}/tls.key
-          require_client_auth: {{ $mtls }}
+      - name: {{ $name }}
+        enabled: true
+        cert_file: {{ $certPath }}/tls.crt
+        key_file: {{ $certPath }}/tls.key
+        require_client_auth: {{ $mtls }}
     {{- if $cert.caEnabled }}
-          truststore_file: {{ $certPath }}/ca.crt
+        truststore_file: {{ $certPath }}/ca.crt
     {{- else }}
-          {{- /* This is a required field so we use the default in the redpanda debian container */}}
-          truststore_file: /etc/ssl/certs/ca-certificates.crt
+        {{/* This is a required field so we use the default in the redpanda debian container */}}
+        truststore_file: /etc/ssl/certs/ca-certificates.crt
     {{- end }}
   {{- end }}
-{{- end }}
-{{- /* RPC Server */}}
+{{- end -}}
+{{/* RPC Server */}}
 {{- $service = .Values.listeners.rpc }}
-      rpc_server:
-        address: 0.0.0.0
-        port: {{ $service.port }}
+    rpc_server:
+      address: 0.0.0.0
+      port: {{ $service.port }}
 {{- if (include "rpc-tls-enabled" . | fromJson).bool }}
-      rpc_server_tls:
-        enabled: true
-        cert_file: /etc/tls/certs/{{ $service.tls.cert }}/tls.crt
-        key_file: /etc/tls/certs/{{ $service.tls.cert }}/tls.key
-        require_client_auth: {{ $service.tls.requireClientAuth }}
+    rpc_server_tls:
+      enabled: true
+      cert_file: /etc/tls/certs/{{ $service.tls.cert }}/tls.crt
+      key_file: /etc/tls/certs/{{ $service.tls.cert }}/tls.key
+      require_client_auth: {{ $service.tls.requireClientAuth }}
   {{- $cert := get .Values.tls.certs $service.tls.cert }}
   {{- if empty $cert }}
     {{- fail (printf "Certificate, '%s', used but not defined")}}
   {{- end }}
   {{- if $cert.caEnabled }}
-        truststore_file: /etc/tls/certs/{{ $service.tls.cert }}/ca.crt
+      truststore_file: /etc/tls/certs/{{ $service.tls.cert }}/ca.crt
   {{- else }}
-        {{- /* This is a required field so we use the default in the redpanda debian container */}}
-        truststore_file: /etc/ssl/certs/ca-certificates.crt
+      {{- /* This is a required field so we use the default in the redpanda debian container */}}
+      truststore_file: /etc/ssl/certs/ca-certificates.crt
   {{- end }}
-{{- end }}
-      seed_servers:
-{{- with $root.tempConfigMapServerList -}}
-  {{- . | trim | nindent 8 }}
 {{- end -}}
+{{- with $root.tempConfigMapServerList }}
+    seed_servers: {{ toYaml . | nindent 6 }}
+{{- end }}
 {{- if and (include "is-licensed" . | fromJson).bool (include "storage-tiered-config" .|fromJson).cloud_storage_enabled }}
   {{- $tieredStorageConfig := (include "storage-tiered-config" .|fromJson) }}
   {{- if not (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
-    {{- $tieredStorageConfig = unset $tieredStorageConfig "cloud_storage_credentials_source"}}
+    {{- $tieredStorageConfig = unset $tieredStorageConfig "cloud_storage_credentials_source" }}
   {{- end }}
-  {{- range $key, $element := $tieredStorageConfig}}
+  {{- range $key, $element := $tieredStorageConfig }}
     {{- if or (eq (typeOf $element) "bool") $element }}
-    {{ $key }}: {{ $element | toYaml }}
+      {{- dict $key $element | toYaml | nindent 2 -}}
     {{- end }}
   {{- end }}
 {{- end }}
-{{- /* Schema Registry API */}}
+{{/* Schema Registry API */}}
 {{- if and .Values.listeners.schemaRegistry.enabled (include "redpanda-22-2-x-without-sasl" $root | fromJson).bool }}
   {{- $schemaRegistryService := .Values.listeners.schemaRegistry }}
-    schema_registry_client:
-      brokers:
+  schema_registry_client:
+    brokers:
       {{- range (include "seed-server-list" $root | mustFromJson) }}
-      - address: {{ . }}
-        port: {{  $kafkaService.port }}
+    - address: {{ . }}
+      port: {{  $kafkaService.port }}
       {{- end }}
     {{- if (include "kafka-internal-tls-enabled" . | fromJson).bool }}
-      broker_tls:
-        enabled: true
-        require_client_auth: {{ $kafkaService.tls.requireClientAuth }}
-        cert_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/tls.crt
-        key_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/tls.key
+    broker_tls:
+      enabled: true
+      require_client_auth: {{ $kafkaService.tls.requireClientAuth }}
+      cert_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/tls.crt
+      key_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/tls.key
       {{- $cert := get .Values.tls.certs $kafkaService.tls.cert }}
       {{- if empty $cert }}
         {{- fail (printf "Certificate, '%s', used but not defined")}}
       {{- end }}
       {{- if $cert.caEnabled }}
-        truststore_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/ca.crt
+      truststore_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/ca.crt
       {{- else }}
-          {{- /* This is a required field so we use the default in the redpanda debian container */}}
-          truststore_file: /etc/ssl/certs/ca-certificates.crt
+      {{- /* This is a required field so we use the default in the redpanda debian container */}}
+      truststore_file: /etc/ssl/certs/ca-certificates.crt
       {{- end }}
     {{- end }}
       {{- with .Values.config.schema_registry_client }}
         {{- toYaml . | nindent 6 }}
       {{- end }}
-    schema_registry:
-      schema_registry_api:
-        - name: internal
-          address: 0.0.0.0
-          port: {{ $schemaRegistryService.port }}
+  schema_registry:
+    schema_registry_api:
+      - name: internal
+        address: 0.0.0.0
+        port: {{ $schemaRegistryService.port }}
           {{- if or (include "sasl-enabled" $root | fromJson).bool $schemaRegistryService.authenticationMethod }}
-          authentication_method: {{ default "http_basic" $schemaRegistryService.authenticationMethod }}
+        authentication_method: {{ default "http_basic" $schemaRegistryService.authenticationMethod }}
           {{- end }}
   {{- range $name, $listener := $schemaRegistryService.external }}
-        - name: {{ $name }}
-          address: 0.0.0.0
+      - name: {{ $name }}
+        address: 0.0.0.0
           {{- /*
             when upgrading from an older version that had a missing port, fail if we cannot guess a default
             this should work in all cases as the older versions would have failed with multiple listeners anyway
@@ -333,27 +333,27 @@ limitations under the License.
           {{- if and (empty $listener.port) (ne (len $schemaRegistryService.external) 1) }}
             {{- fail "missing required port for schemaRegistry listener $listener.name" }}
           {{- end }}
-          port: {{ $listener.port | default 8084 }}
+        port: {{ $listener.port | default 8084 }}
           {{- if or (include "sasl-enabled" $root | fromJson).bool $listener.authenticationMethod }}
-          authentication_method: {{ default "http_basic" $listener.authenticationMethod }}
+        authentication_method: {{ default "http_basic" $listener.authenticationMethod }}
           {{- end }}
   {{- end }}
-      schema_registry_api_tls:
+    schema_registry_api_tls:
   {{- if (include "schemaRegistry-internal-tls-enabled" . | fromJson).bool }}
-        - name: internal
-          enabled: true
-          cert_file: /etc/tls/certs/{{ $schemaRegistryService.tls.cert }}/tls.crt
-          key_file: /etc/tls/certs/{{ $schemaRegistryService.tls.cert }}/tls.key
-          require_client_auth: {{ $schemaRegistryService.tls.requireClientAuth }}
+      - name: internal
+        enabled: true
+        cert_file: /etc/tls/certs/{{ $schemaRegistryService.tls.cert }}/tls.crt
+        key_file: /etc/tls/certs/{{ $schemaRegistryService.tls.cert }}/tls.key
+        require_client_auth: {{ $schemaRegistryService.tls.requireClientAuth }}
     {{- $cert := get .Values.tls.certs $schemaRegistryService.tls.cert }}
     {{- if empty $cert }}
       {{- fail (printf "Certificate, '%s', used but not defined")}}
     {{- end }}
     {{- if $cert.caEnabled }}
-          truststore_file: /etc/tls/certs/{{ $schemaRegistryService.tls.cert }}/ca.crt
+        truststore_file: /etc/tls/certs/{{ $schemaRegistryService.tls.cert }}/ca.crt
     {{- else }}
-          {{- /* This is a required field so we use the default in the redpanda debian container */}}
-          truststore_file: /etc/ssl/certs/ca-certificates.crt
+        {{- /* This is a required field so we use the default in the redpanda debian container */}}
+        truststore_file: /etc/ssl/certs/ca-certificates.crt
     {{- end }}
   {{- end }}
   {{- range $name, $listener := $schemaRegistryService.external }}
@@ -367,81 +367,81 @@ limitations under the License.
       {{- if empty $cert }}
         {{- fail (printf "Certificate, '%s', used but not defined")}}
       {{- end }}
-        - name: {{ $name }}
-          enabled: true
-          cert_file: {{ $certPath }}/tls.crt
-          key_file: {{ $certPath }}/tls.key
-          require_client_auth: {{ $mtls }}
+      - name: {{ $name }}
+        enabled: true
+        cert_file: {{ $certPath }}/tls.crt
+        key_file: {{ $certPath }}/tls.key
+        require_client_auth: {{ $mtls }}
       {{- if $cert.caEnabled }}
-          truststore_file: {{ $certPath }}/ca.crt
+        truststore_file: {{ $certPath }}/ca.crt
       {{- else }}
-          {{- /* This is a required field so we use the default in the redpanda debian container */}}
-          truststore_file: /etc/ssl/certs/ca-certificates.crt
+        {{- /* This is a required field so we use the default in the redpanda debian container */}}
+        truststore_file: /etc/ssl/certs/ca-certificates.crt
       {{- end }}
     {{- end }}
   {{- end }}
-{{- end }}
-{{- /* HTTP Proxy */}}
+{{- end -}}
+{{/* HTTP Proxy */}}
 {{- if and .Values.listeners.http.enabled (include "redpanda-22-2-x-without-sasl" $root | fromJson).bool }}
   {{- $HTTPService := .Values.listeners.http }}
-    pandaproxy_client:
-      brokers:
-      {{- range (include "seed-server-list" $root | mustFromJson) }}
-      - address: {{ . }}
-        port: {{  $kafkaService.port }}
-      {{- end }}
-    {{- if (include "kafka-internal-tls-enabled" . | fromJson).bool }}
-      broker_tls:
-        enabled: true
-        require_client_auth: {{ $kafkaService.tls.requireClientAuth }}
-        cert_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/tls.crt
-        key_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/tls.key
-      {{- $cert := get .Values.tls.certs $kafkaService.tls.cert }}
-      {{- if empty $cert }}
-        {{- fail (printf "Certificate, '%s', used but not defined")}}
-      {{- end }}
-      {{- if $cert.caEnabled }}
-        truststore_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/ca.crt
-      {{- else }}
-          {{- /* This is a required field so we use the default in the redpanda debian container */}}
-          truststore_file: /etc/ssl/certs/ca-certificates.crt
-      {{- end }}
-      {{- with .Values.config.pandaproxy_client }}
-        {{- toYaml . | nindent 6 }}
-      {{- end }}
-    {{- end }}
-    pandaproxy:
-      pandaproxy_api:
-        - name: internal
-          address: 0.0.0.0
-          port: {{ $HTTPService.port }}
-          {{- if or (include "sasl-enabled" $root | fromJson).bool $HTTPService.authenticationMethod }}
-          authentication_method: {{ default "http_basic" $HTTPService.authenticationMethod }}
-          {{- end }}
-  {{- range $name, $listener := $HTTPService.external }}
-        - name: {{ $name }}
-          address: 0.0.0.0
-          port: {{ $listener.port }}
-          {{- if or (include "sasl-enabled" $root | fromJson).bool $listener.authenticationMethod }}
-          authentication_method: {{ default "http_basic" $listener.authenticationMethod }}
-          {{- end }}
+  pandaproxy_client:
+    brokers:
+  {{- range (include "seed-server-list" $root | mustFromJson) }}
+    - address: {{ . }}
+      port: {{  $kafkaService.port }}
   {{- end }}
-      pandaproxy_api_tls:
-  {{- if (include "http-internal-tls-enabled" . | fromJson).bool }}
-        - name: internal
-          enabled: true
-          cert_file: /etc/tls/certs/{{ $HTTPService.tls.cert }}/tls.crt
-          key_file: /etc/tls/certs/{{ $HTTPService.tls.cert }}/tls.key
-          require_client_auth: {{ $HTTPService.tls.requireClientAuth }}
+  {{- if (include "kafka-internal-tls-enabled" . | fromJson).bool }}
+    broker_tls:
+      enabled: true
+      require_client_auth: {{ $kafkaService.tls.requireClientAuth }}
+      cert_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/tls.crt
+      key_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/tls.key
+  {{- $cert := get .Values.tls.certs $kafkaService.tls.cert }}
+  {{- if empty $cert }}
+    {{- fail (printf "Certificate, '%s', used but not defined")}}
+  {{- end }}
+  {{- if $cert.caEnabled }}
+      truststore_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/ca.crt
+  {{- else }}
+        {{- /* This is a required field so we use the default in the redpanda debian container */}}
+        truststore_file: /etc/ssl/certs/ca-certificates.crt
+  {{- end }}
+  {{- with .Values.config.pandaproxy_client }}
+    {{- toYaml . | nindent 6 }}
+  {{- end }}
+{{- end }}
+  pandaproxy:
+    pandaproxy_api:
+      - name: internal
+        address: 0.0.0.0
+        port: {{ $HTTPService.port }}
+{{- if or (include "sasl-enabled" $root | fromJson).bool $HTTPService.authenticationMethod }}
+        authentication_method: {{ default "http_basic" $HTTPService.authenticationMethod }}
+{{- end }}
+{{- range $name, $listener := $HTTPService.external }}
+      - name: {{ $name }}
+        address: 0.0.0.0
+        port: {{ $listener.port }}
+  {{- if or (include "sasl-enabled" $root | fromJson).bool $listener.authenticationMethod }}
+        authentication_method: {{ default "http_basic" $listener.authenticationMethod }}
+  {{- end }}
+{{- end }}
+    pandaproxy_api_tls:
+{{- if (include "http-internal-tls-enabled" . | fromJson).bool }}
+      - name: internal
+        enabled: true
+        cert_file: /etc/tls/certs/{{ $HTTPService.tls.cert }}/tls.crt
+        key_file: /etc/tls/certs/{{ $HTTPService.tls.cert }}/tls.key
+        require_client_auth: {{ $HTTPService.tls.requireClientAuth }}
     {{- $cert := get .Values.tls.certs $HTTPService.tls.cert }}
     {{- if empty $cert }}
       {{- fail (printf "Certificate, '%s', used but not defined")}}
     {{- end }}
     {{- if $cert.caEnabled }}
-          truststore_file: /etc/tls/certs/{{ $HTTPService.tls.cert }}/ca.crt
+        truststore_file: /etc/tls/certs/{{ $HTTPService.tls.cert }}/ca.crt
     {{- else }}
-          {{- /* This is a required field so we use the default in the redpanda debian container */}}
-          truststore_file: /etc/ssl/certs/ca-certificates.crt
+        {{- /* This is a required field so we use the default in the redpanda debian container */}}
+        truststore_file: /etc/ssl/certs/ca-certificates.crt
     {{- end }}
   {{- end }}
   {{- range $name, $listener := $HTTPService.external }}
@@ -455,61 +455,145 @@ limitations under the License.
       {{- if empty $cert }}
         {{- fail (printf "Certificate, '%s', used but not defined")}}
       {{- end }}
-        - name: {{ $name }}
-          enabled: true
-          cert_file: {{ $certPath }}/tls.crt
-          key_file: {{ $certPath }}/tls.key
-          require_client_auth: {{ $mtls }}
+      - name: {{ $name }}
+        enabled: true
+        cert_file: {{ $certPath }}/tls.crt
+        key_file: {{ $certPath }}/tls.key
+        require_client_auth: {{ $mtls }}
       {{- if $cert.caEnabled }}
-          truststore_file: {{ $certPath }}/ca.crt
+        truststore_file: {{ $certPath }}/ca.crt
       {{- else }}
-          {{- /* This is a required field so we use the default in the redpanda debian container */}}
-          truststore_file: /etc/ssl/certs/ca-certificates.crt
+        {{- /* This is a required field so we use the default in the redpanda debian container */}}
+        truststore_file: /etc/ssl/certs/ca-certificates.crt
       {{- end }}
     {{- end }}
   {{- end }}
 {{- end }}
-{{- /* END LISTENERS */}}
+{{/* END LISTENERS */}}
+{{- end -}}
 
-    rpk:
-{{- with (dig "rpk" dict .Values.config) }}
-  {{- . | toYaml | nindent 6}}
-{{- end }}
-      enable_usage_stats: {{ .Values.logging.usageStats.enabled }}
-      overprovisioned: {{ dig "cpu" "overprovisioned" false .Values.resources }}
-      enable_memory_locking: {{ dig "memory" "enable_memory_locking" false .Values.resources }}
-{{- if hasKey .Values.tuning "tune_aio_events" }}
-      tune_aio_events: {{ .Values.tuning.tune_aio_events }}
-{{- end }}
-{{- if hasKey .Values.tuning "tune_clocksource" }}
-      tune_clocksource: {{ .Values.tuning.tune_clocksource }}
-{{- end }}
-{{- if hasKey .Values.tuning "tune_ballast_file" }}
-      tune_ballast_file: {{ .Values.tuning.tune_ballast_file }}
-{{- end }}
-{{- if hasKey .Values.tuning "ballast_file_path" }}
-      ballast_file_path: {{ .Values.tuning.ballast_file_path }}
-{{- end }}
-{{- if hasKey .Values.tuning "ballast_file_size" }}
-      ballast_file_size: {{ .Values.tuning.ballast_file_size }}
-{{- end }}
-{{- if hasKey .Values.tuning "well_known_io" }}
-      well_known_io: {{ .Values.tuning.well_known_io }}
-{{- end }}
+{{- define "rpk-config-internal" -}}
+  {{- $brokers := list -}}
+  {{- $admin := list -}}
+  {{- range $i := untilStep 0 (.Values.statefulset.replicas|int) 1 -}}
+    {{- $podName := printf "%s-%d.%s" (include "redpanda.fullname" $) $i (include "redpanda.internal.domain" $) -}}
+    {{- $brokers = concat $brokers (list (printf "%s:%d" $podName (int $.Values.listeners.kafka.port))) -}}
+    {{- $admin = concat $admin (list (printf "%s:%d" $podName (int $.Values.listeners.admin.port))) -}}
+  {{- end -}}
+rpk:
+  # redpanda server configuration
+  overprovisioned: {{ dig "cpu" "overprovisioned" false .Values.resources }}
+  enable_memory_locking: {{ dig "memory" "enable_memory_locking" false .Values.resources }}
+  additional_start_flags:
+    - "--smp={{ include "redpanda-smp" . }}"
+    - "--memory={{ template "redpanda-memory" . }}M"
+    - "--reserve-memory={{ template "redpanda-reserve-memory" . }}M"
+    - "--default-log-level={{ .Values.logging.logLevel }}"
+  {{- with .Values.statefulset.additionalRedpandaCmdFlags -}}
+  {{- toYaml . | nindent 4 }}
+  {{- end }}
+
+  {{- with dig "config" "rpk" dict .Values.AsMap }}
+  # config.rpk entries
+  {{- toYaml . | nindent 2 }}
+  {{- end }}
+
+  {{- with dig "tuning" dict .Values.AsMap }}
+  # rpk tune entries
+  {{- toYaml . | nindent 2 }}
+  {{- end }}
+
+  # kafka connection configuration
+  kafka_api:
+    brokers: {{ toYaml $brokers | nindent 6 }}
+    tls:
+  {{- if (include "kafka-internal-tls-enabled" . | fromJson).bool }}
+    {{- $cert := get .Values.tls.certs .Values.listeners.kafka.tls.cert }}
+    {{- if $cert.caEnabled }}
+      truststore_file: {{ printf "/etc/tls/certs/%s/ca.crt" .Values.listeners.kafka.tls.cert }}
+    {{- end }}
+    {{- if .Values.listeners.kafka.tls.requireClientAuth }}
+      cert_file: {{ printf "/etc/tls/certs/%s-client/tls.crt" (include "redpanda.fullname" .) }}
+      key_file: {{ printf "/etc/tls/certs/%s-client/tls.key" (include "redpanda.fullname" .) }}
+    {{- end }}
+  {{- end }}
+  admin_api:
+    addresses: {{ toYaml $admin | nindent 6 }}
+    tls:
+  {{- if (include "admin-internal-tls-enabled" . | fromJson).bool }}
+    {{- $cert := get .Values.tls.certs .Values.listeners.admin.tls.cert }}
+    {{- if $cert.caEnabled }}
+      truststore_file: {{ printf "/etc/tls/certs/%s/ca.crt" .Values.listeners.admin.tls.cert }}
+    {{- end }}
+    {{- if .Values.listeners.admin.tls.requireClientAuth }}
+      cert_file: {{ printf "/etc/tls/certs/%s-client/tls.crt" (include "redpanda.fullname" .) }}
+      key_file: {{ printf "/etc/tls/certs/%s-client/tls.key" (include "redpanda.fullname" .) }}
+    {{- end }}
+  {{- end }}
 {{- end -}}
 
 {{- define "configmap-server-list" -}}
-{{- $root := . }}
-{{- range (include "seed-server-list" $root | mustFromJson) }}
-- host:
-    address: {{ . }}
-    port: {{  $root.Values.listeners.rpc.port }}
-{{- end }}
+  {{- $serverList := list -}}
+  {{- range (include "seed-server-list" . | mustFromJson) -}}
+    {{- $server := dict "host" (dict "address" . "port" $.Values.listeners.rpc.port) -}}
+    {{- $serverList = append $serverList $server -}}
+  {{- end -}}
+  {{- toJson (dict "serverList" $serverList) -}}
 {{- end -}}
 
-{{- define "configmap-with-server-list" -}}
-{{- $root := . }}
-{{- $serverList := (include "configmap-server-list" $root ) -}}
-{{- $r := set $root "tempConfigMapServerList" ( $serverList ) }}
-{{ include "configmap-content-no-seed" $r  }}
+{{- define "full-configmap" -}}
+  {{- $serverList := (fromJson (include "configmap-server-list" .)).serverList -}}
+  {{- $r := set . "tempConfigMapServerList" $serverList -}}
+  {{ include "configmap-content-no-seed" $r | nindent 0 }}
+  {{ include "rpk-config-internal" $ | nindent 2 }}
+{{- end -}}
+
+{{- define "rpk-config-external" -}}
+  {{- $brokers := list -}}
+  {{- $admin := list -}}
+  {{- $profile := keys .Values.listeners.kafka.external | first -}}
+  {{- $kafkaListener := get .Values.listeners.kafka.external $profile -}}
+  {{- $adminprofile := keys .Values.listeners.admin.external | first -}}
+  {{- $adminListener := get .Values.listeners.admin.external $adminprofile -}}
+  {{- range $i := until (.Values.statefulset.replicas|int) -}}
+    {{- $externalAdvertiseAddress := printf "%s-%d" (include "redpanda.fullname" $) $i -}}
+    {{- if (tpl ($.Values.external.domain | default "") $) -}}
+      {{- $externalAdvertiseAddress = printf "%s.%s" $externalAdvertiseAddress (tpl $.Values.external.domain $) -}}
+    {{- end -}}
+    {{- $tmplVals := dict "listenerVals" $.Values.listeners.kafka "externalVals" $kafkaListener "externalName" $profile "externalAdvertiseAddress" $externalAdvertiseAddress "values" $.Values "replicaIndex" $i -}}
+    {{- $port := int (include "advertised-port" $tmplVals) -}}
+    {{- $host := fromJson (include "advertised-host" (mustMerge $tmplVals (dict "port" $port) $)) -}}
+    {{- $brokers = concat $brokers (list (printf "%s:%d" (get $host "address") (get $host "port" | int))) -}}
+    {{- $tmplVals = dict "listenerVals" $.Values.listeners.admin "externalVals" $adminListener "externalName" $profile "externalAdvertiseAddress" $externalAdvertiseAddress "values" $.Values "replicaIndex" $i -}}
+    {{- $port = int (include "advertised-port" $tmplVals) -}}
+    {{- $host = fromJson (include "advertised-host" (mustMerge $tmplVals (dict "port" $port) $)) -}}
+    {{- $admin = concat $admin (list (printf "%s:%d" (get $host "address") (get $host "port" | int))) -}}
+  {{- end -}}
+name: {{ $profile }}
+kafka_api:
+  brokers: {{ toYaml $brokers | nindent 6 }}
+  tls:
+  {{- if (include "kafka-external-tls-enabled" (dict "Values" .Values "listener" $kafkaListener) | fromJson).bool }}
+    {{- $cert := get .Values.tls.certs .Values.listeners.kafka.tls.cert }}
+    {{- if $cert.caEnabled }}
+    ca_file: ca.crt
+    {{- end }}
+    {{- if .Values.listeners.kafka.tls.requireClientAuth }}
+    cert_file: tls.crt
+    key_file: tls.key
+    {{- end }}
+  {{- end }}
+admin_api:
+  addresses: {{ toYaml $admin | nindent 6 }}
+  tls:
+  {{- if (include "admin-external-tls-enabled" (dict "Values" .Values "listener" $adminListener) | fromJson).bool }}
+    {{- $cert := get .Values.tls.certs .Values.listeners.admin.tls.cert }}
+    {{- if $cert.caEnabled }}
+    ca_file: ca.crt
+    {{- end }}
+    {{- if .Values.listeners.admin.tls.requireClientAuth }}
+    cert_file: tls.crt
+    key_file: tls.key
+    {{- end }}
+  {{- end }}
 {{- end -}}

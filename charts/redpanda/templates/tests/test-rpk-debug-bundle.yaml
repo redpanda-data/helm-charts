@@ -65,7 +65,19 @@ spec:
       - -c
       - |
         set -e
-        rpk debug bundle -o /usr/share/redpanda/test/debug-test.zip -n {{ .Release.Namespace }} {{ include "rpk-common-flags" . }}
+  {{- if .Values.auth.sasl.enabled }}
+          old_setting=${-//[^x]/}
+          set +x
+          IFS=: read -r {{ include "rpk-sasl-environment-variables" . }} < $(find /etc/secrets/users/* -print)
+          {{- if (include "redpanda-atleast-23-2-1" . | fromJson).bool }}
+          RPK_SASL_MECHANISM=${RPK_SASL_MECHANISM:-{{ .Values.auth.sasl.mechanism | upper }}}
+          {{- else }}
+          REDPANDA_SASL_MECHANISM=${REDPANDA_SASL_MECHANISM:-{{ .Values.auth.sasl.mechanism | upper }}}
+          {{- end }}
+          export {{ include "rpk-sasl-environment-variables" . }}
+          if [[ -n "$old_setting" ]]; then set -x; fi
+  {{- end }}
+        rpk debug bundle -o /usr/share/redpanda/test/debug-test.zip -n {{ .Release.Namespace }}
   containers:
     - name: {{ template "redpanda.name" . }}-tester
       image: busybox:latest

@@ -57,32 +57,38 @@ spec:
         - bash
         - -c
         - |
-          {{- $testTopic := printf "test-topic-%s" (randNumeric 3) }}
-          rpk topic create {{ $testTopic }} {{ include "rpk-topic-flags" . }}
-          rpk topic list {{ include "rpk-topic-flags" . }}
-          echo "Test message!" | rpk topic produce {{ $testTopic }} {{ include "rpk-topic-flags" . }}
-
-          SASL_MECHANISM="PLAIN"
           {{- if .Values.auth.sasl.enabled }}
           set -e
           set +x
 
-          IFS=: read -r CONNECT_SASL_USERNAME KAFKA_SASL_PASSWORD CONNECT_SASL_MECHANISM < $(find /etc/secrets/users/* -print)
-          CONNECT_SASL_MECHANISM=${CONNECT_SASL_MECHANISM:-{{ .Values.auth.sasl.mechanism | upper }}}
-          if [[ -n "$CONNECT_SASL_USERNAME" && -n "$KAFKA_SASL_PASSWORD" && -n "$CONNECT_SASL_MECHANISM" ]]; then
-            SASL_MECHANISM=$CONNECT_SASL_MECHANISM
-            JAAS_CONFIG_SOURCE="\"source.cluster.sasl.jaas.config\": \"org.apache.kafka.common.security.scram.ScramLoginModule required username=\\\\"\"${CONNECT_SASL_USERNAME}\\\\"\" password=\\\\"\"${KAFKA_SASL_PASSWORD}\\\\"\";\","
-            JAAS_CONFIG_TARGET="\"target.cluster.sasl.jaas.config\": \"org.apache.kafka.common.security.scram.ScramLoginModule required username=\\\\"\"${CONNECT_SASL_USERNAME}\\\\"\" password=\\\\"\"${KAFKA_SASL_PASSWORD}\\\\"\";\","
-          fi
+          echo "SASL enabled: reading credentials from $(find /etc/secrets/users/* -print)"
+          IFS=: read -r {{ include "rpk-sasl-environment-variables" . }} < $(find /etc/secrets/users/* -print)
+          {{- if (include "redpanda-atleast-23-2-1" . | fromJson).bool }}
+          RPK_SASL_MECHANISM=${RPK_SASL_MECHANISM:-{{ .Values.auth.sasl.mechanism | upper }}}
+          {{- else }}
+          REDPANDA_SASL_MECHANISM=${REDPANDA_SASL_MECHANISM:-{{ .Values.auth.sasl.mechanism | upper }}}
+          RPK_USER="${REDPANDA_SASL_USERNAME}"
+          RPK_PASS="${REDPANDA_SASL_PASSWORD}"
+          RPK_SASL_MECHANISM="${REDPANDA_SASL_MECHANISM}"
+          {{- end }}
+          export {{ include "rpk-sasl-environment-variables" . }}
+
+          JAAS_CONFIG_SOURCE="\"source.cluster.sasl.jaas.config\": \"org.apache.kafka.common.security.scram.ScramLoginModule required username=\\\\"\"${RPK_USER}\\\\"\" password=\\\\"\"${RPK_PASS}\\\\"\";\","
+          JAAS_CONFIG_TARGET="\"target.cluster.sasl.jaas.config\": \"org.apache.kafka.common.security.scram.ScramLoginModule required username=\\\\"\"${RPK_USER}\\\\"\" password=\\\\"\"${RPK_PASS}\\\\"\";\","
+          {{- end }}
+
+          {{- $testTopic := printf "test-topic-%s" (randNumeric 3) }}
+          rpk topic create {{ $testTopic }}
+          rpk topic list
+          echo "Test message!" | rpk topic produce {{ $testTopic }}
 
           set -x
           set +e
-          {{- end }}
 
           SECURITY_PROTOCOL=PLAINTEXT
-          if [[ -n "$CONNECT_SASL_MECHANISM" && $TLS_ENABLED == "true" ]]; then
+          if [[ -n "$RPK_SASL_MECHANISM" && $TLS_ENABLED == "true" ]]; then
             SECURITY_PROTOCOL="SASL_SSL"
-          elif [[ -n "$CONNECT_SASL_MECHANISM" ]]; then
+          elif [[ -n "$RPK_SASL_MECHANISM" ]]; then
             SECURITY_PROTOCOL="SASL_PLAINTEXT"
           elif [[ $TLS_ENABLED == "true" ]]; then
             SECURITY_PROTOCOL="SSL"
@@ -122,61 +128,37 @@ spec:
           EOF
 
           sed -i "s/CONNECTOR_NAME/$CONNECTOR_NAME/g" /tmp/mm2-conf.json
-          sed -i "s/SASL_MECHANISM/$SASL_MECHANISM/g" /tmp/mm2-conf.json
+          sed -i "s/SASL_MECHANISM/$RPK_SASL_MECHANISM/g" /tmp/mm2-conf.json
           sed -i "s/SECURITY_PROTOCOL/$SECURITY_PROTOCOL/g" /tmp/mm2-conf.json
           set +x
           sed -i "s/JAAS_CONFIG_SOURCE/$JAAS_CONFIG_SOURCE/g" /tmp/mm2-conf.json
           sed -i "s/JAAS_CONFIG_TARGET/$JAAS_CONFIG_TARGET/g" /tmp/mm2-conf.json
           set -x
 
-          max_iteration=10
-          for i in $(seq 1 $max_iteration)
-          do
-            curl -v -H 'Content-Type: application/json' http://{{ include "console.fullname" $consoleValues }}:{{ include "console.containerPort" $consoleValues }}/api/kafka-connect/clusters/connectors/connectors \
-            -d @/tmp/mm2-conf.json && echo
-
-            result=$?
-            if [[ $result -eq 0 ]]
-            then
-              echo "Result successful"
-              break
-            else
-              echo "Result unsuccessful"
-              sleep 1
-            fi
-          done
-
-          if [[ $result -ne 0 ]]
+          URL=http://{{ include "console.fullname" $consoleValues }}:{{ include "console.containerPort" $consoleValues }}/api/kafka-connect/clusters/connectors/connectors
+          {{/* outputting to /dev/null because the output contains the user password */}}
+          echo "Creating mm2 connector"
+          if curl -svm3 --fail --retry 120 --retry-max-time 120 --retry-all-errors -H 'Content-Type: application/json' -o /dev/null "${URL}" -d @/tmp/mm2-conf.json
           then
+            echo "Result successful"
+          else
             echo "mm2 connector can not be created!!!"
             exit 1
           fi
 
-          rpk topic consume source.{{ $testTopic }} -n 1 {{ include "rpk-topic-flags" . }}
+          rpk topic consume source.{{ $testTopic }} -n 1
 
-          for i in $(seq 1 $max_iteration)
-          do
-            curl -v -X DELETE http://{{ include "console.fullname" $consoleValues }}:{{ include "console.containerPort" $consoleValues }}/api/kafka-connect/clusters/connectors/connectors/$CONNECTOR_NAME && echo
-
-            result=$?
-            if [[ $result -eq 0 ]]
-            then
-              echo "Result successful"
-              break
-            else
-              echo "Result unsuccessful"
-              sleep 1
-            fi
-          done
-
-          if [[ $result -ne 0 ]]
+          echo "Destroying mm2 connector"
+          if curl -svm3 --fail --retry 120 --retry-max-time 120 --retry-all-errors -o /dev/null -X DELETE "${URL}/${CONNECTOR_NAME}"
           then
+            echo "Result successful"
+          else
             echo "mm2 connector can not be destroyed!!!"
             exit 1
           fi
 
-          rpk topic list {{ include "rpk-topic-flags" . }}
-          rpk topic delete {{ $testTopic }} source.{{ $testTopic }} mm2-offset-syncs.test-only-redpanda.internal {{ include "rpk-topic-flags" . }}
+          rpk topic list
+          rpk topic delete {{ $testTopic }} source.{{ $testTopic }} mm2-offset-syncs.test-only-redpanda.internal
       volumeMounts: {{ include "default-mounts" . | nindent 8 }}
       securityContext: {{ include "container-security-context" . | nindent 8 }}
   volumes: {{ include "default-volumes" . | nindent 4 }}

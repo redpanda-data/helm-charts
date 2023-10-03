@@ -37,11 +37,7 @@ Any rpk command that's given to the user in in this file must be defined in _exa
 {{- $anySASL := (include "sasl-enabled" . | fromJson).bool }}
 {{- $rpk := deepCopy . }}
 
-{{- $_ := set $rpk "rpk" (
-  printf "kubectl -n %s exec -ti %s-0 -c redpanda -- rpk"
-    .Release.Namespace
-    (include "redpanda.fullname" .))
-}}
+{{- $_ := set $rpk "rpk" "rpk" }}
 
 Congratulations on installing {{ .Chart.Name }}!
 
@@ -56,18 +52,42 @@ If you are using the load balancer service with a cloud provider, the services w
   {{ printf "helm upgrade %s redpanda/redpanda -n %s --set $(kubectl get svc -n %s -o jsonpath='{\"external.addresses={\"}{ range .items[*]}{.status.loadBalancer.ingress[0].ip }{.status.loadBalancer.ingress[0].hostname}{\",\"}{ end }{\"}\\n\"}')" (include "redpanda.name" .) .Release.Namespace .Release.Namespace }}
 {{- end }}
 
+Set up rpk for access to your external listeners:
+{{- $profile := keys .Values.listeners.kafka.external | first -}}
+{{ if (include "tls-enabled" . | fromJson).bool }}
+  {{- $external := dig "tls" "cert" .Values.listeners.kafka.tls.cert (get .Values.listeners.kafka.external $profile )}}
+  kubectl get secret -n {{ .Release.Namespace }} {{ include "redpanda.fullname" . }}-{{ $external }}-cert -o go-template='{{ "{{" }} index .data "ca.crt" | base64decode }}' > ca.crt
+  {{- if or .Values.listeners.kafka.tls.requireClientAuth .Values.listeners.admin.tls.requireClientAuth }}
+  kubectl get secret -n {{ .Release.Namespace }} {{ include "redpanda.fullname" . }}-client -o go-template='{{ "{{" }} index .data "tls.crt" | base64decode }}' > tls.crt
+  kubectl get secret -n {{ .Release.Namespace }} {{ include "redpanda.fullname" . }}-client -o go-template='{{ "{{" }} index .data "tls.key" | base64decode }}' > tls.key
+  {{- end }}
+{{- end }}
+  rpk profile create --from-profile <(kubectl get configmap -n {{ .Release.Namespace }} {{ include "redpanda.fullname" . }}-rpk -o go-template='{{ "{{" }} .data.profile }}') {{ $profile }}
+
+Set up dns to look up the pods on their Kubernetes Nodes. You can use this query to get the list of short-names to IP addresses. Add your external domain to the hostnames and you could test by adding these to your /etc/hosts:
+
+  kubectl get pod -n {{ .Release.Namespace }} -o custom-columns=node:.status.hostIP,name:.metadata.name --no-headers -l app.kubernetes.io/name=redpanda,app.kubernetes.io/component=redpanda-statefulset
+
+{{- if and $anySASL }}
+
+Set the credentials in the environment:
+
+  kubectl -n {{ .Release.Namespace }} get secret {{ .Values.auth.sasl.secretRef }} -o go-template="{{ "{{" }} range .data }}{{ "{{" }} . | base64decode }}{{ "{{" }} end }}" | IFS=: read -r {{ include "rpk-sasl-environment-variables" . }}
+  export {{ include "rpk-sasl-environment-variables" . }}
+
+{{- end }}
+
 Try some sample commands:
 
 {{- if and $anySASL }}
-{{- $_ := set $rpk "dummySasl" true }}
-
 Create a user:
 
   {{ include "rpk-acl-user-create" $rpk }}
 
 Give the user permissions:
 
-    {{ include "rpk-acl-create" $rpk }}
+  {{ include "rpk-acl-create" $rpk }}
+
 {{- end }}
 
 Get the api status:
