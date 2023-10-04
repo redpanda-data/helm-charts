@@ -130,7 +130,7 @@ redpanda.yaml: |
 {{- end }}
 {{- with dig "node" dict .Values.config }}
   {{- range $key, $element := .}}
-    {{- if and (or (eq (typeOf $element) "bool") $element) (and (eq $key "crash_loop_limit") (include "redpanda-atleast-23-1-1" $root | fromJson).bool) }}
+    {{- if and (or (eq (typeOf $element) "bool") $element) (or (and (eq $key "crash_loop_limit") (include "redpanda-atleast-23-1-1" $root | fromJson).bool) (ne $key "crash_loop_limit")) }}
     {{ $key }}: {{ $element | toYaml }}
     {{- end }}
   {{- end }}
@@ -487,7 +487,9 @@ rpk:
   additional_start_flags:
     - "--smp={{ include "redpanda-smp" . }}"
     - "--memory={{ template "redpanda-memory" . }}M"
+    {{- if not .Values.config.node.developer_mode }}
     - "--reserve-memory={{ template "redpanda-reserve-memory" . }}M"
+    {{- end }}
     - "--default-log-level={{ .Values.logging.logLevel }}"
   {{- with .Values.statefulset.additionalRedpandaCmdFlags -}}
   {{- toYaml . | nindent 4 }}

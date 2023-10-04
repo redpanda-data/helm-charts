@@ -328,8 +328,10 @@ Use AppVersion if image.tag is not set
   {{- if lt $result 256 -}}
     {{- printf "\n%d is below the minimum value for Redpanda" $result | fail -}}
   {{- end -}}
+  {{- if not .Values.config.node.developer_mode }}
   {{- if gt (add $result (include "redpanda-reserve-memory" .)) (include "container-memory" . | int64) -}}
     {{- printf "\nNot enough container memory for Redpanda memory values\nredpanda: %d, reserve: %d, container: %d" $result (include "redpanda-reserve-memory" . | int64) (include "container-memory" . | int64) | fail -}}
+  {{- end -}}
   {{- end -}}
   {{- $result -}}
 {{- end -}}

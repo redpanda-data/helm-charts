@@ -995,7 +995,7 @@ config:
     # api_doc_dir: /usr/share/redpanda/proxy-api-doc               # API doc directory
     # coproc_supervisor_server: 127.0.0.1:43189                    # IpAddress and port for supervisor service
     # dashboard_dir: None                                          # serve http dashboard on / url
-    # developer_mode: optional                                     # Skips most of the checks performed at startup
+    # developer_mode: true                                         # Skips most of the checks performed at startup
 
   # Reference schema registry client https://docs.redpanda.com/current/reference/node-configuration-sample/
   schema_registry_client: {}
