@@ -130,8 +130,15 @@ redpanda.yaml: |
 {{- end }}
 {{- with dig "node" dict .Values.config }}
   {{- range $key, $element := .}}
-    {{- if and (or (eq (typeOf $element) "bool") $element) (or (and (eq $key "crash_loop_limit") (include "redpanda-atleast-23-1-1" $root | fromJson).bool) (ne $key "crash_loop_limit")) }}
-    {{ $key }}: {{ $element | toYaml }}
+    {{- $line := dict $key (toYaml $element) }}
+    {{- if and (eq $key "crash_loop_limit") (not (include "redpanda-atleast-23-1-1" $root | fromJson).bool) }}
+      {{- $line = dict }}
+    {{- end }}
+    {{- if not (or (eq (typeOf $element) "bool") $element) }}
+      {{- $line = dict }}
+    {{- end }}
+    {{- with $line }}
+      {{  toYaml . | nindent 4 }}
     {{- end }}
   {{- end }}
 {{- end -}}
