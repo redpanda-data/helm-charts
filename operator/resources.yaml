@@ -6,9 +6,9 @@ metadata:
   name: operator
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.22
+    helm.sh/chart: operator-0.3.23
     app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v23.2.7"
+    app.kubernetes.io/version: "v23.2.11"
     app.kubernetes.io/managed-by: Helm
 ---
 # Source: operator/templates/configmap.yaml
@@ -18,33 +18,13 @@ metadata:
   name: operator-config
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.22
+    helm.sh/chart: operator-0.3.23
     app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v23.2.7"
+    app.kubernetes.io/version: "v23.2.11"
     app.kubernetes.io/managed-by: Helm
 data:
   controller_manager_config.yaml: |
     map[apiVersion:controller-runtime.sigs.k8s.io/v1alpha1 health:map[healthProbeBindAddress::8081] kind:ControllerManagerConfig leaderElection:map[leaderElect:true resourceName:aa9fc693.vectorized.io] metrics:map[bindAddress:127.0.0.1:8080] webhook:map[port:9443]]
----
-# Source: operator/templates/clusterrole_binding.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: operator
-  labels:
-    app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.22
-    app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v23.2.7"
-    app.kubernetes.io/managed-by: Helm
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: operator
-subjects:
-- kind: ServiceAccount
-  name: operator
-  namespace: redpanda
 ---
 # Source: operator/templates/extra_role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -53,9 +33,9 @@ metadata:
   name: operator-pvc
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.22
+    helm.sh/chart: operator-0.3.23
     app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v23.2.7"
+    app.kubernetes.io/version: "v23.2.11"
     app.kubernetes.io/managed-by: Helm
 rules:
 - apiGroups:
@@ -73,9 +53,9 @@ metadata:
   name: operator-election-role
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.22
+    helm.sh/chart: operator-0.3.23
     app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v23.2.7"
+    app.kubernetes.io/version: "v23.2.11"
     app.kubernetes.io/managed-by: Helm
 rules:
 - apiGroups:
@@ -99,9 +79,9 @@ metadata:
   name: operator
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.22
+    helm.sh/chart: operator-0.3.23
     app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v23.2.7"
+    app.kubernetes.io/version: "v23.2.11"
     app.kubernetes.io/managed-by: Helm
 rules:
 - apiGroups:
@@ -512,9 +492,9 @@ metadata:
   name: operator-pvc
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.22
+    helm.sh/chart: operator-0.3.23
     app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v23.2.7"
+    app.kubernetes.io/version: "v23.2.11"
     app.kubernetes.io/managed-by: Helm
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -532,9 +512,9 @@ metadata:
   name: operator-election-rolebinding
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.22
+    helm.sh/chart: operator-0.3.23
     app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v23.2.7"
+    app.kubernetes.io/version: "v23.2.11"
     app.kubernetes.io/managed-by: Helm
 subjects:
 - kind: ServiceAccount
@@ -552,9 +532,9 @@ metadata:
   name: operator
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.22
+    helm.sh/chart: operator-0.3.23
     app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v23.2.7"
+    app.kubernetes.io/version: "v23.2.11"
     app.kubernetes.io/managed-by: Helm
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -572,9 +552,9 @@ metadata:
   name: operator-metrics-service
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.22
+    helm.sh/chart: operator-0.3.23
     app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v23.2.7"
+    app.kubernetes.io/version: "v23.2.11"
     app.kubernetes.io/managed-by: Helm
 spec:
   ports:
@@ -593,9 +573,9 @@ metadata:
   labels:
     
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.3.22
+    helm.sh/chart: operator-0.3.23
     app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v23.2.7"
+    app.kubernetes.io/version: "v23.2.11"
     app.kubernetes.io/managed-by: Helm
 spec:
   replicas: 1
@@ -613,13 +593,13 @@ spec:
       serviceAccountName: operator
       containers:
       - name: manager
-        image: "docker.redpanda.com/redpandadata/redpanda-operator:v23.2.7"
+        image: "docker.redpanda.com/redpandadata/redpanda-operator:v23.2.11"
         imagePullPolicy: IfNotPresent
         args:
         - --health-probe-bind-address=:8081
         - --metrics-bind-address=127.0.0.1:8080
         - --leader-elect
-        - --configurator-tag=v23.2.7
+        - --configurator-tag=v23.2.11
         - --configurator-base-image=docker.redpanda.com/redpandadata/configurator
         - --webhook-enabled=false
         - --namespace=redpanda
