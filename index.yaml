@@ -994,6 +994,49 @@ entries:
           description: Define a Redpanda cluster
       artifacthub.io/images: |
         - name: redpanda-operator
+          image: docker.redpanda.com/redpandadata/redpanda-operator:v23.2.11
+        - name: redpanda
+          image: docker.redpanda.com/redpandadata/redpanda:v23.2.11
+        - name: kube-rbac-proxy
+          image: gcr.io/kubebuilder/kube-rbac-proxy:v0.8.0
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://docs.redpanda.com
+        - name: "Helm (>= 3.6.0)"
+          url: https://helm.sh/docs/intro/install/
+      artifacthub.io/operator: "true"
+      artifacthub.io/operatorCapabilities: Seamless Upgrades
+    apiVersion: v2
+    appVersion: v23.2.11
+    created: "2023-10-05T15:19:44.115377015Z"
+    dependencies:
+    - condition: monitoring.deployPrometheusKubeStack
+      name: kube-prometheus-stack
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 51.2.0
+    description: Redpanda operator helm chart
+    digest: 8bb3f0d7e26d7bf4f8fc507cfd861100b0d8259fd23f89da00e7dd4e8b0f2e6d
+    icon: https://go.redpanda.com/hubfs/Redpandas/operator-panda.png
+    maintainers:
+    - name: redpanda-data
+      url: https://github.com/orgs/redpanda-data/people
+    name: operator
+    sources:
+    - https://github.com/redpanda-data/helm-charts
+    type: application
+    urls:
+    - https://github.com/redpanda-data/helm-charts/releases/download/operator-0.3.23/operator-0.3.23.tgz
+    version: 0.3.23
+  - annotations:
+      artifacthub.io/crds: |
+        - kind: Redpanda
+          version: v1alpha1
+          name: redpanda
+          displayName: Redpanda
+          description: Define a Redpanda cluster
+      artifacthub.io/images: |
+        - name: redpanda-operator
           image: docker.redpanda.com/redpandadata/redpanda-operator:v23.2.5
         - name: redpanda
           image: docker.redpanda.com/redpandadata/redpanda:v23.2.5
@@ -8710,4 +8753,4 @@ entries:
     urls:
     - https://charts.redpanda.com/redpanda-0.1.0.tgz
     version: 0.1.0
-generated: "2023-10-05T12:39:37.293111056Z"
+generated: "2023-10-05T15:19:44.116079122Z"
