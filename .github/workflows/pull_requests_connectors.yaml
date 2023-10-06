@@ -24,7 +24,12 @@ on:
       - .github/ct-connectors.yaml
       - .github/kind.yaml
       - .github/workflows/pull_requests_connectors.yaml
+      - charts/**
       - 'charts/connectors/**'
+      - '!charts/console/**'
+      - '!charts/kminion/**'
+      - '!charts/operator/**'
+      - '!charts/redpanda/**'
       - '!**/*.md'
 jobs:
   lint:

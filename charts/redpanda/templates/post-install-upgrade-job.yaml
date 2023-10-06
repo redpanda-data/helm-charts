@@ -86,7 +86,7 @@ spec:
           {{- if not (empty (include "enterprise-secret" . )) }}
             rpk cluster license set "$REDPANDA_LICENSE"
           {{- else if not (empty (include "enterprise-license" . )) }}
-            rpk cluster license set {{ .Values.license_key | quote }}
+            rpk cluster license set {{ include "enterprise-license" . | quote }}
           {{- end }}
         {{- end }}
         {{- with .Values.post_install_job.resources }}

@@ -24,7 +24,12 @@ on:
       - .github/ct-kminion.yaml
       - .github/kind.yaml
       - .github/workflows/pull_requests_kminion.yaml
+      - charts/**
       - 'charts/kminion/**'
+      - '!charts/connectors/**'
+      - '!charts/console/**'
+      - '!charts/operator/**'
+      - '!charts/redpanda/**'
       - '!**/*.md'
 jobs:
   lint:
