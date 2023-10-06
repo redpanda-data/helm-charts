@@ -24,8 +24,14 @@ on:
       - .github/ct-operator.yaml
       - .github/kind.yaml
       - .github/workflows/pull_requests-operator.yaml
+      - charts/**
       - 'charts/operator/**'
+      - '!charts/connectors/**'
+      - '!charts/console/**'
+      - '!charts/kminion/**'
+      - '!charts/redpanda/**'
       - '!**/*.md'
+
 jobs:
   lint:
     runs-on: ubuntu-22.04

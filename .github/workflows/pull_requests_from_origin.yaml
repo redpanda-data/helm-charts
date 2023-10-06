@@ -25,6 +25,10 @@ on:
       - .github/kind.yaml
       - .github/workflows/pull_requests_from_origin.yaml
       - charts/**
+      - 'charts/console/**'
+      - 'charts/redpanda/**'
+      - '!charts/connectors/**'
+      - '!charts/kminion/**'
       - '!charts/operator/**'
       - '!**/*.md'
 jobs:
