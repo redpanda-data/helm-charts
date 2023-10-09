@@ -52,9 +52,12 @@ logLevel: "info"
 rbac:
   # rbac.create -- Specifies whether the RBAC resources should be created
   create: true
-  # rbac.create -- Specified whether to create additional rbac cluster roles
+  # rbac.createAdditionalControllerCRs -- Enable to create additional rbac cluster roles
   # needed to run additional-controllers, set to true to opt-in
   createAdditionalControllerCRs: false
+  # rbac.createRPKBundleCRs -- Specified to create additional rbac cluster roles
+  # needed when you will set 'rbac.enabled' to the Redpanda Spec (See redpanda chart values file)
+  createRPKBundleCRs: false
 
 webhook:
   # webhook.create -- Specifies whether the Webhook resources should configured
