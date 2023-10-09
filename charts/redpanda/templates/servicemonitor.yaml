@@ -38,6 +38,18 @@ spec:
     scheme: https
     tlsConfig:
       insecureSkipVerify: true
+      ca:
+        secret:
+          name: {{ template "redpanda.fullname" $ }}-default-cert
+          key: ca.crt
+      cert:
+        secret:
+          name: {{ template "redpanda.fullname" $ }}-default-cert
+          key: tls.crt
+      key:
+        secret:
+          name: {{ template "redpanda.fullname" $ }}-default-cert
+          key: tls.key
   {{- end }}
   selector:
     matchLabels:
