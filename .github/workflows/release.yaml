@@ -37,7 +37,7 @@ jobs:
       - name: Set up Helm
         uses: azure/setup-helm@5119fcb9089d432beecbf79bb2c7915207344b78 # v3.5
         with:
-          version: v3.11.1
+          version: v3.12.2
 
       - name: Add Repositories for each chart
         run: |
