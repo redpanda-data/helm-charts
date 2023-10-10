@@ -55,6 +55,42 @@ spec:
           if [[ -n "$old_setting" ]]; then set -x; fi
   {{- end }}
 
+          set -e
+
+          trap reportSchema ERR
+
+          reportSchema () {
+            echo Retrieving schemas/types
+            schemaCurlIgnore http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/schemas/types
+            echo Retrieving schemas/ids/1
+            schemaCurlIgnore http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/schemas/ids/1
+            echo Retrieving subjects
+            schemaCurlIgnore http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects
+            echo Retrieving subjects?deleted=true
+            schemaCurlIgnore http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects?deleted=true
+            echo Retrieving subjects/sensor-value/versions
+            schemaCurlIgnore http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-value/versions
+            echo Retrieving subjects/sensor-value/versions?deleted=true
+            schemaCurlIgnore http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-value/versions?deleted=true
+            echo Retrieving subjects/sensor-value/versions/latest
+            schemaCurlIgnore http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-value/versions/latest
+            echo Retrieving subjects/sensor-value/versions/latest?deleted=true
+            schemaCurlIgnore http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-value/versions/latest?deleted=true
+            echo Retrieving subjects/sensor-value/versions/latest/schema
+            schemaCurlIgnore http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-value/versions/latest/schema
+            echo Retrieving subjects/sensor-value/versions/latest/schema?deleted=true
+            schemaCurlIgnore http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-value/versions/latest/schema?deleted=true
+            echo
+          }
+
+          schemaCurlIgnore () {
+            curl -vm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors -o - \
+              {{- if or (include "sasl-enabled" .|fromJson).bool .Values.listeners.schemaRegistry.authenticationMethod }}
+              -u "${RPK_USER}:${RPK_PASS}" \
+              {{- end }}
+              $* || true
+          }
+
           schemaCurl () {
             curl -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors \
             {{- if or (include "sasl-enabled" .|fromJson).bool .Values.listeners.schemaRegistry.authenticationMethod }}
