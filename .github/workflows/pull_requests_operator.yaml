@@ -36,6 +36,11 @@ jobs:
   lint:
     runs-on: ubuntu-22.04
     steps:
+      - name: Noop
+        run: echo noop
+  version-and-lint:
+    runs-on: ubuntu-22.04
+    steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
