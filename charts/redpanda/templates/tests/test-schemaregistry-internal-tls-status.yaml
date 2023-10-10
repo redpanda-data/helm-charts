@@ -58,7 +58,7 @@ spec:
           if [[ -n "$old_setting" ]]; then set -x; fi
   {{- end }}
 
-          set -ex
+          set -e
 
           trap reportSchema ERR
 
