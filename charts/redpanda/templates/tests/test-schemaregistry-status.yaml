@@ -102,6 +102,10 @@ spec:
 
           schemaCurl http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/schemas/types
 
+          echo "Get existng schemas"
+          schemaCurl http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects
+
+          echo "Create schema"
           curl {{ $curlOptions }} --fail --retry "120" --retry-max-time "120" --retry-all-errors \
           -X POST -H 'Content-Type:application/vnd.schemaregistry.v1+json' \
           -d '{"schema":"{\"type\":\"record\",\"name\":\"sensor_sample\",\"fields\":[{\"name\":\"timestamp\",\"type\":\"long\",\"logicalType\":\"timestamp-millis\"},{\"name\":\"identifier\",\"type\":\"string\",\"logicalType\":\"uuid\"},{\"name\":\"value\",\"type\":\"long\"}]}"}' \
@@ -110,12 +114,15 @@ spec:
           {{- end }}
           http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-value/versions
 
+          echo "Get schema 1"
           schemaCurl http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/schemas/ids/1
 
+          echo "Get existng schemas"
           schemaCurl http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects
 
           max_iteration=10
 
+          echo "Delete schema 1"
           for i in $(seq 1 $max_iteration)
           do
             curl -vv -w "\n" -X DELETE \
@@ -139,6 +146,7 @@ spec:
             echo "All of the trials failed to delete schema!!!"
           fi
 
+          echo "Delete schema 1 permanently"
           for i in $(seq 1 $max_iteration)
           do
             curl -vv -w "\n" -X DELETE \
