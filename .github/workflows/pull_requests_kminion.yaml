@@ -24,10 +24,20 @@ on:
       - .github/ct-kminion.yaml
       - .github/kind.yaml
       - .github/workflows/pull_requests_kminion.yaml
+      - charts/**
       - 'charts/kminion/**'
+      - '!charts/connectors/**'
+      - '!charts/console/**'
+      - '!charts/operator/**'
+      - '!charts/redpanda/**'
       - '!**/*.md'
 jobs:
   lint:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Noop
+        run: echo noop
+  version-and-lint:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout
@@ -49,7 +59,7 @@ jobs:
       - name: Set up chart-testing
         uses: joejulian/chart-testing-action@9f27771144b6debb69e1f85d5f5a3eae8485d057  # v2.4.0-3
 
-      - name: Run chart-testing (lint)
+      - name: Kminion lint
         run: ct lint --config .github/ct-kminion.yaml --github-groups
 
   check-values:

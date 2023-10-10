@@ -25,6 +25,10 @@ on:
       - .github/kind.yaml
       - .github/workflows/pull_requests_from_origin.yaml
       - charts/**
+      - 'charts/console/**'
+      - 'charts/redpanda/**'
+      - '!charts/connectors/**'
+      - '!charts/kminion/**'
       - '!charts/operator/**'
       - '!**/*.md'
 jobs:
@@ -38,8 +42,7 @@ jobs:
           - v23.1.18
           - v22.3.23
         testvaluespattern:
-          - '1[8-9]*' # tests 18 and 19 depend on a github secret that isn't available for fork PRs. Only run these tests in branch PRs.
-          - '99*'
+          - '9[7-9]*' # some tests depend on a github secret that isn't available for fork PRs. Only run these tests in branch PRs.
       fail-fast: false
     runs-on: ubuntu-22.04
     steps:
@@ -54,7 +57,7 @@ jobs:
       - name: Set up Helm
         uses: azure/setup-helm@v3
         with:
-          version: v3.11.1
+          version: v3.12.2
 
       - name: Set up chart-testing
         uses: joejulian/chart-testing-action@9f27771144b6debb69e1f85d5f5a3eae8485d057  # v2.4.0-3
@@ -94,10 +97,12 @@ jobs:
         env:
           REDPANDA_LICENSE: ${{ secrets.REDPANDA_LICENSE }}
         run: |
+          envsubst < ./charts/redpanda/ci/97-license-key-values.yaml.tpl > ./charts/redpanda/ci/97-license-key-values.yaml 
+
           kubectl create secret generic redpanda-license \
           --from-literal=license-key="$REDPANDA_LICENSE" \
           --dry-run=client -o yaml > redpanda-license.yaml.tmp
-
+          
           kubectl annotate -f redpanda-license.yaml.tmp \
           helm.sh/hook-delete-policy="before-hook-creation" \
           helm.sh/hook="pre-install" \
