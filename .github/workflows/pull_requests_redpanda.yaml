@@ -56,7 +56,7 @@ jobs:
       - name: Set up chart-testing
         uses: joejulian/chart-testing-action@9f27771144b6debb69e1f85d5f5a3eae8485d057  # v2.4.0-3
 
-      - name: Run chart-testing (lint)
+      - name: Redpanda lint
         run: ct lint --config .github/ct-redpanda.yaml --github-groups
 
   check-values:

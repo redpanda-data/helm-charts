@@ -52,10 +52,10 @@ jobs:
         with:
           version: v3.12.2
 
-      - name: Set up chart-testing
+      - name: Set up chart-testing for operator
         uses: joejulian/chart-testing-action@9f27771144b6debb69e1f85d5f5a3eae8485d057  # v2.4.0-3
 
-      - name: Run chart-testing (lint)
+      - name: Operator lint
         run: ct lint --config .github/ct-operator.yaml --github-groups
 
   check-values:
