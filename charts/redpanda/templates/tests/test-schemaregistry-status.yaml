@@ -19,7 +19,7 @@ limitations under the License.
 apiVersion: v1
 kind: Pod
 metadata:
-  name: "{{ include "redpanda.fullname" . }}-test-schemaregistry-status"
+  name: {{ include "redpanda.fullname" . }}-test-sr-status-{{ randNumeric 3 }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
   {{- with include "full.labels" . }}

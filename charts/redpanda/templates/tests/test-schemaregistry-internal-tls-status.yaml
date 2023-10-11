@@ -22,7 +22,7 @@ limitations under the License.
 apiVersion: v1
 kind: Pod
 metadata:
-  name: {{ include "redpanda.fullname" . }}-test-schemaregistry-internal-tls-status
+  name: {{ include "redpanda.fullname" . }}-test-sr-internal-tls-status-{{ randNumeric 3 }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
   {{- with include "full.labels" . }}
