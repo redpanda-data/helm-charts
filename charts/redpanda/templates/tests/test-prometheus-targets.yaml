@@ -14,9 +14,6 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   */}}
-{{/*
-
->>>>>> This test is failing. Re-enable it via https://github.com/redpanda-data/helm-charts/issues/680 <<<<<<
 
 {{- if .Values.monitoring.enabled }}
 apiVersion: v1
@@ -44,6 +41,24 @@ spec:
       args:
         - |
           set -xe
+          
+          HEALTHY=$( curl -s --fail --retry "120" --retry-max-time "120" --retry-all-errors --retry-delay 2 -o /dev/null -w "%{http_code}" http://prometheus-operated.prometheus.svc.cluster.local:9090/-/healthy)          
+          if [ $HEALTHY != 200 ]; then
+            echo "prometheus is not healthy, exiting"
+            exit 1
+          fi
+          
+          echo "prometheus is healthy, checking if ready..."
+
+          READY=$( curl -s --fail --retry "120" --retry-max-time "120" --retry-all-errors --retry-delay 2 -o /dev/null -w "%{http_code}" http://prometheus-operated.prometheus.svc.cluster.local:9090/-/ready)          
+          if [ $READY != 200 ]; then
+            echo "prometheus is not ready, exiting"
+            exit 1
+          fi
+          
+          echo "prometheus is ready, requesting target information..."
+
+          
           curl_prometheus() {
 
             # Run the command, and save the exit code
@@ -57,7 +72,7 @@ spec:
             if [ $RESULT == {{ .Values.statefulset.replicas }} ]; then
               break
             fi
-            sleep 2
+            sleep 15
           done
 
           set +x
@@ -67,5 +82,3 @@ spec:
               exit 1
           fi
 {{- end }}
-
-*/}}
