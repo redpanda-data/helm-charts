@@ -19,10 +19,11 @@ limitations under the License.
   {{- $cert := get .Values.tls.certs $service.tls.cert -}}
   {{- $root := deepCopy . }}
   {{- $sasl := .Values.auth.sasl }}
+  {{- $randNumber := randNumeric 3 }}
 apiVersion: v1
 kind: Pod
 metadata:
-  name: {{ include "redpanda.fullname" . }}-test-sr-internal-tls-status-{{ randNumeric 3 }}
+  name: {{ include "redpanda.fullname" . }}-test-sr-internal-tls-status-{{ $randNumber }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
   {{- with include "full.labels" . }}
@@ -71,18 +72,18 @@ spec:
             schemaCurlIgnore https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects
             echo Retrieving subjects?deleted=true
             schemaCurlIgnore https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects?deleted=true
-            echo Retrieving subjects/sensor-value/versions
-            schemaCurlIgnore https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-value/versions
-            echo Retrieving subjects/sensor-value/versions?deleted=true
-            schemaCurlIgnore https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-value/versions?deleted=true
-            echo Retrieving subjects/sensor-value/versions/latest
-            schemaCurlIgnore https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-value/versions/latest
-            echo Retrieving subjects/sensor-value/versions/latest?deleted=true
-            schemaCurlIgnore https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-value/versions/latest?deleted=true
-            echo Retrieving subjects/sensor-value/versions/latest/schema
-            schemaCurlIgnore https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-value/versions/latest/schema
-            echo Retrieving subjects/sensor-value/versions/latest/schema?deleted=true
-            schemaCurlIgnore https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-value/versions/latest/schema?deleted=true
+            echo Retrieving subjects/sensor-{{ $randNumber }}-value/versions
+            schemaCurlIgnore https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-{{ $randNumber }}-value/versions
+            echo Retrieving subjects/sensor-{{ $randNumber }}-value/versions?deleted=true
+            schemaCurlIgnore https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-{{ $randNumber }}-value/versions?deleted=true
+            echo Retrieving subjects/sensor-{{ $randNumber }}-value/versions/latest
+            schemaCurlIgnore https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-{{ $randNumber }}-value/versions/latest
+            echo Retrieving subjects/sensor-{{ $randNumber }}-value/versions/latest?deleted=true
+            schemaCurlIgnore https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-{{ $randNumber }}-value/versions/latest?deleted=true
+            echo Retrieving subjects/sensor-{{ $randNumber }}-value/versions/latest/schema
+            schemaCurlIgnore https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-{{ $randNumber }}-value/versions/latest/schema
+            echo Retrieving subjects/sensor-{{ $randNumber }}-value/versions/latest/schema?deleted=true
+            schemaCurlIgnore https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-{{ $randNumber }}-value/versions/latest/schema?deleted=true
             echo
           }
 
@@ -122,7 +123,7 @@ spec:
             {{- if $cert.caEnabled }}
               --cacert /etc/tls/certs/{{ $service.tls.cert }}/ca.crt \
             {{- end }}
-            https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-value/versions
+            https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-{{ $randNumber }}-value/versions
 
           echo "Get schema 1"
           schemaCurl https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/schemas/ids/1
@@ -138,7 +139,7 @@ spec:
             {{- if $cert.caEnabled }}
               --cacert /etc/tls/certs/{{ $service.tls.cert }}/ca.crt \
             {{- end }}
-              https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-value/versions/1
+              https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-{{ $randNumber }}-value/versions/1
 
           echo "Delete schema 1 permanently"
           curl {{ $curlOptions }} --fail --retry "120" --retry-max-time "120" --retry-all-errors -X DELETE -o - \
@@ -148,7 +149,7 @@ spec:
             {{- if $cert.caEnabled }}
               --cacert /etc/tls/certs/{{ $service.tls.cert }}/ca.crt \
             {{- end }}
-              https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-value/versions/1?permanent=true
+              https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-{{ $randNumber }}-value/versions/1?permanent=true
 
       volumeMounts: {{ include "default-mounts" . | nindent 8 }}
       resources: {{ toYaml .Values.statefulset.resources | nindent 12 }}
