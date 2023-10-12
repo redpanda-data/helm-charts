@@ -57,6 +57,7 @@ jobs:
           - '1[0-2]*'
           - '1[3-5]*'
           - '1[6-7]*'
+          - '9[7-9]*' # some tests depend on a github secret that isn't available for fork PRs. Only run these tests in branch PRs.
       fail-fast: false
     runs-on: ubuntu-22.04
     steps:
@@ -107,6 +108,26 @@ jobs:
           mv external-tls-secret.yaml charts/redpanda/templates/
           cp .github/external-service.yaml charts/redpanda/templates/
           mv some-users-updated.yaml charts/redpanda/templates
+
+      - name: Create redpanda license secret
+        if: steps.list-changed.outputs.changed == 'true'
+        env:
+          REDPANDA_LICENSE: ${{ secrets.REDPANDA_LICENSE }}
+        run: |
+          if [ -z $REDPANDA_LICENSE ]; then echo "License is empty" ; exit 1; fi
+          kubectl create secret generic redpanda-license \
+          --from-literal=license-key="$REDPANDA_LICENSE" \
+          --dry-run=client -o yaml > redpanda-license.yaml.tmp
+
+          kubectl annotate -f redpanda-license.yaml.tmp \
+          helm.sh/hook-delete-policy="before-hook-creation" \
+          helm.sh/hook="pre-install" \
+          helm.sh/hook-weight="-100" \
+          --local --dry-run=none -o yaml > redpanda-license.yaml
+
+          rm redpanda-license.yaml.tmp
+
+          mv redpanda-license.yaml ./charts/redpanda/templates/
 
     #===== Required Test Files === end
 

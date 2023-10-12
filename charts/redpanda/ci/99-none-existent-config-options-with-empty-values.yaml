@@ -19,17 +19,19 @@ enterprise:
     key: license-key
 
 storage:
-  tieredConfig:
-    cloud_storage_enabled: true
-    cloud_storage_secret_key: test
-    cloud_storage_access_key: test
-    cloud_storage_region: test
-    cloud_storage_bucket: test
-    storage_zero_value: 0
-    storage_null_value: null
-    storage_empty_array_value: []
-    storage_empty_map_value: {}
-    storage_empty_string_value: ""
+  tiered:
+    config:
+      cloud_storage_enabled: true
+      cloud_storage_cache_size: 11G
+      cloud_storage_secret_key: test
+      cloud_storage_access_key: test
+      cloud_storage_region: test
+      cloud_storage_bucket: test
+      storage_zero_value: 0
+      storage_null_value: null
+      storage_empty_array_value: []
+      storage_empty_map_value: {}
+      storage_empty_string_value: ""
 
 config:
   cluster:

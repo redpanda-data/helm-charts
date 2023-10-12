@@ -97,6 +97,8 @@ jobs:
         env:
           REDPANDA_LICENSE: ${{ secrets.REDPANDA_LICENSE }}
         run: |
+          if [ -z $REDPANDA_LICENSE ]; then echo "License is empty" ; exit 1; fi
+          
           envsubst < ./charts/redpanda/ci/97-license-key-values.yaml.tpl > ./charts/redpanda/ci/97-license-key-values.yaml 
 
           kubectl create secret generic redpanda-license \

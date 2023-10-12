@@ -87,7 +87,11 @@ bootstrap.yaml: |
   {{- end }}
   {{- range $key, $element := $tieredStorageConfig}}
     {{- if or (eq (typeOf $element) "bool") $element }}
-      {{- dict $key $element | toYaml | nindent 2 }}
+      {{- if eq $key "cloud_storage_cache_size" }}
+        {{- dict $key (include "SI-to-bytes" $element) | toYaml | nindent 2 -}}
+      {{- else }}
+        {{- dict $key $element | toYaml | nindent 2 -}}
+      {{- end }}
     {{- end }}
   {{- end }}
 {{- end }}
@@ -289,7 +293,11 @@ redpanda.yaml: |
   {{- end }}
   {{- range $key, $element := $tieredStorageConfig }}
     {{- if or (eq (typeOf $element) "bool") $element }}
-      {{- dict $key $element | toYaml | nindent 2 -}}
+      {{- if eq $key "cloud_storage_cache_size" }}
+        {{- dict $key (include "SI-to-bytes" $element) | toYaml | nindent 2 -}}
+      {{- else }}
+        {{- dict $key $element | toYaml | nindent 2 -}}
+      {{- end }}
     {{- end }}
   {{- end }}
 {{- end }}
