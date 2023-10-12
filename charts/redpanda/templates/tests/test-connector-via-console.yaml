@@ -138,7 +138,7 @@ spec:
           URL=http://{{ include "console.fullname" $consoleValues }}:{{ include "console.containerPort" $consoleValues }}/api/kafka-connect/clusters/connectors/connectors
           {{/* outputting to /dev/null because the output contains the user password */}}
           echo "Creating mm2 connector"
-          if curl -svm3 --fail --retry 120 --retry-max-time 120 --retry-all-errors -H 'Content-Type: application/json' -o /dev/null "${URL}" -d @/tmp/mm2-conf.json
+          if curl {{ template "curl-options" . }} -H 'Content-Type: application/json' "${URL}" -d @/tmp/mm2-conf.json
           then
             echo "Result successful"
           else
@@ -149,7 +149,7 @@ spec:
           rpk topic consume source.{{ $testTopic }} -n 1
 
           echo "Destroying mm2 connector"
-          if curl -svm3 --fail --retry 120 --retry-max-time 120 --retry-all-errors -o /dev/null -X DELETE "${URL}/${CONNECTOR_NAME}"
+          if curl {{ template "curl-options" . }} -X DELETE "${URL}/${CONNECTOR_NAME}"
           then
             echo "Result successful"
           else

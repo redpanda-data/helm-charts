@@ -55,13 +55,13 @@ spec:
           if [[ -n "$old_setting" ]]; then set -x; fi
   {{- end }}
 
-          curl -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors \
+          curl {{ template "curl-options" . }} \
           {{- if or (include "sasl-enabled" .|fromJson).bool .Values.listeners.http.authenticationMethod }}
           -u ${RPK_USER}:${RPK_PASS} \
           {{- end }}
           http://{{ include "redpanda.servicename" . }}:{{ .Values.listeners.http.port }}/brokers
 
-          curl -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors \
+          curl {{ template "curl-options" . }} \
           {{- if or (include "sasl-enabled" .|fromJson).bool .Values.listeners.http.authenticationMethod }}
           -u ${RPK_USER}:${RPK_PASS} \
           {{- end }}

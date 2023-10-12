@@ -19,10 +19,11 @@ limitations under the License.
   {{- $cert := get .Values.tls.certs $service.tls.cert -}}
   {{- $root := deepCopy . }}
   {{- $sasl := .Values.auth.sasl }}
+  {{- $randNumber := randNumeric 3 }}
 apiVersion: v1
 kind: Pod
 metadata:
-  name: {{ include "redpanda.fullname" . }}-test-schemaregistry-internal-tls-status
+  name: {{ include "redpanda.fullname" . }}-test-sr-internal-tls-status-{{ $randNumber }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
   {{- with include "full.labels" . }}
@@ -58,10 +59,48 @@ spec:
           if [[ -n "$old_setting" ]]; then set -x; fi
   {{- end }}
 
-          set -ex
+          set -e
+
+          trap reportSchema ERR
+
+          reportSchema () {
+            echo Retrieving schemas/types
+            schemaCurlIgnore https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/schemas/types
+            echo Retrieving schemas/ids/1
+            schemaCurlIgnore https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/schemas/ids/1
+            echo Retrieving subjects
+            schemaCurlIgnore https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects
+            echo Retrieving subjects?deleted=true
+            schemaCurlIgnore https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects?deleted=true
+            echo Retrieving subjects/sensor-{{ $randNumber }}-value/versions
+            schemaCurlIgnore https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-{{ $randNumber }}-value/versions
+            echo Retrieving subjects/sensor-{{ $randNumber }}-value/versions?deleted=true
+            schemaCurlIgnore https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-{{ $randNumber }}-value/versions?deleted=true
+            echo Retrieving subjects/sensor-{{ $randNumber }}-value/versions/latest
+            schemaCurlIgnore https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-{{ $randNumber }}-value/versions/latest
+            echo Retrieving subjects/sensor-{{ $randNumber }}-value/versions/latest?deleted=true
+            schemaCurlIgnore https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-{{ $randNumber }}-value/versions/latest?deleted=true
+            echo Retrieving subjects/sensor-{{ $randNumber }}-value/versions/latest/schema
+            schemaCurlIgnore https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-{{ $randNumber }}-value/versions/latest/schema
+            echo Retrieving subjects/sensor-{{ $randNumber }}-value/versions/latest/schema?deleted=true
+            schemaCurlIgnore https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-{{ $randNumber }}-value/versions/latest/schema?deleted=true
+            echo
+          }
+
+
+          schemaCurlIgnore () {
+            curl {{ template "curl-options" . }} \
+              {{- if or (include "sasl-enabled" .|fromJson).bool .Values.listeners.schemaRegistry.authenticationMethod }}
+              -u "${RPK_USER}:${RPK_PASS}" \
+              {{- end }}
+              {{- if $cert.caEnabled }}
+              --cacert /etc/tls/certs/{{ $service.tls.cert }}/ca.crt \
+              {{- end }}
+              $* || true
+          }
 
           schemaCurl () {
-            curl -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors -o - \
+            curl {{ template "curl-options" . }} \
               {{- if or (include "sasl-enabled" .|fromJson).bool .Values.listeners.schemaRegistry.authenticationMethod }}
               -u "${RPK_USER}:${RPK_PASS}" \
               {{- end }}
@@ -75,7 +114,7 @@ spec:
           schemaCurl https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects
 
           echo "Create schema"
-          curl -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors -o - \
+          curl {{ template "curl-options" . }} \
             -X POST -H 'Content-Type:application/vnd.schemaregistry.v1+json' \
             -d '{"schema": "{\"type\":\"record\",\"name\":\"sensor_sample\",\"fields\":[{\"name\":\"timestamp\",\"type\":\"long\",\"logicalType\":\"timestamp-millis\"},{\"name\":\"identifier\",\"type\":\"string\",\"logicalType\":\"uuid\"},{\"name\":\"value\",\"type\":\"long\"}]}"}' \
             {{- if or (include "sasl-enabled" .|fromJson).bool .Values.listeners.schemaRegistry.authenticationMethod }}
@@ -84,7 +123,7 @@ spec:
             {{- if $cert.caEnabled }}
               --cacert /etc/tls/certs/{{ $service.tls.cert }}/ca.crt \
             {{- end }}
-            https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-value/versions
+            https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-{{ $randNumber }}-value/versions
 
           echo "Get schema 1"
           schemaCurl https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/schemas/ids/1
@@ -93,24 +132,24 @@ spec:
           schemaCurl https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects
 
           echo "Delete schema 1"
-          curl -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors -X DELETE -o - \
+          curl {{ template "curl-options" . }} -X DELETE \
             {{- if or (include "sasl-enabled" .|fromJson).bool .Values.listeners.schemaRegistry.authenticationMethod }}
               -u ${RPK_USER}:${RPK_PASS} \
             {{- end }}
             {{- if $cert.caEnabled }}
               --cacert /etc/tls/certs/{{ $service.tls.cert }}/ca.crt \
             {{- end }}
-              https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-value/versions/1
+              https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-{{ $randNumber }}-value/versions/1
 
           echo "Delete schema 1 permanently"
-          curl -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors -X DELETE -o - \
+          curl {{ template "curl-options" . }} -X DELETE \
             {{- if or (include "sasl-enabled" .|fromJson).bool .Values.listeners.schemaRegistry.authenticationMethod }}
               -u ${RPK_USER}:${RPK_PASS} \
             {{- end }}
             {{- if $cert.caEnabled }}
               --cacert /etc/tls/certs/{{ $service.tls.cert }}/ca.crt \
             {{- end }}
-              https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-value/versions/1?permanent=true
+              https://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects/sensor-{{ $randNumber }}-value/versions/1?permanent=true
 
       volumeMounts: {{ include "default-mounts" . | nindent 8 }}
       resources: {{ toYaml .Values.statefulset.resources | nindent 12 }}
