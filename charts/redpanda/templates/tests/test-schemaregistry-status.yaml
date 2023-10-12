@@ -84,9 +84,8 @@ spec:
             echo
           }
 
-{{- $curlOptions := " -svm3 -w \"\\nstatus=%{http_code} %{redirect_url} size=%{size_download} time=%{time_total} content-type=\\\"%{content_type}\\\"\\n\" "}}
           schemaCurlIgnore () {
-            curl {{ $curlOptions }} --fail --retry "120" --retry-max-time "120" --retry-all-errors -o - \
+            curl {{ template "curl-options" . }} \
               {{- if or (include "sasl-enabled" .|fromJson).bool .Values.listeners.schemaRegistry.authenticationMethod }}
               -u "${RPK_USER}:${RPK_PASS}" \
               {{- end }}
@@ -94,7 +93,7 @@ spec:
           }
 
           schemaCurl () {
-            curl {{ $curlOptions }} --fail --retry "120" --retry-max-time "120" --retry-all-errors \
+            curl {{ template "curl-options" . }} \
             {{- if or (include "sasl-enabled" .|fromJson).bool .Values.listeners.schemaRegistry.authenticationMethod }}
             -u ${RPK_USER}:${RPK_PASS} \
             {{- end }}
@@ -107,7 +106,7 @@ spec:
           schemaCurl http://{{ include "redpanda.internal.domain" . }}:{{ .Values.listeners.schemaRegistry.port }}/subjects
 
           echo "Create schema"
-          curl {{ $curlOptions }} --fail --retry "120" --retry-max-time "120" --retry-all-errors \
+          curl {{ template "curl-options" . }} \
           -X POST -H 'Content-Type:application/vnd.schemaregistry.v1+json' \
           -d '{"schema":"{\"type\":\"record\",\"name\":\"sensor_sample\",\"fields\":[{\"name\":\"timestamp\",\"type\":\"long\",\"logicalType\":\"timestamp-millis\"},{\"name\":\"identifier\",\"type\":\"string\",\"logicalType\":\"uuid\"},{\"name\":\"value\",\"type\":\"long\"}]}"}' \
           {{- if or (include "sasl-enabled" .|fromJson).bool .Values.listeners.schemaRegistry.authenticationMethod }}
@@ -126,7 +125,7 @@ spec:
           echo "Delete schema 1"
           for i in $(seq 1 $max_iteration)
           do
-            curl -vv -w "\n" -X DELETE \
+            curl {{ template "curl-options" . }} -X DELETE \
               {{- if or (include "sasl-enabled" .|fromJson).bool .Values.listeners.schemaRegistry.authenticationMethod }}
               -u ${RPK_USER}:${RPK_PASS} \
               {{- end }}
@@ -150,7 +149,7 @@ spec:
           echo "Delete schema 1 permanently"
           for i in $(seq 1 $max_iteration)
           do
-            curl -vv -w "\n" -X DELETE \
+            curl {{ template "curl-options" . }} -X DELETE \
               {{- if or (include "sasl-enabled" .|fromJson).bool .Values.listeners.schemaRegistry.authenticationMethod }}
               -u ${RPK_USER}:${RPK_PASS} \
               {{- end }}

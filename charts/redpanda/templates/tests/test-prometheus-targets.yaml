@@ -42,7 +42,7 @@ spec:
         - |
           set -xe
           
-          HEALTHY=$( curl -s --fail --retry "120" --retry-max-time "120" --retry-all-errors --retry-delay 2 -o /dev/null -w "%{http_code}" http://prometheus-operated.prometheus.svc.cluster.local:9090/-/healthy)          
+          HEALTHY=$( curl {{ template "curl-options" . }} http://prometheus-operated.prometheus.svc.cluster.local:9090/-/healthy)
           if [ $HEALTHY != 200 ]; then
             echo "prometheus is not healthy, exiting"
             exit 1
@@ -50,7 +50,7 @@ spec:
           
           echo "prometheus is healthy, checking if ready..."
 
-          READY=$( curl -s --fail --retry "120" --retry-max-time "120" --retry-all-errors --retry-delay 2 -o /dev/null -w "%{http_code}" http://prometheus-operated.prometheus.svc.cluster.local:9090/-/ready)          
+          READY=$( curl {{ template "curl-options" . }} http://prometheus-operated.prometheus.svc.cluster.local:9090/-/ready)
           if [ $READY != 200 ]; then
             echo "prometheus is not ready, exiting"
             exit 1
@@ -63,7 +63,7 @@ spec:
 
             # Run the command, and save the exit code
             # from: https://prometheus.io/docs/prometheus/latest/querying/api/
-            local RESULT=$( curl -s --fail --retry "120" --retry-max-time "120" --retry-all-errors http://prometheus-operated.prometheus.svc.cluster.local:9090/api/v1/targets?scrapePool=serviceMonitor/{{ .Release.Namespace }}/{{ include "redpanda.fullname" . }}/0 | jq '.data.activeTargets[].health | select(. == "up")' | wc -l  )
+            local RESULT=$( curl {{ template "curl-options" . }} http://prometheus-operated.prometheus.svc.cluster.local:9090/api/v1/targets?scrapePool=serviceMonitor/{{ .Release.Namespace }}/{{ include "redpanda.fullname" . }}/0 | jq '.data.activeTargets[].health | select(. == "up")' | wc -l  )
 
             echo $RESULT
           }

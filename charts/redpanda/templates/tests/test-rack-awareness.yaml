@@ -40,8 +40,7 @@ spec:
       - |
         set -e
 {{- if and .Values.rackAwareness.enabled (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
-        curl --silent --fail --retry 120 \
-          --retry-max-time 120 --retry-all-errors \
+        curl {{ template "curl-options" . }} \
   {{- if (include "tls-enabled" . | fromJson).bool }}
     {{- if (dig "default" "caEnabled" false .Values.tls.certs) }}
           --cacert "/etc/tls/certs/default/ca.crt" \
