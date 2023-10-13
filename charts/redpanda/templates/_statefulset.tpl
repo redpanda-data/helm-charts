@@ -67,3 +67,38 @@ Set nodeSelector for statefulset, defaults to global nodeSelector if not defined
 {{- toYaml $nodeSelectors -}}
 {{- end -}}
 
+{{/*
+Set affinity for statefulset, defaults to global affinity if not defined in statefulset
+*/}}
+{{- define "statefulset-affinity" -}}
+{{- if not ( empty .Values.statefulset.nodeAffinity ) -}}
+nodeAffinity: {{ toYaml .Values.statefulset.nodeAffinity | nindent 2 }}
+{{- else if not ( empty .Values.affinity.nodeAffinity ) -}}
+nodeAffinity: {{ toYaml .Values.affinity.nodeAffinity | nindent 2 }}
+{{- end }}
+{{- if not ( empty .Values.statefulset.podAffinity ) -}}
+podAffinity: {{ toYaml .Values.statefulset.podAffinity | nindent 2 }}
+{{- else if not ( empty .Values.affinity.podAffinity ) -}}
+podAffinity: {{ toYaml .Values.affinity.podAffinity | nindent 2 }}
+{{- end }}
+{{- if not ( empty .Values.statefulset.podAntiAffinity ) -}}
+podAntiAffinity:
+  {{- if eq .Values.statefulset.podAntiAffinity.type "hard" }}
+  requiredDuringSchedulingIgnoredDuringExecution:
+  - topologyKey: {{ .Values.statefulset.podAntiAffinity.topologyKey }}
+    labelSelector:
+      matchLabels: {{ include "statefulset-pod-labels" . | nindent 8 }}
+  {{- else if eq .Values.statefulset.podAntiAffinity.type "soft" }}
+  preferredDuringSchedulingIgnoredDuringExecution:
+  - weight: {{ .Values.statefulset.podAntiAffinity.weight | int64 }}
+    podAffinityTerm:
+      topologyKey: {{ .Values.statefulset.podAntiAffinity.topologyKey }}
+      labelSelector:
+        matchLabels: {{ include "statefulset-pod-labels" . | nindent 8 }}
+  {{- else if eq .Values.statefulset.podAntiAffinity.type "custom" -}}
+    {{- toYaml .Values.statefulset.podAntiAffinity.custom | nindent 2 }}
+  {{- end -}}
+{{- else if not ( empty .Values.affinity.podAntiAffinity ) -}}
+podAntiAffinity: {{ toYaml .Values.affinity.podAntiAffinity | nindent 2 }}
+{{- end }}
+{{- end -}}

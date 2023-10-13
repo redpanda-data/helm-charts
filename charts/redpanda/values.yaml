@@ -37,6 +37,10 @@ commonLabels: {}
 # For details,
 # see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector).
 nodeSelector: {}
+# -- Affinity constraints for scheduling Pods, can override this for StatefulSets and Jobs.
+# For details,
+# see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity).
+affinity: {}
 # -- Taints to be tolerated by Pods, can override this for StatefulSets.
 # For details,
 # see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/).
