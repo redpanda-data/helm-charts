@@ -39,7 +39,20 @@ spec:
         - /bin/bash
         - -c
         - |
-          set -x
+          set -xe
+
+          trap connectorsState ERR
+
+          connectorsState () {
+            echo check connectors expand status
+            curl {{ template "curl-options" . }} http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors?expand=status
+            echo check connectors expand info
+            curl {{ template "curl-options" . }} http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors?expand=info
+            echo check connector configuration
+            curl {{ template "curl-options" . }} http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors/$CONNECTOR_NAME
+            echo check connector topics
+            curl {{ template "curl-options" . }} http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors/$CONNECTOR_NAME/topics
+          }
 
           curl http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors && echo
 
@@ -51,7 +64,6 @@ spec:
 
           SASL_MECHANISM="PLAIN"
           {{- if .Values.auth.sasl.enabled }}
-          set -e
           set +x
 
           IFS=: read -r CONNECT_SASL_USERNAME KAFKA_SASL_PASSWORD CONNECT_SASL_MECHANISM < $(find /mnt/users/* -print)
@@ -64,7 +76,6 @@ spec:
           fi
 
           set -x
-          set +e
           {{- end }}
 
           {{- if .Values.connectors.brokerTLS.enabled }}
