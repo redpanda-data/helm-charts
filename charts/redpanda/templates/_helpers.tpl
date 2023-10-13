@@ -640,7 +640,7 @@ return licenseSecretRef.key checks deprecated values entry if current values emp
   mountPath: {{ printf "/etc/tls/certs/%s" $name }}
     {{- end }}
 - name: mtls-client
-  mountPath: /etc/ls/certs/{{ template "redpanda.fullname" $ }}-client
+  mountPath: /etc/tls/certs/{{ template "redpanda.fullname" $ }}-client
   {{- end }}
 {{- end -}}
 
