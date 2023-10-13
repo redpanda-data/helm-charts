@@ -107,3 +107,7 @@ Use AppVersion if image.tag is not set
 {{- end -}}
 {{- $tag -}}
 {{- end -}}
+
+{{- define "curl-options" -}}
+{{- print " -svm3 --fail --retry \"120\" --retry-max-time \"120\" --retry-all-errors -o - -w \"\\nstatus=%{http_code} %{redirect_url} size=%{size_download} time=%{time_total} content-type=\\\"%{content_type}\\\"\\n\" "}}
+{{- end -}}
