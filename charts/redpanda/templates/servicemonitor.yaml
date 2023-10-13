@@ -34,10 +34,17 @@ spec:
   - interval: {{ .Values.monitoring.scrapeInterval }}
     path: /public_metrics
     targetPort: admin
-  {{- if .Values.tls.enabled }}
+    {{- if dig "enableHttp2" "" .Values.monitoring }}
+    enableHttp2: .Values.monitoring.enableHttp2
+    {{- end }}
+  {{- if or .Values.tls.enabled .Values.monitoring.tlsConfig }}
     scheme: https
     tlsConfig:
+      {{- if  dig "tlsConfig" dict .Values.monitoring }}
+      {{- .Values.monitoring.tlsConfig | toYaml | nindent 6 }}
+      {{- else }}
       insecureSkipVerify: true
+      {{- end}}
   {{- end }}
   selector:
     matchLabels:
