@@ -137,6 +137,11 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: spec.nodeName
+            - name: HOST_IP_ADDRESS
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.hostIP
           securityContext: {{ include "container-security-context" . | nindent 12 }}
           volumeMounts: {{ include "common-mounts" . | nindent 12 }}
 {{- if dig "initContainers" "configurator" "extraVolumeMounts" false .Values.statefulset -}}
