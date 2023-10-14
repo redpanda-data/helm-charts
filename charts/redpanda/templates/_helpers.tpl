@@ -732,3 +732,11 @@ REDPANDA_SASL_USERNAME REDPANDA_SASL_PASSWORD REDPANDA_SASL_MECHANISM
 {{- define "curl-options" -}}
 {{- print " -svm3 --fail --retry \"120\" --retry-max-time \"120\" --retry-all-errors -o - -w \"\\nstatus=%{http_code} %{redirect_url} size=%{size_download} time=%{time_total} content-type=\\\"%{content_type}\\\"\\n\" "}}
 {{- end -}}
+
+{{- define "advertised-address-template" -}}
+  {{- $prefixTemplate := dig "prefixTemplate" "" .externalListener -}}
+  {{- if empty $prefixTemplate -}}
+    {{- $prefixTemplate = dig "prefixTemplate" "" .externalVals -}}
+  {{- end -}}
+  {{ quote $prefixTemplate }}
+{{- end -}}

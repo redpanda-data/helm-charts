@@ -252,6 +252,7 @@ external:
   # matching external.addresses + external.domain
   # externalDns:
   #   enabled: true
+  # prefixTemplate: ""
 
 # -- Log-level settings.
 logging:
@@ -801,6 +802,7 @@ listeners:
         # enabled: true
         # -- The port used for external client connections.
         port: 9094
+        # prefixTemplate: ""
         # -- If undefined, `listeners.kafka.external.default.port` is used.
         advertisedPorts:
         - 31092
@@ -856,6 +858,7 @@ listeners:
       default:
         # enabled: true
         port: 8083
+        # prefixTemplate: ""
         advertisedPorts:
           - 30082
         tls:
