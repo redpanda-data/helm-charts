@@ -30,3 +30,9 @@ connectors:
   enabled: true
   logging:
     level: debug
+
+# tests to ensure this large int isn't converted to scientific notation for the rpk commands
+# in post-upgrade job.
+config:
+  cluster:
+    retention_local_target_ms_default: 21600000
