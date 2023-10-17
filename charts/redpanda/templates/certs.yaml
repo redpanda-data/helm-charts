@@ -76,6 +76,7 @@ spec:
 ---
   {{- $name := .Values.listeners.kafka.tls.cert }}
   {{- $data := get .Values.tls.certs $name }}
+  {{- if and (empty $data.secretRef) (include "client-auth-required" . | fromJson).bool }}
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -100,5 +101,6 @@ spec:
     name: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-issuer
     kind: Issuer
     group: cert-manager.io
+  {{- end }}
   {{- end }}
 {{- end }}
