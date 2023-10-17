@@ -71,6 +71,9 @@ spec:
             set -e
             rpk cluster config import -f /etc/redpanda/bootstrap.yaml
 {{- range $key, $value := .Values.config.cluster }}
+  {{- if and (typeIs "float64" $value) (eq (floor $value) $value) }}
+    {{- $value = int64 $value }}
+  {{- end }}
   {{- if or (typeIs "bool" $value ) $value }}
             rpk cluster config set {{ $key }} {{ $value }}
   {{- end }}
