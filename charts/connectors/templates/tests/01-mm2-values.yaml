@@ -54,16 +54,11 @@ spec:
             curl {{ template "curl-options" . }} http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors/$CONNECTOR_NAME/topics
           }
 
-          curl http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors && echo
-
-          rpk profile create test
-          rpk profile set tls.enabled={{.Values.connectors.brokerTLS.enabled}} brokers={{ .Values.connectors.bootstrapServers }}
-          {{- if .Values.connectors.brokerTLS.ca.secretRef }}
-          rpk profile set tls.ca={{ printf "/redpanda-certs/%s" (default "ca.crt" .Values.connectors.brokerTLS.ca.secretNameOverwrite) }}
-          {{- end }}
+          curl {{ template "curl-options" . }} http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors
 
           SASL_MECHANISM="PLAIN"
           {{- if .Values.auth.sasl.enabled }}
+          set -e
           set +x
 
           IFS=: read -r CONNECT_SASL_USERNAME KAFKA_SASL_PASSWORD CONNECT_SASL_MECHANISM < $(find /mnt/users/* -print)
@@ -76,8 +71,15 @@ spec:
           fi
 
           set -x
+          set +e
           {{- end }}
 
+          rpk profile create test
+          rpk profile set tls.enabled={{.Values.connectors.brokerTLS.enabled}} brokers={{ .Values.connectors.bootstrapServers }}
+          {{- if .Values.connectors.brokerTLS.ca.secretRef }}
+          rpk profile set tls.ca={{ printf "/redpanda-certs/%s" (default "ca.crt" .Values.connectors.brokerTLS.ca.secretNameOverwrite) }}
+          {{- end }}
+          
           {{- if .Values.connectors.brokerTLS.enabled }}
           CONNECT_TLS_ENABLED=true
           {{- else }}
@@ -139,50 +141,13 @@ spec:
           sed -i "s/JAAS_CONFIG_TARGET/$JAAS_CONFIG_TARGET/g" /tmp/mm2-conf.json
           set -x
 
-          max_iteration=10
-          for i in $(seq 1 $max_iteration)
-          do
-            curl -v -H 'Content-Type: application/json' http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors -d @/tmp/mm2-conf.json && echo
-            result=$?
-            if [[ $result -eq 0 ]]
-            then
-              echo "Result successful"
-              break
-            else
-              echo "Result unsuccessful"
-              sleep 1
-            fi
-          done
-
-          if [[ $result -ne 0 ]]
-          then
-            echo "mm2 connector can not be created!!!"
-            exit 1
-          fi
+          curl {{ template "curl-options" . }} -H 'Content-Type: application/json' http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors -d @/tmp/mm2-conf.json
 
           rpk topic consume source.test-topic -n 1 | grep "Test message!"
 
-          for i in $(seq 1 $max_iteration)
-          do
-            curl -X DELETE http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors/$CONNECTOR_NAME && echo
-            result=$?
-            if [[ $result -eq 0 ]]
-            then
-              echo "Result successful"
-              break
-            else
-              echo "Result unsuccessful"
-              sleep 1
-            fi
-          done
+          curl {{ template "curl-options" . }} -X DELETE http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors/$CONNECTOR_NAME
 
-          if [[ $result -ne 0 ]]
-          then
-            echo "mm2 connector can not be destroyed!!!"
-            exit 1
-          fi
-
-          curl http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors && echo
+          curl {{ template "curl-options" . }} http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors
 
           rpk topic delete test-topic source.test-topic mm2-offset-syncs.test-only.internal
       volumeMounts:
