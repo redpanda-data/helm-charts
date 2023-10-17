@@ -148,7 +148,6 @@ auth:
     # -- The authentication mechanism to use for the superuser. Options are `SCRAM-SHA-256` and `SCRAM-SHA-512`.
     mechanism: SCRAM-SHA-512
     # -- A Secret that contains your superuser credentials.
-    # The file must include an empty line at the end.
     # For details,
     # see the [SASL documentation](https://docs.redpanda.com/docs/manage/kubernetes/security/sasl-kubernetes/#use-secrets).
     secretRef: "redpanda-users"
