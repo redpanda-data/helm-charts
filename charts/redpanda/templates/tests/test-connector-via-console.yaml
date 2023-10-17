@@ -19,6 +19,7 @@ limitations under the License.
 {{- $root := deepCopy . }}
 {{- $values := .Values }}
 {{ $consoleValues := dict "Values" (deepCopy .Values.console) "Release" .Release "Chart" .Subcharts.console.Chart }}
+{{ $connectorsVars := dict "Values" (deepCopy .Values.connectors) "Release" .Release "Chart" .Subcharts.connectors.Chart }}
 {{/* brokers */}}
 {{- $kafkaBrokers := list }}
 {{- range (include "seed-server-list" . | mustFromJson) }}
@@ -52,11 +53,24 @@ spec:
         - name: TLS_ENABLED
           value: {{ (include "kafka-internal-tls-enabled" . | fromJson).bool | quote }}
       command:
-        - /usr/bin/timeout
-        - "120"
-        - bash
+        - /bin/bash
         - -c
         - |
+          set -xe
+          
+          trap connectorsState ERR
+
+          connectorsState () {
+            echo check connectors expand status
+            curl {{ template "curl-options" . }} http://{{ include "connectors.serviceName" $connectorsVars }}:{{ (deepCopy .Values.connectors).connectors.restPort }}/connectors?expand=status
+            echo check connectors expand info
+            curl {{ template "curl-options" . }} http://{{ include "connectors.serviceName" $connectorsVars }}:{{ (deepCopy .Values.connectors).connectors.restPort }}/connectors?expand=info
+            echo check connector configuration
+            curl {{ template "curl-options" . }} http://{{ include "connectors.serviceName" $connectorsVars }}:{{ (deepCopy .Values.connectors).connectors.restPort }}/connectors/$CONNECTOR_NAME
+            echo check connector topics
+            curl {{ template "curl-options" . }} http://{{ include "connectors.serviceName" $connectorsVars }}:{{ (deepCopy .Values.connectors).connectors.restPort }}/connectors/$CONNECTOR_NAME/topics
+          }
+          
           {{- if .Values.auth.sasl.enabled }}
           set -e
           set +x
@@ -75,15 +89,14 @@ spec:
 
           JAAS_CONFIG_SOURCE="\"source.cluster.sasl.jaas.config\": \"org.apache.kafka.common.security.scram.ScramLoginModule required username=\\\\"\"${RPK_USER}\\\\"\" password=\\\\"\"${RPK_PASS}\\\\"\";\","
           JAAS_CONFIG_TARGET="\"target.cluster.sasl.jaas.config\": \"org.apache.kafka.common.security.scram.ScramLoginModule required username=\\\\"\"${RPK_USER}\\\\"\" password=\\\\"\"${RPK_PASS}\\\\"\";\","
+          set -x
+          set +e
           {{- end }}
 
           {{- $testTopic := printf "test-topic-%s" (randNumeric 3) }}
           rpk topic create {{ $testTopic }}
           rpk topic list
           echo "Test message!" | rpk topic produce {{ $testTopic }}
-
-          set -x
-          set +e
 
           SECURITY_PROTOCOL=PLAINTEXT
           if [[ -n "$RPK_SASL_MECHANISM" && $TLS_ENABLED == "true" ]]; then
@@ -138,24 +151,12 @@ spec:
           URL=http://{{ include "console.fullname" $consoleValues }}:{{ include "console.containerPort" $consoleValues }}/api/kafka-connect/clusters/connectors/connectors
           {{/* outputting to /dev/null because the output contains the user password */}}
           echo "Creating mm2 connector"
-          if curl {{ template "curl-options" . }} -H 'Content-Type: application/json' "${URL}" -d @/tmp/mm2-conf.json
-          then
-            echo "Result successful"
-          else
-            echo "mm2 connector can not be created!!!"
-            exit 1
-          fi
+          curl {{ template "curl-options" . }} -H 'Content-Type: application/json' "${URL}" -d @/tmp/mm2-conf.json
 
           rpk topic consume source.{{ $testTopic }} -n 1
 
           echo "Destroying mm2 connector"
-          if curl {{ template "curl-options" . }} -X DELETE "${URL}/${CONNECTOR_NAME}"
-          then
-            echo "Result successful"
-          else
-            echo "mm2 connector can not be destroyed!!!"
-            exit 1
-          fi
+          curl {{ template "curl-options" . }} -X DELETE "${URL}/${CONNECTOR_NAME}"
 
           rpk topic list
           rpk topic delete {{ $testTopic }} source.{{ $testTopic }} mm2-offset-syncs.test-only-redpanda.internal
