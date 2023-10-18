@@ -51,7 +51,7 @@ spec:
   template:
     metadata:
       labels: {{ (include "statefulset-pod-labels" .) | nindent 8 }}
-        redpanda.com/poddisruptionbudget: {{ template "redpanda.name" . }}
+        redpanda.com/poddisruptionbudget: {{ template "redpanda.fullname" . }}
       annotations:
         checksum/config: {{ include "configmap-content-no-seed" . | sha256sum }}
 {{- with $.Values.statefulset.annotations }}
