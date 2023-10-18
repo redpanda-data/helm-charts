@@ -16,7 +16,6 @@ limitations under the License.
 */}}
 {{- if .Values.post_install_job.enabled }}
 {{- $values := .Values }}
-{{- $sasl := $values.auth.sasl }}
 {{- $root := deepCopy . }}
 
 ---

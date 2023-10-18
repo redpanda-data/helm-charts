@@ -148,7 +148,6 @@ auth:
     # -- The authentication mechanism to use for the superuser. Options are `SCRAM-SHA-256` and `SCRAM-SHA-512`.
     mechanism: SCRAM-SHA-512
     # -- A Secret that contains your superuser credentials.
-    # The file must include an empty line at the end.
     # For details,
     # see the [SASL documentation](https://docs.redpanda.com/docs/manage/kubernetes/security/sasl-kubernetes/#use-secrets).
     secretRef: "redpanda-users"
@@ -156,10 +155,11 @@ auth:
     # These superusers will be created in the Secret whose name is defined in `auth.sasl.secretRef`.
     # If this list is empty,
     # the Secret in `auth.sasl.secretRef` must already exist in the cluster before you deploy the chart.
-    users:
-    - name: admin
-      password: change-me
-      mechanism: SCRAM-SHA-512
+    # Uncomment the sample list if you wish to try adding sample sasl users or override to use your own.
+    users: []
+    # - name: admin
+    #   password: change-me
+    #   mechanism: SCRAM-SHA-512
 
 # -- TLS settings.
 # For details, see the [TLS documentation](https://docs.redpanda.com/docs/manage/kubernetes/security/kubernetes-tls/).

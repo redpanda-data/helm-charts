@@ -23,8 +23,8 @@ auth:
 storage:
   persistentVolume:
     size: 3Gi
-
-connectors:
-  enabled: true
-  logging:
-    level: debug
+# Removed until tests are working reliably
+# connectors:
+#  enabled: true
+#  logging:
+#    level: debug
