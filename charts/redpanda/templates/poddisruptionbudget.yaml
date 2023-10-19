@@ -35,4 +35,4 @@ spec:
   maxUnavailable: {{ $budget | int64 }}
   selector:
     matchLabels: {{ (include "statefulset-pod-labels" .) | nindent 6 }}
-      redpanda.com/poddisruptionbudget: {{ template "redpanda.name" . }}
+      redpanda.com/poddisruptionbudget: {{ template "redpanda.fullname" . }}
