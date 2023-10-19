@@ -68,7 +68,7 @@ spec:
   {{- if .Values.auth.sasl.enabled }}
           old_setting=${-//[^x]/}
           set +x
-          IFS=: read -r {{ include "rpk-sasl-environment-variables" . }} < $(find /etc/secrets/users/* -print)
+          IFS=: read -r {{ include "rpk-sasl-environment-variables" . }} < <(grep \"\" $(find /etc/secrets/users/* -print))
           {{- if (include "redpanda-atleast-23-2-1" . | fromJson).bool }}
           RPK_SASL_MECHANISM=${RPK_SASL_MECHANISM:-{{ .Values.auth.sasl.mechanism | upper }}}
           {{- else }}
