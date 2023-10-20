@@ -840,6 +840,7 @@ listeners:
         tls:
           # enabled: true
           cert: external
+          requireClientAuth: false
         # default is "http_basic"
         authenticationMethod:
   # -- HTTP API listeners (aka PandaProxy).
@@ -864,6 +865,7 @@ listeners:
         tls:
           # enabled: true
           cert: external
+          requireClientAuth: false
         # default is "http_basic"
         authenticationMethod:
 
