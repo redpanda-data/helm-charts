@@ -1283,6 +1283,24 @@
                     "authenticationMethod": {
                       "type": ["string", "null"],
                       "pattern": "http_basic|none"
+                    },
+                    "tls": {
+                      "type": "object",
+                      "required": [],
+                      "properties": {
+                        "enabled": {
+                          "type": "boolean"
+                        },
+                        "cert": {
+                          "type": "string"
+                        },
+                        "secretRef": {
+                          "type": "string"
+                        },
+                        "requireClientAuth": {
+                          "type": "boolean"
+                        }
+                      }
                     }
                   }
                 }
@@ -1299,6 +1317,9 @@
                   "type": "boolean"
                 },
                 "cert": {
+                  "type": "string"
+                },
+                "secretRef": {
                   "type": "string"
                 },
                 "requireClientAuth": {
@@ -1385,6 +1406,24 @@
                     "authenticationMethod": {
                       "type": ["string", "null"],
                       "pattern": "http_basic|none"
+                    },
+                    "tls": {
+                      "type": "object",
+                      "required": [],
+                      "properties": {
+                        "enabled": {
+                          "type": "boolean"
+                        },
+                        "cert": {
+                          "type": "string"
+                        },
+                        "secretRef": {
+                          "type": "string"
+                        },
+                        "requireClientAuth": {
+                          "type": "boolean"
+                        }
+                      }
                     }
                   }
                 }
@@ -1401,6 +1440,9 @@
                   "type": "boolean"
                 },
                 "cert": {
+                  "type": "string"
+                },
+                "secretRef": {
                   "type": "string"
                 },
                 "requireClientAuth": {
