@@ -102,3 +102,21 @@ podAntiAffinity:
 podAntiAffinity: {{ toYaml .Values.affinity.podAntiAffinity | nindent 2 }}
 {{- end }}
 {{- end -}}
+
+{{/*
+statefulset-checksum-annotation calculates a checksum that is used
+as the value for the annotation, "checksum/conifg". When this value
+changes, kube-controller-manager will roll the pods.
+
+Append any additional dependencies that require the pods to restart
+to the $dependencies list.
+*/}}
+{{- define "statefulset-checksum-annotation" -}}
+  {{- $dependencies := list -}}
+  {{- $dependencies = append $dependencies (include "configmap-content-no-seed" .) -}}
+  {{- if .Values.external.enabled -}}
+    {{- $dependencies = append $dependencies (dig "domain" "" .Values.external) -}}
+    {{- $dependencies = append $dependencies (dig "addresses" "" .Values.external) -}}
+  {{- end -}}
+  {{- toJson $dependencies | sha256sum -}}
+{{- end -}}
