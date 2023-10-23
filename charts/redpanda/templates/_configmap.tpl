@@ -419,7 +419,7 @@ redpanda.yaml: |
       truststore_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/ca.crt
   {{- else }}
         {{- /* This is a required field so we use the default in the redpanda debian container */}}
-        truststore_file: /etc/ssl/certs/ca-certificates.crt
+      truststore_file: /etc/ssl/certs/ca-certificates.crt
   {{- end }}
   {{- with .Values.config.pandaproxy_client }}
     {{- toYaml . | nindent 6 }}
