@@ -206,6 +206,14 @@
                     }
                   }
                 },
+                "secretRef": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  }
+                },
                 "caEnabled": {
                   "type": "boolean"
                 },
@@ -1294,9 +1302,6 @@
                         "cert": {
                           "type": "string"
                         },
-                        "secretRef": {
-                          "type": "string"
-                        },
                         "requireClientAuth": {
                           "type": "boolean"
                         }
@@ -1317,9 +1322,6 @@
                   "type": "boolean"
                 },
                 "cert": {
-                  "type": "string"
-                },
-                "secretRef": {
                   "type": "string"
                 },
                 "requireClientAuth": {
@@ -1417,9 +1419,6 @@
                         "cert": {
                           "type": "string"
                         },
-                        "secretRef": {
-                          "type": "string"
-                        },
                         "requireClientAuth": {
                           "type": "boolean"
                         }
@@ -1440,9 +1439,6 @@
                   "type": "boolean"
                 },
                 "cert": {
-                  "type": "string"
-                },
-                "secretRef": {
                   "type": "string"
                 },
                 "requireClientAuth": {
