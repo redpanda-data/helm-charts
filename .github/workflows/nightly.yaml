@@ -110,7 +110,6 @@ jobs:
           mv some-users-updated.yaml charts/redpanda/templates
 
       - name: Create redpanda license secret
-        if: steps.list-changed.outputs.changed == 'true'
         env:
           REDPANDA_LICENSE: ${{ secrets.REDPANDA_LICENSE }}
         run: |
