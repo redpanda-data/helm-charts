@@ -884,10 +884,13 @@ listeners:
 config:
   rpk: {}
     # additional_start_flags:                                      # List of flags to pass to rpk, e.g., ` "--idle-poll-time-us=0"`
-  cluster: {}
+  cluster:
+    default_topic_replications: 3                                  # Default replication factor for new topics
+                                                                   # There is logic in the chart that will set this to 1 if there are fewer than 3 statefulset.replicas
     # auto_create_topics_enabled: true                             # Allow topic auto creation
     # transaction_coordinator_replication: 1                       # Replication factor for a transaction coordinator topic
     # id_allocator_replication: 1                                  # Replication factor for an ID allocator topic
+    # default_topic_partitions: 1                                  # Default number of partitions per topic
     # disable_metrics: false                                       # Disable registering metrics
     # enable_coproc: false                                         # Enable coprocessing mode
     # enable_idempotence: false                                    # Enable idempotent producer
@@ -1101,13 +1104,11 @@ config:
   # Any of these properties will be ignored. These otherwise valid properties are not allowed
   # to be used in this section since they impact deploying Redpanda in Kubernetes.
   # Make use of the above sections to modify these values instead (see comments below).
-  # admin: "127.0.0.1:9644"                                        # Address and port of admin server
-  # admin_api_tls: validate_many                                   # TLS configuration for admin HTTP server
+  # admin: "127.0.0.1:9644"                                        # Address and port of admin server: use listeners.admin
+  # admin_api_tls: validate_many                                   # TLS configuration for admin HTTP server: use listeners.admin.tls
   # advertised_kafka_api: None                                     # Address of Kafka API published to the clients
   # advertised_pandaproxy_api: None                                # Rest API address and port to publish to client
   # advertised_rpc_api: None                                       # Address of RPC endpoint published to other cluster members
-  # default_topic_partitions: 1                                    # Default number of partitions per topic
-  # default_topic_replications: 3                                  # Default replication factor for new topics
   # enable_admin_api: true                                         # Enable the admin API
   # enable_sasl: false                                             # Enable SASL authentication for Kafka connections
   # kafka_api: "127.0.0.1:9092"                                    # Address and port of an interface to listen for Kafka API requests
@@ -1116,5 +1117,4 @@ config:
   # pandaproxy_api_tls: validate_many                              # TLS configuration for Pandaproxy api
   # rpc_server: "127.0.0.1:33145"                                  # IP address and port for RPC server
   # rpc_server_tls: validate                                       # TLS configuration for RPC server
-  # seed_servers: None                                             # List of the seed servers used to join current cluster; If the seed_server list is empty the node will be a cluster root and it will form a new cluster
   # superusers: None                                               # List of superuser usernames
