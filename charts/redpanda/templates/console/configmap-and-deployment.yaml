@@ -116,6 +116,8 @@ limitations under the License.
       "connect" $connectConfig
 }}
 
+{{ $consoleConfig := deepCopy .Values.console.config | merge $consoleConfig  }}
+
 {{ $config := dict
     "Values" (dict
       "console" (dict "config" $consoleConfig)
