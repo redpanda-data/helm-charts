@@ -105,7 +105,7 @@ podAntiAffinity: {{ toYaml .Values.affinity.podAntiAffinity | nindent 2 }}
 
 {{/*
 statefulset-checksum-annotation calculates a checksum that is used
-as the value for the annotation, "checksum/conifg". When this value
+as the value for the annotation, "checksum/config". When this value
 changes, kube-controller-manager will roll the pods.
 
 Append any additional dependencies that require the pods to restart
