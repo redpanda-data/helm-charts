@@ -567,11 +567,6 @@
         "tieredConfig":{
           "deprecated": true,
           "type": "object",
-          "required": [
-            "cloud_storage_enabled",
-            "cloud_storage_region",
-            "cloud_storage_bucket"
-          ],
           "properties": {
             "cloud_storage_enable_remote_write": {
               "type": "boolean"
@@ -841,6 +836,9 @@
               "type": "integer"
             }
           }
+        },
+        "nodeAffinity": {
+          "type": "object"
         },
         "podAffinity": {
           "type": "object"

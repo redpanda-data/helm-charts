@@ -202,7 +202,7 @@ Use AppVersion if image.tag is not set
   Input can be: b | B | k | K | m | M | g | G | Ki | Mi | Gi
   Or number without suffix
   */}}
-  {{- $si := . -}}
+  {{- $si := . | toString -}}
   {{- $bytes := 0 -}}
   {{- if or (hasSuffix "B" $si) (hasSuffix "b" $si) -}}
     {{- $bytes = $si | trimSuffix "B" | trimSuffix "b" | float64 | floor -}}
@@ -639,8 +639,10 @@ return licenseSecretRef.key checks deprecated values entry if current values emp
 - name: redpanda-{{ $name }}-cert
   mountPath: {{ printf "/etc/tls/certs/%s" $name }}
     {{- end }}
+    {{- if (include "client-auth-required" . | fromJson).bool }}
 - name: mtls-client
   mountPath: /etc/tls/certs/{{ template "redpanda.fullname" $ }}-client
+    {{- end }}
   {{- end }}
 {{- end -}}
 
@@ -661,10 +663,12 @@ return licenseSecretRef.key checks deprecated values entry if current values emp
     secretName: {{ template "cert-secret-name" $r }}
     defaultMode: 0o440
     {{- end }}
+    {{- if (include "client-auth-required" . | fromJson).bool }}
 - name: mtls-client
   secret:
     secretName: {{ template "redpanda.fullname" $ }}-client
     defaultMode: 0o440
+    {{- end }}
   {{- end -}}
   {{- if and .Values.auth.sasl.enabled (not (empty .Values.auth.sasl.secretRef )) }}
 - name: users
@@ -739,4 +743,18 @@ REDPANDA_SASL_USERNAME REDPANDA_SASL_PASSWORD REDPANDA_SASL_MECHANISM
     {{- $prefixTemplate = dig "prefixTemplate" "" .externalVals -}}
   {{- end -}}
   {{ quote $prefixTemplate }}
+{{- end -}}
+
+{{/* check if client auth is enabled for any of the listeners */}}
+{{- define "client-auth-required" -}}
+  {{- with .Values.listeners -}}
+    {{- $requireClientAuth := or
+        .kafka.tls.requireClientAuth
+        .admin.tls.requireClientAuth
+        .schemaRegistry.tls.requireClientAuth
+        .rpc.tls.requireClientAuth
+        .http.tls.requireClientAuth
+    -}}
+    {{- toJson (dict "bool" $requireClientAuth) -}}
+  {{- end -}}
 {{- end -}}

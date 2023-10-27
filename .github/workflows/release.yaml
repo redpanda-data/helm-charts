@@ -53,6 +53,7 @@ jobs:
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           CR_SKIP_EXISTING: true
+          CR_GENERATE_RELEASE_NOTES: true
 
       - name: Checkout kustomize
         uses: actions/checkout@v4 # v3.5.3

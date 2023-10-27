@@ -75,13 +75,13 @@ Set affinity for statefulset, defaults to global affinity if not defined in stat
 nodeAffinity: {{ toYaml .Values.statefulset.nodeAffinity | nindent 2 }}
 {{- else if not ( empty .Values.affinity.nodeAffinity ) -}}
 nodeAffinity: {{ toYaml .Values.affinity.nodeAffinity | nindent 2 }}
-{{- end }}
+{{- end -}}
 {{- if not ( empty .Values.statefulset.podAffinity ) -}}
 podAffinity: {{ toYaml .Values.statefulset.podAffinity | nindent 2 }}
 {{- else if not ( empty .Values.affinity.podAffinity ) -}}
 podAffinity: {{ toYaml .Values.affinity.podAffinity | nindent 2 }}
-{{- end }}
-{{- if not ( empty .Values.statefulset.podAntiAffinity ) -}}
+{{- end -}}
+{{- if not ( empty .Values.statefulset.podAntiAffinity ) }}
 podAntiAffinity:
   {{- if eq .Values.statefulset.podAntiAffinity.type "hard" }}
   requiredDuringSchedulingIgnoredDuringExecution:
@@ -100,12 +100,12 @@ podAntiAffinity:
   {{- end -}}
 {{- else if not ( empty .Values.affinity.podAntiAffinity ) -}}
 podAntiAffinity: {{ toYaml .Values.affinity.podAntiAffinity | nindent 2 }}
-{{- end }}
+{{- end -}}
 {{- end -}}
 
 {{/*
 statefulset-checksum-annotation calculates a checksum that is used
-as the value for the annotation, "checksum/conifg". When this value
+as the value for the annotation, "checksum/config". When this value
 changes, kube-controller-manager will roll the pods.
 
 Append any additional dependencies that require the pods to restart

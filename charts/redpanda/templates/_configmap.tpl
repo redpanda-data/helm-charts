@@ -70,6 +70,11 @@ bootstrap.yaml: |
 {{- end }}
 {{- with (dig "cluster" dict .Values.config) }}
     {{- range $key, $element := .}}
+      {{- if eq $key "default_topic_replications" }}
+        {{/* "sub (add $i (mod $i 2)) 1" calculates the closest odd number less than or equal to $element: 1=1, 2=1, 3=3, ... */}}
+        {{- $r := $.Values.statefulset.replicas }}
+        {{- $element = min $element (sub (add $r (mod $r 2)) 1) }}
+      {{- end }}
       {{- if or (eq (typeOf $element) "bool") $element }}
         {{- dict $key $element | toYaml | nindent 2 }}
       {{- end }}
@@ -419,7 +424,7 @@ redpanda.yaml: |
       truststore_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/ca.crt
   {{- else }}
         {{- /* This is a required field so we use the default in the redpanda debian container */}}
-        truststore_file: /etc/ssl/certs/ca-certificates.crt
+      truststore_file: /etc/ssl/certs/ca-certificates.crt
   {{- end }}
   {{- with .Values.config.pandaproxy_client }}
     {{- toYaml . | nindent 6 }}

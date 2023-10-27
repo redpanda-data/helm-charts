@@ -50,10 +50,6 @@ tasks:
     cmds:
       - .github/create-sasl-secret.sh "some-users"
 
-  create-test-license-secret-template:
-    cmds:
-      - .github/create-license-secret.sh "redpanda-license"
-
   create-test-mv-files:
     cmds:
       - mv external-tls-secret.yaml charts/redpanda/templates/
@@ -65,7 +61,6 @@ tasks:
       - task: create-test-rack-awareness
       - task: create-test-tls-template
       - task: create-test-sasl-secret-template
-      - task: create-test-license-secret-template
       - task: create-test-mv-files
       - task: create-test-metallb-resources
 
