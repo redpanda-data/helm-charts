@@ -202,7 +202,7 @@ Use AppVersion if image.tag is not set
   Input can be: b | B | k | K | m | M | g | G | Ki | Mi | Gi
   Or number without suffix
   */}}
-  {{- $si := . -}}
+  {{- $si := . | toString -}}
   {{- $bytes := 0 -}}
   {{- if or (hasSuffix "B" $si) (hasSuffix "b" $si) -}}
     {{- $bytes = $si | trimSuffix "B" | trimSuffix "b" | float64 | floor -}}
