@@ -27,6 +27,7 @@ jobs:
           - redpanda
           - console
           - operator
+      fail-fast: false
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -37,16 +38,26 @@ jobs:
           git checkout -
       - uses: actions/setup-go@v4
         with:
-          go-version: '>=1.20.4'
+          go-version: '>=1.21.3'
       - run: go install github.com/joejulian/docker-tag-list@latest
       - name: Check chart version for ${{ matrix.chart }}
         id: chartversion
-        run: >-
-          echo "MESSAGE=$(
-            .github/bump_chart_versions.sh ${{ matrix.chart }}
-          )" >> $GITHUB_OUTPUT
-      - uses: peter-evans/create-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: .github/bump_chart_versions.sh ${{ matrix.chart }}
+      - name: debug -- delete me
+        run: |
+          echo TITLE
+          echo steps.chartversion.outputs.TITLE
+          echo INPUT_BODY
+          echo "${INPUT_BODY}"
+          echo CHANGED
+          echo steps.chartversion.outputs.CHANGED
+      - name: create PR
+        if: steps.chartversion.outputs.CHANGED == 'true'
+        uses: peter-evans/create-pull-request@153407881ec5c347639a548ade7d8ad1d6740e38  # v5.0.2
         with:
-          commit-message: ${{ steps.chartversion.outputs.MESSAGE }}
-          title: ${{ steps.chartversion.outputs.MESSAGE }}
+          title: ${{ steps.chartversion.outputs.TITLE }}
+          commit-message: ${{ steps.chartversion.outputs.TITLE }}
+          body-path: ${{ steps.chartversion.outputs.BODY_FILE }}
           branch: bump-appversion/${{ matrix.chart }}
