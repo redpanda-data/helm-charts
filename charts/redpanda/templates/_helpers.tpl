@@ -426,6 +426,13 @@ than 1 core.
 {{- end -}}
 {{- end -}}
 
+{{- define "fail-on-unsupported-helm-version" -}}
+  {{- $helmVer := (fromYaml (toYaml .Capabilities.HelmVersion)).version -}}
+  {{- if semverCompare "<3.8.0-0" $helmVer -}}
+    {{- fail (printf "helm version %s is not supported. Please use helm version v3.8.0 or newer." $helmVer) -}}
+  {{- end -}}
+{{- end -}}
+
 {{- define "redpanda-atleast-22-2-0" -}}
 {{- toJson (dict "bool" (or (not (eq .Values.image.repository "docker.redpanda.com/redpandadata/redpanda")) (include "redpanda.semver" . | semverCompare ">=22.2.0-0 || <0.0.1-0"))) -}}
 {{- end -}}
