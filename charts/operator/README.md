@@ -1,6 +1,6 @@
 # Redpanda Operator
 
-![Version: 0.3.8](https://img.shields.io/badge/Version-0.3.8-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v23.2.2](https://img.shields.io/badge/AppVersion-v23.2.2-informational?style=flat-square)
+![Version: 0.3.26](https://img.shields.io/badge/Version-0.3.26-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v23.2.14](https://img.shields.io/badge/AppVersion-v23.2.14-informational?style=flat-square)
 
 ## Installation
 
@@ -46,6 +46,7 @@ Other instruction will be visible after installation.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| additionalCmdFlags | list | `[]` | Allows setting additional flags to the operator command |
 | affinity | object | `{}` | Allows to specify affinity for Redpanda Operator PODs |
 | clusterDomain | string | `"cluster.local"` |  |
 | config.apiVersion | string | `"controller-runtime.sigs.k8s.io/v1alpha1"` |  |
@@ -63,12 +64,14 @@ Other instruction will be visible after installation.
 | imagePullSecrets | list | `[]` | Redpanda Operator container registry pullSecret (ex: specify docker registry credentials) |
 | labels | string | `nil` | Allows to assign labels to the resources created by this helm chart |
 | logLevel | string | `"info"` | Set Redpanda Operator log level (debug, info, error, panic, fatal) |
-| monitoring | object | `{"enabled":false}` | Add service monitor to the deployment |
+| monitoring | object | `{"deployPrometheusKubeStack":false,"enabled":false}` | Add service monitor to the deployment |
 | nameOverride | string | `""` | Override name of app |
 | nodeSelector | object | `{}` | Allows to schedule Redpanda Operator on specific nodes |
 | podAnnotations | object | `{}` | Allows setting additional annotations for Redpanda Operator PODs |
-| podLabels | object | `{}` | Allows setting additional labels for for Redpanda Operator PODs |
+| podLabels | object | `{}` | Allows setting additional labels for Redpanda Operator PODs |
 | rbac.create | bool | `true` | Specifies whether the RBAC resources should be created |
+| rbac.createAdditionalControllerCRs | bool | `false` | Enable to create additional rbac cluster roles needed to run additional-controllers, set to true to opt-in |
+| rbac.createRPKBundleCRs | bool | `false` | Specified to create additional rbac cluster roles needed when you will set 'rbac.enabled' to the Redpanda Spec (See redpanda chart values file) |
 | replicaCount | int | `1` | Number of instances of Redpanda Operator |
 | resources | object | `{}` | Set resources requests/limits for Redpanda Operator PODs |
 | scope | string | `"Namespace"` | change the scope and therefore the resource the controller will manage only "Cluster" and "Namespace" supported |
