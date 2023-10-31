@@ -15,6 +15,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */}}
 {{- if .Values.post_upgrade_job.enabled }}
+{{- $service := .Values.listeners.admin -}}
+{{- $cert := get .Values.tls.certs $service.tls.cert -}}
 {{- $root := deepCopy . }}
 apiVersion: batch/v1
 kind: Job
@@ -64,7 +66,7 @@ spec:
       containers:
       - name: {{ template "redpanda.name" . }}-post-upgrade
         image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
-        command: ["/bin/sh", "-c"]
+        command: ["/bin/bash", "-c"]
         args:
           - |
             set -e
@@ -84,6 +86,19 @@ spec:
 {{- end }}
 {{- if not (hasKey .Values.config.cluster "storage_min_free_bytes") }}
             rpk cluster config set storage_min_free_bytes {{ include "storage-min-free-bytes" . }}
+{{- end }}
+{{- if .Values.auth.sasl.enabled }}
+            IFS=":" read -r USER_NAME PASSWORD MECHANISM < <(grep "" $(find /etc/secrets/users/* -print))
+            curl -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors --ssl-reqd \
+  {{- if $cert.caEnabled }}
+            --cacert /etc/tls/certs/{{ $service.tls.cert }}/ca.crt \
+  {{- end }}
+            -X PUT -u ${USER_NAME}:${PASSWORD} \
+  {{- if .Values.tls.enabled }}
+            https://{{ include "redpanda.internal.domain" . }}:{{ $service.port }}/v1/debug/restart_service?service=schema-registry
+  {{- else }}
+            http://{{ include "redpanda.internal.domain" . }}:{{ $service.port }}/v1/debug/restart_service?service=schema-registry
+  {{- end }}
 {{- end }}
         {{- with .Values.post_upgrade_job.resources }}
         resources:
