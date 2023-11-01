@@ -87,7 +87,7 @@ spec:
 {{- if not (hasKey .Values.config.cluster "storage_min_free_bytes") }}
             rpk cluster config set storage_min_free_bytes {{ include "storage-min-free-bytes" . }}
 {{- end }}
-{{- if .Values.auth.sasl.enabled }}
+{{- if and .Values.auth.sasl.enabled (include "redpanda-atleast-23-2-1" . | fromJson).bool }}
             IFS=":" read -r USER_NAME PASSWORD MECHANISM < <(grep "" $(find /etc/secrets/users/* -print))
             curl -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors --ssl-reqd \
   {{- if $cert.caEnabled }}
