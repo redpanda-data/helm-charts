@@ -20,12 +20,6 @@ limitations under the License.
   {{- $addresses := dig "addresses" list $values.external }}
   {{- range $replicaIndex := untilStep 0 ($values.statefulset.replicas|int) 1 }}
     {{- $podName := printf "%s-%d" (include "redpanda.fullname" $root) $replicaIndex }}
-    {{- if (dig "externalDns" "enabled" false $values.external) }}
-      {{- $address := printf "%s.%s" $podName (tpl $values.external.domain $) }}
-      {{- if ge (len $addresses) (add $replicaIndex 1) }}
-        {{- $address = printf "%s.%s" (default $podName (index $addresses $replicaIndex)) (tpl $values.external.domain $) }}
-      {{- end }}
-    {{- end }}
 ---
 apiVersion: v1
 kind: Service
@@ -37,22 +31,26 @@ metadata:
       {{- . | nindent 4 }}
     {{- end }}
     repdanda.com/type: "loadbalancer"
-    {{- if (or $values.external.annotations (dig "externalDns" "enabled" false $values.external) ) }}
+  {{- if (or $values.external.annotations (dig "externalDns" "enabled" false $values.external) ) }}
   annotations:
-      {{- with $values.external.annotations }}
-          {{- toYaml . | nindent 4 }}
-      {{- end }}
-      {{- if (dig "externalDns" "enabled" false $values.external) }}
-          {{- printf "external-dns.alpha.kubernetes.io/hostname: %s" $address | nindent 4}}
-      {{- end }}
+    {{- with $values.external.annotations }}
+      {{- toYaml . | nindent 4 }}
     {{- end }}
+    {{- if (dig "externalDns" "enabled" false $values.external) }}
+      {{- $address := printf "%s.%s" $podName (tpl $values.external.domain $) }}
+      {{- if ge (len $addresses) (add $replicaIndex 1) }}
+        {{- $address = printf "%s.%s" (default $podName (index $addresses $replicaIndex)) (tpl $values.external.domain $) }}
+      {{- end }}
+      {{- printf "external-dns.alpha.kubernetes.io/hostname: %s" $address | nindent 4}}
+    {{- end }}
+  {{- end }}
 spec:
   type: LoadBalancer
   publishNotReadyAddresses: true
-    {{- with $root.Values.external.sourceRanges }}
+  {{- with $root.Values.external.sourceRanges }}
   loadBalancerSourceRanges:
-      {{- toYaml $values.external.sourceRanges | nindent 4}}
-    {{- end }}
+    {{- toYaml $values.external.sourceRanges | nindent 4}}
+  {{- end }}
   externalTrafficPolicy: Local
   sessionAffinity: None
   ports:
@@ -96,4 +94,3 @@ spec:
     statefulset.kubernetes.io/pod-name: {{ $podName }}
   {{- end }}
 {{- end }}
-
