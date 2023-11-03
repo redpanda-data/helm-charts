@@ -20,9 +20,11 @@ limitations under the License.
   {{- $addresses := dig "addresses" list $values.external }}
   {{- range $replicaIndex := untilStep 0 ($values.statefulset.replicas|int) 1 }}
     {{- $podName := printf "%s-%d" (include "redpanda.fullname" $root) $replicaIndex }}
-    {{- $address := printf "%s.%s" $podName (tpl $values.external.domain $) }}
-    {{- if ge (len $addresses) (add $replicaIndex 1) }}
-      {{- $address = printf "%s.%s" (default $podName (index $addresses $replicaIndex)) (tpl $values.external.domain $) }}
+    {{- if (dig "externalDns" "enabled" false $values.external) }}
+      {{- $address := printf "%s.%s" $podName (tpl $values.external.domain $) }}
+      {{- if ge (len $addresses) (add $replicaIndex 1) }}
+        {{- $address = printf "%s.%s" (default $podName (index $addresses $replicaIndex)) (tpl $values.external.domain $) }}
+      {{- end }}
     {{- end }}
 ---
 apiVersion: v1
