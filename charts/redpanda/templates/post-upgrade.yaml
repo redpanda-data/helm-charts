@@ -88,17 +88,19 @@ spec:
             rpk cluster config set storage_min_free_bytes {{ include "storage-min-free-bytes" . }}
 {{- end }}
 {{- if (include "redpanda-atleast-23-2-1" . | fromJson).bool }}
-            IFS=":" read -r USER_NAME PASSWORD MECHANISM < <(grep "" $(find /etc/secrets/users/* -print))
-            curl -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors --ssl-reqd \
+            if [ -d "/etc/secrets/users/" ]; then
+                IFS=":" read -r USER_NAME PASSWORD MECHANISM < <(grep "" $(find /etc/secrets/users/* -print))
+                curl -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors --ssl-reqd \
   {{- if $cert.caEnabled }}
-            --cacert /etc/tls/certs/{{ $service.tls.cert }}/ca.crt \
+                --cacert /etc/tls/certs/{{ $service.tls.cert }}/ca.crt \
   {{- end }}
-            -X PUT -u ${USER_NAME}:${PASSWORD} \
+                -X PUT -u ${USER_NAME}:${PASSWORD} \
   {{- if .Values.tls.enabled }}
-            https://{{ include "redpanda.internal.domain" . }}:{{ $service.port }}/v1/debug/restart_service?service=schema-registry || true
+                https://{{ include "redpanda.internal.domain" . }}:{{ $service.port }}/v1/debug/restart_service?service=schema-registry || true
   {{- else }}
-            http://{{ include "redpanda.internal.domain" . }}:{{ $service.port }}/v1/debug/restart_service?service=schema-registry || true
+                http://{{ include "redpanda.internal.domain" . }}:{{ $service.port }}/v1/debug/restart_service?service=schema-registry || true
   {{- end }}
+            fi
 {{- end }}
         {{- with .Values.post_upgrade_job.resources }}
         resources:
