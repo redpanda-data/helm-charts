@@ -89,7 +89,7 @@ spec:
 {{- end }}
 {{- if (include "redpanda-atleast-23-2-1" . | fromJson).bool }}
             IFS=":" read -r USER_NAME PASSWORD MECHANISM < <(grep "" $(find /etc/secrets/users/* -print))
-            curl -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors --ssl-reqd \
+            curl -svm3 --retry "120" --retry-max-time "120" --retry-all-errors --ssl-reqd \
   {{- if $cert.caEnabled }}
             --cacert /etc/tls/certs/{{ $service.tls.cert }}/ca.crt \
   {{- end }}
