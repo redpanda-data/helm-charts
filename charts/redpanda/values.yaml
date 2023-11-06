@@ -627,11 +627,20 @@ statefulset:
       resources: {}
       securityContext: {}
       extraVolumeMounts: |-
+    # Configure extra controllers to run as sidecars inside the Pods running Redpanda brokers.
+    # Available controllers:
+    # - Decommission Controller: The Decommission Controller ensures smooth scaling down operations.
+    # This controller is responsible for monitoring changes in the number of StatefulSet replicas and orchestrating
+    # the decommissioning of brokers when necessary. It also sets the reclaim policy for the decommissioned
+    # broker's PersistentVolume to `Retain` and deletes the corresponding PersistentVolumeClaim.
+    # - Node-PVC Controller: The Node-PVC Controller handles the PVCs of deleted brokers.
+    # By setting the PV Retain policy to retain, it facilitates the rescheduling of brokers to new, healthy nodes when
+    # an existing node is removed.
     controllers:
       image:
-        tag: v23.2.8
+        tag: v23.2.14
         repository: docker.redpanda.com/redpandadata/redpanda-operator
-      # You must enable, this feature is experimental, and so you must opt in
+      # You must also enable RBAC, `rbac.enabled=true`, to deploy this sidecar
       enabled: false
       resources: {}
       securityContext: {}

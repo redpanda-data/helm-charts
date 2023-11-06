@@ -129,6 +129,7 @@ rules:
       - ""
     resources:
       - nodes
+      - pods
     verbs:
       - get
       - list
@@ -179,6 +180,13 @@ annotations:
   {{- toYaml . | nindent 4 }}
     {{- end }}
 rules:
+  - apiGroups:
+      - apps
+    resources:
+      - statefulsets/status
+    verbs:
+      - patch
+      - update
   - apiGroups:
       - ""
     resources:
