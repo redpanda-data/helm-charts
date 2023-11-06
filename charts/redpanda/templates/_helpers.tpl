@@ -202,7 +202,10 @@ Use AppVersion if image.tag is not set
   Input can be: b | B | k | K | m | M | g | G | Ki | Mi | Gi
   Or number without suffix
   */}}
-  {{- $si := . | toString -}}
+  {{- $si := . -}}
+  {{- if not (typeIs "string" . ) -}}
+    {{- $si = int64 $si | toString -}}
+  {{- end -}}
   {{- $bytes := 0 -}}
   {{- if or (hasSuffix "B" $si) (hasSuffix "b" $si) -}}
     {{- $bytes = $si | trimSuffix "B" | trimSuffix "b" | float64 | floor -}}
@@ -421,6 +424,13 @@ than 1 core.
     {{- fail "SASL is enabled and the redpanda version specified leaks secrets to the logs. Please choose a newer version of redpanda." -}}
   {{- end -}}
 {{- end -}}
+{{- end -}}
+
+{{- define "fail-on-unsupported-helm-version" -}}
+  {{- $helmVer := (fromYaml (toYaml .Capabilities.HelmVersion)).version -}}
+  {{- if semverCompare "<3.8.0-0" $helmVer -}}
+    {{- fail (printf "helm version %s is not supported. Please use helm version v3.8.0 or newer." $helmVer) -}}
+  {{- end -}}
 {{- end -}}
 
 {{- define "redpanda-atleast-22-2-0" -}}

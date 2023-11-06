@@ -6,7 +6,7 @@ tags:
 description: The most popular Open Source Kafka JMX to Prometheus tool by the creators of [Redpanda Console](https://github.com/redpanda-data/console) and Redpanda
 ---
 
-![Version: 0.12.0](https://img.shields.io/badge/Version-0.12.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.2.5](https://img.shields.io/badge/AppVersion-v2.2.5-informational?style=flat-square)
+![Version: 0.12.4](https://img.shields.io/badge/Version-0.12.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.2.5](https://img.shields.io/badge/AppVersion-v2.2.5-informational?style=flat-square)
 
 This page describes the official Redpanda KMinion Helm Chart. In particular, this page describes the contents of the chart’s [`values.yaml` file](https://github.com/redpanda-data/helm-charts/blob/main/charts/kminion/values.yaml). Each of the settings is listed and described on this page, along with any default values.
 
