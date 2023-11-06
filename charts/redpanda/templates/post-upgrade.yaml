@@ -95,7 +95,7 @@ spec:
                 --cacert /etc/tls/certs/{{ $service.tls.cert }}/ca.crt \
   {{- end }}
                 -X PUT -u ${USER_NAME}:${PASSWORD} \
-  {{- if .Values.tls.enabled }}
+  {{- if (include "admin-internal-tls-enabled" . | fromJson).bool }}
                 https://{{ include "redpanda.internal.domain" . }}:{{ $service.port }}/v1/debug/restart_service?service=schema-registry || true
   {{- else }}
                 http://{{ include "redpanda.internal.domain" . }}:{{ $service.port }}/v1/debug/restart_service?service=schema-registry || true
