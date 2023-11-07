@@ -22,6 +22,15 @@ image:
   # image.pullPolicy -- Define the pullPolicy for Redpanda Operator image
   pullPolicy: IfNotPresent
 
+kubeRbacProxy:
+  image:
+    # image.repository -- Repository in which the kube-rbac-proxy image is available
+    repository: gcr.io/kubebuilder/kube-rbac-proxy
+    # image.tag -- Define the kube-rbac-proxy image tag
+    tag: v0.14.0
+    # image.pullPolicy -- Define the pullPolicy for kube-rbac-proxy image
+    pullPolicy: IfNotPresent
+
 configurator:
   # configurator.repository -- Repository that Redpanda configurator image is available
   repository: docker.redpanda.com/redpandadata/configurator
