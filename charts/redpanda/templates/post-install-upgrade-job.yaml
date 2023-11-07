@@ -17,7 +17,6 @@ limitations under the License.
 {{- if .Values.post_install_job.enabled }}
 {{- $values := .Values }}
 {{- $root := deepCopy . }}
-
 ---
 apiVersion: batch/v1
 kind: Job
