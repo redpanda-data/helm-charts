@@ -18,7 +18,7 @@ limitations under the License.
 
 {{/* Secret */}}
 {{ $secretConfig := dict }}
-{{ if and .Values.console.enabled (not .Values.console.secret.create) }}
+{{ if and .Values.console.enabled .Values.console.secret.create }}
 {{ $licenseKey := ( include "enterprise-license" .  ) }}
 {{ $secretConfig = ( dict
   "create" true
@@ -39,7 +39,7 @@ limitations under the License.
 
 {{ $configmap := dict }}
 {{/* if the console chart has the creation of the configmap disabled, create it here instead */}}
-{{ if and .Values.console.enabled (not .Values.console.configmap.create) }}
+{{ if and .Values.console.enabled .Values.console.configmap.create }}
 {{ $consoleConfigmap := dict "create" true }}
 
 {{/* kafka section */}}
@@ -134,7 +134,7 @@ limitations under the License.
 {{ end }}
 
 {{/* Deployment */}}
-{{ if and .Values.console.enabled (not .Values.console.deployment.create) }}
+{{ if and .Values.console.enabled .Values.console.deployment.create }}
 
 {{ $extraVolumes := list }}
 {{ $extraVolumeMounts := list }}
@@ -279,9 +279,9 @@ limitations under the License.
 {{ if not (empty $command) }}
   {{ $consoleValues := merge $consoleValues (dict "Values" (dict "deployment" (dict "command" $command))) }}
 {{ end }}
-{{ $consoleValues := merge $consoleValues (dict "Values" (dict "deployment" (dict "create" (not .Values.console.deployment.create)))) }}
+{{ $consoleValues := merge $consoleValues (dict "Values" (dict "deployment" (dict "create" .Values.console.deployment.create))) }}
 
-{{ if and .Values.console.enabled (not .Values.console.configmap.create) }}
+{{ if and .Values.console.enabled .Values.console.configmap.create }}
 {{ $consoleValues := merge $consoleValues (dict "Values" (dict "podAnnotations" (dict "checksum-redpanda-chart/config" ( $configmap | toYaml | sha256sum )))) }}
 {{ end }}
 
