@@ -309,8 +309,8 @@ spec:
           args:
             - --operator-mode=false
             - --namespace={{ .Release.Namespace }}
-            - --health-probe-bind-address={{ .Values.statefulset.sideCars.controllers.healthProbeAddress | quote }}
-            - --metrics-bind-address={{ .Values.statefulset.sideCars.controllers.metricsAddress | quote }}
+            - --health-probe-bind-address={{ .Values.statefulset.sideCars.controllers.healthProbeAddress }}
+            - --metrics-bind-address={{ .Values.statefulset.sideCars.controllers.metricsAddress }}
             - --additional-controllers={{ join "," .Values.statefulset.sideCars.controllers.run }}
           env:
             - name: REDPANDA_HELM_RELEASE_NAME
