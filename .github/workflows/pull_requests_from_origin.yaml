@@ -40,7 +40,6 @@ jobs:
         version:
           - ""
           - v23.1.19
-          - v22.3.24
         testvaluespattern:
           - '9[7-9]*' # some tests depend on a github secret that isn't available for fork PRs. Only run these tests in branch PRs.
       fail-fast: false
