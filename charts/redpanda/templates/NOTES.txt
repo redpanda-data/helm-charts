@@ -49,7 +49,7 @@ The pods will rollout in a few seconds. To check the status:
 
 If you are using the load balancer service with a cloud provider, the services will likely have automatically-generated addresses. In this scenario the advertised listeners must be updated in order for external access to work. Run the following command once Redpanda is deployed:
 
-  {{ printf "helm upgrade %s redpanda/redpanda -n %s --set $(kubectl get svc -n %s -o jsonpath='{\"external.addresses={\"}{ range .items[*]}{.status.loadBalancer.ingress[0].ip }{.status.loadBalancer.ingress[0].hostname}{\",\"}{ end }{\"}\\n\"}')" (include "redpanda.name" .) .Release.Namespace .Release.Namespace }}
+  {{ printf "helm upgrade %s redpanda/redpanda --reuse-values -n %s --set $(kubectl get svc -n %s -o jsonpath='{\"external.addresses={\"}{ range .items[*]}{.status.loadBalancer.ingress[0].ip }{.status.loadBalancer.ingress[0].hostname}{\",\"}{ end }{\"}\\n\"}')" (include "redpanda.name" .) .Release.Namespace .Release.Namespace }}
 {{- end }}
 
 Set up rpk for access to your external listeners:
