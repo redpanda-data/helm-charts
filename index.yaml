@@ -15,6 +15,35 @@ entries:
           url: https://helm.sh/docs/intro/install/
     apiVersion: v2
     appVersion: v1.0.6
+    created: "2023-11-13T11:26:02.258055166Z"
+    description: Redpanda managed Connectors helm chart
+    digest: f3d1cd25569d198a20656b49e2a3f768d1fd1751d8e609986a6e5fd20e48b17d
+    icon: https://images.ctfassets.net/paqvtpyf8rwu/3cYHw5UzhXCbKuR24GDFGO/73fb682e6157d11c10d5b2b5da1d5af0/skate-stand-panda.svg
+    kubeVersion: ^1.21.0-0
+    maintainers:
+    - name: redpanda-data
+      url: https://github.com/orgs/redpanda-data/people
+    name: connectors
+    sources:
+    - https://github.com/redpanda-data/helm-charts
+    type: application
+    urls:
+    - https://github.com/redpanda-data/helm-charts/releases/download/connectors-0.1.8/connectors-0.1.8.tgz
+    version: 0.1.8
+  - annotations:
+      artifacthub.io/images: |
+        - name: connectors
+          image: docker.redpanda.com/redpandadata/connectors:v1.0.6
+        - name: rpk
+          image: docker.redpanda.com/redpandadata/redpanda:latest
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://docs.redpanda.com
+        - name: "Helm (>= 3.6.0)"
+          url: https://helm.sh/docs/intro/install/
+    apiVersion: v2
+    appVersion: v1.0.6
     created: "2023-10-17T13:28:31.337678706Z"
     description: Redpanda managed Connectors helm chart
     digest: 6f707d98737da72c7d3639f86df6b1edbb83200f76242cec3e6366371096e3c0
@@ -10729,4 +10758,4 @@ entries:
     urls:
     - https://charts.redpanda.com/redpanda-0.1.0.tgz
     version: 0.1.0
-generated: "2023-11-08T19:28:03.097989438Z"
+generated: "2023-11-13T11:26:02.258542844Z"
