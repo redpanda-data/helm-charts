@@ -982,6 +982,23 @@
         "initContainers": {
           "type": "object",
           "properties": {
+            "fsValidator": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "expectedFS": {
+                  "type": "string"
+                },
+                "resources": {
+                  "type": "object"
+                },
+                "extraVolumeMounts": {
+                  "type": "string"
+                }
+              }
+            },
             "tuning": {
               "type": "object",
               "properties": {

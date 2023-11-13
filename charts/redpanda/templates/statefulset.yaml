@@ -103,6 +103,26 @@ spec:
           resources: {{- toYaml .Values.statefulset.initContainers.setDataDirOwnership.resources | nindent 12 }}
   {{- end }}
 {{- end }}
+{{- if $values.statefulset.initContainers.fsValidator.enabled }}
+        - name: fs-validator
+          image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
+          command:
+            - /bin/sh
+          args:
+            - -c
+            - 'trap "exit 0" TERM; exec /etc/secrets/fs-validator/scripts/fsValidator.sh {{ .Values.statefulset.initContainers.fsValidator.expectedFS }} & wait $!'
+          volumeMounts: {{ include "common-mounts" . | nindent 12 }}
+  {{- if dig "initContainers" "fsValidator" "extraVolumeMounts" false .Values.statefulset -}}
+    {{ tpl .Values.statefulset.initContainers.fsValidator.extraVolumeMounts . | nindent 12 }}
+  {{- end }}
+            - name: {{ (include "redpanda.fullname" .) | trunc 49 }}-fs-validator
+              mountPath: /etc/secrets/fs-validator/scripts/
+            - name: datadir
+              mountPath: /var/lib/redpanda/data
+  {{- if get .Values.statefulset.initContainers.fsValidator "resources" }}
+          resources: {{- toYaml .Values.statefulset.fsValidator.tuning.resources | nindent 12 }}
+  {{- end }}
+{{- end }}
 {{- if and (include "is-licensed" . | fromJson).bool (include "storage-tiered-config" .|fromJson).cloud_storage_enabled }}
         - name: set-tiered-storage-cache-dir-ownership
           image: {{ .Values.statefulset.initContainerImage.repository }}:{{ .Values.statefulset.initContainerImage.tag }}
@@ -368,6 +388,10 @@ spec:
         - name: {{ template "redpanda.fullname" . }}-config-watcher
           secret:
             secretName: {{ template "redpanda.fullname" . }}-config-watcher
+            defaultMode: 0o775
+        - name: {{ (include "redpanda.fullname" .) | trunc 49 }}-fs-validator
+          secret:
+            secretName: {{ (include "redpanda.fullname" .) | trunc 49 }}-fs-validator
             defaultMode: 0o775
 {{- if semverCompare ">=1.16-0" .Capabilities.KubeVersion.GitVersion }}
       topologySpreadConstraints:

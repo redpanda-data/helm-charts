@@ -650,6 +650,11 @@ statefulset:
         - all
       createRBAC: true
   initContainers:
+    fsValidator:
+      enabled: false
+      expectedFS: xfs
+      resources: {}
+      extraVolumeMounts: |-      
     tuning:
       resources: {}
       extraVolumeMounts: |-
