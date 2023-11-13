@@ -245,13 +245,6 @@ spec:
                 secretKeyRef:
                   name: {{ include "console.fullname" . }}
                   key: enterprise-license
-            {{- else if dig "licenseSecretRef" "name" "" .Values.enterprise }}
-            - name: LICENSE
-              valueFrom:
-                secretKeyRef:
-                  name: {{ dig "licenseSecretRef" "name" "" .Values.enterprise }}
-                  key: {{ dig "licenseSecretRef" "key" "enterprise-license" .Values.enterprise }}
-            {{- end }}
             {{- if .Values.secret.redpanda.adminApi.password }}
             - name: REDPANDA_ADMINAPI_PASSWORD
               valueFrom:
@@ -270,6 +263,14 @@ spec:
             {{- if .Values.secret.redpanda.adminApi.tlsCert }}
             - name: REDPANDA_ADMINAPI_TLS_CERTFILEPATH
               value: "/etc/console/secrets/redpanda-admin-api-tls-cert"
+            {{- end }}
+            {{- else }}
+            {{- if dig "licenseSecretRef" "name" "" .Values.enterprise }}
+            - name: LICENSE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ dig "licenseSecretRef" "name" "" .Values.enterprise }}
+                  key: {{ dig "licenseSecretRef" "key" "enterprise-license" .Values.enterprise }}
             {{- end }}
             {{- end }}
             {{- with .Values.extraEnvFrom }}
