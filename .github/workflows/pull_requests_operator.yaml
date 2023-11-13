@@ -138,7 +138,7 @@ jobs:
       - name: Install CRDs
         if: steps.list-changed.outputs.changed == 'true'
         run: |
-          kubectl kustomize https://github.com/redpanda-data/redpanda//src/go/k8s/config/crd | kubectl apply -f -
+          kubectl kustomize https://github.com/redpanda-data/redpanda-operator//src/go/k8s/config/crd | kubectl apply -f -
 
       - name: Run chart-testing (install and upgrade)
         if: steps.list-changed.outputs.changed == 'true'
