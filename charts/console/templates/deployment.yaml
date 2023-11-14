@@ -135,7 +135,7 @@ spec:
             {{- with .Values.extraEnv }}
               {{- toYaml . | nindent 12 }}
             {{- end }}
-            {{- if .Values.secret.create }}
+          {{- if .Values.secret.create }}
             {{- if .Values.secret.kafka.saslPassword }}
             - name: KAFKA_SASL_PASSWORD
               valueFrom:
@@ -264,7 +264,7 @@ spec:
             - name: REDPANDA_ADMINAPI_TLS_CERTFILEPATH
               value: "/etc/console/secrets/redpanda-admin-api-tls-cert"
             {{- end }}
-            {{- else }}
+          {{- else }}
             {{- if dig "licenseSecretRef" "name" "" .Values.enterprise }}
             - name: LICENSE
               valueFrom:
@@ -272,11 +272,11 @@ spec:
                   name: {{ dig "licenseSecretRef" "name" "" .Values.enterprise }}
                   key: {{ dig "licenseSecretRef" "key" "enterprise-license" .Values.enterprise }}
             {{- end }}
-            {{- end }}
-            {{- with .Values.extraEnvFrom }}
+          {{- end }}
+          {{- with .Values.extraEnvFrom }}
           envFrom:
               {{- toYaml . | nindent 12 }}
-            {{- end }}
+          {{- end }}
         {{- with .Values.extraContainers }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
