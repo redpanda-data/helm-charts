@@ -245,6 +245,7 @@ spec:
                 secretKeyRef:
                   name: {{ include "console.fullname" . }}
                   key: enterprise-license
+            {{- end }}
             {{- if .Values.secret.redpanda.adminApi.password }}
             - name: REDPANDA_ADMINAPI_PASSWORD
               valueFrom:
