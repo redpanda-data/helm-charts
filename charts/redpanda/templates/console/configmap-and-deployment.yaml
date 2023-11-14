@@ -17,9 +17,17 @@ limitations under the License.
 {{ $values := .Values }}
 
 {{/* Secret */}}
-{{ $secretConfig := dict }}
+{{ $secretConfig := dict ( dict
+  "create" $.Values.console.secret.create
+  )
+}}
+{{/* if the console chart has the creation of the secret disabled, create it here instead if needed */}}
 {{ if and .Values.console.enabled (not .Values.console.secret.create) }}
 {{ $licenseKey := ( include "enterprise-license" .  ) }}
+# before license changes, this was not printing a secret, so we gather in which case to print
+# for now only if we have a license do we print, however, this may be an issue for some
+# since if we do include a license we MUST also print all secret items.
+  {{ if ( not (empty $licenseKey ) ) }}
 {{ $secretConfig = ( dict
   "create" true
   "enterprise" ( dict "license" $licenseKey)
@@ -35,6 +43,7 @@ limitations under the License.
 {{ $console = merge $config $console }}
 ---
 {{ include (print .Subcharts.console.Template.BasePath "/secret.yaml") $console }}
+  {{ end }}
 {{ end }}
 
 {{ $configmap := dict }}
