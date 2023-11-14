@@ -713,6 +713,9 @@ serviceAccount:
 # -- Role Based Access Control.
 rbac:
   # -- Enable for features that need extra privileges.
+  # If you use the Redpanda Operator,
+  # you must deploy it with the `--set rbac.createRPKBundleCRs=true` flag
+  # to give it the required ClusterRoles.
   enabled: false
   # -- Annotations to add to the `rbac` resources.
   annotations: {}
