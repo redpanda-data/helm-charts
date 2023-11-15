@@ -91,7 +91,7 @@ spec:
             if [ -d "/etc/secrets/users/" ]; then
                 IFS=":" read -r USER_NAME PASSWORD MECHANISM < <(grep "" $(find /etc/secrets/users/* -print))
                 curl -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors --ssl-reqd \
-  {{- if $cert.caEnabled }}
+  {{- if and $cert ( dig "caEnabled" false $cert ) }}
                 --cacert /etc/tls/certs/{{ $service.tls.cert }}/ca.crt \
   {{- end }}
                 -X PUT -u ${USER_NAME}:${PASSWORD} \
