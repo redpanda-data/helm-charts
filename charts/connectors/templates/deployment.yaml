@@ -28,6 +28,9 @@ metadata:
   {{- toYaml . | nindent 4 }}
 {{- end }}
 spec:
+  {{- with dig "replicas" "" .Values.deployment }}
+  replicas: {{ . }}
+  {{- end }}
   progressDeadlineSeconds: {{ .Values.deployment.progressDeadlineSeconds }}
   revisionHistoryLimit: {{ .Values.deployment.revisionHistoryLimit }}
   selector:
