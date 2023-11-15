@@ -22,11 +22,11 @@ metadata:
   name: {{ template "connectors.fullname" . }}
   labels:
 {{- with .Values.monitoring.labels }}
-  {{- . | nindent 4 }}
+  {{- toYaml . | nindent 4 }}
 {{- end }}
   annotations:
 {{- with .Values.monitoring.annotations }}
-  {{- . | nindent 4 }}
+  {{- toYaml . | nindent 4 }}
 {{- end }}
 spec:
 {{- with .Values.monitoring.namespaceSelector }}
