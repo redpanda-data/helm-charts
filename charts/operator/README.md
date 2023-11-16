@@ -23,7 +23,7 @@ discovered.
 1. Install Redpanda operator CRDs:
 
 ```sh
-kubectl kustomize https://github.com/redpanda-data/redpanda//src/go/k8s/config/crd | kubectl apply -f -
+kubectl kustomize https://github.com/redpanda-data/redpanda-operator//src/go/k8s/config/crd | kubectl apply -f -
 ```
 
 > The CRDs are decoupled from helm chart, so that helm release can be managed with fewer privileges.
