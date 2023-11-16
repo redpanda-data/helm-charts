@@ -1283,6 +1283,51 @@ entries:
       artifacthub.io/operatorCapabilities: Seamless Upgrades
     apiVersion: v2
     appVersion: v2.0.0
+    created: "2023-11-16T01:46:11.699891459Z"
+    dependencies:
+    - condition: monitoring.deployPrometheusKubeStack
+      name: kube-prometheus-stack
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 51.2.0
+    description: Redpanda operator helm chart
+    digest: 5a994bb66ae45f36228b06b3fe4c072e64ee7dc9d1468bf26f9c5644ad841d4f
+    icon: https://go.redpanda.com/hubfs/Redpandas/operator-panda.png
+    maintainers:
+    - name: redpanda-data
+      url: https://github.com/orgs/redpanda-data/people
+    name: operator
+    sources:
+    - https://github.com/redpanda-data/helm-charts
+    type: application
+    urls:
+    - https://github.com/redpanda-data/helm-charts/releases/download/operator-0.4.1/operator-0.4.1.tgz
+    version: 0.4.1
+  - annotations:
+      artifacthub.io/crds: |
+        - kind: Redpanda
+          version: v1alpha1
+          name: redpanda
+          displayName: Redpanda
+          description: Define a Redpanda cluster
+      artifacthub.io/images: |
+        - name: redpanda-operator
+          image: docker.redpanda.com/redpandadata/redpanda-operator:v2.0.0
+        - name: configurator
+          image: docker.redpanda.com/redpandadata/configurator:v2.0.0
+        - name: redpanda
+          image: docker.redpanda.com/redpandadata/redpanda:v23.2.13
+        - name: kube-rbac-proxy
+          image: gcr.io/kubebuilder/kube-rbac-proxy:v0.14.0
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://docs.redpanda.com
+        - name: "Helm (>= 3.6.0)"
+          url: https://helm.sh/docs/intro/install/
+      artifacthub.io/operator: "true"
+      artifacthub.io/operatorCapabilities: Seamless Upgrades
+    apiVersion: v2
+    appVersion: v2.0.0
     created: "2023-11-07T14:26:38.138840395Z"
     dependencies:
     - condition: monitoring.deployPrometheusKubeStack
@@ -11039,4 +11084,4 @@ entries:
     urls:
     - https://charts.redpanda.com/redpanda-0.1.0.tgz
     version: 0.1.0
-generated: "2023-11-16T01:09:42.36963727Z"
+generated: "2023-11-16T01:46:11.700358537Z"
