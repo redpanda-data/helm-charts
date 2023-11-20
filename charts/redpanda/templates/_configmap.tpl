@@ -560,6 +560,10 @@ rpk:
     {{- $server := dict "host" (dict "address" . "port" $.Values.listeners.rpc.port) -}}
     {{- $serverList = append $serverList $server -}}
   {{- end -}}
+  {{- range $seed := .Values.additionalSeedServers -}}
+    {{- $server := dict "host" (dict "address" $seed.address "port" $seed.port) -}}
+    {{- $serverList = append $serverList $server -}}
+  {{- end -}}
   {{- toJson (dict "serverList" $serverList) -}}
 {{- end -}}
 

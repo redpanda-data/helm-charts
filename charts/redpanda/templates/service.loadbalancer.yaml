@@ -54,6 +54,12 @@ spec:
   externalTrafficPolicy: Local
   sessionAffinity: None
   ports:
+    {{- range $listener := $values.listeners.rpc }}
+    - name: rpc
+      protocol: TCP
+      targetPort: {{ $values.listeners.rpc.port }}
+      port: {{ $values.listeners.rpc.port }}
+    {{- end }}
     {{- range $name, $listener := $values.listeners.admin.external }}
       {{- $enabled := dig "enabled" $values.external.enabled $listener }}
       {{- if $enabled }}

@@ -282,6 +282,16 @@ Use AppVersion if image.tag is not set
 {{- toJson (dict "bool" $enabled) -}}
 {{- end -}}
 
+{{- define "external-rpc-enabled" -}}
+{{- if (hasKey .Values.external "rpc") -}}
+  {{- if (default false .Values.external.rpc.enabled) -}}
+    {{- toJson (dict "bool" true) -}}
+  {{- else -}}
+    {{- toJson (dict "bool" false) -}}
+  {{- end -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "redpanda-reserve-memory" -}}
   {{/*
   Determines the value of --reserve-memory flag (in mebibytes with M suffix, per Seastar).

@@ -20,6 +20,10 @@ limitations under the License.
 
 {{- $values := .Values }}
 {{- $internalAdvertiseAddress := printf "%s.%s" "$(SERVICE_NAME)" (include "redpanda.internal.domain" .) -}}
+{{- $externalAdvertiseAddress := printf "$(SERVICE_NAME)" -}}
+{{- if (tpl ($values.external.domain | default "") $) -}}
+  {{- $externalAdvertiseAddress = printf "$(SERVICE_NAME).%s" (tpl $values.external.domain $) -}}
+{{- end -}}
 {{- $uid := dig "podSecurityContext" "runAsUser" .Values.statefulset.securityContext.runAsUser .Values.statefulset -}}
 {{- $gid := dig "podSecurityContext" "fsGroup" .Values.statefulset.securityContext.fsGroup .Values.statefulset -}}
 {{- $root := deepCopy . }}
@@ -65,6 +69,20 @@ spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets: {{- toYaml . | nindent 8 }}
     {{- end }}
+{{- /*
+TODO this needs to be added automatically
+      hostAliases:
+      - ip: "ip-of-redpanda-0-lb"
+        hostnames:
+        - "redpanda-0.external-domain"
+      - ip: "ip-of-redpanda-1-lb"
+        hostnames:
+        - "redpanda-1.external-domain"
+      - ip: "20.221.87.87"
+      - ip: "ip-of-redpanda-2-lb"
+        hostnames:
+        - "redpanda-2.external-domain"
+*/}}
       initContainers:
 {{- if and (hasKey $values.tuning "tune_aio_events") $values.tuning.tune_aio_events }}
         - name: tuning
@@ -260,7 +278,11 @@ spec:
             - rpk
             - redpanda
             - start
+{{- if (include "external-rpc-enabled" . | fromJson).bool }}
+            - "--advertise-rpc-addr={{ $externalAdvertiseAddress }}:{{ .Values.listeners.rpc.port }}"
+{{- else }}
             - "--advertise-rpc-addr={{ $internalAdvertiseAddress }}:{{ .Values.listeners.rpc.port }}"
+{{- end }}
           ports:
 {{- range $name, $listener := .Values.listeners }}
             - name: {{ lower $name }}
