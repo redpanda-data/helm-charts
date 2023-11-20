@@ -165,8 +165,8 @@ redpanda.yaml: |
         port: {{ $listener.port }}
   {{- end }}
 {{- end }}
-    admin_api_tls:
 {{- if (include "admin-internal-tls-enabled" . | fromJson).bool }}
+    admin_api_tls:
       - name: internal
         enabled: true
         cert_file: /etc/tls/certs/{{ $service.tls.cert }}/tls.crt
@@ -224,8 +224,8 @@ redpanda.yaml: |
         authentication_method: {{ default "sasl" $listener.authenticationMethod }}
   {{- end }}
 {{- end }}
-    kafka_api_tls:
 {{- if (include "kafka-internal-tls-enabled" . | fromJson).bool }}
+    kafka_api_tls:
       - name: internal
         enabled: true
         cert_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/tls.crt
