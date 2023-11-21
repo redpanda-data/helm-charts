@@ -70,8 +70,10 @@ rules:
     - create
     - delete
     - get
+    - list
     - patch
     - update
+    - watch
 - apiGroups:
     - apps
   resources:
@@ -94,8 +96,6 @@ rules:
     - get
     - patch
     - update
-    - list
-    - watch
 - apiGroups:
     - apps
   resources:
@@ -294,8 +294,10 @@ rules:
     - create
     - delete
     - get
+    - list
     - patch
     - update
+    - watch
 - apiGroups:
     - rbac.authorization.k8s.io
   resources:
@@ -315,6 +317,26 @@ rules:
   verbs:
     - create
     - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - redpanda.vectorized.io
+  resources:
+    - clusters
+  verbs:
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - redpanda.vectorized.io
+  resources:
+    - consoles
+  verbs:
     - get
     - list
     - patch
@@ -344,6 +366,36 @@ rules:
     - patch
     - update
     - watch
+- apiGroups:
+    - source.toolkit.fluxcd.io
+  resources:
+    - gitrepository
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - source.toolkit.fluxcd.io
+  resources:
+    - gitrepository/finalizers
+  verbs:
+    - create
+    - delete
+    - get
+    - patch
+    - update
+- apiGroups:
+    - source.toolkit.fluxcd.io
+  resources:
+    - gitrepository/status
+  verbs:
+    - get
+    - patch
+    - update
 - apiGroups:
     - source.toolkit.fluxcd.io
   resources:
@@ -404,17 +456,6 @@ rules:
     - get
     - patch
     - update
-- apiGroups:
-    - ""
-  resources:
-    - persistentvolumeclaims
-  verbs:
-    - delete
-    - get
-    - list
-    - patch
-    - update
-    - watch
 - apiGroups:
     - cluster.redpanda.com
   resources:
