@@ -91,6 +91,8 @@ rules:
   resources:
     - statefulsets
   verbs:
+    - list
+    - watch
     - create
     - delete
     - get
