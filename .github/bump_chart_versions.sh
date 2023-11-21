@@ -20,7 +20,7 @@ get_chart_appversion() {
 }
 
 get_chart_app_constraint() {
-    CONSTRAINT=$(yq -r .appVersion "${CHARTFILE}" | awk '{patch=split($1,version,".");version[patch]++; print "~"version[1],version[2]}' OFS=.)
+    CONSTRAINT=$(yq -r .appVersion "${CHARTFILE}" | awk '{patch=split($1,version,".");version[patch]++; print "~"version[1]}' OFS=.)
 }
 
 get_repo() {
