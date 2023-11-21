@@ -6,9 +6,9 @@ metadata:
   name: operator
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.1
+    helm.sh/chart: operator-0.4.2
     app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v2.0.0"
+    app.kubernetes.io/version: "v2.1.0"
     app.kubernetes.io/managed-by: Helm
 ---
 # Source: operator/templates/configmap.yaml
@@ -18,9 +18,9 @@ metadata:
   name: operator-config
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.1
+    helm.sh/chart: operator-0.4.2
     app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v2.0.0"
+    app.kubernetes.io/version: "v2.1.0"
     app.kubernetes.io/managed-by: Helm
 data:
   controller_manager_config.yaml: |
@@ -33,9 +33,9 @@ metadata:
   name: operator-pvc
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.1
+    helm.sh/chart: operator-0.4.2
     app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v2.0.0"
+    app.kubernetes.io/version: "v2.1.0"
     app.kubernetes.io/managed-by: Helm
 rules:
 - apiGroups:
@@ -53,9 +53,9 @@ metadata:
   name: operator-election-role
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.1
+    helm.sh/chart: operator-0.4.2
     app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v2.0.0"
+    app.kubernetes.io/version: "v2.1.0"
     app.kubernetes.io/managed-by: Helm
 rules:
 - apiGroups:
@@ -79,9 +79,9 @@ metadata:
   name: operator
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.1
+    helm.sh/chart: operator-0.4.2
     app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v2.0.0"
+    app.kubernetes.io/version: "v2.1.0"
     app.kubernetes.io/managed-by: Helm
 rules:
 - apiGroups:
@@ -115,8 +115,10 @@ rules:
     - create
     - delete
     - get
+    - list
     - patch
     - update
+    - watch
 - apiGroups:
     - apps
   resources:
@@ -139,8 +141,6 @@ rules:
     - get
     - patch
     - update
-    - list
-    - watch
 - apiGroups:
     - apps
   resources:
@@ -339,8 +339,10 @@ rules:
     - create
     - delete
     - get
+    - list
     - patch
     - update
+    - watch
 - apiGroups:
     - rbac.authorization.k8s.io
   resources:
@@ -360,6 +362,26 @@ rules:
   verbs:
     - create
     - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - redpanda.vectorized.io
+  resources:
+    - clusters
+  verbs:
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - redpanda.vectorized.io
+  resources:
+    - consoles
+  verbs:
     - get
     - list
     - patch
@@ -389,6 +411,36 @@ rules:
     - patch
     - update
     - watch
+- apiGroups:
+    - source.toolkit.fluxcd.io
+  resources:
+    - gitrepository
+  verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+- apiGroups:
+    - source.toolkit.fluxcd.io
+  resources:
+    - gitrepository/finalizers
+  verbs:
+    - create
+    - delete
+    - get
+    - patch
+    - update
+- apiGroups:
+    - source.toolkit.fluxcd.io
+  resources:
+    - gitrepository/status
+  verbs:
+    - get
+    - patch
+    - update
 - apiGroups:
     - source.toolkit.fluxcd.io
   resources:
@@ -450,17 +502,6 @@ rules:
     - patch
     - update
 - apiGroups:
-    - ""
-  resources:
-    - persistentvolumeclaims
-  verbs:
-    - delete
-    - get
-    - list
-    - patch
-    - update
-    - watch
-- apiGroups:
     - cluster.redpanda.com
   resources:
     - topics
@@ -492,9 +533,9 @@ metadata:
   name: operator-pvc
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.1
+    helm.sh/chart: operator-0.4.2
     app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v2.0.0"
+    app.kubernetes.io/version: "v2.1.0"
     app.kubernetes.io/managed-by: Helm
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -512,9 +553,9 @@ metadata:
   name: operator-election-rolebinding
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.1
+    helm.sh/chart: operator-0.4.2
     app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v2.0.0"
+    app.kubernetes.io/version: "v2.1.0"
     app.kubernetes.io/managed-by: Helm
 subjects:
 - kind: ServiceAccount
@@ -532,9 +573,9 @@ metadata:
   name: operator
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.1
+    helm.sh/chart: operator-0.4.2
     app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v2.0.0"
+    app.kubernetes.io/version: "v2.1.0"
     app.kubernetes.io/managed-by: Helm
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -552,9 +593,9 @@ metadata:
   name: operator-metrics-service
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.1
+    helm.sh/chart: operator-0.4.2
     app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v2.0.0"
+    app.kubernetes.io/version: "v2.1.0"
     app.kubernetes.io/managed-by: Helm
 spec:
   ports:
@@ -573,9 +614,9 @@ metadata:
   labels:
     
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.1
+    helm.sh/chart: operator-0.4.2
     app.kubernetes.io/instance: operator
-    app.kubernetes.io/version: "v2.0.0"
+    app.kubernetes.io/version: "v2.1.0"
     app.kubernetes.io/managed-by: Helm
 spec:
   replicas: 1
@@ -593,13 +634,13 @@ spec:
       serviceAccountName: operator
       containers:
       - name: manager
-        image: "docker.redpanda.com/redpandadata/redpanda-operator:v2.0.0"
+        image: "docker.redpanda.com/redpandadata/redpanda-operator:v2.1.0"
         imagePullPolicy: IfNotPresent
         args:
         - --health-probe-bind-address=:8081
         - --metrics-bind-address=127.0.0.1:8080
         - --leader-elect
-        - --configurator-tag=v2.0.0
+        - --configurator-tag=v2.1.0
         - --configurator-base-image=docker.redpanda.com/redpandadata/configurator
         - --webhook-enabled=false
         - --namespace=redpanda
