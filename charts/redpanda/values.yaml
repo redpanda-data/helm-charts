@@ -929,6 +929,9 @@ config:
     # tm_sync_timeout_ms: 2000ms                                   # Time to wait state catch up before rejecting a request
     # tm_violation_recovery_policy: crash                          # Describes how to recover from an invariant violation happened on the transaction coordinator level
     # transactional_id_expiration_ms: 10080min                     # Producer ids are expired once this time has elapsed after the last write with the given producer ID
+    kafka_mtls_principal_mapping_rules: '[DEFAULT]'                         # Principal mapping rules for mTLS authentication on the Kafka API. If null, the property is disabled.
+
+
   # -- Tunable cluster properties.
   tunable:
     # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#log_segment_size).
