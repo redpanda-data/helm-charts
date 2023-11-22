@@ -250,8 +250,12 @@ spec:
                 - -c
                 - |
                   set -x
+                  {{- if ( dig "node" "recovery_mode_enabled" false .Values.config ) }}
+                  echo "in recovery mode, OK"
+                  {{- else }}
                   rpk cluster health
                   rpk cluster health | grep 'Healthy:.*true'
+                  {{- end }}
             initialDelaySeconds: {{ .Values.statefulset.readinessProbe.initialDelaySeconds }}
             failureThreshold: {{ .Values.statefulset.readinessProbe.failureThreshold }}
             periodSeconds: {{ .Values.statefulset.readinessProbe.periodSeconds }}
