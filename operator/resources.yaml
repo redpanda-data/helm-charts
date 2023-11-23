@@ -6,7 +6,7 @@ metadata:
   name: operator
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.3
+    helm.sh/chart: operator-0.4.4
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v2.1.0"
     app.kubernetes.io/managed-by: Helm
@@ -18,10 +18,11 @@ metadata:
   name: operator-config
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.3
+    helm.sh/chart: operator-0.4.4
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v2.1.0"
     app.kubernetes.io/managed-by: Helm
+    
 data:
   controller_manager_config.yaml: |
     map[apiVersion:controller-runtime.sigs.k8s.io/v1alpha1 health:map[healthProbeBindAddress::8081] kind:ControllerManagerConfig leaderElection:map[leaderElect:true resourceName:aa9fc693.vectorized.io] metrics:map[bindAddress:127.0.0.1:8080] webhook:map[port:9443]]
@@ -33,10 +34,11 @@ metadata:
   name: operator-pvc
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.3
+    helm.sh/chart: operator-0.4.4
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v2.1.0"
     app.kubernetes.io/managed-by: Helm
+    
 rules:
 - apiGroups:
   - ""
@@ -53,10 +55,11 @@ metadata:
   name: operator-election-role
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.3
+    helm.sh/chart: operator-0.4.4
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v2.1.0"
     app.kubernetes.io/managed-by: Helm
+    
 rules:
 - apiGroups:
   - ""
@@ -79,10 +82,11 @@ metadata:
   name: operator
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.3
+    helm.sh/chart: operator-0.4.4
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v2.1.0"
     app.kubernetes.io/managed-by: Helm
+    
 rules:
 - apiGroups:
     - ""
@@ -535,10 +539,11 @@ metadata:
   name: operator-pvc
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.3
+    helm.sh/chart: operator-0.4.4
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v2.1.0"
     app.kubernetes.io/managed-by: Helm
+    
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -555,10 +560,11 @@ metadata:
   name: operator-election-rolebinding
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.3
+    helm.sh/chart: operator-0.4.4
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v2.1.0"
     app.kubernetes.io/managed-by: Helm
+    
 subjects:
 - kind: ServiceAccount
   name: operator
@@ -575,10 +581,11 @@ metadata:
   name: operator
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.3
+    helm.sh/chart: operator-0.4.4
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v2.1.0"
     app.kubernetes.io/managed-by: Helm
+    
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -595,10 +602,11 @@ metadata:
   name: operator-metrics-service
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.3
+    helm.sh/chart: operator-0.4.4
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v2.1.0"
     app.kubernetes.io/managed-by: Helm
+    
 spec:
   ports:
   - name: https
@@ -616,10 +624,11 @@ metadata:
   labels:
     
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.3
+    helm.sh/chart: operator-0.4.4
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v2.1.0"
     app.kubernetes.io/managed-by: Helm
+    
 spec:
   replicas: 1
   selector:
