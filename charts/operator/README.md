@@ -62,7 +62,7 @@ Other instruction will be visible after installation.
 | image.pullPolicy | string | `"IfNotPresent"` |  |
 | image.repository | string | `"docker.redpanda.com/redpandadata/redpanda-operator"` | Repository that Redpanda Operator image is available |
 | imagePullSecrets | list | `[]` | Redpanda Operator container registry pullSecret (ex: specify docker registry credentials) |
-| commonLabels | string | `nil` | Allows to assign commonLabels to the resources created by this helm chart |
+| commonLabels | object | `{}` | Allows to assign commonLabels to the resources created by this helm chart |
 | logLevel | string | `"info"` | Set Redpanda Operator log level (debug, info, error, panic, fatal) |
 | monitoring | object | `{"deployPrometheusKubeStack":false,"enabled":false}` | Add service monitor to the deployment |
 | nameOverride | string | `""` | Override name of app |
