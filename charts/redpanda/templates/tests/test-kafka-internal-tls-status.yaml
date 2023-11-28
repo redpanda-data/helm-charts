@@ -33,7 +33,6 @@ metadata:
 spec:
   restartPolicy: Never
   securityContext: {{ include "pod-security-context" . | nindent 4 }}
-    fsGroup: 65535
   {{- with .Values.imagePullSecrets }}
   imagePullSecrets: {{- toYaml . | nindent 4 }}
   {{- end }}

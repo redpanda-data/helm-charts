@@ -41,7 +41,6 @@ metadata:
 spec:
   restartPolicy: Never
   securityContext: {{ include "pod-security-context" . | nindent 4 }}
-    fsGroup: 101
   affinity:
     podAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:
