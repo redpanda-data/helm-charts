@@ -129,7 +129,6 @@ rules:
       - ""
     resources:
       - nodes
-      - pods
     verbs:
       - get
       - list
@@ -191,6 +190,7 @@ rules:
       - ""
     resources:
       - secrets
+      - pods
     verbs:
       - get
       - list
