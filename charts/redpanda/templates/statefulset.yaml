@@ -243,6 +243,7 @@ spec:
           # It's ok that this cluster-wide check affects all the pods as it's only used for the
           # PodDisruptionBudget and we don't want to roll any pods if the Redpanda cluster isn't healthy.
           # https://kubernetes.io/docs/concepts/workloads/pods/disruptions/#pod-disruption-budgets
+          # All services set `publishUnreadyAddresses:true` to prevent this from affecting cluster access
         {{- if not ( dig "node" "recovery_mode_enabled" false .Values.config ) }}
           readinessProbe:
             exec:
