@@ -42,12 +42,12 @@ limitations under the License.
 {{ $extraVolumeMounts := list }}
 {{ $command := list }}
 {{ if (include "sasl-enabled" . | fromJson).bool }}
-  {{ $command = concat $command (list "sh" "-c") }}
-  {{ $consoleSASLConfig := (printf "set -e; IFS=':' read -r CONNECT_SASL_USERNAME KAFKA_SASL_PASSWORD CONNECT_SASL_MECHANISM < <(grep \"\" $(find /mnt/users/* -print)); CONNECT_SASL_MECHANISM=${CONNECT_SASL_MECHANISM:-%s}; export CONNECT_SASL_USERNAME CONNECT_SASL_PASSWORD_FILE CONNECT_SASL_MECHANISM;" (( include "sasl-mechanism" . ) | lower)) }}
+  {{ $command = concat $command (list "bash" "-c") }}
+  {{ $consoleSASLConfig := (printf "set -e; IFS=':' read -r CONNECT_SASL_USERNAME CONNECT_SASL_PASSWORD CONNECT_SASL_MECHANISM < <(grep \"\" $(find /mnt/users/* -print)); CONNECT_SASL_MECHANISM=${CONNECT_SASL_MECHANISM:-%s}; export CONNECT_SASL_USERNAME CONNECT_SASL_PASSWORD CONNECT_SASL_MECHANISM;" ( include "sasl-mechanism" . | lower )) }}
   {{ $consoleSASLConfig = cat $consoleSASLConfig " [[ $CONNECT_SASL_MECHANISM == \"SCRAM-SHA-256\" ]] && CONNECT_SASL_MECHANISM=scram-sha-256;" }}
   {{ $consoleSASLConfig = cat $consoleSASLConfig " [[ $CONNECT_SASL_MECHANISM == \"SCRAM-SHA-512\" ]] && CONNECT_SASL_MECHANISM=scram-sha-512;" }}
   {{ $consoleSASLConfig = cat $consoleSASLConfig " export CONNECT_SASL_MECHANISM;" }}
-  {{ $consoleSASLConfig = cat $consoleSASLConfig " echo $KAFKA_SASL_PASSWORD > /opt/kafka/connect-password/rc-credentials/password;" }}
+  {{ $consoleSASLConfig = cat $consoleSASLConfig " echo $CONNECT_SASL_PASSWORD > /opt/kafka/connect-password/rc-credentials/password;" }}
   {{ $consoleSASLConfig = cat $consoleSASLConfig " exec /opt/kafka/bin/kafka_connect_run.sh" }}
   {{ $command = append $command $consoleSASLConfig }}
   {{ $extraVolumes = append $extraVolumes (dict
