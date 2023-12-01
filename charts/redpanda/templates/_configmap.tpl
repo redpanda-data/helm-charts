@@ -575,8 +575,11 @@ rpk:
   {{- $admin := list -}}
   {{- $profile := keys .Values.listeners.kafka.external | first -}}
   {{- $kafkaListener := get .Values.listeners.kafka.external $profile -}}
-  {{- $adminprofile := keys .Values.listeners.admin.external | first -}}
-  {{- $adminListener := get .Values.listeners.admin.external $adminprofile -}}
+  {{- $adminListener := dict -}}
+  {{- if .Values.listeners.admin.external -}}
+      {{- $adminprofile := keys .Values.listeners.admin.external | first -}}
+      {{- $adminListener = get .Values.listeners.admin.external $adminprofile -}}
+  {{- end -}}
   {{- range $i := until (.Values.statefulset.replicas|int) -}}
     {{- $externalAdvertiseAddress := printf "%s-%d" (include "redpanda.fullname" $) $i -}}
     {{- if (tpl ($.Values.external.domain | default "") $) -}}
