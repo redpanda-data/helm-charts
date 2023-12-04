@@ -3,7 +3,7 @@
 description: Find the default values and descriptions of settings in the Redpanda Helm chart.
 ---
 
-![Version: 5.6.37](https://img.shields.io/badge/Version-5.6.37-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v23.2.13](https://img.shields.io/badge/AppVersion-v23.2.13-informational?style=flat-square)
+![Version: 5.6.56](https://img.shields.io/badge/Version-5.6.56-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v23.2.17](https://img.shields.io/badge/AppVersion-v23.2.17-informational?style=flat-square)
 
 This page describes the official Redpanda Helm Chart. In particular, this page describes the contents of the chart’s [`values.yaml` file](https://github.com/redpanda-data/helm-charts/blob/main/charts/redpanda/values.yaml). Each of the settings is listed and described on this page, along with any default values.
 
@@ -533,7 +533,7 @@ Annotations to add to the `rbac` resources.
 
 ### [rbac.enabled](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=rbac.enabled)
 
-Enable for features that need extra privileges.
+Enable for features that need extra privileges. If you use the Redpanda Operator, you must deploy it with the `--set rbac.createRPKBundleCRs=true` flag to give it the required ClusterRoles.
 
 **Default:** `false`
 
@@ -646,6 +646,22 @@ Additional annotations to apply to the Pods of this StatefulSet.
 ### [statefulset.initContainers.extraInitContainers](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.extraInitContainers)
 
 **Default:** `""`
+
+### [statefulset.initContainers.fsValidator.enabled](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.fsValidator.enabled)
+
+**Default:** `false`
+
+### [statefulset.initContainers.fsValidator.expectedFS](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.fsValidator.expectedFS)
+
+**Default:** `"xfs"`
+
+### [statefulset.initContainers.fsValidator.extraVolumeMounts](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.fsValidator.extraVolumeMounts)
+
+**Default:** `""`
+
+### [statefulset.initContainers.fsValidator.resources](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.fsValidator.resources)
+
+**Default:** `{}`
 
 ### [statefulset.initContainers.setDataDirOwnership.enabled](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.setDataDirOwnership.enabled)
 
@@ -813,7 +829,7 @@ Number of Redpanda brokers (Redpanda Data recommends setting this to the number 
 
 ### [statefulset.sideCars.controllers.image.tag](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.sideCars.controllers.image.tag)
 
-**Default:** `"v23.2.8"`
+**Default:** `"v23.2.14"`
 
 ### [statefulset.sideCars.controllers.metricsAddress](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.sideCars.controllers.metricsAddress)
 
