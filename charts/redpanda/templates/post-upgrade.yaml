@@ -80,9 +80,9 @@ spec:
   {{- if and (typeIs "float64" $value) (eq (floor $value) $value) }}
     {{- $value = int64 $value }}
   {{- end }}
-  {{- if (typeIs "bool" $value ) }}
+  {{- if and (typeIs "bool" $value ) ( not ( empty $value ) ) }}
             rpk cluster config set {{ $key }} {{ $value }}
-  {{- else if (typeIs "[]interface {}" $value ) }}
+  {{- else if and (typeIs "[]interface {}" $value ) ( not ( empty $value ) ) }}
             rpk cluster config set {{ $key }} "[ {{ join "," $value }} ]"
   {{- else if $value }}
             rpk cluster config set {{ $key }} {{ $value }}

@@ -78,7 +78,9 @@ bootstrap.yaml: |
       {{- if eq (typeOf $element) "bool" }}
         {{- dict $key $element | toYaml | nindent 2 }}
       {{- else if eq (typeOf $element) "[]interface {}" }}
-        {{ dict $key $element | toYaml | nindent 2 }}
+        {{- if not ( empty $element ) }}
+      {{ dict $key $element | toYaml | nindent 2 }}
+        {{- end }}
       {{- else if $element }}
         {{- dict $key $element | toYaml | nindent 2 }}
       {{- end }}
@@ -129,7 +131,9 @@ redpanda.yaml: |
     {{- if eq (typeOf $element) "bool"  }}
     {{ $key }}: {{ $element | toYaml }}
     {{- else if eq (typeOf $element) "[]interface {}" }}
+      {{- if not ( empty $element ) }}
     {{ $key }}: {{ $element | toYaml | nindent 4 }}
+      {{- end }}
     {{- else if $element }}
     {{ $key }}: {{ $element | toYaml }}
     {{- end }}
