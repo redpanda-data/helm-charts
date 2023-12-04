@@ -24,9 +24,14 @@ auth:
     enabled: true
     secretRef: "redpanda-users"
     users:
-      - name: admin
+      - name: admins
         password: change-me
         mechanism: SCRAM-SHA-256
+
+config:
+  cluster:
+    default_topic_replications: 3
+    kafka_nodelete_topics: ['audit', 'consumer_offsets', '_schemas', 'my_sample_topic']
 
 storage:
   persistentVolume:
