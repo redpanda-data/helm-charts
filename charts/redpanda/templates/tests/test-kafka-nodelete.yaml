@@ -15,6 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */}}
 {{- if dig "kafka_nodelete_topics" "[]" $.Values.config.cluster }}
+{{- $noDeleteTopics := .Values.config.cluster.kafka_nodelete_topics }}
 {{- $sasl := .Values.auth.sasl }}
 {{- $root := deepCopy . }}
 {{- $rpk := deepCopy . }}
@@ -72,7 +73,7 @@ spec:
           {{- $i := .Values.statefulset.replicas }}
           {{- $default_topic_replicas := sub (add $i (mod $i 2)) 1 }}
           # wait for post-upgrade job to update the default_topic_replications value
-          timeout 600 bash -c "until [[ $(rpk cluster config get default_topic_replications) = {{ $default_topic_replicas }} ]]; do sleep 1; done"
+          timeout 120 bash -c "until [[ $(rpk cluster config get default_topic_replications) = {{ $default_topic_replicas }} ]]; do sleep 1; done"
   
           exists=$(rpk topic list | grep my_sample_topic | awk '{print $1}')
           if [[ "$exists" != "my_sample_topic" ]]; then
@@ -89,12 +90,14 @@ spec:
          
           # now check if we can delete the topic (we should not)
           rpk topic delete my_sample_topic
+
+          {{- if has "my_sample_topic" $noDeleteTopics }}
           result=$(rpk topic list | grep my_sample_topic | awk '{print $1}')
-          
           if [[ "$result" != "my_sample_topic" ]]; then
             echo "topic should not have been deleted"
             exit 1
           fi
+          {{- end }}
 
       volumeMounts: {{ include "default-mounts" . | nindent 8 }}
       resources: {{ toYaml .Values.statefulset.resources | nindent 12 }}
