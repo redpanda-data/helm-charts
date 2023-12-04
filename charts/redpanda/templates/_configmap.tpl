@@ -159,7 +159,7 @@ redpanda.yaml: |
         address: 0.0.0.0
         port: {{ $service.port }}
 {{- range $name, $listener := $service.external }}
-  {{- if and $listener.port $name }}
+  {{- if and $listener.port $name (dig "enabled" true $listener) }}
       - name: {{ $name }}
         address: 0.0.0.0
         port: {{ $listener.port }}
@@ -185,7 +185,7 @@ redpanda.yaml: |
 {{- end }}
 {{- range $name, $listener := $service.external }}
   {{- $k := dict "Values" $values "listener" $listener }}
-  {{- if (include "admin-external-tls-enabled" $k | fromJson).bool }}
+  {{- if and (include "admin-external-tls-enabled" $k | fromJson).bool (dig "enabled" true $listener) }}
     {{- $mtls := dig "tls" "requireClientAuth" false $listener }}
     {{- $mtls = dig "tls" "requireClientAuth" $mtls $k }}
     {{- $certName := include "admin-external-tls-cert" $k }}
@@ -217,11 +217,13 @@ redpanda.yaml: |
         authentication_method: {{ default "sasl" $kafkaService.authenticationMethod }}
 {{- end }}
 {{- range $name, $listener := $kafkaService.external }}
+  {{- if and $listener.port $name (dig "enabled" true $listener) }}
       - name: {{ $name }}
         address: 0.0.0.0
         port: {{ $listener.port }}
-  {{- if or (include "sasl-enabled" $root | fromJson).bool $listener.authenticationMethod }}
+    {{- if or (include "sasl-enabled" $root | fromJson).bool $listener.authenticationMethod }}
         authentication_method: {{ default "sasl" $listener.authenticationMethod }}
+    {{- end }}
   {{- end }}
 {{- end }}
     kafka_api_tls:
@@ -244,7 +246,7 @@ redpanda.yaml: |
 {{- end }}
 {{- range $name, $listener := $kafkaService.external }}
   {{- $k := dict "Values" $values "listener" $listener }}
-  {{- if (include "kafka-external-tls-enabled" $k | fromJson).bool }}
+  {{- if and (include "kafka-external-tls-enabled" $k | fromJson).bool (dig "enabled" true $listener) }}
     {{- $mtls := dig "tls" "requireClientAuth" false $listener }}
     {{- $mtls = dig "tls" "requireClientAuth" $mtls $k }}
     {{- $certName := include "kafka-external-tls-cert" $k }}
@@ -344,6 +346,7 @@ redpanda.yaml: |
         authentication_method: {{ default "http_basic" $schemaRegistryService.authenticationMethod }}
           {{- end }}
   {{- range $name, $listener := $schemaRegistryService.external }}
+    {{- if dig "enabled" true $listener }}
       - name: {{ $name }}
         address: 0.0.0.0
           {{- /*
@@ -353,10 +356,11 @@ redpanda.yaml: |
           {{- if and (empty $listener.port) (ne (len $schemaRegistryService.external) 1) }}
             {{- fail "missing required port for schemaRegistry listener $listener.name" }}
           {{- end }}
-        port: {{ $listener.port | default 8084 }}
+        port: {{ $listener.port }}
           {{- if or (include "sasl-enabled" $root | fromJson).bool $listener.authenticationMethod }}
         authentication_method: {{ default "http_basic" $listener.authenticationMethod }}
           {{- end }}
+    {{- end }}
   {{- end }}
     schema_registry_api_tls:
   {{- if (include "schemaRegistry-internal-tls-enabled" . | fromJson).bool }}
@@ -378,7 +382,7 @@ redpanda.yaml: |
   {{- end }}
   {{- range $name, $listener := $schemaRegistryService.external }}
     {{- $k := dict "Values" $values "listener" $listener }}
-    {{- if (include "schemaRegistry-external-tls-enabled" $k | fromJson).bool }}
+    {{- if and (include "schemaRegistry-external-tls-enabled" $k | fromJson).bool (dig "enabled" true $listener) }}
       {{- $mtls := dig "tls" "requireClientAuth" false $listener }}
       {{- $mtls = dig "tls" "requireClientAuth" $mtls $k }}
       {{- $certName := include "schemaRegistry-external-tls-cert" $k }}
@@ -439,11 +443,13 @@ redpanda.yaml: |
         authentication_method: {{ default "http_basic" $HTTPService.authenticationMethod }}
 {{- end }}
 {{- range $name, $listener := $HTTPService.external }}
+  {{- if and $listener.port $name (dig "enabled" true $listener) }}
       - name: {{ $name }}
         address: 0.0.0.0
         port: {{ $listener.port }}
-  {{- if or (include "sasl-enabled" $root | fromJson).bool $listener.authenticationMethod }}
+    {{- if or (include "sasl-enabled" $root | fromJson).bool $listener.authenticationMethod }}
         authentication_method: {{ default "http_basic" $listener.authenticationMethod }}
+    {{- end }}
   {{- end }}
 {{- end }}
     pandaproxy_api_tls:
@@ -466,7 +472,7 @@ redpanda.yaml: |
   {{- end }}
   {{- range $name, $listener := $HTTPService.external }}
     {{- $k := dict "Values" $values "listener" $listener }}
-    {{- if (include "http-external-tls-enabled" $k | fromJson).bool }}
+    {{- if and (include "http-external-tls-enabled" $k | fromJson).bool (dig "enabled" true $listener) }}
       {{- $mtls := dig "tls" "requireClientAuth" false $listener }}
       {{- $mtls = dig "tls" "requireClientAuth" $mtls $k }}
       {{- $certName := include "http-external-tls-cert" $k }}
@@ -598,7 +604,7 @@ name: {{ $profile }}
 kafka_api:
   brokers: {{ toYaml $brokers | nindent 6 }}
   tls:
-  {{- if (include "kafka-external-tls-enabled" (dict "Values" .Values "listener" $kafkaListener) | fromJson).bool }}
+  {{- if and (include "kafka-external-tls-enabled" (dict "Values" .Values "listener" $kafkaListener) | fromJson).bool (dig "enabled" true $adminListener) }}
     {{- $cert := get .Values.tls.certs .Values.listeners.kafka.tls.cert }}
     {{- if $cert.caEnabled }}
     ca_file: ca.crt
@@ -611,7 +617,7 @@ kafka_api:
 admin_api:
   addresses: {{ toYaml $admin | nindent 6 }}
   tls:
-  {{- if (include "admin-external-tls-enabled" (dict "Values" .Values "listener" $adminListener) | fromJson).bool }}
+  {{- if and (include "admin-external-tls-enabled" (dict "Values" .Values "listener" $adminListener) | fromJson).bool (dig "enabled" true $adminListener) }}
     {{- $cert := get .Values.tls.certs .Values.listeners.admin.tls.cert }}
     {{- if $cert.caEnabled }}
     ca_file: ca.crt
