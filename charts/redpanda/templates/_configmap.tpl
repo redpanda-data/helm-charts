@@ -75,7 +75,13 @@ bootstrap.yaml: |
         {{- $r := $.Values.statefulset.replicas }}
         {{- $element = min $element (sub (add $r (mod $r 2)) 1) }}
       {{- end }}
-      {{- if or (eq (typeOf $element) "bool") $element }}
+      {{- if eq (typeOf $element) "bool" }}
+        {{- dict $key $element | toYaml | nindent 2 }}
+      {{- else if eq (typeOf $element) "[]interface {}" }}
+        {{- if not ( empty $element ) }}
+      {{ dict $key $element | toYaml | nindent 2 }}
+        {{- end }}
+      {{- else if $element }}
         {{- dict $key $element | toYaml | nindent 2 }}
       {{- end }}
     {{- end }}
@@ -122,7 +128,13 @@ redpanda.yaml: |
 {{- end }}
 {{- with (dig "cluster" dict .Values.config) }}
   {{- range $key, $element := . }}
-    {{- if or (eq (typeOf $element) "bool") $element }}
+    {{- if eq (typeOf $element) "bool"  }}
+    {{ $key }}: {{ $element | toYaml }}
+    {{- else if eq (typeOf $element) "[]interface {}" }}
+      {{- if not ( empty $element ) }}
+    {{ $key }}: {{ $element | toYaml | nindent 4 }}
+      {{- end }}
+    {{- else if $element }}
     {{ $key }}: {{ $element | toYaml }}
     {{- end }}
   {{- end }}
