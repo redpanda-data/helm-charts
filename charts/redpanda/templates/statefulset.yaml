@@ -254,11 +254,11 @@ spec:
                   set -x
                   rpk cluster health
                   rpk cluster health | grep 'Healthy:.*true'
-        {{- end }}
             initialDelaySeconds: {{ .Values.statefulset.readinessProbe.initialDelaySeconds }}
             failureThreshold: {{ .Values.statefulset.readinessProbe.failureThreshold }}
             periodSeconds: {{ .Values.statefulset.readinessProbe.periodSeconds }}
             successThreshold: {{ .Values.statefulset.readinessProbe.initialDelaySeconds }}
+        {{- end }}
           command:
             - rpk
             - redpanda
