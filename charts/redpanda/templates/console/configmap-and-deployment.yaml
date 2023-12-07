@@ -275,7 +275,9 @@ limitations under the License.
   }}
 {{ end }}
 
-{{ $extraEnv := concat $kafkaTLS $schemaRegistryTLS $adminAPI}}
+{{ $extraEnv := concat $kafkaTLS $schemaRegistryTLS $adminAPI .Values.console.extraEnv }}
+{{ $extraVolumes = concat $extraVolumes .Values.console.extraVolumes }}
+{{ $extraVolumeMounts = concat $extraVolumeMounts .Values.console.extraVolumeMounts }}
 {{ $consoleValues := dict
   "Values" (dict
   "extraVolumes" $extraVolumes
