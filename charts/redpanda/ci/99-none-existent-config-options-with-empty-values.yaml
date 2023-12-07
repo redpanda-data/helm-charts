@@ -53,3 +53,17 @@ config:
     node_empty_array_value: []
     node_empty_map_value: {}
     node_empty_string_value: ""
+
+console:
+  extraEnv:
+    - name: TEST
+      value: test
+  extraVolumeMounts:
+    - name: redpanda-license
+      mountPath: /mnt/test
+      readOnly: true
+  extraVolumes:
+    - name: redpanda-license
+      secret:
+        defaultMode: 0420
+        secretName: redpanda-license
