@@ -52,22 +52,22 @@ cleanup_aks() {
 
     export CI TEST_STORAGE_ACCOUNT TEST_RESOURCE_GROUP
 
-    docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.50.0 \
+    docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.55.0 \
       az login --service-principal \
       --username 918839a6-3e96-4950-8bf2-f56d0a2e7447 \
       --password $AZURE_CLIENT_SECRET \
       --tenant 9a95fd9e-005d-487a-9a01-d08c1eab2757 || true
 
-    docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.50.0 \
+    docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.55.0 \
       az storage account delete \
       --name $TEST_STORAGE_ACCOUNT \
       --resource-group $TEST_RESOURCE_GROUP \
       --yes
 
-    docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.50.0 \
+    docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.55.0 \
       az group delete --resource-group $TEST_RESOURCE_GROUP --yes --debug
 
-    docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.50.0 \
+    docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.55.0 \
       az group delete --resource-group $TEST_RESOURCE_GROUP --yes --debug || true
 }
 

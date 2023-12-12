@@ -133,18 +133,18 @@ test_aks() {
 
     export TEST_STORAGE_ACCOUNT TEST_RESOURCE_GROUP TEST_STORAGE_CONTAINER
 
-    docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.50.0 \
+    docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.55.0 \
       az login --service-principal \
       --username $AZURE_CLIENT_ID \
       --password $AZURE_CLIENT_SECRET \
       --tenant $AZURE_TENANT_ID
 
-    docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.50.0 \
+    docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.55.0 \
       az group create \
       --name $TEST_RESOURCE_GROUP \
       --location eastus2
 
-    docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.50.0 \
+    docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.55.0 \
       az storage account create \
       --name $TEST_STORAGE_ACCOUNT \
       --resource-group $TEST_RESOURCE_GROUP \
@@ -152,13 +152,13 @@ test_aks() {
       --sku Standard_RAGRS \
       --kind StorageV2
 
-    docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.50.0 \
+    docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.55.0 \
       az storage container create \
       --name $TEST_STORAGE_CONTAINER \
       --account-name $TEST_STORAGE_ACCOUNT
 
 
-    TEST_AZURE_SHARED_KEY=$(docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.50.0 az storage account keys list -g $TEST_RESOURCE_GROUP -n $TEST_STORAGE_ACCOUNT --query '[0].value' -o tsv)
+    TEST_AZURE_SHARED_KEY=$(docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.55.0 az storage account keys list -g $TEST_RESOURCE_GROUP -n $TEST_STORAGE_ACCOUNT --query '[0].value' -o tsv)
     export TEST_AZURE_SHARED_KEY
 
     trap kind_dump EXIT
