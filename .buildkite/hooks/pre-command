@@ -155,7 +155,8 @@ test_aks() {
     docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.55.0 \
       az storage container create \
       --name $TEST_STORAGE_CONTAINER \
-      --account-name $TEST_STORAGE_ACCOUNT
+      --account-name $TEST_STORAGE_ACCOUNT \
+      --auth-mode login
 
 
     TEST_AZURE_SHARED_KEY=$(docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.55.0 az storage account keys list -g $TEST_RESOURCE_GROUP -n $TEST_STORAGE_ACCOUNT --query '[0].value' -o tsv)
