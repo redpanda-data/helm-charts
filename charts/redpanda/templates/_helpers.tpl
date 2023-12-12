@@ -454,6 +454,9 @@ than 1 core.
 {{- define "redpanda-atleast-23-2-1" -}}
 {{- toJson (dict "bool" (or (not (eq .Values.image.repository "docker.redpanda.com/redpandadata/redpanda")) (include "redpanda.semver" . | semverCompare ">=23.2.1-0 || <0.0.1-0"))) -}}
 {{- end -}}
+{{- define "redpanda-atleast-23-3-0" -}}
+{{- toJson (dict "bool" (or (not (eq .Values.image.repository "docker.redpanda.com/redpandadata/redpanda")) (include "redpanda.semver" . | semverCompare ">=23.3.0-0 || <0.0.1-0"))) -}}
+{{- end -}}
 
 {{- define "redpanda-22-2-x-without-sasl" -}}
 {{- $result :=  (include "redpanda-atleast-22-3-0" . | fromJson).bool -}}
@@ -580,6 +583,97 @@ return a warning if the chart is configured with insufficient CPU
     -}}
   {{- end -}}
   {{- toJson $brokers -}}
+{{- end -}}
+
+{{- define "kafka-brokers-sasl-enabled" -}}
+  {{- $root := . -}}
+  {{- $kafkaService := .Values.listeners.kafka }}
+  {{- $auditLogging := .Values.auditLogging }}
+  {{- $brokers := list -}}
+  {{- $broker_tls := dict -}}
+  {{- $result := dict -}}
+  {{- $tlsEnabled := .Values.tls.enabled -}}
+  {{- $tlsCerts := .Values.tls.certs -}}
+  {{- $trustStoreFile := "" -}}
+  {{- $requireClientAuth := dig "tls" "requireClientAuth" false $kafkaService -}}
+  {{- if and ( eq "internal" $auditLogging.listener ) ( eq (default "sasl" $kafkaService.authenticationMethod) "sasl" ) -}}
+    {{- range $id, $item := $root.tempConfigMapServerList }}
+      {{- $brokerItem := ( dict
+        "address" $item.host.address
+        "port" $kafkaService.port
+        )
+      -}}
+    {{- $brokers = append $brokers $brokerItem -}}
+    {{- end }}
+    {{- if $brokers -}}
+      {{- $result = set $result "brokers" $brokers -}}
+    {{- end -}}
+    {{- if dig "tls" "enabled" $tlsEnabled $kafkaService -}}
+      {{- $cert := get $tlsCerts $kafkaService.tls.cert -}}
+      {{- if empty $cert -}}
+        {{- fail (printf "Certificate used but not defined") -}}
+      {{- end -}}
+      {{- if $cert.caEnabled -}}
+        {{- $trustStoreFile =  ( printf "/etc/tls/certs/%s/ca.crt" $kafkaService.tls.cert ) -}}
+      {{- else -}}
+        {{- $trustStoreFile = "/etc/ssl/certs/ca-certificates.crt" -}}
+      {{- end -}}
+      {{- $broker_tls = ( dict
+        "enabled" true
+        "cert_file" ( printf "/etc/tls/certs/%s/tls.crt" $kafkaService.tls.cert )
+        "key_file" ( printf "/etc/tls/certs/%s/tls.key" $kafkaService.tls.cert )
+        "require_client_auth" $requireClientAuth
+        )
+      -}}
+      {{- if $trustStoreFile -}}
+        {{- $broker_tls = set $broker_tls "truststore_file" $trustStoreFile -}}
+      {{- end -}}
+      {{- if $broker_tls -}}
+        {{- $result = set $result "broker_tls" $broker_tls -}}
+      {{- end -}}
+    {{- end -}}
+  {{- else -}}
+    {{- range $name, $listener := $kafkaService.external -}}
+      {{- if and $listener.port $name (dig "enabled" true $listener) ( eq (default "sasl" $listener.authenticationMethod) "sasl" ) ( eq $name $auditLogging.listener ) -}}
+        {{- range $id, $item := $root.tempConfigMapServerList }}
+          {{- $brokerItem := ( dict
+            "address" $item.host.address
+            "port" $listener.port
+            )
+          -}}
+        {{- $brokers = append $brokers $brokerItem -}}
+        {{- end }}
+        {{- if $brokers -}}
+          {{- $result = set $result "brokers" $brokers -}}
+        {{- end -}}
+        {{- if dig "tls" "enabled" $tlsEnabled $listener -}}
+          {{- $cert := get $tlsCerts $listener.tls.cert -}}
+          {{- if empty $cert -}}
+            {{- fail (printf "Certificate used but not defined") -}}
+          {{- end -}}
+          {{- if $cert.caEnabled -}}
+            {{- $trustStoreFile =  ( printf "/etc/tls/certs/%s/ca.crt" $listener.tls.cert ) -}}
+          {{- else -}}
+            {{- $trustStoreFile = "/etc/ssl/certs/ca-certificates.crt" -}}
+          {{- end -}}
+          {{- $broker_tls = ( dict
+            "enabled" true
+            "cert_file" ( printf "/etc/tls/certs/%s/tls.crt" $listener.tls.cert )
+            "key_file" ( printf "/etc/tls/certs/%s/tls.key" $listener.tls.cert )
+            "require_client_auth" $requireClientAuth
+            )
+          -}}
+          {{- if $trustStoreFile -}}
+            {{- $broker_tls = set $broker_tls "truststore_file" $trustStoreFile -}}
+          {{- end -}}
+          {{- if $broker_tls -}}
+            {{- $result = set $result "broker_tls" $broker_tls -}}
+          {{- end -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- toYaml $result  -}}
 {{- end -}}
 
 {{/*

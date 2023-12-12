@@ -87,6 +87,30 @@ license_secret_ref: {}
   # secret_name: my-secret
   # secret_key: key-where-license-is-stored
 
+# -- Audit logging for a redpanda cluster, must have enabled sasl and have one kafka listener supporting sasl authentication
+# for audit logging to work. Note this feature is only available for redpanda versions >= v23.3.0.
+auditLogging:
+  # -- Enable or disable audit logging, for production clusters we suggest you enable,
+  # however, this will only work if you also enable sasl and a listener with sasl enabled.
+  enabled: false
+  # -- Kafka listener name, note that it must have `authenticationMethod` set to sasl
+  # 'internal' if using internal listener, else use external listener name, e.g., default.
+  listener: internal
+  # -- Integer value defining the number of partitions used by a newly created audit topic.
+  partitions: 12
+  # -- Event types that should be captured by audit logs, default is ["admin", "authenticate", "management"].
+  enabledEventTypes:
+  # -- List of topics to exclude from auditing, default is null.
+  excludedTopics:
+  # -- List of principals to exclude from auditing, default is null.
+  excludedPrincipals:
+  # -- Defines the number of bytes (in bytes) allocated by the internal audit client for audit messages.
+  clientMaxBufferSize: 16777216
+  # -- In ms, frequency in which per shard audit logs are batched to client for write to audit log.
+  queueDrainIntervalMs: 500
+  # -- Defines the maximum amount of memory used (in bytes) by the audit buffer in each shard.
+  queueMaxBufferSizePerShard: 1048576
+
 # -- Enterprise (optional)
 # For details,
 # see the [License documentation](https://docs.redpanda.com/docs/get-started/licenses/?platform=kubernetes#redpanda-enterprise-edition).
