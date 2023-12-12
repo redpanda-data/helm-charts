@@ -139,17 +139,16 @@ test_aks() {
       --password $AZURE_CLIENT_SECRET \
       --tenant $AZURE_TENANT_ID
 
-    # the westus2 is used as buildkite is deployed in us-west-2 which is close to Azure westus2 (Maybe in the same city)
     docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.50.0 \
       az group create \
       --name $TEST_RESOURCE_GROUP \
-      --location westus2
+      --location eastus2
 
     docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.50.0 \
       az storage account create \
       --name $TEST_STORAGE_ACCOUNT \
       --resource-group $TEST_RESOURCE_GROUP \
-      --location westus2 \
+      --location eastus2 \
       --sku Standard_RAGRS \
       --kind StorageV2
 
