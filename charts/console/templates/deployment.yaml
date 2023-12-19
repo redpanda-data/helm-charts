@@ -48,8 +48,9 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "console.serviceAccountName" . }}
-      securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- with .Values.podSecurityContext }}
+      securityContext: {{- . | toYaml | nindent 8 }}
+      {{- end }}
       volumes:
         - name: configs
           configMap:
@@ -84,8 +85,9 @@ spec:
         {{- with .Values.deployment.extraArgs }}
             {{ . | toYaml | nindent 12 }}
         {{- end }}
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+          {{- with .Values.securityContext }}
+          securityContext: {{- . | toYaml | nindent 12 }}
+          {{- end }}
           image: {{ include "console.container.image" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
