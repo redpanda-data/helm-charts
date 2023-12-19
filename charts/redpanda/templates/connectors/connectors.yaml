@@ -67,8 +67,6 @@ limitations under the License.
     "mountPath" "/mnt/users"
     "readOnly" true
   )}}
-
-
   {{ $extraVolumes = append $extraVolumes (dict
     "name" (printf "%s-user-password" ((include "redpanda.fullname" .)) | trunc 49)
     "emptyDir" (dict)
