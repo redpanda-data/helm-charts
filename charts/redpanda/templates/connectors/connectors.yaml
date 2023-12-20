@@ -50,12 +50,18 @@ limitations under the License.
   {{ $consoleSASLConfig = cat $consoleSASLConfig " echo $CONNECT_SASL_PASSWORD > /opt/kafka/connect-password/rc-credentials/password;" }}
   {{ $consoleSASLConfig = cat $consoleSASLConfig " exec /opt/kafka/bin/kafka_connect_run.sh" }}
   {{ $command = append $command $consoleSASLConfig }}
+
+  {{ $extraVolumes = concat $extraVolumes .Values.connectors.storage.volume }}
+
   {{ $extraVolumes = append $extraVolumes (dict
     "name" (printf "%s-users" (include "redpanda.fullname" .))
     "secret" (dict
       "secretName" .Values.auth.sasl.secretRef
     )
   )}}
+
+  {{ $extraVolumeMounts = concat $extraVolumeMounts .Values.connectors.storage.volumeMounts }}
+
   {{ $extraVolumeMounts = append $extraVolumeMounts (dict
     "name" (printf "%s-users" (include "redpanda.fullname" .))
     "mountPath" "/mnt/users"
