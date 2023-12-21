@@ -33,7 +33,7 @@ spec:
   endpoints:
   - interval: {{ .Values.monitoring.scrapeInterval }}
     path: /public_metrics
-    targetPort: admin
+    port: admin
     {{- if dig "enableHttp2" "" .Values.monitoring }}
     enableHttp2: .Values.monitoring.enableHttp2
     {{- end }}
