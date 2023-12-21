@@ -1552,6 +1552,38 @@
           }
         }
       }
+    },
+    "auditLogging": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "listener": {
+          "type": "string"
+        },
+        "partitions": {
+          "type": "integer"
+        },
+        "enabledEventTypes": {
+          "type": ["array", "null"]
+        },
+        "excludedTopics": {
+          "type": ["array", "null"]
+        },
+        "excludedPrincipals": {
+          "type": ["array", "null"]
+        },
+        "clientMaxBufferSize": {
+          "type": "integer"
+        },
+        "queueDrainIntervalMs": {
+          "type": "integer"
+        },
+        "queueMaxBufferSizePerShard": {
+          "type": "integer"
+        }
+      }
     }
   }
 }
