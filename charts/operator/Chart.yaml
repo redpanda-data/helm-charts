@@ -6,7 +6,7 @@ type: application
 # The chart version and the app version are not the same and will not track
 # together. The chart version is a semver representation of changes to this
 # chart.
-version: 0.4.10
+version: 0.4.11
 
 # This is the default version of the operator being deployed.
 # ** NOTE for maintainers: please enssure the artifacthub image annotation is updated before merging
@@ -38,7 +38,7 @@ annotations:
     - name: configurator
       image: docker.redpanda.com/redpandadata/configurator:v2.1.10-23.2.18
     - name: redpanda
-      image: docker.redpanda.com/redpandadata/redpanda:v23.2.18
+      image: docker.redpanda.com/redpandadata/redpanda:v23.2.20
     - name: kube-rbac-proxy
       image: gcr.io/kubebuilder/kube-rbac-proxy:v0.14.0
   artifacthub.io/crds: |
