@@ -23,11 +23,11 @@ type: application
 # The chart version and the app version are not the same and will not track
 # together. The chart version is a semver representation of changes to this
 # chart.
-version: 5.7.1
+version: 5.7.2
 
 # The app version is the default version of Redpanda to install.
 # ** NOTE for maintainers: please ensure the artifacthub image annotation is updated before merging
-appVersion: v23.2.20
+appVersion: v23.2.21
 
 # kubeVersion must be suffixed with "-0" to be able to match cloud providers
 # kubernetes versions like "v1.23.8-gke.1900". Their suffix is interpreted as a
@@ -56,7 +56,7 @@ annotations:
       url: https://helm.sh/docs/intro/install/
   artifacthub.io/images: |
     - name: redpanda
-      image: docker.redpanda.com/redpandadata/redpanda:v23.2.20
+      image: docker.redpanda.com/redpandadata/redpanda:v23.2.21
     - name: busybox
       image: busybox:latest
     - name: mintel/docker-alpine-bash-curl-jq
