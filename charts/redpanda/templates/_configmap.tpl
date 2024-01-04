@@ -106,6 +106,9 @@ bootstrap.yaml: |
   {{- if not (eq (int .Values.auditLogging.partitions) 12) }}
   audit_log_num_partitions: {{ .Values.auditLogging.partitions }}
   {{- end }}
+  {{- if (dig "replicationFactor" "" .Values.auditLogging) }}
+  audit_log_replication_factor: {{ .Values.auditLogging.replicationFactor }}
+  {{- end }}
     {{- if dig "enabledEventTypes" "" .Values.auditLogging }}
   audit_enabled_event_types:
       {{- with .Values.auditLogging.enabledEventTypes }}
