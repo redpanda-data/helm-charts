@@ -1,6 +1,6 @@
 # Redpanda Operator
 
-![Version: 0.3.26](https://img.shields.io/badge/Version-0.3.26-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v23.2.14](https://img.shields.io/badge/AppVersion-v23.2.14-informational?style=flat-square)
+![Version: 0.4.11](https://img.shields.io/badge/Version-0.4.11-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.1.10-23.2.18](https://img.shields.io/badge/AppVersion-v2.1.10--23.2.18-informational?style=flat-square)
 
 ## Installation
 
@@ -49,6 +49,7 @@ Other instruction will be visible after installation.
 | additionalCmdFlags | list | `[]` | Allows setting additional flags to the operator command |
 | affinity | object | `{}` | Allows to specify affinity for Redpanda Operator PODs |
 | clusterDomain | string | `"cluster.local"` |  |
+| commonLabels | string | `nil` | Allows to assign labels to the resources created by this helm chart |
 | config.apiVersion | string | `"controller-runtime.sigs.k8s.io/v1alpha1"` |  |
 | config.health.healthProbeBindAddress | string | `":8081"` |  |
 | config.kind | string | `"ControllerManagerConfig"` |  |
@@ -59,10 +60,12 @@ Other instruction will be visible after installation.
 | configurator.pullPolicy | string | `"IfNotPresent"` |  |
 | configurator.repository | string | `"docker.redpanda.com/redpandadata/configurator"` | Repository that Redpanda configurator image is available |
 | fullnameOverride | string | `""` | Override the fully qualified app name |
-| image.pullPolicy | string | `"IfNotPresent"` |  |
-| image.repository | string | `"docker.redpanda.com/redpandadata/redpanda-operator"` | Repository that Redpanda Operator image is available |
+| image.pullPolicy | string | `"IfNotPresent"` | Define the pullPolicy for kube-rbac-proxy image |
+| image.repository | string | `"docker.redpanda.com/redpandadata/redpanda-operator"` | Repository in which the kube-rbac-proxy image is available |
 | imagePullSecrets | list | `[]` | Redpanda Operator container registry pullSecret (ex: specify docker registry credentials) |
-| commonLabels | object | `{}` | Allows to assign commonLabels to the resources created by this helm chart |
+| kubeRbacProxy.image.pullPolicy | string | `"IfNotPresent"` |  |
+| kubeRbacProxy.image.repository | string | `"gcr.io/kubebuilder/kube-rbac-proxy"` |  |
+| kubeRbacProxy.image.tag | string | `"v0.14.0"` |  |
 | logLevel | string | `"info"` | Set Redpanda Operator log level (debug, info, error, panic, fatal) |
 | monitoring | object | `{"deployPrometheusKubeStack":false,"enabled":false}` | Add service monitor to the deployment |
 | nameOverride | string | `""` | Override name of app |
