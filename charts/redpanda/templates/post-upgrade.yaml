@@ -37,6 +37,9 @@ metadata:
   {{- toYaml . | nindent 4 }}
 {{- end }}
 spec:
+  {{- with .Values.post_upgrade_job.backoffLimit }}
+  backoffLimit: {{ .Values.post_upgrade_job.backoffLimit }}
+  {{- end }}
   template:
     metadata:
       name: "{{ .Release.Name }}"
