@@ -601,6 +601,9 @@ post_upgrade_job:
   #   - secretRef:
   #       name: redpanda-aws-secrets
   affinity: {}
+  # When helm upgrade is performed the post-upgrade job is scheduled before Statefulset successfully finish
+  # its rollout. User can extend Job default backoff limit of `6`.
+  # backoffLimit:
 
 statefulset:
   # -- Number of Redpanda brokers (Redpanda Data recommends setting this to the number of worker nodes in the cluster)
