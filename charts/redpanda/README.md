@@ -99,7 +99,7 @@ Defines the maximum amount of memory used (in bytes) by the audit buffer in each
 
 ### [auditLogging.replicationFactor](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=auditLogging.replicationFactor)
 
-Defines the replication factor for a newly created audit log topic. This configuration applies only to the audit log topic and may be different from the cluster or other topic configurations. This cannot be altered for existing audit log topics. Setting this value is optional. If a value is not provided, Redpanda will use the internal_topic_replication_factor cluster config value. Default is null
+Defines the replication factor for a newly created audit log topic. This configuration applies only to the audit log topic and may be different from the cluster or other topic configurations. This cannot be altered for existing audit log topics. Setting this value is optional. If a value is not provided, Redpanda will use the `internal_topic_replication_factor cluster` config value. Default is `null`
 
 **Default:** `nil`
 
