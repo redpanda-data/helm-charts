@@ -416,6 +416,17 @@
                 }
               }
             },
+            "credentialsSecretRef": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "key": {
+                  "type": "string"
+                }
+              }
+            },
             "config":{
               "type": "object",
               "required": [

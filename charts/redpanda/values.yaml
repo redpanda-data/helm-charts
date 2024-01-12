@@ -455,6 +455,12 @@ storage:
       labels: {}
       # -- Additional annotations to apply to the created PersistentVolumeClaims.
       annotations: {}
+
+    # credentialsSecretRef can be used to set cloud_storage_secret_key from
+    # referenced Kubernetes Secret
+    credentialsSecretRef: {}
+      # name:
+      # key
     #
     # -- Tiered Storage settings
     # Requires `enterprise.licenseKey` or `enterprised.licenseSecretRef`
