@@ -163,6 +163,13 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: status.hostIP
+            {{- if and .Values.storage.tiered.credentialsSecretRef.name .Values.storage.tiered.credentialsSecretRef.key }}
+            - name: CLOUD_STORAGE_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: {{ .Values.storage.tiered.credentialsSecretRef.key }}
+                  name: {{ .Values.storage.tiered.credentialsSecretRef.name }}
+            {{- end }}
           securityContext: {{ include "container-security-context" . | nindent 12 }}
           volumeMounts: {{ include "common-mounts" . | nindent 12 }}
 {{- if dig "initContainers" "configurator" "extraVolumeMounts" false .Values.statefulset -}}
