@@ -1,89 +1,111 @@
-# Default values for redpanda-operator.
-# This is a YAML-formatted file.
+# Default values for the Redpanda Operator Helm chart.
 # Declare variables to be passed into your templates.
 
-# nameOverride -- Override name of app
+# -- Overrides the `redpanda-operator.name` template.
 nameOverride: ""
 
-# fullnameOverride -- Override the fully qualified app name
+# -- Overrides the `redpanda-operator.fullname` template.
 fullnameOverride: ""
 
-# replicaCount -- Number of instances of Redpanda Operator
+# -- Defines the number of instances of the Redpanda Operator to deploy.
+# Each instance is deployed as a Pod. All instances are managed by a Deployment resource.
 replicaCount: 1
 
-# Kubernetes Cluster Domain
+# -- Sets the Kubernetes cluster domain.
 clusterDomain: cluster.local
 
+# -- Container image settings.
 image:
-  # image.repository -- Repository that Redpanda Operator image is available
+  # -- Defines the repository from which to pull the `redpanda-operator` image.
   repository: docker.redpanda.com/redpandadata/redpanda-operator
-  # image.tag -- Define the Redpanda Operator container tag
+  # -- Defines the image version.
+  # See DockerHub for [all stable versions](https://hub.docker.com/r/redpandadata/redpanda-operator/tags).
+  # @default -- `Chart.appVersion`.
   # tag:
-  # image.pullPolicy -- Define the pullPolicy for Redpanda Operator image
+  # -- Defines the `pullPolicy` for the `redpanda-operator` image.
   pullPolicy: IfNotPresent
 
+# -- Configuration for the `kube-rbac-proxy`, a component that provides an HTTP proxy to perform authorization checks.
 kubeRbacProxy:
+  # -- Defines settings for pulling the `kube-rbac-proxy` image.
   image:
-    # image.repository -- Repository in which the kube-rbac-proxy image is available
+    # -- Defines the repository in which the `kube-rbac-proxy` image is available.
     repository: gcr.io/kubebuilder/kube-rbac-proxy
-    # image.tag -- Define the kube-rbac-proxy image tag
+    # -- Defines the `kube-rbac-proxy` image tag.
     tag: v0.14.0
-    # image.pullPolicy -- Define the pullPolicy for kube-rbac-proxy image
+    # -- Defines the `pullPolicy` for `kube-rbac-proxy` image
     pullPolicy: IfNotPresent
 
+# -- Configuration for the Redpanda configurator, a component for managing Redpanda configuration.
 configurator:
-  # configurator.repository -- Repository that Redpanda configurator image is available
+  # -- Defines the repository in which the Redpanda configurator image is available.
   repository: docker.redpanda.com/redpandadata/configurator
-  # configurator.tag -- Define the Redpanda configurator container tag
+  # -- Defines the Redpanda configurator image tag. Uncomment and set a value to use a specific version.
   # tag:
-  # configurator.pullPolicy -- Define the pullPolicy for Redpanda configurator image
+  # -- Defines the `pullPolicy` for the Redpanda configurator image.
   pullPolicy: IfNotPresent
 
+# -- Configuration for the Kubernetes Controller Manager used by Redpanda Operator.
+# The Controller Manager is a component of the Kubernetes control plane that runs controller processes. These controllers are background threads that handle the orchestration and operational logic of Kubernetes, ensuring the desired state of the cluster matches the observed state.
 config:
   apiVersion: controller-runtime.sigs.k8s.io/v1alpha1
   kind: ControllerManagerConfig
+  # -- Configuration for health checking.
   health:
+    # -- Address for the health probe server to listen on.
     healthProbeBindAddress: :8081
+  # -- Configuration for the metrics endpoint.
   metrics:
+    # -- Address for the metrics server to bind to.
     bindAddress: 127.0.0.1:8080
+  # -- Configuration for webhooks, such as the port they listen on. Webhooks are HTTP callbacks that receive and process data in response to events.
   webhook:
+    # -- Sets the port for the webhook server to listen on.
     port: 9443
+  # -- Configuration for leader election, which is a process that ensures only one instance of the controller manager is active at a time. This is critical for high availability and to prevent split-brain scenarios in a distributed system.
   leaderElection:
+    # -- Enables leader election.
     leaderElect: true
+    # -- Sets the name of the resource lock for the leader election process.
     resourceName: aa9fc693.vectorized.io
 
-# imagePullSecrets -- Redpanda Operator container registry pullSecret (ex: specify docker registry credentials)
+# -- Pull secrets may be used to provide credentials to image repositories
+# See the [Kubernetes documentation](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/).
 imagePullSecrets: []
 
-# logLevel -- Set Redpanda Operator log level (debug, info, error, panic, fatal)
+# -- Log level
+# Valid values (from least to most verbose) are: `fatal`, `panic`, `error`, `info` and `debug`.
 logLevel: "info"
 
+# -- Role-based Access Control (RBAC) configuration for the Redpanda Operator.
 rbac:
-  # rbac.create -- Specifies whether the RBAC resources should be created
+  # -- Enables the creation of additional RBAC roles.
   create: true
-  # rbac.createAdditionalControllerCRs -- Enable to create additional rbac cluster roles
-  # needed to run additional-controllers, set to true to opt-in
+  # -- Creates additional RBAC cluster roles that are
+  # needed to run additional controllers using `additionalCmdFlags`.
   createAdditionalControllerCRs: false
-  # rbac.createRPKBundleCRs -- Specified to create additional rbac cluster roles
-  # needed when you will set 'rbac.enabled' to the Redpanda Spec (See redpanda chart values file)
+  # -- Create RBAC cluster roles needed for the Redpanda Helm chart's 'rbac.enabled' feature.
   createRPKBundleCRs: false
 
+# -- Specifies whether to create Webhook resources both to intercept and potentially modify or reject Kubernetes API requests as well as authenticate requests to the Kubernetes API. Only valid when `scope` is set to Cluster.
 webhook:
-  # webhook.create -- Specifies whether the Webhook resources should configured
+  # -- Creates the Webhook resources.
   enabled: false
 
+# -- Service account management.
 serviceAccount:
-  # serviceAccount.create -- Specifies whether a service account should be created
+  # -- Specifies whether a service account should be created.
   create: true
-  # serviceAccount.name -- The name of the service account to use. If not set name is generated using the fullname template
+  # -- The name of the service account to use.
+  # If not set and `serviceAccount.create` is `true`,
+  # a name is generated using the `redpanda-operator.fullname` template.
   name:
 
-# resources -- Set resources requests/limits for Redpanda Operator PODs
+# -- Sets resources requests/limits for Redpanda Operator Pods.
+# By default requests and limits are not set to increase the chances that the charts run on environments with few
+# resources, such as Minikube. To specify resources, uncomment the following
+# lines, adjust them as necessary, and remove the curly braces after `resources`.
 resources: {}
-# We usually recommend not to specify default resources and to leave this as a conscious
-# choice for the user. This also increases chances charts run on environments with little
-# resources, such as Minikube. If you do want to specify resources, uncomment the following
-# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
 #  limits:
 #   cpu: 100m
 #   memory: 30Mi
@@ -91,32 +113,45 @@ resources: {}
 #   cpu: 100m
 #   memory: 20Mi
 
-# nodeSelector -- Allows to schedule Redpanda Operator on specific nodes
-nodeSelector: {}
-# tolerations -- Allows to schedule Redpanda Operator on tainted nodes
+# -- Node selection constraints for scheduling Pods on specific nodes.
+# For details,
+# see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector).nodeSelector: {}
+# -- Taints to be tolerated by Pods.
+# For details,
+# see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/).
 tolerations: []
-# affinity -- Allows to specify affinity for Redpanda Operator PODs
+# -- Sets affinity constraints for scheduling Pods that run the Redpanda Operator.
+# For details,
+# see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity).
 affinity: {}
 
-# podAnnotations -- Allows setting additional annotations for Redpanda Operator PODs
+# Sets additional annotations for Pods.
 podAnnotations: {}
-# podLabels -- Allows setting additional labels for Redpanda Operator PODs
+# Adds additional labels to Pods.
 podLabels: {}
 
-# additionalCmdFlags -- Allows setting additional flags to the operator command
+# -- Passes additional flags to the Redpanda Operator at startup.
+# Additional flags include:
+#
+# - `--additional-controllers`: Additional controllers to deploy. Valid values are nodeWatcher or decommission. For more information about the Nodewatcher controller, see [Install the Nodewatcher controller](https://docs.redpanda.com/current/manage/kubernetes/k-scale-redpanda/#node-pvc). For more information about the Decommission controller, see [Use the Decommission controller](https://docs.redpanda.com/current/manage/kubernetes/k-decommission-brokers/#Automated).
 additionalCmdFlags: []
-# - --some-flag
+# - --additional-controllers="<controller-name"
 
-# commonLabels -- Allows to assign labels to the resources created by this helm chart
+# -- Additional labels to add to all Kubernetes objects.
+# For example, `my.k8s.service: redpanda-operator`.
 commonLabels:
 
-# monitoring -- Add service monitor to the deployment
+# -- Configuration for monitoring.
 monitoring:
+  # -- Creates a ServiceMonitor that can be used by Prometheus-Operator or VictoriaMetrics-Operator to scrape the metrics.
   enabled: false
+  # -- Deploys the [Prometheus community Helm chart](https://prometheus-community.github.io/helm-charts/).
   deployPrometheusKubeStack: false
 
+# Defines the name of the Secret in which to store the self-signed TLS certificate for the Webhooks when `webhook.enabled` is `true`.
 webhookSecretName: webhook-server-cert
 
-# scope -- change the scope and therefore the resource the controller will manage
-# only "Cluster" and "Namespace" supported
+# -- Sets the scope of the Redpanda Operator.
+# Valid values are `Cluster` or `Namespace`.
+# The Cluster scope is deprecated because it deploys the deprecated version of the Redpanda Operator. Use the default Namespace scope. In the Namespace scope, the Redpanda Operator manages Redpanda resources that are deployed in the same namespace as itself.
 scope: Namespace
