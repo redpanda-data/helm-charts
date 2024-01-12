@@ -7,7 +7,7 @@ nameOverride: ""
 # -- Overrides the `redpanda-operator.fullname` template.
 fullnameOverride: ""
 
-# -- Defines the number of instances of the Redpanda Operator to deploy.
+# -- Sets the number of instances of the Redpanda Operator to deploy.
 # Each instance is deployed as a Pod. All instances are managed by a Deployment resource.
 replicaCount: 1
 
@@ -16,33 +16,33 @@ clusterDomain: cluster.local
 
 # -- Container image settings.
 image:
-  # -- Defines the repository from which to pull the `redpanda-operator` image.
+  # -- Sets the repository from which to pull the `redpanda-operator` image.
   repository: docker.redpanda.com/redpandadata/redpanda-operator
-  # -- Defines the image version.
+  # -- Sets the image version.
   # See DockerHub for [all stable versions](https://hub.docker.com/r/redpandadata/redpanda-operator/tags).
   # @default -- `Chart.appVersion`.
   # tag:
-  # -- Defines the `pullPolicy` for the `redpanda-operator` image.
+  # -- Sets the `pullPolicy` for the `redpanda-operator` image.
   pullPolicy: IfNotPresent
 
 # -- Configuration for the `kube-rbac-proxy`, a component that provides an HTTP proxy to perform authorization checks.
 kubeRbacProxy:
-  # -- Defines settings for pulling the `kube-rbac-proxy` image.
+  # -- Sets settings for pulling the `kube-rbac-proxy` image.
   image:
-    # -- Defines the repository in which the `kube-rbac-proxy` image is available.
+    # -- Sets the repository in which the `kube-rbac-proxy` image is available.
     repository: gcr.io/kubebuilder/kube-rbac-proxy
-    # -- Defines the `kube-rbac-proxy` image tag.
+    # -- Sets the `kube-rbac-proxy` image tag.
     tag: v0.14.0
-    # -- Defines the `pullPolicy` for `kube-rbac-proxy` image
+    # -- Sets the `pullPolicy` for `kube-rbac-proxy` image
     pullPolicy: IfNotPresent
 
 # -- Configuration for the Redpanda configurator, a component for managing Redpanda configuration.
 configurator:
-  # -- Defines the repository in which the Redpanda configurator image is available.
+  # -- Sets the repository in which the Redpanda configurator image is available.
   repository: docker.redpanda.com/redpandadata/configurator
-  # -- Defines the Redpanda configurator image tag. Uncomment and set a value to use a specific version.
+  # -- Sets the Redpanda configurator image tag. Uncomment and set a value to use a specific version.
   # tag:
-  # -- Defines the `pullPolicy` for the Redpanda configurator image.
+  # -- Sets the `pullPolicy` for the Redpanda configurator image.
   pullPolicy: IfNotPresent
 
 # -- Configuration for the Kubernetes Controller Manager used by Redpanda Operator.
@@ -52,11 +52,11 @@ config:
   kind: ControllerManagerConfig
   # -- Configuration for health checking.
   health:
-    # -- Address for the health probe server to listen on.
+    # -- Sets the address for the health probe server to listen on.
     healthProbeBindAddress: :8081
   # -- Configuration for the metrics endpoint.
   metrics:
-    # -- Address for the metrics server to bind to.
+    # -- Sets the address for the metrics server to bind to.
     bindAddress: 127.0.0.1:8080
   # -- Configuration for webhooks, such as the port they listen on. Webhooks are HTTP callbacks that receive and process data in response to events.
   webhook:
@@ -148,7 +148,7 @@ monitoring:
   # -- Deploys the [Prometheus community Helm chart](https://prometheus-community.github.io/helm-charts/).
   deployPrometheusKubeStack: false
 
-# Defines the name of the Secret in which to store the self-signed TLS certificate for the Webhooks when `webhook.enabled` is `true`.
+# Sets the name of the Secret in which to store the self-signed TLS certificate for the Webhooks when `webhook.enabled` is `true`.
 webhookSecretName: webhook-server-cert
 
 # -- Sets the scope of the Redpanda Operator.
