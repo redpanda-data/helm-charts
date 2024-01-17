@@ -3,7 +3,7 @@
 description: Find the default values and descriptions of settings in the Redpanda Helm chart.
 ---
 
-![Version: 5.7.4](https://img.shields.io/badge/Version-5.7.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v23.3.1](https://img.shields.io/badge/AppVersion-v23.3.1-informational?style=flat-square)
+![Version: 5.7.8](https://img.shields.io/badge/Version-5.7.8-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v23.3.1](https://img.shields.io/badge/AppVersion-v23.3.1-informational?style=flat-square)
 
 This page describes the official Redpanda Helm Chart. In particular, this page describes the contents of the chart’s [`values.yaml` file](https://github.com/redpanda-data/helm-charts/blob/main/charts/redpanda/values.yaml). Each of the settings is listed and described on this page, along with any default values.
 
@@ -40,7 +40,7 @@ Audit logging for a redpanda cluster, must have enabled sasl and have one kafka 
 **Default:**
 
 ```
-{"clientMaxBufferSize":16777216,"enabled":false,"enabledEventTypes":null,"excludedPrincipals":null,"excludedTopics":null,"listener":"internal","partitions":12,"queueDrainIntervalMs":500,"queueMaxBufferSizePerShard":1048576}
+{"clientMaxBufferSize":16777216,"enabled":false,"enabledEventTypes":null,"excludedPrincipals":null,"excludedTopics":null,"listener":"internal","partitions":12,"queueDrainIntervalMs":500,"queueMaxBufferSizePerShard":1048576,"replicationFactor":null}
 ```
 
 ### [auditLogging.clientMaxBufferSize](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=auditLogging.clientMaxBufferSize)
@@ -96,6 +96,12 @@ In ms, frequency in which per shard audit logs are batched to client for write t
 Defines the maximum amount of memory used (in bytes) by the audit buffer in each shard.
 
 **Default:** `1048576`
+
+### [auditLogging.replicationFactor](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=auditLogging.replicationFactor)
+
+Defines the replication factor for a newly created audit log topic. This configuration applies only to the audit log topic and may be different from the cluster or other topic configurations. This cannot be altered for existing audit log topics. Setting this value is optional. If a value is not provided, Redpanda will use the internal_topic_replication_factor cluster config value. Default is null
+
+**Default:** `nil`
 
 ### [auth](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=auth)
 
@@ -345,7 +351,7 @@ The Redpanda version. See DockerHub for: [All stable versions](https://hub.docke
 
 ### [imagePullSecrets](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=imagePullSecrets)
 
-Pull secrets may be used to provide credentials to image repositories See https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+Pull secrets may be used to provide credentials to image repositories See the [Kubernetes documentation](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/).
 
 **Default:** `[]`
 
@@ -960,7 +966,7 @@ Persistence settings. For details, see the [storage documentation](https://docs.
 **Default:**
 
 ```
-{"hostPath":"","persistentVolume":{"annotations":{},"enabled":true,"labels":{},"size":"20Gi","storageClass":""},"tiered":{"config":{"cloud_storage_access_key":"","cloud_storage_api_endpoint":"","cloud_storage_azure_container":null,"cloud_storage_azure_shared_key":null,"cloud_storage_azure_storage_account":null,"cloud_storage_bucket":"","cloud_storage_cache_size":5368709120,"cloud_storage_credentials_source":"config_file","cloud_storage_enable_remote_read":true,"cloud_storage_enable_remote_write":true,"cloud_storage_enabled":false,"cloud_storage_region":"","cloud_storage_secret_key":""},"hostPath":"","mountType":"emptyDir","persistentVolume":{"annotations":{},"labels":{},"storageClass":""}}}
+{"hostPath":"","persistentVolume":{"annotations":{},"enabled":true,"labels":{},"size":"20Gi","storageClass":""},"tiered":{"config":{"cloud_storage_access_key":"","cloud_storage_api_endpoint":"","cloud_storage_azure_container":null,"cloud_storage_azure_shared_key":null,"cloud_storage_azure_storage_account":null,"cloud_storage_bucket":"","cloud_storage_cache_size":5368709120,"cloud_storage_credentials_source":"config_file","cloud_storage_enable_remote_read":true,"cloud_storage_enable_remote_write":true,"cloud_storage_enabled":false,"cloud_storage_region":"","cloud_storage_secret_key":""},"credentialsSecretRef":{},"hostPath":"","mountType":"emptyDir","persistentVolume":{"annotations":{},"labels":{},"storageClass":""}}}
 ```
 
 ### [storage.hostPath](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.hostPath)
