@@ -99,11 +99,10 @@ jobs:
           version: v3.11.1
 
       - name: Get appVersion
+        id: app_version
         uses: mikefarah/yq@master
-        run: |
-          appVersion=$(yq .appVersion charts/operator/Chart.yaml)
-          echo $appVersion
-          echo appVersion=$appVersion >> "$GITHUB_OUTPUT"
+        with:
+          cmd: yq .appVersion charts/operator/Chart.yaml
 
       - name: Set up chart-testing
         uses: joejulian/chart-testing-action@9f27771144b6debb69e1f85d5f5a3eae8485d057  # v2.4.0-3
@@ -143,7 +142,7 @@ jobs:
       - name: Install CRDs
         if: steps.list-changed.outputs.changed == 'true'
         run: |
-          kubectl kustomize https://github.com/redpanda-data/redpanda-operator//src/go/k8s/config/crd?ref=$(steps.list-changed.outputs.appVersion) | kubectl apply -f -
+          kubectl kustomize https://github.com/redpanda-data/redpanda-operator//src/go/k8s/config/crd?ref=${{ steps.app_version.outputs.result }} | kubectl apply -f -
 
       - name: Run chart-testing (install and upgrade)
         if: steps.list-changed.outputs.changed == 'true'
