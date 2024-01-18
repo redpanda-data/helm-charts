@@ -26,7 +26,7 @@ discovered.
 kubectl kustomize https://github.com/redpanda-data/redpanda-operator//src/go/k8s/config/crd?ref=<appVersion> | kubectl apply -f -
 ```
 
-where `appVersion` is the version of the operator image you are installing.
+where `appVersion` is the [version of the operator](https://github.com/redpanda-data/redpanda-operator/releases) image you are installing.
 
 > The CRDs are decoupled from helm chart, so that helm release can be managed with fewer privileges.
 > The CRDs need to be installed by someone with cluster-level privileges, but once installed the
