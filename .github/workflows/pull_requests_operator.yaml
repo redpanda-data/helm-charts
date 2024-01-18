@@ -74,7 +74,6 @@ jobs:
           git checkout main
           git checkout -
 
-
       - name: install dyff
         run: curl -Ls https://github.com/homeport/dyff/releases/download/v1.5.6/dyff_1.5.6_linux_amd64.tar.gz | tar xzv dyff
       - name: compare operator values with main
@@ -94,11 +93,16 @@ jobs:
           git checkout main
           git checkout -
 
-
       - name: Set up Helm
         uses: azure/setup-helm@v3
         with:
           version: v3.11.1
+
+      - name: Get appVersion
+        id: app_version
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq .appVersion charts/operator/Chart.yaml
 
       - name: Set up chart-testing
         uses: joejulian/chart-testing-action@9f27771144b6debb69e1f85d5f5a3eae8485d057  # v2.4.0-3
@@ -138,7 +142,7 @@ jobs:
       - name: Install CRDs
         if: steps.list-changed.outputs.changed == 'true'
         run: |
-          kubectl kustomize https://github.com/redpanda-data/redpanda-operator//src/go/k8s/config/crd | kubectl apply -f -
+          kubectl kustomize https://github.com/redpanda-data/redpanda-operator//src/go/k8s/config/crd?ref=${{ steps.app_version.outputs.result }} | kubectl apply -f -
 
       - name: Run chart-testing (install and upgrade)
         if: steps.list-changed.outputs.changed == 'true'
