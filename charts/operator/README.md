@@ -363,4 +363,3 @@ Creates the Webhook resources.
 ### [webhookSecretName](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=webhookSecretName)
 
 **Default:** `"webhook-server-cert"`
-
