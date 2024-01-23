@@ -470,40 +470,49 @@ storage:
       # -- Global flag that enables Tiered Storage if a license key is provided.
       # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_enabled).
       cloud_storage_enabled: false
-      # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#cloud_storage_enable_remote_write).
+      # -- Cluster level default remote write configuration for new topics.
+      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#cloud_storage_enable_remote_write).
       cloud_storage_enable_remote_write: true
-      # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#cloud_storage_enable_remote_read).
+      # -- Cluster level default remote read configuration for new topics.
+      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#cloud_storage_enable_remote_read).
       cloud_storage_enable_remote_read: true
-
-      # -- Required for AWS and GCS.
+      # -- AWS or GCP region for where the bucket used for Tiered Storage is located (required for AWS and GCS).
       # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_region).
       cloud_storage_region: ""
-      # -- Required for AWS and GCS.
+      # -- AWS or GCP bucket name used for Tiered Storage (required for AWS and GCS).
       # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_bucket).
       cloud_storage_bucket: ""
-      # -- Required for AWS and GCS authentication with access keys.
+      # -- AWS or GCP access key (required for AWS and GCS authentication with access keys).
       # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_access_key).
       cloud_storage_access_key: ""
-      # -- Required for AWS and GCS authentication with access keys.
+      # -- AWS or GCP secret key (required for AWS and GCS authentication with access keys).
       # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_secret_key).
       cloud_storage_secret_key: ""
-      # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_api_endpoint).
+      # -- AWS or GCP API endpoint.
+      # - For AWS, this can be left blank as it is generated automatically using the bucket and region (e.g. "<bucket>.s3.<region>.amazonaws.com")
+      # - For GCS, use "storage.googleapis.com"
+      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_api_endpoint).
       cloud_storage_api_endpoint: ""
-      # -- Required for ABS.
+      # -- Name of the Azure container to use with Tiered Storage (required for ABS/ADLS).
+      # Note that the container must belong to the account specified by `cloud_storage_azure_storage_account`.
       # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_azure_container).
       cloud_storage_azure_container: null
-      # -- Required for ABS.
+      # -- Name of the Azure storage account to use with Tiered Storage (required for ABS/ADLS).
       # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_azure_storage_account).
       cloud_storage_azure_storage_account: null
-      # -- Required for ABS.
+      # -- Shared key to be used for Azure Shared Key authentication with the Azure storage account specified by `cloud_storage_azure_storage_account`.
+      # Note that the key should be base64 encoded.
       # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_azure_shared_key).
       cloud_storage_azure_shared_key: null
-      # -- Required for ABS hierarchical namespace
-      # Available starting from 23.2.8
+      # -- Azure ADLS endpoint and port (required for ABS hierarchical namespaces).
+      # Available starting from 23.2.8.
       # cloud_storage_azure_adls_endpoint: ""
       # cloud_storage_azure_adls_port: ""
-      # Available starting from 22.3.X
-      # -- Required for AWS and GCS authentication with IAM roles.
+      # -- Source of credentials used to connect to cloud services (required for AWS and GCS authentication with IAM roles).
+      # - config_file
+      # - aws_instance_metadata
+      # - sts
+      # - gcp_instance_metadata
       # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_credentials_source).
       cloud_storage_credentials_source: config_file
 
