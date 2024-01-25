@@ -37,7 +37,7 @@ spec:
     {{- if dig "enableHttp2" "" .Values.monitoring }}
     enableHttp2: .Values.monitoring.enableHttp2
     {{- end }}
-  {{- if or .Values.tls.enabled .Values.monitoring.tlsConfig }}
+  {{- if .Values.tls.enabled }}
     scheme: https
     tlsConfig:
       {{- if  dig "tlsConfig" dict .Values.monitoring }}
