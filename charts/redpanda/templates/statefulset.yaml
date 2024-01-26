@@ -458,7 +458,7 @@ spec:
 {{- end }}
 {{- if and (include "is-licensed" . | fromJson).bool (include "storage-tiered-config" .|fromJson).cloud_storage_enabled (eq (include "storage-tiered-mountType" .) "persistentVolume") }}
     - metadata:
-        name: tiered-storage-dir
+        name: {{ default "tiered-storage-dir" .Values.storage.persistentVolume.nameOverwrite }}
         labels:
           app.kubernetes.io/name: {{ template "redpanda.name" . }}
           app.kubernetes.io/instance: {{ .Release.Name | quote }}

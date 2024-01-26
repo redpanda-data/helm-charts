@@ -3,7 +3,7 @@
 description: Find the default values and descriptions of settings in the Redpanda Helm chart.
 ---
 
-![Version: 5.7.8](https://img.shields.io/badge/Version-5.7.8-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v23.3.1](https://img.shields.io/badge/AppVersion-v23.3.1-informational?style=flat-square)
+![Version: 5.7.14](https://img.shields.io/badge/Version-5.7.14-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v23.3.3](https://img.shields.io/badge/AppVersion-v23.3.3-informational?style=flat-square)
 
 This page describes the official Redpanda Helm Chart. In particular, this page describes the contents of the chart’s [`values.yaml` file](https://github.com/redpanda-data/helm-charts/blob/main/charts/redpanda/values.yaml). Each of the settings is listed and described on this page, along with any default values.
 
@@ -57,7 +57,7 @@ Enable or disable audit logging, for production clusters we suggest you enable, 
 
 ### [auditLogging.enabledEventTypes](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=auditLogging.enabledEventTypes)
 
-Event types that should be captured by audit logs, default is ["admin", "authenticate", "management"].
+Event types that should be captured by audit logs, default is [`admin`, `authenticate`, `management`].
 
 **Default:** `nil`
 
@@ -75,7 +75,7 @@ List of topics to exclude from auditing, default is null.
 
 ### [auditLogging.listener](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=auditLogging.listener)
 
-Kafka listener name, note that it must have `authenticationMethod` set to sasl 'internal' if using internal listener, else use external listener name, e.g., default.
+Kafka listener name, note that it must have `authenticationMethod` set to `sasl`. For external listeners, use the external listener name, such as `default`.
 
 **Default:** `"internal"`
 
@@ -777,7 +777,7 @@ In environments where root is not allowed, you cannot change the ownership of fi
 
 ### [statefulset.nodeSelector](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.nodeSelector)
 
-Node selection constraints for scheduling Pods of this StatefulSet. These constraints override the global nodeSelector value. For details, see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector).
+Node selection constraints for scheduling Pods of this StatefulSet. These constraints override the global `nodeSelector` value. For details, see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector).
 
 **Default:** `{}`
 
@@ -817,7 +817,7 @@ Valid anti-affinity types are `soft`, `hard`, or `custom`. Use `custom` if you w
 
 ### [statefulset.podAntiAffinity.weight](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.podAntiAffinity.weight)
 
-Weight for `soft` anti-affinity rules. Does not apply for other anti-affinity types.
+Weight for `soft` anti-affinity rules. Does not apply to other anti-affinity types.
 
 **Default:** `100`
 
@@ -966,7 +966,7 @@ Persistence settings. For details, see the [storage documentation](https://docs.
 **Default:**
 
 ```
-{"hostPath":"","persistentVolume":{"annotations":{},"enabled":true,"labels":{},"size":"20Gi","storageClass":""},"tiered":{"config":{"cloud_storage_access_key":"","cloud_storage_api_endpoint":"","cloud_storage_azure_container":null,"cloud_storage_azure_shared_key":null,"cloud_storage_azure_storage_account":null,"cloud_storage_bucket":"","cloud_storage_cache_size":5368709120,"cloud_storage_credentials_source":"config_file","cloud_storage_enable_remote_read":true,"cloud_storage_enable_remote_write":true,"cloud_storage_enabled":false,"cloud_storage_region":"","cloud_storage_secret_key":""},"credentialsSecretRef":{},"hostPath":"","mountType":"emptyDir","persistentVolume":{"annotations":{},"labels":{},"storageClass":""}}}
+{"hostPath":"","persistentVolume":{"annotations":{},"enabled":true,"labels":{},"nameOverwrite":"","size":"20Gi","storageClass":""},"tiered":{"config":{"cloud_storage_access_key":"","cloud_storage_api_endpoint":"","cloud_storage_azure_container":null,"cloud_storage_azure_shared_key":null,"cloud_storage_azure_storage_account":null,"cloud_storage_bucket":"","cloud_storage_cache_size":5368709120,"cloud_storage_credentials_source":"config_file","cloud_storage_enable_remote_read":true,"cloud_storage_enable_remote_write":true,"cloud_storage_enabled":false,"cloud_storage_region":"","cloud_storage_secret_key":""},"credentialsSecretRef":{},"hostPath":"","mountType":"emptyDir","persistentVolume":{"annotations":{},"labels":{},"storageClass":""}}}
 ```
 
 ### [storage.hostPath](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.hostPath)
@@ -982,7 +982,7 @@ If `persistentVolume.enabled` is true, a PersistentVolumeClaim is created and us
 **Default:**
 
 ```
-{"annotations":{},"enabled":true,"labels":{},"size":"20Gi","storageClass":""}
+{"annotations":{},"enabled":true,"labels":{},"nameOverwrite":"","size":"20Gi","storageClass":""}
 ```
 
 ### [storage.persistentVolume.annotations](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.persistentVolume.annotations)
@@ -997,9 +997,15 @@ Additional labels to apply to the created PersistentVolumeClaims.
 
 **Default:** `{}`
 
+### [storage.persistentVolume.nameOverwrite](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.persistentVolume.nameOverwrite)
+
+Option to change volume claim template name for tiered storage persistent volume if tiered.mountType is set to `persistentVolume`
+
+**Default:** `""`
+
 ### [storage.persistentVolume.storageClass](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.persistentVolume.storageClass)
 
-To disable dynamic provisioning, set to "-". If undefined or empty (default), then no storageClassName spec is set, and the default dynamic provisioner is chosen (gp2 on AWS, standard on GKE, AWS & OpenStack).
+To disable dynamic provisioning, set to `-`. If undefined or empty (default), then no storageClassName spec is set, and the default dynamic provisioner is chosen (gp2 on AWS, standard on GKE, AWS & OpenStack).
 
 **Default:** `""`
 
@@ -1015,37 +1021,37 @@ Tiered Storage settings Requires `enterprise.licenseKey` or `enterprised.license
 
 ### [storage.tiered.config.cloud_storage_access_key](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.tiered.config.cloud_storage_access_key)
 
-Required for AWS and GCS authentication with access keys. See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_access_key).
+AWS or GCP access key (required for AWS and GCP authentication with access keys). See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_access_key).
 
 **Default:** `""`
 
 ### [storage.tiered.config.cloud_storage_api_endpoint](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.tiered.config.cloud_storage_api_endpoint)
 
-See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_api_endpoint).
+AWS or GCP API endpoint. * For AWS, this can be left blank as it is generated automatically using the bucket and region. For example, `<bucket>.s3.<region>.amazonaws.com`. * For GCP, use `storage.googleapis.com` See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_api_endpoint).
 
 **Default:** `""`
 
 ### [storage.tiered.config.cloud_storage_azure_container](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.tiered.config.cloud_storage_azure_container)
 
-Required for ABS. See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_azure_container).
+Name of the Azure container to use with Tiered Storage (required for ABS/ADLS). Note that the container must belong to the account specified by `cloud_storage_azure_storage_account`. See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_azure_container).
 
 **Default:** `nil`
 
 ### [storage.tiered.config.cloud_storage_azure_shared_key](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.tiered.config.cloud_storage_azure_shared_key)
 
-Required for ABS. See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_azure_shared_key).
+Shared key to be used for Azure Shared Key authentication with the Azure storage account specified by `cloud_storage_azure_storage_account`. Note that the key should be base64 encoded. See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_azure_shared_key).
 
 **Default:** `nil`
 
 ### [storage.tiered.config.cloud_storage_azure_storage_account](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.tiered.config.cloud_storage_azure_storage_account)
 
-Required for ABS. See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_azure_storage_account).
+Name of the Azure storage account to use with Tiered Storage (required for ABS/ADLS). See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_azure_storage_account).
 
 **Default:** `nil`
 
 ### [storage.tiered.config.cloud_storage_bucket](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.tiered.config.cloud_storage_bucket)
 
-Required for AWS and GCS. See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_bucket).
+AWS or GCP bucket name used for Tiered Storage (required for AWS and GCP). See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_bucket).
 
 **Default:** `""`
 
@@ -1057,19 +1063,19 @@ Maximum size of the disk cache used by Tiered Storage. Default is 20 GiB. See th
 
 ### [storage.tiered.config.cloud_storage_credentials_source](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.tiered.config.cloud_storage_credentials_source)
 
-Required for AWS and GCS authentication with IAM roles. See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_credentials_source).
+Source of credentials used to connect to cloud services (required for AWS and GCP authentication with IAM roles). * `config_file` * `aws_instance_metadata` * `sts` * `gcp_instance_metadata` See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_credentials_source).
 
 **Default:** `"config_file"`
 
 ### [storage.tiered.config.cloud_storage_enable_remote_read](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.tiered.config.cloud_storage_enable_remote_read)
 
-See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#cloud_storage_enable_remote_read).
+Cluster level default remote read configuration for new topics. See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#cloud_storage_enable_remote_read).
 
 **Default:** `true`
 
 ### [storage.tiered.config.cloud_storage_enable_remote_write](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.tiered.config.cloud_storage_enable_remote_write)
 
-See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#cloud_storage_enable_remote_write).
+Cluster level default remote write configuration for new topics. See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#cloud_storage_enable_remote_write).
 
 **Default:** `true`
 
@@ -1081,13 +1087,13 @@ Global flag that enables Tiered Storage if a license key is provided. See the [p
 
 ### [storage.tiered.config.cloud_storage_region](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.tiered.config.cloud_storage_region)
 
-Required for AWS and GCS. See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_region).
+AWS or GCP region for where the bucket used for Tiered Storage is located (required for AWS and GCP). See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_region).
 
 **Default:** `""`
 
 ### [storage.tiered.config.cloud_storage_secret_key](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.tiered.config.cloud_storage_secret_key)
 
-Required for AWS and GCS authentication with access keys. See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_secret_key).
+AWS or GCP secret key (required for AWS and GCP authentication with access keys). See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_secret_key).
 
 **Default:** `""`
 
