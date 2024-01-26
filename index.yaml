@@ -3304,6 +3304,46 @@ entries:
           url: https://helm.sh/docs/intro/install/
     apiVersion: v2
     appVersion: v23.3.3
+    created: "2024-01-26T18:56:09.430956008Z"
+    dependencies:
+    - condition: console.enabled
+      name: console
+      repository: https://charts.redpanda.com
+      version: '>=0.5 <1.0'
+    - condition: connectors.enabled
+      name: connectors
+      repository: https://charts.redpanda.com
+      version: '>=0.1.2 <1.0'
+    description: Redpanda is the real-time engine for modern apps.
+    digest: 501109c2bef3fad22795776c987a580b2447c0dfe6fa02e39a5f6429cc2d1ce5
+    icon: https://images.ctfassets.net/paqvtpyf8rwu/3cYHw5UzhXCbKuR24GDFGO/73fb682e6157d11c10d5b2b5da1d5af0/skate-stand-panda.svg
+    kubeVersion: ^1.21.0-0
+    maintainers:
+    - name: redpanda-data
+      url: https://github.com/orgs/redpanda-data/people
+    name: redpanda
+    sources:
+    - https://github.com/redpanda-data/helm-charts
+    type: application
+    urls:
+    - https://github.com/redpanda-data/helm-charts/releases/download/redpanda-5.7.14/redpanda-5.7.14.tgz
+    version: 5.7.14
+  - annotations:
+      artifacthub.io/images: |
+        - name: redpanda
+          image: docker.redpanda.com/redpandadata/redpanda:v23.3.3
+        - name: busybox
+          image: busybox:latest
+        - name: mintel/docker-alpine-bash-curl-jq
+          image: mintel/docker-alpine-bash-curl-jq:latest
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://docs.redpanda.com
+        - name: "Helm (>= 3.8.0)"
+          url: https://helm.sh/docs/intro/install/
+    apiVersion: v2
+    appVersion: v23.3.3
     created: "2024-01-26T00:19:38.780887634Z"
     dependencies:
     - condition: console.enabled
@@ -13242,4 +13282,4 @@ entries:
     urls:
     - https://charts.redpanda.com/redpanda-0.1.0.tgz
     version: 0.1.0
-generated: "2024-01-26T17:04:05.630297907Z"
+generated: "2024-01-26T18:56:09.431718969Z"
