@@ -426,6 +426,9 @@ storage:
     labels: {}
     # -- Additional annotations to apply to the created PersistentVolumeClaims.
     annotations: {}
+    # -- Option to change volume claim template name for tiered storage persistent volume
+    # if tiered.mountType is set to `persistentVolume`
+    nameOverwrite: ""
   #
   # Settings for the Tiered Storage cache.
   # For details,
