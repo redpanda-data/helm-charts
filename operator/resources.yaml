@@ -6,7 +6,7 @@ metadata:
   name: operator
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.15
+    helm.sh/chart: operator-0.4.16
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v2.1.12-23.3.3"
     app.kubernetes.io/managed-by: Helm
@@ -18,7 +18,7 @@ metadata:
   name: operator-config
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.15
+    helm.sh/chart: operator-0.4.16
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v2.1.12-23.3.3"
     app.kubernetes.io/managed-by: Helm
@@ -34,7 +34,7 @@ metadata:
   name: operator-pvc
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.15
+    helm.sh/chart: operator-0.4.16
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v2.1.12-23.3.3"
     app.kubernetes.io/managed-by: Helm
@@ -55,7 +55,7 @@ metadata:
   name: operator-election-role
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.15
+    helm.sh/chart: operator-0.4.16
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v2.1.12-23.3.3"
     app.kubernetes.io/managed-by: Helm
@@ -82,7 +82,7 @@ metadata:
   name: operator
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.15
+    helm.sh/chart: operator-0.4.16
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v2.1.12-23.3.3"
     app.kubernetes.io/managed-by: Helm
@@ -272,9 +272,19 @@ rules:
   resources:
     - pods
   verbs:
+    - delete
     - get
     - list
+    - patch
+    - update
     - watch
+- apiGroups:
+    - ""
+  resources:
+    - pods/status
+  verbs:
+    - patch
+    - update
 - apiGroups:
     - ""
   resources:
@@ -551,7 +561,7 @@ metadata:
   name: operator-pvc
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.15
+    helm.sh/chart: operator-0.4.16
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v2.1.12-23.3.3"
     app.kubernetes.io/managed-by: Helm
@@ -572,7 +582,7 @@ metadata:
   name: operator-election-rolebinding
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.15
+    helm.sh/chart: operator-0.4.16
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v2.1.12-23.3.3"
     app.kubernetes.io/managed-by: Helm
@@ -593,7 +603,7 @@ metadata:
   name: operator
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.15
+    helm.sh/chart: operator-0.4.16
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v2.1.12-23.3.3"
     app.kubernetes.io/managed-by: Helm
@@ -614,7 +624,7 @@ metadata:
   name: operator-metrics-service
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.15
+    helm.sh/chart: operator-0.4.16
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v2.1.12-23.3.3"
     app.kubernetes.io/managed-by: Helm
@@ -636,7 +646,7 @@ metadata:
   labels:
     
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.15
+    helm.sh/chart: operator-0.4.16
     app.kubernetes.io/instance: operator
     app.kubernetes.io/version: "v2.1.12-23.3.3"
     app.kubernetes.io/managed-by: Helm
