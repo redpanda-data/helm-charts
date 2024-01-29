@@ -26,7 +26,8 @@ jobs:
         chart:
           - redpanda
           - console
-          - operator
+# Operator changed it's versioning scheme, so that version checks wrongly open PRs
+#          - operator
       fail-fast: false
     runs-on: ubuntu-22.04
     steps:
