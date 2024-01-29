@@ -461,7 +461,8 @@ storage:
 
     # credentialsSecretRef can be used to set cloud_storage_secret_key from
     # referenced Kubernetes Secret
-    credentialsSecretRef: {}
+    credentialsSecretRef:
+      configurationKey: cloud_storage_secret_key
       # name:
       # key
     #
