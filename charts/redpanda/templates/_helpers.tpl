@@ -862,3 +862,26 @@ REDPANDA_SASL_USERNAME REDPANDA_SASL_PASSWORD REDPANDA_SASL_MECHANISM
     {{- toJson (dict "bool" $requireClientAuth) -}}
   {{- end -}}
 {{- end -}}
+
+{{- define "storage-tiered-credentials-secret-key" -}}
+{{- $oldCondtion := (and .Values.storage.tiered.credentialsSecretRef.name .Values.storage.tiered.credentialsSecretRef.key) -}}
+{{- $newCondtion := (and .Values.storage.tiered.credentialsSecretRef.secretKey.name .Values.storage.tiered.credentialsSecretRef.secretKey.key) -}}
+{{- $configurationKey := (dig "configurationKey" "" .Values.storage.tiered.credentialsSecretRef) -}}
+{{- if empty $configurationKey -}}
+  {{- $configurationKey = .Values.storage.tiered.credentialsSecretRef.secretKey.configurationKey -}}
+{{- end -}}
+{{- $key := (dig "key" "" .Values.storage.tiered.credentialsSecretRef) -}}
+{{- if empty $key -}}
+  {{- $key = .Values.storage.tiered.credentialsSecretRef.secretKey.key -}}
+{{- end -}}
+{{- $name := (dig "name" "" .Values.storage.tiered.credentialsSecretRef) -}}
+{{- if empty $name -}}
+  {{- $name = .Values.storage.tiered.credentialsSecretRef.secretKey.name -}}
+{{- end -}}
+{{- toJson (dict
+  "bool" (or $oldCondtion $newCondtion)
+  "configurationKey" $configurationKey
+  "key" $key
+  "name" $name
+) -}}
+{{- end -}}

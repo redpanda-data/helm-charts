@@ -163,12 +163,19 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: status.hostIP
-            {{- if and .Values.storage.tiered.credentialsSecretRef.name .Values.storage.tiered.credentialsSecretRef.key }}
+            {{- if (include "storage-tiered-credentials-secret-key" . | fromJson).bool }}
             - name: CLOUD_STORAGE_SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  key: {{ .Values.storage.tiered.credentialsSecretRef.key }}
-                  name: {{ .Values.storage.tiered.credentialsSecretRef.name }}
+                  key: {{ (include "storage-tiered-credentials-secret-key" . | fromJson).key }}
+                  name: {{ (include "storage-tiered-credentials-secret-key" . | fromJson).name }}
+            {{- end }}
+            {{- if and .Values.storage.tiered.credentialsSecretRef.accessKey.name .Values.storage.tiered.credentialsSecretRef.accessKey.key }}
+            - name: CLOUD_STORAGE_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: {{ .Values.storage.tiered.credentialsSecretRef.accessKey.key }}
+                  name: {{ .Values.storage.tiered.credentialsSecretRef.accessKey.name }}
             {{- end }}
           securityContext: {{ include "container-security-context" . | nindent 12 }}
           volumeMounts: {{ include "common-mounts" . | nindent 12 }}
