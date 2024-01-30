@@ -428,14 +428,41 @@
             "credentialsSecretRef": {
               "type": "object",
               "properties": {
+                "accessKey": {
+                  "type": "object",
+                  "configurationKey": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "key": {
+                    "type": "string"
+                  }
+                },
+                "secretKey": {
+                  "type": "object",
+                  "configurationKey": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "key": {
+                    "type": "string"
+                  }
+                },
                 "configurationKey": {
-                  "type": "string"
+                  "type": "string",
+                  "deprecated": true
                 },
                 "name": {
-                  "type": "string"
+                  "type": "string",
+                  "deprecated": true
                 },
                 "key": {
-                  "type": "string"
+                  "type": "string",
+                  "deprecated": true
                 }
               }
             },

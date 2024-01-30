@@ -459,12 +459,25 @@ storage:
       # -- Additional annotations to apply to the created PersistentVolumeClaims.
       annotations: {}
 
-    # credentialsSecretRef can be used to set cloud_storage_secret_key from
+    # credentialsSecretRef can be used to set `cloud_storage_secret_key` and/or `cloud_storage_access_key` from
     # referenced Kubernetes Secret
     credentialsSecretRef:
-      configurationKey: cloud_storage_secret_key
+      accessKey:
+        # https://docs.redpanda.com/current/reference/cluster-properties/#cloud_storage_access_key
+        configurationKey: cloud_storage_access_key
+        # name:
+        # key:
+      secretKey:
+        # https://docs.redpanda.com/current/reference/cluster-properties/#cloud_storage_secret_key
+        # or
+        # https://docs.redpanda.com/current/reference/cluster-properties/#cloud_storage_azure_shared_key
+        configurationKey: cloud_storage_secret_key
+        # name:
+        # key
+      # -- DEPRECATED `configurationKey`, `name` and `key`. Please use `accessKey` and `secretKey`
+      # configurationKey: cloud_storage_secret_key
       # name:
-      # key
+      # key:
     #
     # -- Tiered Storage settings
     # Requires `enterprise.licenseKey` or `enterprised.licenseSecretRef`
