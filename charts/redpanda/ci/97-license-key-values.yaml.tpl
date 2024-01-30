@@ -15,3 +15,11 @@
 ---
 enterprise:
   license: "${REDPANDA_LICENSE}"
+
+console:
+  # Until https://github.com/redpanda-data/console-enterprise/pull/256 is released the console
+  # test named `test-license-with-console.yaml` needs to work with unreleased Redpanda Console version.
+  image:
+    registry: redpandadata
+    repository: console-unstable
+    tag: master-8a51854
