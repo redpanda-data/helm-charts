@@ -267,6 +267,8 @@ external:
   # The number of brokers is defined in statefulset.replicas.
   # The values can be IP addresses or DNS names.
   # If external.domain is set, the domain is appended to these values.
+  # There is an option to define a single external address for all brokers and leverage
+  # prefixTemplate as it will be calculated during initContainer execution.
   # addresses:
   # - redpanda-0
   # - redpanda-1

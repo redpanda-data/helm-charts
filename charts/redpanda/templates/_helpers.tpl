@@ -524,10 +524,16 @@ advertised-host returns a json string with the data needed for configuring the a
 {{- define "advertised-host" -}}
   {{- $host := dict "name" .externalName "address" .externalAdvertiseAddress "port" .port -}}
   {{- if .values.external.addresses -}}
-    {{- if ( .values.external.domain | default "" ) }}
-      {{- $host = dict "name" .externalName "address" (printf "%s.%s" (index .values.external.addresses .replicaIndex) (.values.external.domain)) "port" .port -}}
+    {{- $address := "" -}}
+    {{- if gt (len .values.external.addresses) 1 -}}
+      {{- $address = (index .values.external.addresses .replicaIndex) -}}
     {{- else -}}
-      {{- $host = dict "name" .externalName  "address" (index .values.external.addresses .replicaIndex) "port" .port -}}
+      {{- $address = (index .values.external.addresses 0) -}}
+    {{- end -}}
+    {{- if ( .values.external.domain | default "" ) }}
+      {{- $host = dict "name" .externalName "address" (printf "%s.%s" $address .values.external.domain) "port" .port -}}
+    {{- else -}}
+      {{- $host = dict "name" .externalName  "address" $address "port" .port -}}
     {{- end -}}
   {{- end -}}
   {{- toJson $host -}}
