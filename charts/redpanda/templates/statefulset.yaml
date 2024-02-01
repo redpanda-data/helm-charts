@@ -383,7 +383,7 @@ spec:
         - name: tiered-storage-dir
           {{- if eq $tieredType "persistentVolume" }}
           persistentVolumeClaim:
-            claimName: tiered-storage-dir
+            claimName: {{ default "tiered-storage-dir" .Values.storage.persistentVolume.nameOverwrite }}
           {{- else if eq $tieredType "hostPath" }}
           hostPath:
             path: {{ include "storage-tiered-hostpath" . }}
