@@ -379,12 +379,9 @@ spec:
       {{- end }}
       {{- if and (include "is-licensed" . | fromJson).bool (include "storage-tiered-config" .|fromJson).cloud_storage_enabled }}
         {{- $tieredType := include "storage-tiered-mountType" . }}
-        {{- if ne $tieredType "none" }}
+        {{- if and (ne $tieredType "none") (ne $tieredType "persistentVolume") }}
         - name: tiered-storage-dir
-          {{- if eq $tieredType "persistentVolume" }}
-          persistentVolumeClaim:
-            claimName: {{ default "tiered-storage-dir" .Values.storage.persistentVolume.nameOverwrite }}
-          {{- else if eq $tieredType "hostPath" }}
+          {{- if eq $tieredType "hostPath" }}
           hostPath:
             path: {{ include "storage-tiered-hostpath" . }}
           {{- else }}
