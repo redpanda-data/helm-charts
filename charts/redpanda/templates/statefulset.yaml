@@ -131,7 +131,7 @@ spec:
             - name: datadir
               mountPath: /var/lib/redpanda/data
   {{- if ne (include "storage-tiered-mountType" .) "none" }}
-            - name: tiered-storage-dir
+            - name: {{ default "tiered-storage-dir" .Values.storage.persistentVolume.nameOverwrite }}
               mountPath: {{ include "tieredStorage.cacheDirectory" . }}
   {{- end }}
   {{- if dig "initContainers" "setTieredStorageCacheDirOwnership" "extraVolumeMounts" false .Values.statefulset -}}
@@ -303,7 +303,7 @@ spec:
             - name: datadir
               mountPath: /var/lib/redpanda/data
 {{- if and (include "is-licensed" . | fromJson).bool (include "storage-tiered-config" .|fromJson).cloud_storage_enabled (ne (include "storage-tiered-mountType" .) "none") }}
-            - name: tiered-storage-dir
+            - name: {{ default "tiered-storage-dir" .Values.storage.persistentVolume.nameOverwrite }}
               mountPath: {{ include "tieredStorage.cacheDirectory" . }}
 {{- end }}
           resources:
