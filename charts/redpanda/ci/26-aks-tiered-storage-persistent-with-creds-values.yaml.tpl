@@ -17,6 +17,7 @@ storage:
   persistentVolume:
     storageClass: managed-csi
   tiered:
+    mountType: persistentVolume
     persistentVolume:
       storageClass: managed-csi
     config:

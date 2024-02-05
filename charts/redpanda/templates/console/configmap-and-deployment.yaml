@@ -285,6 +285,7 @@ limitations under the License.
   "extraEnv" $extraEnv
   "secret" $secretConfig
   "enterprise" $enterprise
+  "image" $values.console.image
 )}}
 
 {{ if not (empty $command) }}

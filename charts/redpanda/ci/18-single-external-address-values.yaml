@@ -12,11 +12,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-debug: true
-remote: origin
-target-branch: main
-helm-extra-args: --timeout 600s
-chart-repos:
-  - redpanda=https://charts.redpanda.com
-charts:
-  - charts/redpanda
+---
+# the number of replicas should match the length of the addresses
+statefulset:
+  replicas: 3
+
+external:
+  enabled: true
+  domain: my-domain
+  addresses:
+  - $PREFIX_TEMPLATE
+  prefixTemplate: $POD_ORDINAL-XYZ-$(echo -n $HOST_IP_ADDRESS | sha256sum
+    | head -c 7)

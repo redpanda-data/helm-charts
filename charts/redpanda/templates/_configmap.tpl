@@ -90,6 +90,47 @@ bootstrap.yaml: |
   {{- if and (not (hasKey .Values.config.cluster "storage_min_free_bytes")) ((include "redpanda-atleast-22-2-0" . | fromJson).bool) }}
   storage_min_free_bytes: {{ include "storage-min-free-bytes" . }}
   {{- end }}
+{{/* AUDIT LOGS */}}
+{{- if (include "redpanda-atleast-23-3-0" . | fromJson).bool }}
+  {{- if and ( dig "enabled" "false" .Values.auditLogging ) (include "sasl-enabled" $root | fromJson).bool }}
+  audit_enabled: true
+  {{- if not (eq (int .Values.auditLogging.clientMaxBufferSize) 16777216 ) }}
+  audit_client_max_buffer_size: {{ .Values.auditLogging.clientMaxBufferSize }}
+  {{- end }}
+  {{- if not (eq (int .Values.auditLogging.queueDrainIntervalMs) 500) }}
+  audit_queue_drain_interval_ms: {{ .Values.auditLogging.queueDrainIntervalMs }}
+  {{- end }}
+  {{- if not (eq (int .Values.auditLogging.queueMaxBufferSizePerShard) 1048576) }}
+  audit_queue_max_buffer_size_per_shard: {{ .Values.auditLogging.queueMaxBufferSizePerShard }}
+  {{- end }}
+  {{- if not (eq (int .Values.auditLogging.partitions) 12) }}
+  audit_log_num_partitions: {{ .Values.auditLogging.partitions }}
+  {{- end }}
+  {{- if (dig "replicationFactor" "" .Values.auditLogging) }}
+  audit_log_replication_factor: {{ .Values.auditLogging.replicationFactor }}
+  {{- end }}
+    {{- if dig "enabledEventTypes" "" .Values.auditLogging }}
+  audit_enabled_event_types:
+      {{- with .Values.auditLogging.enabledEventTypes }}
+        {{- toYaml . | nindent 2 }}
+      {{- end }}
+    {{- end }}
+    {{- if dig "excludedTopics" "" .Values.auditLogging }}
+  audit_excluded_topics:
+      {{- with .Values.auditLogging.excludedTopics }}
+        {{- toYaml . | nindent 2 }}
+      {{- end }}
+    {{- end }}
+    {{- if dig "excludedPrincipals" "" .Values.auditLogging }}
+  audit_excluded_principals:
+      {{- with .Values.auditLogging.excludedPrincipals }}
+        {{- toYaml . | nindent 2 }}
+      {{- end }}
+    {{- end }}
+  {{- else }}
+  audit_enabled: false
+  {{- end }}
+{{- end }}
 {{- if and (include "is-licensed" . | fromJson).bool (include "storage-tiered-config" .|fromJson).cloud_storage_enabled }}
   {{- $tieredStorageConfig := (include "storage-tiered-config" .|fromJson) }}
   {{- $tieredStorageConfig = unset $tieredStorageConfig "cloud_storage_cache_directory" }}
@@ -163,6 +204,44 @@ redpanda.yaml: |
     {{- end }}
   {{- end }}
 {{- end -}}
+{{/* AUDIT LOGS */}}
+{{- if (include "redpanda-atleast-23-3-0" . | fromJson).bool }}
+  {{- if and ( dig "enabled" "false" .Values.auditLogging ) (include "sasl-enabled" $root | fromJson).bool }}
+    audit_enabled: true
+  {{- if not (eq (int .Values.auditLogging.clientMaxBufferSize) 16777216) }}
+    audit_client_max_buffer_size: {{ .Values.auditLogging.clientMaxBufferSize }}
+  {{- end }}
+  {{- if not (eq (int .Values.auditLogging.queueDrainIntervalMs) 500) }}
+    audit_queue_drain_interval_ms: {{ .Values.auditLogging.queueDrainIntervalMs }}
+  {{- end }}
+  {{- if not (eq (int .Values.auditLogging.queueMaxBufferSizePerShard) 1048576) }}
+    audit_queue_max_buffer_size_per_shard: {{ .Values.auditLogging.queueMaxBufferSizePerShard }}
+  {{- end }}
+  {{- if not (eq (int .Values.auditLogging.partitions) 12) }}
+    audit_log_num_partitions: {{ .Values.auditLogging.partitions }}
+  {{- end }}
+    {{- if dig "enabledEventTypes" "" .Values.auditLogging }}
+    audit_enabled_event_types:
+      {{- with .Values.auditLogging.enabledEventTypes }}
+        {{- toYaml . | nindent 4 }}
+      {{- end }}
+    {{- end }}
+    {{- if dig "excludedTopics" "" .Values.auditLogging }}
+    audit_excluded_topics:
+      {{- with .Values.auditLogging.excludedTopics }}
+        {{- toYaml . | nindent 4 }}
+      {{- end }}
+    {{- end }}
+    {{- if dig "excludedPrincipals" "" .Values.auditLogging }}
+    audit_excluded_principals:
+      {{- with .Values.auditLogging.excludedPrincipals }}
+        {{- toYaml . | nindent 4 }}
+      {{- end }}
+    {{- end }}
+  {{- else }}
+    audit_enabled: false
+  {{- end }}
+{{- end }}
 {{/* LISTENERS */}}
 {{/* Admin API */}}
 {{- $service := .Values.listeners.admin }}
@@ -186,7 +265,7 @@ redpanda.yaml: |
         require_client_auth: {{ $service.tls.requireClientAuth }}
   {{- $cert := get .Values.tls.certs $service.tls.cert }}
   {{- if empty $cert }}
-    {{- fail (printf "Certificate, '%s', used but not defined")}}
+    {{- fail (printf "Certificate used but not defined")}}
   {{- end }}
   {{- if $cert.caEnabled }}
         truststore_file: /etc/tls/certs/{{ $service.tls.cert }}/ca.crt
@@ -247,7 +326,7 @@ redpanda.yaml: |
         require_client_auth: {{ $kafkaService.tls.requireClientAuth }}
   {{- $cert := get .Values.tls.certs $kafkaService.tls.cert }}
   {{- if empty $cert }}
-    {{- fail (printf "Certificate, '%s', used but not defined")}}
+    {{- fail (printf "Certificate used but not defined")}}
   {{- end }}
   {{- if $cert.caEnabled }}
         truststore_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/ca.crt
@@ -293,7 +372,7 @@ redpanda.yaml: |
       require_client_auth: {{ $service.tls.requireClientAuth }}
   {{- $cert := get .Values.tls.certs $service.tls.cert }}
   {{- if empty $cert }}
-    {{- fail (printf "Certificate, '%s', used but not defined")}}
+    {{- fail (printf "Certificate used but not defined")}}
   {{- end }}
   {{- if $cert.caEnabled }}
       truststore_file: /etc/tls/certs/{{ $service.tls.cert }}/ca.crt
@@ -325,10 +404,10 @@ redpanda.yaml: |
   {{- $schemaRegistryService := .Values.listeners.schemaRegistry }}
   schema_registry_client:
     brokers:
-      {{- range (include "seed-server-list" $root | mustFromJson) }}
-    - address: {{ . }}
+    {{- range $id, $item := $root.tempConfigMapServerList }}
+    - address: {{ $item.host.address }}
       port: {{  $kafkaService.port }}
-      {{- end }}
+    {{- end }}
     {{- if (include "kafka-internal-tls-enabled" . | fromJson).bool }}
     broker_tls:
       enabled: true
@@ -337,7 +416,7 @@ redpanda.yaml: |
       key_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/tls.key
       {{- $cert := get .Values.tls.certs $kafkaService.tls.cert }}
       {{- if empty $cert }}
-        {{- fail (printf "Certificate, '%s', used but not defined")}}
+        {{- fail (printf "Certificate used but not defined")}}
       {{- end }}
       {{- if $cert.caEnabled }}
       truststore_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/ca.crt
@@ -383,7 +462,7 @@ redpanda.yaml: |
         require_client_auth: {{ $schemaRegistryService.tls.requireClientAuth }}
     {{- $cert := get .Values.tls.certs $schemaRegistryService.tls.cert }}
     {{- if empty $cert }}
-      {{- fail (printf "Certificate, '%s', used but not defined")}}
+      {{- fail ( printf "Certificate used but not defined" )}}
     {{- end }}
     {{- if $cert.caEnabled }}
         truststore_file: /etc/tls/certs/{{ $schemaRegistryService.tls.cert }}/ca.crt
@@ -401,7 +480,7 @@ redpanda.yaml: |
       {{- $certPath := printf "/etc/tls/certs/%s" $certName }}
       {{- $cert := get $values.tls.certs $certName }}
       {{- if empty $cert }}
-        {{- fail (printf "Certificate, '%s', used but not defined")}}
+        {{- fail ( printf "Certificate, '%s', used but not defined" $certName )}}
       {{- end }}
       - name: {{ $name }}
         enabled: true
@@ -417,13 +496,22 @@ redpanda.yaml: |
     {{- end }}
   {{- end }}
 {{- end -}}
+{{/* AUDIT LOGS: Client Details */}}
+{{- if (include "redpanda-atleast-23-3-0" . | fromJson).bool }}
+  {{- if and ( dig "enabled" "false" .Values.auditLogging ) (include "sasl-enabled" $root | fromJson).bool }}
+    {{- if not ( empty ( include "kafka-brokers-sasl-enabled" . | fromJson ) ) }}
+  audit_log_client:
+    {{- include "kafka-brokers-sasl-enabled" . | nindent 4 -}}
+    {{- end }}
+  {{- end }}
+{{- end }}
 {{/* HTTP Proxy */}}
 {{- if and .Values.listeners.http.enabled (include "redpanda-22-2-x-without-sasl" $root | fromJson).bool }}
   {{- $HTTPService := .Values.listeners.http }}
   pandaproxy_client:
     brokers:
-  {{- range (include "seed-server-list" $root | mustFromJson) }}
-    - address: {{ . }}
+  {{- range $id, $item := $root.tempConfigMapServerList }}
+    - address: {{ $item.host.address }}
       port: {{  $kafkaService.port }}
   {{- end }}
   {{- if (include "kafka-internal-tls-enabled" . | fromJson).bool }}
@@ -434,7 +522,7 @@ redpanda.yaml: |
       key_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/tls.key
   {{- $cert := get .Values.tls.certs $kafkaService.tls.cert }}
   {{- if empty $cert }}
-    {{- fail (printf "Certificate, '%s', used but not defined")}}
+    {{- fail (printf "Certificate used but not defined")}}
   {{- end }}
   {{- if $cert.caEnabled }}
       truststore_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/ca.crt
@@ -473,7 +561,7 @@ redpanda.yaml: |
         require_client_auth: {{ $HTTPService.tls.requireClientAuth }}
     {{- $cert := get .Values.tls.certs $HTTPService.tls.cert }}
     {{- if empty $cert }}
-      {{- fail (printf "Certificate, '%s', used but not defined")}}
+      {{- fail (printf "Certificate used but not defined")}}
     {{- end }}
     {{- if $cert.caEnabled }}
         truststore_file: /etc/tls/certs/{{ $HTTPService.tls.cert }}/ca.crt
@@ -491,7 +579,7 @@ redpanda.yaml: |
       {{- $certPath := printf "/etc/tls/certs/%s" $certName }}
       {{- $cert := get $values.tls.certs $certName }}
       {{- if empty $cert }}
-        {{- fail (printf "Certificate, '%s', used but not defined")}}
+        {{- fail (printf "Certificate, '%s', used but not defined" $certName )}}
       {{- end }}
       - name: {{ $name }}
         enabled: true

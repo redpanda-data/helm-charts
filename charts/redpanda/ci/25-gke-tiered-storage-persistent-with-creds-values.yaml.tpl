@@ -14,20 +14,20 @@
 # limitations under the License.
 ---
 storage:
-  persistentVolume:
-    storageClass: managed-csi
   tiered:
-    persistentVolume:
-      storageClass: managed-csi
+    mountType: persistentVolume
     config:
       cloud_storage_enabled: true
+      cloud_storage_api_endpoint: storage.googleapis.com
       cloud_storage_credentials_source: config_file
+      cloud_storage_region: "US-WEST1"
+      cloud_storage_bucket: "${TEST_BUCKET}"
       cloud_storage_segment_max_upload_interval_sec: 1
-      cloud_storage_azure_storage_account: ${TEST_STORAGE_ACCOUNT}
-      cloud_storage_azure_container: ${TEST_STORAGE_CONTAINER}
-      cloud_storage_azure_shared_key: ${TEST_AZURE_SHARED_KEY}
+      cloud_storage_access_key: "${GCP_ACCESS_KEY_ID}"
+      cloud_storage_secret_key: "${GCP_SECRET_ACCESS_KEY}"
 enterprise:
-    license: "${REDPANDA_SAMPLE_LICENSE}"
+  license: "${REDPANDA_SAMPLE_LICENSE}"
+
 
 resources:
   cpu:

@@ -163,6 +163,20 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: status.hostIP
+            {{- if (include "storage-tiered-credentials-secret-key" . | fromJson).bool }}
+            - name: CLOUD_STORAGE_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: {{ (include "storage-tiered-credentials-secret-key" . | fromJson).key }}
+                  name: {{ (include "storage-tiered-credentials-secret-key" . | fromJson).name }}
+            {{- end }}
+            {{- if and .Values.storage.tiered.credentialsSecretRef.accessKey.name .Values.storage.tiered.credentialsSecretRef.accessKey.key }}
+            - name: CLOUD_STORAGE_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: {{ .Values.storage.tiered.credentialsSecretRef.accessKey.key }}
+                  name: {{ .Values.storage.tiered.credentialsSecretRef.accessKey.name }}
+            {{- end }}
           securityContext: {{ include "container-security-context" . | nindent 12 }}
           volumeMounts: {{ include "common-mounts" . | nindent 12 }}
 {{- if dig "initContainers" "configurator" "extraVolumeMounts" false .Values.statefulset -}}
@@ -365,12 +379,9 @@ spec:
       {{- end }}
       {{- if and (include "is-licensed" . | fromJson).bool (include "storage-tiered-config" .|fromJson).cloud_storage_enabled }}
         {{- $tieredType := include "storage-tiered-mountType" . }}
-        {{- if ne $tieredType "none" }}
+        {{- if and (ne $tieredType "none") (ne $tieredType "persistentVolume") }}
         - name: tiered-storage-dir
-          {{- if eq $tieredType "persistentVolume" }}
-          persistentVolumeClaim:
-            claimName: tiered-storage-dir
-          {{- else if eq $tieredType "hostPath" }}
+          {{- if eq $tieredType "hostPath" }}
           hostPath:
             path: {{ include "storage-tiered-hostpath" . }}
           {{- else }}
@@ -451,7 +462,7 @@ spec:
 {{- end }}
 {{- if and (include "is-licensed" . | fromJson).bool (include "storage-tiered-config" .|fromJson).cloud_storage_enabled (eq (include "storage-tiered-mountType" .) "persistentVolume") }}
     - metadata:
-        name: tiered-storage-dir
+        name: {{ default "tiered-storage-dir" .Values.storage.persistentVolume.nameOverwrite }}
         labels:
           app.kubernetes.io/name: {{ template "redpanda.name" . }}
           app.kubernetes.io/instance: {{ .Release.Name | quote }}

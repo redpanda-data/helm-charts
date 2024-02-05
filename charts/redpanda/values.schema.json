@@ -413,6 +413,56 @@
                 },
                 "annotations": {
                   "type": "object"
+                },
+                "enabled": {
+                  "type": "boolean"
+                },
+                "size": {
+                  "type": "string"
+                },
+                "nameOverwrite": {
+                  "type": "string"
+                }
+              }
+            },
+            "credentialsSecretRef": {
+              "type": "object",
+              "properties": {
+                "accessKey": {
+                  "type": "object",
+                  "configurationKey": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "key": {
+                    "type": "string"
+                  }
+                },
+                "secretKey": {
+                  "type": "object",
+                  "configurationKey": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "key": {
+                    "type": "string"
+                  }
+                },
+                "configurationKey": {
+                  "type": "string",
+                  "deprecated": true
+                },
+                "name": {
+                  "type": "string",
+                  "deprecated": true
+                },
+                "key": {
+                  "type": "string",
+                  "deprecated": true
                 }
               }
             },
@@ -1550,6 +1600,41 @@
               "type": "integer"
             }
           }
+        }
+      }
+    },
+    "auditLogging": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "listener": {
+          "type": "string"
+        },
+        "partitions": {
+          "type": "integer"
+        },
+        "enabledEventTypes": {
+          "type": ["array", "null"]
+        },
+        "excludedTopics": {
+          "type": ["array", "null"]
+        },
+        "excludedPrincipals": {
+          "type": ["array", "null"]
+        },
+        "clientMaxBufferSize": {
+          "type": "integer"
+        },
+        "queueDrainIntervalMs": {
+          "type": "integer"
+        },
+        "queueMaxBufferSizePerShard": {
+          "type": "integer"
+        },
+        "replicationFactor": {
+          "type": ["integer", "null"]
         }
       }
     }

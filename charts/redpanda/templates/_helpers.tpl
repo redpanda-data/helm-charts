@@ -454,6 +454,9 @@ than 1 core.
 {{- define "redpanda-atleast-23-2-1" -}}
 {{- toJson (dict "bool" (or (not (eq .Values.image.repository "docker.redpanda.com/redpandadata/redpanda")) (include "redpanda.semver" . | semverCompare ">=23.2.1-0 || <0.0.1-0"))) -}}
 {{- end -}}
+{{- define "redpanda-atleast-23-3-0" -}}
+{{- toJson (dict "bool" (or (not (eq .Values.image.repository "docker.redpanda.com/redpandadata/redpanda")) (include "redpanda.semver" . | semverCompare ">=23.3.0-0 || <0.0.1-0"))) -}}
+{{- end -}}
 
 {{- define "redpanda-22-2-x-without-sasl" -}}
 {{- $result :=  (include "redpanda-atleast-22-3-0" . | fromJson).bool -}}
@@ -521,10 +524,16 @@ advertised-host returns a json string with the data needed for configuring the a
 {{- define "advertised-host" -}}
   {{- $host := dict "name" .externalName "address" .externalAdvertiseAddress "port" .port -}}
   {{- if .values.external.addresses -}}
-    {{- if ( .values.external.domain | default "" ) }}
-      {{- $host = dict "name" .externalName "address" (printf "%s.%s" (index .values.external.addresses .replicaIndex) (.values.external.domain)) "port" .port -}}
+    {{- $address := "" -}}
+    {{- if gt (len .values.external.addresses) 1 -}}
+      {{- $address = (index .values.external.addresses .replicaIndex) -}}
     {{- else -}}
-      {{- $host = dict "name" .externalName  "address" (index .values.external.addresses .replicaIndex) "port" .port -}}
+      {{- $address = (index .values.external.addresses 0) -}}
+    {{- end -}}
+    {{- if ( .values.external.domain | default "" ) }}
+      {{- $host = dict "name" .externalName "address" (printf "%s.%s" $address .values.external.domain) "port" .port -}}
+    {{- else -}}
+      {{- $host = dict "name" .externalName  "address" $address "port" .port -}}
     {{- end -}}
   {{- end -}}
   {{- toJson $host -}}
@@ -580,6 +589,97 @@ return a warning if the chart is configured with insufficient CPU
     -}}
   {{- end -}}
   {{- toJson $brokers -}}
+{{- end -}}
+
+{{- define "kafka-brokers-sasl-enabled" -}}
+  {{- $root := . -}}
+  {{- $kafkaService := .Values.listeners.kafka }}
+  {{- $auditLogging := .Values.auditLogging }}
+  {{- $brokers := list -}}
+  {{- $broker_tls := dict -}}
+  {{- $result := dict -}}
+  {{- $tlsEnabled := .Values.tls.enabled -}}
+  {{- $tlsCerts := .Values.tls.certs -}}
+  {{- $trustStoreFile := "" -}}
+  {{- $requireClientAuth := dig "tls" "requireClientAuth" false $kafkaService -}}
+  {{- if and ( eq "internal" $auditLogging.listener ) ( eq (default "sasl" $kafkaService.authenticationMethod) "sasl" ) -}}
+    {{- range $id, $item := $root.tempConfigMapServerList }}
+      {{- $brokerItem := ( dict
+        "address" $item.host.address
+        "port" $kafkaService.port
+        )
+      -}}
+    {{- $brokers = append $brokers $brokerItem -}}
+    {{- end }}
+    {{- if $brokers -}}
+      {{- $result = set $result "brokers" $brokers -}}
+    {{- end -}}
+    {{- if dig "tls" "enabled" $tlsEnabled $kafkaService -}}
+      {{- $cert := get $tlsCerts $kafkaService.tls.cert -}}
+      {{- if empty $cert -}}
+        {{- fail (printf "Certificate used but not defined") -}}
+      {{- end -}}
+      {{- if $cert.caEnabled -}}
+        {{- $trustStoreFile =  ( printf "/etc/tls/certs/%s/ca.crt" $kafkaService.tls.cert ) -}}
+      {{- else -}}
+        {{- $trustStoreFile = "/etc/ssl/certs/ca-certificates.crt" -}}
+      {{- end -}}
+      {{- $broker_tls = ( dict
+        "enabled" true
+        "cert_file" ( printf "/etc/tls/certs/%s/tls.crt" $kafkaService.tls.cert )
+        "key_file" ( printf "/etc/tls/certs/%s/tls.key" $kafkaService.tls.cert )
+        "require_client_auth" $requireClientAuth
+        )
+      -}}
+      {{- if $trustStoreFile -}}
+        {{- $broker_tls = set $broker_tls "truststore_file" $trustStoreFile -}}
+      {{- end -}}
+      {{- if $broker_tls -}}
+        {{- $result = set $result "broker_tls" $broker_tls -}}
+      {{- end -}}
+    {{- end -}}
+  {{- else -}}
+    {{- range $name, $listener := $kafkaService.external -}}
+      {{- if and $listener.port $name (dig "enabled" true $listener) ( eq (default "sasl" $listener.authenticationMethod) "sasl" ) ( eq $name $auditLogging.listener ) -}}
+        {{- range $id, $item := $root.tempConfigMapServerList }}
+          {{- $brokerItem := ( dict
+            "address" $item.host.address
+            "port" $listener.port
+            )
+          -}}
+        {{- $brokers = append $brokers $brokerItem -}}
+        {{- end }}
+        {{- if $brokers -}}
+          {{- $result = set $result "brokers" $brokers -}}
+        {{- end -}}
+        {{- if dig "tls" "enabled" $tlsEnabled $listener -}}
+          {{- $cert := get $tlsCerts $listener.tls.cert -}}
+          {{- if empty $cert -}}
+            {{- fail (printf "Certificate used but not defined") -}}
+          {{- end -}}
+          {{- if $cert.caEnabled -}}
+            {{- $trustStoreFile =  ( printf "/etc/tls/certs/%s/ca.crt" $listener.tls.cert ) -}}
+          {{- else -}}
+            {{- $trustStoreFile = "/etc/ssl/certs/ca-certificates.crt" -}}
+          {{- end -}}
+          {{- $broker_tls = ( dict
+            "enabled" true
+            "cert_file" ( printf "/etc/tls/certs/%s/tls.crt" $listener.tls.cert )
+            "key_file" ( printf "/etc/tls/certs/%s/tls.key" $listener.tls.cert )
+            "require_client_auth" $requireClientAuth
+            )
+          -}}
+          {{- if $trustStoreFile -}}
+            {{- $broker_tls = set $broker_tls "truststore_file" $trustStoreFile -}}
+          {{- end -}}
+          {{- if $broker_tls -}}
+            {{- $result = set $result "broker_tls" $broker_tls -}}
+          {{- end -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- toYaml $result  -}}
 {{- end -}}
 
 {{/*
@@ -767,4 +867,27 @@ REDPANDA_SASL_USERNAME REDPANDA_SASL_PASSWORD REDPANDA_SASL_MECHANISM
     -}}
     {{- toJson (dict "bool" $requireClientAuth) -}}
   {{- end -}}
+{{- end -}}
+
+{{- define "storage-tiered-credentials-secret-key" -}}
+{{- $oldCondtion := (and .Values.storage.tiered.credentialsSecretRef.name .Values.storage.tiered.credentialsSecretRef.key) -}}
+{{- $newCondtion := (and .Values.storage.tiered.credentialsSecretRef.secretKey.name .Values.storage.tiered.credentialsSecretRef.secretKey.key) -}}
+{{- $configurationKey := (dig "configurationKey" "" .Values.storage.tiered.credentialsSecretRef) -}}
+{{- if empty $configurationKey -}}
+  {{- $configurationKey = .Values.storage.tiered.credentialsSecretRef.secretKey.configurationKey -}}
+{{- end -}}
+{{- $key := (dig "key" "" .Values.storage.tiered.credentialsSecretRef) -}}
+{{- if empty $key -}}
+  {{- $key = .Values.storage.tiered.credentialsSecretRef.secretKey.key -}}
+{{- end -}}
+{{- $name := (dig "name" "" .Values.storage.tiered.credentialsSecretRef) -}}
+{{- if empty $name -}}
+  {{- $name = .Values.storage.tiered.credentialsSecretRef.secretKey.name -}}
+{{- end -}}
+{{- toJson (dict
+  "bool" (or $oldCondtion $newCondtion)
+  "configurationKey" $configurationKey
+  "key" $key
+  "name" $name
+) -}}
 {{- end -}}

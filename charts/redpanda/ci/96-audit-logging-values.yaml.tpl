@@ -13,31 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
-storage:
-  persistentVolume:
-    storageClass: managed-csi
-  tiered:
-    persistentVolume:
-      storageClass: managed-csi
-    config:
-      cloud_storage_enabled: true
-      cloud_storage_credentials_source: config_file
-      cloud_storage_segment_max_upload_interval_sec: 1
-      cloud_storage_azure_storage_account: ${TEST_STORAGE_ACCOUNT}
-      cloud_storage_azure_container: ${TEST_STORAGE_CONTAINER}
-      cloud_storage_azure_shared_key: ${TEST_AZURE_SHARED_KEY}
 enterprise:
-    license: "${REDPANDA_SAMPLE_LICENSE}"
+  license: "${REDPANDA_LICENSE}"
 
-resources:
-  cpu:
-    cores: 400m
-  memory:
-    container:
-      max: 2.0Gi
-    redpanda:
-      memory: 1Gi
-      reserveMemory: 100Mi
+auth:
+  sasl:
+    enabled: true
+    users:
+      - name: admin
+        password: change-me
+        mechanism: SCRAM-SHA-512
+
+auditLogging:
+  enabled: true
+  listeners: default
 
 console:
   # Until https://github.com/redpanda-data/console-enterprise/pull/256 is released the console
