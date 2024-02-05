@@ -59,6 +59,8 @@ test_eks() {
     export KUBECONFIG
 
     envsubst < ./charts/redpanda/ci/21-eks-tiered-storage-with-creds-values.yaml.tpl > ./charts/redpanda/ci/21-eks-tiered-storage-with-creds-values.yaml
+    envsubst < ./charts/redpanda/ci/24-eks-tiered-storage-persistent-with-creds-values.yaml.tpl > ./charts/redpanda/ci/24-eks-tiered-storage-persistent-with-creds-values.yaml
+    envsubst < ./charts/redpanda/ci/27-eks-tiered-storage-persistent-nameoverwrite-with-creds-values.yaml.tpl > ./charts/redpanda/ci/27-eks-tiered-storage-persistent-nameoverwrite-with-creds-values.yaml
 }
 
 test_gke() {
@@ -105,6 +107,8 @@ test_gke() {
     buildkite-agent artifact upload $KUBECONFIG
 
     envsubst < ./charts/redpanda/ci/22-gke-tiered-storage-with-creds-values.yaml.tpl > ./charts/redpanda/ci/22-gke-tiered-storage-with-creds-values.yaml
+    envsubst < ./charts/redpanda/ci/25-gke-tiered-storage-persistent-with-creds-values.yaml.tpl > ./charts/redpanda/ci/25-gke-tiered-storage-persistent-with-creds-values.yaml
+    envsubst < ./charts/redpanda/ci/28-gke-tiered-storage-persistent-nameoverwrite-with-creds-values.yaml.tpl > ./charts/redpanda/ci/28-gke-tiered-storage-persistent-nameoverwrite-with-creds-values.yaml
 }
 
 test_aks() {
@@ -172,6 +176,8 @@ test_aks() {
     buildkite-agent artifact upload $KUBECONFIG
 
     envsubst < ./charts/redpanda/ci/23-aks-tiered-storage-with-creds-values.yaml.tpl > ./charts/redpanda/ci/23-aks-tiered-storage-with-creds-values.yaml
+    envsubst < ./charts/redpanda/ci/26-aks-tiered-storage-persistent-with-creds-values.yaml.tpl > ./charts/redpanda/ci/26-aks-tiered-storage-persistent-with-creds-values.yaml
+    envsubst < ./charts/redpanda/ci/29-aks-tiered-storage-persistent-nameoverwrite-with-creds-values.yaml.tpl > ./charts/redpanda/ci/29-aks-tiered-storage-persistent-nameoverwrite-with-creds-values.yaml
 }
 
 test_"${CLOUD_PROVIDER}"
