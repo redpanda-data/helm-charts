@@ -869,25 +869,79 @@ REDPANDA_SASL_USERNAME REDPANDA_SASL_PASSWORD REDPANDA_SASL_MECHANISM
   {{- end -}}
 {{- end -}}
 
-{{- define "storage-tiered-credentials-secret-key" -}}
-{{- $oldCondtion := (and .Values.storage.tiered.credentialsSecretRef.name .Values.storage.tiered.credentialsSecretRef.key) -}}
-{{- $newCondtion := (and .Values.storage.tiered.credentialsSecretRef.secretKey.name .Values.storage.tiered.credentialsSecretRef.secretKey.key) -}}
-{{- $configurationKey := (dig "configurationKey" "" .Values.storage.tiered.credentialsSecretRef) -}}
-{{- if empty $configurationKey -}}
-  {{- $configurationKey = .Values.storage.tiered.credentialsSecretRef.secretKey.configurationKey -}}
+{{/* secret-ref-or-value
+        in: {Value: string?, SecretKey: string?, SecretName: string?}
+        out: corev1.Envvar | nil
+    secret-ref-or-value converts a set of values into a structure suitable for
+    use as an environment variable or nil.
+*/}}
+{{- define "secret-ref-or-value" -}}
+    {{- if and (empty .Value) (or (empty .SecretName) (empty .SecretKey)) -}}
+        {{- mustToJson nil -}}
+    {{- else -}}
+        {{- $out := (dict
+            "name" .Name
+            "value" .Value
+            "valueFrom" (dict
+                "secretKeyRef" (dict
+                    "name" .SecretName
+                    "key" .SecretKey
+                )
+            )
+        ) -}}
+        {{- if empty .Value -}}
+            {{- $_ := unset $out "value" -}}
+        {{- else -}}
+            {{- $_ := unset $out "valueFrom" -}}
+        {{- end -}}
+        {{- mustToJson $out -}}
+    {{- end -}}
 {{- end -}}
-{{- $key := (dig "key" "" .Values.storage.tiered.credentialsSecretRef) -}}
-{{- if empty $key -}}
-  {{- $key = .Values.storage.tiered.credentialsSecretRef.secretKey.key -}}
-{{- end -}}
-{{- $name := (dig "name" "" .Values.storage.tiered.credentialsSecretRef) -}}
-{{- if empty $name -}}
-  {{- $name = .Values.storage.tiered.credentialsSecretRef.secretKey.name -}}
-{{- end -}}
-{{- toJson (dict
-  "bool" (or $oldCondtion $newCondtion)
-  "configurationKey" $configurationKey
-  "key" $key
-  "name" $name
-) -}}
+
+{{- define "tiered-storage-env-vars" -}}
+    {{- $config := (include "storage-tiered-config" . | fromJson) -}}
+    [
+        {{- if and (include "is-licensed" . | fromJson).bool (dig "cloud_storage_enabled" false $config) -}}
+            {{include "secret-ref-or-value" (dict
+                "Name" "RPK_CLOUD_STORAGE_SECRET_KEY"
+                "Value" (dig "cloud_storage_secret_key" nil $config)
+                "SecretName" (dig "tiered" "credentialsSecretRef" "secretKey" "name" nil .Values.storage)
+                "SecretKey" (dig "tiered" "credentialsSecretRef" "secretKey" "key" nil .Values.storage)
+            )}}
+            ,
+            {{include "secret-ref-or-value" (dict
+                "Name" "RPK_CLOUD_STORAGE_ACCESS_KEY"
+                "Value" (dig "cloud_storage_access_key" nil $config)
+                "SecretName" (dig "tiered" "credentialsSecretRef" "accessKey" "name" nil .Values.storage)
+                "SecretKey" (dig "tiered" "credentialsSecretRef" "accessKey" "key" nil .Values.storage)
+            )}}
+
+            {{/* Because these keys can be set via secrets, they're special
+            cased above. Remove them so they don't get duplicated. */}}
+            {{- $_ := unset $config "cloud_storage_access_key" -}}
+            {{- $_ := unset $config "cloud_storage_secret_key" -}}
+
+            {{/* iterate over the sorted keys of $config for deterministic output */}}
+            {{- range $i, $key := ($config | keys | sortAlpha) -}}
+                {{- $value := (get $config $key) -}}
+
+                {{/* Special case for cache size */}}
+                {{- if eq $key "cloud_storage_cache_size" -}}
+                    {{- $value = (include "SI-to-bytes" $value | int64) -}}
+                {{- end -}}
+
+                ,
+
+                {{/* Only include values that are truthy OR that are booleans */}}
+                {{- if or (eq (typeOf $value) "bool") $value -}}
+                    {{include "secret-ref-or-value" (dict
+                        "Name" (printf "RPK_%s" ($key | upper))
+                        "Value" ($value | toJson)
+                    )}}
+                {{- else -}}
+                    null
+                {{- end -}}
+            {{- end -}}
+        {{- end -}}
+    ]
 {{- end -}}

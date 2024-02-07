@@ -68,25 +68,46 @@ spec:
       containers:
       - name: {{ template "redpanda.name" . }}-post-install
         image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
-        {{- if not ( empty (include "enterprise-secret" . ) ) }}
-        env:
-          - name: REDPANDA_LICENSE
-            valueFrom:
-              secretKeyRef:
-                name: {{ include "enterprise-secret-name" . }}
-                key: {{ include "enterprise-secret-key" . }}
-        {{- end }}
+        {{ (dict "env" (prepend
+            (include "tiered-storage-env-vars" . | fromJsonArray)
+            (include "secret-ref-or-value" (dict
+                "Name" "REDPANDA_LICENSE"
+                "Value" (include "enterprise-license" .)
+                "SecretName" (include "enterprise-secret-name" .)
+                "SecretKey" (include "enterprise-secret-key" .)
+            ) | fromJson)
+         | compact)) | toYaml | nindent 8 }}
         command: ["bash","-c"]
         args:
           - |
             set -e
         {{- if (include "redpanda-atleast-22-2-0" . | fromJson).bool }}
-          {{- if not (empty (include "enterprise-secret" . )) }}
-            rpk cluster license set "$REDPANDA_LICENSE"
-          {{- else if not (empty (include "enterprise-license" . )) }}
-            rpk cluster license set {{ include "enterprise-license" . | quote }}
-          {{- end }}
+            if [[ -n "$REDPANDA_LICENSE" ]] then
+              rpk cluster license set "$REDPANDA_LICENSE"
+            fi
         {{- end }}
+
+            {{/* ### Here be dragons ### 
+            This block of bash configures cluster configuration settings by
+            pulling them from environment variables.
+
+            This allows us to support configurations from secrets or their raw
+            values.
+
+            The loop itself looks for all envvars prefixed with "RPK_"
+            ("${!RPK_@}") and then writes them to a yaml file in the form:
+            {envar.strip("RPK_").lower()}: {value}
+
+            This file is then loaded via `rpk cluster config import` which
+            ensures that conditional configurations (cloud_storage_enabled)
+            "see" all their dependent keys.
+            */}}
+            touch /tmp/cfg.yml
+            for KEY in "${!RPK_@}"; do
+              config="${KEY#*RPK_}"
+              echo "${config,,}: ${!KEY}" >> /tmp/cfg.yml
+            done
+            rpk cluster config import -f /tmp/cfg.yml
         {{- with .Values.post_install_job.resources }}
         resources:
           {{- toYaml . | nindent 10 }}
