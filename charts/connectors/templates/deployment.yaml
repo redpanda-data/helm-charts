@@ -242,13 +242,13 @@ spec:
             secretName: {{ .Values.connectors.brokerTLS.ca.secretRef }}
       {{- end }}
       {{- if .Values.connectors.brokerTLS.cert.secretRef }}
-        - name: truststore
+        - name: cert
           secret:
             defaultMode: 0o444
             secretName: {{ .Values.connectors.brokerTLS.cert.secretRef }}
       {{- end }}
       {{- if .Values.connectors.brokerTLS.key.secretRef }}
-        - name: truststore
+        - name: key
           secret:
             defaultMode: 0o444
             secretName: {{ .Values.connectors.brokerTLS.key.secretRef }}
