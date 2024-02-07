@@ -131,22 +131,6 @@ bootstrap.yaml: |
   audit_enabled: false
   {{- end }}
 {{- end }}
-{{- if and (include "is-licensed" . | fromJson).bool (include "storage-tiered-config" .|fromJson).cloud_storage_enabled }}
-  {{- $tieredStorageConfig := (include "storage-tiered-config" .|fromJson) }}
-  {{- $tieredStorageConfig = unset $tieredStorageConfig "cloud_storage_cache_directory" }}
-  {{- if not (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
-    {{- $tieredStorageConfig = unset $tieredStorageConfig "cloud_storage_credentials_source"}}
-  {{- end }}
-  {{- range $key, $element := $tieredStorageConfig}}
-    {{- if or (eq (typeOf $element) "bool") $element }}
-      {{- if eq $key "cloud_storage_cache_size" }}
-        {{- dict $key (include "SI-to-bytes" $element) | toYaml | nindent 2 -}}
-      {{- else }}
-        {{- dict $key $element | toYaml | nindent 2 -}}
-      {{- end }}
-    {{- end }}
-  {{- end }}
-{{- end }}
 
 redpanda.yaml: |
   config_file: /etc/redpanda/redpanda.yaml

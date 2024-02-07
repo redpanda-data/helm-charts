@@ -32,7 +32,8 @@ metadata:
 {{- end }}
   annotations:
     "helm.sh/hook": post-upgrade
-    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation
+    "helm.sh/hook-weight": "-10"
 {{- with .Values.post_upgrade_job.annotations }}
   {{- toYaml . | nindent 4 }}
 {{- end }}
