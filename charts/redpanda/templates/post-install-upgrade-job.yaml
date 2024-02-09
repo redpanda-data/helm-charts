@@ -109,13 +109,11 @@ spec:
             ensures that conditional configurations (cloud_storage_enabled)
             "see" all their dependent keys.
             */}}
-            touch /tmp/cfg.yml
             for KEY in "${!RPK_@}"; do
               config="${KEY#*RPK_}"
-              echo "${config,,}: ${!KEY}" >> /tmp/cfg.yml
+              echo Setting "${config,,}"
               rpk cluster config set "${config,,}=${!KEY}"
             done
-            rpk cluster config import -f /tmp/cfg.yml
         {{- with .Values.post_install_job.resources }}
         resources:
           {{- toYaml . | nindent 10 }}
