@@ -14,7 +14,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- if dig "kafka_nodelete_topics" "[]" $.Values.config.cluster }}
 {{- $noDeleteTopics := .Values.config.cluster.kafka_nodelete_topics }}
 {{- $sasl := .Values.auth.sasl }}
 {{- $root := deepCopy . }}
@@ -103,4 +102,3 @@ spec:
       resources: {{ toYaml .Values.statefulset.resources | nindent 12 }}
       securityContext: {{ include "container-security-context" . | nindent 8 }}
   volumes: {{ include "default-volumes" . | nindent 4 }}
-{{- end }}
