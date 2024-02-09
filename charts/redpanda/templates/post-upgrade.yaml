@@ -121,6 +121,9 @@ spec:
 {{- if not (hasKey .Values.config.cluster "storage_min_free_bytes") }}
             rpk cluster config set storage_min_free_bytes {{ include "storage-min-free-bytes" . }}
 {{- end }}
+{{- if hasKey .Values.storage.tiered.config "cloud_storage_enabled" }}
+            rpk cluster config set cloud_storage_enabled {{ .Values.storage.tiered.config.cloud_storage_enabled }}
+{{- end }}
 {{- if (include "redpanda-atleast-23-2-1" . | fromJson).bool }}
             if [ -d "/etc/secrets/users/" ]; then
                 IFS=":" read -r USER_NAME PASSWORD MECHANISM < <(grep "" $(find /etc/secrets/users/* -print))
