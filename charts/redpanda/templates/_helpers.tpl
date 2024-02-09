@@ -937,9 +937,12 @@ REDPANDA_SASL_USERNAME REDPANDA_SASL_PASSWORD REDPANDA_SASL_MECHANISM
 
                 {{/* Only include values that are truthy OR that are booleans */}}
                 {{- if or (eq (typeOf $value) "bool") $value -}}
+                    {{- if ne (typeOf $value) "string" -}}
+                      {{- $value = $value | toJson -}}
+                    {{- end -}}
                     {{include "secret-ref-or-value" (dict
                         "Name" (printf "RPK_%s" ($key | upper))
-                        "Value" ($value | toJson)
+                        "Value" $value
                     )}}
                 {{- else -}}
                     null
