@@ -945,3 +945,16 @@ REDPANDA_SASL_USERNAME REDPANDA_SASL_PASSWORD REDPANDA_SASL_MECHANISM
         {{- end -}}
     ]
 {{- end -}}
+
+{{- define "cluster-and-tunable-configuration" -}}
+  {{- $envars := list -}}
+  {{- $combinedConfig := merge (deepCopy .Values.config.cluster) (deepCopy .Values.config.tunable) -}}
+  {{- range $i, $key := ( $combinedConfig | keys | sortAlpha) -}}
+    {{- $value := (get $combinedConfig $key) -}}
+    {{- $envars = prepend $envars ((include "secret-ref-or-value" (dict
+          "Name" (printf "RPK_%s" ($key | upper))
+          "Value" ($value | toJson)
+      )) | fromJson ) -}}
+  {{- end -}}
+  {{- mustToJson $envars -}}
+{{- end -}}

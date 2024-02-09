@@ -68,15 +68,22 @@ spec:
       containers:
       - name: {{ template "redpanda.name" . }}-post-install
         image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
-        {{ (dict "env" (prepend
-            (include "tiered-storage-env-vars" . | fromJsonArray)
-            (include "secret-ref-or-value" (dict
-                "Name" "REDPANDA_LICENSE"
-                "Value" (include "enterprise-license" .)
-                "SecretName" (include "enterprise-secret-name" .)
-                "SecretKey" (include "enterprise-secret-key" .)
-            ) | fromJson)
-         | compact)) | toYaml | nindent 8 }}
+        {{ (dict "env"
+             (concat
+               (include "cluster-and-tunable-configuration" . | fromJsonArray)
+               (prepend
+                 (include "tiered-storage-env-vars" . | fromJsonArray)
+                 (include "secret-ref-or-value"
+                   (dict
+                     "Name" "REDPANDA_LICENSE"
+                     "Value" (include "enterprise-license" .)
+                     "SecretName" (include "enterprise-secret-name" .)
+                     "SecretKey" (include "enterprise-secret-key" .)
+                   ) | fromJson
+                 )
+               ) | compact
+             )
+           ) | toYaml | nindent 8 }}
         command: ["bash","-c"]
         args:
           - |
@@ -106,6 +113,7 @@ spec:
             for KEY in "${!RPK_@}"; do
               config="${KEY#*RPK_}"
               echo "${config,,}: ${!KEY}" >> /tmp/cfg.yml
+              rpk cluster config set "${config,,}=${!KEY}"
             done
             rpk cluster config import -f /tmp/cfg.yml
         {{- with .Values.post_install_job.resources }}
