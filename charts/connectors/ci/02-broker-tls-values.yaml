@@ -13,17 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
-
 connectors:
-  enabled: true
-  logging:
-    level: debug
-  connectors:
-    brokerTLS:
-      enabled: true
-      ca:
-        secretRef: "redpanda-default-cert"
-      cert:
-        secretRef: "redpanda-default-cert"
-      key:
-        secretRef: "redpanda-default-cert"
+  bootstrapServers: "redpanda-0.redpanda.redpanda.svc.cluster.local.:9093,redpanda-1.redpanda.redpanda.svc.cluster.local.:9093,redpanda-2.redpanda.redpanda.svc.cluster.local.:9093"
+  brokerTLS:
+    enabled: true
+    ca:
+      secretRef: redpanda-default-cert
+    cert:
+      secretRef: redpanda-default-cert
+    key:
+      secretRef: redpanda-default-cert
+
+logging:
+  level: trace
