@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */}}
 {{- $brokers := dig "kafka" "brokers" "" .Values.kminion.config -}}
-{{- if gt (len $brokers) 0 -}}
+{{- if and (.Values.tests.enabled) (gt (len $brokers) 0) -}}
 apiVersion: v1
 kind: Pod
 metadata:
