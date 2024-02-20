@@ -307,7 +307,7 @@ spec:
               mountPath: {{ include "tieredStorage.cacheDirectory" . }}
 {{- end }}
           resources:
-{{- if hasKey .Values.resources.memory "min" }}
+{{- if hasKey .Values.resources.memory.container "min" }}
             requests:
               cpu: {{ .Values.resources.cpu.cores }}
               memory: {{ .Values.resources.memory.container.min }}
