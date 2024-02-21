@@ -143,6 +143,12 @@ spec:
 
           curl {{ template "curl-options" . }} -H 'Content-Type: application/json' http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors -d @/tmp/mm2-conf.json
 
+          # The rpk topic consume could fail for the first few times as kafka connect needs
+          # to spawn the task and copy one message from the source topic. To solve this race condition
+          # the retry should be implemented in bash for rpk topic consume or other mechanism that
+          # can confirm source connectors started its execution. As a fast fix fixed 30 second fix is added.
+          sleep 30
+
           rpk topic consume source.test-topic -n 1 | grep "Test message!"
 
           curl {{ template "curl-options" . }} -X DELETE http://{{ include "connectors.serviceName" . }}:{{ .Values.connectors.restPort }}/connectors/$CONNECTOR_NAME
