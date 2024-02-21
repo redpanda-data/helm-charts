@@ -14,7 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- if and (include "is-licensed" . | fromJson).bool .Values.console.enabled }}
+{{- if and (.Values.tests.enabled) (and (include "is-licensed" . | fromJson).bool .Values.console.enabled) }}
 apiVersion: v1
 kind: Pod
 metadata:
