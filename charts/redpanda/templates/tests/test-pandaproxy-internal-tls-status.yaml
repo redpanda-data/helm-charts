@@ -14,7 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- if and (include "http-internal-tls-enabled" . | fromJson).bool .Values.listeners.http.enabled (include "redpanda-22-2-x-without-sasl" . | fromJson).bool -}}
+{{- if and (.Values.tests.enabled) (and (include "http-internal-tls-enabled" . | fromJson).bool .Values.listeners.http.enabled (include "redpanda-22-2-x-without-sasl" . | fromJson).bool) -}}
   {{- $service := .Values.listeners.http -}}
   {{- $cert := get .Values.tls.certs $service.tls.cert -}}
   {{- $root := deepCopy . }}

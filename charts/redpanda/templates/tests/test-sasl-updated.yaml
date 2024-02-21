@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */}}
 
-{{- if and (include "sasl-enabled" . | fromJson).bool (eq .Values.auth.sasl.secretRef "some-users") -}}
+{{- if and (.Values.tests.enabled) (and (include "sasl-enabled" . | fromJson).bool (eq .Values.auth.sasl.secretRef "some-users")) -}}
     {{- $rpk := deepCopy . }}
     {{- $sasl := .Values.auth.sasl }}
     {{- $_ := set $rpk "rpk" "rpk" }}

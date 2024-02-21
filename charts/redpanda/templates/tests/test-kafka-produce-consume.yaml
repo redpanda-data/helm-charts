@@ -14,6 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
+{{- if .Values.tests.enabled }}
 {{- $sasl := .Values.auth.sasl }}
 {{- $root := deepCopy . }}
 {{- $rpk := deepCopy . }}
@@ -85,3 +86,4 @@ spec:
       resources: {{ toYaml .Values.statefulset.resources | nindent 12 }}
       securityContext: {{ include "container-security-context" . | nindent 8 }}
   volumes: {{ include "default-volumes" . | nindent 4 }}
+{{- end }}

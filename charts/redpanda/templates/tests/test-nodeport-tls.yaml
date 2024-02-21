@@ -14,7 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   */}}
-{{- if and .Values.tls.enabled ( eq .Values.external.type "NodePort" ) -}}
+{{- if and (.Values.tests.enabled) (and .Values.tls.enabled ( eq .Values.external.type "NodePort" )) -}}
   {{- $values := .Values }}
   {{- $root := deepCopy . }}
 apiVersion: v1
