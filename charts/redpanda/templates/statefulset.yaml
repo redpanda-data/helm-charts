@@ -283,7 +283,7 @@ spec:
             - name: {{ lower $name }}
               containerPort: {{ $listener.port }}
   {{- range $externalName, $external := $listener.external }}
-    {{- if $external.port }}
+  {{- if or ($external.enabled) (and ($values.external.enabled) (not (eq $external.enabled false))) }}
             - name: {{ lower $name | trunc 6 }}-{{ lower $externalName | trunc 8 }}
               containerPort: {{ $external.port }}
     {{- end }}
