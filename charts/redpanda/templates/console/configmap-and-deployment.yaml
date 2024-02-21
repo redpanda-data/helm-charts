@@ -286,6 +286,26 @@ limitations under the License.
   "secret" $secretConfig
   "enterprise" $enterprise
   "image" $values.console.image
+  "autoscaling" .Values.console.autoscaling
+  "replicaCount" .Values.console.replicaCount
+  "strategy" .Values.console.strategy
+  "podAnnotations" .Values.console.podAnnotations
+  "podLabels" .Values.console.podLabels
+  "imagePullSecrets" .Values.console.imagePullSecrets
+  "podSecurityContext" .Values.console.podSecurityContext
+  "secretMounts" .Values.console.secretMounts
+  "initContainers" .Values.console.initContainers
+  "extraArgs" .Values.console.extraArgs
+  "securityContext" .Values.console.securityContext
+  "livenessProbe" .Values.console.livenessProbe
+  "readinessProbe" .Values.console.readinessProbe
+  "resources" .Values.console.resources
+  "extraContainers" .Values.console.extraContainers
+  "nodeSelector" .Values.console.nodeSelector
+  "affinity" .Values.console.affinity
+  "topologySpreadConstraints" .Values.console.topologySpreadConstraints
+  "priorityClassName" .Values.console.priorityClassName
+  "tolerations" .Values.console.tolerations
 )}}
 
 {{ if not (empty $command) }}
