@@ -14,7 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- if and (.Values.tests.enabled) (and (include "kafka-internal-tls-enabled" . | fromJson).bool (not (include "sasl-enabled" . | fromJson).bool)) -}}
+{{- if and .Values.tests.enabled (include "kafka-internal-tls-enabled" . | fromJson).bool (not (include "sasl-enabled" . | fromJson).bool) -}}
   {{- $service := .Values.listeners.kafka -}}
   {{- $cert := get .Values.tls.certs $service.tls.cert -}}
   {{- $root := deepCopy . }}

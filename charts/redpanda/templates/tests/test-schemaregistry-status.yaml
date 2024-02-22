@@ -14,7 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- if and (.Values.tests.enabled) (and (not (include "schemaRegistry-internal-tls-enabled" . | fromJson).bool) .Values.listeners.schemaRegistry.enabled (include "redpanda-22-2-x-without-sasl" . | fromJson).bool) }}
+{{- if and .Values.tests.enabled (not (include "schemaRegistry-internal-tls-enabled" . | fromJson).bool) .Values.listeners.schemaRegistry.enabled (include "redpanda-22-2-x-without-sasl" . | fromJson).bool }}
   {{- $sasl := .Values.auth.sasl }}
   {{- $randNumber := randNumeric 3 }}
 apiVersion: v1
