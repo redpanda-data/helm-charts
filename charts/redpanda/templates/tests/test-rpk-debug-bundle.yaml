@@ -21,7 +21,7 @@ This test currently fails because of a bug where when multiple containers exist
 The api returns an error. We should be requesting logs from each container.
 
 
-{{- if and (.Values.tests.enabled) (and .Values.rbac.enabled (include "redpanda-atleast-23-1-1" .|fromJson).bool) -}}
+{{- if and .Values.tests.enabled .Values.rbac.enabled (include "redpanda-atleast-23-1-1" .|fromJson).bool -}}
   {{- $sasl := .Values.auth.sasl }}
   {{- $useSaslSecret := and $sasl.enabled (not (empty $sasl.secretRef )) }}
 
