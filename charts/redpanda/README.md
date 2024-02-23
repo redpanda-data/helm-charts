@@ -3,7 +3,7 @@
 description: Find the default values and descriptions of settings in the Redpanda Helm chart.
 ---
 
-![Version: 5.7.27](https://img.shields.io/badge/Version-5.7.27-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v23.3.5](https://img.shields.io/badge/AppVersion-v23.3.5-informational?style=flat-square)
+![Version: 5.7.30](https://img.shields.io/badge/Version-5.7.30-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v23.3.6](https://img.shields.io/badge/AppVersion-v23.3.6-informational?style=flat-square)
 
 This page describes the official Redpanda Helm Chart. In particular, this page describes the contents of the chart’s [`values.yaml` file](https://github.com/redpanda-data/helm-charts/blob/main/charts/redpanda/values.yaml). Each of the settings is listed and described on this page, along with any default values.
 
@@ -1120,6 +1120,10 @@ Additional labels to apply to the created PersistentVolumeClaims.
 To disable dynamic provisioning, set to "-". If undefined or empty (default), then no storageClassName spec is set, and the default dynamic provisioner is chosen (gp2 on AWS, standard on GKE, AWS & OpenStack).
 
 **Default:** `""`
+
+### [tests.enabled](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=tests.enabled)
+
+**Default:** `true`
 
 ### [tls](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=tls)
 
