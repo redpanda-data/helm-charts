@@ -27,7 +27,7 @@ spec:
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }}
-      targetPort: {{ include "console.containerPort" . }}
+      targetPort: {{ .Values.service.targetPort }}
       protocol: TCP
       name: http
       {{- if and (contains "NodePort" .Values.service.type) .Values.service.nodePort }}

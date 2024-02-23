@@ -77,15 +77,19 @@ Create the name of the service account to use
 
 {{/*
 Console's HTTP server Port.
-The port is defined from the service targetPort bu can be overridden
-in the provided config and if that is missing defaults to 8080.
+The port is defined from the provided config but can be overridden
+by setting service.targetPort and if that is missing defaults to 8080.
 */}}
 {{- define "console.containerPort" -}}
 {{- $listenPort := 8080 -}}
-{{- if .Values.console.config.server -}}
-{{- $listenPort = .Values.console.config.server.listenPort -}}
+{{- if .Values.service.targetPort -}}
+{{- $listenPort = .Values.service.targetPort -}}
 {{- end -}}
-{{- .Values.service.targetPort | default $listenPort -}}
+{{- if and .Values.console .Values.console.config .Values.console.config.server -}}
+  {{- .Values.console.config.server.listenPort | default $listenPort -}}
+{{- else -}}
+  {{- $listenPort -}}
+{{- end -}}
 {{- end -}}
 
 {{/*
