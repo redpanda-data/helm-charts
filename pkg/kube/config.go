@@ -1,8 +1,6 @@
 package kube
 
 import (
-	"encoding/json"
-
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
@@ -10,21 +8,7 @@ import (
 
 type RESTConfig = rest.Config
 
-type Config struct{}
-
-var _ json.Marshaler = &Config{}
-
-func ConfigFromFile(path string) (*Config, error) {
-	panic("not implemented")
-}
-
-func NewConfig(kubeconfig []byte) (*Config, error) {
-	panic("not implemented")
-}
-
-func (c *Config) MarshalJSON() ([]byte, error) {
-	panic("not implemented")
-}
+var WriteToFile = clientcmd.WriteToFile
 
 func RestToConfig(cfg *rest.Config) clientcmdapi.Config {
 	// Thanks to: https://github.com/kubernetes/client-go/issues/711#issuecomment-1666075787
@@ -56,5 +40,3 @@ func RestToConfig(cfg *rest.Config) clientcmdapi.Config {
 		AuthInfos:      authinfos,
 	}
 }
-
-var WriteToFile = clientcmd.WriteToFile
