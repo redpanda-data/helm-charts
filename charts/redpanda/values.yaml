@@ -1028,11 +1028,11 @@ config:
     # create_topic_timeout_ms: 2000ms                              # Timeout (ms) to wait for new topic creation
     # default_num_windows: 10                                      # Default number of quota tracking windows
     # default_window_sec: 1000ms                                   # Default quota tracking window size in milliseconds
-    # log_retention_ms: 10080min                                   # delete segments older than this (default 1 week)
+    # log_retention_ms: 6.048e+8                                   # delete segments older than this (default 1 week)
     # disable_batch_cache: false                                   # Disable batch cache in log manager
     # fetch_reads_debounce_timeout: 1ms                            # Time to wait for next read in fetch request when requested min bytes wasn't reached
     # fetch_session_eviction_timeout_ms: 60s                       # Minimum time before which unused session will get evicted from sessions; Maximum time after which inactive session will be deleted is two time given configuration valuecache
-    # group_initial_rebalance_delay: 300ms                         # Extra delay (ms) added to rebalance phase to wait for new members
+    # group_initial_rebalance_delay: 300                           # Extra delay (ms) added to rebalance phase to wait for new members
     # group_new_member_join_timeout: 30000ms                       # Timeout for new member joins
     # group_topic_partitions: 1                                    # Number of partitions in the internal group membership topic
     # id_allocator_batch_size: 1000                                # ID allocator allocates messages in batches (each batch is a one log record) and then serves requests from memory without touching the log until the batch is exhausted
