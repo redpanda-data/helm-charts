@@ -10,33 +10,15 @@ import (
 	"os/exec"
 	"path"
 	"slices"
-	"strconv"
 	"time"
 
+	"github.com/cockroachdb/errors"
 	"github.com/redpanda-data/helm-charts/pkg/kube"
 	"k8s.io/client-go/rest"
 	"sigs.k8s.io/yaml"
 )
 
-const helmTimestampFormat = `2006-01-02 15:04:05.999999999 -0700 MST`
-
-// Time is a wrapper around [time.Time] to match Helm's JSON time format.
-type Time struct {
-	time.Time
-}
-
-func (t Time) MarshalJSON() ([]byte, error) {
-	return []byte(strconv.Quote(t.Time.Format(helmTimestampFormat))), nil
-}
-
-func (t *Time) UnmarshalJSON(in []byte) error {
-	raw, err := strconv.Unquote(string(in))
-	if err != nil {
-		return err
-	}
-	t.Time, err = time.Parse(helmTimestampFormat, raw)
-	return err
-}
+type RawYAML []byte
 
 type Repo struct {
 	Name string `json:"name"`
@@ -51,13 +33,13 @@ type Chart struct {
 }
 
 type Release struct {
-	Name       string `json:"name"`
-	Namespace  string `json:"namespace"`
-	Revision   string `json:"revision"`
-	Updated    Time   `json:"updated"`
-	Status     string `json:"status"`
-	Chart      string `json:"chart"`
-	AppVersion string `json:"app_version"`
+	Name       string    `json:"name"`
+	Namespace  string    `json:"namespace"`
+	Revision   int       `json:"revision"`
+	DeployedAt time.Time `json:"deployedAt"`
+	Status     string    `json:"status"`
+	Chart      string    `json:"chart"`
+	AppVersion string    `json:"app_version"`
 }
 
 // Client is a sandboxed programmatic API for the `helm` CLI.
@@ -66,7 +48,8 @@ type Release struct {
 // hermetic but shares a global cache to keep network chatter to a minimum. See
 // `helm env` for more details.
 type Client struct {
-	env []string
+	env        []string
+	configHome string
 }
 
 type Options struct {
@@ -106,65 +89,9 @@ func New(opts Options) (*Client, error) {
 	}
 
 	return &Client{
-		env: append(os.Environ(), env...),
+		configHome: opts.ConfigHome,
+		env:        append(os.Environ(), env...),
 	}, nil
-}
-
-type InstallOptions struct {
-	CreateNamespace bool
-	Name            string
-	Namespace       string
-	Values          map[string]any
-	Version         string
-	NoWait          bool
-	NoWaitForJobs   bool
-}
-
-func (o *InstallOptions) asFlags() ([]string, error) {
-	valuesFile, err := os.CreateTemp(os.TempDir(), "helm-values")
-	if err != nil {
-		return nil, err
-	}
-
-	valuesBytes, err := yaml.Marshal(o.Values)
-	if err != nil {
-		return nil, err
-	}
-
-	if _, err := valuesFile.Write(valuesBytes); err != nil {
-		return nil, err
-	}
-
-	if err := valuesFile.Close(); err != nil {
-		return nil, err
-	}
-
-	flags := []string{
-		fmt.Sprintf("--namespace=%s", o.Namespace),
-		fmt.Sprintf("--values=%s", valuesFile.Name()),
-	}
-
-	if o.CreateNamespace {
-		flags = append(flags, "--create-namespace")
-	}
-
-	if o.Name == "" {
-		flags = append(flags, "--generate-name")
-	}
-
-	if o.Version != "" {
-		flags = append(flags, fmt.Sprintf("--version=%s", o.Version))
-	}
-
-	if !o.NoWait {
-		flags = append(flags, "--wait")
-	}
-
-	if !o.NoWaitForJobs {
-		flags = append(flags, "--wait-for-jobs")
-	}
-
-	return flags, nil
 }
 
 func (c *Client) List(ctx context.Context) ([]Release, error) {
@@ -180,14 +107,62 @@ func (c *Client) List(ctx context.Context) ([]Release, error) {
 	return releases, nil
 }
 
-func (c *Client) Install(ctx context.Context, chart string, opts InstallOptions) error {
-	flags, err := opts.asFlags()
+func (c *Client) Get(ctx context.Context, namespace, name string) (Release, error) {
+	stdout, _, err := c.runHelm(ctx, "get", "metadata", name, "--output=json", "--namespace", namespace)
+	if err != nil {
+		return Release{}, err
+	}
+
+	var release Release
+	if err := json.Unmarshal(stdout, &release); err != nil {
+		return Release{}, err
+	}
+	return release, nil
+}
+
+func (c *Client) ShowValues(ctx context.Context, chart string, values any) error {
+	stdout, _, err := c.runHelm(ctx, "show", "values", chart)
 	if err != nil {
 		return err
 	}
+	return yaml.Unmarshal(stdout, &values)
+}
+
+func (c *Client) GetValues(ctx context.Context, release *Release, values any) error {
+	stdout, _, err := c.runHelm(ctx, "get", "values", release.Name, "--output=json", "--namespace", release.Namespace)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(stdout, &values)
+}
+
+type InstallOptions struct {
+	CreateNamespace bool   `flag:"create-namespace"`
+	Name            string `flag:"-"`
+	Namespace       string `flag:"namespace"`
+	Values          any    `flag:"-"`
+	Version         string `flag:"version"`
+	NoWait          bool   `flag:"wait"`
+	NoWaitForJobs   bool   `flag:"wait-for-jobs"`
+	GenerateName    bool   `flag:"generate-name"`
+	ValuesFile      string `flag:"values"`
+}
+
+func (c *Client) Install(ctx context.Context, chart string, opts InstallOptions) (Release, error) {
+	if opts.Name == "" {
+		opts.GenerateName = true
+	}
+
+	if opts.Values != nil {
+		var err error
+		opts.ValuesFile, err = c.writeValues(opts.Values)
+		if err != nil {
+			return Release{}, err
+		}
+	}
 
 	args := []string{"install", chart, "--output=json"}
-	args = append(args, flags...)
+	args = append(args, ToFlags(opts)...)
 
 	if opts.Name != "" {
 		args = slices.Insert(args, 1, opts.Name)
@@ -195,18 +170,96 @@ func (c *Client) Install(ctx context.Context, chart string, opts InstallOptions)
 
 	stdout, _, err := c.runHelm(ctx, args...)
 	if err != nil {
-		return err
+		return Release{}, err
 	}
 
-	// Primarily this is an assertion that we're seeing valid JSON in the
-	// output. In the future, this value will be returned (or used to generate
-	// a return value).
+	// TODO(chrisseto): The result of `helm install` appears to be its own
+	// unique type. The closest equivalent is `helm get all` but that can't be
+	// output as JSON.
+	// For now, we scrape out the name and use `helm get metadata` to return
+	// consistent information.
 	var result map[string]any
 	if err := json.Unmarshal([]byte(stdout), &result); err != nil {
-		return err
+		return Release{}, err
 	}
 
-	return nil
+	return c.Get(ctx, opts.Namespace, result["name"].(string))
+}
+
+func (c *Client) Template(ctx context.Context, chart string, opts InstallOptions) ([]byte, error) {
+	if opts.Name == "" {
+		opts.GenerateName = true
+	}
+
+	if opts.Values != nil {
+		var err error
+		opts.ValuesFile, err = c.writeValues(opts.Values)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// TODO figure out how to remove kube-version.
+	args := []string{"template", chart, "--dry-run=client", "--kube-version=v1.21.0"}
+	args = append(args, ToFlags(opts)...)
+
+	if opts.Name != "" {
+		args = slices.Insert(args, 1, opts.Name)
+	}
+
+	stdout, _, err := c.runHelm(ctx, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	return stdout, nil
+}
+
+type UpgradeOptions struct {
+	CreateNamespace bool   `flag:"create-namespace"`
+	Install         bool   `flag:"install"`
+	Namespace       string `flag:"namespace"`
+	Version         string `flag:"version"`
+	NoWait          bool   `flag:"wait"`
+	NoWaitForJobs   bool   `flag:"wait-for-jobs"`
+	ReuseValues     bool   `flag:"reuse-values"`
+	Values          any    `flag:"-"`
+	ValuesFile      string `flag:"values"`
+}
+
+func (c *Client) Upgrade(ctx context.Context, release, chart string, opts UpgradeOptions) (Release, error) {
+	if opts.Values != nil {
+		var err error
+		opts.ValuesFile, err = c.writeValues(opts.Values)
+		if err != nil {
+			return Release{}, err
+		}
+	}
+
+	args := []string{"upgrade", release, chart, "--output=json"}
+	args = append(args, ToFlags(opts)...)
+
+	stdout, _, err := c.runHelm(ctx, args...)
+	if err != nil {
+		return Release{}, err
+	}
+
+	// TODO(chrisseto): The result of `helm install` appears to be its own
+	// unique type. The closest equivalent is `helm get all` but that can't be
+	// output as JSON.
+	// For now, we scrape out the name and use `helm get metadata` to return
+	// consistent information.
+	var result map[string]any
+	if err := json.Unmarshal([]byte(stdout), &result); err != nil {
+		return Release{}, err
+	}
+
+	return c.Get(ctx, opts.Namespace, result["name"].(string))
+}
+
+func (c *Client) Test(ctx context.Context, release Release) error {
+	stdout, _, err := c.runHelm(ctx, "test", release.Name, "--namespace", release.Namespace, "--logs")
+	return errors.Wrapf(err, "stdout: %s", stdout)
 }
 
 func (c *Client) RepoList(ctx context.Context) ([]Repo, error) {
@@ -252,9 +305,32 @@ func (c *Client) runHelm(ctx context.Context, args ...string) ([]byte, []byte, e
 	cmd.Stderr = &stderr
 
 	err := cmd.Run()
+	return stdout.Bytes(), stderr.Bytes(), errors.Wrapf(err, "stderr: %s", stderr.String())
+}
+
+// writeValues writes a helm values file to a unique file in HELM_CONFIG_HOME
+// and returns the path to the written file.
+func (c *Client) writeValues(values any) (string, error) {
+	valuesFile, err := os.CreateTemp(c.configHome, "values-*.yaml")
 	if err != nil {
-		err = fmt.Errorf("%w: %s", err, stderr.String())
+		return "", err
 	}
 
-	return stdout.Bytes(), stderr.Bytes(), err
+	valueBytes, ok := values.(RawYAML)
+	if !ok {
+		valueBytes, err = yaml.Marshal(values)
+		if err != nil {
+			return "", err
+		}
+	}
+
+	if _, err := valuesFile.Write(valueBytes); err != nil {
+		return "", err
+	}
+
+	if err := valuesFile.Close(); err != nil {
+		return "", err
+	}
+
+	return valuesFile.Name(), nil
 }
