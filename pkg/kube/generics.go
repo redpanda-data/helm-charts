@@ -53,3 +53,7 @@ func Delete[T any, PT AddrofObject[T]](ctx context.Context, ctl *Ctl, key Object
 
 	return ctl.client.Delete(ctx, obj)
 }
+
+func AsKey(obj Object) ObjectKey {
+	return ObjectKey{Namespace: obj.GetNamespace(), Name: obj.GetName()}
+}
