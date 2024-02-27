@@ -34,6 +34,15 @@ run: once
 
 tasks:
 
+  lint:
+    cmds:
+      - task: lint:chart:redpanda
+
+  lint:chart:redpanda:
+    cmds:
+      - ct lint --config .github/ct-redpanda.yaml --github-groups
+      - .github/check-ci-files.sh charts/redpanda/ci
+
   create-test-rack-awareness:
     cmds:
       - .github/annotate_kind_nodes.sh {{.KIND_CLUSTERNAME}}
