@@ -1,3 +1,18 @@
+# Contributing
+
+## Development Environment
+
+The development environment is managed by [`nix`](https://nixos.org). If
+installing nix is not an option, you can ensure all the tools listed in
+[`flake.nix`](./flake.nix) are installed and available in `$PATH`.
+
+To install nix, either follow the [official guide](https://nixos.org/download) or [zero-to-nix's quick start](https://zero-to-nix.com/start).
+
+```sh
+nix develop # Enter a development shell.
+nix develop --command fish/zsh # Enter a development shell using fish/zsh instead of bash.
+```
+
 ## Contributing
 
 One way to debug during helm development is to diff the kubernetes configuration files that helm generates:
