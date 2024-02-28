@@ -1,0 +1,110 @@
+{{- /* Generated from "flowcontrol.go" */ -}}
+
+{{- define "flowcontrol.FlowControl" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- (dict "r" (dict "earlyReturn" (get (fromJson (include "flowcontrol.earlyReturn" (dict "a" (list $dot) ))) "r") "ifElse" (get (fromJson (include "flowcontrol.ifElse" (dict "a" (list $dot) ))) "r") "sliceRanges" (get (fromJson (include "flowcontrol.sliceRanges" (dict "a" (list $dot) ))) "r") "mapRanges" (get (fromJson (include "flowcontrol.mapRanges" (dict "a" (list $dot) ))) "r") "intBinaryExprs" (get (fromJson (include "flowcontrol.intBinaryExprs" (dict "a" (list ) ))) "r") )) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "flowcontrol.earlyReturn" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $dot.Values "boolean") ))) "r")) ))) "r") -}}
+{{- $ok_2 := $tmp_tuple_1.T2 -}}
+{{- $b_1 := $tmp_tuple_1.T1 -}}
+{{- if (and $ok_2 $b_1) -}}
+{{- (dict "r" "Early Returns work!") | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- (dict "r" "Should have returned early") | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "flowcontrol.ifElse" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $tmp_tuple_2 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $dot.Values "oneToFour") ))) "r")) ))) "r") -}}
+{{- $ok := $tmp_tuple_2.T2 -}}
+{{- $oneToFour := $tmp_tuple_2.T1 -}}
+{{- if (not $ok) -}}
+{{- (dict "r" "oneToFour not specified!") | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- if (eq (int $oneToFour) 1) -}}
+{{- (dict "r" "It's 1") | toJson -}}
+{{- break -}}
+{{- else -}}{{- if (eq (int $oneToFour) 2) -}}
+{{- (dict "r" "It's 2") | toJson -}}
+{{- break -}}
+{{- else -}}{{- if (eq (int $oneToFour) 3) -}}
+{{- (dict "r" "It's 3") | toJson -}}
+{{- break -}}
+{{- else -}}
+{{- (dict "r" "It's 4") | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- (dict "r" "unreachable") | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "flowcontrol.sliceRanges" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $tmp_tuple_3 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $dot.Values "ints") ))) "r")) ))) "r") -}}
+{{- $ok := $tmp_tuple_3.T2 -}}
+{{- $intsAny := $tmp_tuple_3.T1 -}}
+{{- if (not $ok) -}}
+{{- $intsAny = (list ) -}}
+{{- end -}}
+{{- $ints := $intsAny -}}
+{{- $sumOfIndexes := 0 -}}
+{{- range $i, $_ := $ints -}}
+{{- $sumOfIndexes = (add $sumOfIndexes $i) -}}
+{{- end -}}
+{{- $continuesWork := true -}}
+{{- range $_, $_ := $ints -}}
+{{- continue -}}
+{{- $continuesWork = false -}}
+{{- end -}}
+{{- $breaksWork := true -}}
+{{- range $_, $_ := $ints -}}
+{{- break -}}
+{{- $breaksWork = false -}}
+{{- end -}}
+{{- (dict "r" (list $sumOfIndexes $continuesWork $breaksWork)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "flowcontrol.mapRanges" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $m := (dict "1" 1 "2" 2 "3" 3 ) -}}
+{{- range $k, $_ := $m -}}
+{{- $_ = $k -}}
+{{- end -}}
+{{- $sum := 0 -}}
+{{- range $_, $v := $m -}}
+{{- $sum = (add $sum $v) -}}
+{{- end -}}
+{{- (dict "r" (list $sum)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "flowcontrol.intBinaryExprs" -}}
+{{- range $_ := (list 1) -}}
+{{- $x := 1 -}}
+{{- $y := 2 -}}
+{{- $z := 3 -}}
+{{- (dict "r" (list $z (sub $x $y) (add $x $y) (div $x $y) (mul $x $y))) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+

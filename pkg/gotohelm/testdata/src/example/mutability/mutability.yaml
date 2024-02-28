@@ -1,0 +1,15 @@
+{{- /* Generated from "mutability.go" */ -}}
+
+{{- define "mutability.Mutability" -}}
+{{- range $_ := (list 1) -}}
+{{- $v := (dict "Name" "" "Labels" (fromJson "null") "SubService" (fromJson "null") ) -}}
+{{- $_ := (set $v "Labels" (dict )) -}}
+{{- $_ := (set $v "SubService" (mustMergeOverwrite (dict "Name" "" "Labels" (fromJson "null") ) (dict ))) -}}
+{{- $_ := (set $v.SubService "Labels" (dict )) -}}
+{{- $_ := (set $v.SubService "Name" "Hello!") -}}
+{{- $_ := (set $v.SubService.Labels "hello" "world") -}}
+{{- (dict "r" (dict "values" (mustFromJson (mustToJson $v)) )) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+

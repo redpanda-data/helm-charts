@@ -1,0 +1,45 @@
+{{- /* Generated from "asserts.go" */ -}}
+
+{{- define "typing.typeTesting" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $t := (index $dot.Values "t") -}}
+{{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "string" $t) ))) "r")) ))) "r") -}}
+{{- $ok_1 := $tmp_tuple_1.T2 -}}
+{{- $tmp_tuple_2 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "int" $t) ))) "r")) ))) "r") -}}
+{{- $ok_2 := $tmp_tuple_2.T2 -}}
+{{- $tmp_tuple_3 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "float64" $t) ))) "r")) ))) "r") -}}
+{{- $ok_3 := $tmp_tuple_3.T2 -}}
+{{- if $ok_1 -}}
+{{- (dict "r" "it's a string!") | toJson -}}
+{{- break -}}
+{{- else -}}{{- if $ok_2 -}}
+{{- (dict "r" "it's an int!") | toJson -}}
+{{- break -}}
+{{- else -}}{{- if $ok_3 -}}
+{{- (dict "r" "it's a float!") | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- (dict "r" "it's something else!") | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "typing.typeAssertions" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- (dict "r" "Not yet supported") | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "typing.typeSwitching" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- (dict "r" "Not yet supported") | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
