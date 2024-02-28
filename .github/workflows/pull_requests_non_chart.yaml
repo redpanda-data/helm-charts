@@ -37,6 +37,7 @@ on:
       # Watch changes to this file.
       - '.github/workflows/pull_requests_non_chart.yaml'
       - '.github/workflows/release.yaml'
+      - '.github/workflows/nightly_version_checks.yaml'
       # Watch for any go-related changes are we start to rely on `go test`
       - '**/*.go'
       - go.mod
