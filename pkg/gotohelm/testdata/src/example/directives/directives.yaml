@@ -1,0 +1,9 @@
+{{- /* Generated from "directives.go" */ -}}
+
+{{- define "directives.Directives" -}}
+{{- range $_ := (list 1) -}}
+{{- (dict "r" true) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+

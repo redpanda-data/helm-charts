@@ -1,0 +1,42 @@
+{{- /* Generated from "structs.go" */ -}}
+
+{{- define "typing.Typing" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- (dict "r" (dict "zeros" (get (fromJson (include "typing.zeros" (dict "a" (list ) ))) "r") "compileMe" (get (fromJson (include "typing.compileMe" (dict "a" (list ) ))) "r") "typeTesting" (get (fromJson (include "typing.typeTesting" (dict "a" (list $dot) ))) "r") "typeAssertions" (get (fromJson (include "typing.typeSwitching" (dict "a" (list $dot) ))) "r") "typeSwitching" (get (fromJson (include "typing.typeSwitching" (dict "a" (list $dot) ))) "r") "nestedFieldAccess" (get (fromJson (include "typing.nestedFieldAccess" (dict "a" (list ) ))) "r") )) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "typing.zeros" -}}
+{{- range $_ := (list 1) -}}
+{{- $number := (fromJson "null") -}}
+{{- $str := (fromJson "null") -}}
+{{- $stru := (fromJson "null") -}}
+{{- (dict "r" (list (mustMergeOverwrite (dict "Key" "" "with_tag" 0 ) (dict )) (mustMergeOverwrite (mustMergeOverwrite (dict "Key" "" "with_tag" 0 ) (dict "Nilable" (fromJson "null") )) (dict )) $number $str $stru)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "typing.nestedFieldAccess" -}}
+{{- range $_ := (list 1) -}}
+{{- $x := (mustMergeOverwrite (dict ) (dict "childs" (list (mustMergeOverwrite (dict ) (dict "childs" (list (mustMergeOverwrite (dict ) (dict "val" "Hello!" ))) ))) )) -}}
+{{- (dict "r" (index (index $x.childs 0).childs 0).val) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "typing.compileMe" -}}
+{{- range $_ := (list 1) -}}
+{{- (dict "r" (mustMergeOverwrite (dict "Key" "" "with_tag" 0 ) (dict "Key" "foo" ))) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "typing.alsoMe" -}}
+{{- range $_ := (list 1) -}}
+{{- (dict "r" (mustMergeOverwrite (mustMergeOverwrite (dict "Key" "" "with_tag" 0 ) (dict "Nilable" (fromJson "null") )) (mustMergeOverwrite (dict "Key" "" "with_tag" 0 ) (dict "Key" "Foo" )) (dict ))) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+

@@ -1,0 +1,26 @@
+{{- /* Generated from "sprig.go" */ -}}
+
+{{- define "sprig.Sprig" -}}
+{{- range $_ := (list 1) -}}
+{{- (dict "r" (dict "empty" (get (fromJson (include "sprig.empty" (dict "a" (list ) ))) "r") "default" (get (fromJson (include "sprig.default_" (dict "a" (list ) ))) "r") )) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "sprig.default_" -}}
+{{- range $_ := (list 1) -}}
+{{- $defaultStr := "DEFAULT" -}}
+{{- $defaultInt := 1234 -}}
+{{- $defaultStrSlice := (list $defaultStr) -}}
+{{- (dict "r" (list (default "" $defaultStr) (default "value" $defaultStr) (default nil $defaultStrSlice) (default (list ) $defaultStrSlice) (default 0 $defaultInt) (default 1 $defaultInt))) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "sprig.empty" -}}
+{{- range $_ := (list 1) -}}
+{{- (dict "r" (list (empty nil) (empty (list )) (empty (list "")) (empty (dict )) (empty (dict "key" nil )) (empty 1) (empty 0) (empty false) (empty true) (empty "") (empty "hello") (empty (mustMergeOverwrite (dict "Value" 0 ) (dict ))) (empty (mustMergeOverwrite (dict "Value" 0 ) (dict "Value" 0 ))) (empty (mustMergeOverwrite (dict "Value" 0 ) (dict "Value" 1 ))))) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+

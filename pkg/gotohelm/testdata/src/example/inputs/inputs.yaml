@@ -1,0 +1,48 @@
+{{- /* Generated from "inputs.go" */ -}}
+
+{{- define "inputs.Inputs" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- (dict "r" (dict "unwrap" (get (fromJson (include "inputs.unwrap" (dict "a" (list $dot) ))) "r") "echo" (get (fromJson (include "inputs.echo" (dict "a" (list $dot) ))) "r") "digCompat" (get (fromJson (include "inputs.digCompat" (dict "a" (list $dot) ))) "r") "keys" (get (fromJson (include "inputs.keys" (dict "a" (list $dot) ))) "r") )) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "inputs.unwrap" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- (dict "r" $dot.Values.AsMap.nested) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "inputs.echo" -}}
+{{- $globals := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- (dict "r" $globals.Values) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "inputs.digCompat" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- (dict "r" (dig "doesn't" "exist" "hello" $dot.Values.AsMap)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "inputs.keys" -}}
+{{- $globals := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $keys := (list ) -}}
+{{- range $key, $_ := $globals.Values -}}
+{{- $keys = (mustAppend $keys $key) -}}
+{{- end -}}
+{{- $keys = (keys $globals.Values) -}}
+{{- $_ := (sortAlpha $keys) -}}
+{{- (dict "r" $keys) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+

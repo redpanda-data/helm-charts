@@ -1,0 +1,17 @@
+{{- /* Generated from "k8s.go" */ -}}
+
+{{- define "k8s.Pod" -}}
+{{- range $_ := (list 1) -}}
+{{- (dict "r" (mustMergeOverwrite (mustMergeOverwrite (dict ) (dict "metadata" (dict "creationTimestamp" (fromJson "null") ) "spec" (dict "containers" (fromJson "null") ) "status" (dict ) )) (mustMergeOverwrite (dict ) (dict "apiVersion" "v1" "kind" "Pod" )) (dict "metadata" (mustMergeOverwrite (dict "creationTimestamp" (fromJson "null") ) (dict "namespace" "spacename" "name" "eman" )) ))) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "k8s.PDB" -}}
+{{- range $_ := (list 1) -}}
+{{- $minAvail := 3 -}}
+{{- (dict "r" (mustMergeOverwrite (mustMergeOverwrite (dict ) (dict "metadata" (dict "creationTimestamp" (fromJson "null") ) "spec" (dict ) "status" (dict "disruptionsAllowed" 0 "currentHealthy" 0 "desiredHealthy" 0 "expectedPods" 0 ) )) (mustMergeOverwrite (dict ) (dict "apiVersion" "v1" "kind" "PodDisruptionBudget" )) (dict "spec" (mustMergeOverwrite (dict ) (dict "minAvailable" $minAvail )) ))) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
