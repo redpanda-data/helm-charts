@@ -20,9 +20,9 @@
 
 name: release
 on:
-  push:
+  pull_request:
     branches:
-      - main
+      - "**"
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -48,13 +48,6 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
-      - name: Run chart-releaser
-        uses: helm/chart-releaser-action@a917fd15b20e8b64b94d9158ad54cd6345335584 # v1.6.0
-        env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          CR_SKIP_EXISTING: true
-          CR_GENERATE_RELEASE_NOTES: true
-
       - name: Checkout kustomize
         uses: actions/checkout@v4 # v3.5.3
         with:
@@ -70,7 +63,7 @@ jobs:
       - name: Install kustomize
         uses: imranismail/setup-kustomize@2ba527d4d055ab63514ba50a99456fc35684947f # v2.1.0
         with:
-          kustomize-version: v5.1.1
+          kustomize-version: 5.3.0
 
       - name: Build dependencies for the operator chart
         run: |
@@ -88,8 +81,7 @@ jobs:
           rm kustomization.yaml
           kustomize create --resources resources.yaml
           cd ..
-          if [[ $(git status --porcelain) ]] ; then
-            git add .
-            git commit -m 'update kustomize/operator'
-            git push
-          fi
+          pwd
+          ls -al .
+          ls -al operator
+          ls -al ../
