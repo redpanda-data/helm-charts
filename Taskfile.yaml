@@ -43,6 +43,12 @@ tasks:
       - ct lint --config .github/ct-redpanda.yaml --github-groups
       - .github/check-ci-files.sh charts/redpanda/ci
 
+  generate:
+    desc: "[Re]Generate all generated files"
+    cmds:
+      # Generates README.md's for all charts
+      - helm-docs -c ./charts
+
   create-test-rack-awareness:
     cmds:
       - .github/annotate_kind_nodes.sh {{.KIND_CLUSTERNAME}}
