@@ -2,6 +2,7 @@ package redpanda
 
 import (
 	"os"
+	"os/exec"
 	"testing"
 
 	"github.com/redpanda-data/helm-charts/pkg/helm"
@@ -19,6 +20,11 @@ func TieredStorageStatic(t *testing.T) Values {
 	}
 
 	return Values{
+		Config: &Config{
+			Node: map[string]any{
+				"developer_mode": true,
+			},
+		},
 		Enterprise: &Enterprise{
 			License: os.Getenv("REDPANDA_LICENSE"),
 		},
@@ -55,6 +61,11 @@ func TieredStorageSecretRefs(t *testing.T, secret *corev1.Secret) Values {
 	}
 
 	return Values{
+		Config: &Config{
+			Node: map[string]any{
+				"developer_mode": true,
+			},
+		},
 		Enterprise: &Enterprise{
 			License: os.Getenv("REDPANDA_LICENSE"),
 		},
@@ -74,6 +85,44 @@ func TieredStorageSecretRefs(t *testing.T, secret *corev1.Secret) Values {
 	}
 }
 
+func TestTemplate(t *testing.T) {
+	ctx := testutil.Context(t)
+	client, err := helm.New(helm.Options{ConfigHome: testutil.TempDir(t)})
+	require.NoError(t, err)
+
+	// Chart deps are kept within ./charts as a tgz archive. Helm dep build
+	// will ensure that ./charts is in sync with Chart.lock.
+	_, err = exec.CommandContext(ctx, "helm", "dep", "build").CombinedOutput()
+	require.NoError(t, err, "failed to refresh helm dependencies")
+
+	values, err := os.ReadDir("./ci")
+	require.NoError(t, err)
+
+	for _, v := range values {
+		v := v
+		t.Run(v.Name(), func(t *testing.T) {
+			t.Parallel()
+
+			out, err := client.Template(ctx, ".", helm.TemplateOptions{
+				Name:       "redpanda",
+				ValuesFile: "./ci/" + v.Name(),
+				Set: []string{
+					// Tests utilize some non-deterministic helpers (rng). We don't
+					// really care about the stability of their output, so globally
+					// disable them.
+					"tests.enabled=false",
+					// jwtSecret defaults to a random string. Can't have that
+					// in snapshot testing so set it to a static value.
+					"console.secret.login.jwtSecret=SECRETKEY",
+				},
+			})
+			require.NoError(t, err)
+
+			testutil.AssertGolden(t, testutil.Text, "./testdata/"+v.Name()+".golden", out)
+		})
+	}
+}
+
 func TestChart(t *testing.T) {
 	if testing.Short() {
 		t.Skipf("Skipping log running test...")
@@ -87,7 +136,15 @@ func TestChart(t *testing.T) {
 		credsSecret, err := kube.Create(ctx, env.Ctl(), TieredStorageSecret(env.Namespace()))
 		require.NoError(t, err)
 
-		rpRelease := env.Install(".", helm.InstallOptions{})
+		rpRelease := env.Install(".", helm.InstallOptions{
+			Values: Values{
+				Config: &Config{
+					Node: map[string]any{
+						"developer_mode": true,
+					},
+				},
+			},
+		})
 
 		rpk := Client{Ctl: env.Ctl(), Release: &rpRelease}
 

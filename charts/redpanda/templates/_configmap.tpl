@@ -663,7 +663,7 @@ rpk:
 {{- define "rpk-config-external" -}}
   {{- $brokers := list -}}
   {{- $admin := list -}}
-  {{- $profile := keys .Values.listeners.kafka.external | first -}}
+  {{- $profile := keys .Values.listeners.kafka.external | sortAlpha | first -}}
   {{- $kafkaListener := get .Values.listeners.kafka.external $profile -}}
   {{- $adminListener := dict -}}
   {{- if .Values.listeners.admin.external -}}
