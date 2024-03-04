@@ -11,7 +11,8 @@ type Flags struct {
 	NoWait        bool `flag:"wait"`
 	NoWaitForJobs bool `flag:"no-wait-for-jobs"`
 	NotAFlag      string
-	StringFlag    string `flag:"string-flag"`
+	StringFlag    string   `flag:"string-flag"`
+	StringArray   []string `flag:"string-array"`
 }
 
 func TestToFlags(t *testing.T) {
@@ -41,6 +42,20 @@ func TestToFlags(t *testing.T) {
 				"--wait=true",
 				"--no-wait-for-jobs=false",
 				"--string-flag=something",
+			},
+		},
+		{
+			in: Flags{
+				StringFlag:  "something",
+				StringArray: []string{"1", "2", "3"},
+			},
+			out: []string{
+				"--wait=true",
+				"--no-wait-for-jobs=false",
+				"--string-flag=something",
+				"--string-array=1",
+				"--string-array=2",
+				"--string-array=3",
 			},
 		},
 	}
