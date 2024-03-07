@@ -1,10 +1,11 @@
-package redpanda
+package redpanda_test
 
 import (
 	"bytes"
 	"context"
 	"fmt"
 
+	"github.com/redpanda-data/helm-charts/charts/redpanda"
 	"github.com/redpanda-data/helm-charts/pkg/helm"
 	"github.com/redpanda-data/helm-charts/pkg/kube"
 	corev1 "k8s.io/api/core/v1"
@@ -23,7 +24,7 @@ func (c *Client) getStsPod(ctx context.Context, ordinal int) (*corev1.Pod, error
 	})
 }
 
-func (c *Client) ClusterConfig(ctx context.Context) (ClusterConfig, error) {
+func (c *Client) ClusterConfig(ctx context.Context) (redpanda.ClusterConfig, error) {
 	pod, err := c.getStsPod(ctx, 0)
 	if err != nil {
 		return nil, err
