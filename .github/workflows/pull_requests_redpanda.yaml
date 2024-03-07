@@ -74,10 +74,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - run: |
-          git checkout main
-          git checkout -
-
       - name: compare redpanda values with main
         run: dyff --color=off -k between -s <(git show 'origin/main:charts/redpanda/values.yaml') charts/redpanda/values.yaml
 
@@ -113,9 +109,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - run: |
-          git checkout main
-          git checkout -
+
+        # TODO(chrisseto): Need to start linting generated files here.
+        # Currently just testing that generation within CI works but
+        # need to fail if the generation results in new diffs.
+        # Alternatively, could exclude all generated files from source
+        # control and leverage nix to generate files just-in-time and
+        # then package them into a usable chart for test?
+      - run: task chart:generate:redpanda
 
       # we're excluding console from testing until we have a way to test it with Redpanda
       - name: Run chart-testing (list-changed)
@@ -182,6 +183,14 @@ jobs:
         if: steps.list-changed.outputs.changed == 'true'
         run: |
           task helm:install:metallb
+
+        # Chart-testing requires there to be a branch on the local repository
+        # for diffing. This will create such a branch without performing a
+        # checkout.
+      - name: Fetch origin/main
+        if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          git fetch origin ${{ github.event.repository.default_branch }}:${{ github.event.repository.default_branch }}
 
       - name: Run chart-testing (install and upgrade)
         if: steps.list-changed.outputs.changed == 'true'

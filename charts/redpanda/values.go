@@ -1,3 +1,4 @@
+//+gotohelm:ignore=true
 package redpanda
 
 import (
@@ -78,7 +79,7 @@ func (Image) JSONSchemaExtend(schema *jsonschema.Schema) {
 }
 
 type Service struct {
-	Name     string `json:"name"`
+	Name     *string `json:"name"`
 	Internal struct {
 		Annotations map[string]string `json:"annotations"`
 	} `json:"internal"`

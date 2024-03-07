@@ -49,6 +49,11 @@ run: once
 # maintained via aliases.
 tasks:
 
+  shell:
+    desc: "Launch a development shell"
+    cmds:
+      - nix develop --impure
+
   lint:
     cmds:
       - task: chart:lint:redpanda
@@ -59,9 +64,14 @@ tasks:
       - .github/check-ci-files.sh charts/redpanda/ci
 
   chart:generate:redpanda:
+    desc: "Generate files for the redpanda Helm chart"
     cmds:
-      - go run ./cmd/genpartial/main.go -out charts/redpanda/values_partial.gen.go -struct Values ./charts/redpanda
-      - go run ./cmd/genvalues/main.go > charts/redpanda/values.schema.json
+      # Generate a "partial" version of the Values struct.
+      - nix run .#genpartial -- -out charts/redpanda/values_partial.gen.go -struct Values ./charts/redpanda
+      # Generate the values JSON schema from the Values struct
+      - nix run .#genvalues > charts/redpanda/values.schema.json
+      # Generate helm templates from Go definitions
+      - nix run .#gotohelm -- -write ./charts/redpanda/templates ./charts/redpanda 
 
   generate:
     desc: "[Re]Generate all generated files"

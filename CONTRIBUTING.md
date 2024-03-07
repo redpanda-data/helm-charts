@@ -8,9 +8,23 @@ installing nix is not an option, you can ensure all the tools listed in
 
 To install nix, either follow the [official guide](https://nixos.org/download) or [zero-to-nix's quick start](https://zero-to-nix.com/start).
 
+Next, you'll want to enable the experimental features `flakes` and
+`nix-command` to avoid typing `--extra-experimental-features nix-command
+--extra-experimental-features flakes` all the time.
+
+```bash
+# Or open the file in an editor and paste in this line.
+# If you're using nix to manage your nix install, you'll have to find your own path :)
+echo 'experimental-features = nix-command flakes' >> /etc/nix/nix.conf
+```
+
+Now you're ready to go!
+
 ```sh
 nix develop # Enter a development shell.
-nix develop --command fish/zsh # Enter a development shell using fish/zsh instead of bash.
+task shell # Or enter through task
+nix develop -c fish  # Enter a development shell using fish/zsh
+nix develop -c zsh  # Enter a development shell using fish/zsh
 ```
 
 ## Contributing

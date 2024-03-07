@@ -140,16 +140,16 @@ func TestChart(t *testing.T) {
 		require.NoError(t, err)
 
 		rpRelease := env.Install(redpandaChart, helm.InstallOptions{
-			Values: redpanda.Values{
-				Config: redpanda.Config{
-					Node: map[string]any{
+			Values: redpanda.PartialValues{
+				Config: &redpanda.PartialConfig{
+					Node: &redpanda.PartialNodeConfig{
 						"developer_mode": true,
 					},
 				},
 			},
 		})
 
-		rpk := redpanda.Client{Ctl: env.Ctl(), Release: &rpRelease}
+		rpk := Client{Ctl: env.Ctl(), Release: &rpRelease}
 
 		config, err := rpk.ClusterConfig(ctx)
 		require.NoError(t, err)

@@ -1,3 +1,4 @@
+//+gotohelm:ignore=true
 package redpanda
 
 import (
