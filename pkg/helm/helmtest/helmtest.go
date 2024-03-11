@@ -29,7 +29,7 @@ func Setup(t *testing.T) *Env {
 
 	client, err := helm.New(helm.Options{
 		KubeConfig: ctl.RestConfig(),
-		ConfigHome: t.TempDir(),
+		ConfigHome: testutil.TempDir(t),
 	})
 	require.NoError(t, err)
 
