@@ -58,6 +58,11 @@ tasks:
       - ct lint --config .github/ct-redpanda.yaml --github-groups
       - .github/check-ci-files.sh charts/redpanda/ci
 
+  chart:generate:redpanda:
+    cmds:
+      - go run ./cmd/genpartial/main.go -out charts/redpanda/values_partial.gen.go -struct Values ./charts/redpanda
+      - go run ./cmd/genvalues/main.go > charts/redpanda/values.schema.json
+
   generate:
     desc: "[Re]Generate all generated files"
     cmds:

@@ -1,10 +1,11 @@
-package redpanda
+package redpanda_test
 
 import (
 	"os"
 	"os/exec"
 	"testing"
 
+	"github.com/redpanda-data/helm-charts/charts/redpanda"
 	"github.com/redpanda-data/helm-charts/pkg/helm"
 	"github.com/redpanda-data/helm-charts/pkg/helm/helmtest"
 	"github.com/redpanda-data/helm-charts/pkg/kube"
@@ -14,23 +15,23 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func TieredStorageStatic(t *testing.T) Values {
+func TieredStorageStatic(t *testing.T) redpanda.Values {
 	if os.Getenv("REDPANDA_LICENSE") == "" {
 		t.Skipf("$REDPANDA_LICENSE is not set")
 	}
 
-	return Values{
-		Config: &Config{
+	return redpanda.Values{
+		Config: redpanda.Config{
 			Node: map[string]any{
 				"developer_mode": true,
 			},
 		},
-		Enterprise: &Enterprise{
+		Enterprise: redpanda.Enterprise{
 			License: os.Getenv("REDPANDA_LICENSE"),
 		},
-		Storage: &Storage{
-			Tiered: &Tiered{
-				Config: map[string]any{
+		Storage: redpanda.Storage{
+			Tiered: &redpanda.Tiered{
+				Config: redpanda.TieredStorageConfig{
 					"cloud_storage_enabled":    true,
 					"cloud_storage_region":     "static-region",
 					"cloud_storage_bucket":     "static-bucket",
@@ -55,25 +56,25 @@ func TieredStorageSecret(namespace string) corev1.Secret {
 	}
 }
 
-func TieredStorageSecretRefs(t *testing.T, secret *corev1.Secret) Values {
+func TieredStorageSecretRefs(t *testing.T, secret *corev1.Secret) redpanda.Values {
 	if os.Getenv("REDPANDA_LICENSE") == "" {
 		t.Skipf("$REDPANDA_LICENSE is not set")
 	}
 
-	return Values{
-		Config: &Config{
+	return redpanda.Values{
+		Config: redpanda.Config{
 			Node: map[string]any{
 				"developer_mode": true,
 			},
 		},
-		Enterprise: &Enterprise{
+		Enterprise: redpanda.Enterprise{
 			License: os.Getenv("REDPANDA_LICENSE"),
 		},
-		Storage: &Storage{
-			Tiered: &Tiered{
-				CredentialsSecretRef: &TieredStorageCredentials{
-					AccessKey: &SecretRef{Name: secret.Name, Key: "access"},
-					SecretKey: &SecretRef{Name: secret.Name, Key: "secret"},
+		Storage: redpanda.Storage{
+			Tiered: &redpanda.Tiered{
+				CredentialsSecretRef: redpanda.TieredStorageCredentials{
+					AccessKey: &redpanda.SecretRef{Name: secret.Name, Key: "access"},
+					SecretKey: &redpanda.SecretRef{Name: secret.Name, Key: "secret"},
 				},
 				Config: map[string]any{
 					"cloud_storage_enabled": true,
@@ -128,6 +129,8 @@ func TestChart(t *testing.T) {
 		t.Skipf("Skipping log running test...")
 	}
 
+	redpandaChart := "."
+
 	env := helmtest.Setup(t).Namespaced(t)
 
 	t.Run("tiered-storage-secrets", func(t *testing.T) {
@@ -136,9 +139,9 @@ func TestChart(t *testing.T) {
 		credsSecret, err := kube.Create(ctx, env.Ctl(), TieredStorageSecret(env.Namespace()))
 		require.NoError(t, err)
 
-		rpRelease := env.Install(".", helm.InstallOptions{
-			Values: Values{
-				Config: &Config{
+		rpRelease := env.Install(redpandaChart, helm.InstallOptions{
+			Values: redpanda.Values{
+				Config: redpanda.Config{
 					Node: map[string]any{
 						"developer_mode": true,
 					},
@@ -146,20 +149,20 @@ func TestChart(t *testing.T) {
 			},
 		})
 
-		rpk := Client{Ctl: env.Ctl(), Release: &rpRelease}
+		rpk := redpanda.Client{Ctl: env.Ctl(), Release: &rpRelease}
 
 		config, err := rpk.ClusterConfig(ctx)
 		require.NoError(t, err)
 		require.Equal(t, false, config["cloud_storage_enabled"])
 
-		rpRelease = env.Upgrade(".", rpRelease, helm.UpgradeOptions{Values: TieredStorageStatic(t)})
+		rpRelease = env.Upgrade(redpandaChart, rpRelease, helm.UpgradeOptions{Values: TieredStorageStatic(t)})
 
 		config, err = rpk.ClusterConfig(ctx)
 		require.NoError(t, err)
 		require.Equal(t, true, config["cloud_storage_enabled"])
 		require.Equal(t, "static-access-key", config["cloud_storage_access_key"])
 
-		rpRelease = env.Upgrade(".", rpRelease, helm.UpgradeOptions{Values: TieredStorageSecretRefs(t, credsSecret)})
+		rpRelease = env.Upgrade(redpandaChart, rpRelease, helm.UpgradeOptions{Values: TieredStorageSecretRefs(t, credsSecret)})
 
 		config, err = rpk.ClusterConfig(ctx)
 		require.NoError(t, err)

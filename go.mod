@@ -4,9 +4,12 @@ go 1.21.5
 
 require (
 	github.com/cockroachdb/errors v1.11.1
+	github.com/evanphx/json-patch v4.12.0+incompatible
 	github.com/gonvenience/ytbx v1.4.4
 	github.com/homeport/dyff v1.7.1
+	github.com/invopop/jsonschema v0.12.0
 	github.com/stretchr/testify v1.8.4
+	github.com/wk8/go-ordered-map/v2 v2.1.8
 	golang.org/x/tools v0.17.0
 	k8s.io/api v0.29.2
 	k8s.io/apimachinery v0.29.2
@@ -17,6 +20,8 @@ require (
 
 require (
 	github.com/BurntSushi/toml v1.3.2 // indirect
+	github.com/bahlo/generic-list-go v0.2.0 // indirect
+	github.com/buger/jsonparser v1.1.1 // indirect
 	github.com/cockroachdb/logtags v0.0.0-20230118201751-21c54148d20b // indirect
 	github.com/cockroachdb/redact v1.1.5 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
