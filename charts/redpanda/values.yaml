@@ -577,6 +577,10 @@ post_install_job:
   #     memory: 1024Mi
   # labels: {}
   # annotations: {}
+  # You can set the security context as nessesary for the post-install job as follows
+  # securityContext:
+  #   allowPrivilegeEscalation: false
+  #   runAsNonRoot: true
   affinity: {}
 
 post_upgrade_job:
@@ -602,6 +606,10 @@ post_upgrade_job:
   # extraEnvFrom:
   #   - secretRef:
   #       name: redpanda-aws-secrets
+  # You can set the security context as nessesary for the post-upgrade job as follows
+  # securityContext:
+  #   allowPrivilegeEscalation: false
+  #   runAsNonRoot: true
   affinity: {}
   # When helm upgrade is performed the post-upgrade job is scheduled before Statefulset successfully finish
   # its rollout. User can extend Job default backoff limit of `6`.
