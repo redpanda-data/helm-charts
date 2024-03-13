@@ -163,9 +163,7 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: status.hostIP
-          securityContext: {{- $defaultContext := include "container-security-context" . | fromYaml -}}
-                        {{- $customContext := .Values.post_upgrade_job.securityContext -}}
-                        {{- merge $defaultContext $customContext | toYaml | nindent 12 }}
+          securityContext: {{ include "container-security-context" . | nindent 12 }}
           volumeMounts: {{ include "common-mounts" . | nindent 12 }}
 {{- if dig "initContainers" "configurator" "extraVolumeMounts" false .Values.statefulset -}}
   {{ tpl .Values.statefulset.initContainers.configurator.extraVolumeMounts . | nindent 12 }}
