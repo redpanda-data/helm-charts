@@ -1,7 +1,9 @@
-//+gotohelm:ignore=true
+// +gotohelm:ignore=true
 package redpanda
 
 import (
+	cmmeta "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
+	certmanagerv1 "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
 	"github.com/invopop/jsonschema"
 	orderedmap "github.com/wk8/go-ordered-map/v2"
 )
@@ -121,14 +123,14 @@ type Auth struct {
 }
 
 type TLS struct {
-	Enabled *bool       `json:"enabled" jsonschema:"required"`
-	Certs   *TLSCertMap `json:"certs"`
+	Enabled *bool      `json:"enabled" jsonschema:"required"`
+	Certs   TLSCertMap `json:"certs"`
 }
 
 type ExternalConfig struct {
 	Addresses      []string          `json:"addresses"`
 	Annotations    map[string]string `json:"annotations"`
-	Domain         string            `json:"domain"`
+	Domain         *string           `json:"domain"`
 	Enabled        bool              `json:"enabled" jsonschema:"required"`
 	Type           string            `json:"type" jsonschema:"pattern=^(LoadBalancer|NodePort)$"`
 	PrefixTemplate string            `json:"prefixTemplate"`
@@ -403,15 +405,23 @@ type PandaProxyClient struct {
 
 type TLSCert struct {
 	// Enabled   bool   `json:"enabled"`
-	CAEnabled bool   `json:"caEnabled" jsonschema:"required"`
-	Duration  string `json:"duration" jsonschema:"pattern=.*[smh]$"`
-	IssuerRef struct {
-		Name string        `json:"name"`
-		Kind IssuerRefKind `json:"kind"`
-	} `json:"issuerRef"`
+	CAEnabled bool                    `json:"caEnabled" jsonschema:"required"`
+	Duration  string                  `json:"duration" jsonschema:"pattern=.*[smh]$"`
+	IssuerRef *cmmeta.ObjectReference `json:"issuerRef"`
 	SecretRef struct {
 		Name string `json:"name"`
 	} `json:"secretRef"`
+}
+
+func (TLSCert) JSONSchemaExtend(schema *jsonschema.Schema) {
+	// An object reference could allow anything but we want to require that the
+	// reference is to either a ClusterIssuer or Issuer.
+	ref, _ := schema.Properties.Get("issuerRef")
+	refKind, _ := ref.Properties.Get("kind")
+	refKind.Enum = []any{
+		certmanagerv1.ClusterIssuerKind,
+		certmanagerv1.IssuerKind,
+	}
 }
 
 type TLSCertMap map[string]TLSCert
