@@ -1,12 +1,15 @@
 package testutil
 
 import (
+	"bytes"
 	"context"
 	"flag"
 	"os"
 	"testing"
 	"time"
 
+	"github.com/gonvenience/ytbx"
+	"github.com/homeport/dyff/pkg/dyff"
 	"github.com/stretchr/testify/require"
 )
 
@@ -109,7 +112,27 @@ func AssertGolden(t *testing.T, assertionType GoldenAssertion, path string, actu
 	case JSON:
 		require.JSONEq(t, string(expected), string(actual), msg, path)
 	case YAML:
-		require.YAMLEq(t, string(expected), string(actual), msg, path)
+		actualDocuments, err := ytbx.LoadDocuments(actual)
+		require.NoError(t, err)
+
+		expectedDocuments, err := ytbx.LoadDocuments(expected)
+		require.NoError(t, err)
+
+		report, err := dyff.CompareInputFiles(
+			ytbx.InputFile{Documents: expectedDocuments},
+			ytbx.InputFile{Documents: actualDocuments},
+		)
+		require.NoError(t, err)
+
+		if len(report.Diffs) > 1 {
+			hr := dyff.HumanReport{Report: report, OmitHeader: true}
+
+			var buf bytes.Buffer
+			require.NoError(t, hr.WriteReport(&buf))
+
+			require.Fail(t, buf.String())
+		}
+
 	default:
 		require.Fail(t, "unknown assertion type: %#v", assertionType)
 	}
