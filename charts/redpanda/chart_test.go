@@ -118,7 +118,7 @@ func TestTemplate(t *testing.T) {
 			})
 			require.NoError(t, err)
 
-			testutil.AssertGolden(t, testutil.Text, "./testdata/"+v.Name()+".golden", out)
+			testutil.AssertGolden(t, testutil.YAML, "./testdata/"+v.Name()+".golden", out)
 		})
 	}
 }
