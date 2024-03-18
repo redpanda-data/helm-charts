@@ -14,7 +14,10 @@ type Enterprise struct {
 
 type Config struct {
 	Cluster ClusterConfig `json:"cluster,omitempty"`
+	Node    NodeConfig    `json:"node,omitempty"`
 }
+
+type NodeConfig map[string]any
 
 type ClusterConfig map[string]any
 

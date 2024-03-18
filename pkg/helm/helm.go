@@ -137,15 +137,16 @@ func (c *Client) GetValues(ctx context.Context, release *Release, values any) er
 }
 
 type InstallOptions struct {
-	CreateNamespace bool   `flag:"create-namespace"`
-	Name            string `flag:"-"`
-	Namespace       string `flag:"namespace"`
-	Values          any    `flag:"-"`
-	Version         string `flag:"version"`
-	NoWait          bool   `flag:"wait"`
-	NoWaitForJobs   bool   `flag:"wait-for-jobs"`
-	GenerateName    bool   `flag:"generate-name"`
-	ValuesFile      string `flag:"values"`
+	CreateNamespace bool     `flag:"create-namespace"`
+	Name            string   `flag:"-"`
+	Namespace       string   `flag:"namespace"`
+	Values          any      `flag:"-"`
+	Version         string   `flag:"version"`
+	NoWait          bool     `flag:"wait"`
+	NoWaitForJobs   bool     `flag:"wait-for-jobs"`
+	GenerateName    bool     `flag:"generate-name"`
+	ValuesFile      string   `flag:"values"`
+	Set             []string `flag:"set"`
 }
 
 func (c *Client) Install(ctx context.Context, chart string, opts InstallOptions) (Release, error) {
@@ -186,7 +187,17 @@ func (c *Client) Install(ctx context.Context, chart string, opts InstallOptions)
 	return c.Get(ctx, opts.Namespace, result["name"].(string))
 }
 
-func (c *Client) Template(ctx context.Context, chart string, opts InstallOptions) ([]byte, error) {
+type TemplateOptions struct {
+	Name         string   `flag:"-"`
+	Namespace    string   `flag:"namespace"`
+	Values       any      `flag:"-"`
+	Version      string   `flag:"version"`
+	GenerateName bool     `flag:"generate-name"`
+	ValuesFile   string   `flag:"values"`
+	Set          []string `flag:"set"`
+}
+
+func (c *Client) Template(ctx context.Context, chart string, opts TemplateOptions) ([]byte, error) {
 	if opts.Name == "" {
 		opts.GenerateName = true
 	}
@@ -200,7 +211,7 @@ func (c *Client) Template(ctx context.Context, chart string, opts InstallOptions
 	}
 
 	// TODO figure out how to remove kube-version.
-	args := []string{"template", chart, "--dry-run=client", "--kube-version=v1.21.0"}
+	args := []string{"template", chart, "--dry-run=client", "--kube-version=v1.21.0", "--debug"}
 	args = append(args, ToFlags(opts)...)
 
 	if opts.Name != "" {
@@ -216,15 +227,16 @@ func (c *Client) Template(ctx context.Context, chart string, opts InstallOptions
 }
 
 type UpgradeOptions struct {
-	CreateNamespace bool   `flag:"create-namespace"`
-	Install         bool   `flag:"install"`
-	Namespace       string `flag:"namespace"`
-	Version         string `flag:"version"`
-	NoWait          bool   `flag:"wait"`
-	NoWaitForJobs   bool   `flag:"wait-for-jobs"`
-	ReuseValues     bool   `flag:"reuse-values"`
-	Values          any    `flag:"-"`
-	ValuesFile      string `flag:"values"`
+	CreateNamespace bool     `flag:"create-namespace"`
+	Install         bool     `flag:"install"`
+	Namespace       string   `flag:"namespace"`
+	Version         string   `flag:"version"`
+	NoWait          bool     `flag:"wait"`
+	NoWaitForJobs   bool     `flag:"wait-for-jobs"`
+	ReuseValues     bool     `flag:"reuse-values"`
+	Values          any      `flag:"-"`
+	ValuesFile      string   `flag:"values"`
+	Set             []string `flag:"set"`
 }
 
 func (c *Client) Upgrade(ctx context.Context, release, chart string, opts UpgradeOptions) (Release, error) {

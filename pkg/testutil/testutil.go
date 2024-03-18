@@ -6,14 +6,25 @@ import (
 	"os"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
 )
 
-var retain = flag.Bool("retain", false, "if true, no clean up will be performed.")
+var (
+	retain = flag.Bool("retain", false, "if true, no clean up will be performed.")
+	update = flag.Bool("update", false, "if true, golden assertions will update the expected file instead of performing an assertion")
+)
 
 // Retain returns the value of the -retain CLI flag. A value of true indicates
 // that cleanup actions should be SKIPPED.
 func Retain() bool {
 	return *retain
+}
+
+// Update returns value of the -update CLI flag. A value of true indicates that
+// computed files should be updated instead of asserted against.
+func Update() bool {
+	return *update
 }
 
 // TempDir is wrapper around [testing.T.TempDir] that respects [Retain].
@@ -61,4 +72,45 @@ type Writer struct {
 func (w Writer) Write(p []byte) (int, error) {
 	w.T.Log(string(p))
 	return len(p), nil
+}
+
+type GoldenAssertion int
+
+const (
+	YAML GoldenAssertion = iota
+	JSON
+	Text
+	Bytes
+)
+
+// AssertGolden is a helper for "golden" or "snapshot" testing. It asserts
+// that `actual`, a serialized YAML document, is equal to the one at `path`. If
+// `-update` has been passed to `go test`, `actual` will be written to `path`.
+func AssertGolden(t *testing.T, assertionType GoldenAssertion, path string, actual []byte) {
+	t.Helper()
+
+	if Update() {
+		require.NoError(t, os.WriteFile(path, actual, 0o644))
+		return
+	}
+
+	expected, err := os.ReadFile(path)
+	if !os.IsNotExist(err) {
+		require.NoError(t, err)
+	}
+
+	const msg = "Divergence from snapshot at %q. If this change is expected re-run this test with -update."
+
+	switch assertionType {
+	case Text:
+		require.Equal(t, string(expected), string(actual), msg, path)
+	case Bytes:
+		require.Equal(t, expected, actual, msg, path)
+	case JSON:
+		require.JSONEq(t, string(expected), string(actual), msg, path)
+	case YAML:
+		require.YAMLEq(t, string(expected), string(actual), msg, path)
+	default:
+		require.Fail(t, "unknown assertion type: %#v", assertionType)
+	}
 }

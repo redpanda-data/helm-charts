@@ -31,6 +31,13 @@ func ToFlags(flagsStruct any) []string {
 			continue
 		}
 
+		if field.Type.Kind() == reflect.Slice {
+			for j := 0; j < v.Field(i).Len(); j++ {
+				flags = append(flags, fmt.Sprintf("--%s=%v", flag, v.Field(i).Index(j)))
+			}
+			continue
+		}
+
 		flags = append(flags, fmt.Sprintf("--%s=%v", flag, value))
 	}
 
