@@ -477,6 +477,12 @@ fsGroupChangePolicy: {{ dig "securityContext" "fsGroupChangePolicy" "OnRootMisma
 {{- define "container-security-context" -}}
 runAsUser: {{ dig "podSecurityContext" "runAsUser" .Values.statefulset.securityContext.runAsUser .Values.statefulset }}
 runAsGroup: {{ dig "podSecurityContext" "fsGroup" .Values.statefulset.securityContext.fsGroup .Values.statefulset }}
+{{- if hasKey .Values.statefulset.securityContext "allowPrivilegeEscalation" }}
+allowPrivilegeEscalation: {{ dig "podSecurityContext" "allowPrivilegeEscalation" .Values.statefulset.securityContext.allowPrivilegeEscalation .Values.statefulset }}
+{{- end -}}
+{{- if hasKey .Values.statefulset.securityContext "runAsNonRoot" }}
+runAsNonRoot: {{ dig "podSecurityContext" "runAsNonRoot" .Values.statefulset.securityContext.runAsNonRoot .Values.statefulset }}
+{{- end -}}
 {{- end -}}
 
 {{- define "admin-tls-curl-flags" -}}

@@ -113,7 +113,9 @@ spec:
         resources:
           {{- toYaml . | nindent 10 }}
         {{- end }}
-        securityContext: {{ include "container-security-context" . | nindent 10 }}
+        securityContext:{{- $defaultContext := include "container-security-context" . | fromYaml -}}
+                        {{- $customContext := .Values.post_upgrade_job.securityContext -}}
+                        {{- merge $defaultContext $customContext | toYaml | nindent 10 }}
         {{- if .Values.post_upgrade_job.extraEnv }}
         env:
           {{- include "common.tplvalues.render" (dict "value" .Values.post_upgrade_job.extraEnv "context" $) | nindent 10 }}

@@ -135,7 +135,9 @@ spec:
         resources:
           {{- toYaml . | nindent 10 }}
         {{- end }}
-        securityContext: {{ include "container-security-context" . | nindent 10 }}
+        securityContext: {{- $defaultContext := include "container-security-context" . | fromYaml -}}
+                        {{- $customContext := .Values.post_install_job.securityContext -}}
+                        {{- merge $defaultContext $customContext | toYaml | nindent 10 }}
         volumeMounts: {{- include "default-mounts" . | nindent 10 }}
       volumes: {{ include "default-volumes" . | nindent 8 }}
       serviceAccountName: {{ include "redpanda.serviceAccountName" . }}
