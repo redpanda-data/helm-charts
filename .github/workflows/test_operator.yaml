@@ -35,51 +35,48 @@ jobs:
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
 
+      # Cache the nix store.
+      - uses: DeterminateSystems/magic-nix-cache-action@v4
+
+      # Cache helm repositories.
+      - uses: actions/cache@v4
+        with:
+          key: helm-repositories
+          path: |
+            ~/.cache/helm
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - run: |
-          git checkout main
-          git checkout -
-
-      # we're excluding console from testing until we have a way to test it with Redpanda
-      - name: Run chart-testing (list-changed)
-        id: list-changed
-        run: |
-          changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }} --config .github/ct-operator.yaml)
-          echo "$changed"
-          if [[ -n "$changed" ]]; then
-            echo changed="true" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Create kind cluster
         uses: helm/kind-action@99576bfa6ddf9a8e612d83b513da5a75875caced # v1.9.0
-        if: steps.list-changed.outputs.changed == 'true'
         with:
           config: .github/kind.yaml
 
       - name: Check kind config worked
-        if: steps.list-changed.outputs.changed == 'true'
         run: kubectl get nodes
 
       - name: Annotate nodes for rack awareness
-        if: steps.list-changed.outputs.changed == 'true'
         run: .github/annotate_kind_nodes.sh chart-testing
 
       - name: install cert-manager
-        if: steps.list-changed.outputs.changed == 'true'
         run: |
           task helm:install:cert-manager
 
       - name: Install CRDs
-        if: steps.list-changed.outputs.changed == 'true'
         run: |
           kubectl kustomize https://github.com/redpanda-data/redpanda-operator//src/go/k8s/config/crd?ref="$(yq -r .appVersion charts/operator/Chart.yaml)" | kubectl apply -f -
 
+        # Chart-testing requires there to be a branch on the local repository
+        # for diffing. This will create such a branch without performing a
+        # checkout.
+      - name: Fetch origin/main
+        run: |
+          git fetch origin ${{ github.event.repository.default_branch }}:${{ github.event.repository.default_branch }}
+
       - name: Run chart-testing (install and upgrade)
-        if: steps.list-changed.outputs.changed == 'true'
         run: |
           ct install \
             --github-groups \

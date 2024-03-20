@@ -63,8 +63,7 @@ tasks:
       # Fail on any generated diffs.
       - git diff --exit-code
       # Actually run linters.
-      # Need to ignore an error on predicate-quantifier until https://github.com/dorny/paths-filter/pull/226 is merged.
-      - actionlint -ignore 'input "predicate-quantifier"'
+      - actionlint
       - ct lint --chart-dirs ./charts --check-version-increment=false --github-groups --all
       - .github/check-ci-files.sh charts/connectors/ci
       - .github/check-ci-files.sh charts/kminion/ci
