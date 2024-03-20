@@ -139,10 +139,7 @@ jobs:
       - name: install cert-manager
         if: steps.list-changed.outputs.changed == 'true'
         run: |
-          helm repo add jetstack https://charts.jetstack.io &&
-          helm install cert-manager --namespace cert-manager \
-            --create-namespace --version v1.11.0 jetstack/cert-manager \
-            --set installCRDs=true --wait --wait-for-jobs
+          task helm:install:cert-manager
 
       - name: Install CRDs
         if: steps.list-changed.outputs.changed == 'true'

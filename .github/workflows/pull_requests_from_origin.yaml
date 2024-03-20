@@ -120,33 +120,17 @@ jobs:
       - name: install cert-manager
         if: steps.list-changed.outputs.changed == 'true'
         run: |
-          helm repo add jetstack https://charts.jetstack.io &&
-          helm install cert-manager --namespace cert-manager \
-            --create-namespace --version v1.11.0 jetstack/cert-manager \
-            --set installCRDs=true --wait --wait-for-jobs
+          task helm:install:cert-manager
 
       - name: install prometheus-operator
         if: steps.list-changed.outputs.changed == 'true'
         run: |
-          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts &&
-          helm install prometheus prometheus-community/kube-prometheus-stack \
-            --namespace prometheus --create-namespace \
-            --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false \
-            --set nodeExporter.enabled=false \
-            --set grafana.enabled=false --set kubeStateMetrics.enabled=false --set alertmanager.enabled=false \
-            --wait --wait-for-jobs
+          task helm:install:kube-prometheus-stack
 
       - name: install metallb
         if: steps.list-changed.outputs.changed == 'true'
         run: |
-          helm repo add metallb https://metallb.github.io/metallb &&
-          helm install metallb metallb/metallb -n metallb-system \
-            --create-namespace --version 0.13.10 --wait --wait-for-jobs
-
-      - name: apply metallb resources
-        if: steps.list-changed.outputs.changed == 'true'
-        run: |
-          kubectl -n metallb-system apply -f .github/metallb-config.yaml
+          task helm:install:metallb
 
       - name: Run chart-testing (install and upgrade)
         if: steps.list-changed.outputs.changed == 'true'

@@ -2,9 +2,9 @@ version: '3'
 
 # NOTE: Task doesn't allow to override environment variables. Thus, when an
 # environment variable is referenced in a taskfile, it is because we expect it
-# to be defined by the environment where Task is being invoked, in an `.env`
-# file, or in a task's `env:` attribute.
-dotenv: [".env", '{{.ENV}}/.env.']
+# to be defined by the environment where Task is being invoked or in a task's
+# `env:` attribute.
+dotenv: []
 
 vars:
   BINDIR: .local/bin
@@ -32,13 +32,28 @@ includes:
 # if a task is referenced multiple times, only run it once
 run: once
 
+
+# Try to follow "THING:ACTION:SPECIFIER" for specific actions.
+# Examples:
+# - chart:lint:redpanda # Lint the redpanda chart
+# - helm:add-repo:jetstack # Add the jetstack repo to helm
+# - helm:install:cert-manager # Install cert-manager using helm
+# When this files becomes too long, all of THING can be extracted into it's own
+# file.
+# For CI or running many types of similar ACTIONs, have a top level task named
+# just ACTION. For example, "lint" would run tasks that match *:lint:*. (Though
+# there's no matching in taskile AFAIK so this is done by hand).
+#
+# Feel free to change this format provided there's a general flow to the new
+# format, all existing tasks are changed, and backwards compatibility is
+# maintained via aliases.
 tasks:
 
   lint:
     cmds:
-      - task: lint:chart:redpanda
+      - task: chart:lint:redpanda
 
-  lint:chart:redpanda:
+  chart:lint:redpanda:
     cmds:
       - ct lint --config .github/ct-redpanda.yaml --github-groups
       - .github/check-ci-files.sh charts/redpanda/ci
@@ -85,44 +100,80 @@ tasks:
       - task: setup-test-files
       - task: install-redpanda-chart
 
-  add-jetstack-repo:
+  helm:add-repo:jetstack:
+    aliases:
+      - add-jetstack-repo
     cmds:
       - helm repo add jetstack https://charts.jetstack.io
       - helm repo update
     status:
       - helm search repo -r '\vjetstack/cert-manager\v' | grep cert-manager
 
-  add-metallb-repo:
-    cmds:
-      - helm repo add metallb https://metallb.github.io/metallb
-      - helm repo update
-    status:
-      - helm search repo -r '\vmetallb/metallb\v' | grep metallb
-
-  add-prometheus-community-repo:
+  helm:add-repo:prometheus-community:
+    aliases:
+      - add-prometheus-community-repo
     cmds:
       - helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
       - helm repo update
     status:
       - helm search repo -r '\vprometheus-community/kube-prometheus-stack\v' | grep metallb
 
-  install-metallb:
-    deps:
+  helm:add-repo:metallb:
+    aliases:
       - add-metallb-repo
     cmds:
-      - helm install metallb metallb/metallb -n metallb-system --create-namespace --version 0.13.10 --wait --wait-for-jobs
+      - helm repo add metallb https://metallb.github.io/metallb
+      - helm repo update
+    status:
+      - helm search repo -r '\vmetallb/metallb\v' | grep metallb
 
-  install-cert-manager:
+  helm:install:metallb:
+    aliases:
+      - install-metallb
     deps:
-      - add-jetstack-repo
+      - helm:add-repo:metallb
     cmds:
-      - helm install cert-manager jetstack/cert-manager --set installCRDs=true --namespace cert-manager --create-namespace
+      - |
+        helm install metallb metallb/metallb \
+        --create-namespace \
+        --namespace metallb-system \
+        --version 0.13.10 \
+        --wait \
+        --wait-for-jobs
+      - kubectl --namespace metallb-system apply -f .github/metallb-config.yaml
 
-  install-kube-prometheus-stack:
+  helm:install:cert-manager:
+    aliases:
+      - install-cert-manager
     deps:
-      - add-prometheus-community-repo
+      - helm:add-repo:jetstack
     cmds:
-      - helm install prometheus prometheus-community/kube-prometheus-stack --namespace prometheus --create-namespace --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false --set nodeExporter.enabled=false --set grafana.enabled=false --set kubeStateMetrics.enabled=false --set alertmanager.enabled=false --wait --wait-for-jobs
+      - |
+        helm install cert-manager jetstack/cert-manager \
+        --create-namespace \
+        --namespace cert-manager \
+        --set installCRDs=true \
+        --version v1.11.0 \
+        --wait \
+        --wait-for-jobs
+
+  helm:install:kube-prometheus-stack:
+    aliases:
+      - install-kube-prometheus-stack
+    deps:
+      - helm:add-repo:prometheus-community
+    cmds:
+      - |
+        helm install prometheus prometheus-community/kube-prometheus-stack \
+        --namespace prometheus \
+        --create-namespace \
+        --set alertmanager.enabled=false \
+        --set grafana.enabled=false \
+        --set kubeStateMetrics.enabled=false \
+        --set nodeExporter.enabled=false \
+        --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false \
+        --wait \
+        --wait-for-jobs
 
   aws-check-login:
     internal: true
