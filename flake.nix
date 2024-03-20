@@ -31,6 +31,7 @@
 
           devShells.default = pkgs.mkShell {
             buildInputs = [
+              pkgs.actionlint # Github Workflow definition linter https://github.com/rhysd/actionlint
               pkgs.chart-releaser
               pkgs.chart-testing
               pkgs.dyff

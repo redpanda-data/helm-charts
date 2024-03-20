@@ -20,6 +20,11 @@ on:
   schedule:
     - cron: '0 2 * * 1-5'  # 01:00 AM UTC Monday - Friday
   workflow_dispatch: {}
+
+defaults:
+  run:
+    shell: nix develop --impure --command bash {0}
+
 jobs:
   test-redpanda-nightly:
     name: Run ct tests for ci values matching ${{ matrix.testvaluespattern }} for Redpanda nightly build
@@ -38,10 +43,15 @@ jobs:
       fail-fast: false
     runs-on: ubuntu-22.04
     steps:
+      - uses: cachix/install-nix-action@v26
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - run: |
           git checkout main
           git checkout -
@@ -51,9 +61,6 @@ jobs:
           echo bash -O extglob -c "rm -v charts/redpanda/ci/!(${{ matrix.testvaluespattern }})"
           bash -O extglob -c "rm -v charts/redpanda/ci/!(${{ matrix.testvaluespattern }})"
 
-      - uses: actions/setup-go@v5
-        with:
-          go-version: '>=1.20.4'
       - run: go install github.com/joejulian/docker-tag-list@latest
 
       - name: Get latest nightly tag
@@ -62,14 +69,6 @@ jobs:
           echo "TAG=$(
             docker-tag-list -c '~0.0.0-0' --latest -r redpandadata/redpanda-nightly | sed 's/-a..64$//'
           )" >> $GITHUB_OUTPUT
-
-      - name: Set up Helm
-        uses: azure/setup-helm@v3
-        with:
-          version: v3.12.2
-
-      - name: Set up chart-testing
-        uses: joejulian/chart-testing-action@9f27771144b6debb69e1f85d5f5a3eae8485d057  # v2.4.0-3
 
       - name: Create kind cluster
         uses: helm/kind-action@99576bfa6ddf9a8e612d83b513da5a75875caced # v1.9.0
