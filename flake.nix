@@ -2,37 +2,48 @@
   inputs = {
     nixpkgs.url = "nixpkgs";
     nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
-    flake-utils.url = "github:numtide/flake-utils";
+    flake-parts.url = "github:hercules-ci/flake-parts";
   };
 
   outputs =
-    { self
+    inputs@{ self
     , nixpkgs
     , nixpkgs-unstable
-    , flake-utils
+    , flake-parts
     ,
-    }:
-    flake-utils.lib.eachDefaultSystem (
-      system:
-      let
-        pkgs = import nixpkgs { inherit system; };
-        pkgs-unstable = import nixpkgs-unstable { inherit system; };
-      in
-      {
-        formatter = pkgs.nixpkgs-fmt;
+    }: flake-parts.lib.mkFlake { inherit inputs; } {
+      systems = [ "aarch64-darwin" "x86_64-linux" ];
 
-        devShells.default = pkgs.mkShell {
-          buildInputs = [
-            pkgs.chart-testing
-            pkgs.go
-            pkgs.dyff
-            pkgs.go-task
-            pkgs.helm-docs
-            pkgs.kind
-            pkgs.kubectl
-            pkgs.kubernetes-helm
-          ];
+      perSystem = { system, ... }:
+        let
+          pkgs = import nixpkgs {
+            inherit system;
+            overlays = [
+              (final: prev: {
+                chart-releaser = pkgs.callPackage ./.github/chart-releaser.nix { };
+                chart-testing = pkgs.callPackage ./.github/chart-testing.nix { };
+              })
+            ];
+          };
+        in
+        {
+          formatter = pkgs.nixpkgs-fmt;
+
+          devShells.default = pkgs.mkShell {
+            buildInputs = [
+              pkgs.chart-releaser
+              pkgs.chart-testing
+              pkgs.dyff
+              pkgs.git
+              pkgs.go
+              pkgs.go-task
+              pkgs.helm-docs
+              pkgs.kind
+              pkgs.kubectl
+              pkgs.kubernetes-helm
+              pkgs.kustomize
+            ];
+          };
         };
-      }
-    );
+    };
 }
