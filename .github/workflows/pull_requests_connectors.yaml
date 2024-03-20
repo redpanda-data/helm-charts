@@ -31,19 +31,33 @@ on:
       - '!charts/operator/**'
       - '!charts/redpanda/**'
       - '!**/*.md'
+
+defaults:
+  run:
+    shell: nix develop --impure --command bash {0}
+
 jobs:
   lint:
     runs-on: ubuntu-22.04
+    defaults:
+      run:
+        shell: bash {0} # Explicit restore the default for jobs not using nix.
     steps:
       - name: Noop
         run: echo noop
+
   version-and-lint:
     runs-on: ubuntu-22.04
     steps:
+      - uses: cachix/install-nix-action@v26
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - run: |
           git checkout main
           git checkout -
@@ -51,32 +65,27 @@ jobs:
       - name: Run CI file name checker
         run: .github/check-ci-files.sh charts/connectors/ci
 
-      - name: Set up Helm
-        uses: azure/setup-helm@v3
-        with:
-          version: v3.12.2
-
-      - name: Set up chart-testing
-        uses: joejulian/chart-testing-action@9f27771144b6debb69e1f85d5f5a3eae8485d057  # v2.4.0-3
-
       - name: Connectors lint
         run: ct lint --config .github/ct-connectors.yaml --github-groups
 
   check-values:
     runs-on: ubuntu-22.04
     steps:
+      - uses: cachix/install-nix-action@v26
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - run: |
           git checkout main
           git checkout -
 
-      - name: install dyff
-        run: curl -Ls https://github.com/homeport/dyff/releases/download/v1.5.6/dyff_1.5.6_linux_amd64.tar.gz | tar xzv dyff
       - name: compare connectors values with main
-        run: ./dyff --color=off -k between -s <(git show 'origin/main:charts/connectors/values.yaml') charts/connectors/values.yaml
+        run: dyff --color=off -k between -s <(git show 'origin/main:charts/connectors/values.yaml') charts/connectors/values.yaml
 
   test:
     needs: lint
@@ -85,21 +94,18 @@ jobs:
       fail-fast: true
     runs-on: ubuntu-22.04
     steps:
+      - uses: cachix/install-nix-action@v26
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - run: |
           git checkout main
           git checkout -
-
-      - name: Set up Helm
-        uses: azure/setup-helm@v3
-        with:
-          version: v3.11.1
-
-      - name: Set up chart-testing
-        uses: joejulian/chart-testing-action@9f27771144b6debb69e1f85d5f5a3eae8485d057  # v2.4.0-3
 
       - name: Run chart-testing (list-changed)
         id: list-changed
