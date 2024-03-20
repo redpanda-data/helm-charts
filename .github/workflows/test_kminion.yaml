@@ -35,47 +35,39 @@ jobs:
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
 
+      # Cache the nix store.
+      - uses: DeterminateSystems/magic-nix-cache-action@v4
+
+      # Cache helm repositories.
+      - uses: actions/cache@v4
+        with:
+          key: helm-repositories
+          path: |
+            ~/.cache/helm
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - run: |
-          git checkout main
-          git checkout -
-
-      - name: Run chart-testing (list-changed)
-        id: list-changed
-        run: |
-          changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }} --config .github/ct-kminion.yaml)
-          echo "$changed"
-          if [[ -n "$changed" ]]; then
-            echo changed="true" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Create kind cluster
         uses: helm/kind-action@99576bfa6ddf9a8e612d83b513da5a75875caced # v1.9.0
-        if: steps.list-changed.outputs.changed == 'true'
         with:
           config: .github/kind.yaml
 
       - name: Check kind config worked
-        if: steps.list-changed.outputs.changed == 'true'
         run: kubectl get nodes
 
       - name: install cert-manager
-        if: steps.list-changed.outputs.changed == 'true'
         run: |
           task helm:install:cert-manager
 
       - name: install Redpanda
-        if: steps.list-changed.outputs.changed == 'true'
         run: |
           helm dependency build charts/redpanda
           helm install --namespace redpanda --create-namespace redpanda charts/redpanda --wait --wait-for-jobs
 
       - name: Copy Redpanda tls cert to kminion chart
-        if: steps.list-changed.outputs.changed == 'true'
         run: |
           kubectl -n redpanda wait --for=condition=Ready --timeout=10m certificates/redpanda-default-cert
           kubectl -n redpanda get secret -o yaml redpanda-default-cert | \
@@ -83,8 +75,14 @@ jobs:
             sed -e '/resourceVersion/d' | \
             sed -e '/uid/d'  > charts/kminion/templates/redpanda-tls.yaml
 
+        # Chart-testing requires there to be a branch on the local repository
+        # for diffing. This will create such a branch without performing a
+        # checkout.
+      - name: Fetch origin/main
+        run: |
+          git fetch origin ${{ github.event.repository.default_branch }}:${{ github.event.repository.default_branch }}
+
       - name: Run chart-testing (install and upgrade)
-        if: steps.list-changed.outputs.changed == 'true'
         run: |
           ct install \
             --github-groups \

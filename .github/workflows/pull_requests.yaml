@@ -20,6 +20,12 @@ on:
     branches:
       - "**"
 
+# Cancel old workflows whenever a PR is updated.
+# Thanks to https://stackoverflow.com/questions/66335225/how-to-cancel-previous-runs-in-the-pr-when-you-push-new-commitsupdate-the-curre
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 defaults:
   run:
     shell: nix develop --impure --command bash {0}
@@ -39,33 +45,45 @@ jobs:
     - uses: dorny/paths-filter@v3
       id: chart-changes
       with:
-        predicate-quantifier: 'every'
+        # NOTE: changes to "auxiliary" files such as Taskfile.yaml and
+        # flake.nix won't trigger actions besides lint. This is intentional due
+        # to the long run times of chart-testing. It's possible to accidentally
+        # break the other chart workflows right now. Please ensure that you
+        # exercise changes to those files manually.
         filters: |
           charts-redpanda:
-            - 'charts/redpanda/**'
-            - '!charts/redpanda/**/*.md'
-            - '!charts/redpanda/**/*.golden'
-            - '!charts/redpanda/**/*.md.gotmpl'
+            - '.github/workflows/test_redpanda.yaml'
+            - 'charts/redpanda/ci/*'
+            - 'charts/redpanda/files/*'
+            - 'charts/redpanda/templates/**'
+            - 'charts/redpanda/(.helmignore|values.schema.json|Chart.yaml)'
           charts-console:
-            - 'charts/console/**'
-            - '!charts/console/**/*.md'
-            - '!charts/console/**/*.md.gotmpl'
+            - 'charts/console/ci/*'
+            - 'charts/console/files/*'
+            - 'charts/console/templates/**'
+            - 'charts/console/(.helmignore|values.schema.json|Chart.yaml)'
           charts-connectors:
-            - 'charts/connectors/**'
-            - '!charts/connectors/**/*.md'
-            - '!charts/connectors/**/*.md.gotmpl'
+            - '.github/workflows/test_connectors.yaml'
+            - 'charts/connectors/ci/*'
+            - 'charts/connectors/files/*'
+            - 'charts/connectors/templates/**'
+            - 'charts/connectors/(.helmignore|values.schema.json|Chart.yaml)'
           charts-kminion:
-            - 'charts/kminion/**'
-            - '!charts/kminion/**/*.md'
-            - '!charts/kminion/**/*.md.gotmpl'
+            - '.github/workflows/test_kminion.yaml'
+            - 'charts/kminion/ci/*'
+            - 'charts/kminion/files/*'
+            - 'charts/kminion/templates/**'
+            - 'charts/kminion/(.helmignore|values.schema.json|Chart.yaml)'
           charts-operator:
-            - 'charts/operator/**'
-            - '!charts/operator/**/*.md'
-            - '!charts/operator/**/*.md.gotmpl'
+            - '.github/workflows/test_operator.yaml'
+            - 'charts/operator/ci/*'
+            - 'charts/operator/files/*'
+            - 'charts/operator/templates/**'
+            - 'charts/operator/(.helmignore|values.schema.json|Chart.yaml)'
           go-code:
-            - '**/testdata/*'
-            - '**/*.go'
-            - '*.go'
+            - '.github/workflows/pull_requests.yaml'
+            - '**/testdata/**'
+            - '**.go'
             - 'go.mod'
             - 'go.sum'
 
@@ -75,6 +93,10 @@ jobs:
       - uses: cachix/install-nix-action@v26
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Cache the nix store.
+      - uses: DeterminateSystems/magic-nix-cache-action@v4
+
       - uses: actions/checkout@v4
       - run: task ci:lint
 
@@ -86,6 +108,7 @@ jobs:
       - uses: cachix/install-nix-action@v26
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: DeterminateSystems/magic-nix-cache-action@v4
       - uses: actions/checkout@v4
       - run: go test ./... -short
 
