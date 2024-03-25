@@ -22,8 +22,10 @@ import (
 	"io"
 	"os"
 	"regexp"
+	"sort"
 
 	"github.com/cockroachdb/errors"
+	"golang.org/x/exp/maps"
 	"golang.org/x/tools/go/ast/astutil"
 	"golang.org/x/tools/go/packages"
 )
@@ -195,6 +197,27 @@ func GeneratePartial(pkg *packages.Package, structName string, out io.Writer) er
 		}
 	}
 
+	// Now that we have our partial structs, we need to generate the import
+	// block for them. Because we're doing fancy re-writing to avoid some extra
+	// work, we have to do a bit of extra work to make sure import aliases are preserved.
+	//
+	// Traverse the AST of our partial structs looking for identifiers that
+	// refer to packages (PkgNames really) and store them into a set that we'll
+	// later emit.
+	imports := map[string]*types.Package{}
+	for _, partial := range partials {
+		ast.Inspect(partial, func(n ast.Node) bool {
+			switch n := n.(type) {
+			case *ast.Ident:
+				obj := pkg.TypesInfo.ObjectOf(n)
+				if pkgName, ok := obj.(*types.PkgName); ok {
+					imports[pkgName.Name()] = pkgName.Imported()
+				}
+			}
+			return true
+		})
+	}
+
 	// Printout the resultant set of structs to `out`. We could generate an
 	// ast.File and print that but it's a bit finicky. Printf and then
 	// formatting rewritten nodes is easier.
@@ -203,6 +226,27 @@ func GeneratePartial(pkg *packages.Package, structName string, out io.Writer) er
 	fmt.Fprintf(out, "//go:build !generate\n")
 	fmt.Fprintf(out, "//+gotohelm:ignore=true\n")
 	fmt.Fprintf(out, "package %s\n\n", pkg.Name)
+
+	// Only print out imports if we have them. Would be nice to just lean on go
+	// fmt for this but generating something for use with format.File is quite
+	// difficult. It might be worth while to try out format.Source so we don't
+	// have to worry about formatting or spacing while printing.
+	if len(imports) > 0 {
+		names := maps.Keys(imports)
+		sort.Strings(names)
+
+		fmt.Fprintf(out, "import (\n")
+		for _, name := range names {
+			pkg := imports[name]
+			if pkg.Name() == name {
+				fmt.Fprintf(out, "\t%q\n", pkg.Path())
+			} else {
+				fmt.Fprintf(out, "\t%s %q\n", name, pkg.Path())
+			}
+		}
+		fmt.Fprintf(out, ")\n\n")
+	}
+
 	for i, d := range partials {
 		if i > 0 {
 			fmt.Fprintf(out, "\n\n")
