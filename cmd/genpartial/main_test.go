@@ -2,6 +2,8 @@ package main
 
 import (
 	"bytes"
+	alias1 "os"
+	alias2 "os"
 	"testing"
 
 	"github.com/redpanda-data/helm-charts/pkg/testutil"
@@ -46,6 +48,11 @@ type ExampleStruct struct {
 	F1 []*int `json:"L"`
 	F2 string `yaml:"M"`
 	F3 IntAlias
+
+	// Struct from another package
+	G1 bytes.Buffer
+	G2 alias1.File
+	G3 alias2.FileMode
 }
 
 type NestedStruct struct {
