@@ -4,6 +4,12 @@
 //+gotohelm:ignore=true
 package main
 
+import (
+	alias1 "os"
+	alias2 "os"
+	"bytes"
+)
+
 type (
 	PartialMapGeneric[T any] map[string]T
 )
@@ -12,8 +18,7 @@ type PartialExampleStruct struct {
 	A1 PartialMapGeneric[int]                  `json:",omitempty"`
 	A2 PartialMapGeneric[PartialNestedStruct]  `json:",omitempty"`
 	A3 PartialMapGeneric[*PartialNestedStruct] `json:",omitempty"`
-	A4 PartialMapGeneric[*PartialNestedStruct] `json:",omitempty"`
-	A5 PartialMapGeneric[IntAlias]             `json:",omitempty"`
+	A4 PartialMapGeneric[IntAlias]             `json:",omitempty"`
 
 	B1 *int `json:",omitempty"`
 	B2 *int `json:",omitempty"`
@@ -34,6 +39,10 @@ type PartialExampleStruct struct {
 	F1 []*int   `json:"L,omitempty"`
 	F2 *string  `yaml:"M"json:",omitempty"`
 	F3 IntAlias `json:",omitempty"`
+
+	G1 bytes.Buffer    `json:",omitempty"`
+	G2 alias1.File     `json:",omitempty"`
+	G3 alias2.FileMode `json:",omitempty"`
 }
 
 type PartialNestedStruct struct {
