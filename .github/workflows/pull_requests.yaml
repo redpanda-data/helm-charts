@@ -1,0 +1,129 @@
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Pull Request Checks
+
+on:
+  pull_request:
+    branches:
+      - "**"
+
+defaults:
+  run:
+    shell: nix develop --impure --command bash {0}
+
+jobs:
+  changes:
+    runs-on: ubuntu-22.04
+    outputs:
+      charts-connectors: ${{ steps.chart-changes.outputs.charts-connectors }}
+      charts-console: ${{ steps.chart-changes.outputs.charts-console }}
+      charts-kminion: ${{ steps.chart-changes.outputs.charts-kminion }}
+      charts-operator: ${{ steps.chart-changes.outputs.charts-operator }}
+      charts-redpanda: ${{ steps.chart-changes.outputs.charts-redpanda }}
+      go-code: ${{ steps.chart-changes.outputs.go-code }}
+    steps:
+    - uses: actions/checkout@v4
+    - uses: dorny/paths-filter@v3
+      id: chart-changes
+      with:
+        filters: |
+          charts-redpanda:
+            - 'charts/redpanda/**'
+            - '!charts/redpanda/**/*.md'
+            - '!charts/redpanda/**/*.md.gotmpl'
+          charts-console:
+            - 'charts/console/**'
+            - '!charts/console/**/*.md'
+            - '!charts/console/**/*.md.gotmpl'
+          charts-connectors:
+            - 'charts/connectors/**'
+            - '!charts/connectors/**/*.md'
+            - '!charts/connectors/**/*.md.gotmpl'
+          charts-kminion:
+            - 'charts/kminion/**'
+            - '!charts/kminion/**/*.md'
+            - '!charts/kminion/**/*.md.gotmpl'
+          charts-operator:
+            - 'charts/operator/**'
+            - '!charts/operator/**/*.md'
+            - '!charts/operator/**/*.md.gotmpl'
+          go-code:
+            - '**/testdata/*'
+            - '**/*.go'
+            - '*.go'
+            - 'go.mod'
+            - 'go.sum'
+
+  lint:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: cachix/install-nix-action@v26
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v4
+      - run: task ci:lint
+
+  test-go:
+    needs: [changes, lint]
+    if: ${{ needs.changes.outputs.go-code == 'true' }}
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: cachix/install-nix-action@v26
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v4
+      - run: go test ./... -short
+
+  test-charts-redpanda:
+    needs: [changes, lint]
+    if: ${{ needs.changes.outputs.charts-redpanda == 'true' }}
+    uses: ./.github/workflows/test_redpanda.yaml
+    secrets: inherit
+
+  test-charts-connectors:
+    needs: [changes, lint]
+    if: ${{ needs.changes.outputs.charts-connectors == 'true' }}
+    uses: ./.github/workflows/test_connectors.yaml
+    secrets: inherit
+
+  test-charts-kminion:
+    needs: [changes, lint]
+    if: ${{ needs.changes.outputs.charts-kminion == 'true' }}
+    uses: ./.github/workflows/test_kminion.yaml
+    secrets: inherit
+
+  test-charts-operator:
+    needs: [changes, lint]
+    if: ${{ needs.changes.outputs.charts-operator == 'true' }}
+    uses: ./.github/workflows/test_operator.yaml
+    secrets: inherit
+
+  summary:
+    if: always()
+    needs:
+      - lint
+      - test-charts-connectors
+      - test-charts-kminion
+      - test-charts-operator
+      - test-charts-redpanda
+      - test-go
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Summarize the results of the test matrix pass/fail
+        uses: re-actors/alls-green@release/v1
+        with:
+          allowed-skips: test-go, test-charts-connectors, test-charts-kminion, test-charts-operator, test-charts-redpanda
+          jobs: ${{ toJSON(needs)}}

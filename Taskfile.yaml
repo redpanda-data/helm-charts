@@ -54,14 +54,22 @@ tasks:
     cmds:
       - nix develop --impure
 
-  lint:
+  ci:lint:
     cmds:
-      - task: chart:lint:redpanda
-
-  chart:lint:redpanda:
-    cmds:
-      - ct lint --config .github/ct-redpanda.yaml --github-groups
+      # Regenerate any generated files.
+      - helm-docs -c ./charts/
+      - task: chart:generate:redpanda
+      - go mod tidy
+      # Fail on any generated diffs.
+      - git diff --exit-code
+      # Actually run linters.
+      - actionlint
+      - ct lint --chart-dirs ./charts --check-version-increment=false --github-groups --all
+      - .github/check-ci-files.sh charts/connectors/ci
+      - .github/check-ci-files.sh charts/kminion/ci
+      - .github/check-ci-files.sh charts/operator/ci
       - .github/check-ci-files.sh charts/redpanda/ci
+      - go vet ./...
 
   chart:generate:redpanda:
     desc: "Generate files for the redpanda Helm chart"
@@ -72,12 +80,6 @@ tasks:
       - nix run .#genvalues > charts/redpanda/values.schema.json
       # Generate helm templates from Go definitions
       - nix run .#gotohelm -- -write ./charts/redpanda/templates ./charts/redpanda 
-
-  generate:
-    desc: "[Re]Generate all generated files"
-    cmds:
-      # Generates README.md's for all charts
-      - helm-docs -c ./charts
 
   create-test-rack-awareness:
     cmds:
