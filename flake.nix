@@ -85,10 +85,12 @@
               pkgs.go
               pkgs.go-task
               pkgs.helm-docs
+              pkgs.jq # CLI JSON swiss army knife
               pkgs.kind
               pkgs.kubectl
               pkgs.kubernetes-helm
               pkgs.kustomize
+              pkgs.yq # jq but for YAML
             ];
           };
         };

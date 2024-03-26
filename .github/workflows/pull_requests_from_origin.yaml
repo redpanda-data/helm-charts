@@ -68,7 +68,7 @@ jobs:
         id: list-changed
         run: |
           changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }} --config .github/ct-redpanda.yaml)
-          echo $changed
+          echo "$changed"
           if [[ -n "$changed" ]]; then
             echo changed="true" >> "$GITHUB_OUTPUT"
           fi
@@ -98,7 +98,7 @@ jobs:
         env:
           REDPANDA_LICENSE: ${{ secrets.REDPANDA_LICENSE }}
         run: |
-          if [ -z $REDPANDA_LICENSE ]; then echo "License is empty" ; exit 1; fi
+          if [ -z "$REDPANDA_LICENSE" ]; then echo "License is empty" ; exit 1; fi
           
           envsubst < ./charts/redpanda/ci/97-license-key-values.yaml.tpl > ./charts/redpanda/ci/97-license-key-values.yaml 
           envsubst < ./charts/redpanda/ci/96-audit-logging-values.yaml.tpl > ./charts/redpanda/ci/96-audit-logging-values.yaml 

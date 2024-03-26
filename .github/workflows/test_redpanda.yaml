@@ -1,86 +1,16 @@
-# Licensed to the Apache Software Foundation (ASF) under one or more
-# contributor license agreements.  See the NOTICE file distributed with
-# this work for additional information regarding copyright ownership.
-# The ASF licenses this file to You under the Apache License, Version 2.0
-# (the "License"); you may not use this file except in compliance with
-# the License.  You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-name: Lint and Test Redpanda Charts
+name: Test Redpanda Chart
 
 on:
-  pull_request:
-    branches:
-      - "**"
-    paths:
-      - .buildkite/*
-      - .github/*.sh
-      - .github/ct-redpanda.yaml
-      - .github/kind.yaml
-      - .github/workflows/pull_requests_redpanda.yaml
-      - charts/**
-      - 'charts/console/**'
-      - 'charts/redpanda/**'
-      - '!charts/connectors/**'
-      - '!charts/kminion/**'
-      - '!charts/operator/**'
-      - '!**/*.md'
+  workflow_call:
+    inputs: {}
+    secrets: {}
 
 defaults:
   run:
     shell: nix develop --impure --command bash {0}
 
 jobs:
-  lint:
-    runs-on: ubuntu-22.04
-    defaults:
-      run:
-        shell: bash {0} # Explicit restore the default for jobs not using nix.
-    steps:
-      - name: Noop
-        run: echo noop
-
-  version-and-lint:
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: cachix/install-nix-action@v26
-        with:
-          github_access_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Redpanda lint
-        run: task chart:lint:redpanda
-
-  check-values:
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: cachix/install-nix-action@v26
-        with:
-          github_access_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: compare redpanda values with main
-        run: dyff --color=off -k between -s <(git show 'origin/main:charts/redpanda/values.yaml') charts/redpanda/values.yaml
-
-      - name: compare console values with main
-        run: dyff --color=off -k between -s <(git show 'origin/main:charts/console/values.yaml') charts/console/values.yaml
-
-  test:
+  test-redpanda:
     name: "${{ matrix.version }}/${{ matrix.testvaluespattern }}: Run ct tests"
     strategy:
       matrix:
@@ -110,20 +40,12 @@ jobs:
         with:
           fetch-depth: 0
 
-        # TODO(chrisseto): Need to start linting generated files here.
-        # Currently just testing that generation within CI works but
-        # need to fail if the generation results in new diffs.
-        # Alternatively, could exclude all generated files from source
-        # control and leverage nix to generate files just-in-time and
-        # then package them into a usable chart for test?
-      - run: task chart:generate:redpanda
-
       # we're excluding console from testing until we have a way to test it with Redpanda
       - name: Run chart-testing (list-changed)
         id: list-changed
         run: |
           changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }} --config .github/ct-redpanda.yaml)
-          echo $changed
+          echo "$changed"
           if [[ -n "$changed" ]]; then
             echo changed="true" >> "$GITHUB_OUTPUT"
           fi
@@ -203,14 +125,3 @@ jobs:
             --skip-missing-values \
             --chart-dirs=charts/redpanda \
             --target-branch ${{ github.event.repository.default_branch }}
-
-  summary:
-    if: always()
-    needs:
-      - test
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Summarize the results of the test matrix pass/fail
-        uses: re-actors/alls-green@release/v1
-        with:
-          jobs: ${{ toJSON(needs)}}
