@@ -13,82 +13,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Lint and Test KMinion Chart
+name: Test KMinion Chart
 
 on:
-  pull_request:
-    branches:
-      - "**"
-    paths:
-      - .github/*.sh
-      - .github/ct-kminion.yaml
-      - .github/kind.yaml
-      - .github/workflows/pull_requests_kminion.yaml
-      - charts/**
-      - 'charts/kminion/**'
-      - '!charts/connectors/**'
-      - '!charts/console/**'
-      - '!charts/operator/**'
-      - '!charts/redpanda/**'
-      - '!**/*.md'
+  workflow_call:
+    inputs: {}
+    secrets: {}
 
 defaults:
   run:
     shell: nix develop --impure --command bash {0}
 
 jobs:
-  lint:
-    runs-on: ubuntu-22.04
-    defaults:
-      run:
-        shell: bash {0} # Explicit restore the default for jobs not using nix.
-    steps:
-      - name: Noop
-        run: echo noop
-
-  version-and-lint:
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: cachix/install-nix-action@v26
-        with:
-          github_access_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - run: |
-          git checkout main
-          git checkout -
-
-      - name: Run CI file name checker
-        run: .github/check-ci-files.sh charts/kminion/ci
-
-      - name: Kminion lint
-        run: ct lint --config .github/ct-kminion.yaml --github-groups
-
-  check-values:
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: cachix/install-nix-action@v26
-        with:
-          github_access_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - run: |
-          git checkout main
-          git checkout -
-
-      - name: compare kminion values with main
-        run: dyff --color=off -k between -s <(git show 'origin/main:charts/kminion/values.yaml') charts/kminion/values.yaml
-
   test:
-    needs: lint
     name: Run ct tests for kminion chart
     strategy:
       fail-fast: true
@@ -111,7 +48,7 @@ jobs:
         id: list-changed
         run: |
           changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }} --config .github/ct-kminion.yaml)
-          echo $changed
+          echo "$changed"
           if [[ -n "$changed" ]]; then
             echo changed="true" >> "$GITHUB_OUTPUT"
           fi
@@ -155,13 +92,3 @@ jobs:
             --config .github/ct-kminion.yaml \
             --skip-missing-values \
             --target-branch ${{ github.event.repository.default_branch }}
-  summary:
-    if: always()
-    needs:
-      - test
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Summarize the results of the test matrix pass/fail
-        uses: re-actors/alls-green@release/v1
-        with:
-          jobs: ${{ toJSON(needs)}}

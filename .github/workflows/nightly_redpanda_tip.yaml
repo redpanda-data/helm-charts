@@ -68,7 +68,7 @@ jobs:
         run: |
           echo "TAG=$(
             docker-tag-list -c '~0.0.0-0' --latest -r redpandadata/redpanda-nightly | sed 's/-a..64$//'
-          )" >> $GITHUB_OUTPUT
+          )" >> "$GITHUB_OUTPUT"
 
       - name: Create kind cluster
         uses: helm/kind-action@99576bfa6ddf9a8e612d83b513da5a75875caced # v1.9.0
