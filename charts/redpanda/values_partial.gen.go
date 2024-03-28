@@ -4,6 +4,10 @@
 //+gotohelm:ignore=true
 package redpanda
 
+import (
+	cmmeta "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
+)
+
 type PartialValues struct {
 	NameOverride     *string           `json:"nameOverride,omitempty"`
 	FullnameOverride *string           `json:"fullnameOverride,omitempty"`
@@ -348,12 +352,9 @@ type PartialPandaProxyClient struct {
 }
 
 type PartialTLSCert struct {
-	CAEnabled *bool   `json:"caEnabled,omitempty" jsonschema:"required"`
-	Duration  *string `json:"duration,omitempty" jsonschema:"pattern=.*[smh]$"`
-	IssuerRef struct {
-		Name *string        `json:"name,omitempty"`
-		Kind *IssuerRefKind `json:"kind,omitempty"`
-	} `json:"issuerRef,omitempty"`
+	CAEnabled *bool                   `json:"caEnabled,omitempty" jsonschema:"required"`
+	Duration  *string                 `json:"duration,omitempty" jsonschema:"pattern=.*[smh]$"`
+	IssuerRef *cmmeta.ObjectReference `json:"issuerRef,omitempty"`
 	SecretRef struct {
 		Name *string `json:"name,omitempty"`
 	} `json:"secretRef,omitempty"`
