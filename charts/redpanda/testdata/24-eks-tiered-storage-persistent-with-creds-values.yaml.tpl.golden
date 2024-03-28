@@ -10,7 +10,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.34
+    helm.sh/chart: redpanda-5.7.37
 spec:
   maxUnavailable: 1
   selector:
@@ -90,7 +90,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.34
+    helm.sh/chart: redpanda-5.7.37
 type: Opaque
 stringData:
   common.sh: |-
@@ -184,7 +184,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.34
+    helm.sh/chart: redpanda-5.7.37
 type: Opaque
 stringData:
   sasl-user.sh: |-
@@ -214,7 +214,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.34
+    helm.sh/chart: redpanda-5.7.37
 type: Opaque
 stringData:
   configurator.sh: |-
@@ -273,7 +273,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.34
+    helm.sh/chart: redpanda-5.7.37
 data: 
   
   bootstrap.yaml: |
@@ -500,7 +500,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.34
+    helm.sh/chart: redpanda-5.7.37
 data:
   profile: | 
     name: default
@@ -592,7 +592,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.34
+    helm.sh/chart: redpanda-5.7.37
 spec:
   type: ClusterIP
   publishNotReadyAddresses: true
@@ -634,7 +634,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.34
+    helm.sh/chart: redpanda-5.7.37
 spec:
   type: NodePort
   publishNotReadyAddresses: true
@@ -804,7 +804,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.34
+    helm.sh/chart: redpanda-5.7.37
 spec:
   selector:
     matchLabels: 
@@ -833,7 +833,7 @@ spec:
       serviceAccountName: default
       initContainers:
         - name: tuning
-          image: docker.redpanda.com/redpandadata/redpanda:v23.3.7
+          image: docker.redpanda.com/redpandadata/redpanda:v23.3.10
           command:
             - /bin/bash
             - -c
@@ -866,7 +866,7 @@ spec:
             - name: tiered-storage-dir
               mountPath: /var/lib/redpanda/data/cloud_storage_cache
         - name: redpanda-configurator
-          image: docker.redpanda.com/redpandadata/redpanda:v23.3.7
+          image: docker.redpanda.com/redpandadata/redpanda:v23.3.10
           command:
             - /bin/bash
             - -c
@@ -904,7 +904,7 @@ spec:
               mountPath: /etc/secrets/configurator/scripts/
       containers:
         - name: redpanda
-          image: docker.redpanda.com/redpandadata/redpanda:v23.3.7
+          image: docker.redpanda.com/redpandadata/redpanda:v23.3.10
           env:
             - name: SERVICE_NAME
               valueFrom:
@@ -1028,7 +1028,7 @@ spec:
               cpu: 1
               memory: 2.5Gi
         - name: config-watcher
-          image: docker.redpanda.com/redpandadata/redpanda:v23.3.7
+          image: docker.redpanda.com/redpandadata/redpanda:v23.3.10
           command:
             - /bin/sh
           args:
@@ -1142,7 +1142,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.34
+    helm.sh/chart: redpanda-5.7.37
 spec:
   duration: 43800h
   isCA: true
@@ -1168,7 +1168,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.34
+    helm.sh/chart: redpanda-5.7.37
 spec:
   duration: 43800h
   isCA: true
@@ -1193,7 +1193,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.34
+    helm.sh/chart: redpanda-5.7.37
 spec:
   dnsNames:
     - redpanda-cluster.redpanda.default.svc.cluster.local
@@ -1230,7 +1230,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.34
+    helm.sh/chart: redpanda-5.7.37
 spec:
   dnsNames:
     - redpanda-cluster.redpanda.default.svc.cluster.local
@@ -1268,7 +1268,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.34
+    helm.sh/chart: redpanda-5.7.37
 spec:
   selfSigned: {}
 ---
@@ -1284,7 +1284,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.34
+    helm.sh/chart: redpanda-5.7.37
 spec:
   ca:
     secretName: redpanda-default-root-certificate
@@ -1301,7 +1301,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.34
+    helm.sh/chart: redpanda-5.7.37
 spec:
   selfSigned: {}
 ---
@@ -1317,7 +1317,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.34
+    helm.sh/chart: redpanda-5.7.37
 spec:
   ca:
     secretName: redpanda-external-root-certificate
@@ -1356,7 +1356,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.34
+    helm.sh/chart: redpanda-5.7.37
   annotations:
     # This is what defines this resource as a hook. Without this line, the
     # job is considered part of the release.
@@ -1380,7 +1380,7 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
       containers:
       - name: redpanda-post-install
-        image: docker.redpanda.com/redpandadata/redpanda:v23.3.7
+        image: docker.redpanda.com/redpandadata/redpanda:v23.3.10
         
         env:
         - name: REDPANDA_LICENSE
@@ -1426,9 +1426,9 @@ spec:
 
             
             rpk cluster config import -f /tmp/cfg.yml
-        securityContext: 
-          runAsUser: 101
+        securityContext:
           runAsGroup: 101
+          runAsUser: 101
         volumeMounts:
           - name: config
             mountPath: /etc/redpanda
@@ -1461,7 +1461,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.34
+    helm.sh/chart: redpanda-5.7.37
   annotations:
     "helm.sh/hook": post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation
@@ -1484,7 +1484,7 @@ spec:
       serviceAccountName: default
       containers:
       - name: redpanda-post-upgrade
-        image: docker.redpanda.com/redpandadata/redpanda:v23.3.7
+        image: docker.redpanda.com/redpandadata/redpanda:v23.3.10
         command: ["/bin/bash", "-c"]
         args:
           - |
@@ -1499,9 +1499,9 @@ spec:
                 -X PUT -u ${USER_NAME}:${PASSWORD} \
                 https://redpanda.default.svc.cluster.local.:9644/v1/debug/restart_service?service=schema-registry || true
             fi
-        securityContext: 
-          runAsUser: 101
+        securityContext:
           runAsGroup: 101
+          runAsUser: 101
         volumeMounts:
           - name: config
             mountPath: /etc/redpanda
