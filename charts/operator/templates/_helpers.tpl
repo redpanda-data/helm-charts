@@ -53,7 +53,7 @@ app.kubernetes.io/name: {{ include "redpanda-operator.name" . }}
 helm.sh/chart: {{ include "redpanda-operator.chart" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+app.kubernetes.io/version: {{ include "operator.tag" . | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{ with .Values.commonLabels }}
