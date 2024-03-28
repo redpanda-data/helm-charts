@@ -12,8 +12,7 @@ type PartialExampleStruct struct {
 	A1 PartialMapGeneric[int]                  `json:",omitempty"`
 	A2 PartialMapGeneric[PartialNestedStruct]  `json:",omitempty"`
 	A3 PartialMapGeneric[*PartialNestedStruct] `json:",omitempty"`
-	A4 PartialMapGeneric[*PartialNestedStruct] `json:",omitempty"`
-	A5 PartialMapGeneric[IntAlias]             `json:",omitempty"`
+	A4 PartialMapGeneric[IntAlias]             `json:",omitempty"`
 
 	B1 *int `json:",omitempty"`
 	B2 *int `json:",omitempty"`
