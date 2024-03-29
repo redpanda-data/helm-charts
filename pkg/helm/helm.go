@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"path"
 	"slices"
+	"strings"
 	"time"
 
 	"github.com/cockroachdb/errors"
@@ -309,7 +310,7 @@ func (c *Client) runHelm(ctx context.Context, args ...string) ([]byte, []byte, e
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
 
-	log.Printf("Executing: %#v", append([]string{"helm"}, args...))
+	log.Printf("Executing: %#v", strings.Join(append([]string{"helm"}, args...), " "))
 	cmd := exec.CommandContext(ctx, "helm", args...)
 
 	cmd.Env = c.env
