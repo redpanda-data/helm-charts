@@ -66,7 +66,7 @@
                 # 2. Run `nix develop`
                 # 3. Copy the output value into vendorHash
                 # TODO: Figure out a better way to update this.
-                vendorHash = "sha256-68iCDOuD/h4BuscIXZPZu+RM3aAPc+tFX3AmEjnCIME=";
+                vendorHash = "sha256-ILhTJL3KBuZNXpCLxbWFGK7+9cUb2imPHjgfTxqnkjM=";
               };
             in
             {
