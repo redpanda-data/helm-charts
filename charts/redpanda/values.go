@@ -178,7 +178,7 @@ type RedpandaResources struct {
 type Storage struct {
 	HostPath         string  `json:"hostPath" jsonschema:"required"`
 	Tiered           *Tiered `json:"tiered" jsonschema:"required"`
-	PersistentVolume struct {
+	PersistentVolume *struct {
 		Annotations  map[string]string `json:"annotations" jsonschema:"required"`
 		Enabled      bool              `json:"enabled" jsonschema:"required"`
 		Labels       map[string]string `json:"labels" jsonschema:"required"`
@@ -187,7 +187,7 @@ type Storage struct {
 	} `json:"persistentVolume" jsonschema:"required,deprecated"`
 	TieredConfig                  TieredStorageConfig `json:"tieredConfig" jsonschema:"deprecated"`
 	TieredStorageHostPath         string              `json:"tieredStorageHostPath" jsonschema:"deprecated"`
-	TieredStoragePersistentVolume struct {
+	TieredStoragePersistentVolume *struct {
 		Annotations  map[string]string `json:"annotations" jsonschema:"required"`
 		Enabled      bool              `json:"enabled" jsonschema:"required"`
 		Labels       map[string]string `json:"labels" jsonschema:"required"`
