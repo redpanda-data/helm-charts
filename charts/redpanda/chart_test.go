@@ -15,23 +15,24 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func TieredStorageStatic(t *testing.T) redpanda.Values {
-	if os.Getenv("REDPANDA_LICENSE") == "" {
+func TieredStorageStatic(t *testing.T) redpanda.PartialValues {
+	license := os.Getenv("REDPANDA_LICENSE")
+	if license == "" {
 		t.Skipf("$REDPANDA_LICENSE is not set")
 	}
 
-	return redpanda.Values{
-		Config: redpanda.Config{
-			Node: map[string]any{
+	return redpanda.PartialValues{
+		Config: &redpanda.PartialConfig{
+			Node: &redpanda.PartialNodeConfig{
 				"developer_mode": true,
 			},
 		},
-		Enterprise: redpanda.Enterprise{
-			License: os.Getenv("REDPANDA_LICENSE"),
+		Enterprise: &redpanda.PartialEnterprise{
+			License: &license,
 		},
-		Storage: redpanda.Storage{
-			Tiered: &redpanda.Tiered{
-				Config: redpanda.TieredStorageConfig{
+		Storage: &redpanda.PartialStorage{
+			Tiered: &redpanda.PartialTiered{
+				Config: &redpanda.PartialTieredStorageConfig{
 					"cloud_storage_enabled":    true,
 					"cloud_storage_region":     "static-region",
 					"cloud_storage_bucket":     "static-bucket",
@@ -56,27 +57,30 @@ func TieredStorageSecret(namespace string) corev1.Secret {
 	}
 }
 
-func TieredStorageSecretRefs(t *testing.T, secret *corev1.Secret) redpanda.Values {
-	if os.Getenv("REDPANDA_LICENSE") == "" {
+func TieredStorageSecretRefs(t *testing.T, secret *corev1.Secret) redpanda.PartialValues {
+	license := os.Getenv("REDPANDA_LICENSE")
+	if license == "" {
 		t.Skipf("$REDPANDA_LICENSE is not set")
 	}
 
-	return redpanda.Values{
-		Config: redpanda.Config{
-			Node: map[string]any{
+	access := "access"
+	secretKey := "secret"
+	return redpanda.PartialValues{
+		Config: &redpanda.PartialConfig{
+			Node: &redpanda.PartialNodeConfig{
 				"developer_mode": true,
 			},
 		},
-		Enterprise: redpanda.Enterprise{
-			License: os.Getenv("REDPANDA_LICENSE"),
+		Enterprise: &redpanda.PartialEnterprise{
+			License: &license,
 		},
-		Storage: redpanda.Storage{
-			Tiered: &redpanda.Tiered{
-				CredentialsSecretRef: redpanda.TieredStorageCredentials{
-					AccessKey: &redpanda.SecretRef{Name: secret.Name, Key: "access"},
-					SecretKey: &redpanda.SecretRef{Name: secret.Name, Key: "secret"},
+		Storage: &redpanda.PartialStorage{
+			Tiered: &redpanda.PartialTiered{
+				CredentialsSecretRef: &redpanda.PartialTieredStorageCredentials{
+					AccessKey: &redpanda.PartialSecretRef{Name: &secret.Name, Key: &access},
+					SecretKey: &redpanda.PartialSecretRef{Name: &secret.Name, Key: &secretKey},
 				},
-				Config: map[string]any{
+				Config: &redpanda.PartialTieredStorageConfig{
 					"cloud_storage_enabled": true,
 					"cloud_storage_region":  "a-region",
 					"cloud_storage_bucket":  "a-bucket",

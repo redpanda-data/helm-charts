@@ -147,7 +147,7 @@ type PartialRedpandaResources struct {
 type PartialStorage struct {
 	HostPath         *string        `json:"hostPath,omitempty" jsonschema:"required"`
 	Tiered           *PartialTiered `json:"tiered,omitempty" jsonschema:"required"`
-	PersistentVolume struct {
+	PersistentVolume *struct {
 		Annotations  map[string]string `json:"annotations,omitempty" jsonschema:"required"`
 		Enabled      *bool             `json:"enabled,omitempty" jsonschema:"required"`
 		Labels       map[string]string `json:"labels,omitempty" jsonschema:"required"`
@@ -156,7 +156,7 @@ type PartialStorage struct {
 	} `json:"persistentVolume,omitempty" jsonschema:"required,deprecated"`
 	TieredConfig                  *PartialTieredStorageConfig `json:"tieredConfig,omitempty" jsonschema:"deprecated"`
 	TieredStorageHostPath         *string                     `json:"tieredStorageHostPath,omitempty" jsonschema:"deprecated"`
-	TieredStoragePersistentVolume struct {
+	TieredStoragePersistentVolume *struct {
 		Annotations  map[string]string `json:"annotations,omitempty" jsonschema:"required"`
 		Enabled      *bool             `json:"enabled,omitempty" jsonschema:"required"`
 		Labels       map[string]string `json:"labels,omitempty" jsonschema:"required"`
