@@ -47,7 +47,27 @@
 {{- $labels = $values.commonLabels -}}
 {{- end -}}
 {{- $defaults := (dict "helm.sh/chart" (get (fromJson (include "redpanda.Chart" (dict "a" (list $dot) ))) "r") "app.kubernetes.io/name" (get (fromJson (include "redpanda.Name" (dict "a" (list $dot) ))) "r") "app.kubernetes.io/instance" $dot.Release.Name "app.kubernetes.io/managed-by" $dot.Release.Service "app.kubernetes.io/component" (get (fromJson (include "redpanda.Name" (dict "a" (list $dot) ))) "r") ) -}}
-{{- (dict "r" (merge $defaults $labels)) | toJson -}}
+{{- (dict "r" (merge (dict ) $labels $defaults)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.StatefulSetPodLabels" -}}
+{{- $dot := (index .a 0) -}}
+{{- $ExistingStatefulSetLabels := (index .a 1) -}}
+{{- range $_ := (list 1) -}}
+{{- if (ne $ExistingStatefulSetLabels nil) -}}
+{{- (dict "r" $ExistingStatefulSetLabels) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- $values := $dot.Values.AsMap -}}
+{{- $labels := (dict ) -}}
+{{- if (ne $values.commonLabels nil) -}}
+{{- $labels = $values.commonLabels -}}
+{{- end -}}
+{{- $component := (printf "%s-statefulset" (trimSuffix "-" (trunc 51 (get (fromJson (include "redpanda.Name" (dict "a" (list $dot) ))) "r")))) -}}
+{{- $defaults := (dict "app.kubernetes.io/component" $component "app.kubernetes.io/instance" $dot.Release.Name "app.kubernetes.io/name" (get (fromJson (include "redpanda.Name" (dict "a" (list $dot) ))) "r") ) -}}
+{{- (dict "r" (merge (dict ) $labels $defaults)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

@@ -21,17 +21,8 @@ limitations under the License.
   New installs will get better selectors.
 */ -}}
 {{- $sts := lookup "apps/v1" "StatefulSet" .Release.Namespace (include "redpanda.fullname" .) -}}
-{{- $labels := dig "spec" "selector" "matchLabels" "" $sts -}}
-{{- if not (empty $labels) -}}
-{{ $labels | toYaml }}
-{{- else -}}
-app.kubernetes.io/name: {{ template "redpanda.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name | quote }}
-app.kubernetes.io/component: {{ (include "redpanda.name" .) | trunc 51 }}-statefulset
-{{- with .Values.commonLabels }}
-{{ toYaml . }}
-{{- end }}
-{{- end -}}
+{{- $labels := dig "spec" "selector" "matchLabels" nil $sts -}}
+{{- get ((include "redpanda.StatefulSetPodLabels" (dict "a" (list . $labels))) | fromJson) "r" | toYaml }}
 {{- end -}}
 
 {{/*

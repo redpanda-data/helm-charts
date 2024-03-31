@@ -119,6 +119,9 @@ func TestTemplate(t *testing.T) {
 					// jwtSecret defaults to a random string. Can't have that
 					// in snapshot testing so set it to a static value.
 					"console.secret.login.jwtSecret=SECRETKEY",
+					// Overwrite Chart.yaml version field to be stable in our test
+					"commonLabels.helm\\.sh/chart=redpanda-5.7.36",
+					"image.tag=v23.3.10",
 				},
 			})
 			require.NoError(t, err)

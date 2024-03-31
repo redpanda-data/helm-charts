@@ -62,8 +62,34 @@ func FullLabels(dot *helmette.Dot) map[string]string {
 		"app.kubernetes.io/component":  Name(dot),
 	}
 
-	// TODO Shouldn't our defaults take precedence over user provided labels?
-	return helmette.Merge(defaults, labels)
+	// As Merge function would not only return the dictionary, but also mutate its first argument
+	// the empty map is provided to not mutate user provided commonLabels
+	return helmette.Merge(map[string]string{}, labels, defaults)
+}
+
+func StatefulSetPodLabels(dot *helmette.Dot, ExistingStatefulSetLabels map[string]string) map[string]string {
+	if ExistingStatefulSetLabels != nil {
+		return ExistingStatefulSetLabels
+	}
+	values := helmette.Unwrap[Values](dot.Values)
+
+	labels := map[string]string{}
+	if values.CommonLabels != nil {
+		labels = values.CommonLabels
+	}
+
+	component := fmt.Sprintf("%s-statefulset",
+		strings.TrimSuffix(helmette.Trunc(51, Name(dot)), "-"))
+
+	defaults := map[string]string{
+		"app.kubernetes.io/component": component,
+		"app.kubernetes.io/instance":  dot.Release.Name,
+		"app.kubernetes.io/name":      Name(dot),
+	}
+
+	// As Merge function would not only return the dictionary, but also mutate its first argument
+	// the empty map is provided to not mutate user provided commonLabels
+	return helmette.Merge(map[string]string{}, labels, defaults)
 }
 
 // Create the name of the service account to use

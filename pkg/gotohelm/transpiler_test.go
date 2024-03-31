@@ -13,6 +13,7 @@ import (
 	"unicode"
 
 	"github.com/Masterminds/sprig/v3"
+	"github.com/mitchellh/copystructure"
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	"github.com/redpanda-data/helm-charts/pkg/testutil"
 	"github.com/stretchr/testify/require"
@@ -26,9 +27,16 @@ type TestSpec struct {
 }
 
 var testSpecs = map[string]TestSpec{
-	"a":          {},
-	"b":          {},
-	"k8s":        {},
+	"a":   {},
+	"b":   {},
+	"k8s": {},
+	"labels": {
+		Values: []map[string]any{
+			{"commonLabels": map[string]any{"test": "test"}},
+			{"commonLabels": map[string]any{"helm.sh/chart": "overwrite"}},
+			{},
+		},
+	},
 	"syntax":     {},
 	"sprig":      {},
 	"directives": {},
@@ -136,14 +144,16 @@ func TestTranspile(t *testing.T) {
 				spec.Values = append(spec.Values, map[string]any{})
 			}
 
-			for i, values := range spec.Values {
-				values := values
+			for i, originalValues := range spec.Values {
+				originalValues := originalValues
+				values, err := copystructure.Copy(originalValues)
+				require.NoError(t, err)
 
 				t.Run(fmt.Sprintf("Values%d", i), func(t *testing.T) {
 					t.Logf("using values: %#v", values)
 
 					dot := helmette.Dot{
-						Values: values,
+						Values: helmette.Values(values.(map[string]any)),
 						Chart: helmette.Chart{
 							Name:    pkg.Name,
 							Version: "1.2.3",
@@ -172,6 +182,7 @@ func TestTranspile(t *testing.T) {
 
 						var b bytes.Buffer
 						require.NoError(t, tpl.Execute(&b, map[string]any{"a": []any{dot}}))
+						require.Equal(t, helmette.Values(changeAnyIntToFloat64(originalValues)), dot.Values)
 
 						var x map[string]any
 						require.NoError(t, json.Unmarshal(b.Bytes(), &x))
@@ -195,6 +206,34 @@ func TestTranspile(t *testing.T) {
 			}
 		})
 	}
+}
+
+func changeAnyIntToFloat64(input map[string]any) map[string]any {
+	result := make(map[string]any)
+	for k, v := range input {
+		result[k] = v
+		if intValue, ok := v.(int); ok {
+			result[k] = float64(intValue)
+		}
+		if mapValue, ok := v.(map[string]any); ok {
+			result[k] = changeAnyIntToFloat64(mapValue)
+		}
+		if arrayValue, ok := v.([]int); ok {
+			newArray := make([]any, 0)
+			for _, i := range arrayValue {
+				newArray = append(newArray, float64(i))
+			}
+			result[k] = newArray
+		}
+		if arrayValue, ok := v.([]string); ok {
+			newArray := make([]any, 0)
+			for _, str := range arrayValue {
+				newArray = append(newArray, str)
+			}
+			result[k] = newArray
+		}
+	}
+	return result
 }
 
 type GoRunner struct {
