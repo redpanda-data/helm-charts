@@ -39,10 +39,12 @@ jobs:
     - uses: dorny/paths-filter@v3
       id: chart-changes
       with:
+        predicate-quantifier: 'every'
         filters: |
           charts-redpanda:
             - 'charts/redpanda/**'
             - '!charts/redpanda/**/*.md'
+            - '!charts/redpanda/**/*.golden'
             - '!charts/redpanda/**/*.md.gotmpl'
           charts-console:
             - 'charts/console/**'
