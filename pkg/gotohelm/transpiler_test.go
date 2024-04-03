@@ -22,7 +22,10 @@ import (
 
 type TestSpec struct {
 	Unsupported bool
-	Values      []map[string]any
+	// ValuesChanged when `false`, the default, will cause the test to assert that
+	// .Values has not be mutated by the chart. Set to `true` to disable.
+	ValuesChanged bool
+	Values        []map[string]any
 }
 
 var testSpecs = map[string]TestSpec{
@@ -37,8 +40,14 @@ var testSpecs = map[string]TestSpec{
 			{"commonLabels": map[string]any{}},
 		},
 	},
-	"syntax":     {},
-	"sprig":      {},
+	"syntax": {},
+	"sprig":  {},
+	"changing_inputs": {
+		Values: []map[string]any{
+			{"int": 8, "boolean": true, "string": "testing-testing"},
+		},
+		ValuesChanged: true,
+	},
 	"directives": {},
 	"mutability": {},
 	"inputs": {
@@ -138,6 +147,8 @@ func TestTranspile(t *testing.T) {
 			}
 			tpl, err = template.New(pkg.Name).Funcs(funcs).ParseGlob(filepath.Join(td, "src", "example", pkg.Name, "*.yaml"))
 			require.NoError(t, err)
+			tpl, err = tpl.ParseFiles(filepath.Join(td, "src", "example", pkg.Name, "_shims.tpl"))
+			require.NoError(t, err)
 
 			// If .Values isn't explicitly specified, default to an empty object.
 			if spec.Values == nil {
@@ -170,6 +181,8 @@ func TestTranspile(t *testing.T) {
 					dotJSON, err := json.Marshal(dot)
 					require.NoError(t, err)
 					require.NoError(t, json.Unmarshal(dotJSON, &dot))
+					var clonedDot helmette.Dot
+					require.NoError(t, json.Unmarshal(dotJSON, &clonedDot))
 
 					actualJSON := map[string]any{}
 					for _, tpl := range tpl.Templates() {
@@ -180,6 +193,11 @@ func TestTranspile(t *testing.T) {
 
 						var b bytes.Buffer
 						require.NoError(t, tpl.Execute(&b, map[string]any{"a": []any{dot}}))
+						if spec.ValuesChanged {
+							require.NotEqual(t, clonedDot, dot)
+						} else {
+							require.Equal(t, clonedDot, dot)
+						}
 
 						var x map[string]any
 						require.NoError(t, json.Unmarshal(b.Bytes(), &x))
