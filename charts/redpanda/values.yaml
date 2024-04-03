@@ -806,8 +806,8 @@ tuning:
   # current value is below a certain threshold. This allows Redpanda to make as many
   # simultaneous IO requests as possible, increasing throughput.
   #
-  # When this option is enabled, Helm creates a privileged container. If your security profile does not allow this,
-  # see the [tuning documentation](https://docs.redpanda.com/docs/deploy/deployment-option/self-hosted/kubernetes/kubernetes-tune-workers/).
+  # When this option is enabled, Helm creates a privileged container. If your security profile does not allow this, you can disable this container by setting `tune_aio_events` to `false`.
+  # For more details, see the [tuning documentation](https://docs.redpanda.com/docs/deploy/deployment-option/self-hosted/kubernetes/kubernetes-tune-workers/).
   tune_aio_events: true
   #
   # Syncs NTP
