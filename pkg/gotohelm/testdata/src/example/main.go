@@ -8,6 +8,7 @@ import (
 
 	"example.com/example/a"
 	"example.com/example/b"
+	"example.com/example/changing_inputs"
 	"example.com/example/directives"
 	"example.com/example/flowcontrol"
 	"example.com/example/inputs"
@@ -100,6 +101,11 @@ func runChart(dot *helmette.Dot) (_ map[string]any, err any) {
 	case "inputs":
 		return map[string]any{
 			"Inputs": inputs.Inputs(dot),
+		}, nil
+
+	case "changing_inputs":
+		return map[string]any{
+			"ChangingInputs": changing_inputs.ChangingInputs(dot),
 		}, nil
 
 	default:
