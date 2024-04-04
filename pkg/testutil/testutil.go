@@ -124,7 +124,7 @@ func AssertGolden(t *testing.T, assertionType GoldenAssertion, path string, actu
 		)
 		require.NoError(t, err)
 
-		if len(report.Diffs) > 1 {
+		if len(report.Diffs) > 0 {
 			hr := dyff.HumanReport{Report: report, OmitHeader: true}
 
 			var buf bytes.Buffer
