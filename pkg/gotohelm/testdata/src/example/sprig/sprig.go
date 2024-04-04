@@ -15,6 +15,7 @@ type AStruct struct {
 // in helmette return the same values as the transpiled versions.
 func Sprig() map[string]any {
 	return map[string]any{
+		"concat":  concat(),
 		"default": default_(),
 		"keys":    keys(),
 		"empty":   empty(),
@@ -40,6 +41,15 @@ func keys() [][]string {
 	return [][]string{
 		keys,
 		helmette.Keys(map[string]int{}),
+	}
+}
+
+func concat() [][]int {
+	return [][]int{
+		helmette.Concat([]int{1, 2}, []int{3, 4}),
+		helmette.Concat([]int{1, 2}, []int{3, 4}, []int{5, 6}),
+		append([]int{1, 2}, []int{3, 4}...),
+		append([]int{1, 2}, 3, 4),
 	}
 }
 

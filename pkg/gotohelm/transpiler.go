@@ -605,13 +605,14 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 	case callee == nil, callee.Pkg() == nil:
 		switch n.Fun.(*ast.Ident).Name {
 		case "append":
-			// TODO: mustAppend isn't variadic. Need to either nest mustAppend calls or use concat.
 			if len(args) > 2 {
-				panic(&Unsupported{
-					Node: n,
-					Fset: t.Fset,
-					Msg:  "appending multiple values at once is not currently supported",
-				})
+				return &BuiltInCall{FuncName: "concat", Arguments: []Node{
+					args[0],
+					&BuiltInCall{FuncName: "list", Arguments: args[1:]},
+				}}
+			}
+			if n.Ellipsis.IsValid() {
+				return &BuiltInCall{FuncName: "concat", Arguments: args}
 			}
 			return &BuiltInCall{FuncName: "mustAppend", Arguments: args}
 		case "int", "int32":
@@ -651,6 +652,7 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 	// are also the same.
 	funcMapping := map[string]string{
 		"fmt.Sprintf":             "printf",
+		"helmette.Concat":         "concat",
 		"helmette.Default":        "default",
 		"helmette.Empty":          "empty",
 		"helmette.FromJSON":       "fromJson",
