@@ -410,10 +410,10 @@ data:
       overprovisioned: false
       enable_memory_locking: false
       additional_start_flags:
-        - "--smp=1"
-        - "--memory=2048M"
-        - "--reserve-memory=205M"
-        - "--default-log-level=info"
+        - --default-log-level=info
+        - --memory=2048M
+        - --reserve-memory=205M
+        - --smp=1
       # rpk tune entries
       tune_aio_events: true
     

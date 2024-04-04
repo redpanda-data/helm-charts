@@ -595,15 +595,7 @@ rpk:
   overprovisioned: {{ dig "cpu" "overprovisioned" false .Values.resources }}
   enable_memory_locking: {{ dig "memory" "enable_memory_locking" false .Values.resources }}
   additional_start_flags:
-    - "--smp={{ include "redpanda-smp" . }}"
-    - "--memory={{ template "redpanda-memory" . }}M"
-    {{- if not .Values.config.node.developer_mode }}
-    - "--reserve-memory={{ template "redpanda-reserve-memory" . }}M"
-    {{- end }}
-    - "--default-log-level={{ .Values.logging.logLevel }}"
-  {{- with .Values.statefulset.additionalRedpandaCmdFlags -}}
-  {{- toYaml . | nindent 4 }}
-  {{- end }}
+  {{- get ((include "redpanda.RedpandaAdditionalStartFlags" (dict "a" (list . (include "redpanda-smp" .) (include "redpanda-memory" .) (include "redpanda-reserve-memory" .)))) | fromJson) "r" | toYaml | nindent 4 }}
 
   {{- with dig "config" "rpk" dict .Values.AsMap }}
   # config.rpk entries
