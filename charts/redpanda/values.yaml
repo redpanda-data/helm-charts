@@ -624,6 +624,9 @@ statefulset:
     maxUnavailable: 1
   # -- Additional annotations to apply to the Pods of this StatefulSet.
   annotations: {}
+  podTemplate:
+    # -- Additional labels to apply to the Pods of this StatefulSet.
+    labels: {}
   # -- Adjust the period for your probes to meet your needs.
   # For details,
   # see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes).

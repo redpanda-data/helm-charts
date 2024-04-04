@@ -1146,6 +1146,17 @@
           ],
           "type": "object"
         },
+        "podTemplate": {
+          "properties": {
+            "labels": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
         "priorityClassName": {
           "type": "string"
         },

@@ -176,14 +176,19 @@ type PartialPostUpgradeJob struct {
 	ExtraEnvFrom any                  `json:"extraEnvFrom,omitempty" jsonschema:"oneof_type=array;string"`
 }
 
+type PartialPodTemplate struct {
+	Labels map[string]string `json:"labels,omitempty"`
+}
+
 type PartialStatefulset struct {
 	NodeAffinity   map[string]any `json:"nodeAffinity,omitempty"`
 	Replicas       *int           `json:"replicas,omitempty" jsonschema:"required"`
 	UpdateStrategy struct {
 		Type *string `json:"type,omitempty" jsonschema:"required,pattern=^(RollingUpdate|OnDelete)$"`
 	} `json:"updateStrategy,omitempty" jsonschema:"required"`
-	AdditionalRedpandaCmdFlags []string          `json:"additionalRedpandaCmdFlags,omitempty"`
-	Annotations                map[string]string `json:"annotations,omitempty" jsonschema:"required"`
+	AdditionalRedpandaCmdFlags []string            `json:"additionalRedpandaCmdFlags,omitempty"`
+	Annotations                map[string]string   `json:"annotations,omitempty" jsonschema:"required"`
+	PodTemplate                *PartialPodTemplate `json:"podTemplate,omitempty"`
 	Budget                     struct {
 		MaxUnavailable *int `json:"maxUnavailable,omitempty" jsonschema:"required"`
 	} `json:"budget,omitempty" jsonschema:"required"`

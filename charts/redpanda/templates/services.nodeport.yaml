@@ -72,5 +72,5 @@ spec:
       nodePort: {{ first (dig "advertisedPorts" (list $listener.port) $listener) }}
   {{- end }}
 {{- end }}
-  selector: {{ (include "statefulset-pod-labels" .) | nindent 4 }}
+  selector: {{ (include "statefulset-pod-labels-selector" .) | nindent 4 }}
 {{- end }}

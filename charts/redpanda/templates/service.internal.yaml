@@ -35,7 +35,7 @@ spec:
   type: ClusterIP
   publishNotReadyAddresses: true
   clusterIP: None
-  selector: {{ (include "statefulset-pod-labels" .) | nindent 4 }}
+  selector: {{ (include "statefulset-pod-labels-selector" .) | nindent 4 }}
   ports:
   {{- range $name, $listener := .Values.listeners }}
     {{- if dig "enabled" true $listener}}

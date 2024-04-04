@@ -821,6 +821,12 @@ Weight for `soft` anti-affinity rules. Does not apply to other anti-affinity typ
 
 **Default:** `100`
 
+### [statefulset.podTemplate.labels](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.podTemplate.labels)
+
+Additional labels to apply to the Pods of this StatefulSet.
+
+**Default:** `{}`
+
 ### [statefulset.priorityClassName](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.priorityClassName)
 
 PriorityClassName given to Pods of this StatefulSet. For details, see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass).

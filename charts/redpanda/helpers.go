@@ -65,6 +65,61 @@ func FullLabels(dot *helmette.Dot) map[string]string {
 	return helmette.Merge(labels, defaults)
 }
 
+// StatefulSetPodLabelsSelector returns the label selector for the Redpanda StatefulSet.
+// If this helm release is an upgrade, the existing statefulset's label selector will be used as it's an immutable field.
+func StatefulSetPodLabelsSelector(dot *helmette.Dot, statefulSet map[string]any) map[string]string {
+	if dot.Release.IsUpgrade && statefulSet != nil {
+		existingStatefulSetLabelSelector := helmette.Dig(statefulSet, nil, "spec", "selector", "matchLabels")
+
+		if existingStatefulSetLabelSelector != nil {
+			return existingStatefulSetLabelSelector.(map[string]string)
+		}
+	}
+
+	values := helmette.Unwrap[Values](dot.Values)
+
+	commonLabels := map[string]string{}
+	if values.CommonLabels != nil {
+		commonLabels = values.CommonLabels
+	}
+
+	component := fmt.Sprintf("%s-statefulset",
+		strings.TrimSuffix(helmette.Trunc(51, Name(dot)), "-"))
+
+	defaults := map[string]string{
+		"app.kubernetes.io/component": component,
+		"app.kubernetes.io/instance":  dot.Release.Name,
+		"app.kubernetes.io/name":      Name(dot),
+	}
+
+	return helmette.Merge(commonLabels, defaults)
+}
+
+// StatefulSetPodLabels returns the label that includs label selector for the Redpanda PodTemplate.
+// If this helm release is an upgrade, the existing statefulset's pod template labels will be used as it's an immutable field.
+func StatefulSetPodLabels(dot *helmette.Dot, statefulSet map[string]any) map[string]string {
+	if dot.Release.IsUpgrade && statefulSet != nil {
+		existingStatefulSetPodTemplateLabels := helmette.Dig(statefulSet, nil, "spec", "template", "metadata", "labels")
+
+		if existingStatefulSetPodTemplateLabels != nil {
+			return existingStatefulSetPodTemplateLabels.(map[string]string)
+		}
+	}
+
+	values := helmette.Unwrap[Values](dot.Values)
+
+	statefulSetLabels := map[string]string{}
+	if values.Statefulset.PodTemplate.Labels != nil {
+		statefulSetLabels = values.Statefulset.PodTemplate.Labels
+	}
+
+	defults := map[string]string{
+		"redpanda.com/poddisruptionbudget": Fullname(dot),
+	}
+
+	return helmette.Merge(statefulSetLabels, StatefulSetPodLabelsSelector(dot, nil), defults)
+}
+
 // Create the name of the service account to use
 func ServiceAccountName(dot *helmette.Dot) string {
 	values := helmette.Unwrap[Values](dot.Values)

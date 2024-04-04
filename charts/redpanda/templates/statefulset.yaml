@@ -43,7 +43,7 @@ metadata:
 {{- end }}
 spec:
   selector:
-    matchLabels: {{ (include "statefulset-pod-labels" .) | nindent 6 }}
+    matchLabels: {{ (include "statefulset-pod-labels-selector" .) | nindent 6 }}
   serviceName: {{ template "redpanda.servicename" . }}
   replicas: {{ .Values.statefulset.replicas | int64 }}
   updateStrategy:
@@ -52,7 +52,6 @@ spec:
   template:
     metadata:
       labels: {{ (include "statefulset-pod-labels" .) | nindent 8 }}
-        redpanda.com/poddisruptionbudget: {{ template "redpanda.fullname" . }}
       annotations:
         config.redpanda.com/checksum: {{ include "statefulset-checksum-annotation" . }}
 {{- with $.Values.statefulset.annotations }}
@@ -401,7 +400,7 @@ spec:
           topologyKey: {{ $v.topologyKey }}
           whenUnsatisfiable: {{ $v.whenUnsatisfiable }}
           labelSelector:
-            matchLabels: {{ include "statefulset-pod-labels" $ | nindent 14 }}
+            matchLabels: {{ include "statefulset-pod-labels-selector" $ | nindent 14 }}
     {{- end }}
 {{- end }}
 {{- with ( include "statefulset-nodeSelectors" . ) }}

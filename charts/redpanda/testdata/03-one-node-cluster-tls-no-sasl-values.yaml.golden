@@ -15,9 +15,9 @@ spec:
   maxUnavailable: 1
   selector:
     matchLabels: 
-      app.kubernetes.io/name: redpanda
-      app.kubernetes.io/instance: "redpanda"
       app.kubernetes.io/component: redpanda-statefulset
+      app.kubernetes.io/instance: redpanda
+      app.kubernetes.io/name: redpanda
       redpanda.com/poddisruptionbudget: redpanda
 ---
 # Source: redpanda/charts/console/templates/serviceaccount.yaml
@@ -505,9 +505,9 @@ spec:
   publishNotReadyAddresses: true
   clusterIP: None
   selector: 
-    app.kubernetes.io/name: redpanda
-    app.kubernetes.io/instance: "redpanda"
     app.kubernetes.io/component: redpanda-statefulset
+    app.kubernetes.io/instance: redpanda
+    app.kubernetes.io/name: redpanda
   ports:
     - name: admin
       protocol: TCP
@@ -565,9 +565,9 @@ spec:
       port: 8084
       nodePort: 30081
   selector: 
-    app.kubernetes.io/name: redpanda
-    app.kubernetes.io/instance: "redpanda"
     app.kubernetes.io/component: redpanda-statefulset
+    app.kubernetes.io/instance: redpanda
+    app.kubernetes.io/name: redpanda
 ---
 # Source: redpanda/templates/console/configmap-and-deployment.yaml
 apiVersion: apps/v1
@@ -700,9 +700,9 @@ metadata:
 spec:
   selector:
     matchLabels: 
-      app.kubernetes.io/name: redpanda
-      app.kubernetes.io/instance: "redpanda"
       app.kubernetes.io/component: redpanda-statefulset
+      app.kubernetes.io/instance: redpanda
+      app.kubernetes.io/name: redpanda
   serviceName: redpanda
   replicas: 1
   updateStrategy:
@@ -711,9 +711,9 @@ spec:
   template:
     metadata:
       labels: 
-        app.kubernetes.io/name: redpanda
-        app.kubernetes.io/instance: "redpanda"
         app.kubernetes.io/component: redpanda-statefulset
+        app.kubernetes.io/instance: redpanda
+        app.kubernetes.io/name: redpanda
         redpanda.com/poddisruptionbudget: redpanda
       annotations:
         config.redpanda.com/checksum: 4719797cc24da807a3e7ee94bfe7ef592cc5f2d8f86cda636ceba64a04dcd0b0
@@ -961,9 +961,9 @@ spec:
           whenUnsatisfiable: ScheduleAnyway
           labelSelector:
             matchLabels: 
-              app.kubernetes.io/name: redpanda
-              app.kubernetes.io/instance: "redpanda"
               app.kubernetes.io/component: redpanda-statefulset
+              app.kubernetes.io/instance: redpanda
+              app.kubernetes.io/name: redpanda
       nodeSelector:
         {}
       affinity:
@@ -973,9 +973,9 @@ spec:
           - topologyKey: kubernetes.io/hostname
             labelSelector:
               matchLabels: 
-                app.kubernetes.io/name: redpanda
-                app.kubernetes.io/instance: "redpanda"
                 app.kubernetes.io/component: redpanda-statefulset
+                app.kubernetes.io/instance: redpanda
+                app.kubernetes.io/name: redpanda
       tolerations:
         []
   volumeClaimTemplates:
