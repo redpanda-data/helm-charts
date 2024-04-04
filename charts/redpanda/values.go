@@ -167,7 +167,7 @@ type RedpandaResources struct {
 	Memory struct {
 		EnableMemoryLocking bool `json:"enable_memory_locking"`
 		Container           struct {
-			Min MemoryAmount `json:"min"`
+			Min *MemoryAmount `json:"min"`
 			Max MemoryAmount `json:"max" jsonschema:"required"`
 		} `json:"container" jsonschema:"required"`
 	} `json:"memory" jsonschema:"required"`

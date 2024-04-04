@@ -9,6 +9,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/Masterminds/sprig/v3"
 	"github.com/imdario/mergo"
 	"golang.org/x/exp/maps"
 )
@@ -187,4 +188,9 @@ func Concat[T any](lists ...[]T) []T {
 		out = append(out, l...)
 	}
 	return out
+}
+
+// Atoi is the go equivalent of sprig's `atoi`.
+func Atoi(in string) int {
+	return sprig.FuncMap()["atoi"].(func(string) int)(in)
 }
