@@ -15,9 +15,10 @@ type AStruct struct {
 // in helmette return the same values as the transpiled versions.
 func Sprig() map[string]any {
 	return map[string]any{
-		"empty":   empty(),
 		"default": default_(),
+		"empty":   empty(),
 		"strings": stringsFunctions(),
+		"unset":   unset(),
 	}
 }
 
@@ -28,6 +29,22 @@ func stringsFunctions() []string {
 		strings.ToLower("hello WORLD"),
 		strings.ToUpper("hello WORLD"),
 	}
+}
+
+func unset() []map[string]int {
+	m1 := map[string]int{"0": 0, "1": 1, "2": 2}
+	m2 := map[string]int{"0": 0, "1": 1, "2": 2}
+	m3 := map[string]int{"0": 0, "1": 1, "2": 2}
+	m4 := map[string]int{"0": 0, "1": 1, "2": 2}
+
+	delete(m2, "0")
+
+	helmette.Unset(m3, "2")
+
+	delete(m3, "1")
+	helmette.Unset(m3, "2")
+
+	return []map[string]int{m1, m2, m3, m4}
 }
 
 func default_() []any {

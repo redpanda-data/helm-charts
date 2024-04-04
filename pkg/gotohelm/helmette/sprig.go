@@ -173,3 +173,8 @@ func Lower(in string) string {
 func Upper(in string) string {
 	return strings.ToUpper(in)
 }
+
+// Unset is the go equivalent of sprig's `unset`.
+func Unset[K comparable, V any](d map[K]V, key K) {
+	delete(d, key)
+}

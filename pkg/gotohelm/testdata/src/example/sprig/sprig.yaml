@@ -2,7 +2,7 @@
 
 {{- define "sprig.Sprig" -}}
 {{- range $_ := (list 1) -}}
-{{- (dict "r" (dict "empty" (get (fromJson (include "sprig.empty" (dict "a" (list ) ))) "r") "default" (get (fromJson (include "sprig.default_" (dict "a" (list ) ))) "r") "strings" (get (fromJson (include "sprig.stringsFunctions" (dict "a" (list ) ))) "r") )) | toJson -}}
+{{- (dict "r" (dict "default" (get (fromJson (include "sprig.default_" (dict "a" (list ) ))) "r") "empty" (get (fromJson (include "sprig.empty" (dict "a" (list ) ))) "r") "strings" (get (fromJson (include "sprig.stringsFunctions" (dict "a" (list ) ))) "r") "unset" (get (fromJson (include "sprig.unset" (dict "a" (list ) ))) "r") )) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -10,6 +10,21 @@
 {{- define "sprig.stringsFunctions" -}}
 {{- range $_ := (list 1) -}}
 {{- (dict "r" (list (lower "hello WORLD") (upper "hello WORLD") (lower "hello WORLD") (upper "hello WORLD"))) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "sprig.unset" -}}
+{{- range $_ := (list 1) -}}
+{{- $m1 := (dict "0" 0 "1" 1 "2" 2 ) -}}
+{{- $m2 := (dict "0" 0 "1" 1 "2" 2 ) -}}
+{{- $m3 := (dict "0" 0 "1" 1 "2" 2 ) -}}
+{{- $m4 := (dict "0" 0 "1" 1 "2" 2 ) -}}
+{{- $_ := (unset $m2 "0") -}}
+{{- $_ := (unset $m3 "2") -}}
+{{- $_ := (unset $m3 "1") -}}
+{{- $_ := (unset $m3 "2") -}}
+{{- (dict "r" (list $m1 $m2 $m3 $m4)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
