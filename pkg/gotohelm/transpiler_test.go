@@ -26,9 +26,17 @@ type TestSpec struct {
 }
 
 var testSpecs = map[string]TestSpec{
-	"a":          {},
-	"b":          {},
-	"k8s":        {},
+	"a":   {},
+	"b":   {},
+	"k8s": {},
+	"labels": {
+		Values: []map[string]any{
+			{"commonLabels": map[string]any{"test": "test"}},
+			{"commonLabels": map[string]any{"helm.sh/chart": "overwrite"}},
+			{},
+			{"commonLabels": map[string]any{}},
+		},
+	},
 	"syntax":     {},
 	"sprig":      {},
 	"directives": {},
