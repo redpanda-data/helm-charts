@@ -40,6 +40,10 @@ func main() {
 			out = map[string]any{}
 		}
 
+		if err != nil {
+			err = fmt.Sprintf("%+v", err)
+		}
+
 		if err := enc.Encode(map[string]any{
 			"result": out,
 			"err":    err,

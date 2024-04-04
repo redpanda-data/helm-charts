@@ -624,6 +624,8 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 			return &BuiltInCall{FuncName: "toString", Arguments: args}
 		case "len":
 			return &BuiltInCall{FuncName: "len", Arguments: args}
+		case "delete":
+			return &BuiltInCall{FuncName: "unset", Arguments: args}
 		default:
 			panic(fmt.Sprintf("unsupport golang builtin %q", n.Fun.(*ast.Ident).Name))
 		}
@@ -663,6 +665,7 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 		"helmette.ToJSON":         "toJson",
 		"helmette.Tpl":            "tpl",
 		"helmette.Trunc":          "trunc",
+		"helmette.Unset":          "unset",
 		"helmette.Upper":          "upper",
 		"maps.Keys":               "keys",
 		"math.Floor":              "floor",

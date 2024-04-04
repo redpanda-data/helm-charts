@@ -257,7 +257,7 @@ func (g *GoRunner) Render(ctx context.Context, dot *helmette.Dot) (map[string]an
 	select {
 	case res := <-g.outputCh:
 		if err, ok := res["err"]; ok && err != nil {
-			return nil, fmt.Errorf("%#v", err)
+			return nil, fmt.Errorf("error from go code: %s", err)
 		}
 		if m, ok := res["result"].(map[string]any); ok {
 			return m, nil
