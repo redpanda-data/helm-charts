@@ -25,10 +25,11 @@ spec:
 # Source: redpanda/charts/console/templates/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
+automountServiceAccountToken: true
 metadata:
   name: redpanda-console
   labels:
-    helm.sh/chart: console-0.7.24
+    helm.sh/chart: console-0.7.25
     app.kubernetes.io/name: console
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/version: "v2.4.5"
@@ -326,10 +327,10 @@ data:
       overprovisioned: false
       enable_memory_locking: false
       additional_start_flags:
-        - "--smp=1"
-        - "--memory=2048M"
-        - "--reserve-memory=205M"
-        - "--default-log-level=info"
+        - --default-log-level=info
+        - --memory=2048M
+        - --reserve-memory=205M
+        - --smp=1
       # rpk tune entries
       tune_aio_events: true
     
@@ -375,7 +376,7 @@ kind: ConfigMap
 metadata:
   name: redpanda-console
   labels:
-    helm.sh/chart: console-0.7.24
+    helm.sh/chart: console-0.7.25
     app.kubernetes.io/name: console
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/version: "v2.4.5"
@@ -405,7 +406,7 @@ kind: Service
 metadata:
   name: redpanda-console
   labels:
-    helm.sh/chart: console-0.7.24
+    helm.sh/chart: console-0.7.25
     app.kubernetes.io/name: console
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/version: "v2.4.5"
@@ -517,7 +518,7 @@ kind: Deployment
 metadata:
   name: redpanda-console
   labels:
-    helm.sh/chart: console-0.7.24
+    helm.sh/chart: console-0.7.25
     app.kubernetes.io/name: console
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/version: "v2.4.5"
@@ -533,12 +534,13 @@ spec:
     metadata:
       annotations:
         checksum/config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum-redpanda-chart/config: 63c329ba09b56f1dd83be951ffa92276a4629ad8a718d23cd4e7ac76a51d28e5
+        checksum-redpanda-chart/config: f95b24f953ead12c5fcbc88d8389bce0ad053498a3b052bcab9a28563c2281b4
       labels:
         app.kubernetes.io/name: console
         app.kubernetes.io/instance: redpanda
     spec:
       serviceAccountName: redpanda-console
+      automountServiceAccountToken: true
       securityContext:
         fsGroup: 99
         runAsUser: 99
@@ -887,7 +889,7 @@ kind: Pod
 metadata:
   name: "redpanda-console-test-connection"
   labels:
-    helm.sh/chart: console-0.7.24
+    helm.sh/chart: console-0.7.25
     app.kubernetes.io/name: console
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/version: "v2.4.5"
