@@ -277,6 +277,9 @@
         }
       }
     },
+    "automountServiceAccountToken": {
+      "type": "boolean"
+    },
     "serviceAccount": {
       "type": "object",
       "properties": {
@@ -284,6 +287,9 @@
           "type": "object"
         },
         "create": {
+          "type": "boolean"
+        },
+        "automountServiceAccountToken": {
           "type": "boolean"
         },
         "name": {
