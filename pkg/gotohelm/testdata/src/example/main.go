@@ -12,6 +12,7 @@ import (
 	"example.com/example/flowcontrol"
 	"example.com/example/inputs"
 	"example.com/example/k8s"
+	"example.com/example/labels"
 	"example.com/example/mutability"
 	"example.com/example/sprig"
 	"example.com/example/typing"
@@ -50,6 +51,10 @@ func runChart(dot *helmette.Dot) (_ map[string]any, err any) {
 	defer func() { err = recover() }()
 
 	switch dot.Chart.Name {
+	case "labels":
+		return map[string]any{
+			"FullLabels": labels.FullLabels(dot),
+		}, nil
 	case "sprig":
 		return map[string]any{
 			"Sprig": sprig.Sprig(),
