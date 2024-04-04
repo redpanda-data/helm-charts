@@ -42,9 +42,14 @@ nameOverride: ""
 # -- Override `console.fullname` template.
 fullnameOverride: ""
 
+# -- Automount API credentials for the Service Account into the pod.
+automountServiceAccountToken: true
+
 serviceAccount:
   # -- Specifies whether a service account should be created.
   create: true
+  # -- Specifies whether a service account should automount API-Credentials
+  automountServiceAccountToken: true
   # -- Annotations to add to the service account.
   annotations: {}
   # -- The name of the service account to use.
