@@ -62,8 +62,7 @@ func FullLabels(dot *helmette.Dot) map[string]string {
 		"app.kubernetes.io/component":  Name(dot),
 	}
 
-	// TODO Shouldn't our defaults take precedence over user provided labels?
-	return helmette.Merge(defaults, labels)
+	return helmette.Merge(labels, defaults)
 }
 
 // Create the name of the service account to use
