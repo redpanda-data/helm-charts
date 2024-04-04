@@ -23,11 +23,10 @@ spec:
 # Source: redpanda/charts/console/templates/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
-automountServiceAccountToken: true
 metadata:
   name: redpanda-console
   labels:
-    helm.sh/chart: console-0.7.25
+    helm.sh/chart: console-0.7.24
     app.kubernetes.io/name: console
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/version: "v2.4.5"
@@ -437,7 +436,7 @@ kind: ConfigMap
 metadata:
   name: redpanda-console
   labels:
-    helm.sh/chart: console-0.7.25
+    helm.sh/chart: console-0.7.24
     app.kubernetes.io/name: console
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/version: "v2.4.5"
@@ -467,7 +466,7 @@ kind: Service
 metadata:
   name: redpanda-console
   labels:
-    helm.sh/chart: console-0.7.25
+    helm.sh/chart: console-0.7.24
     app.kubernetes.io/name: console
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/version: "v2.4.5"
@@ -575,7 +574,7 @@ kind: Deployment
 metadata:
   name: redpanda-console
   labels:
-    helm.sh/chart: console-0.7.25
+    helm.sh/chart: console-0.7.24
     app.kubernetes.io/name: console
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/version: "v2.4.5"
@@ -591,13 +590,12 @@ spec:
     metadata:
       annotations:
         checksum/config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum-redpanda-chart/config: 81e2c7b7079444623a213600ed7e35f29bb4589ca326d13d6eeb33a2f0fb5ea5
+        checksum-redpanda-chart/config: 11b9b16f1898f78a96cf661b3ff71cbbe2f2af35281ef684edcf163c896c6a6c
       labels:
         app.kubernetes.io/name: console
         app.kubernetes.io/instance: redpanda
     spec:
       serviceAccountName: redpanda-console
-      automountServiceAccountToken: true
       securityContext:
         fsGroup: 99
         runAsUser: 99
@@ -1194,7 +1192,7 @@ kind: Pod
 metadata:
   name: "redpanda-console-test-connection"
   labels:
-    helm.sh/chart: console-0.7.25
+    helm.sh/chart: console-0.7.24
     app.kubernetes.io/name: console
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/version: "v2.4.5"
