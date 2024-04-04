@@ -236,7 +236,6 @@ data:
     enable_rack_awareness: false
           
     default_topic_replications: 3
-    enable_idempotence: false
     
     compacted_log_segment_size: 67108864
     group_topic_partitions: 16
@@ -258,7 +257,6 @@ data:
       kafka_enable_authorization: false
       enable_sasl: false
       default_topic_replications: 3
-      enable_idempotence: false
       compacted_log_segment_size: 67108864
       group_topic_partitions: 16
       kafka_batch_max_bytes: 1048576
@@ -333,15 +331,6 @@ data:
         - host:
             address: redpanda-2.redpanda.default.svc.cluster.local.
             port: 33145
-    cloud_storage_access_key: test
-    cloud_storage_bucket: test
-    cloud_storage_cache_size: "11000000000"
-    cloud_storage_credentials_source: config_file
-    cloud_storage_enable_remote_read: true
-    cloud_storage_enable_remote_write: true
-    cloud_storage_enabled: true
-    cloud_storage_region: test
-    cloud_storage_secret_key: test
   
     schema_registry_client:
       brokers:
@@ -674,17 +663,13 @@ spec:
             - key: ca.crt
               path: ca.crt
             secretName: redpanda-default-cert
-        - name: redpanda-license
-          secret:
-            defaultMode: 272
-            secretName: redpanda-license
       containers:
         - name: console
           args:
             - "--config.filepath=/etc/console/configs/config.yaml"
           securityContext:
             runAsNonRoot: true
-          image: redpandadata/console-unstable:master-8a51854
+          image: docker.redpanda.com/redpandadata/console:v2.4.5
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -702,9 +687,6 @@ spec:
               readOnly: true
             - mountPath: /mnt/cert/adminapi/default
               name: adminapi-default-cert
-              readOnly: true
-            - mountPath: /mnt/test
-              name: redpanda-license
               readOnly: true
           livenessProbe:
             initialDelaySeconds: 0
@@ -739,13 +721,6 @@ spec:
               value: "true"
             - name: REDPANDA_ADMINAPI_URLS
               value: https://redpanda.default.svc.cluster.local.:9644
-            - name: TEST
-              value: test
-            - name: LICENSE
-              valueFrom:
-                secretKeyRef:
-                  name: redpanda-license
-                  key: license-key
       priorityClassName:
 ---
 # Source: redpanda/templates/statefulset.yaml
@@ -776,9 +751,10 @@ spec:
         app.kubernetes.io/component: redpanda-statefulset
         app.kubernetes.io/instance: redpanda
         app.kubernetes.io/name: redpanda
+        azure.workload.identity/use: "true"
         redpanda.com/poddisruptionbudget: redpanda
       annotations:
-        config.redpanda.com/checksum: 1a37359565ee5aa39f2265200feb5613c0bb27495adde5a6e1cae726a786a953
+        config.redpanda.com/checksum: bdc12c59ed4146a58b5b4bfca4bdd4495b1b9e19e49457cce50c827e3d8977ea
     spec:
       terminationGracePeriodSeconds: 90
       securityContext: 
@@ -806,19 +782,6 @@ spec:
               mountPath: /etc/tls/certs/external
             - name: redpanda
               mountPath: /etc/redpanda
-        - name: set-tiered-storage-cache-dir-ownership
-          image: busybox:latest
-          command: ["/bin/sh", "-c", 'mkdir -p /var/lib/redpanda/data/cloud_storage_cache; chown 101:101 -R /var/lib/redpanda/data/cloud_storage_cache']
-          volumeMounts: 
-            
-            - name: redpanda-default-cert
-              mountPath: /etc/tls/certs/default
-            - name: redpanda-external-cert
-              mountPath: /etc/tls/certs/external
-            - name: datadir
-              mountPath: /var/lib/redpanda/data
-            - name: tiered-storage-dir
-              mountPath: /var/lib/redpanda/data/cloud_storage_cache
         - name: redpanda-configurator
           image: docker.redpanda.com/redpandadata/redpanda:v23.3.10
           command:
@@ -975,8 +938,6 @@ spec:
               mountPath: /var/lifecycle
             - name: datadir
               mountPath: /var/lib/redpanda/data
-            - name: tiered-storage-dir
-              mountPath: /var/lib/redpanda/data/cloud_storage_cache
           resources:
             limits:
               cpu: 1
@@ -1015,9 +976,6 @@ spec:
         - name: datadir
           persistentVolumeClaim:
             claimName: datadir
-        - name: tiered-storage-dir
-          emptyDir:
-            sizeLimit: 11G
         - name: redpanda
           configMap:
             name: redpanda
@@ -1328,30 +1286,7 @@ spec:
       - name: redpanda-post-install
         image: docker.redpanda.com/redpandadata/redpanda:v23.3.10
         
-        env:
-        - name: REDPANDA_LICENSE
-          valueFrom:
-            secretKeyRef:
-              key: license-key
-              name: redpanda-license
-        - name: RPK_CLOUD_STORAGE_SECRET_KEY
-          value: test
-        - name: RPK_CLOUD_STORAGE_ACCESS_KEY
-          value: test
-        - name: RPK_CLOUD_STORAGE_BUCKET
-          value: '"test"'
-        - name: RPK_CLOUD_STORAGE_CACHE_SIZE
-          value: "11000000000"
-        - name: RPK_CLOUD_STORAGE_CREDENTIALS_SOURCE
-          value: '"config_file"'
-        - name: RPK_CLOUD_STORAGE_ENABLE_REMOTE_READ
-          value: "true"
-        - name: RPK_CLOUD_STORAGE_ENABLE_REMOTE_WRITE
-          value: "true"
-        - name: RPK_CLOUD_STORAGE_ENABLED
-          value: "true"
-        - name: RPK_CLOUD_STORAGE_REGION
-          value: '"test"'
+        env: []
         command: ["bash","-c"]
         args:
           - |

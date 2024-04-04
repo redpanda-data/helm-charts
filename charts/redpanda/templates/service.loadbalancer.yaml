@@ -90,7 +90,7 @@ spec:
       port: {{ dig "nodePort" (first (dig "advertisedPorts" (list $listener.port) $listener)) $listener }}
       {{- end }}
     {{- end }}
-  selector: {{ (include "statefulset-pod-labels" $root ) | nindent 4 }}
+  selector: {{ (include "statefulset-pod-labels-selector" $root ) | nindent 4 }}
     statefulset.kubernetes.io/pod-name: {{ $podName }}
   {{- end }}
 {{- end }}

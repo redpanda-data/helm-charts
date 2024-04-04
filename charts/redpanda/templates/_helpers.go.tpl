@@ -52,6 +52,51 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "redpanda.StatefulSetPodLabelsSelector" -}}
+{{- $dot := (index .a 0) -}}
+{{- $statefulSet := (index .a 1) -}}
+{{- range $_ := (list 1) -}}
+{{- if (and $dot.Release.IsUpgrade (ne $statefulSet nil)) -}}
+{{- $existingStatefulSetLabelSelector := (dig "spec" "selector" "matchLabels" nil $statefulSet) -}}
+{{- if (ne $existingStatefulSetLabelSelector nil) -}}
+{{- (dict "r" $existingStatefulSetLabelSelector) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+{{- $values := $dot.Values.AsMap -}}
+{{- $commonLabels := (dict ) -}}
+{{- if (ne $values.commonLabels nil) -}}
+{{- $commonLabels = $values.commonLabels -}}
+{{- end -}}
+{{- $component := (printf "%s-statefulset" (trimSuffix "-" (trunc 51 (get (fromJson (include "redpanda.Name" (dict "a" (list $dot) ))) "r")))) -}}
+{{- $defaults := (dict "app.kubernetes.io/component" $component "app.kubernetes.io/instance" $dot.Release.Name "app.kubernetes.io/name" (get (fromJson (include "redpanda.Name" (dict "a" (list $dot) ))) "r") ) -}}
+{{- (dict "r" (merge (dict ) $commonLabels $defaults)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.StatefulSetPodLabels" -}}
+{{- $dot := (index .a 0) -}}
+{{- $statefulSet := (index .a 1) -}}
+{{- range $_ := (list 1) -}}
+{{- if (and $dot.Release.IsUpgrade (ne $statefulSet nil)) -}}
+{{- $existingStatefulSetPodTemplateLabels := (dig "spec" "template" "metadata" "labels" nil $statefulSet) -}}
+{{- if (ne $existingStatefulSetPodTemplateLabels nil) -}}
+{{- (dict "r" $existingStatefulSetPodTemplateLabels) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+{{- $values := $dot.Values.AsMap -}}
+{{- $statefulSetLabels := (dict ) -}}
+{{- if (ne $values.statefulset.podTemplate.labels nil) -}}
+{{- $statefulSetLabels = $values.statefulset.podTemplate.labels -}}
+{{- end -}}
+{{- $defults := (dict "redpanda.com/poddisruptionbudget" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r") ) -}}
+{{- (dict "r" (merge (dict ) $statefulSetLabels (get (fromJson (include "redpanda.StatefulSetPodLabelsSelector" (dict "a" (list $dot nil) ))) "r") $defults)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "redpanda.ServiceAccountName" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}

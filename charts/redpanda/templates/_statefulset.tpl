@@ -15,23 +15,22 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */}}
 
+{{- define "statefulset-pod-labels-selector" -}}
+{{- /*
+  StatefulSets cannot change their selector. Use the existing one even if it's broken.
+  New installs will get better selectors.
+*/ -}}
+{{- $sts := lookup "apps/v1" "StatefulSet" .Release.Namespace (include "redpanda.fullname" .) -}}
+{{- get ((include "redpanda.StatefulSetPodLabelsSelector" (dict "a" (list . $sts))) | fromJson) "r" | toYaml }}
+{{- end -}}
+
 {{- define "statefulset-pod-labels" -}}
 {{- /*
   StatefulSets cannot change their selector. Use the existing one even if it's broken.
   New installs will get better selectors.
 */ -}}
 {{- $sts := lookup "apps/v1" "StatefulSet" .Release.Namespace (include "redpanda.fullname" .) -}}
-{{- $labels := dig "spec" "selector" "matchLabels" "" $sts -}}
-{{- if not (empty $labels) -}}
-{{ $labels | toYaml }}
-{{- else -}}
-app.kubernetes.io/name: {{ template "redpanda.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name | quote }}
-app.kubernetes.io/component: {{ (include "redpanda.name" .) | trunc 51 }}-statefulset
-{{- with .Values.commonLabels }}
-{{ toYaml . }}
-{{- end }}
-{{- end -}}
+{{- get ((include "redpanda.StatefulSetPodLabels" (dict "a" (list . $sts))) | fromJson) "r" | toYaml }}
 {{- end -}}
 
 {{/*
@@ -87,14 +86,14 @@ podAntiAffinity:
   requiredDuringSchedulingIgnoredDuringExecution:
   - topologyKey: {{ .Values.statefulset.podAntiAffinity.topologyKey }}
     labelSelector:
-      matchLabels: {{ include "statefulset-pod-labels" . | nindent 8 }}
+      matchLabels: {{ include "statefulset-pod-labels-selector" . | nindent 8 }}
   {{- else if eq .Values.statefulset.podAntiAffinity.type "soft" }}
   preferredDuringSchedulingIgnoredDuringExecution:
   - weight: {{ .Values.statefulset.podAntiAffinity.weight | int64 }}
     podAffinityTerm:
       topologyKey: {{ .Values.statefulset.podAntiAffinity.topologyKey }}
       labelSelector:
-        matchLabels: {{ include "statefulset-pod-labels" . | nindent 8 }}
+        matchLabels: {{ include "statefulset-pod-labels-selector" . | nindent 8 }}
   {{- else if eq .Values.statefulset.podAntiAffinity.type "custom" -}}
     {{- toYaml .Values.statefulset.podAntiAffinity.custom | nindent 2 }}
   {{- end -}}

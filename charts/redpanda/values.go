@@ -1,4 +1,4 @@
-//+gotohelm:ignore=true
+// +gotohelm:ignore=true
 package redpanda
 
 import (
@@ -228,6 +228,10 @@ type PostUpgradeJob struct {
 	// ExtraEnvFrom []corev1.EnvFromSource `json:"extraEnvFrom"`
 }
 
+type PodTemplate struct {
+	Labels map[string]string `json:"labels"`
+}
+
 type Statefulset struct {
 	NodeAffinity   map[string]any `json:"nodeAffinity"`
 	Replicas       int            `json:"replicas" jsonschema:"required"`
@@ -236,6 +240,7 @@ type Statefulset struct {
 	} `json:"updateStrategy" jsonschema:"required"`
 	AdditionalRedpandaCmdFlags []string          `json:"additionalRedpandaCmdFlags"`
 	Annotations                map[string]string `json:"annotations" jsonschema:"required"`
+	PodTemplate                PodTemplate       `json:"podTemplate"`
 	Budget                     struct {
 		MaxUnavailable int `json:"maxUnavailable" jsonschema:"required"`
 	} `json:"budget" jsonschema:"required"`
