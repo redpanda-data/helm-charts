@@ -179,3 +179,12 @@ func Upper(in string) string {
 func Unset[K comparable, V any](d map[K]V, key K) {
 	delete(d, key)
 }
+
+// Concat is the go equivalent of sprig's `concat`.
+func Concat[T any](lists ...[]T) []T {
+	var out []T
+	for _, l := range lists {
+		out = append(out, l...)
+	}
+	return out
+}
