@@ -591,7 +591,6 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 		"helmette.Keys":         "keys",
 		"helmette.KindIs":       "kindIs",
 		"helmette.KindOf":       "kindOf",
-		"helmette.Merge":        "merge",
 		"helmette.MustFromJSON": "mustFromJson",
 		"helmette.MustToJSON":   "mustToJson",
 		"helmette.RegexMatch":   "regexMatch",
@@ -653,6 +652,9 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 			},
 		}, args...)
 		return &Call{FuncName: "_shims.typeassertion", Arguments: args}
+	case "helmette.Merge":
+		dict := DictLiteral{}
+		return &BuiltInCall{FuncName: "merge", Arguments: append([]Node{&dict}, args...)}
 	default:
 		panic(fmt.Sprintf("unsupported function %s", name))
 	}

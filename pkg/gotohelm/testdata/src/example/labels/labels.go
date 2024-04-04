@@ -26,5 +26,5 @@ func FullLabels(dot *helmette.Dot) map[string]string {
 	// the empty map is provided to not mutate user provided commonLabels
 	//
 	// https://github.com/Masterminds/sprig/blob/581758eb7d96ae4d113649668fa96acc74d46e7f/docs/dicts.md?plain=1#L125-L182
-	return helmette.Merge(map[string]string{}, commonLabels, defaults)
+	return helmette.Merge(commonLabels, defaults)
 }
