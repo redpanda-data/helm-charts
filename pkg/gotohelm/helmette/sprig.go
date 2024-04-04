@@ -39,7 +39,8 @@ func Keys[K comparable, V any](m map[K]V) []K {
 }
 
 // Merge is a go equivalent of sprig's `merge`.
-func Merge[K comparable, V any](dst map[K]V, sources ...map[K]V) map[K]V {
+func Merge[K comparable, V any](sources ...map[K]V) map[K]V {
+	dst := map[K]V{}
 	for _, src := range sources {
 		if err := mergo.Merge(&dst, src); err != nil {
 			return nil

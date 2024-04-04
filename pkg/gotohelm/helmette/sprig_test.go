@@ -84,8 +84,7 @@ func TestMerge(t *testing.T) {
 	}
 	for _, tc := range testCases {
 		t.Run(tc.Name, func(t *testing.T) {
-			require.Equal(t, tc.Output, helmette.Merge(tc.Inputs[0], tc.Inputs[1:]...))
-			require.Equal(t, tc.Output, tc.Inputs[0])
+			require.Equal(t, tc.Output, helmette.Merge(tc.Inputs...))
 		})
 	}
 }

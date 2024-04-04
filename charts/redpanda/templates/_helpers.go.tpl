@@ -47,7 +47,7 @@
 {{- $labels = $values.commonLabels -}}
 {{- end -}}
 {{- $defaults := (dict "helm.sh/chart" (get (fromJson (include "redpanda.Chart" (dict "a" (list $dot) ))) "r") "app.kubernetes.io/name" (get (fromJson (include "redpanda.Name" (dict "a" (list $dot) ))) "r") "app.kubernetes.io/instance" $dot.Release.Name "app.kubernetes.io/managed-by" $dot.Release.Service "app.kubernetes.io/component" (get (fromJson (include "redpanda.Name" (dict "a" (list $dot) ))) "r") ) -}}
-{{- (dict "r" (merge $defaults $labels)) | toJson -}}
+{{- (dict "r" (merge (dict ) $defaults $labels)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
