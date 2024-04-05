@@ -662,6 +662,7 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 		"helmette.MustRegexMatch": "mustRegexMatch",
 		"helmette.MustToJSON":     "mustToJson",
 		"helmette.RegexMatch":     "regexMatch",
+		"helmette.SortAlpha":      "sortAlpha",
 		"helmette.ToJSON":         "toJson",
 		"helmette.Tpl":            "tpl",
 		"helmette.Trunc":          "trunc",

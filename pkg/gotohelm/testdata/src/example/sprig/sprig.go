@@ -16,6 +16,7 @@ type AStruct struct {
 func Sprig() map[string]any {
 	return map[string]any{
 		"default": default_(),
+		"keys":    keys(),
 		"empty":   empty(),
 		"strings": stringsFunctions(),
 		"unset":   unset(),
@@ -28,6 +29,17 @@ func stringsFunctions() []string {
 		helmette.Upper("hello WORLD"),
 		strings.ToLower("hello WORLD"),
 		strings.ToUpper("hello WORLD"),
+	}
+}
+
+func keys() [][]string {
+	// .Keys is non-deterministic, must sort to ensure tests always pass.
+	keys := helmette.Keys(map[string]int{"0": 0, "1": 1})
+	helmette.SortAlpha(keys)
+
+	return [][]string{
+		keys,
+		helmette.Keys(map[string]int{}),
 	}
 }
 

@@ -10,6 +10,7 @@ import (
 	"text/template"
 
 	"github.com/imdario/mergo"
+	"golang.org/x/exp/maps"
 )
 
 var (
@@ -35,7 +36,7 @@ func KindIs(kind string, v any) bool {
 
 // Keys is the go equivalent of sprig's `keys`.
 func Keys[K comparable, V any](m map[K]V) []K {
-	return nil
+	return maps.Keys(m)
 }
 
 // Merge is a go equivalent of sprig's `merge`.
