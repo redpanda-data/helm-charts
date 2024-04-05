@@ -52,11 +52,7 @@ spec:
   template:
     metadata:
       labels: {{ (include "statefulset-pod-labels" .) | nindent 8 }}
-      annotations:
-        config.redpanda.com/checksum: {{ include "statefulset-checksum-annotation" . }}
-{{- with $.Values.statefulset.annotations }}
-        {{- toYaml . | nindent 8 }}
-{{- end }}
+      annotations:{{ ( get ( (include "redpanda.StatefulSetPodAnnotations" (dict "a" (list . (include "statefulset-checksum-annotation" .) )) ) | fromJson) "r" ) | toYaml | nindent 8 }}
     spec:
       terminationGracePeriodSeconds: {{ .Values.statefulset.terminationGracePeriodSeconds }}
       securityContext: {{ include "pod-security-context" . | nindent 8 }}

@@ -229,7 +229,8 @@ type PostUpgradeJob struct {
 }
 
 type PodTemplate struct {
-	Labels map[string]string `json:"labels"`
+	Labels      map[string]string `json:"labels"`
+	Annotations map[string]string `json:"annotations" jsonschema:"required"`
 }
 
 type Statefulset struct {
@@ -238,10 +239,12 @@ type Statefulset struct {
 	UpdateStrategy struct {
 		Type string `json:"type" jsonschema:"required,pattern=^(RollingUpdate|OnDelete)$"`
 	} `json:"updateStrategy" jsonschema:"required"`
-	AdditionalRedpandaCmdFlags []string          `json:"additionalRedpandaCmdFlags"`
-	Annotations                map[string]string `json:"annotations" jsonschema:"required"`
-	PodTemplate                PodTemplate       `json:"podTemplate"`
-	Budget                     struct {
+	AdditionalRedpandaCmdFlags []string `json:"additionalRedpandaCmdFlags"`
+	// Annotations are used only for `Statefulset.spec.template.metadata.annotations`. The StatefulSet does not have
+	// any dedicated annotation.
+	Annotations map[string]string `json:"annotations" jsonschema:"deprecated"`
+	PodTemplate PodTemplate       `json:"podTemplate"`
+	Budget      struct {
 		MaxUnavailable int `json:"maxUnavailable" jsonschema:"required"`
 	} `json:"budget" jsonschema:"required"`
 	StartupProbe struct {

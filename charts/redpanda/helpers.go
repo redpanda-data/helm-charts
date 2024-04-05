@@ -120,6 +120,21 @@ func StatefulSetPodLabels(dot *helmette.Dot, statefulSet map[string]any) map[str
 	return helmette.Merge(statefulSetLabels, StatefulSetPodLabelsSelector(dot, nil), defults)
 }
 
+// StatefulSetPodAnnotations returns the annotation for the Redpanda PodTemplate.
+func StatefulSetPodAnnotations(dot *helmette.Dot, configMapChecksum string) map[string]string {
+	values := helmette.Unwrap[Values](dot.Values)
+
+	configMapChecksumAnnotation := map[string]string{
+		"config.redpanda.com/checksum": configMapChecksum,
+	}
+
+	if values.Statefulset.PodTemplate.Annotations != nil {
+		return helmette.Merge(values.Statefulset.PodTemplate.Annotations, configMapChecksumAnnotation)
+	}
+
+	return helmette.Merge(values.Statefulset.Annotations, configMapChecksumAnnotation)
+}
+
 // Create the name of the service account to use
 func ServiceAccountName(dot *helmette.Dot) string {
 	values := helmette.Unwrap[Values](dot.Values)

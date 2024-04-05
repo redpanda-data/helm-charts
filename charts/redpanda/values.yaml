@@ -622,11 +622,15 @@ statefulset:
     type: RollingUpdate
   budget:
     maxUnavailable: 1
-  # -- Additional annotations to apply to the Pods of this StatefulSet.
+  # -- DEPRECATED Please use statefulset.podTemplate.annotations.
+  # Annotations are used only for `Statefulset.spec.template.metadata.annotations`. The StatefulSet does not have
+  #	any dedicated annotation.
   annotations: {}
   podTemplate:
     # -- Additional labels to apply to the Pods of this StatefulSet.
     labels: {}
+    # -- Additional annotations to apply to the Pods of this StatefulSet.
+    annotations: {}
   # -- Adjust the period for your probes to meet your needs.
   # For details,
   # see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes).

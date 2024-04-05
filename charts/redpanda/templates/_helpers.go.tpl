@@ -97,6 +97,21 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "redpanda.StatefulSetPodAnnotations" -}}
+{{- $dot := (index .a 0) -}}
+{{- $configMapChecksum := (index .a 1) -}}
+{{- range $_ := (list 1) -}}
+{{- $values := $dot.Values.AsMap -}}
+{{- $configMapChecksumAnnotation := (dict "config.redpanda.com/checksum" $configMapChecksum ) -}}
+{{- if (ne $values.statefulset.podTemplate.annotations nil) -}}
+{{- (dict "r" (merge (dict ) $values.statefulset.podTemplate.annotations $configMapChecksumAnnotation)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- (dict "r" (merge (dict ) $values.statefulset.annotations $configMapChecksumAnnotation)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "redpanda.ServiceAccountName" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
