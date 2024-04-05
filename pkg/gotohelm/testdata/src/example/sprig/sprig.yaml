@@ -2,7 +2,14 @@
 
 {{- define "sprig.Sprig" -}}
 {{- range $_ := (list 1) -}}
-{{- (dict "r" (dict "empty" (get (fromJson (include "sprig.empty" (dict "a" (list ) ))) "r") "default" (get (fromJson (include "sprig.default_" (dict "a" (list ) ))) "r") )) | toJson -}}
+{{- (dict "r" (dict "empty" (get (fromJson (include "sprig.empty" (dict "a" (list ) ))) "r") "default" (get (fromJson (include "sprig.default_" (dict "a" (list ) ))) "r") "strings" (get (fromJson (include "sprig.stringsFunctions" (dict "a" (list ) ))) "r") )) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "sprig.stringsFunctions" -}}
+{{- range $_ := (list 1) -}}
+{{- (dict "r" (list (lower "hello WORLD") (upper "hello WORLD") (lower "hello WORLD") (upper "hello WORLD"))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
