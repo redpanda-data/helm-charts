@@ -850,7 +850,7 @@ REDPANDA_SASL_USERNAME REDPANDA_SASL_PASSWORD REDPANDA_SASL_MECHANISM
     [
         {{- if and (include "is-licensed" . | fromJson).bool (dig "cloud_storage_enabled" false $config) -}}
             {{include "secret-ref-or-value" (dict
-                "Name" "RPK_CLOUD_STORAGE_SECRET_KEY"
+                "Name" (printf "RPK_%s" (dig "tiered" "credentialsSecretRef" "secretKey" "configurationKey"  nil .Values.storage ) | upper )
                 "Value" (dig "cloud_storage_secret_key" nil $config)
                 "SecretName" (dig "tiered" "credentialsSecretRef" "secretKey" "name" nil .Values.storage)
                 "SecretKey" (dig "tiered" "credentialsSecretRef" "secretKey" "key" nil .Values.storage)
