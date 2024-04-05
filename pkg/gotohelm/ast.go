@@ -9,6 +9,16 @@ type Node interface {
 	Write(io.Writer)
 }
 
+type ParenExpr struct {
+	Expr Node
+}
+
+func (s *ParenExpr) Write(w io.Writer) {
+	w.Write([]byte("("))
+	s.Expr.Write(w)
+	w.Write([]byte(")"))
+}
+
 type Selector struct {
 	Expr  Node
 	Field string

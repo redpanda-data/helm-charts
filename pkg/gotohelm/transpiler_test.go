@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -13,6 +14,7 @@ import (
 	"unicode"
 
 	"github.com/Masterminds/sprig/v3"
+	"github.com/cockroachdb/errors"
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	"github.com/redpanda-data/helm-charts/pkg/testutil"
 	"github.com/stretchr/testify/require"
@@ -254,11 +256,13 @@ func (g *GoRunner) Render(ctx context.Context, dot *helmette.Dot) (map[string]an
 
 	select {
 	case res := <-g.outputCh:
-		var err error
-		if e, ok := res["err"]; ok && e != nil {
-			return nil, fmt.Errorf("%#v", e)
+		if err, ok := res["err"]; ok && err != nil {
+			return nil, fmt.Errorf("%#v", err)
 		}
-		return res["result"].(map[string]any), err
+		if m, ok := res["result"].(map[string]any); ok {
+			return m, nil
+		}
+		return nil, fmt.Errorf("unexpected return %#v", res)
 	case <-ctx.Done():
 		return nil, ctx.Err()
 	}
@@ -274,6 +278,11 @@ func (g *GoRunner) Run(ctx context.Context) error {
 	}
 
 	stdout, err := g.cmd.StdoutPipe()
+	if err != nil {
+		return err
+	}
+
+	stderr, err := g.cmd.StderrPipe()
 	if err != nil {
 		return err
 	}
@@ -294,12 +303,14 @@ func (g *GoRunner) Run(ctx context.Context) error {
 		}
 
 		if err := enc.Encode(in); err != nil {
-			return err
+			stderrout, _ := io.ReadAll(stderr)
+			return errors.Wrapf(err, "stderr: %s", stderrout)
 		}
 
 		var out map[string]any
 		if err := dec.Decode(&out); err != nil {
-			return err
+			stderrout, _ := io.ReadAll(stderr)
+			return errors.Wrapf(err, "stderr: %s", stderrout)
 		}
 
 		select {
