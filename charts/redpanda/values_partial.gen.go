@@ -177,7 +177,8 @@ type PartialPostUpgradeJob struct {
 }
 
 type PartialPodTemplate struct {
-	Labels map[string]string `json:"labels,omitempty"`
+	Labels      map[string]string `json:"labels,omitempty"`
+	Annotations map[string]string `json:"annotations,omitempty" jsonschema:"required"`
 }
 
 type PartialStatefulset struct {
@@ -186,10 +187,11 @@ type PartialStatefulset struct {
 	UpdateStrategy struct {
 		Type *string `json:"type,omitempty" jsonschema:"required,pattern=^(RollingUpdate|OnDelete)$"`
 	} `json:"updateStrategy,omitempty" jsonschema:"required"`
-	AdditionalRedpandaCmdFlags []string            `json:"additionalRedpandaCmdFlags,omitempty"`
-	Annotations                map[string]string   `json:"annotations,omitempty" jsonschema:"required"`
-	PodTemplate                *PartialPodTemplate `json:"podTemplate,omitempty"`
-	Budget                     struct {
+	AdditionalRedpandaCmdFlags []string `json:"additionalRedpandaCmdFlags,omitempty"`
+
+	Annotations map[string]string   `json:"annotations,omitempty" jsonschema:"deprecated"`
+	PodTemplate *PartialPodTemplate `json:"podTemplate,omitempty"`
+	Budget      struct {
 		MaxUnavailable *int `json:"maxUnavailable,omitempty" jsonschema:"required"`
 	} `json:"budget,omitempty" jsonschema:"required"`
 	StartupProbe struct {

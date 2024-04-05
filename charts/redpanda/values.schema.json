@@ -1148,6 +1148,12 @@
         },
         "podTemplate": {
           "properties": {
+            "annotations": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
             "labels": {
               "additionalProperties": {
                 "type": "string"
@@ -1155,6 +1161,9 @@
               "type": "object"
             }
           },
+          "required": [
+            "annotations"
+          ],
           "type": "object"
         },
         "priorityClassName": {
@@ -1313,7 +1322,6 @@
       "required": [
         "replicas",
         "updateStrategy",
-        "annotations",
         "budget",
         "startupProbe",
         "livenessProbe",

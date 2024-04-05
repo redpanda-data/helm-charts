@@ -681,7 +681,7 @@ Additional flags to pass to redpanda,
 
 ### [statefulset.annotations](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.annotations)
 
-Additional annotations to apply to the Pods of this StatefulSet.
+DEPRECATED Please use statefulset.podTemplate.annotations. Annotations are used only for `Statefulset.spec.template.metadata.annotations`. The StatefulSet does not have any dedicated annotation.
 
 **Default:** `{}`
 
@@ -820,6 +820,12 @@ Valid anti-affinity types are `soft`, `hard`, or `custom`. Use `custom` if you w
 Weight for `soft` anti-affinity rules. Does not apply to other anti-affinity types.
 
 **Default:** `100`
+
+### [statefulset.podTemplate.annotations](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.podTemplate.annotations)
+
+Additional annotations to apply to the Pods of this StatefulSet.
+
+**Default:** `{}`
 
 ### [statefulset.podTemplate.labels](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.podTemplate.labels)
 
