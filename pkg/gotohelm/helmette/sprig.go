@@ -163,3 +163,13 @@ func MustFromJSON(data string) any {
 	}
 	return out
 }
+
+// Lower is the go equivalent of sprig's `lower`.
+func Lower(in string) string {
+	return strings.ToLower(in)
+}
+
+// Upper is the go equivalent of sprig's `upper`.
+func Upper(in string) string {
+	return strings.ToUpper(in)
+}

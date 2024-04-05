@@ -1,6 +1,8 @@
 package sprig
 
 import (
+	"strings"
+
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 )
 
@@ -15,6 +17,16 @@ func Sprig() map[string]any {
 	return map[string]any{
 		"empty":   empty(),
 		"default": default_(),
+		"strings": stringsFunctions(),
+	}
+}
+
+func stringsFunctions() []string {
+	return []string{
+		helmette.Lower("hello WORLD"),
+		helmette.Upper("hello WORLD"),
+		strings.ToLower("hello WORLD"),
+		strings.ToUpper("hello WORLD"),
 	}
 }
 
