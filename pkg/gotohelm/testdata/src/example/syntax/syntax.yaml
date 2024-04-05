@@ -1,0 +1,61 @@
+{{- /* Generated from "syntax.go" */ -}}
+
+{{- define "syntax.Syntax" -}}
+{{- range $_ := (list 1) -}}
+{{- $_ = 0 -}}
+{{- $_ = "" -}}
+{{- $_ = (dict ) -}}
+{{- $_ = (list ) -}}
+{{- $_ = `` -}}
+{{- $_ = true -}}
+{{- $_ = false -}}
+{{- $_ = (len "") -}}
+{{- $_ = (len (list )) -}}
+{{- $_ = (len (dict )) -}}
+{{- $_ := (get (fromJson (include "syntax.binaryExprs" (dict "a" (list ) ))) "r") -}}
+{{- $_ = (true) -}}
+{{- $_ = (mustSlice (list 1 2 3) 0) -}}
+{{- $_ = (mustSlice (list 1 2 3) 1) -}}
+{{- $_ = (mustSlice (list 1 2 3) 0 2) -}}
+{{- $_ = (mustSlice (list 1 2 3) 1 2) -}}
+{{- $_ = (mustSlice (list 1 2 3) 1 2 3) -}}
+{{- $_ = (substr 0 -1 "1234") -}}
+{{- $_ = (substr 1 -1 "1234") -}}
+{{- $_ = (substr 0 2 "1234") -}}
+{{- $_ = (substr 1 2 "1234") -}}
+{{- (dict "r" (dict )) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "syntax.binaryExprs" -}}
+{{- range $_ := (list 1) -}}
+{{- $_ = (mul 1 1) -}}
+{{- $_ = (add 1 1) -}}
+{{- $_ = (sub 1 1) -}}
+{{- $_ = (div 1 1) -}}
+{{- $_ = (eq 1 1) -}}
+{{- $_ = (ne 1 1) -}}
+{{- $_ = (mul (int 1) (int 1)) -}}
+{{- $_ = (add (int 1) (int 1)) -}}
+{{- $_ = (sub (int 1) (int 1)) -}}
+{{- $_ = (div (int 1) (int 1)) -}}
+{{- $_ = (eq (int 1) (int 1)) -}}
+{{- $_ = (ne (int 1) (int 1)) -}}
+{{- $_ = (mul (int 1) (int 1)) -}}
+{{- $_ = (add (int 1) (int 1)) -}}
+{{- $_ = (sub (int 1) (int 1)) -}}
+{{- $_ = (div (int 1) (int 1)) -}}
+{{- $_ = (eq (int 1) (int 1)) -}}
+{{- $_ = (ne (int 1) (int 1)) -}}
+{{- $_ = (mul (int64 1) (int64 1)) -}}
+{{- $_ = (add (int64 1) (int64 1)) -}}
+{{- $_ = (sub (int64 1) (int64 1)) -}}
+{{- $_ = (div (int64 1) (int64 1)) -}}
+{{- $_ = (eq (int64 1) (int64 1)) -}}
+{{- $_ = (ne (int64 1) (int64 1)) -}}
+{{- $_ = (eq (dict ) nil) -}}
+{{- $_ = (ne (dict ) nil) -}}
+{{- end -}}
+{{- end -}}
+

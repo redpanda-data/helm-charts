@@ -318,9 +318,51 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 	case *ast.BasicLit:
 		return &Literal{Value: n.Value}
 
+	case *ast.ParenExpr:
+		return &ParenExpr{Expr: t.transpileExpr(n.X)}
+
 	case *ast.StarExpr:
 		// TODO this should be wrapped in something like "Assert not nil"
 		return t.transpileExpr(n.X)
+
+	case *ast.SliceExpr:
+		target := t.transpileExpr(n.X)
+		low := t.transpileExpr(n.Low)
+		high := t.transpileExpr(n.High)
+		max := t.transpileExpr(n.Max)
+
+		// If low isn't specified it defaults to zero
+		if low == nil {
+			low = &Literal{Value: "0"}
+		}
+
+		// The builtin `slice` function from go would work great here but sprig
+		// overwrites it for some reason with a worse version.
+		if t.isString(n.X) {
+			// NB: Triple slicing a string (""[1:2:3]) isn't valid. No need to
+			// check .Max or .Slice3.
+
+			// Empty slicing a string (""[:]) is effectively a noop
+			if low == nil && high == nil {
+				return target
+			}
+
+			// Sprig's substring will run [start:] if end is < 0.
+			if high == nil {
+				high = &Literal{Value: "-1"}
+			}
+
+			return &BuiltInCall{FuncName: "substr", Arguments: []Node{low, high, target}}
+		}
+
+		args := []Node{target, low}
+		if high != nil {
+			args = append(args, high)
+		}
+		if n.Slice3 && n.Max != nil {
+			args = append(args, max)
+		}
+		return &BuiltInCall{FuncName: "mustSlice", Arguments: args}
 
 	case *ast.CompositeLit:
 		typ := t.typeOf(n)
@@ -441,20 +483,32 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 
 		// Poor man's pattern matching :[
 		mapping := map[[3]string]string{
-			{"_", token.EQL.String(), "_"}:             "eq",
-			{"_", token.NEQ.String(), "_"}:             "ne",
-			{"_", token.LAND.String(), "_"}:            "and",
-			{"_", token.LOR.String(), "_"}:             "or",
-			{"_", token.GTR.String(), "_"}:             "gt",
-			{"_", token.LSS.String(), "_"}:             "lt",
-			{"_", token.GEQ.String(), "_"}:             "gte",
-			{"_", token.LEQ.String(), "_"}:             "lte",
-			{"int", token.ADD.String(), "int"}:         "add",
-			{"int", token.SUB.String(), "int"}:         "sub",
-			{"int", token.MUL.String(), "int"}:         "mul",
-			{"int", token.QUO.String(), "int"}:         "div",
-			{"float32", token.QUO.String(), "float32"}: "divf",
-			{"float64", token.QUO.String(), "float64"}: "divf",
+			{"_", token.EQL.String(), "_"}:                     "eq",
+			{"_", token.NEQ.String(), "_"}:                     "ne",
+			{"_", token.LAND.String(), "_"}:                    "and",
+			{"_", token.LOR.String(), "_"}:                     "or",
+			{"_", token.GTR.String(), "_"}:                     "gt",
+			{"_", token.LSS.String(), "_"}:                     "lt",
+			{"_", token.GEQ.String(), "_"}:                     "gte",
+			{"_", token.LEQ.String(), "_"}:                     "lte",
+			{"float32", token.QUO.String(), "float32"}:         "divf",
+			{"float64", token.QUO.String(), "float64"}:         "divf",
+			{"int", token.ADD.String(), "int"}:                 "add",
+			{"int", token.SUB.String(), "int"}:                 "sub",
+			{"int", token.MUL.String(), "int"}:                 "mul",
+			{"int", token.QUO.String(), "int"}:                 "div",
+			{"int32", token.ADD.String(), "int32"}:             "add",
+			{"int32", token.SUB.String(), "int32"}:             "sub",
+			{"int32", token.MUL.String(), "int32"}:             "mul",
+			{"int32", token.QUO.String(), "int32"}:             "div",
+			{"int64", token.ADD.String(), "int64"}:             "add",
+			{"int64", token.SUB.String(), "int64"}:             "sub",
+			{"int64", token.MUL.String(), "int64"}:             "mul",
+			{"int64", token.QUO.String(), "int64"}:             "div",
+			{"untyped int", token.ADD.String(), "untyped int"}: "add",
+			{"untyped int", token.SUB.String(), "untyped int"}: "sub",
+			{"untyped int", token.MUL.String(), "untyped int"}: "mul",
+			{"untyped int", token.QUO.String(), "untyped int"}: "div",
 		}
 
 		// Typed versions take precedence.
@@ -472,6 +526,12 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 				Arguments: []Node{t.transpileExpr(n.X), t.transpileExpr(n.Y)},
 			}
 		}
+
+		panic(&Unsupported{
+			Node: n,
+			Fset: t.Fset,
+			Msg:  fmt.Sprintf(`No matching %T signature for %v or %v`, n, typed, untyped),
+		})
 
 		// TODO re-add suport for rewriting str + str into printf "%s%s". For
 		// now its easier to just require writers to use printf
@@ -556,10 +616,14 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 			return &BuiltInCall{FuncName: "mustAppend", Arguments: args}
 		case "int", "int32":
 			return &BuiltInCall{FuncName: "int", Arguments: args}
+		case "int64":
+			return &BuiltInCall{FuncName: "int64", Arguments: args}
 		case "panic":
 			return &BuiltInCall{FuncName: "fail", Arguments: args}
 		case "string":
 			return &BuiltInCall{FuncName: "toString", Arguments: args}
+		case "len":
+			return &BuiltInCall{FuncName: "len", Arguments: args}
 		default:
 			panic(fmt.Sprintf("unsupport golang builtin %q", n.Fun.(*ast.Ident).Name))
 		}

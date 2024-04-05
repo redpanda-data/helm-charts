@@ -16,6 +16,7 @@ import (
 	"example.com/example/labels"
 	"example.com/example/mutability"
 	"example.com/example/sprig"
+	"example.com/example/syntax"
 	"example.com/example/typing"
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 )
@@ -106,6 +107,11 @@ func runChart(dot *helmette.Dot) (_ map[string]any, err any) {
 	case "changing_inputs":
 		return map[string]any{
 			"ChangingInputs": changing_inputs.ChangingInputs(dot),
+		}, nil
+
+	case "syntax":
+		return map[string]any{
+			"Syntax": syntax.Syntax(),
 		}, nil
 
 	default:
