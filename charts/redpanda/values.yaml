@@ -219,6 +219,8 @@ tls:
       # that are not authenticated using public authorities.
       caEnabled: true
       # duration: 43800h
+      # if you wish to have Kubernetes internal dns names (IE the headless service of the redpanda StatefulSet) included in `dnsNames` of the  certificate even, when supplying an issuer.
+      # applyInternalDNSNames: false
     # -- Example external tls configuration
     # uncomment and set the right key to the listeners that require them
     # also enable the tls setting for those listeners.
@@ -235,6 +237,8 @@ tls:
       # that are not authenticated using public authorities.
       caEnabled: true
       # duration: 43800h
+      # if you wish to for apply internal dns names to the certificate even when supplying an issuer
+      # applyInternalDNSNames: false
 
 # -- External access settings.
 # For details,

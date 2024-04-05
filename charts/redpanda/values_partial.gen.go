@@ -355,9 +355,10 @@ type PartialPandaProxyClient struct {
 }
 
 type PartialTLSCert struct {
-	CAEnabled *bool   `json:"caEnabled,omitempty" jsonschema:"required"`
-	Duration  *string `json:"duration,omitempty" jsonschema:"pattern=.*[smh]$"`
-	IssuerRef struct {
+	CAEnabled             *bool   `json:"caEnabled,omitempty" jsonschema:"required"`
+	Duration              *string `json:"duration,omitempty" jsonschema:"pattern=.*[smh]$"`
+	ApplyInternalDNSNames *bool   `json:"applyInternalDNSNames,omitempty"`
+	IssuerRef             struct {
 		Name *string        `json:"name,omitempty"`
 		Kind *IssuerRefKind `json:"kind,omitempty"`
 	} `json:"issuerRef,omitempty"`

@@ -10,7 +10,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.38
+    helm.sh/chart: redpanda-5.7.39
     testlabel: exercise_common_labels_template
 spec:
   maxUnavailable: 1
@@ -46,7 +46,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.38
+    helm.sh/chart: redpanda-5.7.39
     testlabel: exercise_common_labels_template
 type: Opaque
 stringData:
@@ -142,7 +142,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.38
+    helm.sh/chart: redpanda-5.7.39
     testlabel: exercise_common_labels_template
 type: Opaque
 stringData:
@@ -173,7 +173,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.38
+    helm.sh/chart: redpanda-5.7.39
     testlabel: exercise_common_labels_template
 type: Opaque
 stringData:
@@ -221,7 +221,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.38
+    helm.sh/chart: redpanda-5.7.39
     testlabel: exercise_common_labels_template
 data: 
   
@@ -355,7 +355,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.38
+    helm.sh/chart: redpanda-5.7.39
     testlabel: exercise_common_labels_template
 data:
   profile: | 
@@ -438,7 +438,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.38
+    helm.sh/chart: redpanda-5.7.39
     testlabel: exercise_common_labels_template
 spec:
   type: ClusterIP
@@ -482,7 +482,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.38
+    helm.sh/chart: redpanda-5.7.39
     testlabel: exercise_common_labels_template
 spec:
   type: NodePort
@@ -601,7 +601,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.38
+    helm.sh/chart: redpanda-5.7.39
     testlabel: exercise_common_labels_template
 spec:
   selector:
@@ -883,6 +883,19 @@ spec:
 # for now only if we have a license do we print, however, this may be an issue for some
 # since if we do include a license we MUST also print all secret items.
 ---
+# Source: redpanda/templates/some-users-updated.yaml
+apiVersion: v1
+data:
+  updated-sasl-users.txt: YWRtaW46YmFkcGFzc3dvcmQ6U0NSQU0tU0hBLTI1Ngp1c2VyMTpwYXNzMTpTQ1JBTS1TSEEtNTEyCnNvbWV1c2VyOkFCQzEyMzpTQ1JBTS1TSEEtNTEyCmFub3RoZXJtZToyNzg0YTpTQ1JBTS1TSEEtMjU2CmFub3RoZXJhbm90aGVybWU6Mjc4NGFibGFoOlNDUkFNLVNIQS01MTIK
+kind: Secret
+metadata:
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation
+    helm.sh/hook-weight: "100"
+  creationTimestamp: null
+  name: some-users
+---
 # Source: redpanda/charts/console/templates/tests/test-connection.yaml
 apiVersion: v1
 kind: Pod
@@ -917,7 +930,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.38
+    helm.sh/chart: redpanda-5.7.39
     testlabel: exercise_common_labels_template
   annotations:
     # This is what defines this resource as a hook. Without this line, the
@@ -990,7 +1003,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.38
+    helm.sh/chart: redpanda-5.7.39
     testlabel: exercise_common_labels_template
   annotations:
     "helm.sh/hook": post-upgrade
