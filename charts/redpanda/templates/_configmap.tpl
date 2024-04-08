@@ -368,7 +368,7 @@ redpanda.yaml: |
 {{- with $root.tempConfigMapServerList }}
     seed_servers: {{ toYaml . | nindent 6 }}
 {{- end }}
-{{- if and (include "is-licensed" . | fromJson).bool (include "storage-tiered-config" .|fromJson).cloud_storage_enabled }}
+{{- if (include "storage-tiered-config" .|fromJson).cloud_storage_enabled }}
   {{- $tieredStorageConfig := (include "storage-tiered-config" .|fromJson) }}
   {{- if not (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
     {{- $tieredStorageConfig = unset $tieredStorageConfig "cloud_storage_credentials_source" }}
