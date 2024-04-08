@@ -11,7 +11,7 @@ exitCode=0
 for file in ${FILES}/*
 do
  echo verifying file: ${file}
- if [[ $file == *-values.yaml ]] || [[ $file == *-values.yaml.tpl ]]; then
+ if [[ $file == *-values.yaml ]] || [[ $file == *-values.yaml.tpl ]] || [[ $file == *-novalues.yaml.tpl ]] ; then
    continue
  else
    echo "- file does not match neither suffix '-values.yaml' nor -values.yaml.tpl'"
