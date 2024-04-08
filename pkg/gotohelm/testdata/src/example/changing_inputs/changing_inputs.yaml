@@ -10,7 +10,7 @@
 {{- $_ := (set $dot.Values $k "change that") -}}
 {{- end -}}
 {{- end -}}
-{{- (dict "r" nil) | toJson -}}
+{{- (dict "r" (coalesce nil)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

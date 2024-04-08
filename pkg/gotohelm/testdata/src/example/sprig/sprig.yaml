@@ -50,14 +50,14 @@
 {{- $defaultStr := "DEFAULT" -}}
 {{- $defaultInt := 1234 -}}
 {{- $defaultStrSlice := (list $defaultStr) -}}
-{{- (dict "r" (list (default "" $defaultStr) (default "value" $defaultStr) (default nil $defaultStrSlice) (default (list ) $defaultStrSlice) (default 0 $defaultInt) (default 1 $defaultInt))) | toJson -}}
+{{- (dict "r" (list (default "" $defaultStr) (default "value" $defaultStr) (default (coalesce nil) $defaultStrSlice) (default (list ) $defaultStrSlice) (default 0 $defaultInt) (default 1 $defaultInt))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
 
 {{- define "sprig.empty" -}}
 {{- range $_ := (list 1) -}}
-{{- (dict "r" (list (empty nil) (empty (list )) (empty (list "")) (empty (dict )) (empty (dict "key" nil )) (empty 1) (empty 0) (empty false) (empty true) (empty "") (empty "hello") (empty (mustMergeOverwrite (dict "Value" 0 ) (dict ))) (empty (mustMergeOverwrite (dict "Value" 0 ) (dict "Value" 0 ))) (empty (mustMergeOverwrite (dict "Value" 0 ) (dict "Value" 1 ))))) | toJson -}}
+{{- (dict "r" (list (empty (coalesce nil)) (empty (list )) (empty (list "")) (empty (dict )) (empty (dict "key" (coalesce nil) )) (empty 1) (empty 0) (empty false) (empty true) (empty "") (empty "hello") (empty (mustMergeOverwrite (dict "Value" 0 ) (dict ))) (empty (mustMergeOverwrite (dict "Value" 0 ) (dict "Value" 0 ))) (empty (mustMergeOverwrite (dict "Value" 0 ) (dict "Value" 1 ))))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
