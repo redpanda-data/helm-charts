@@ -32,7 +32,15 @@ func (s *Selector) Write(w io.Writer) {
 type Nil struct{}
 
 func (*Nil) Write(w io.Writer) {
-	w.Write([]byte(`(fromJson "null")`))
+	// nil is strange for some reason, in many cases it's acceptable to just
+	// have `nil` but in others, you'll get `nil is not a command` errors.
+	// {{ $_ := nil }} Doesn't work
+	// {{ $_ := (eq nil nil) }} Works
+	// It's too difficult to inspect all the cases and use nil in some but not
+	// others, instead wrap nil in a function that just returns nil.
+	// (fromJSON "null") doesn't work quite as expected but coalesce seems to
+	// do the trick.
+	w.Write([]byte(`(coalesce nil)`))
 }
 
 type Statement struct {
