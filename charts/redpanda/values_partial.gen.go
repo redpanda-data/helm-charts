@@ -395,8 +395,9 @@ type PartialAdminListeners struct {
 }
 
 type PartialAdminExternal struct {
-	AdvertisedPorts []int `json:"advertisedPorts,omitempty" jsonschema:"minItems=1"`
-	Enabled         *bool `json:"enabled,omitempty"`
+	AdvertisedPorts []int32 `json:"advertisedPorts,omitempty" jsonschema:"minItems=1"`
+	Enabled         *bool   `json:"enabled,omitempty"`
+	Port            *int32  `json:"port,omitempty" jsonschema:"required"`
 }
 
 type PartialHTTPListeners struct {
@@ -409,9 +410,9 @@ type PartialHTTPListeners struct {
 }
 
 type PartialHTTPExternal struct {
-	AdvertisedPorts      []int               `json:"advertisedPorts,omitempty" jsonschema:"minItems=1"`
+	AdvertisedPorts      []int32             `json:"advertisedPorts,omitempty" jsonschema:"minItems=1"`
 	Enabled              *bool               `json:"enabled,omitempty"`
-	Port                 *int                `json:"port,omitempty" jsonschema:"required"`
+	Port                 *int32              `json:"port,omitempty" jsonschema:"required"`
 	AuthenticationMethod *string             `json:"authenticationMethod,omitempty" jsonschema:"pattern=http_basic|none,oneof_type=string;null"`
 	PrefixTemplate       *string             `json:"prefixTemplate,omitempty"`
 	TLS                  *PartialExternalTLS `json:"tls,omitempty" jsonschema:"required"`
@@ -425,9 +426,9 @@ type PartialKafkaListeners struct {
 }
 
 type PartialKafkaExternal struct {
-	AdvertisedPorts      []int   `json:"advertisedPorts,omitempty" jsonschema:"minItems=1"`
+	AdvertisedPorts      []int32 `json:"advertisedPorts,omitempty" jsonschema:"minItems=1"`
 	Enabled              *bool   `json:"enabled,omitempty"`
-	Port                 *int    `json:"port,omitempty" jsonschema:"required"`
+	Port                 *int32  `json:"port,omitempty" jsonschema:"required"`
 	AuthenticationMethod *string `json:"authenticationMethod,omitempty" jsonschema:"pattern=sasl|none|mtls_identity,oneof_type=string;null"`
 	PrefixTemplate       *string `json:"prefixTemplate,omitempty"`
 }
@@ -442,9 +443,9 @@ type PartialSchemaRegistryListeners struct {
 }
 
 type PartialSchemaRegistryExternal struct {
-	AdvertisedPorts      []int               `json:"advertisedPorts,omitempty" jsonschema:"minItems=1"`
+	AdvertisedPorts      []int32             `json:"advertisedPorts,omitempty" jsonschema:"minItems=1"`
 	Enabled              *bool               `json:"enabled,omitempty"`
-	Port                 *int                `json:"port,omitempty"`
+	Port                 *int32              `json:"port,omitempty"`
 	AuthenticationMethod *string             `json:"authenticationMethod,omitempty" jsonschema:"pattern=http_basic|none,oneof_type=string;null"`
 	TLS                  *PartialExternalTLS `json:"tls,omitempty"`
 }

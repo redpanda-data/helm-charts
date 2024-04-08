@@ -460,8 +460,9 @@ type AdminListeners struct {
 }
 
 type AdminExternal struct {
-	AdvertisedPorts []int `json:"advertisedPorts" jsonschema:"minItems=1"`
-	Enabled         bool  `json:"enabled"`
+	AdvertisedPorts []int32 `json:"advertisedPorts" jsonschema:"minItems=1"`
+	Enabled         *bool   `json:"enabled"`
+	Port            int32   `json:"port" jsonschema:"required"`
 }
 
 type HTTPListeners struct {
@@ -474,9 +475,9 @@ type HTTPListeners struct {
 }
 
 type HTTPExternal struct {
-	AdvertisedPorts      []int        `json:"advertisedPorts" jsonschema:"minItems=1"`
-	Enabled              bool         `json:"enabled"`
-	Port                 int          `json:"port" jsonschema:"required"`
+	AdvertisedPorts      []int32      `json:"advertisedPorts" jsonschema:"minItems=1"`
+	Enabled              *bool        `json:"enabled"`
+	Port                 int32        `json:"port" jsonschema:"required"`
 	AuthenticationMethod *string      `json:"authenticationMethod" jsonschema:"pattern=http_basic|none,oneof_type=string;null"`
 	PrefixTemplate       string       `json:"prefixTemplate"`
 	TLS                  *ExternalTLS `json:"tls" jsonschema:"required"`
@@ -490,9 +491,9 @@ type KafkaListeners struct {
 }
 
 type KafkaExternal struct {
-	AdvertisedPorts      []int   `json:"advertisedPorts" jsonschema:"minItems=1"`
-	Enabled              bool    `json:"enabled"`
-	Port                 int     `json:"port" jsonschema:"required"`
+	AdvertisedPorts      []int32 `json:"advertisedPorts" jsonschema:"minItems=1"`
+	Enabled              *bool   `json:"enabled"`
+	Port                 int32   `json:"port" jsonschema:"required"`
 	AuthenticationMethod *string `json:"authenticationMethod" jsonschema:"pattern=sasl|none|mtls_identity,oneof_type=string;null"`
 	PrefixTemplate       string  `json:"prefixTemplate"`
 }
@@ -507,9 +508,9 @@ type SchemaRegistryListeners struct {
 }
 
 type SchemaRegistryExternal struct {
-	AdvertisedPorts      []int        `json:"advertisedPorts" jsonschema:"minItems=1"`
-	Enabled              bool         `json:"enabled"`
-	Port                 int          `json:"port"`
+	AdvertisedPorts      []int32      `json:"advertisedPorts" jsonschema:"minItems=1"`
+	Enabled              *bool        `json:"enabled"`
+	Port                 int32        `json:"port"`
 	AuthenticationMethod *string      `json:"authenticationMethod" jsonschema:"pattern=http_basic|none,oneof_type=string;null"`
 	TLS                  *ExternalTLS `json:"tls"`
 }

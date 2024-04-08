@@ -205,19 +205,6 @@ Use AppVersion if image.tag is not set
   {{- $result -}}
 {{- end -}}
 
-{{- define "external-nodeport-enabled" -}}
-{{- $values := .Values -}}
-{{- $enabled := and .Values.external.enabled (eq .Values.external.type "NodePort") -}}
-{{- range $listener := .Values.listeners -}}
-  {{- range $external := $listener.external -}}
-    {{- if and (dig "enabled" false $external) (eq (dig "type" $values.external.type $external) "NodePort") -}}
-      {{- $enabled = true -}}
-    {{- end -}}
-  {{- end -}}
-{{- end -}}
-{{- toJson (dict "bool" $enabled) -}}
-{{- end -}}
-
 {{- define "external-loadbalancer-enabled" -}}
 {{- $values := .Values -}}
 {{- $enabled := and .Values.external.enabled (eq .Values.external.type "LoadBalancer") -}}

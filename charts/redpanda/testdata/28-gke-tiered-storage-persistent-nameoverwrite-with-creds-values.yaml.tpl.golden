@@ -625,44 +625,52 @@ spec:
       port: 8081
       targetPort: 8081
 ---
-# Source: redpanda/templates/services.nodeport.yaml
+# Source: redpanda/templates/service.nodeport.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: redpanda-external
-  namespace: "default"
+  annotations: {}
+  creationTimestamp: null
   labels:
     app.kubernetes.io/component: redpanda
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
     helm.sh/chart: redpanda-5.7.39
+  name: redpanda-external
+  namespace: default
 spec:
-  type: NodePort
-  publishNotReadyAddresses: true
   externalTrafficPolicy: Local
-  sessionAffinity: None
   ports:
-    - name: admin-default
-      protocol: TCP
-      port: 9645
-      nodePort: 31644
-    - name: kafka-default
-      protocol: TCP
-      port: 9094
-      nodePort: 31092
-    - name: http-default
-      protocol: TCP
-      port: 8083
-      nodePort: 30082
-    - name: schema-default
-      protocol: TCP
-      port: 8084
-      nodePort: 30081
-  selector: 
+  - name: admin-default
+    nodePort: 31644
+    port: 9645
+    protocol: TCP
+    targetPort: 0
+  - name: kafka-default
+    nodePort: 31092
+    port: 9094
+    protocol: TCP
+    targetPort: 0
+  - name: http-default
+    nodePort: 30082
+    port: 8083
+    protocol: TCP
+    targetPort: 0
+  - name: schema-default
+    nodePort: 30081
+    port: 8084
+    protocol: TCP
+    targetPort: 0
+  publishNotReadyAddresses: true
+  selector:
     app.kubernetes.io/component: redpanda-statefulset
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/name: redpanda
+  sessionAffinity: None
+  type: NodePort
+status:
+  loadBalancer: {}
 ---
 # Source: redpanda/templates/console/configmap-and-deployment.yaml
 apiVersion: apps/v1
