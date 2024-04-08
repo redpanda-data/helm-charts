@@ -54,7 +54,7 @@ spec:
         - |
           set -e
 {{- $cloudStorageFlags := "" }}
-{{- if and (include "is-licensed" . | fromJson).bool (include "storage-tiered-config" .|fromJson).cloud_storage_enabled }}
+{{- if (include "storage-tiered-config" .|fromJson).cloud_storage_enabled }}
   {{- $cloudStorageFlags = "-c retention.bytes=80 -c segment.bytes=40 -c redpanda.remote.read=true -c redpanda.remote.write=true"}}
 {{- end }}
 {{- if .Values.auth.sasl.enabled }}

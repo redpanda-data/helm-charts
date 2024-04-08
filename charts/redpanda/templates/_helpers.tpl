@@ -848,7 +848,7 @@ REDPANDA_SASL_USERNAME REDPANDA_SASL_PASSWORD REDPANDA_SASL_MECHANISM
 {{- define "tiered-storage-env-vars" -}}
     {{- $config := (include "storage-tiered-config" . | fromJson) -}}
     [
-        {{- if and (include "is-licensed" . | fromJson).bool (dig "cloud_storage_enabled" false $config) -}}
+        {{- if dig "cloud_storage_enabled" false $config -}}
             {{include "secret-ref-or-value" (dict
                 "Name" "RPK_CLOUD_STORAGE_SECRET_KEY"
                 "Value" (dig "cloud_storage_secret_key" nil $config)
