@@ -10,10 +10,10 @@
 
 {{- define "typing.zeros" -}}
 {{- range $_ := (list 1) -}}
-{{- $number := (fromJson "null") -}}
-{{- $str := (fromJson "null") -}}
-{{- $stru := (fromJson "null") -}}
-{{- (dict "r" (list (mustMergeOverwrite (dict "Key" "" "with_tag" 0 ) (dict )) (mustMergeOverwrite (mustMergeOverwrite (dict "Key" "" "with_tag" 0 ) (dict "Nilable" (fromJson "null") )) (dict )) $number $str $stru)) | toJson -}}
+{{- $number := (coalesce nil) -}}
+{{- $str := (coalesce nil) -}}
+{{- $stru := (coalesce nil) -}}
+{{- (dict "r" (list (mustMergeOverwrite (dict "Key" "" "with_tag" 0 ) (dict )) (mustMergeOverwrite (mustMergeOverwrite (dict "Key" "" "with_tag" 0 ) (dict "Nilable" (coalesce nil) )) (dict )) $number $str $stru)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -35,7 +35,7 @@
 
 {{- define "typing.alsoMe" -}}
 {{- range $_ := (list 1) -}}
-{{- (dict "r" (mustMergeOverwrite (mustMergeOverwrite (dict "Key" "" "with_tag" 0 ) (dict "Nilable" (fromJson "null") )) (mustMergeOverwrite (dict "Key" "" "with_tag" 0 ) (dict "Key" "Foo" )) (dict ))) | toJson -}}
+{{- (dict "r" (mustMergeOverwrite (mustMergeOverwrite (dict "Key" "" "with_tag" 0 ) (dict "Nilable" (coalesce nil) )) (mustMergeOverwrite (dict "Key" "" "with_tag" 0 ) (dict "Key" "Foo" )) (dict ))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
