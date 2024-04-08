@@ -1,5 +1,14 @@
 package syntax
 
+import (
+	corev1 "k8s.io/api/core/v1"
+)
+
+const (
+	AStrConst  = "1234"
+	AnIntConst = 1234
+)
+
 // Syntax only returns an empty map but it contains a variety of go syntax to
 // assert that the transpiler doesn't crash upon seeing it.
 // Notably: Syntax DOES NOT check for correctness.
@@ -34,6 +43,13 @@ func Syntax() map[string]any {
 	_ = "1234"[1:]
 	_ = "1234"[:2]
 	_ = "1234"[1:2]
+
+	// Ident
+	_ = AStrConst  // A reference to a string constant
+	_ = AnIntConst // A reference to an int constant
+
+	// SelectorExpr
+	_ = corev1.IPv4Protocol // A reference to an imported constant
 
 	return map[string]any{}
 }

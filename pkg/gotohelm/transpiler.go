@@ -448,19 +448,63 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 		return t.transpileCallExpr(n)
 
 	case *ast.Ident:
+		switch obj := t.TypesInfo.ObjectOf(n).(type) {
+		case *types.Const:
+			// We could include definitions to constants and then reference
+			// them. For now, it's easier to turn constants into their
+			// definitions.
+			return &Literal{
+				Value: obj.Val().ExactString(),
+			}
+
+		case *types.Nil:
+			return &Nil{}
+
+		case *types.Var:
+			return &Ident{Name: obj.Name()}
+
 		// Unclear how often this check is correct. true, false, and _ won't
 		// have an Obj. AST rewriting can also result in .Obj being nil.
-		if n.Obj == nil {
+		case nil:
 			if n.Name == "_" {
 				return &Ident{Name: n.Name}
 			}
 			return &Literal{Value: n.Name}
+
+		default:
+			panic(&Unsupported{
+				Node: n,
+				Fset: t.Fset,
+				Msg:  "Unsupported *ast.Ident",
+			})
 		}
 
-		return &Ident{Name: n.Name}
-
 	case *ast.SelectorExpr:
-		if s, ok := unwrapStruct(t.typeOf(n.X)); ok {
+		switch obj := t.TypesInfo.ObjectOf(n.Sel).(type) {
+		case *types.Const:
+			// We could include definitions to constants and then reference
+			// them. For now, it's easier to turn constants into their
+			// definitions.
+			return &Literal{
+				Value: obj.Val().ExactString(),
+			}
+
+		case *types.Func:
+			// TODO this needs better documentation
+			// And probably needs a more aggressive check.
+			return &Selector{
+				Expr:  t.transpileExpr(n.X),
+				Field: n.Sel.Name,
+			}
+
+		case *types.Var:
+			// If our selector is a variable, we're probably accessing a field
+			// on a struct.
+			s, ok := unwrapStruct(t.typeOf(n.X))
+			if !ok {
+				break
+			}
+
 			for _, f := range getFields(s) {
 				if f.Field.Name() == n.Sel.Name {
 					return &Selector{
@@ -471,11 +515,11 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 			}
 		}
 
-		// TODO when would this ever get hit?
-		return &Selector{
-			Expr:  t.transpileExpr(n.X),
-			Field: n.Sel.Name,
-		}
+		panic(&Unsupported{
+			Node: n,
+			Fset: t.Fset,
+			Msg:  fmt.Sprintf("%T", t.TypesInfo.ObjectOf(n.Sel)),
+		})
 
 	case *ast.BinaryExpr:
 		untyped := [3]string{"_", n.Op.String(), "_"}
