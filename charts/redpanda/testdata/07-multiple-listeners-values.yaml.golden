@@ -624,68 +624,82 @@ spec:
       port: 8081
       targetPort: 8081
 ---
-# Source: redpanda/templates/services.nodeport.yaml
+# Source: redpanda/templates/service.nodeport.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: redpanda-external
-  namespace: "default"
+  annotations: {}
+  creationTimestamp: null
   labels:
     app.kubernetes.io/component: redpanda
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
     helm.sh/chart: redpanda-5.7.39
+  name: redpanda-external
+  namespace: default
 spec:
-  type: NodePort
-  publishNotReadyAddresses: true
   externalTrafficPolicy: Local
-  sessionAffinity: None
   ports:
-    - name: admin-default
-      protocol: TCP
-      port: 9645
-      nodePort: 31644
-    - name: kafka-default
-      protocol: TCP
-      port: 9094
-      nodePort: 31092
-    - name: kafka-ext2
-      protocol: TCP
-      port: 19094
-      nodePort: 31292
-    - name: kafka-ext3
-      protocol: TCP
-      port: 29094
-      nodePort: 31392
-    - name: http-default
-      protocol: TCP
-      port: 8083
-      nodePort: 30082
-    - name: http-ext2
-      protocol: TCP
-      port: 18083
-      nodePort: 30183
-    - name: http-ext3
-      protocol: TCP
-      port: 28083
-      nodePort: 30283
-    - name: schema-default
-      protocol: TCP
-      port: 8084
-      nodePort: 30081
-    - name: schema-ext2
-      protocol: TCP
-      port: 18081
-      nodePort: 30181
-    - name: schema-ext3
-      protocol: TCP
-      port: 28081
-      nodePort: 30281
-  selector: 
+  - name: admin-default
+    nodePort: 31644
+    port: 9645
+    protocol: TCP
+    targetPort: 0
+  - name: kafka-default
+    nodePort: 31092
+    port: 9094
+    protocol: TCP
+    targetPort: 0
+  - name: kafka-ext2
+    nodePort: 31292
+    port: 19094
+    protocol: TCP
+    targetPort: 0
+  - name: kafka-ext3
+    nodePort: 31392
+    port: 29094
+    protocol: TCP
+    targetPort: 0
+  - name: http-default
+    nodePort: 30082
+    port: 8083
+    protocol: TCP
+    targetPort: 0
+  - name: http-ext2
+    nodePort: 30183
+    port: 18083
+    protocol: TCP
+    targetPort: 0
+  - name: http-ext3
+    nodePort: 30283
+    port: 28083
+    protocol: TCP
+    targetPort: 0
+  - name: schema-default
+    nodePort: 30081
+    port: 8084
+    protocol: TCP
+    targetPort: 0
+  - name: schema-ext2
+    nodePort: 30181
+    port: 18081
+    protocol: TCP
+    targetPort: 0
+  - name: schema-ext3
+    nodePort: 30281
+    port: 28081
+    protocol: TCP
+    targetPort: 0
+  publishNotReadyAddresses: true
+  selector:
     app.kubernetes.io/component: redpanda-statefulset
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/name: redpanda
+  sessionAffinity: None
+  type: NodePort
+status:
+  loadBalancer: {}
 ---
 # Source: redpanda/templates/console/configmap-and-deployment.yaml
 apiVersion: apps/v1
