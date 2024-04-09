@@ -108,13 +108,14 @@ spec:
                 status.storage.replication.factor={{ .Values.connectors.storage.replicationFactor.status }}
                 producer.linger.ms={{ .Values.connectors.producerLingerMS }}
                 producer.batch.size={{ .Values.connectors.producerBatchSize }}
-                config.providers=file,secretsManager
+                config.providers=file,secretsManager,env
                 config.providers.file.class=org.apache.kafka.common.config.provider.FileConfigProvider
                 {{- if .Values.connectors.secretManager.enabled }}
                 config.providers.secretsManager.class=com.github.jcustenborder.kafka.config.aws.SecretsManagerConfigProvider
                 config.providers.secretsManager.param.secret.prefix={{ .Values.connectors.secretManager.consolePrefix }}{{ .Values.connectors.secretManager.connectorsPrefix }}
                 config.providers.secretsManager.param.aws.region={{ .Values.connectors.secretManager.region }}
                 {{- end }}
+                config.providers.env.class=org.apache.kafka.common.config.provider.EnvVarConfigProvider
             - name: CONNECT_ADDITIONAL_CONFIGURATION
               value: {{ .Values.connectors.additionalConfiguration | quote }}
             - name: CONNECT_BOOTSTRAP_SERVERS
@@ -152,6 +153,10 @@ spec:
               value: {{ printf "key/%s" (default "tls.key" .Values.connectors.brokerTLS.key.secretNameOverwrite) }}
             {{- end }}
             {{- with .Values.deployment.extraEnv }}
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+          envFrom:
+            {{- with .Values.deployment.extraEnvFrom }}
               {{- toYaml . | nindent 12 }}
             {{- end }}
           livenessProbe:
