@@ -208,6 +208,13 @@ deployment:
   # - name: RACK_ID
   #   value: "1"
 
+  # -- Configure extra environment variables from Secrets and ConfigMaps.
+  extraEnvFrom: []
+  # - secretRef: 
+  #     name: my-secret
+  # - configMapRef:
+  #     name: my-configmap
+
   # -- The maximum time in seconds for a deployment to make progress before it is
   # considered to be failed. The deployment controller will continue to process
   # failed deployments and a condition with a ProgressDeadlineExceeded reason
