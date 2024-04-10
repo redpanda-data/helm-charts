@@ -1,16 +1,30 @@
 {{- /* Generated from "k8s.go" */ -}}
 
-{{- define "k8s.Pod" -}}
+{{- define "k8s.K8s" -}}
+{{- range $_ := (list 1) -}}
+{{- (dict "r" (dict "Objects" (list (get (fromJson (include "k8s.pod" (dict "a" (list ) ))) "r") (get (fromJson (include "k8s.pdb" (dict "a" (list ) ))) "r") (get (fromJson (include "k8s.service" (dict "a" (list ) ))) "r")) "intstr" (list 10 11 "12") )) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "k8s.pod" -}}
 {{- range $_ := (list 1) -}}
 {{- (dict "r" (mustMergeOverwrite (mustMergeOverwrite (dict ) (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) "spec" (dict "containers" (coalesce nil) ) "status" (dict ) )) (mustMergeOverwrite (dict ) (dict "apiVersion" "v1" "kind" "Pod" )) (dict "metadata" (mustMergeOverwrite (dict "creationTimestamp" (coalesce nil) ) (dict "namespace" "spacename" "name" "eman" )) ))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
 
-{{- define "k8s.PDB" -}}
+{{- define "k8s.pdb" -}}
 {{- range $_ := (list 1) -}}
 {{- $minAvail := 3 -}}
-{{- (dict "r" (mustMergeOverwrite (mustMergeOverwrite (dict ) (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) "spec" (dict ) "status" (dict "disruptionsAllowed" 0 "currentHealthy" 0 "desiredHealthy" 0 "expectedPods" 0 ) )) (mustMergeOverwrite (dict ) (dict "apiVersion" "v1" "kind" "PodDisruptionBudget" )) (dict "spec" (mustMergeOverwrite (dict ) (dict "minAvailable" $minAvail )) ))) | toJson -}}
+{{- (dict "r" (mustMergeOverwrite (mustMergeOverwrite (dict ) (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) "spec" (dict ) "status" (dict "disruptionsAllowed" 0 "currentHealthy" 0 "desiredHealthy" 0 "expectedPods" 0 ) )) (mustMergeOverwrite (dict ) (dict "apiVersion" "policyv1" "kind" "PodDisruptionBudget" )) (dict "spec" (mustMergeOverwrite (dict ) (dict "minAvailable" $minAvail )) ))) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "k8s.service" -}}
+{{- range $_ := (list 1) -}}
+{{- (dict "r" (mustMergeOverwrite (mustMergeOverwrite (dict ) (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) "spec" (dict ) "status" (dict "loadBalancer" (dict ) ) )) (mustMergeOverwrite (dict ) (dict "apiVersion" "v1" "kind" "Service" )) (dict "spec" (mustMergeOverwrite (dict ) (dict "ports" (list (mustMergeOverwrite (dict "port" 0 "targetPort" 0 ) (dict ))) )) ))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
