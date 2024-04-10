@@ -94,8 +94,7 @@ func runChart(dot *helmette.Dot) (_ map[string]any, err any) {
 
 	case "k8s":
 		return map[string]any{
-			"Pod": k8s.Pod(),
-			"PDB": k8s.PDB(),
+			"K8s": k8s.K8s(),
 		}, nil
 
 	case "flowcontrol":

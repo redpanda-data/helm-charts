@@ -13,6 +13,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/cockroachdb/errors"
 	"golang.org/x/tools/go/packages"
 	"golang.org/x/tools/go/types/typeutil"
 )
@@ -67,7 +68,7 @@ func Transpile(pkg *packages.Package) (_ *Chart, err error) {
 	}
 
 	t := &Transpiler{
-		Package:   pkg.Name,
+		Package:   pkg,
 		Fset:      pkg.Fset,
 		TypesInfo: pkg.TypesInfo,
 		Files:     pkg.Syntax,
@@ -77,7 +78,7 @@ func Transpile(pkg *packages.Package) (_ *Chart, err error) {
 }
 
 type Transpiler struct {
-	Package   string
+	Package   *packages.Package
 	Fset      *token.FileSet
 	Files     []*ast.File
 	TypesInfo *types.Info
@@ -133,7 +134,7 @@ func (t *Transpiler) Transpile() *Chart {
 			// TODO add a source field here? Ideally with a line number.
 			funcs = append(funcs, &Func{
 				Name:       name,
-				Namespace:  t.Package,
+				Namespace:  t.Package.Name,
 				Params:     params,
 				Statements: statements,
 			})
@@ -365,17 +366,17 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 		return &BuiltInCall{FuncName: "mustSlice", Arguments: args}
 
 	case *ast.CompositeLit:
-		typ := t.typeOf(n)
 
 		// TODO: Need to handle implementors of json.Marshaler.
 		// TODO: Need to filter out zero value fields that are explicitly
 		// provided.
 
+		typ := t.typeOf(n)
 		if p, ok := typ.(*types.Pointer); ok {
 			typ = p.Elem()
 		}
 
-		switch typ := typ.Underlying().(type) {
+		switch underlying := typ.Underlying().(type) {
 		case *types.Slice:
 			var elts []Node
 			for _, el := range n.Elts {
@@ -387,8 +388,8 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 			}
 
 		case *types.Map:
-			if !types.AssignableTo(typ.Key(), types.Typ[types.String]) {
-				panic(fmt.Sprintf("map keys must be string. Got %#v", typ.Key()))
+			if !types.AssignableTo(underlying.Key(), types.Typ[types.String]) {
+				panic(fmt.Sprintf("map keys must be string. Got %#v", underlying.Key()))
 			}
 
 			var d DictLiteral
@@ -402,7 +403,7 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 
 		case *types.Struct:
 			zero := t.zeroOf(typ)
-			fields := getFields(typ)
+			fields := t.getFields(underlying)
 			fieldByName := map[string]*structField{}
 			for _, f := range fields {
 				f := f
@@ -416,17 +417,17 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 				value := el.(*ast.KeyValueExpr).Value
 
 				field := fieldByName[key]
-				if field.Omit {
+				if field.JSONOmit() {
 					continue
 				}
 
-				if field.Embedded {
+				if field.JSONInline() {
 					embedded = append(embedded, t.transpileExpr(value))
 					continue
 				}
 
 				d.KeysValues = append(d.KeysValues, &KeyValue{
-					Key:   strconv.Quote(field.JSONName),
+					Key:   strconv.Quote(field.JSONName()),
 					Value: t.transpileExpr(value),
 				})
 			}
@@ -500,16 +501,16 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 		case *types.Var:
 			// If our selector is a variable, we're probably accessing a field
 			// on a struct.
-			s, ok := unwrapStruct(t.typeOf(n.X))
-			if !ok {
-				break
+			typ := t.typeOf(n.X)
+			if p, ok := typ.(*types.Pointer); ok {
+				typ = p.Elem()
 			}
 
-			for _, f := range getFields(s) {
+			for _, f := range t.getFields(typ.Underlying().(*types.Struct)) {
 				if f.Field.Name() == n.Sel.Name {
 					return &Selector{
 						Expr:  t.transpileExpr(n.X),
-						Field: f.JSONName,
+						Field: f.JSONName(),
 					}
 				}
 			}
@@ -688,8 +689,8 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 
 	// Call to function within the same package. A-Okay. It's
 	// transpiled.
-	case callee.Pkg().Name() == t.Package:
-		return &Call{FuncName: fmt.Sprintf("%s.%s", t.Package, callee.Name()), Arguments: args}
+	case callee.Pkg().Name() == t.Package.Name:
+		return &Call{FuncName: fmt.Sprintf("%s.%s", t.Package.Name, callee.Name()), Arguments: args}
 	}
 
 	// Mapping of go functions to sprig/helm/template functions where arguments
@@ -738,7 +739,7 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 		return &BuiltInCall{FuncName: "trimSuffix", Arguments: []Node{args[1], args[0]}}
 	case "strings.ReplaceAll":
 		return &BuiltInCall{FuncName: "replace", Arguments: []Node{args[1], args[2], args[0]}}
-	case "intstr.FromInt32":
+	case "intstr.FromInt32", "intstr.FromInt", "intstr.FromString":
 		return args[0]
 	case "helmette.MustDuration":
 		return args[0]
@@ -802,11 +803,15 @@ func (t *Transpiler) zeroOf(typ types.Type) Node {
 	switch typ.String() {
 	case "k8s.io/apimachinery/pkg/apis/meta/v1.Time":
 		return &Nil{}
+	case "k8s.io/apimachinery/pkg/util/intstr.IntOrString":
+		// IntOrString's zero value appears to marshal to a 0 though it's
+		// unclear how correct this is.
+		return &Literal{Value: "0"}
 	}
 
-	switch typ := typ.Underlying().(type) {
+	switch underlying := typ.Underlying().(type) {
 	case *types.Basic:
-		switch typ.Info() {
+		switch underlying.Info() {
 		case types.IsString:
 			return &Literal{Value: `""`}
 		case types.IsInteger, types.IsUnsigned | types.IsInteger:
@@ -825,18 +830,18 @@ func (t *Transpiler) zeroOf(typ types.Type) Node {
 		var out DictLiteral
 
 		// Skip fields that json Marshalling would itself skip.
-		for _, field := range getFields(typ) {
-			if field.Omit || (field.OmitEmpty && omitemptyRespected(field.Field.Type())) {
+		for _, field := range t.getFields(underlying) {
+			if field.JSONOmit() || !field.IncludeInZero() {
 				continue
 			}
 
-			if field.Embedded {
+			if field.JSONInline() {
 				embedded = append(embedded, t.zeroOf(field.Field.Type()))
 				continue
 			}
 
 			out.KeysValues = append(out.KeysValues, &KeyValue{
-				Key:   strconv.Quote(field.JSONName),
+				Key:   strconv.Quote(field.JSONName()),
 				Value: t.zeroOf(field.Field.Type()),
 			})
 		}
@@ -853,18 +858,45 @@ func (t *Transpiler) zeroOf(typ types.Type) Node {
 	}
 }
 
-func unwrapStruct(typ types.Type) (*types.Struct, bool) {
-	if p, ok := typ.Underlying().(*types.Pointer); ok {
-		typ = p.Elem()
+func (t *Transpiler) getFields(s *types.Struct) []structField {
+	_, spec := t.getStructType(s)
+
+	var fields []structField
+	for i, astField := range spec.Fields.List {
+		fields = append(fields, structField{
+			Field:      s.Field(i),
+			Tag:        parseTag(s.Tag(i)),
+			Definition: astField,
+		})
 	}
 
-	if s, ok := typ.Underlying().(*types.Struct); ok {
-		return s, true
-	}
-
-	return nil, false
+	return fields
 }
 
+// getTypeSpec returns the [ast.StructType] for the given named type and the
+// [packages.Package] that contains the definition.
+func (t *Transpiler) getStructType(typ *types.Struct) (*packages.Package, *ast.StructType) {
+	if typ.NumFields() == 0 {
+		panic("unhandled")
+	}
+
+	pack := t.Package.Imports[typ.Field(0).Pkg().Path()]
+	if pack == nil {
+		pack = t.Package
+	}
+
+	// This is quite strange, struct 
+	spec := findNearest[*ast.StructType](pack, typ.Field(0).Pos())
+
+	if spec == nil {
+		panic(fmt.Sprintf("failed to resolve TypeSpec: %#v", typ))
+	}
+
+	return pack, spec
+}
+
+// omitemptyRespected return true if the `omitempty` JSON tag would be
+// respected by [[json.Marshal]] for the given type.
 func omitemptyRespected(typ types.Type) bool {
 	switch typ.(type) {
 	case *types.Basic, *types.Pointer, *types.Slice, *types.Map:
@@ -901,36 +933,54 @@ func parseTag(tag string) jsonTag {
 }
 
 type structField struct {
-	Field     *types.Var
-	Embedded  bool
-	Omit      bool
-	OmitEmpty bool
-	JSONName  string
+	Field      *types.Var
+	Tag        jsonTag
+	Definition *ast.Field
 }
 
-func getFields(s *types.Struct) []structField {
-	var fields []structField
-	for i := 0; i < s.NumFields(); i++ {
-		field := s.Field(i)
-		tag := parseTag(s.Tag(i))
-
-		omit := tag.Name == "-" || !field.Exported()
-		embedded := tag.Name == "" && field.Embedded()
-
-		if tag.Name == "" && tag.Name != "-" {
-			tag.Name = field.Name()
-		}
-
-		fields = append(fields, structField{
-			Field:     field,
-			Omit:      omit,
-			OmitEmpty: tag.OmitEmpty,
-			JSONName:  tag.Name,
-			Embedded:  embedded,
-		})
-
+func (f *structField) JSONName() string {
+	if f.Tag.Name != "" && f.Tag.Name != "-" {
+		return f.Tag.Name
 	}
-	return fields
+	return f.Field.Name()
+}
+
+// KubernetesOptional returns true if this field's comment contains any of
+// Kubernetes' optional annotations.
+func (f *structField) KubernetesOptional() bool {
+	optional, _ := regexp.MatchString(`\+optional`, f.Definition.Doc.Text())
+	return optional
+}
+
+// JSONOmit returns true if json.Marshal would omit this field. This is
+// determined by checking if the field isn't exported or has the `json:"-"`
+// tag.
+func (f *structField) JSONOmit() bool {
+	return f.Tag.Name == "-" || !f.Field.Exported()
+}
+
+// JSONInline returns true if this field should be merged with the JSON of it's
+// parent rather than being placed within its own key.
+func (f *structField) JSONInline() bool {
+	// TODO(chrisseto) Should this respect the nonstandard ",inline" tag?
+	return f.Field.Embedded() && f.Tag.Name == ""
+}
+
+// IncludeInZero returns true if this field would be included in the output
+// [[json.Marshal]]'d called with a zero value of this field's parent struct.
+func (f *structField) IncludeInZero() bool {
+	// TODO(chrisseto): We can start producing more human readable/ergonomic
+	// manifests if we process Kubernetes' +optional annotation. This however
+	// breaks a lot of our tests as golang's json.Marshal does not respect
+	// those annotations. It may be possible to fix by using one of Kubernetes'
+	// marshallers?
+	if f.JSONOmit() {
+		return false
+	}
+	if f.Tag.OmitEmpty && omitemptyRespected(f.Field.Type()) {
+		return false
+	}
+	return true
 }
 
 func parseDirectives(in string) map[string]string {
@@ -941,4 +991,41 @@ func parseDirectives(in string) map[string]string {
 		out[m[1]] = m[2]
 	}
 	return out
+}
+
+// findNearest finds the nearest [ast.Node] to the given position. This allows
+// finding the defining [ast.Node] from type instances or other such objects.
+func findNearest[T ast.Node](pkg *packages.Package, pos token.Pos) T {
+	// NB: It seems that pkg.Syntax is NOT ordered by position and therefore
+	// can't be binary searched.
+	var file *ast.File
+	for _, f := range pkg.Syntax {
+		if f.FileStart < pos && f.FileEnd > pos {
+			file = f
+			break
+		}
+	}
+
+	if file == nil {
+		panic(errors.Newf("pos %d not located in pkg: %v", pos, pkg))
+	}
+
+	var result *T
+	ast.Inspect(file, func(n ast.Node) bool {
+		if n == nil || n.Pos() > pos || n.End() < pos {
+			return false
+		}
+
+		if asT, ok := n.(T); ok {
+			result = &asT
+		}
+
+		return true
+	})
+
+	if result != nil {
+		return *result
+	}
+
+	return (ast.Node)(nil).(T)
 }
