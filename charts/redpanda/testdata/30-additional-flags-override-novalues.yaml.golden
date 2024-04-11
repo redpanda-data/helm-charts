@@ -27,10 +27,10 @@ automountServiceAccountToken: true
 metadata:
   name: redpanda-console
   labels:
-    helm.sh/chart: console-0.7.25
+    helm.sh/chart: console-0.7.26
     app.kubernetes.io/name: console
     app.kubernetes.io/instance: redpanda
-    app.kubernetes.io/version: "v2.4.5"
+    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
 ---
 # Source: redpanda/templates/secrets.yaml
@@ -470,10 +470,10 @@ kind: ConfigMap
 metadata:
   name: redpanda-console
   labels:
-    helm.sh/chart: console-0.7.25
+    helm.sh/chart: console-0.7.26
     app.kubernetes.io/name: console
     app.kubernetes.io/instance: redpanda
-    app.kubernetes.io/version: "v2.4.5"
+    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
     
 data:
@@ -504,10 +504,10 @@ kind: Service
 metadata:
   name: redpanda-console
   labels:
-    helm.sh/chart: console-0.7.25
+    helm.sh/chart: console-0.7.26
     app.kubernetes.io/name: console
     app.kubernetes.io/instance: redpanda
-    app.kubernetes.io/version: "v2.4.5"
+    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
     
 spec:
@@ -612,10 +612,10 @@ kind: Deployment
 metadata:
   name: redpanda-console
   labels:
-    helm.sh/chart: console-0.7.25
+    helm.sh/chart: console-0.7.26
     app.kubernetes.io/name: console
     app.kubernetes.io/instance: redpanda
-    app.kubernetes.io/version: "v2.4.5"
+    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
     
 spec:
@@ -628,7 +628,7 @@ spec:
     metadata:
       annotations:
         checksum/config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum-redpanda-chart/config: 61914d7be7a38bb843855250c431b5d33f79bf73a42be380a03e8ffd3170564a
+        checksum-redpanda-chart/config: 64f2cd1f30a71442b56a635c16aab05bd3d59037c9d3ad6b1e6a23b39c65c686
       labels:
         app.kubernetes.io/name: console
         app.kubernetes.io/instance: redpanda
@@ -669,7 +669,7 @@ spec:
             - "--config.filepath=/etc/console/configs/config.yaml"
           securityContext:
             runAsNonRoot: true
-          image: docker.redpanda.com/redpandadata/console:v2.4.5
+          image: docker.redpanda.com/redpandadata/console:v2.4.6
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -1231,10 +1231,10 @@ kind: Pod
 metadata:
   name: "redpanda-console-test-connection"
   labels:
-    helm.sh/chart: console-0.7.25
+    helm.sh/chart: console-0.7.26
     app.kubernetes.io/name: console
     app.kubernetes.io/instance: redpanda
-    app.kubernetes.io/version: "v2.4.5"
+    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
     
   annotations:

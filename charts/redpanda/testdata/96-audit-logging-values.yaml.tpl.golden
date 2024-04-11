@@ -27,10 +27,10 @@ automountServiceAccountToken: true
 metadata:
   name: redpanda-console
   labels:
-    helm.sh/chart: console-0.7.25
+    helm.sh/chart: console-0.7.26
     app.kubernetes.io/name: console
     app.kubernetes.io/instance: redpanda
-    app.kubernetes.io/version: "v2.4.5"
+    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
 ---
 # Source: redpanda/templates/console/configmap-and-deployment.yaml
@@ -39,10 +39,10 @@ kind: Secret
 metadata:
   name: redpanda-console
   labels:
-    helm.sh/chart: console-0.7.25
+    helm.sh/chart: console-0.7.26
     app.kubernetes.io/name: console
     app.kubernetes.io/instance: redpanda
-    app.kubernetes.io/version: "v2.4.5"
+    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
     
 type: Opaque
@@ -649,10 +649,10 @@ kind: ConfigMap
 metadata:
   name: redpanda-console
   labels:
-    helm.sh/chart: console-0.7.25
+    helm.sh/chart: console-0.7.26
     app.kubernetes.io/name: console
     app.kubernetes.io/instance: redpanda
-    app.kubernetes.io/version: "v2.4.5"
+    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
     
 data:
@@ -683,10 +683,10 @@ kind: Service
 metadata:
   name: redpanda-console
   labels:
-    helm.sh/chart: console-0.7.25
+    helm.sh/chart: console-0.7.26
     app.kubernetes.io/name: console
     app.kubernetes.io/instance: redpanda
-    app.kubernetes.io/version: "v2.4.5"
+    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
     
 spec:
@@ -791,10 +791,10 @@ kind: Deployment
 metadata:
   name: redpanda-console
   labels:
-    helm.sh/chart: console-0.7.25
+    helm.sh/chart: console-0.7.26
     app.kubernetes.io/name: console
     app.kubernetes.io/instance: redpanda
-    app.kubernetes.io/version: "v2.4.5"
+    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
     
 spec:
@@ -807,7 +807,7 @@ spec:
     metadata:
       annotations:
         checksum/config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum-redpanda-chart/config: 12228d42f8c1e9a30a0e192e9ad02f3413ea17bd3f323309e8b4af2268dec566
+        checksum-redpanda-chart/config: c5f6c4185763af51a4a493220baec02b1299de425010cfba663ead5c8d35fa50
       labels:
         app.kubernetes.io/name: console
         app.kubernetes.io/instance: redpanda
@@ -1448,10 +1448,10 @@ kind: Pod
 metadata:
   name: "redpanda-console-test-connection"
   labels:
-    helm.sh/chart: console-0.7.25
+    helm.sh/chart: console-0.7.26
     app.kubernetes.io/name: console
     app.kubernetes.io/instance: redpanda
-    app.kubernetes.io/version: "v2.4.5"
+    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
     
   annotations:
