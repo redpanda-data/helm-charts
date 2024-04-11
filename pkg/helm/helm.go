@@ -33,6 +33,45 @@ type Chart struct {
 	Description string `json:"description"`
 }
 
+// ChartLock is a helm lock file for dependencies.
+type ChartLock struct {
+	// Generated is the date the lock file was last generated.
+	Generated time.Time `json:"generated"`
+	// Digest is a hash of the dependencies in Chart.yaml.
+	Digest string `json:"digest"`
+	// Dependencies is the list of dependencies that this lock file has locked.
+	Dependencies []*Dependency `json:"dependencies"`
+}
+
+// Dependency describes a chart upon which another chart depends.
+type Dependency struct {
+	// Name is the name of the dependency.
+	//
+	// This must mach the name in the dependency's Chart.yaml.
+	Name string `json:"name"`
+	// Version is the version (range) of this chart.
+	//
+	// A lock file will always produce a single version, while a dependency
+	// may contain a semantic version range.
+	Version string `json:"version,omitempty"`
+	// The URL to the repository.
+	//
+	// Appending `index.yaml` to this string should result in a URL that can be
+	// used to fetch the repository index.
+	Repository string `json:"repository"`
+	// A yaml path that resolves to a boolean, used for enabling/disabling charts (e.g. subchart1.enabled )
+	Condition string `json:"condition,omitempty"`
+	// Tags can be used to group charts for enabling/disabling together
+	Tags []string `json:"tags,omitempty"`
+	// Enabled bool determines if chart should be loaded
+	Enabled bool `json:"enabled,omitempty"`
+	// ImportValues holds the mapping of source values to parent key to be imported. Each item can be a
+	// string or pair of child/parent sublist items.
+	ImportValues []interface{} `json:"import-values,omitempty"`
+	// Alias usable alias to be used for the chart
+	Alias string `json:"alias,omitempty"`
+}
+
 type Release struct {
 	Name       string    `json:"name"`
 	Namespace  string    `json:"namespace"`
@@ -346,4 +385,28 @@ func (c *Client) writeValues(values any) (string, error) {
 	}
 
 	return valuesFile.Name(), nil
+}
+
+func GetChartLock(filePath string) (ChartLock, error) {
+	b, err := os.ReadFile(filePath)
+	if err != nil {
+		return ChartLock{}, err
+	}
+
+	cl := ChartLock{}
+	err = yaml.Unmarshal(b, &cl)
+	if err != nil {
+		return ChartLock{}, err
+	}
+
+	return cl, nil
+}
+
+func UpdateChartLock(chartLock ChartLock, filepath string) error {
+	b, err := yaml.Marshal(chartLock)
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile(filepath, b, 0644)
 }
