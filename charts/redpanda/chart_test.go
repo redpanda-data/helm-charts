@@ -2,7 +2,6 @@ package redpanda_test
 
 import (
 	"os"
-	"os/exec"
 	"testing"
 
 	"github.com/redpanda-data/helm-charts/charts/redpanda"
@@ -95,26 +94,11 @@ func TestTemplate(t *testing.T) {
 	client, err := helm.New(helm.Options{ConfigHome: testutil.TempDir(t)})
 	require.NoError(t, err)
 
-	lock, err := helm.GetChartLock("Chart.lock")
-	require.NoError(t, err)
-
-	// Chart deps are kept within ./charts as a tgz archive. Helm dep build
-	// will ensure that ./charts is in sync with Chart.lock.
-	_, err = exec.CommandContext(ctx, "helm", "dep", "build").CombinedOutput()
-	require.NoError(t, err, "failed to refresh helm dependencies")
-
-	newLock, err := helm.GetChartLock("Chart.lock")
-	require.NoError(t, err)
-
-	// Comparison between Chart.lock before and after `helm dep build` execution is required to prevent
-	// circular dependency between Chart.lock update, which is included in release [Auto commit], and
-	// next unnecessary release pipeline execution due to change in `generated` field. Allowed change
-	// in Chart.lock is only when dependencies are different. Dependencies might change only when
-	// Redpanda chart dependencies got new release.
-	if lock.Digest == newLock.Digest {
-		err = helm.UpdateChartLock(lock, "Chart.lock")
-		require.NoError(t, err)
-	}
+	// Chart deps are kept within ./charts as a tgz archive, which is git
+	// ignored. Helm dep build will ensure that ./charts is in sync with
+	// Chart.lock, which is tracked by git.
+	require.NoError(t, client.RepoAdd(ctx, "redpanda", "https://charts.redpanda.com"))
+	require.NoError(t, client.DependencyBuild(ctx, "."), "failed to refresh helm dependencies")
 
 	values, err := os.ReadDir("./ci")
 	require.NoError(t, err)
