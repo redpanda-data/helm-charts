@@ -37,7 +37,7 @@ metadata:
       {{- end }}
 spec:
   dnsNames:
-      {{- if (empty $data.issuerRef) }}
+      {{- if or (empty $data.issuerRef) (dig "applyInternalDNSNames" false $data) }}
     - {{ template "redpanda.fullname" $ }}-cluster.{{ printf "%s.%s.svc.%s" $service $ns $domain }}
     - {{ template "redpanda.fullname" $ }}-cluster.{{ printf "%s.%s.svc" $service $ns }}
     - {{ template "redpanda.fullname" $ }}-cluster.{{ printf "%s.%s" $service $ns }}

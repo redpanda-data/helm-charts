@@ -411,9 +411,10 @@ type PandaProxyClient struct {
 
 type TLSCert struct {
 	// Enabled   bool   `json:"enabled"`
-	CAEnabled bool   `json:"caEnabled" jsonschema:"required"`
-	Duration  string `json:"duration" jsonschema:"pattern=.*[smh]$"`
-	IssuerRef struct {
+	CAEnabled             bool   `json:"caEnabled" jsonschema:"required"`
+	Duration              string `json:"duration" jsonschema:"pattern=.*[smh]$"`
+	ApplyInternalDNSNames *bool  `json:"applyInternalDNSNames"`
+	IssuerRef             struct {
 		Name string        `json:"name"`
 		Kind IssuerRefKind `json:"kind"`
 	} `json:"issuerRef"`
