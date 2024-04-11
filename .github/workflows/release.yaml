@@ -63,27 +63,25 @@ jobs:
         run: |
           helm repo add redpanda https://charts.redpanda.com
 
-      - name: Update testdata
-        run: |
-          go test ./charts/redpanda -update -short
-
-      # Commit changes must be run before chart-releaser execution, because auto commit would include helm chart tar.gz artifact
-      - name: Commit changes for testdata golden files
-        run: |
-          git config --global user.name 'vbotbuildovich'
-          git config --global user.email 'vbotbuildovich@users.noreply.github.com'
-          git config --global --add --bool push.autoSetupRemote true
-          git add --all
-          git commit -m "[Auto Commit] Update testdata golden files"
-          git push
-
-      # Chart releaser must be run after auto commit for testdata golder files, because commit could include helm chart tar.gz artifact
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@a917fd15b20e8b64b94d9158ad54cd6345335584 # v1.6.0
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           CR_SKIP_EXISTING: true
           CR_GENERATE_RELEASE_NOTES: true
+
+      - name: Update testdata
+        run: |
+          go test ./charts/redpanda -update -short
+
+      - name: Commit changes for testdata golden files
+        run: |
+          git config --global user.name 'vbotbuildovich'
+          git config --global user.email 'vbotbuildovich@users.noreply.github.com'
+          git config --global --add --bool push.autoSetupRemote true
+          git add charts/redpanda
+          git commit -m "[Auto Commit] Update testdata golden files"
+          git push
 
       - name: Checkout kustomize
         uses: actions/checkout@v4 # v3.5.3
