@@ -1262,19 +1262,6 @@ spec:
   ca:
     secretName: redpanda-external-root-certificate
 ---
-# Source: redpanda/templates/some-users-updated.yaml
-apiVersion: v1
-data:
-  updated-sasl-users.txt: YWRtaW46YmFkcGFzc3dvcmQ6U0NSQU0tU0hBLTI1Ngp1c2VyMTpwYXNzMTpTQ1JBTS1TSEEtNTEyCnNvbWV1c2VyOkFCQzEyMzpTQ1JBTS1TSEEtNTEyCmFub3RoZXJtZToyNzg0YTpTQ1JBTS1TSEEtMjU2CmFub3RoZXJhbm90aGVybWU6Mjc4NGFibGFoOlNDUkFNLVNIQS01MTIK
-kind: Secret
-metadata:
-  annotations:
-    helm.sh/hook: post-install,post-upgrade
-    helm.sh/hook-delete-policy: before-hook-creation
-    helm.sh/hook-weight: "100"
-  creationTimestamp: null
-  name: some-users
----
 # Source: redpanda/charts/console/templates/tests/test-connection.yaml
 apiVersion: v1
 kind: Pod
