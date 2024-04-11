@@ -345,16 +345,28 @@ func (c *Client) Search(ctx context.Context, keyword string) ([]Chart, error) {
 	return charts, nil
 }
 
+func (c *Client) DependencyBuild(ctx context.Context, chartDir string) error {
+	_, _, err := c.runHelmInDir(ctx, chartDir, "dep", "build")
+	return err
+}
+
 func (c *Client) runHelm(ctx context.Context, args ...string) ([]byte, []byte, error) {
+	// NB: an empty string will cause os/exec to use it's default of the
+	// working directory of the calling process.
+	return c.runHelmInDir(ctx, "", args...)
+}
+
+func (c *Client) runHelmInDir(ctx context.Context, dir string, args ...string) ([]byte, []byte, error) {
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
 
 	log.Printf("Executing: %#v", strings.Join(append([]string{"helm"}, args...), " "))
 	cmd := exec.CommandContext(ctx, "helm", args...)
 
+	cmd.Dir = dir
 	cmd.Env = c.env
-	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
+	cmd.Stdout = &stdout
 
 	err := cmd.Run()
 	return stdout.Bytes(), stderr.Bytes(), errors.Wrapf(err, "stderr: %s", stderr.String())
