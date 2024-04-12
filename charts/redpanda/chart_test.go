@@ -1,7 +1,9 @@
 package redpanda_test
 
 import (
+	"bytes"
 	"os"
+	"os/exec"
 	"testing"
 
 	"github.com/redpanda-data/helm-charts/charts/redpanda"
@@ -122,6 +124,25 @@ func TestTemplate(t *testing.T) {
 				},
 			})
 			require.NoError(t, err)
+
+			// kube-lint template file
+			var stdout bytes.Buffer
+			var stderr bytes.Buffer
+			inputYaml := bytes.NewBuffer(out)
+
+			cmd := exec.CommandContext(ctx, "kube-linter", "lint", "-", "--format", "json")
+			cmd.Stdin = inputYaml
+			cmd.Stdout = &stdout
+			cmd.Stderr = &stderr
+
+			errKubeLinter := cmd.Run()
+			if errKubeLinter != nil && len(stderr.String()) > 0 {
+				t.Logf("kube-linter error(s) found for %q: \n%s\nstderr:\n%s", v.Name(), stdout.String(), stderr.String())
+			} else if errKubeLinter != nil {
+				t.Logf("kube-linter error(s) found for %q: \n%s", v.Name(), errKubeLinter)
+			}
+			// TODO: remove comment below and the logging above once we agree to linter
+			//require.NoError(t, errKubeLinter)
 
 			testutil.AssertGolden(t, testutil.YAML, "./testdata/"+v.Name()+".golden", out)
 		})
