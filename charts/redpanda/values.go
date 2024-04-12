@@ -17,6 +17,11 @@ import (
 // the Values struct as well to ensure that nothing can ever get out of sync.
 
 type Values struct {
+	// ---
+	// RedpandaYAML represents redpanda.yaml as is read by redpanda. Provide
+	// direct access to every field. Enhance when possible.
+	RedpandaYAML `json:",inline"`
+
 	NameOverride     string            `json:"nameOverride"`
 	FullnameOverride string            `json:"fullnameOverride"`
 	ClusterDomain    string            `json:"clusterDomain"`
@@ -52,6 +57,10 @@ type Values struct {
 	Tests          *struct {
 		Enabled bool `json:"enabled"`
 	} `json:"tests"`
+}
+
+type RedpandaYAML struct {
+	Redpanda *BrokerConfig `json:"redpanda"`
 }
 
 func (Values) JSONSchemaExtend(schema *jsonschema.Schema) {
@@ -121,8 +130,8 @@ type Auth struct {
 }
 
 type TLS struct {
-	Enabled *bool       `json:"enabled" jsonschema:"required"`
-	Certs   *TLSCertMap `json:"certs"`
+	Enabled *bool      `json:"enabled" jsonschema:"required"`
+	Certs   TLSCertMap `json:"certs"`
 }
 
 type ExternalConfig struct {
@@ -487,7 +496,7 @@ type KafkaListeners struct {
 	AuthenticationMethod string                           `json:"authenticationMethod" jsonschema:"pattern=sasl|none|mtls_identity"`
 	External             ExternalListeners[KafkaExternal] `json:"external"`
 	TLS                  *ExternalTLS                     `json:"tls" jsonschema:"required"`
-	Port                 int                              `json:"port" jsonschema:"required"`
+	Port                 int32                            `json:"port" jsonschema:"required"`
 }
 
 type KafkaExternal struct {

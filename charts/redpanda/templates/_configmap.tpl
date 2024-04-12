@@ -283,66 +283,8 @@ redpanda.yaml: |
   {{- end }}
 {{- end -}}
 {{/* Kafka API */}}
-{{- $kafkaService := .Values.listeners.kafka }}
-    kafka_api:
-      - name: internal
-        address: 0.0.0.0
-        port: {{ $kafkaService.port }}
-{{- if or (include "sasl-enabled" $root | fromJson).bool $kafkaService.authenticationMethod }}
-        authentication_method: {{ default "sasl" $kafkaService.authenticationMethod }}
-{{- end }}
-{{- range $name, $listener := $kafkaService.external }}
-  {{- if and $listener.port $name (dig "enabled" true $listener) }}
-      - name: {{ $name }}
-        address: 0.0.0.0
-        port: {{ $listener.port }}
-    {{- if or (include "sasl-enabled" $root | fromJson).bool $listener.authenticationMethod }}
-        authentication_method: {{ default "sasl" $listener.authenticationMethod }}
-    {{- end }}
-  {{- end }}
-{{- end }}
-    kafka_api_tls:
-{{- if (include "kafka-internal-tls-enabled" . | fromJson).bool }}
-      - name: internal
-        enabled: true
-        cert_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/tls.crt
-        key_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/tls.key
-        require_client_auth: {{ $kafkaService.tls.requireClientAuth }}
-  {{- $cert := get .Values.tls.certs $kafkaService.tls.cert }}
-  {{- if empty $cert }}
-    {{- fail (printf "Certificate used but not defined")}}
-  {{- end }}
-  {{- if $cert.caEnabled }}
-        truststore_file: /etc/tls/certs/{{ $kafkaService.tls.cert }}/ca.crt
-  {{- else }}
-        {{/* This is a required field so we use the default in the redpanda debian container */}}
-        truststore_file: /etc/ssl/certs/ca-certificates.crt
-  {{- end }}
-{{- end }}
-{{- range $name, $listener := $kafkaService.external }}
-  {{- $k := dict "Values" $values "listener" $listener }}
-  {{- if and (include "kafka-external-tls-enabled" $k | fromJson).bool (dig "enabled" true $listener) }}
-    {{- $mtls := dig "tls" "requireClientAuth" false $listener }}
-    {{- $mtls = dig "tls" "requireClientAuth" $mtls $k }}
-    {{- $certName := include "kafka-external-tls-cert" $k }}
-    {{- $certPath := printf "/etc/tls/certs/%s" $certName }}
-    {{- $cert := get $values.tls.certs $certName }}
-    {{- if empty $cert }}
-      {{- fail (printf "Certificate, '%s', used but not defined" $certName)}}
-    {{- end }}
-      - name: {{ $name }}
-        enabled: true
-        cert_file: {{ $certPath }}/tls.crt
-        key_file: {{ $certPath }}/tls.key
-        require_client_auth: {{ $mtls }}
-    {{- if $cert.caEnabled }}
-        truststore_file: {{ $certPath }}/ca.crt
-    {{- else }}
-        {{/* This is a required field so we use the default in the redpanda debian container */}}
-        truststore_file: /etc/ssl/certs/ca-certificates.crt
-    {{- end }}
-  {{- end }}
-{{- end -}}
+    kafka_api: {{ (include "redpanda.RedpandaYAMLKafkaAPIListeners"   ) }}
+    kafka_api_tls: {{ (include "redpanda.RedpandaYAMLKafkaAPITLSListeners"  ) }}
 {{/* RPC Server */}}
 {{- $service = .Values.listeners.rpc }}
     rpc_server:

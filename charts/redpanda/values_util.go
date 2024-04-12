@@ -1,11 +1,14 @@
-//+gotohelm:ignore=true
+// +gotohelm:ignore=true
 package redpanda
 
 import (
 	"fmt"
 
 	"github.com/invopop/jsonschema"
+	corev1 "k8s.io/api/core/v1"
 )
+
+type TLSCertReference string
 
 type ImageTag string
 
@@ -50,4 +53,26 @@ func deprecate(schema *jsonschema.Schema, keys ...string) {
 		}
 		prop.Deprecated = true
 	}
+}
+
+// FileSource ...
+// +kubebuilder:validation:MaxProperties=1
+type FileSource struct {
+	Path         *string
+	Contents     []byte
+	SecretKeyRef *corev1.SecretKeySelector
+	ConfigMapRef *corev1.ConfigMapKeySelector
+}
+
+// PerBrokerValue allows configuring a value per Redpanda Broker/Node/Pod.
+type PerBrokerValue[T comparable] struct {
+	// Static, if provided, is a static value that will be set verbatim
+	// regardless of the broker.
+	Static *T
+	// ByOrdinal is a list of values that will be used
+	// It's length MUST be greater than or equal to (>=) the number of Redpanda
+	// Brokers.
+	ByOrdinal *[]T
+	// TODO decide how this will work.
+	Template *string
 }
