@@ -6,6 +6,10 @@ package redpanda
 // Developer facing documentation
 // Annotations +kubebuilder,+gotohelm,etc
 
+// JSONScalar is any scalar JSON value marshalled to a string.
+// +kubebuilder:validation:Pattern=^(\d+)|(true|false)|(".*")$
+type JSONScalar string
+
 type BrokerConfig struct {
 	// KafkaListeners is an amalgam of `kafka_api`, `kafka_api_tls`,
 	// `advertised_kafka_api`. That may be configured in a more ergonomic and
@@ -15,17 +19,17 @@ type BrokerConfig struct {
 	// KafkaAPI is a direct mapping to `kafka_api`. It takes precedence over
 	// everything else, if provided. It is recommend to instead use .KafkaListeners.
 	// +verbatim
-	KafkaAPI []map[string]any `json:"kafka_api,omitempty"`
+	KafkaAPI []map[string]JSONScalar `json:"kafka_api,omitempty"`
 	// AdvertisedKafkaAPI is a direct mapping to `advertised_kafka_api`. It
 	// takes precedence over everything else, if provided. It is recommend to
 	// instead use .KafkaListeners.
 	// +verbatim
-	AdvertisedKafkaAPI []map[string]any `json:"advertised_kafka_api,omitempty"`
+	AdvertisedKafkaAPI []map[string]JSONScalar `json:"advertised_kafka_api,omitempty"`
 	// KafkaAPITLS is a direct mapping to `kafka_api_tls`. It takes precedence
 	// over everything else, if provided. It is recommend to instead use
 	// .KafkaListeners.
 	// +verbatim
-	KafkaAPITLS []map[string]any `json:"kafka_api_tls,omitempty"`
+	KafkaAPITLS []map[string]JSONScalar `json:"kafka_api_tls,omitempty"`
 }
 
 // ---
