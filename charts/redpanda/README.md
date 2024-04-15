@@ -3,7 +3,7 @@
 description: Find the default values and descriptions of settings in the Redpanda Helm chart.
 ---
 
-![Version: 5.7.40](https://img.shields.io/badge/Version-5.7.40-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v23.3.11](https://img.shields.io/badge/AppVersion-v23.3.11-informational?style=flat-square)
+![Version: 5.7.41](https://img.shields.io/badge/Version-5.7.41-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v23.3.11](https://img.shields.io/badge/AppVersion-v23.3.11-informational?style=flat-square)
 
 This page describes the official Redpanda Helm Chart. In particular, this page describes the contents of the chart’s [`values.yaml` file](https://github.com/redpanda-data/helm-charts/blob/main/charts/redpanda/values.yaml). Each of the settings is listed and described on this page, along with any default values.
 
@@ -625,7 +625,7 @@ CPU resources. For details, see the [Pod resources documentation](https://docs.r
 
 ### [resources.cpu.cores](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=resources.cpu.cores)
 
-Redpanda makes use of a thread per core model. For details, see this [blog](https://redpanda.com/blog/tpc-buffers). For this reason, Redpanda should only be given full cores.  Note: You can increase cores, but decreasing cores is not currently supported. See the [GitHub issue](https://github.com/redpanda-data/redpanda/issues/350).  This setting is equivalent to `--smp`, `resources.requests.cpu`, and `resources.limits.cpu`. For production, use `4` or greater.
+Redpanda makes use of a thread per core model. For details, see this [blog](https://redpanda.com/blog/tpc-buffers). For this reason, Redpanda should only be given full cores.  Note: You can increase cores, but decreasing cores is not currently supported. See the [GitHub issue](https://github.com/redpanda-data/redpanda/issues/350).  This setting is equivalent to `--smp`, `resources.requests.cpu`, and `resources.limits.cpu`. For production, use `4` or greater.  To maximize efficiency, use the `static` CPU manager policy by specifying an even integer for CPU resource requests and limits. This policy gives the Pods running Redpanda brokers access to exclusive CPUs on the node. See https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/#static-policy.
 
 **Default:** `1`
 
@@ -638,6 +638,12 @@ Memory resources For details, see the [Pod resources documentation](https://docs
 ```
 {"container":{"max":"2.5Gi"}}
 ```
+
+### [resources.memory.container](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=resources.memory.container)
+
+Enables memory locking. For production, set to `true`. enable_memory_locking: false  It is recommended to have at least 2Gi of memory per core for the Redpanda binary. This memory is taken from the total memory given to each container. The Helm chart allocates 80% of the container's memory to Redpanda, leaving the rest for the Seastar subsystem (reserveMemory) and other container processes. So at least 2.5Gi per core is recommended in order to ensure Redpanda has a full 2Gi.  These values affect `--memory` and `--reserve-memory` flags passed to Redpanda and the memory requests/limits in the StatefulSet. Valid suffixes: B, K, M, G, Ki, Mi, and Gi To create `Guaranteed` Pod QoS for Redpanda brokers, provide both container max and min values for the container. For details, see https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-guaranteed * Every container in the Pod must have a memory limit and a memory request. * For every container in the Pod, the memory limit must equal the memory request.
+
+**Default:** `{"max":"2.5Gi"}`
 
 ### [resources.memory.container.max](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=resources.memory.container.max)
 
@@ -711,6 +717,8 @@ DEPRECATED Please use statefulset.podTemplate.annotations. Annotations are used 
 
 ### [statefulset.initContainers.configurator.resources](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.configurator.resources)
 
+To create `Guaranteed` Pods for Redpanda brokers, provide both requests and limits for CPU and memory. For details, see https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-guaranteed * Every container in the Pod must have a CPU limit and a CPU request. * For every container in the Pod, the CPU limit must equal the CPU request.
+
 **Default:** `{}`
 
 ### [statefulset.initContainers.extraInitContainers](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.extraInitContainers)
@@ -731,6 +739,8 @@ DEPRECATED Please use statefulset.podTemplate.annotations. Annotations are used 
 
 ### [statefulset.initContainers.fsValidator.resources](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.fsValidator.resources)
 
+To create `Guaranteed` Pods for Redpanda brokers, provide both requests and limits for CPU and memory. For details, see https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-guaranteed * Every container in the Pod must have a CPU limit and a CPU request. * For every container in the Pod, the CPU limit must equal the CPU request.
+
 **Default:** `{}`
 
 ### [statefulset.initContainers.setDataDirOwnership.enabled](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.setDataDirOwnership.enabled)
@@ -745,6 +755,8 @@ In environments where root is not allowed, you cannot change the ownership of fi
 
 ### [statefulset.initContainers.setDataDirOwnership.resources](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.setDataDirOwnership.resources)
 
+To create `Guaranteed` Pods for Redpanda brokers, provide both requests and limits for CPU and memory. For details, see https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-guaranteed * Every container in the Pod must have a CPU limit and a CPU request. * For every container in the Pod, the CPU limit must equal the CPU request.
+
 **Default:** `{}`
 
 ### [statefulset.initContainers.setTieredStorageCacheDirOwnership.extraVolumeMounts](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.setTieredStorageCacheDirOwnership.extraVolumeMounts)
@@ -753,6 +765,8 @@ In environments where root is not allowed, you cannot change the ownership of fi
 
 ### [statefulset.initContainers.setTieredStorageCacheDirOwnership.resources](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.setTieredStorageCacheDirOwnership.resources)
 
+To create `Guaranteed` Pods for Redpanda brokers, provide both requests and limits for CPU and memory. For details, see https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-guaranteed * Every container in the Pod must have a CPU limit and a CPU request. * For every container in the Pod, the CPU limit must equal the CPU request.
+
 **Default:** `{}`
 
 ### [statefulset.initContainers.tuning.extraVolumeMounts](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.tuning.extraVolumeMounts)
@@ -760,6 +774,8 @@ In environments where root is not allowed, you cannot change the ownership of fi
 **Default:** `""`
 
 ### [statefulset.initContainers.tuning.resources](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.tuning.resources)
+
+To create `Guaranteed` Pods for Redpanda brokers, provide both requests and limits for CPU and memory. For details, see https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-guaranteed * Every container in the Pod must have a CPU limit and a CPU request. * For every container in the Pod, the CPU limit must equal the CPU request.
 
 **Default:** `{}`
 
@@ -883,6 +899,8 @@ Number of Redpanda brokers (Redpanda Data recommends setting this to the number 
 
 ### [statefulset.sideCars.configWatcher.resources](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.sideCars.configWatcher.resources)
 
+To create `Guaranteed` Pods for Redpanda brokers, provide both requests and limits for CPU and memory. For details, see https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-guaranteed * Every container in the Pod must have a memory limit and a memory request. * For every container in the Pod, the memory limit must equal the memory request. * Every container in the Pod must have a CPU limit and a CPU request. * For every container in the Pod, the CPU limit must equal the CPU request.  To maximize efficiency, use the `static` CPU manager policy by specifying an even integer for CPU resource requests and limits. This policy gives the Pods running Redpanda brokers access to exclusive CPUs on the node. For details, see https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/#static-policy
+
 **Default:** `{}`
 
 ### [statefulset.sideCars.configWatcher.securityContext](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.sideCars.configWatcher.securityContext)
@@ -918,6 +936,8 @@ Number of Redpanda brokers (Redpanda Data recommends setting this to the number 
 **Default:** `":9082"`
 
 ### [statefulset.sideCars.controllers.resources](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.sideCars.controllers.resources)
+
+To create `Guaranteed` Pods for Redpanda brokers, provide both requests and limits for CPU and memory. For details, see https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-guaranteed  * Every container in the Pod must have a CPU limit and a CPU request. * For every container in the Pod, the CPU limit must equal the CPU request. * Every container in the Pod must have a CPU limit and a CPU request. * For every container in the Pod, the CPU limit must equal the CPU request.  To maximize efficiency, use the `static` CPU manager policy by specifying an even integer for CPU resource requests and limits. This policy gives the Pods running Redpanda brokers access to exclusive CPUs on the node. For details, see https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/#static-policy
 
 **Default:** `{}`
 

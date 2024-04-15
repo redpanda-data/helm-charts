@@ -115,7 +115,7 @@ spec:
             - name: datadir
               mountPath: /var/lib/redpanda/data
   {{- if get .Values.statefulset.initContainers.fsValidator "resources" }}
-          resources: {{- toYaml .Values.statefulset.fsValidator.tuning.resources | nindent 12 }}
+          resources: {{- toYaml .Values.statefulset.fsValidator.resources | nindent 12 }}
   {{- end }}
 {{- end }}
 {{- if (include "storage-tiered-config" .|fromJson).cloud_storage_enabled }}
