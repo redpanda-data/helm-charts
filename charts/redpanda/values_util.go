@@ -1,4 +1,4 @@
-//+gotohelm:ignore=true
+// +gotohelm:ignore=true
 package redpanda
 
 import (
@@ -42,6 +42,18 @@ func (ExternalListeners[T]) JSONSchemaExtend(schema *jsonschema.Schema) {
 	schema.AdditionalProperties = nil
 }
 
+type HTTPAuthenticationMethod string
+
+func (HTTPAuthenticationMethod) JSONSchemaExtend(s *jsonschema.Schema) {
+	s.Enum = append(s.Enum, "none", "http_basic")
+}
+
+type KafkaAuthenticationMethod string
+
+func (KafkaAuthenticationMethod) JSONSchemaExtend(s *jsonschema.Schema) {
+	s.Enum = append(s.Enum, "sasl", "none", "mtls_identity")
+}
+
 func deprecate(schema *jsonschema.Schema, keys ...string) {
 	for _, key := range keys {
 		prop, ok := schema.Properties.Get(key)
@@ -49,5 +61,20 @@ func deprecate(schema *jsonschema.Schema, keys ...string) {
 			panic(fmt.Sprintf("missing field %q on %T", key, schema.Title))
 		}
 		prop.Deprecated = true
+	}
+}
+
+func makeNullable(schema *jsonschema.Schema, keys ...string) {
+	for _, key := range keys {
+		prop, ok := schema.Properties.Get(key)
+		if !ok {
+			panic(fmt.Sprintf("missing field %q on %T", key, schema.Title))
+		}
+		schema.Properties.Set(key, &jsonschema.Schema{
+			OneOf: []*jsonschema.Schema{
+				prop,
+				{Type: "null"},
+			},
+		})
 	}
 }

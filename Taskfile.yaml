@@ -77,7 +77,7 @@ tasks:
       # Generate a "partial" version of the Values struct.
       - nix run .#genpartial -- -out charts/redpanda/values_partial.gen.go -struct Values ./charts/redpanda
       # Generate the values JSON schema from the Values struct
-      - nix run .#genvalues > charts/redpanda/values.schema.json
+      - nix run .#genschema > charts/redpanda/values.schema.json
       # Generate helm templates from Go definitions
       - nix run .#gotohelm -- -write ./charts/redpanda/templates ./charts/redpanda 
 

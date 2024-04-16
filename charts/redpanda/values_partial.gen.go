@@ -75,7 +75,7 @@ type PartialAuditLogging struct {
 	ClientMaxBufferSize        *int     `json:"clientMaxBufferSize,omitempty"`
 	QueueDrainIntervalMS       *int     `json:"queueDrainIntervalMs,omitempty"`
 	QueueMaxBufferSizeperShard *int     `json:"queueMaxBufferSizePerShard,omitempty"`
-	ReplicationFactor          *int     `json:"replicationFactor,omitempty" jsonschema:"oneof_type=integer;null"`
+	ReplicationFactor          *int     `json:"replicationFactor,omitempty"`
 }
 
 type PartialEnterprise struct {
@@ -403,51 +403,51 @@ type PartialAdminExternal struct {
 type PartialHTTPListeners struct {
 	Enabled              *bool                                         `json:"enabled,omitempty" jsonschema:"required"`
 	External             PartialExternalListeners[PartialHTTPExternal] `json:"external,omitempty"`
-	AuthenticationMethod *string                                       `json:"authenticationMethod,omitempty" jsonschema:"pattern=http_basic|none"`
+	AuthenticationMethod *HTTPAuthenticationMethod                     `json:"authenticationMethod,omitempty"`
 	TLS                  *PartialExternalTLS                           `json:"tls,omitempty" jsonschema:"required"`
 	KafkaEndpoint        *string                                       `json:"kafkaEndpoint,omitempty" jsonschema:"required,pattern=^[A-Za-z_-][A-Za-z0-9_-]*$"`
 	Port                 *int                                          `json:"port,omitempty" jsonschema:"required"`
 }
 
 type PartialHTTPExternal struct {
-	AdvertisedPorts      []int32             `json:"advertisedPorts,omitempty" jsonschema:"minItems=1"`
-	Enabled              *bool               `json:"enabled,omitempty"`
-	Port                 *int32              `json:"port,omitempty" jsonschema:"required"`
-	AuthenticationMethod *string             `json:"authenticationMethod,omitempty" jsonschema:"pattern=http_basic|none,oneof_type=string;null"`
-	PrefixTemplate       *string             `json:"prefixTemplate,omitempty"`
-	TLS                  *PartialExternalTLS `json:"tls,omitempty" jsonschema:"required"`
+	AdvertisedPorts      []int32                   `json:"advertisedPorts,omitempty" jsonschema:"minItems=1"`
+	Enabled              *bool                     `json:"enabled,omitempty"`
+	Port                 *int32                    `json:"port,omitempty" jsonschema:"required"`
+	AuthenticationMethod *HTTPAuthenticationMethod `json:"authenticationMethod,omitempty"`
+	PrefixTemplate       *string                   `json:"prefixTemplate,omitempty"`
+	TLS                  *PartialExternalTLS       `json:"tls,omitempty" jsonschema:"required"`
 }
 
 type PartialKafkaListeners struct {
-	AuthenticationMethod *string                                        `json:"authenticationMethod,omitempty" jsonschema:"pattern=sasl|none|mtls_identity"`
+	AuthenticationMethod *KafkaAuthenticationMethod                     `json:"authenticationMethod,omitempty"`
 	External             PartialExternalListeners[PartialKafkaExternal] `json:"external,omitempty"`
 	TLS                  *PartialExternalTLS                            `json:"tls,omitempty" jsonschema:"required"`
 	Port                 *int                                           `json:"port,omitempty" jsonschema:"required"`
 }
 
 type PartialKafkaExternal struct {
-	AdvertisedPorts      []int32 `json:"advertisedPorts,omitempty" jsonschema:"minItems=1"`
-	Enabled              *bool   `json:"enabled,omitempty"`
-	Port                 *int32  `json:"port,omitempty" jsonschema:"required"`
-	AuthenticationMethod *string `json:"authenticationMethod,omitempty" jsonschema:"pattern=sasl|none|mtls_identity,oneof_type=string;null"`
-	PrefixTemplate       *string `json:"prefixTemplate,omitempty"`
+	AdvertisedPorts      []int32                    `json:"advertisedPorts,omitempty" jsonschema:"minItems=1"`
+	Enabled              *bool                      `json:"enabled,omitempty"`
+	Port                 *int32                     `json:"port,omitempty" jsonschema:"required"`
+	AuthenticationMethod *KafkaAuthenticationMethod `json:"authenticationMethod,omitempty"`
+	PrefixTemplate       *string                    `json:"prefixTemplate,omitempty"`
 }
 
 type PartialSchemaRegistryListeners struct {
 	Enabled              *bool                                                   `json:"enabled,omitempty" jsonschema:"required"`
 	External             PartialExternalListeners[PartialSchemaRegistryExternal] `json:"external,omitempty"`
-	AuthenticationMethod *string                                                 `json:"authenticationMethod,omitempty" jsonschema:"pattern=http_basic|none,oneof_type=string;null"`
+	AuthenticationMethod *HTTPAuthenticationMethod                               `json:"authenticationMethod,omitempty"`
 	KafkaEndpoint        *string                                                 `json:"kafkaEndpoint,omitempty" jsonschema:"required,pattern=^[A-Za-z_-][A-Za-z0-9_-]*$"`
 	Port                 *int                                                    `json:"port,omitempty" jsonschema:"required"`
 	TLS                  *PartialExternalTLS                                     `json:"tls,omitempty" jsonschema:"required"`
 }
 
 type PartialSchemaRegistryExternal struct {
-	AdvertisedPorts      []int32             `json:"advertisedPorts,omitempty" jsonschema:"minItems=1"`
-	Enabled              *bool               `json:"enabled,omitempty"`
-	Port                 *int32              `json:"port,omitempty"`
-	AuthenticationMethod *string             `json:"authenticationMethod,omitempty" jsonschema:"pattern=http_basic|none,oneof_type=string;null"`
-	TLS                  *PartialExternalTLS `json:"tls,omitempty"`
+	AdvertisedPorts      []int32                   `json:"advertisedPorts,omitempty" jsonschema:"minItems=1"`
+	Enabled              *bool                     `json:"enabled,omitempty"`
+	Port                 *int32                    `json:"port,omitempty"`
+	AuthenticationMethod *HTTPAuthenticationMethod `json:"authenticationMethod,omitempty"`
+	TLS                  *PartialExternalTLS       `json:"tls,omitempty"`
 }
 
 type PartialTunableConfig map[string]any
