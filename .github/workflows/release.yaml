@@ -58,6 +58,11 @@ jobs:
         with:
           token: ${{ secrets.ACTIONS_BOT_TOKEN }}
           fetch-depth: 0
+      - name: configure git
+        run: |
+          git config --global user.name 'vbotbuildovich'
+          git config --global user.email 'vbotbuildovich@users.noreply.github.com'
+          git config --global --add --bool push.autoSetupRemote true
 
       - name: Add Repositories for each chart
         run: |
@@ -76,9 +81,6 @@ jobs:
 
       - name: Commit changes for testdata golden files
         run: |
-          git config --global user.name 'vbotbuildovich'
-          git config --global user.email 'vbotbuildovich@users.noreply.github.com'
-          git config --global --add --bool push.autoSetupRemote true
           git add charts/redpanda
           git commit -m "[Auto Commit] Update testdata golden files"
           git push
