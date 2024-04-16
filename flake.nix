@@ -90,6 +90,7 @@
               pkgs.kubectl
               pkgs.kubernetes-helm
               pkgs.kustomize
+              pkgs.kube-linter
               pkgs.yq # jq but for YAML
             ];
           };
