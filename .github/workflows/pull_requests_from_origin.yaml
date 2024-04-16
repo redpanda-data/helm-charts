@@ -44,8 +44,6 @@ jobs:
       matrix:
         version:
           - ""
-          - v23.1.21
-          - v23.2.24
         testvaluespattern:
           - '9[6-9]*' # some tests depend on a github secret that isn't available for fork PRs. Only run these tests in branch PRs.
       fail-fast: false
