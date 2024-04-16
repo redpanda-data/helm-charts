@@ -5,7 +5,6 @@ go 1.21.5
 require (
 	github.com/Masterminds/sprig/v3 v3.2.3
 	github.com/cockroachdb/errors v1.11.1
-	github.com/evanphx/json-patch v4.12.0+incompatible
 	github.com/gonvenience/ytbx v1.4.4
 	github.com/homeport/dyff v1.7.1
 	github.com/imdario/mergo v0.3.11

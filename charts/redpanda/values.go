@@ -100,7 +100,11 @@ type AuditLogging struct {
 	ClientMaxBufferSize        int      `json:"clientMaxBufferSize"`
 	QueueDrainIntervalMS       int      `json:"queueDrainIntervalMs"`
 	QueueMaxBufferSizeperShard int      `json:"queueMaxBufferSizePerShard"`
-	ReplicationFactor          *int     `json:"replicationFactor" jsonschema:"oneof_type=integer;null"`
+	ReplicationFactor          *int     `json:"replicationFactor"`
+}
+
+func (AuditLogging) JSONSchemaExtend(schema *jsonschema.Schema) {
+	makeNullable(schema, "replicationFactor", "enabledEventTypes", "excludedPrincipals", "excludedTopics")
 }
 
 type Enterprise struct {
@@ -139,12 +143,6 @@ type ExternalConfig struct {
 	ExternalDNS *struct {
 		Enabled bool `json:"enabled" jsonschema:"required"`
 	} `json:"externalDns"`
-}
-
-func (ExternalConfig) JSONSchemaExtend(schema *jsonschema.Schema) {
-	// TODO
-	domain, _ := schema.Properties.Get("domain")
-	domain.Format = "idn-hostname"
 }
 
 type Logging struct {
@@ -468,51 +466,82 @@ type AdminExternal struct {
 type HTTPListeners struct {
 	Enabled              bool                            `json:"enabled" jsonschema:"required"`
 	External             ExternalListeners[HTTPExternal] `json:"external"`
-	AuthenticationMethod string                          `json:"authenticationMethod" jsonschema:"pattern=http_basic|none"`
+	AuthenticationMethod HTTPAuthenticationMethod        `json:"authenticationMethod"`
 	TLS                  *ExternalTLS                    `json:"tls" jsonschema:"required"`
 	KafkaEndpoint        string                          `json:"kafkaEndpoint" jsonschema:"required,pattern=^[A-Za-z_-][A-Za-z0-9_-]*$"`
 	Port                 int                             `json:"port" jsonschema:"required"`
 }
 
+func (HTTPListeners) JSONSchemaExtend(schema *jsonschema.Schema) {
+	makeNullable(schema, "authenticationMethod")
+}
+
 type HTTPExternal struct {
-	AdvertisedPorts      []int32      `json:"advertisedPorts" jsonschema:"minItems=1"`
-	Enabled              *bool        `json:"enabled"`
-	Port                 int32        `json:"port" jsonschema:"required"`
-	AuthenticationMethod *string      `json:"authenticationMethod" jsonschema:"pattern=http_basic|none,oneof_type=string;null"`
-	PrefixTemplate       string       `json:"prefixTemplate"`
-	TLS                  *ExternalTLS `json:"tls" jsonschema:"required"`
+	AdvertisedPorts      []int32                   `json:"advertisedPorts" jsonschema:"minItems=1"`
+	Enabled              *bool                     `json:"enabled"`
+	Port                 int32                     `json:"port" jsonschema:"required"`
+	AuthenticationMethod *HTTPAuthenticationMethod `json:"authenticationMethod"`
+	PrefixTemplate       string                    `json:"prefixTemplate"`
+	TLS                  *ExternalTLS              `json:"tls" jsonschema:"required"`
+}
+
+func (HTTPExternal) JSONSchemaExtend(schema *jsonschema.Schema) {
+	makeNullable(schema, "authenticationMethod")
+	// TODO document me. Legacy matching needs to be removed in a minor bump.
+	tls, _ := schema.Properties.Get("tls")
+	tls.Required = []string{}
+	schema.Required = []string{"port"}
 }
 
 type KafkaListeners struct {
-	AuthenticationMethod string                           `json:"authenticationMethod" jsonschema:"pattern=sasl|none|mtls_identity"`
+	AuthenticationMethod KafkaAuthenticationMethod        `json:"authenticationMethod"`
 	External             ExternalListeners[KafkaExternal] `json:"external"`
 	TLS                  *ExternalTLS                     `json:"tls" jsonschema:"required"`
 	Port                 int                              `json:"port" jsonschema:"required"`
 }
 
+func (KafkaListeners) JSONSchemaExtend(schema *jsonschema.Schema) {
+	makeNullable(schema, "authenticationMethod")
+}
+
 type KafkaExternal struct {
-	AdvertisedPorts      []int32 `json:"advertisedPorts" jsonschema:"minItems=1"`
-	Enabled              *bool   `json:"enabled"`
-	Port                 int32   `json:"port" jsonschema:"required"`
-	AuthenticationMethod *string `json:"authenticationMethod" jsonschema:"pattern=sasl|none|mtls_identity,oneof_type=string;null"`
-	PrefixTemplate       string  `json:"prefixTemplate"`
+	AdvertisedPorts      []int32                    `json:"advertisedPorts" jsonschema:"minItems=1"`
+	Enabled              *bool                      `json:"enabled"`
+	Port                 int32                      `json:"port" jsonschema:"required"`
+	AuthenticationMethod *KafkaAuthenticationMethod `json:"authenticationMethod"`
+	PrefixTemplate       string                     `json:"prefixTemplate"`
+}
+
+func (KafkaExternal) JSONSchemaExtend(schema *jsonschema.Schema) {
+	makeNullable(schema, "authenticationMethod")
 }
 
 type SchemaRegistryListeners struct {
 	Enabled              bool                                      `json:"enabled" jsonschema:"required"`
 	External             ExternalListeners[SchemaRegistryExternal] `json:"external"`
-	AuthenticationMethod *string                                   `json:"authenticationMethod" jsonschema:"pattern=http_basic|none,oneof_type=string;null"`
+	AuthenticationMethod *HTTPAuthenticationMethod                 `json:"authenticationMethod"`
 	KafkaEndpoint        string                                    `json:"kafkaEndpoint" jsonschema:"required,pattern=^[A-Za-z_-][A-Za-z0-9_-]*$"`
 	Port                 int                                       `json:"port" jsonschema:"required"`
 	TLS                  *ExternalTLS                              `json:"tls" jsonschema:"required"`
 }
 
+func (SchemaRegistryListeners) JSONSchemaExtend(schema *jsonschema.Schema) {
+	makeNullable(schema, "authenticationMethod")
+}
+
 type SchemaRegistryExternal struct {
-	AdvertisedPorts      []int32      `json:"advertisedPorts" jsonschema:"minItems=1"`
-	Enabled              *bool        `json:"enabled"`
-	Port                 int32        `json:"port"`
-	AuthenticationMethod *string      `json:"authenticationMethod" jsonschema:"pattern=http_basic|none,oneof_type=string;null"`
-	TLS                  *ExternalTLS `json:"tls"`
+	AdvertisedPorts      []int32                   `json:"advertisedPorts" jsonschema:"minItems=1"`
+	Enabled              *bool                     `json:"enabled"`
+	Port                 int32                     `json:"port"`
+	AuthenticationMethod *HTTPAuthenticationMethod `json:"authenticationMethod"`
+	TLS                  *ExternalTLS              `json:"tls"`
+}
+
+func (SchemaRegistryExternal) JSONSchemaExtend(schema *jsonschema.Schema) {
+	makeNullable(schema, "authenticationMethod")
+	// TODO this as well
+	tls, _ := schema.Properties.Get("tls")
+	tls.Required = []string{}
 }
 
 type TunableConfig map[string]any
@@ -554,9 +583,9 @@ type TieredStorageConfig map[string]any
 
 func (TieredStorageConfig) JSONSchema() *jsonschema.Schema {
 	type schema struct {
-		// CloudStorageEnabled                     bool   `json:"cloud_storage_enabled" jsonschema:"required"`
-		// CloudStorageAccessKey                   string `json:"cloud_storage_access_key"`
-		// CloudStorageSecretKey                   string `json:"cloud_storage_secret_key"`
+		CloudStorageEnabled                     bool   `json:"cloud_storage_enabled" jsonschema:"required"`
+		CloudStorageAccessKey                   string `json:"cloud_storage_access_key"`
+		CloudStorageSecretKey                   string `json:"cloud_storage_secret_key"`
 		CloudStorageAPIEndpoint                 string `json:"cloud_storage_api_endpoint"`
 		CloudStorageAPIEndpointPort             int    `json:"cloud_storage_api_endpoint_port"`
 		CloudStorageAzureADLSEndpoint           string `json:"cloud_storage_azure_adls_endpoint"`

@@ -67,13 +67,13 @@
                 # 2. Run `nix develop`
                 # 3. Copy the output value into vendorHash
                 # TODO: Figure out a better way to update this.
-                vendorHash = "sha256-ILhTJL3KBuZNXpCLxbWFGK7+9cUb2imPHjgfTxqnkjM=";
+                vendorHash = "sha256-7nAKTLGNZm5sfqjlI8RzBBskl2EAyv9cz3WpOZd2Tio=";
               };
             in
             {
               gotohelm = buildCmdGoModule "gotohelm";
               genpartial = buildCmdGoModule "genpartial";
-              genvalues = buildCmdGoModule "genvalues";
+              genschema = buildCmdGoModule "genschema";
             };
 
           devShells.default = pkgs.mkShell {
