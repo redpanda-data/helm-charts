@@ -81,7 +81,7 @@ jobs:
 
       - name: Commit changes for testdata golden files
         run: |
-          git add charts/redpanda
+          git add charts/redpanda/testdata
           git commit -m "[Auto Commit] Update testdata golden files"
           git push
 
