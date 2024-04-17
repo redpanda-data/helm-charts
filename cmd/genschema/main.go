@@ -6,6 +6,7 @@ import (
 
 	"github.com/invopop/jsonschema"
 	"github.com/redpanda-data/helm-charts/charts/redpanda"
+	"github.com/redpanda-data/helm-charts/pkg/valuesutil"
 )
 
 func Must[T any](value T, err error) T {
@@ -43,14 +44,8 @@ func main() {
 	// Because of jsonschema's usage of an ordered map, the key ordering is a
 	// bit strange. Round trip through an untyped map[string]any to have go
 	// sort the keys alphabetically. (This helps reduce diff churn).
-	var untyped map[string]any
-	if err := json.Unmarshal(Must(json.Marshal(schema)), &untyped); err != nil {
-		panic(err)
-	}
+	untyped := Must(valuesutil.UnmarshalInto[any](schema))
+	data := Must(json.MarshalIndent(untyped, "", "  "))
 
-	data, err := json.MarshalIndent(untyped, "", "  ")
-	if err != nil {
-		panic(err.Error())
-	}
 	fmt.Printf("%s\n", data)
 }
