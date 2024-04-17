@@ -22,6 +22,7 @@
               (final: prev: {
                 chart-releaser = pkgs.callPackage ./.github/chart-releaser.nix { };
                 chart-testing = pkgs.callPackage ./.github/chart-testing.nix { };
+                docker-tag-list = pkgs.callPackage ./.github/docker-tag-list.nix { };
               })
             ];
           };
@@ -80,17 +81,19 @@
               pkgs.actionlint # Github Workflow definition linter https://github.com/rhysd/actionlint
               pkgs.chart-releaser
               pkgs.chart-testing
+              pkgs.docker-tag-list # Utility to list out docker tags
               pkgs.dyff
+              pkgs.gh # Github CLI
               pkgs.git
               pkgs.go
               pkgs.go-task
               pkgs.helm-docs
               pkgs.jq # CLI JSON swiss army knife
               pkgs.kind
+              pkgs.kube-linter
               pkgs.kubectl
               pkgs.kubernetes-helm
               pkgs.kustomize
-              pkgs.kube-linter
               pkgs.yq # jq but for YAML
             ];
           };
