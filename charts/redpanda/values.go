@@ -17,6 +17,11 @@ import (
 // the Values struct as well to ensure that nothing can ever get out of sync.
 
 type Values struct {
+	// ---
+	// RedpandaYAML represents redpanda.yaml as is read by redpanda. Provide
+	// direct access to every field. Enhance when possible.
+	// RedpandaYAML `json:",inline"`
+
 	NameOverride     string            `json:"nameOverride"`
 	FullnameOverride string            `json:"fullnameOverride"`
 	ClusterDomain    string            `json:"clusterDomain"`
@@ -27,8 +32,12 @@ type Values struct {
 	Image            Image             `json:"image" jsonschema:"required,description=Values used to define the container image to be used for Redpanda"`
 	Service          *Service          `json:"service"`
 	// ImagePullSecrets []string `json:"imagePullSecrets"`
-	LicenseKey       string           `json:"license_key" jsonschema:"deprecated,pattern=^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?\\.(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$|^$"`
-	LicenseSecretRef LicenseSecretRef `json:"license_secret_ref" jsonschema:"deprecated"`
+
+	// +deprecated
+	// kubebuilder:validation:Pattern=^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?\\.(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$|^$"
+	LicenseKey string `json:"license_key"`
+	// +deprecated
+	LicenseSecretRef LicenseSecretRef `json:"license_secret_ref"`
 	AuditLogging     AuditLogging     `json:"auditLogging"`
 	Enterprise       Enterprise       `json:"enterprise"`
 	RackAwareness    RackAwareness    `json:"rackAwareness"`
@@ -52,6 +61,10 @@ type Values struct {
 	Tests          *struct {
 		Enabled bool `json:"enabled"`
 	} `json:"tests"`
+}
+
+type RedpandaYAML struct {
+	Redpanda *BrokerConfig `json:"redpanda"`
 }
 
 func (Values) JSONSchemaExtend(schema *jsonschema.Schema) {
@@ -121,8 +134,8 @@ type Auth struct {
 }
 
 type TLS struct {
-	Enabled *bool       `json:"enabled" jsonschema:"required"`
-	Certs   *TLSCertMap `json:"certs"`
+	Enabled *bool      `json:"enabled" jsonschema:"required"`
+	Certs   TLSCertMap `json:"certs"`
 }
 
 type ExternalConfig struct {
@@ -435,9 +448,10 @@ func (TLSCertMap) JSONSchemaExtend(schema *jsonschema.Schema) {
 }
 
 type SASLUser struct {
-	Name      string `json:"name"`
-	Password  string `json:"password"`
-	Mechanism string `json:"mechanism" jsonschema:"pattern=^(SCRAM-SHA-512|SCRAM-SHA-256)$"`
+	Name     string `json:"name"`
+	Password string `json:"password"`
+	// +kubebuilder:validation:Pattern=^(SCRAM-SHA-512|SCRAM-SHA-256)$
+	Mechanism string `json:"mechanism"`
 }
 
 type SASLAuth struct {
@@ -487,7 +501,7 @@ type KafkaListeners struct {
 	AuthenticationMethod string                           `json:"authenticationMethod" jsonschema:"pattern=sasl|none|mtls_identity"`
 	External             ExternalListeners[KafkaExternal] `json:"external"`
 	TLS                  *ExternalTLS                     `json:"tls" jsonschema:"required"`
-	Port                 int                              `json:"port" jsonschema:"required"`
+	Port                 int32                            `json:"port" jsonschema:"required"`
 }
 
 type KafkaExternal struct {
@@ -606,8 +620,10 @@ type Tiered struct {
 	CredentialsSecretRef TieredStorageCredentials `json:"credentialsSecretRef"`
 	Config               TieredStorageConfig      `json:"config"`
 	HostPath             string                   `json:"hostPath"`
-	MountType            string                   `json:"mountType" jsonschema:"required,pattern=^(none|hostPath|emptyDir|persistentVolume)$"`
-	PersistentVolume     struct {
+	// +kubebuilder:validation:Required
+	// +kubebuilder:validation:Pattern=^(none|hostPath|emptyDir|persistentVolume)$
+	MountType        string `json:"mountType"`
+	PersistentVolume struct {
 		Annotations   map[string]string `json:"annotations" jsonschema:"required"`
 		Enabled       bool              `json:"enabled"`
 		Labels        map[string]string `json:"labels" jsonschema:"required"`

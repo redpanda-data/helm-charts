@@ -1,0 +1,81 @@
+{
+	"properties": {
+		"maxSkew": {
+			"type": "integer"
+		},
+		"topologyKey": {
+			"type": "string"
+		},
+		"whenUnsatisfiable": {
+			"type": "string",
+			"enum": [
+				"ScheduleAnyway",
+				"DoNotSchedule"
+			]
+		},
+		"labelSelector": {
+			"properties": {
+				"matchLabels": {
+					"additionalProperties": {
+						"type": "string"
+					},
+					"type": "object"
+				},
+				"matchExpressions": {
+					"items": {
+						"properties": {
+							"key": {
+								"type": "string"
+							},
+							"operator": {
+								"type": "string"
+							},
+							"values": {
+								"items": {
+									"type": "string"
+								},
+								"type": "array"
+							}
+						},
+						"type": "object",
+						"required": [
+							"key",
+							"operator"
+						]
+					},
+					"type": "array"
+				}
+			},
+			"type": "object"
+		},
+		"minDomains": {
+			"type": "integer"
+		},
+		"nodeAffinityPolicy": {
+			"type": "string",
+			"enum": [
+				"Ignore",
+				"Honor"
+			]
+		},
+		"nodeTaintsPolicy": {
+			"type": "string",
+			"enum": [
+				"Ignore",
+				"Honor"
+			]
+		},
+		"matchLabelKeys": {
+			"items": {
+				"type": "string"
+			},
+			"type": "array"
+		}
+	},
+	"type": "object",
+	"required": [
+		"maxSkew",
+		"topologyKey",
+		"whenUnsatisfiable"
+	]
+}
