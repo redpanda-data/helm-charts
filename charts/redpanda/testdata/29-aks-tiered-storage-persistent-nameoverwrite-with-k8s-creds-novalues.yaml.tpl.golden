@@ -379,7 +379,6 @@ data:
             address: redpanda-2.redpanda.default.svc.cluster.local.
             port: 33145
     cloud_storage_azure_container: ${TEST_STORAGE_CONTAINER}
-    cloud_storage_azure_shared_key: ${TEST_AZURE_SHARED_KEY}
     cloud_storage_azure_storage_account: ${TEST_STORAGE_ACCOUNT}
     cloud_storage_cache_size: "5368709120"
     cloud_storage_credentials_source: config_file
@@ -833,7 +832,7 @@ spec:
         app.kubernetes.io/name: redpanda
         redpanda.com/poddisruptionbudget: redpanda
       annotations:
-        config.redpanda.com/checksum: 6d844303ea4511bc85c0def54717a84fb8bf81fae5c8a4ba45a2f4aa317672e9
+        config.redpanda.com/checksum: da57489c2cfcb7e3285c79156b3648381479e37128d8c38d274071a67b07a020
     spec:
       terminationGracePeriodSeconds: 90
       securityContext: 
@@ -872,7 +871,7 @@ spec:
               mountPath: /etc/tls/certs/external
             - name: datadir
               mountPath: /var/lib/redpanda/data
-            - name: tiered-storage-dir
+            - name: shadow-index-cache
               mountPath: /var/lib/redpanda/data/cloud_storage_cache
         - name: redpanda-configurator
           image: docker.redpanda.com/redpandadata/redpanda:v23.3.11
@@ -1030,7 +1029,7 @@ spec:
               mountPath: /var/lifecycle
             - name: datadir
               mountPath: /var/lib/redpanda/data
-            - name: tiered-storage-dir
+            - name: shadow-index-cache
               mountPath: /var/lib/redpanda/data/cloud_storage_cache
           resources:
             limits:
@@ -1124,7 +1123,7 @@ spec:
           requests:
             storage: "20Gi"
     - metadata:
-        name: tiered-storage-dir
+        name: shadow-index-cache
         labels:
           app.kubernetes.io/name: redpanda
           app.kubernetes.io/instance: "redpanda"
@@ -1397,7 +1396,10 @@ spec:
         - name: REDPANDA_LICENSE
           value: ${REDPANDA_SAMPLE_LICENSE}
         - name: RPK_CLOUD_STORAGE_AZURE_SHARED_KEY
-          value: '"${TEST_AZURE_SHARED_KEY}"'
+          valueFrom:
+            secretKeyRef:
+              key: XYZ
+              name: ABC
         - name: RPK_CLOUD_STORAGE_AZURE_CONTAINER
           value: '"${TEST_STORAGE_CONTAINER}"'
         - name: RPK_CLOUD_STORAGE_AZURE_STORAGE_ACCOUNT

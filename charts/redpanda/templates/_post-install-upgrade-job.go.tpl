@@ -23,10 +23,19 @@
 {{- (dict "r" $envars) | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- if (and (not (empty (index $tieredStorageConfig "cloud_storage_azure_container"))) (not (empty (index $tieredStorageConfig "cloud_storage_azure_storage_account")))) -}}
+{{- if (not (empty (index $tieredStorageConfig "cloud_storage_azure_shared_key"))) -}}
+{{- $envars = (mustAppend $envars (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_AZURE_SHARED_KEY" "value" (mustToJson (index $tieredStorageConfig "cloud_storage_azure_shared_key")) ))) -}}
+{{- else -}}{{- if (and (and (ne $values.storage.tiered.credentialsSecretRef.secretKey (coalesce nil)) (not (empty $values.storage.tiered.credentialsSecretRef.secretKey.name))) (not (empty $values.storage.tiered.credentialsSecretRef.secretKey.key))) -}}
+{{- $envars = (mustAppend $envars (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_AZURE_SHARED_KEY" "valueFrom" (mustMergeOverwrite (dict ) (dict "secretKeyRef" (mustMergeOverwrite (mustMergeOverwrite (dict ) (dict "key" "" )) (mustMergeOverwrite (dict ) (dict "name" $values.storage.tiered.credentialsSecretRef.secretKey.name )) (dict "key" $values.storage.tiered.credentialsSecretRef.secretKey.key )) )) ))) -}}
+{{- end -}}
+{{- end -}}
+{{- else -}}
 {{- if (not (empty (index $tieredStorageConfig "cloud_storage_secret_key"))) -}}
 {{- $envars = (mustAppend $envars (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_SECRET_KEY" "value" (index $tieredStorageConfig "cloud_storage_secret_key") ))) -}}
 {{- else -}}{{- if (and (and (ne $values.storage.tiered.credentialsSecretRef.secretKey (coalesce nil)) (not (empty $values.storage.tiered.credentialsSecretRef.secretKey.name))) (not (empty $values.storage.tiered.credentialsSecretRef.secretKey.key))) -}}
 {{- $envars = (mustAppend $envars (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_SECRET_KEY" "valueFrom" (mustMergeOverwrite (dict ) (dict "secretKeyRef" (mustMergeOverwrite (mustMergeOverwrite (dict ) (dict "key" "" )) (mustMergeOverwrite (dict ) (dict "name" $values.storage.tiered.credentialsSecretRef.secretKey.name )) (dict "key" $values.storage.tiered.credentialsSecretRef.secretKey.key )) )) ))) -}}
+{{- end -}}
 {{- end -}}
 {{- end -}}
 {{- if (not (empty (index $tieredStorageConfig "cloud_storage_access_key"))) -}}
@@ -36,7 +45,7 @@
 {{- end -}}
 {{- end -}}
 {{- range $k, $v := $tieredStorageConfig -}}
-{{- if (or (eq $k "cloud_storage_access_key") (eq $k "cloud_storage_secret_key")) -}}
+{{- if (or (or (eq $k "cloud_storage_access_key") (eq $k "cloud_storage_secret_key")) (eq $k "cloud_storage_azure_shared_key")) -}}
 {{- continue -}}
 {{- end -}}
 {{- if (or (eq $v (coalesce nil)) (empty $v)) -}}

@@ -1331,10 +1331,10 @@ spec:
         image: docker.redpanda.com/redpandadata/redpanda:v23.3.11
         
         env:
-        - name: RPK_CLOUD_STORAGE_AZURE_CONTAINER
-          value: '"${TEST_STORAGE_CONTAINER}"'
         - name: RPK_CLOUD_STORAGE_AZURE_SHARED_KEY
           value: '"${TEST_AZURE_SHARED_KEY}"'
+        - name: RPK_CLOUD_STORAGE_AZURE_CONTAINER
+          value: '"${TEST_STORAGE_CONTAINER}"'
         - name: RPK_CLOUD_STORAGE_AZURE_STORAGE_ACCOUNT
           value: '"${TEST_STORAGE_ACCOUNT}"'
         - name: RPK_CLOUD_STORAGE_CACHE_SIZE

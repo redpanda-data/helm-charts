@@ -55,23 +55,44 @@ func RedpandaEnvironmentVariables(dot *helmette.Dot) []corev1.EnvVar {
 		return envars
 	}
 
-	if !helmette.Empty(tieredStorageConfig["cloud_storage_secret_key"]) {
-		envars = append(envars, corev1.EnvVar{
-			Name:  "RPK_CLOUD_STORAGE_SECRET_KEY",
-			Value: tieredStorageConfig["cloud_storage_secret_key"].(string),
-		})
-	} else if values.Storage.Tiered.CredentialsSecretRef.SecretKey != nil &&
-		!helmette.Empty(values.Storage.Tiered.CredentialsSecretRef.SecretKey.Name) &&
-		!helmette.Empty(values.Storage.Tiered.CredentialsSecretRef.SecretKey.Key) {
-		envars = append(envars, corev1.EnvVar{
-			Name: "RPK_CLOUD_STORAGE_SECRET_KEY",
-			ValueFrom: &corev1.EnvVarSource{
-				SecretKeyRef: &corev1.SecretKeySelector{
-					LocalObjectReference: corev1.LocalObjectReference{Name: values.Storage.Tiered.CredentialsSecretRef.SecretKey.Name},
-					Key:                  values.Storage.Tiered.CredentialsSecretRef.SecretKey.Key,
+	if !helmette.Empty(tieredStorageConfig["cloud_storage_azure_container"]) && !helmette.Empty(tieredStorageConfig["cloud_storage_azure_storage_account"]) {
+		if !helmette.Empty(tieredStorageConfig["cloud_storage_azure_shared_key"]) {
+			envars = append(envars, corev1.EnvVar{
+				Name:  "RPK_CLOUD_STORAGE_AZURE_SHARED_KEY",
+				Value: helmette.MustToJSON(tieredStorageConfig["cloud_storage_azure_shared_key"]),
+			})
+		} else if values.Storage.Tiered.CredentialsSecretRef.SecretKey != nil &&
+			!helmette.Empty(values.Storage.Tiered.CredentialsSecretRef.SecretKey.Name) &&
+			!helmette.Empty(values.Storage.Tiered.CredentialsSecretRef.SecretKey.Key) {
+			envars = append(envars, corev1.EnvVar{
+				Name: "RPK_CLOUD_STORAGE_AZURE_SHARED_KEY",
+				ValueFrom: &corev1.EnvVarSource{
+					SecretKeyRef: &corev1.SecretKeySelector{
+						LocalObjectReference: corev1.LocalObjectReference{Name: values.Storage.Tiered.CredentialsSecretRef.SecretKey.Name},
+						Key:                  values.Storage.Tiered.CredentialsSecretRef.SecretKey.Key,
+					},
 				},
-			},
-		})
+			})
+		}
+	} else {
+		if !helmette.Empty(tieredStorageConfig["cloud_storage_secret_key"]) {
+			envars = append(envars, corev1.EnvVar{
+				Name:  "RPK_CLOUD_STORAGE_SECRET_KEY",
+				Value: tieredStorageConfig["cloud_storage_secret_key"].(string),
+			})
+		} else if values.Storage.Tiered.CredentialsSecretRef.SecretKey != nil &&
+			!helmette.Empty(values.Storage.Tiered.CredentialsSecretRef.SecretKey.Name) &&
+			!helmette.Empty(values.Storage.Tiered.CredentialsSecretRef.SecretKey.Key) {
+			envars = append(envars, corev1.EnvVar{
+				Name: "RPK_CLOUD_STORAGE_SECRET_KEY",
+				ValueFrom: &corev1.EnvVarSource{
+					SecretKeyRef: &corev1.SecretKeySelector{
+						LocalObjectReference: corev1.LocalObjectReference{Name: values.Storage.Tiered.CredentialsSecretRef.SecretKey.Name},
+						Key:                  values.Storage.Tiered.CredentialsSecretRef.SecretKey.Key,
+					},
+				},
+			})
+		}
 	}
 
 	if !helmette.Empty(tieredStorageConfig["cloud_storage_access_key"]) {
@@ -92,8 +113,9 @@ func RedpandaEnvironmentVariables(dot *helmette.Dot) []corev1.EnvVar {
 			},
 		})
 	}
+
 	for k, v := range tieredStorageConfig {
-		if k == "cloud_storage_access_key" || k == "cloud_storage_secret_key" {
+		if k == "cloud_storage_access_key" || k == "cloud_storage_secret_key" || k == "cloud_storage_azure_shared_key" {
 			continue
 		}
 
