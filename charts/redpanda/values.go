@@ -3,6 +3,7 @@ package redpanda
 
 import (
 	"github.com/invopop/jsonschema"
+	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 	orderedmap "github.com/wk8/go-ordered-map/v2"
 	corev1 "k8s.io/api/core/v1"
 )
@@ -168,10 +169,11 @@ type Logging struct {
 }
 
 type Monitoring struct {
-	Enabled        *bool             `json:"enabled" jsonschema:"required"`
-	ScrapeInterval string            `json:"scrapeInterval" jsonschema:"required,pattern=.*[smh]$"`
-	Labels         map[string]string `json:"labels"`
-	TLSConfig      map[string]any    `json:"tlsConfig"`
+	Enabled        *bool                   `json:"enabled" jsonschema:"required"`
+	ScrapeInterval monitoringv1.Duration   `json:"scrapeInterval" jsonschema:"required"`
+	Labels         map[string]string       `json:"labels"`
+	TLSConfig      *monitoringv1.TLSConfig `json:"tlsConfig"`
+	EnableHttp2    *bool                   `json:"enableHttp2"`
 }
 
 type RedpandaResources struct {
