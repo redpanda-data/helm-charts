@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"text/template"
 
@@ -27,6 +28,11 @@ var (
 // KindOf is the go equivalent of sprig's `kindOf`.
 func KindOf(v any) string {
 	return reflect.TypeOf(v).Kind().String()
+}
+
+func Int64(v string) int64 {
+	i, _ := strconv.ParseInt(v, 0, 0)
+	return i
 }
 
 // KindIs is the go equivalent of sprig's `kindIs`.

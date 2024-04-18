@@ -711,6 +711,7 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 		"helmette.RegexMatch":     "regexMatch",
 		"helmette.SortAlpha":      "sortAlpha",
 		"helmette.ToJSON":         "toJson",
+		"helmette.Int64":          "int64",
 		"helmette.Tpl":            "tpl",
 		"helmette.Trunc":          "trunc",
 		"helmette.Unset":          "unset",
@@ -754,6 +755,8 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 		// TODO revalidate arguments
 		// TODO add in zerof
 		return &Call{FuncName: "_shims.dicttest", Arguments: args}
+	case "helmette.Sitobytes":
+		return &BuiltInCall{FuncName: "include", Arguments: append([]Node{&Literal{Value: "\"_shims.sitobytes\""}}, args...)}
 	case "helmette.TypeTest":
 		// TODO there's got to be a better way to get the type params....
 		args = append([]Node{
@@ -885,7 +888,7 @@ func (t *Transpiler) getStructType(typ *types.Struct) (*packages.Package, *ast.S
 		pack = t.Package
 	}
 
-	// This is quite strange, struct 
+	// This is quite strange, struct
 	spec := findNearest[*ast.StructType](pack, typ.Field(0).Pos())
 
 	if spec == nil {

@@ -1,9 +1,11 @@
 package helmette
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/mitchellh/mapstructure"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -69,4 +71,15 @@ func Unwrap[T any](from Values) T {
 		panic(err)
 	}
 	return out
+}
+
+// Sitobytes will translate string representation of Quantity to decimal value
+// See also: "_shims.sitobytes".
+func Sitobytes(value any) string {
+	v, ok := value.(string)
+	if !ok {
+		return ""
+	}
+	q := resource.MustParse(v)
+	return fmt.Sprintf("%d", q.Value())
 }

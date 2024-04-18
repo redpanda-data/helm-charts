@@ -68,15 +68,7 @@ spec:
       containers:
       - name: {{ template "redpanda.name" . }}-post-install
         image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
-        {{ (dict "env" (prepend
-            (include "tiered-storage-env-vars" . | fromJsonArray)
-            (include "secret-ref-or-value" (dict
-                "Name" "REDPANDA_LICENSE"
-                "Value" (include "enterprise-license" .)
-                "SecretName" (include "enterprise-secret-name" .)
-                "SecretKey" (include "enterprise-secret-key" .)
-            ) | fromJson)
-         | compact)) | toYaml | nindent 8 }}
+        {{ (dict "env" (get ((include "redpanda.RedpandaEnvironmentVariables" (dict "a" (list .))) | fromJson) "r")) | toYaml | nindent 8 }}
         command: ["bash","-c"]
         args:
           - |
