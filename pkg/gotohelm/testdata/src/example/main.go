@@ -15,6 +15,7 @@ import (
 	"example.com/example/k8s"
 	"example.com/example/labels"
 	"example.com/example/mutability"
+	"example.com/example/quantity"
 	"example.com/example/sprig"
 	"example.com/example/syntax"
 	"example.com/example/typing"
@@ -115,6 +116,11 @@ func runChart(dot *helmette.Dot) (_ map[string]any, err any) {
 	case "syntax":
 		return map[string]any{
 			"Syntax": syntax.Syntax(),
+		}, nil
+
+	case "quantity":
+		return map[string]any{
+			"SiToBytes": quantity.SiToBytes(dot),
 		}, nil
 
 	default:

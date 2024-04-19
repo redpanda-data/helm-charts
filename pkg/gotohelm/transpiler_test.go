@@ -76,6 +76,46 @@ var testSpecs = map[string]TestSpec{
 			{"t": "a string"},
 		},
 	},
+	"quantity": {
+		Values: []map[string]any{
+			{"q": "100g"},
+			{"q": "100G"},
+			{"q": "100Gi"},
+			//{"q": "100gi"},
+			// template: quantity.yaml:7:15:
+			//    executing "quantity.SiToBytes" at <include "_shims.sitobytes" $a>:
+			//        error calling include: template: _shims.tpl:70:138:
+			//            executing "_shims.sitobytes" at <fail>:
+			//                error calling fail:
+			// 100gi is invalid SI quantity
+			// Suffixes can be: b | B | k | K | m | M | g | G | Ki | Mi | Gi or without any Suffixes
+			{"q": "100"},
+			{"q": "100b"},
+			{"q": "100B"},
+			{"q": "100m"},
+			{"q": "100M"},
+			{"q": "100Mi"},
+			//{"q": "100mi"},
+			// template: quantity.yaml:7:15:
+			//    executing "quantity.SiToBytes" at <include "_shims.sitobytes" $a>:
+			//        error calling include: template: _shims.tpl:70:138:
+			//            executing "_shims.sitobytes" at <fail>:
+			//                error calling fail:
+			// 100mi is invalid SI quantity
+			// Suffixes can be: b | B | k | K | m | M | g | G | Ki | Mi | Gi or without any Suffixes
+			{"q": "100k"},
+			{"q": "100K"},
+			{"q": "100Ki"},
+			//{"q": "100ki"},
+			// template: quantity.yaml:7:15:
+			//    executing "quantity.SiToBytes" at <include "_shims.sitobytes" $a>:
+			//        error calling include: template: _shims.tpl:70:138:
+			//            executing "_shims.sitobytes" at <fail>:
+			//                error calling fail:
+			// 100ki is invalid SI quantity
+			// Suffixes can be: b | B | k | K | m | M | g | G | Ki | Mi | Gi or without any Suffixes
+		},
+	},
 }
 
 func TestTranspile(t *testing.T) {

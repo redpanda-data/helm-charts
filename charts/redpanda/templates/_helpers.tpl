@@ -145,51 +145,12 @@ Use AppVersion if image.tag is not set
 {{- toJson (dict "bool" (dig "enabled" false .Values.auth.sasl)) -}}
 {{- end -}}
 
-{{- define "SI-to-bytes" -}}
-  {{/*
-  This template converts the incoming SI value to whole number bytes.
-  Input can be: b | B | k | K | m | M | g | G | Ki | Mi | Gi
-  Or number without suffix
-  */}}
-  {{- $si := . -}}
-  {{- if not (typeIs "string" . ) -}}
-    {{- $si = int64 $si | toString -}}
-  {{- end -}}
-  {{- $bytes := 0 -}}
-  {{- if or (hasSuffix "B" $si) (hasSuffix "b" $si) -}}
-    {{- $bytes = $si | trimSuffix "B" | trimSuffix "b" | float64 | floor -}}
-  {{- else if or (hasSuffix "K" $si) (hasSuffix "k" $si) -}}
-    {{- $raw := $si | trimSuffix "K" | trimSuffix "k" | float64 -}}
-    {{- $bytes = mulf $raw (mul 1000) | floor -}}
-  {{- else if or (hasSuffix "M" $si) (hasSuffix "m" $si) -}}
-    {{- $raw := $si | trimSuffix "M" | trimSuffix "m" | float64 -}}
-    {{- $bytes = mulf $raw (mul 1000 1000) | floor -}}
-  {{- else if or (hasSuffix "G" $si) (hasSuffix "g" $si) -}}
-    {{- $raw := $si | trimSuffix "G" | trimSuffix "g" | float64 -}}
-    {{- $bytes = mulf $raw (mul 1000 1000 1000) | floor -}}
-  {{- else if hasSuffix "Ki" $si -}}
-    {{- $raw := $si | trimSuffix "Ki" | float64 -}}
-    {{- $bytes = mulf $raw (mul 1024) | floor -}}
-  {{- else if hasSuffix "Mi" $si -}}
-    {{- $raw := $si | trimSuffix "Mi" | float64 -}}
-    {{- $bytes = mulf $raw (mul 1024 1024) | floor -}}
-  {{- else if hasSuffix "Gi" $si -}}
-    {{- $raw := $si | trimSuffix "Gi" | float64 -}}
-    {{- $bytes = mulf $raw (mul 1024 1024 1024) | floor -}}
-  {{- else if (mustRegexMatch "^[0-9]+$" $si) -}}
-    {{- $bytes = $si -}}
-  {{- else -}}
-    {{- printf "\n%s is invalid SI quantity\nSuffixes can be: b | B | k | K | m | M | g | G | Ki | Mi | Gi or without any Suffixes" $si | fail -}}
-  {{- end -}}
-  {{- $bytes | int64 -}}
-{{- end -}}
-
 {{/* Resource variables */}}
 {{- define "redpanda-memoryToMi" -}}
   {{/*
   This template converts the incoming memory value to whole number mebibytes.
   */}}
-  {{- div (include "SI-to-bytes" .) (mul 1024 1024) -}}
+  {{- div (include "_shims.sitobytes" .) (mul 1024 1024) -}}
 {{- end -}}
 
 {{- define "container-memory" -}}
@@ -323,7 +284,7 @@ than 1 core.
 {{- define "storage-min-free-bytes" -}}
 {{- $fiveGiB := 5368709120 -}}
 {{- if dig "enabled" false .Values.storage.persistentVolume -}}
-  {{- min $fiveGiB (mulf (include "SI-to-bytes" .Values.storage.persistentVolume.size) 0.05 | int64) -}}
+  {{- min $fiveGiB (mulf (include "_shims.sitobytes" .Values.storage.persistentVolume.size) 0.05 | int64) -}}
 {{- else -}}
 {{- $fiveGiB -}}
 {{- end -}}
@@ -861,7 +822,7 @@ REDPANDA_SASL_USERNAME REDPANDA_SASL_PASSWORD REDPANDA_SASL_MECHANISM
 
                 {{/* Special case for cache size */}}
                 {{- if eq $key "cloud_storage_cache_size" -}}
-                    {{- $value = (include "SI-to-bytes" $value | int64) -}}
+                    {{- $value = (include "_shims.sitobytes" $value | int64) -}}
                 {{- end -}}
 
                 ,

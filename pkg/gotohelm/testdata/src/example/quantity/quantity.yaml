@@ -1,0 +1,10 @@
+{{- /* Generated from "quantity.go" */ -}}
+
+{{- define "quantity.SiToBytes" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- (dict "r" (include "_shims.sitobytes" (index $dot.Values "q"))) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+

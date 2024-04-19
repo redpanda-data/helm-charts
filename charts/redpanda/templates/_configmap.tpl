@@ -376,7 +376,7 @@ redpanda.yaml: |
   {{- range $key, $element := $tieredStorageConfig }}
     {{- if or (eq (typeOf $element) "bool") $element }}
       {{- if eq $key "cloud_storage_cache_size" }}
-        {{- dict $key (include "SI-to-bytes" $element) | toYaml | nindent 2 -}}
+        {{- dict $key (include "_shims.sitobytes" $element) | toYaml | nindent 2 -}}
       {{- else }}
         {{- dict $key $element | toYaml | nindent 2 -}}
       {{- end }}
