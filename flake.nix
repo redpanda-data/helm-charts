@@ -91,7 +91,8 @@
                   # it uses reflection.
                   "^charts$"
                   "^charts/redpanda$"
-                  "^charts(/.*\.go)?$"
+                  "^charts/.*\.go$"
+                  "^charts/.*\.schema.json$"
                 ];
               };
             };
