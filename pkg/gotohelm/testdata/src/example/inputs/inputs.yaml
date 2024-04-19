@@ -27,7 +27,7 @@
 {{- define "inputs.digCompat" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
-{{- (dict "r" (dig "doesn't" "exist" "hello" $dot.Values.AsMap)) | toJson -}}
+{{- (dict "r" (get (fromJson (include "_shims.typeassertion" (dict "a" (list "string" (dig "doesn't" "exist" "hello" $dot.Values.AsMap)) ))) "r")) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

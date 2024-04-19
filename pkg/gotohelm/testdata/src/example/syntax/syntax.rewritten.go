@@ -3,6 +3,7 @@ package syntax
 
 import (
 	"fmt"
+	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	corev1 "k8s.io/api/core/v1"
 )
 
@@ -44,6 +45,13 @@ func Syntax() map[string]any {
 
 	// SelectorExpr
 	_ = corev1.IPv4Protocol // A reference to an imported constant
+
+	// TypeAssertExpr
+	var x any
+	_ = helmette.Compact2(helmette.TypeTest[int](x))
+	_ = helmette.Compact2(helmette.TypeTest[[]any](x))
+	_ = helmette.Compact2(helmette.TypeTest[[]string](x))
+	_ = helmette.Compact2(helmette.TypeTest[map[string]any](x))
 
 	return map[string]any{
 		"sliceExpr": slice,

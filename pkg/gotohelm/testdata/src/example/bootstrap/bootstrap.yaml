@@ -1,57 +1,64 @@
 {{- /* Generated from "bootstrap.go" */ -}}
 
-{{- define "bootstrap.hydrate" -}}
-{{- $in := (index .a 0) -}}
+{{- define "bootstrap.typetest" -}}
+{{- $typ := (index .a 0) -}}
+{{- $value := (index .a 1) -}}
+{{- $zero := (index .a 2) -}}
 {{- range $_ := (list 1) -}}
-{{- (dict "r" $in) | toJson -}}
+{{- if (typeIs $typ $value) -}}
+{{- (dict "r" (list $value true)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- (dict "r" (list $zero false)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
 
-{{- define "bootstrap.mustget" -}}
-{{- $d := (index .a 0) -}}
-{{- $key := (index .a 1) -}}
+{{- define "bootstrap.typeassertion" -}}
+{{- $typ := (index .a 0) -}}
+{{- $value := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
-{{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $d $key) ))) "r")) ))) "r") -}}
-{{- $ok := $tmp_tuple_1.T2 -}}
-{{- $value := $tmp_tuple_1.T1 -}}
-{{- if (not $ok) -}}
-{{- $_ := (fail (printf "missing key %q" $key)) -}}
+{{- if (not (typeIs $typ $value)) -}}
+{{- $_ := (fail (printf "expected type of %q got: %T" $typ $value)) -}}
 {{- end -}}
 {{- (dict "r" $value) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
 
-{{- define "bootstrap.zeroof" -}}
-{{- $kind := (index .a 0) -}}
+{{- define "bootstrap.dicttest" -}}
+{{- $m := (index .a 0) -}}
+{{- $key := (index .a 1) -}}
+{{- $zero := (index .a 2) -}}
 {{- range $_ := (list 1) -}}
-{{- if (eq $kind "int") -}}
-{{- (dict "r" 0) | toJson -}}
+{{- if (hasKey $m $key) -}}
+{{- (dict "r" (list (index $m $key) true)) | toJson -}}
 {{- break -}}
-{{- else -}}{{- if (eq $kind "string") -}}
-{{- (dict "r" "") | toJson -}}
+{{- end -}}
+{{- (dict "r" (list $zero false)) | toJson -}}
 {{- break -}}
-{{- else -}}{{- if (eq $kind "slice") -}}
-{{- (dict "r" (list )) | toJson -}}
-{{- break -}}
-{{- else -}}
-{{- $_ := (fail (printf "unhandled kind %q" $kind)) -}}
-{{- end -}}
-{{- end -}}
-{{- end -}}
 {{- end -}}
 {{- end -}}
 
-{{- define "bootstrap.typetest" -}}
-{{- $kind := (index .a 0) -}}
-{{- $value := (index .a 1) -}}
+{{- define "bootstrap.compact" -}}
+{{- $args := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
-{{- if (eq (kindOf $value) $kind) -}}
-{{- (dict "r" (list $value true)) | toJson -}}
+{{- $out := (dict ) -}}
+{{- range $i, $e := $args -}}
+{{- $_ := (set $out (printf "T%d" (int (add 1 $i))) $e) -}}
+{{- end -}}
+{{- (dict "r" $out) | toJson -}}
 {{- break -}}
 {{- end -}}
-{{- (dict "r" (list (get (fromJson (include "bootstrap.zeroof" (dict "a" (list $kind) ))) "r") false)) | toJson -}}
+{{- end -}}
+
+{{- define "bootstrap.deref" -}}
+{{- $ptr := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- if (eq $ptr (coalesce nil)) -}}
+{{- $_ := (fail "nil dereference") -}}
+{{- end -}}
+{{- (dict "r" $ptr) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

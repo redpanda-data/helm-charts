@@ -21,6 +21,7 @@ import (
 	"strings"
 
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
+	appsv1 "k8s.io/api/apps/v1"
 )
 
 // Create chart name and version as used by the chart label.
@@ -67,12 +68,10 @@ func FullLabels(dot *helmette.Dot) map[string]string {
 
 // StatefulSetPodLabelsSelector returns the label selector for the Redpanda StatefulSet.
 // If this helm release is an upgrade, the existing statefulset's label selector will be used as it's an immutable field.
-func StatefulSetPodLabelsSelector(dot *helmette.Dot, statefulSet map[string]any) map[string]string {
-	if dot.Release.IsUpgrade && statefulSet != nil {
-		existingStatefulSetLabelSelector := helmette.Dig(statefulSet, nil, "spec", "selector", "matchLabels")
-
-		if existingStatefulSetLabelSelector != nil {
-			return existingStatefulSetLabelSelector.(map[string]string)
+func StatefulSetPodLabelsSelector(dot *helmette.Dot, existing *appsv1.StatefulSet) map[string]string {
+	if dot.Release.IsUpgrade && existing != nil {
+		if len(existing.Spec.Selector.MatchLabels) > 0 {
+			return existing.Spec.Selector.MatchLabels
 		}
 	}
 
@@ -97,12 +96,10 @@ func StatefulSetPodLabelsSelector(dot *helmette.Dot, statefulSet map[string]any)
 
 // StatefulSetPodLabels returns the label that includs label selector for the Redpanda PodTemplate.
 // If this helm release is an upgrade, the existing statefulset's pod template labels will be used as it's an immutable field.
-func StatefulSetPodLabels(dot *helmette.Dot, statefulSet map[string]any) map[string]string {
-	if dot.Release.IsUpgrade && statefulSet != nil {
-		existingStatefulSetPodTemplateLabels := helmette.Dig(statefulSet, nil, "spec", "template", "metadata", "labels")
-
-		if existingStatefulSetPodTemplateLabels != nil {
-			return existingStatefulSetPodTemplateLabels.(map[string]string)
+func StatefulSetPodLabels(dot *helmette.Dot, existing *appsv1.StatefulSet) map[string]string {
+	if dot.Release.IsUpgrade && existing != nil {
+		if len(existing.Spec.Template.ObjectMeta.Labels) > 0 {
+			return existing.Spec.Template.ObjectMeta.Labels
 		}
 	}
 

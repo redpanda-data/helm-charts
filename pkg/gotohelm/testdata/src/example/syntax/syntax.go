@@ -44,6 +44,13 @@ func Syntax() map[string]any {
 	// SelectorExpr
 	_ = corev1.IPv4Protocol // A reference to an imported constant
 
+	// TypeAssertExpr
+	var x any
+	_, _ = x.(int)
+	_, _ = x.([]any)
+	_, _ = x.([]string)
+	_, _ = x.(map[string]any)
+
 	return map[string]any{
 		"sliceExpr": slice,
 	}

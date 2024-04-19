@@ -3,6 +3,7 @@ package gotohelm
 import (
 	"fmt"
 	"io"
+	"strconv"
 )
 
 type Node interface {
@@ -165,7 +166,9 @@ type File struct {
 }
 
 func (f *File) Write(w io.Writer) {
-	fmt.Fprintf(w, "{{- /* Generated from %q */ -}}\n\n", f.Source)
+	if f.Source != "" {
+		fmt.Fprintf(w, "{{- /* Generated from %q */ -}}\n\n", f.Source)
+	}
 	w.Write([]byte(f.Header))
 	for _, s := range f.Funcs {
 		s.Write(w)
@@ -208,6 +211,10 @@ func (r *Return) Write(w io.Writer) {
 
 type Literal struct {
 	Value string
+}
+
+func NewLiteral(unquoted string) *Literal {
+	return &Literal{Value: strconv.Quote(unquoted)}
 }
 
 func (l *Literal) Write(w io.Writer) {

@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 
+	"example.com/example/astrewrites"
 	"example.com/example/changing_inputs"
 	"example.com/example/directives"
 	"example.com/example/flowcontrol"
@@ -55,10 +56,19 @@ func runChart(dot *helmette.Dot) (_ map[string]any, err any) {
 	defer func() { err = recover() }()
 
 	switch dot.Chart.Name {
+	case "astrewrites":
+		return map[string]any{
+			"ASTRewrites": astrewrites.ASTRewrites(),
+		}, nil
+
 	case "labels":
 		return map[string]any{
 			"FullLabels": labels.FullLabels(dot),
 		}, nil
+
+	case "bootstrap":
+		return map[string]any{}, nil
+
 	case "sprig":
 		return map[string]any{
 			"Sprig": sprig.Sprig(),
