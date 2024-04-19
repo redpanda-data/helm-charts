@@ -146,14 +146,13 @@ func (t *Transpiler) Transpile() *Chart {
 			Funcs:  funcs,
 		})
 	}
-	// TODO Do this better
-	// Write out some basic shim functions to help us better match go's
-	// behavior.
+
 	chart.Files = append(chart.Files, &File{
 		Source: "",
 		Name:   "_shims.tpl",
 		Header: shimsYAML,
 	})
+
 	return &chart
 }
 
@@ -208,21 +207,31 @@ func (t *Transpiler) transpileStatement(stmt ast.Stmt) Node {
 		}
 
 	case *ast.ReturnStmt:
-		if len(stmt.Results) != 1 {
-			panic(&Unsupported{
-				Node: stmt,
-				Fset: t.Fset,
-				Msg:  "returns must return exactly 1 value",
-			})
+		if len(stmt.Results) == 1 {
+			return &Return{Expr: t.transpileExpr(stmt.Results[0])}
 		}
 
-		return &Return{
-			Expr: t.transpileExpr(stmt.Results[0]),
+		var results []Node
+		for _, r := range stmt.Results {
+			results = append(results, t.transpileExpr(r))
 		}
+		return &Return{Expr: &BuiltInCall{FuncName: "list", Arguments: results}}
 
 	case *ast.AssignStmt:
-		if len(stmt.Lhs) != 1 || len(stmt.Rhs) != 1 {
+		if len(stmt.Lhs) != len(stmt.Rhs) {
 			break
+		}
+
+		if len(stmt.Lhs) == len(stmt.Rhs) && len(stmt.Lhs) > 1 {
+			var stmts []Node
+			for i := 0; i < len(stmt.Lhs); i++ {
+				stmts = append(stmts, t.transpileStatement(&ast.AssignStmt{
+					Lhs: []ast.Expr{stmt.Lhs[i]},
+					Tok: stmt.Tok,
+					Rhs: []ast.Expr{stmt.Rhs[i]},
+				}))
+			}
+			return &Block{Statements: stmts}
 		}
 
 		// +=, /=, *=, etc show up as assignments. They're not supported in
@@ -635,20 +644,13 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 		}
 
 	case *ast.TypeAssertExpr:
-		// return &BuiltInCall{
-		// 	FuncName: "_shims.typeassertion",
-		// 	Arguments: []Node{
-		// 		t.transpileExpr(n.Type),
-		// 		t.transpileExpr(n.X),
-		// 	},
-		// }
-
-		// TODO figure out how to support type switches. For now, hope for the
-		// best and expect something to break if the type happens to be
-		// incorrect.
-		// Could potentially inject some "bootstrap" functions that would make this easier.
-		// IE
-		return t.transpileExpr(n.X)
+		return &Call{
+			FuncName: "_shims.typeassertion",
+			Arguments: []Node{
+				t.transpileTypeRepr(t.typeOf(n.Type)),
+				t.transpileExpr(n.X),
+			},
+		}
 	}
 
 	var b bytes.Buffer
@@ -730,6 +732,7 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 		"helmette.Default":        "default",
 		"helmette.Empty":          "empty",
 		"helmette.FromJSON":       "fromJson",
+		"helmette.HasKey":         "hasKey",
 		"helmette.Keys":           "keys",
 		"helmette.KindIs":         "kindIs",
 		"helmette.KindOf":         "kindOf",
@@ -742,6 +745,8 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 		"helmette.ToJSON":         "toJson",
 		"helmette.Tpl":            "tpl",
 		"helmette.Trunc":          "trunc",
+		"helmette.TypeIs":         "typeIs",
+		"helmette.TypeOf":         "typeOf",
 		"helmette.Unset":          "unset",
 		"helmette.Upper":          "upper",
 		"maps.Keys":               "keys",
@@ -757,6 +762,8 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 	if tplFuncName, ok := funcMapping[name]; ok {
 		return &BuiltInCall{FuncName: tplFuncName, Arguments: args}
 	}
+
+	signature := t.typeOf(n.Fun).(*types.Signature)
 
 	// Mappings that are not 1:1 and require some argument fiddling to make
 	// them match up as expected.
@@ -794,37 +801,56 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 		return &BuiltInCall{FuncName: "dig", Arguments: append(args[2:], args[1], args[0])}
 	case "helmette.Unwrap":
 		return &Selector{Expr: args[0], Field: "AsMap"}
-	case "helmette.Compact2":
+	case "helmette.Compact2", "helmette.Compact3":
 		return &Call{FuncName: "_shims.compact", Arguments: args}
 	case "helmette.DictTest":
-		// TODO need to figure out how to get the generic argument here.
-		// TODO revalidate arguments
-		// TODO add in zerof
-		return &Call{FuncName: "_shims.dicttest", Arguments: args}
+		valueType := callee.(*types.Func).Type().(*types.Signature).TypeParams().At(1)
+		return &Call{FuncName: "_shims.dicttest", Arguments: append(args, t.zeroOf(valueType))}
 	case "helmette.TypeTest":
-		// TODO there's got to be a better way to get the type params....
-		args = append([]Node{
-			&Literal{
-				Value: fmt.Sprintf("%q", n.Fun.(*ast.IndexExpr).Index.(*ast.Ident).Name),
-			},
-		}, args...)
-		return &Call{FuncName: "_shims.typetest", Arguments: args}
-	case "helmette.TypeAssertion":
-		// TODO need to figure out how to get the generic argument here.
-		// TODO revalidate arguments
-		// TODO there's got to be a better way to get the type params....
-		args = append([]Node{
-			&Literal{
-				Value: fmt.Sprintf("%q", n.Fun.(*ast.IndexExpr).Index.(*ast.Ident).Name),
-			},
-		}, args...)
-		return &Call{FuncName: "_shims.typeassertion", Arguments: args}
+		typ := signature.Results().At(0).Type()
+		return &Call{FuncName: "_shims.typetest", Arguments: []Node{t.transpileTypeRepr(typ), args[0], t.zeroOf(typ)}}
 	case "helmette.Merge":
 		dict := DictLiteral{}
 		return &BuiltInCall{FuncName: "merge", Arguments: append([]Node{&dict}, args...)}
 	default:
 		panic(fmt.Sprintf("unsupported function %s", name))
 	}
+}
+
+func (t *Transpiler) transpileTypeRepr(typ types.Type) Node {
+	// NB: Ideally, we'd just use typ.String(). Sadly, we can't as typ.String()
+	// will return `any` but we need to match the result of fmt.Sprintf("%T")
+	// which returns `interface {}`.
+	switch typ := typ.(type) {
+	case *types.Pointer:
+		return &BuiltInCall{FuncName: "printf", Arguments: []Node{
+			NewLiteral("*%s"),
+			t.transpileTypeRepr(typ.Elem()),
+		}}
+	case *types.Array:
+		return &BuiltInCall{FuncName: "printf", Arguments: []Node{
+			NewLiteral(fmt.Sprintf("[%d]%%s", typ.Len())),
+			t.transpileTypeRepr(typ.Elem()),
+		}}
+	case *types.Slice:
+		return &BuiltInCall{FuncName: "printf", Arguments: []Node{
+			NewLiteral("[]%s"),
+			t.transpileTypeRepr(typ.Elem()),
+		}}
+	case *types.Map:
+		return &BuiltInCall{FuncName: "printf", Arguments: []Node{
+			NewLiteral("map[%s]%s"),
+			t.transpileTypeRepr(typ.Key()),
+			t.transpileTypeRepr(typ.Elem()),
+		}}
+	case *types.Basic:
+		return NewLiteral(typ.String())
+	case *types.Interface:
+		if typ.Empty() {
+			return NewLiteral("interface {}")
+		}
+	}
+	panic(fmt.Sprintf("unsupported type: %v", typ))
 }
 
 func (t *Transpiler) isString(e ast.Expr) bool {
@@ -863,6 +889,8 @@ func (t *Transpiler) zeroOf(typ types.Type) Node {
 			return &Literal{Value: `""`}
 		case types.IsInteger, types.IsUnsigned | types.IsInteger:
 			return &Literal{Value: "0"}
+		case types.IsFloat:
+			return &BuiltInCall{FuncName: "float64", Arguments: []Node{&Literal{Value: "0"}}}
 		case types.IsBoolean:
 			return &Literal{Value: "false"}
 		default:

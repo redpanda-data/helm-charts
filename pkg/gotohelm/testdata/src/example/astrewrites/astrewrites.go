@@ -4,6 +4,10 @@ import (
 	corev1 "k8s.io/api/core/v1"
 )
 
+func ASTRewrites() []any {
+	return []any{}
+}
+
 func mvrs() {
 	m := map[string]int{}
 	var a any = m
@@ -75,5 +79,5 @@ func ifHoisting() {
 }
 
 func mvr3() (float32, bool, int) {
-	return 0, true, -1
+	return 0, true, 3
 }

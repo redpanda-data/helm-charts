@@ -58,6 +58,7 @@ tasks:
     cmds:
       # Regenerate any generated files.
       - helm-docs -c ./charts/
+      - task: go:generate:gotohelm
       - task: chart:generate:redpanda
       - go mod tidy
       # Ensure flake.nix has been formatted.
@@ -74,6 +75,8 @@ tasks:
       - go vet ./...
 
   chart:generate:redpanda:
+    deps:
+    - go:generate:gotohelm
     desc: "Generate files for the redpanda Helm chart"
     cmds:
       # Generate a "partial" version of the Values struct.
@@ -82,6 +85,14 @@ tasks:
       - nix run .#genschema > charts/redpanda/values.schema.json
       # Generate helm templates from Go definitions
       - nix run .#gotohelm -- -write ./charts/redpanda/templates ./charts/redpanda 
+
+  go:generate:gotohelm:
+    desc: "Generate files for the gotohelm go package"
+    cmds:
+    # Hoist shims.yaml from the bootstrap package and update the names to _shims.
+    - cp ./pkg/gotohelm/testdata/src/example/bootstrap/bootstrap.yaml ./pkg/gotohelm/shims.yaml
+    # Use nix develop here to ensure that sed is always gnu sed.
+    - nix develop -c sed -i s/bootstrap/_shims/ ./pkg/gotohelm/shims.yaml
 
   create-test-rack-awareness:
     cmds:

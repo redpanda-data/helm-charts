@@ -87,6 +87,11 @@ func NodePortService(dot *helmette.Dot) *corev1.Service {
 		})
 	}
 
+	annotations := values.External.Annotations
+	if annotations == nil {
+		annotations = map[string]string{}
+	}
+
 	return &corev1.Service{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "v1",
@@ -96,7 +101,7 @@ func NodePortService(dot *helmette.Dot) *corev1.Service {
 			Name:        fmt.Sprintf("%s-external", ServiceName(dot)),
 			Namespace:   dot.Release.Namespace,
 			Labels:      FullLabels(dot),
-			Annotations: helmette.Default(map[string]string{}, values.External.Annotations).(map[string]string),
+			Annotations: annotations,
 		},
 		Spec: corev1.ServiceSpec{
 			ExternalTrafficPolicy:    corev1.ServiceExternalTrafficPolicyLocal,

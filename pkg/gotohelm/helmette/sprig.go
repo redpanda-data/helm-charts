@@ -35,6 +35,24 @@ func KindIs(kind string, v any) bool {
 	return KindOf(v) == kind
 }
 
+// TypeOf is the go equivalent of sprig's `typeOf`.
+func TypeOf(v any) string {
+	// https://github.com/Masterminds/sprig/blob/581758eb7d96ae4d113649668fa96acc74d46e7f/reflect.go#L18
+	return fmt.Sprintf("%T", v)
+}
+
+// KindIs is the go equivalent of sprig's `typeIs`.
+func TypeIs(typ string, v any) bool {
+	// https://github.com/Masterminds/sprig/blob/581758eb7d96ae4d113649668fa96acc74d46e7f/reflect.go#L9
+	return TypeOf(v) == typ
+}
+
+// HasKey is the go equivalent of sprig's `hasKey`.
+func HasKey[K comparable, V any](m map[K]V, key K) bool {
+	_, ok := m[key]
+	return ok
+}
+
 // Keys is the go equivalent of sprig's `keys`.
 func Keys[K comparable, V any](m map[K]V) []K {
 	return maps.Keys(m)

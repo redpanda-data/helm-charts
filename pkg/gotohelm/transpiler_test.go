@@ -31,10 +31,8 @@ type TestSpec struct {
 }
 
 var testSpecs = map[string]TestSpec{
-	// astrewrites is temporarily disabled due to a bug in type assertions.
-	// This bug is fixed in a later commit and astrewrites will be reenabled in
-	// said commit.
-	"astrewrites": {Unsupported: true},
+	"astrewrites": {},
+	"bootstrap":   {},
 	"directives":  {},
 	"k8s":         {},
 	"mutability":  {},

@@ -1,34 +1,65 @@
-{{- /* Generated from "" */ -}}
+{{- /* Generated from "_shims.go" */ -}}
 
 {{- define "_shims.typetest" -}}
-{{- $type := (index .a 0) -}}
+{{- $typ := (index .a 0) -}}
 {{- $value := (index .a 1) -}}
-{{- dict "r" (list $value (typeIs $type $value)) | toJson -}}
+{{- $zero := (index .a 2) -}}
+{{- range $_ := (list 1) -}}
+{{- if (typeIs $typ $value) -}}
+{{- (dict "r" (list $value true)) | toJson -}}
+{{- break -}}
 {{- end -}}
-
-{{- define "_shims.dicttest" -}}
-{{- $dict := (index .a 0) -}}
-{{- $key := (index .a 1) -}}
-{{- if (hasKey $dict $key) -}}
-{{- (dict "r" (list (index $dict $key) true)) | toJson -}}
-{{- else -}}
-{{- (dict "r" (list "" false)) | toJson -}}
+{{- (dict "r" (list $zero false)) | toJson -}}
+{{- break -}}
 {{- end -}}
 {{- end -}}
 
 {{- define "_shims.typeassertion" -}}
-{{- $type := (index .a 0) -}}
+{{- $typ := (index .a 0) -}}
 {{- $value := (index .a 1) -}}
-{{- if (not (typeIs $type $value)) -}}
-{{- (fail "TODO MAKE THIS A NICE MESSAGE") -}}
+{{- range $_ := (list 1) -}}
+{{- if (not (typeIs $typ $value)) -}}
+{{- $_ := (fail (printf "expected type of %q got: %T" $typ $value)) -}}
 {{- end -}}
 {{- (dict "r" $value) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "_shims.dicttest" -}}
+{{- $m := (index .a 0) -}}
+{{- $key := (index .a 1) -}}
+{{- $zero := (index .a 2) -}}
+{{- range $_ := (list 1) -}}
+{{- if (hasKey $m $key) -}}
+{{- (dict "r" (list (index $m $key) true)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- (dict "r" (list $zero false)) | toJson -}}
+{{- break -}}
+{{- end -}}
 {{- end -}}
 
 {{- define "_shims.compact" -}}
-{{- $out := (dict) -}}
-{{- range $i, $e := (index .a 0) }}
-{{- $_ := (set $out (printf "T%d" (add1 $i)) $e) -}}
+{{- $args := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $out := (dict ) -}}
+{{- range $i, $e := $args -}}
+{{- $_ := (set $out (printf "T%d" (int (add 1 $i))) $e) -}}
 {{- end -}}
 {{- (dict "r" $out) | toJson -}}
+{{- break -}}
 {{- end -}}
+{{- end -}}
+
+{{- define "_shims.deref" -}}
+{{- $ptr := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- if (eq $ptr (coalesce nil)) -}}
+{{- $_ := (fail "nil dereference") -}}
+{{- end -}}
+{{- (dict "r" $ptr) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+

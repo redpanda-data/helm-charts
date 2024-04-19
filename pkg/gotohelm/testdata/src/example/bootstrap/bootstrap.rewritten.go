@@ -1,4 +1,15 @@
 //go:build rewrites
+// Welcome to the magical bootstrap package. This package/file generates the
+// _shims.tpl file included in all gotohelm outputs. A task in Taskfile.yaml is
+// used to copy the generated file into the gotohelm package. In the future, it
+// might be easier to transpile this file on the fly.
+//
+// Because this file sets up basic utilities and bridges between go and
+// templating there are restricts on what may be used.
+//
+//   - only sprig functions may be used from the `helmette` package.
+//   - go primitives without direct template support (switches, multi-value
+//     returns, type assertions, etc) may not be used.
 package bootstrap
 
 import (
@@ -7,40 +18,38 @@ import (
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 )
 
-type TypeSpec struct {
-	ExpectedType string
-	DefaultValue any
+func typetest(typ string, value, zero any) []any {
+	if helmette.TypeIs(typ, value) {
+		return []any{value, true}
+	}
+	return []any{zero, false}
 }
 
-func hydrate(in any) any {
-	return in
-}
-
-func mustget(d map[string]any, key string) any {
-	tmp_tuple_1 := helmette.Compact2(helmette.DictTest[string, any](d, key))
-	ok := tmp_tuple_1.T2
-	value := tmp_tuple_1.T1
-	if !ok {
-		panic(fmt.Sprintf("missing key %q", key))
+func typeassertion(typ string, value any) any {
+	if !helmette.TypeIs(typ, value) {
+		panic(fmt.Sprintf("expected type of %q got: %T", typ, value))
 	}
 	return value
 }
 
-func zeroof(kind string) any {
-	if kind == "int" {
-		return 0
-	} else if kind == "string" {
-		return ""
-	} else if kind == "slice" {
-		return []any{} // TODO is this technically correct?
-	} else {
-		panic(fmt.Sprintf("unhandled kind %q", kind))
+func dicttest(m map[string]any, key string, zero any) []any {
+	if helmette.HasKey(m, key) {
+		return []any{m[key], true}
 	}
+	return []any{zero, false}
 }
 
-func typetest(kind string, value any) []any {
-	if helmette.KindOf(value) == kind {
-		return []any{value, true}
+func compact(args []any) map[string]any {
+	out := map[string]any{}
+	for i, e := range args {
+		out[fmt.Sprintf("T%d", 1+i)] = e
 	}
-	return []any{zeroof(kind), false}
+	return out
+}
+
+func deref(ptr any) any {
+	if ptr == nil {
+		panic("nil dereference")
+	}
+	return ptr
 }

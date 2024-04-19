@@ -4,7 +4,7 @@
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- range $k, $v := $dot.Values -}}
-{{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "string" $v) ))) "r")) ))) "r") -}}
+{{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "string" $v "") ))) "r")) ))) "r") -}}
 {{- $ok_1 := $tmp_tuple_1.T2 -}}
 {{- if $ok_1 -}}
 {{- $_ := (set $dot.Values $k "change that") -}}
