@@ -18,6 +18,9 @@ spec:
       app.kubernetes.io/component: redpanda-statefulset
       app.kubernetes.io/instance: redpanda
       app.kubernetes.io/name: redpanda
+      redpanda.com/testing: "true"
+      redpanda.com/testing-samples: sample
+      redpanda.com/testing-samples-two: two
       redpanda.com/poddisruptionbudget: redpanda
 ---
 # Source: redpanda/charts/console/templates/serviceaccount.yaml
@@ -32,53 +35,6 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
----
-# Source: redpanda/templates/console/configmap-and-deployment.yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: redpanda-console
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: console
-    app.kubernetes.io/instance: redpanda
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: ""
-  kafka-protobuf-git-basicauth-password: ""
-  kafka-sasl-aws-msk-iam-secret-key: ""
-  kafka-tls-ca: ""
-  kafka-tls-cert: ""
-  kafka-tls-key: ""
-  kafka-schema-registry-password: ""
-  kafka-schemaregistry-tls-ca: ""
-  kafka-schemaregistry-tls-cert: ""
-  kafka-schemaregistry-tls-key: ""
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: ""
-  login-google-groups-service-account.json: ""
-  login-github-oauth-client-secret: ""
-  login-github-personal-access-token: ""
-  login-okta-client-secret: ""
-  login-okta-directory-api-token: ""
-  login-oidc-client-secret: ""
-
-  # Enterprise
-  enterprise-license: "JHtSRURQQU5EQV9TQU1QTEVfTElDRU5TRX0="
-
-  # Redpanda
-  redpanda-admin-api-password: ""
-  redpanda-admin-api-tls-ca: ""
-  redpanda-admin-api-tls-cert: ""
-  redpanda-admin-api-tls-key: ""
 ---
 # Source: redpanda/templates/secrets.yaml
 apiVersion: v1
@@ -378,15 +334,6 @@ data:
         - host:
             address: redpanda-2.redpanda.default.svc.cluster.local.
             port: 33145
-    cloud_storage_azure_container: ${TEST_STORAGE_CONTAINER}
-    cloud_storage_azure_shared_key: ${TEST_AZURE_SHARED_KEY}
-    cloud_storage_azure_storage_account: ${TEST_STORAGE_ACCOUNT}
-    cloud_storage_cache_size: "5368709120"
-    cloud_storage_credentials_source: config_file
-    cloud_storage_enable_remote_read: true
-    cloud_storage_enable_remote_write: true
-    cloud_storage_enabled: true
-    cloud_storage_segment_max_upload_interval_sec: 1
   
     schema_registry_client:
       brokers:
@@ -467,8 +414,8 @@ data:
       enable_memory_locking: false
       additional_start_flags:
         - --default-log-level=info
-        - --memory=1024M
-        - --reserve-memory=100M
+        - --memory=2048M
+        - --reserve-memory=205M
         - --smp=1
       # rpk tune entries
       tune_aio_events: true
@@ -601,6 +548,9 @@ spec:
     app.kubernetes.io/component: redpanda-statefulset
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/name: redpanda
+    redpanda.com/testing: "true"
+    redpanda.com/testing-samples: sample
+    redpanda.com/testing-samples-two: two
   ports:
     - name: admin
       protocol: TCP
@@ -665,6 +615,9 @@ spec:
     app.kubernetes.io/component: redpanda-statefulset
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/name: redpanda
+    redpanda.com/testing: "true"
+    redpanda.com/testing-samples: sample
+    redpanda.com/testing-samples-two: two
   sessionAffinity: None
   type: NodePort
 status:
@@ -706,9 +659,6 @@ spec:
         - name: configs
           configMap:
             name: redpanda-console
-        - name: secrets
-          secret:
-            secretName: redpanda-console
         - name: kafka-default-cert
           secret:
             defaultMode: 272
@@ -736,7 +686,7 @@ spec:
             - "--config.filepath=/etc/console/configs/config.yaml"
           securityContext:
             runAsNonRoot: true
-          image: redpandadata/console-unstable:master-8a51854
+          image: docker.redpanda.com/redpandadata/console:v2.4.6
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -745,9 +695,6 @@ spec:
           volumeMounts:
             - name: configs
               mountPath: /etc/console/configs
-              readOnly: true
-            - name: secrets
-              mountPath: /etc/console/secrets
               readOnly: true
             - mountPath: /mnt/cert/kafka/default
               name: kafka-default-cert
@@ -791,16 +738,6 @@ spec:
               value: "true"
             - name: REDPANDA_ADMINAPI_URLS
               value: https://redpanda.default.svc.cluster.local.:9644
-            - name: LOGIN_JWTSECRET
-              valueFrom:
-                secretKeyRef:
-                  name: redpanda-console
-                  key: login-jwt-secret
-            - name: LICENSE
-              valueFrom:
-                secretKeyRef:
-                  name: redpanda-console
-                  key: enterprise-license
       priorityClassName:
 ---
 # Source: redpanda/templates/statefulset.yaml
@@ -820,6 +757,9 @@ spec:
       app.kubernetes.io/component: redpanda-statefulset
       app.kubernetes.io/instance: redpanda
       app.kubernetes.io/name: redpanda
+      redpanda.com/testing: "true"
+      redpanda.com/testing-samples: sample
+      redpanda.com/testing-samples-two: two
   serviceName: redpanda
   replicas: 3
   updateStrategy:
@@ -832,8 +772,11 @@ spec:
         app.kubernetes.io/instance: redpanda
         app.kubernetes.io/name: redpanda
         redpanda.com/poddisruptionbudget: redpanda
+        redpanda.com/testing: "true"
+        redpanda.com/testing-samples: sample
+        redpanda.com/testing-samples-two: two
       annotations:
-        config.redpanda.com/checksum: 6d844303ea4511bc85c0def54717a84fb8bf81fae5c8a4ba45a2f4aa317672e9
+        config.redpanda.com/checksum: bdc12c59ed4146a58b5b4bfca4bdd4495b1b9e19e49457cce50c827e3d8977ea
     spec:
       terminationGracePeriodSeconds: 90
       securityContext: 
@@ -861,19 +804,6 @@ spec:
               mountPath: /etc/tls/certs/external
             - name: redpanda
               mountPath: /etc/redpanda
-        - name: set-tiered-storage-cache-dir-ownership
-          image: busybox:latest
-          command: ["/bin/sh", "-c", 'mkdir -p /var/lib/redpanda/data/cloud_storage_cache; chown 101:101 -R /var/lib/redpanda/data/cloud_storage_cache']
-          volumeMounts: 
-            
-            - name: redpanda-default-cert
-              mountPath: /etc/tls/certs/default
-            - name: redpanda-external-cert
-              mountPath: /etc/tls/certs/external
-            - name: datadir
-              mountPath: /var/lib/redpanda/data
-            - name: shadow-index-cache
-              mountPath: /var/lib/redpanda/data/cloud_storage_cache
         - name: redpanda-configurator
           image: docker.redpanda.com/redpandadata/redpanda:v23.3.11
           command:
@@ -914,7 +844,7 @@ spec:
       containers:
         - name: redpanda
           image: docker.redpanda.com/redpandadata/redpanda:v23.3.11
-          env: 
+          env:
             - name: SERVICE_NAME
               valueFrom:
                 fieldRef:
@@ -1030,12 +960,10 @@ spec:
               mountPath: /var/lifecycle
             - name: datadir
               mountPath: /var/lib/redpanda/data
-            - name: shadow-index-cache
-              mountPath: /var/lib/redpanda/data/cloud_storage_cache
           resources:
             limits:
-              cpu: 400m
-              memory: 2.0Gi
+              cpu: 1
+              memory: 2.5Gi
         - name: config-watcher
           image: docker.redpanda.com/redpandadata/redpanda:v23.3.11
           command:
@@ -1096,6 +1024,9 @@ spec:
               app.kubernetes.io/component: redpanda-statefulset
               app.kubernetes.io/instance: redpanda
               app.kubernetes.io/name: redpanda
+              redpanda.com/testing: "true"
+              redpanda.com/testing-samples: sample
+              redpanda.com/testing-samples-two: two
       nodeSelector:
         {}
       affinity:
@@ -1108,6 +1039,9 @@ spec:
                 app.kubernetes.io/component: redpanda-statefulset
                 app.kubernetes.io/instance: redpanda
                 app.kubernetes.io/name: redpanda
+                redpanda.com/testing: "true"
+                redpanda.com/testing-samples: sample
+                redpanda.com/testing-samples-two: two
       tolerations:
         []
   volumeClaimTemplates:
@@ -1119,22 +1053,9 @@ spec:
           app.kubernetes.io/component: redpanda
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: "managed-csi"
         resources:
           requests:
             storage: "20Gi"
-    - metadata:
-        name: shadow-index-cache
-        labels:
-          app.kubernetes.io/name: redpanda
-          app.kubernetes.io/instance: "redpanda"
-          app.kubernetes.io/component: redpanda
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        storageClassName: managed-csi
-        resources:
-          requests:
-            storage: 5.36870912e+09
 ---
 # Source: redpanda/templates/console/configmap-and-deployment.yaml
 # before license changes, this was not printing a secret, so we gather in which case to print
@@ -1393,27 +1314,7 @@ spec:
       - name: redpanda-post-install
         image: docker.redpanda.com/redpandadata/redpanda:v23.3.11
         
-        env:
-        - name: REDPANDA_LICENSE
-          value: ${REDPANDA_SAMPLE_LICENSE}
-        - name: RPK_CLOUD_STORAGE_AZURE_SHARED_KEY
-          value: ${TEST_AZURE_SHARED_KEY}
-        - name: RPK_CLOUD_STORAGE_AZURE_CONTAINER
-          value: ${TEST_STORAGE_CONTAINER}
-        - name: RPK_CLOUD_STORAGE_AZURE_STORAGE_ACCOUNT
-          value: ${TEST_STORAGE_ACCOUNT}
-        - name: RPK_CLOUD_STORAGE_CACHE_SIZE
-          value: "5368709120"
-        - name: RPK_CLOUD_STORAGE_CREDENTIALS_SOURCE
-          value: config_file
-        - name: RPK_CLOUD_STORAGE_ENABLE_REMOTE_READ
-          value: "true"
-        - name: RPK_CLOUD_STORAGE_ENABLE_REMOTE_WRITE
-          value: "true"
-        - name: RPK_CLOUD_STORAGE_ENABLED
-          value: "true"
-        - name: RPK_CLOUD_STORAGE_SEGMENT_MAX_UPLOAD_INTERVAL_SEC
-          value: "1"
+        env: []
         command: ["bash","-c"]
         args:
           - |

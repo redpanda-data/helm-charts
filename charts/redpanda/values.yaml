@@ -640,6 +640,9 @@ statefulset:
   # Annotations are used only for `Statefulset.spec.template.metadata.annotations`. The StatefulSet does not have
   #	any dedicated annotation.
   annotations: {}
+  # -- Additional labels to be added to statefulset label selector.
+  # For example, `my.k8s.service: redpanda`.
+  additionalSelectorLabels: {}
   podTemplate:
     # -- Additional labels to apply to the Pods of this StatefulSet.
     labels: {}

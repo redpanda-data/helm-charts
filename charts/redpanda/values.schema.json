@@ -1117,6 +1117,12 @@
           },
           "type": "array"
         },
+        "additionalSelectorLabels": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
         "annotations": {
           "additionalProperties": {
             "type": "string"
@@ -1545,6 +1551,7 @@
         }
       },
       "required": [
+        "additionalSelectorLabels",
         "replicas",
         "updateStrategy",
         "podTemplate",

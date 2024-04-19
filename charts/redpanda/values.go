@@ -307,9 +307,10 @@ type PodTemplate struct {
 }
 
 type Statefulset struct {
-	NodeAffinity   map[string]any `json:"nodeAffinity"`
-	Replicas       int            `json:"replicas" jsonschema:"required"`
-	UpdateStrategy struct {
+	AdditionalSelectorLabels map[string]string `json:"additionalSelectorLabels" jsonschema:"required"`
+	NodeAffinity             map[string]any    `json:"nodeAffinity"`
+	Replicas                 int               `json:"replicas" jsonschema:"required"`
+	UpdateStrategy           struct {
 		Type string `json:"type" jsonschema:"required,pattern=^(RollingUpdate|OnDelete)$"`
 	} `json:"updateStrategy" jsonschema:"required"`
 	AdditionalRedpandaCmdFlags []string `json:"additionalRedpandaCmdFlags"`

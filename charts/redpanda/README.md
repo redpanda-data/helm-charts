@@ -3,7 +3,7 @@
 description: Find the default values and descriptions of settings in the Redpanda Helm chart.
 ---
 
-![Version: 5.7.41](https://img.shields.io/badge/Version-5.7.41-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v23.3.11](https://img.shields.io/badge/AppVersion-v23.3.11-informational?style=flat-square)
+![Version: 5.8.0](https://img.shields.io/badge/Version-5.8.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v23.3.11](https://img.shields.io/badge/AppVersion-v23.3.11-informational?style=flat-square)
 
 This page describes the official Redpanda Helm Chart. In particular, this page describes the contents of the chart’s [`values.yaml` file](https://github.com/redpanda-data/helm-charts/blob/main/charts/redpanda/values.yaml). Each of the settings is listed and described on this page, along with any default values.
 
@@ -684,6 +684,12 @@ The name of the service account to use. If not set and `serviceAccount.create` i
 Additional flags to pass to redpanda,
 
 **Default:** `[]`
+
+### [statefulset.additionalSelectorLabels](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.additionalSelectorLabels)
+
+Additional labels to be added to statefulset label selector. For example, `my.k8s.service: redpanda`.
+
+**Default:** `{}`
 
 ### [statefulset.annotations](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.annotations)
 

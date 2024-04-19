@@ -205,9 +205,10 @@ type PartialPodTemplate struct {
 }
 
 type PartialStatefulset struct {
-	NodeAffinity   map[string]any `json:"nodeAffinity,omitempty"`
-	Replicas       *int           `json:"replicas,omitempty" jsonschema:"required"`
-	UpdateStrategy struct {
+	AdditionalSelectorLabels map[string]string `json:"additionalSelectorLabels,omitempty" jsonschema:"required"`
+	NodeAffinity             map[string]any    `json:"nodeAffinity,omitempty"`
+	Replicas                 *int              `json:"replicas,omitempty" jsonschema:"required"`
+	UpdateStrategy           struct {
 		Type *string `json:"type,omitempty" jsonschema:"required,pattern=^(RollingUpdate|OnDelete)$"`
 	} `json:"updateStrategy,omitempty" jsonschema:"required"`
 	AdditionalRedpandaCmdFlags []string `json:"additionalRedpandaCmdFlags,omitempty"`
