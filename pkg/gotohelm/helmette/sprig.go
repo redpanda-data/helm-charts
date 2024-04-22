@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"text/template"
 
@@ -185,4 +186,9 @@ func Concat[T any](lists ...[]T) []T {
 		out = append(out, l...)
 	}
 	return out
+}
+
+// Atoi is the go equivalent of sprig's `atoi`.
+func Atoi(in string) (int, error) {
+	return strconv.Atoi(in)
 }

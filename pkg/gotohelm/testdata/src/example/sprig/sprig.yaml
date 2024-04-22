@@ -2,7 +2,7 @@
 
 {{- define "sprig.Sprig" -}}
 {{- range $_ := (list 1) -}}
-{{- (dict "r" (dict "concat" (get (fromJson (include "sprig.concat" (dict "a" (list ) ))) "r") "default" (get (fromJson (include "sprig.default_" (dict "a" (list ) ))) "r") "keys" (get (fromJson (include "sprig.keys" (dict "a" (list ) ))) "r") "empty" (get (fromJson (include "sprig.empty" (dict "a" (list ) ))) "r") "strings" (get (fromJson (include "sprig.stringsFunctions" (dict "a" (list ) ))) "r") "unset" (get (fromJson (include "sprig.unset" (dict "a" (list ) ))) "r") "regex" (get (fromJson (include "sprig.regex" (dict "a" (list ) ))) "r") )) | toJson -}}
+{{- (dict "r" (dict "concat" (get (fromJson (include "sprig.concat" (dict "a" (list ) ))) "r") "default" (get (fromJson (include "sprig.default_" (dict "a" (list ) ))) "r") "keys" (get (fromJson (include "sprig.keys" (dict "a" (list ) ))) "r") "empty" (get (fromJson (include "sprig.empty" (dict "a" (list ) ))) "r") "strings" (get (fromJson (include "sprig.stringsFunctions" (dict "a" (list ) ))) "r") "unset" (get (fromJson (include "sprig.unset" (dict "a" (list ) ))) "r") "regex" (get (fromJson (include "sprig.regex" (dict "a" (list ) ))) "r") "atoi" (get (fromJson (include "sprig.atoi" (dict "a" (list ) ))) "r") )) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -10,6 +10,23 @@
 {{- define "sprig.regex" -}}
 {{- range $_ := (list 1) -}}
 {{- (dict "r" (list (mustRegexMatch `^\d+(k|M|G|T|P|E|Ki|Mi|Gi|Ti|Pi|Ei)?$` "2.5Gi") (regexMatch `^\d+(k|M|G|T|P|E|Ki|Mi|Gi|Ti|Pi|Ei)?$` "2.5Gi") (regexMatch `^\d+(k|M|G|T|P|E|Ki|Mi|Gi|Ti|Pi|Ei)?$` "25Gi"))) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "sprig.atoi" -}}
+{{- range $_ := (list 1) -}}
+{{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (list (atoi "234") nil)) ))) "r") -}}
+{{- $positive := $tmp_tuple_1.T1 -}}
+{{- $tmp_tuple_2 := (get (fromJson (include "_shims.compact" (dict "a" (list (list (atoi "-23") nil)) ))) "r") -}}
+{{- $negative := $tmp_tuple_2.T1 -}}
+{{- $tmp_tuple_3 := (get (fromJson (include "_shims.compact" (dict "a" (list (list (atoi "paokwdpo") nil)) ))) "r") -}}
+{{- $err := $tmp_tuple_3.T2 -}}
+{{- $invalidInput := $tmp_tuple_3.T1 -}}
+{{- $errorHappen := 0 -}}
+{{- if (ne $err (coalesce nil)) -}}
+{{- end -}}
+{{- (dict "r" (list $positive $negative $errorHappen $invalidInput)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
