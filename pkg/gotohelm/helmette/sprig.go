@@ -92,10 +92,8 @@ func RegexMatch(pattern, s string) bool {
 }
 
 // MustRegexMatch is the go equivalent of sprig's `mustRegexMatch`.
-func MustRegexMatch(pattern, s string) {
-	if !RegexMatch(pattern, s) {
-		panic("did not match")
-	}
+func MustRegexMatch(pattern, s string) bool {
+	return RegexMatch(pattern, s)
 }
 
 // Coalesce is the go equivalent of sprig's `coalesce`.

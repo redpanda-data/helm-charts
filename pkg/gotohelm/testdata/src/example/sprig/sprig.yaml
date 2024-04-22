@@ -2,7 +2,14 @@
 
 {{- define "sprig.Sprig" -}}
 {{- range $_ := (list 1) -}}
-{{- (dict "r" (dict "concat" (get (fromJson (include "sprig.concat" (dict "a" (list ) ))) "r") "default" (get (fromJson (include "sprig.default_" (dict "a" (list ) ))) "r") "keys" (get (fromJson (include "sprig.keys" (dict "a" (list ) ))) "r") "empty" (get (fromJson (include "sprig.empty" (dict "a" (list ) ))) "r") "strings" (get (fromJson (include "sprig.stringsFunctions" (dict "a" (list ) ))) "r") "unset" (get (fromJson (include "sprig.unset" (dict "a" (list ) ))) "r") )) | toJson -}}
+{{- (dict "r" (dict "concat" (get (fromJson (include "sprig.concat" (dict "a" (list ) ))) "r") "default" (get (fromJson (include "sprig.default_" (dict "a" (list ) ))) "r") "keys" (get (fromJson (include "sprig.keys" (dict "a" (list ) ))) "r") "empty" (get (fromJson (include "sprig.empty" (dict "a" (list ) ))) "r") "strings" (get (fromJson (include "sprig.stringsFunctions" (dict "a" (list ) ))) "r") "unset" (get (fromJson (include "sprig.unset" (dict "a" (list ) ))) "r") "regex" (get (fromJson (include "sprig.regex" (dict "a" (list ) ))) "r") )) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "sprig.regex" -}}
+{{- range $_ := (list 1) -}}
+{{- (dict "r" (list (mustRegexMatch `^\d+(k|M|G|T|P|E|Ki|Mi|Gi|Ti|Pi|Ei)?$` "2.5Gi") (regexMatch `^\d+(k|M|G|T|P|E|Ki|Mi|Gi|Ti|Pi|Ei)?$` "2.5Gi") (regexMatch `^\d+(k|M|G|T|P|E|Ki|Mi|Gi|Ti|Pi|Ei)?$` "25Gi"))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

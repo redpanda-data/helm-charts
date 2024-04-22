@@ -21,6 +21,15 @@ func Sprig() map[string]any {
 		"empty":   empty(),
 		"strings": stringsFunctions(),
 		"unset":   unset(),
+		"regex":   regex(),
+	}
+}
+
+func regex() []bool {
+	return []bool{
+		helmette.MustRegexMatch(`^\d+(k|M|G|T|P|E|Ki|Mi|Gi|Ti|Pi|Ei)?$`, "2.5Gi"),
+		helmette.RegexMatch(`^\d+(k|M|G|T|P|E|Ki|Mi|Gi|Ti|Pi|Ei)?$`, "2.5Gi"),
+		helmette.RegexMatch(`^\d+(k|M|G|T|P|E|Ki|Mi|Gi|Ti|Pi|Ei)?$`, "25Gi"),
 	}
 }
 
