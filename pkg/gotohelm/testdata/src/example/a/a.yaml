@@ -1,9 +1,0 @@
-{{- /* Generated from "a.go" */ -}}
-
-{{- define "a.ConfigMap" -}}
-{{- range $_ := (list 1) -}}
-{{- (dict "r" (dict "apiVersion" "v1" "kind" "ConfigMap" "name" "foo" )) | toJson -}}
-{{- break -}}
-{{- end -}}
-{{- end -}}
-

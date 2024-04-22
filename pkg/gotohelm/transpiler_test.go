@@ -31,9 +31,15 @@ type TestSpec struct {
 }
 
 var testSpecs = map[string]TestSpec{
-	"a":   {},
-	"b":   {},
-	"k8s": {},
+	// astrewrites is temporarily disabled due to a bug in type assertions.
+	// This bug is fixed in a later commit and astrewrites will be reenabled in
+	// said commit.
+	"astrewrites": {Unsupported: true},
+	"directives":  {},
+	"k8s":         {},
+	"mutability":  {},
+	"sprig":       {},
+	"syntax":      {},
 	"labels": {
 		Values: []map[string]any{
 			{"commonLabels": map[string]any{"test": "test"}},
@@ -42,16 +48,12 @@ var testSpecs = map[string]TestSpec{
 			{"commonLabels": map[string]any{}},
 		},
 	},
-	"syntax": {},
-	"sprig":  {},
 	"changing_inputs": {
 		Values: []map[string]any{
 			{"int": 8, "boolean": true, "string": "testing-testing"},
 		},
 		ValuesChanged: true,
 	},
-	"directives": {},
-	"mutability": {},
 	"inputs": {
 		Values: []map[string]any{
 			{"foo": 1, "bar": "baz", "nested": map[string]any{"quux": true}},

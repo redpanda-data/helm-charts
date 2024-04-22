@@ -1,3 +1,4 @@
+//go:build rewrites
 package main
 
 import (
@@ -25,14 +26,16 @@ func main() {
 
 	for {
 		var dot helmette.Dot
-		if err := dec.Decode(&dot); err != nil {
-			if err == io.EOF {
+		err_1 := dec.Decode(&dot)
+		if err_1 != nil {
+			if err_1 == io.EOF {
 				break
 			}
-			panic(err)
+			panic(err_1)
 		}
-
-		out, err := runChart(&dot)
+		tmp_tuple_1 := helmette.Compact2(runChart(&dot))
+		err := tmp_tuple_1.T2
+		out := tmp_tuple_1.T1
 
 		if out == nil {
 			out = map[string]any{}
@@ -41,12 +44,13 @@ func main() {
 		if err != nil {
 			err = fmt.Sprintf("%+v", err)
 		}
-
-		if err := enc.Encode(map[string]any{
+		err_2 := enc.Encode(map[string]any{
 			"result": out,
 			"err":    err,
-		}); err != nil {
-			panic(err)
+		})
+		if err_2 !=
+			nil {
+			panic(err_2)
 		}
 	}
 }
