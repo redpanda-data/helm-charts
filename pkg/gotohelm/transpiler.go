@@ -746,6 +746,16 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 	// Mappings that are not 1:1 and require some argument fiddling to make
 	// them match up as expected.
 	switch name {
+	case "helmette.Atoi":
+		// NIL literal is included as the second item in list, because that will
+		// mimic go lang return parameters of int and error.
+		return &BuiltInCall{
+			FuncName: "list",
+			Arguments: []Node{
+				&BuiltInCall{FuncName: "atoi", Arguments: args},
+				&Literal{Value: "nil"},
+			},
+		}
 	case "slices.Sort":
 		// TODO: This only works for strings :[
 		return &BuiltInCall{FuncName: "sortAlpha", Arguments: args}
@@ -899,7 +909,7 @@ func (t *Transpiler) getStructType(typ *types.Struct) (*packages.Package, *ast.S
 		pack = t.Package
 	}
 
-	// This is quite strange, struct 
+	// This is quite strange, struct
 	spec := findNearest[*ast.StructType](pack, typ.Field(0).Pos())
 
 	if spec == nil {

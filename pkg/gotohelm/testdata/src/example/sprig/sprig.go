@@ -22,6 +22,7 @@ func Sprig() map[string]any {
 		"strings": stringsFunctions(),
 		"unset":   unset(),
 		"regex":   regex(),
+		"atoi":    atoi(),
 	}
 }
 
@@ -30,6 +31,23 @@ func regex() []bool {
 		helmette.MustRegexMatch(`^\d+(k|M|G|T|P|E|Ki|Mi|Gi|Ti|Pi|Ei)?$`, "2.5Gi"),
 		helmette.RegexMatch(`^\d+(k|M|G|T|P|E|Ki|Mi|Gi|Ti|Pi|Ei)?$`, "2.5Gi"),
 		helmette.RegexMatch(`^\d+(k|M|G|T|P|E|Ki|Mi|Gi|Ti|Pi|Ei)?$`, "25Gi"),
+	}
+}
+
+func atoi() []int {
+	positive, _ := helmette.Atoi("234")
+	negative, _ := helmette.Atoi("-23")
+	invalidInput, err := helmette.Atoi("paokwdpo")
+	errorHappen := 0
+	if err != nil {
+		// The error will never happen in go template engine. That's why sprig is swallowing/omitting any error
+		//errorHappen = 1
+	}
+	return []int{
+		positive,
+		negative,
+		errorHappen,
+		invalidInput,
 	}
 }
 
