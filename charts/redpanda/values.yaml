@@ -375,7 +375,7 @@ resources:
     #
     # These values affect `--memory` and `--reserve-memory` flags passed to Redpanda and the memory
     # requests/limits in the StatefulSet.
-    # Valid suffixes: B, K, M, G, Ki, Mi, and Gi
+    # Valid suffixes: k, M, G, T, P, Ki, Mi, Gi, Ti, Pi
     # To create `Guaranteed` Pod QoS for Redpanda brokers, provide both container max and min values for the container.
     # For details, see
     # https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-guaranteed
