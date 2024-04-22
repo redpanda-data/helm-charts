@@ -65,7 +65,7 @@
 {{- $ints := $intsAny -}}
 {{- $sumOfIndexes := 0 -}}
 {{- range $i, $_ := $ints -}}
-{{- $sumOfIndexes = (add $sumOfIndexes $i) -}}
+{{- $sumOfIndexes = (int (add $sumOfIndexes $i)) -}}
 {{- end -}}
 {{- $continuesWork := true -}}
 {{- range $_, $_ := $ints -}}
@@ -91,7 +91,7 @@
 {{- end -}}
 {{- $sum := 0 -}}
 {{- range $_, $v := $m -}}
-{{- $sum = (add $sum $v) -}}
+{{- $sum = (int (add $sum $v)) -}}
 {{- end -}}
 {{- (dict "r" (list $sum)) | toJson -}}
 {{- break -}}
@@ -103,7 +103,7 @@
 {{- $x := 1 -}}
 {{- $y := 2 -}}
 {{- $z := 3 -}}
-{{- (dict "r" (list $z (sub $x $y) (add $x $y) (div $x $y) (mul $x $y))) | toJson -}}
+{{- (dict "r" (list $z (int (sub $x $y)) (int (add $x $y)) (int (div $x $y)) (int (mul $x $y)))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

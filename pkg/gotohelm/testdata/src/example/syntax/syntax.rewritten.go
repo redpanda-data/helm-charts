@@ -44,6 +44,8 @@ func Syntax() map[string]any {
 	_ = "1234"[1:]
 	_ = "1234"[:2]
 	_ = "1234"[1:2]
+	s := "abcd"
+	_ = s[:len(s)-1]
 
 	// Ident
 	_ = AStrConst  // A reference to a string constant
