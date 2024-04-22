@@ -526,50 +526,64 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 		untyped := [3]string{"_", n.Op.String(), "_"}
 		typed := [3]string{t.typeOf(n.X).String(), n.Op.String(), t.typeOf(n.Y).String()}
 
+		f := func(op string) func(a, b Node) Node {
+			return func(a, b Node) Node {
+				return &BuiltInCall{FuncName: op, Arguments: []Node{a, b}}
+			}
+		}
+
+		wrapWithCast := func(op, cast string) func(a, b Node) Node {
+			return func(a, b Node) Node {
+				return &BuiltInCall{
+					FuncName: cast,
+					Arguments: []Node{
+						&BuiltInCall{
+							FuncName:  op,
+							Arguments: []Node{a, b},
+						},
+					},
+				}
+			}
+		}
+
 		// Poor man's pattern matching :[
-		mapping := map[[3]string]string{
-			{"_", token.EQL.String(), "_"}:                     "eq",
-			{"_", token.NEQ.String(), "_"}:                     "ne",
-			{"_", token.LAND.String(), "_"}:                    "and",
-			{"_", token.LOR.String(), "_"}:                     "or",
-			{"_", token.GTR.String(), "_"}:                     "gt",
-			{"_", token.LSS.String(), "_"}:                     "lt",
-			{"_", token.GEQ.String(), "_"}:                     "gte",
-			{"_", token.LEQ.String(), "_"}:                     "lte",
-			{"float32", token.QUO.String(), "float32"}:         "divf",
-			{"float64", token.QUO.String(), "float64"}:         "divf",
-			{"int", token.ADD.String(), "int"}:                 "add",
-			{"int", token.SUB.String(), "int"}:                 "sub",
-			{"int", token.MUL.String(), "int"}:                 "mul",
-			{"int", token.QUO.String(), "int"}:                 "div",
-			{"int32", token.ADD.String(), "int32"}:             "add",
-			{"int32", token.SUB.String(), "int32"}:             "sub",
-			{"int32", token.MUL.String(), "int32"}:             "mul",
-			{"int32", token.QUO.String(), "int32"}:             "div",
-			{"int64", token.ADD.String(), "int64"}:             "add",
-			{"int64", token.SUB.String(), "int64"}:             "sub",
-			{"int64", token.MUL.String(), "int64"}:             "mul",
-			{"int64", token.QUO.String(), "int64"}:             "div",
-			{"untyped int", token.ADD.String(), "untyped int"}: "add",
-			{"untyped int", token.SUB.String(), "untyped int"}: "sub",
-			{"untyped int", token.MUL.String(), "untyped int"}: "mul",
-			{"untyped int", token.QUO.String(), "untyped int"}: "div",
+		mapping := map[[3]string]func(a, b Node) Node{
+			{"_", token.EQL.String(), "_"}:                     f("eq"),
+			{"_", token.NEQ.String(), "_"}:                     f("ne"),
+			{"_", token.LAND.String(), "_"}:                    f("and"),
+			{"_", token.LOR.String(), "_"}:                     f("or"),
+			{"_", token.GTR.String(), "_"}:                     f("gt"),
+			{"_", token.LSS.String(), "_"}:                     f("lt"),
+			{"_", token.GEQ.String(), "_"}:                     f("gte"),
+			{"_", token.LEQ.String(), "_"}:                     f("lte"),
+			{"float32", token.QUO.String(), "float32"}:         wrapWithCast("divf", "float32"),
+			{"float64", token.QUO.String(), "float64"}:         wrapWithCast("divf", "float64"),
+			{"int", token.ADD.String(), "int"}:                 wrapWithCast("add", "int"),
+			{"int", token.SUB.String(), "int"}:                 wrapWithCast("sub", "int"),
+			{"int", token.MUL.String(), "int"}:                 wrapWithCast("mul", "int"),
+			{"int", token.QUO.String(), "int"}:                 wrapWithCast("div", "int"),
+			{"int32", token.ADD.String(), "int32"}:             wrapWithCast("add", "int"),
+			{"int32", token.SUB.String(), "int32"}:             wrapWithCast("sub", "int"),
+			{"int32", token.MUL.String(), "int32"}:             wrapWithCast("mul", "int"),
+			{"int32", token.QUO.String(), "int32"}:             wrapWithCast("div", "int"),
+			{"int64", token.ADD.String(), "int64"}:             wrapWithCast("add", "int64"),
+			{"int64", token.SUB.String(), "int64"}:             wrapWithCast("sub", "int64"),
+			{"int64", token.MUL.String(), "int64"}:             wrapWithCast("mul", "int64"),
+			{"int64", token.QUO.String(), "int64"}:             wrapWithCast("div", "int64"),
+			{"untyped int", token.ADD.String(), "untyped int"}: f("add"),
+			{"untyped int", token.SUB.String(), "untyped int"}: f("sub"),
+			{"untyped int", token.MUL.String(), "untyped int"}: f("mul"),
+			{"untyped int", token.QUO.String(), "untyped int"}: f("div"),
 		}
 
 		// Typed versions take precedence.
 		if funcName, ok := mapping[typed]; ok {
-			return &BuiltInCall{
-				FuncName:  funcName,
-				Arguments: []Node{t.transpileExpr(n.X), t.transpileExpr(n.Y)},
-			}
+			return funcName(t.transpileExpr(n.X), t.transpileExpr(n.Y))
 		}
 
 		// Fallback to "wild cards" (_).
 		if funcName, ok := mapping[untyped]; ok {
-			return &BuiltInCall{
-				FuncName:  funcName,
-				Arguments: []Node{t.transpileExpr(n.X), t.transpileExpr(n.Y)},
-			}
+			return funcName(t.transpileExpr(n.X), t.transpileExpr(n.Y))
 		}
 
 		panic(&Unsupported{
