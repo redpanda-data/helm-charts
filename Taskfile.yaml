@@ -60,6 +60,8 @@ tasks:
       - helm-docs -c ./charts/
       - task: chart:generate:redpanda
       - go mod tidy
+      # Ensure flake.nix has been formatted.
+      - nix fmt
       # Fail on any generated diffs.
       - git diff --exit-code
       # Actually run linters.

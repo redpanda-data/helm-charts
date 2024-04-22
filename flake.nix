@@ -32,7 +32,7 @@
 
           packages =
             let
-              buildCmdGoModule = package: pkgs.buildGoModule {
+              buildCmdGoModule = { package, srcFilters }: pkgs.buildGoModule {
                 pname = package;
                 version = "0.0.0";
 
@@ -46,19 +46,14 @@
                 # All files required for running `go build`
                 # We filter out other extraneous files so `nix develop` doesn't
                 # rebuild our go programs needlessly.
-                src = pkgs.lib.sources.sourceByRegex ./. [
+                src = pkgs.lib.sources.sourceByRegex ./. ([
                   # Including by regex requires that all folders within the
                   # hierarchy are matched. IE To include
                   # `charts/redpanda/foo.go` There must be a match for
                   # `charts`, `charts/redpanda`, and `charts/redpanda/foo.go`
                   "^go.mod$"
                   "^go.sum$"
-                  "^cmd(/.*)?$"
-                  "^pkg(/.*)?$"
-                  "^charts$"
-                  "^charts/redpanda$"
-                  "^charts(/.*\.go)?$"
-                ];
+                ] ++ srcFilters);
 
                 # Effectively a nix lock file for go.mod and go.sum to know if
                 # deps need to be re-downloaded.
@@ -71,9 +66,34 @@
               };
             in
             {
-              gotohelm = buildCmdGoModule "gotohelm";
-              genpartial = buildCmdGoModule "genpartial";
-              genschema = buildCmdGoModule "genschema";
+              gotohelm = buildCmdGoModule {
+                package = "gotohelm";
+                srcFilters = [
+                  "^cmd$"
+                  "^cmd/gotohelm(/.*)?$"
+                  "^pkg(/.*)?$"
+                ];
+              };
+              genpartial = buildCmdGoModule {
+                package = "genpartial";
+                srcFilters = [
+                  "^cmd$"
+                  "^cmd/genpartial(/.*)?$"
+                  "^pkg(/.*)?$"
+                ];
+              };
+              genschema = buildCmdGoModule {
+                package = "genschema";
+                srcFilters = [
+                  "^cmd(/.*)?$"
+                  "^pkg(/.*)?$"
+                  # genschema currently needs to import the redpanda package as
+                  # it uses reflection.
+                  "^charts$"
+                  "^charts/redpanda$"
+                  "^charts(/.*\.go)?$"
+                ];
+              };
             };
 
           devShells.default = pkgs.mkShell {
