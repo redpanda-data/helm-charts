@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"go/ast"
 	"go/format"
+	"go/parser"
 	"go/token"
 	"go/types"
 
@@ -75,12 +76,48 @@ func LoadPackages(cfg *packages.Config, patterns ...string) ([]*packages.Package
 	return packages.Load(cfg, patterns...)
 }
 
+// typeToNode returns an [ast.Expr] representing the provided type.
+func typeToNode(pkg *packages.Package, typ types.Type) ast.Expr {
+	qualifier := func(p *types.Package) string {
+		if p.Path() == pkg.PkgPath {
+			return ""
+		}
+
+		// Technically this could break in the case of having multiple files
+		// with different import aliases.
+		for _, obj := range pkg.TypesInfo.Defs {
+			if name, ok := obj.(*types.PkgName); ok && p.Path() == name.Imported().Path() {
+				return name.Name()
+			}
+		}
+
+		// If no package name was found in Defs, there's no import alias.
+		// Fallback to p.Name().
+		return p.Name()
+	}
+
+	// This should only happen if a rewrite forgot to update TypesInfo or
+	// someone called TypeOf on `_`.
+	if typ == nil {
+		panic("nil type")
+	}
+
+	s := types.TypeString(typ, qualifier)
+
+	expr, err := parser.ParseExpr(s)
+	if err != nil {
+		panic(err)
+	}
+
+	return expr
+}
+
 // rewriteMultiValueReturns rewrites instances of multi-value returns into an
 // equivalent set of statements that utilizes a tuple followed by unpacking it.
 //
 //	x, y := f(a)
 //
-//	mvr := Tuple2(f(a))
+//	mvr := Compact2(f(a))
 //	x := mvr.First
 //	y := mvr.Second
 func rewriteMultiValueReturns(pkg *packages.Package, f *ast.File) (*ast.File, bool) {
@@ -90,7 +127,7 @@ func rewriteMultiValueReturns(pkg *packages.Package, f *ast.File) (*ast.File, bo
 	var count int
 	f = astutil.Apply(f, func(c *astutil.Cursor) bool {
 		assignment, ok := c.Node().(*ast.AssignStmt)
-		if !ok || assignment.Tok == token.ASSIGN {
+		if !ok {
 			return true
 		}
 		if len(assignment.Lhs) < 2 || len(assignment.Rhs) != 1 {
@@ -102,22 +139,20 @@ func rewriteMultiValueReturns(pkg *packages.Package, f *ast.File) (*ast.File, bo
 
 		// TODO might be nicer to call c.InsertAfter in reverse order because
 		// unpacking ends up looking "backwards".
+		unpacked := 0
 		var typeArgs []ast.Expr
-		for i, v := range assignment.Lhs {
-			qualifier := func(p *types.Package) string {
-				// TODO this doesn't work with import aliases :/
-				if p == pkg.Types {
-					return ""
-				}
-				return p.Name()
-			}
 
-			typeArgs = append(typeArgs, &ast.Ident{Name: types.TypeString(info.TypeOf(v), qualifier)})
+		rhsTypes := info.TypeOf(assignment.Rhs[0]).(*types.Tuple)
+
+		for i, v := range assignment.Lhs {
+			typeArgs = append(typeArgs, typeToNode(pkg, rhsTypes.At(i).Type()))
 
 			// Skip over any blackhole assignments.
 			if ident, ok := v.(*ast.Ident); ok && ident.Name == "_" {
 				continue
 			}
+
+			unpacked++
 
 			c.InsertAfter(&ast.AssignStmt{
 				Lhs: []ast.Expr{v},
@@ -131,18 +166,35 @@ func rewriteMultiValueReturns(pkg *packages.Package, f *ast.File) (*ast.File, bo
 			})
 		}
 
+		tok := assignment.Tok
+
+		if unpacked == 0 {
+			mvr = &ast.Ident{Name: "_"}
+			tok = token.ASSIGN
+		}
+
 		c.Replace(&ast.AssignStmt{
 			Lhs: []ast.Expr{mvr},
-			Tok: assignment.Tok,
+			Tok: tok,
 			Rhs: []ast.Expr{
 				&ast.CallExpr{
-					Fun: &ast.IndexListExpr{
-						X: &ast.SelectorExpr{
-							X:   ast.NewIdent(shimsPkg),
-							Sel: ast.NewIdent("Compact2"),
-						},
-						Indices: typeArgs,
+					Fun: &ast.SelectorExpr{
+						X:   ast.NewIdent(shimsPkg),
+						Sel: ast.NewIdent(fmt.Sprintf("Compact%d", len(typeArgs))),
 					},
+					// TODO(chrisseto): This is commented out for the worse
+					// possible reason. It seems that format.Node is _slightly_
+					// non-deterministic in the case of long lines. The easiest
+					// way to work around that for now is to not include
+					// explicit type hints to CompactN as go seems to be able
+					// to infer most cases.
+					// Fun: &ast.IndexListExpr{
+					// 	X: &ast.SelectorExpr{
+					// 		X:   ast.NewIdent(shimsPkg),
+					// 		Sel: ast.NewIdent(fmt.Sprintf("Compact%d", len(typeArgs))),
+					// 	},
+					// 	Indices: typeArgs,
+					// },
 					Args: assignment.Rhs,
 				},
 			},
@@ -164,10 +216,24 @@ func rewriteMultiValueReturns(pkg *packages.Package, f *ast.File) (*ast.File, bo
 //
 //	t, ok := x.(type)
 //
-//	t, ok := TypeAssertion[type](x)
+//	t, ok := DictTest[keytype, valuetype](m, k)
 func rewriteMultiValueSyntaxToHelpers(pkg *packages.Package, f *ast.File) (*ast.File, bool) {
 	count := 0
 	fset := pkg.Fset
+
+	replace := func(c *astutil.Cursor, replacement ast.Expr) {
+		// Increment count so we know when replacements have occurred.
+		count++
+
+		// Populate .Types for our replacement so downstream rewrites can
+		// depend on .TypeInfo without having to reparse the entire package.
+		pkg.TypesInfo.Types[replacement] = types.TypeAndValue{
+			Type: pkg.TypesInfo.TypeOf(c.Node().(ast.Expr)),
+		}
+
+		// Actually replace the node.
+		c.Replace(replacement)
+	}
 
 	f = astutil.Apply(f, func(c *astutil.Cursor) bool {
 		assignment, ok := c.Parent().(*ast.AssignStmt)
@@ -185,20 +251,23 @@ func rewriteMultiValueSyntaxToHelpers(pkg *packages.Package, f *ast.File) (*ast.
 
 		switch node := c.Node().(type) {
 		case *ast.IndexExpr:
-			count++
-			// x, ok := y.[key] -> x, ok := DictTest(y, key)
-			c.Replace(&ast.CallExpr{
-				Fun: &ast.SelectorExpr{
-					X:   ast.NewIdent(shimsPkg),
-					Sel: ast.NewIdent("DictTest"),
+			// x, ok := m[key] -> x, ok := DictTest[K, V](y, key)
+			typ := pkg.TypesInfo.TypeOf(node.X).Underlying().(*types.Map)
+
+			replace(c, &ast.CallExpr{
+				Fun: &ast.IndexListExpr{
+					X: &ast.SelectorExpr{X: ast.NewIdent(shimsPkg), Sel: ast.NewIdent("DictTest")},
+					Indices: []ast.Expr{
+						typeToNode(pkg, typ.Key()),
+						typeToNode(pkg, typ.Elem()),
+					},
 				},
 				Args: []ast.Expr{node.X, node.Index},
 			})
 
 		case *ast.TypeAssertExpr:
-			count++
 			// x, ok := y.(type) -> x, ok := TypeTest[type](y)
-			c.Replace(&ast.CallExpr{
+			replace(c, &ast.CallExpr{
 				Fun: &ast.IndexExpr{
 					X: &ast.SelectorExpr{
 						X:   ast.NewIdent(shimsPkg),

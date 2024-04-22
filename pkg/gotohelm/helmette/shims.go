@@ -39,15 +39,6 @@ func MustDuration(duration string) *metav1.Duration {
 	return &metav1.Duration{Duration: d}
 }
 
-type Tuple2[T1, T2 any] struct {
-	T1 T1
-	T2 T2
-}
-
-func Compact2[T1, T2 any](t1, t2 any) Tuple2[T1, T2] {
-	return Tuple2[T1, T2]{}
-}
-
 // Unwrap "unwraps" .Values into a golang struct.
 // DANGER: Unwrap performs no defaulting or validation. At the helm level, this
 // is transpiled into .Values.AsMap.
@@ -69,4 +60,23 @@ func Unwrap[T any](from Values) T {
 		panic(err)
 	}
 	return out
+}
+
+type Tuple2[T1, T2 any] struct {
+	T1 T1
+	T2 T2
+}
+
+type Tuple3[T1, T2, T3 any] struct {
+	T1 T1
+	T2 T2
+	T3 T3
+}
+
+func Compact2[T1, T2 any](t1 T1, t2 T2) Tuple2[T1, T2] {
+	return Tuple2[T1, T2]{T1: t1, T2: t2}
+}
+
+func Compact3[T1, T2, T3 any](t1 T1, t2 T2, t3 T3) Tuple3[T1, T2, T3] {
+	return Tuple3[T1, T2, T3]{T1: t1, T2: t2, T3: t3}
 }
