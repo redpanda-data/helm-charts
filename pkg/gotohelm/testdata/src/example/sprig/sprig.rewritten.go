@@ -24,6 +24,28 @@ func Sprig() map[string]any {
 		"unset":   unset(),
 		"regex":   regex(),
 		"atoi":    atoi(),
+		"float":   float(),
+	}
+}
+
+func float() []float64 {
+	tmp_tuple_1 := helmette.Compact2(helmette.Float64("3.2"))
+	f := tmp_tuple_1.T1
+	tmp_tuple_2 := helmette.Compact2(helmette.Float64("3"))
+	integer := tmp_tuple_2.T1
+	tmp_tuple_3 := helmette.Compact2(helmette.Float64("abc"))
+	err := tmp_tuple_3.T2
+	invalidInput := tmp_tuple_3.T1
+	errorHappen := 0.3
+	if err != nil {
+		// The error will never happen in go template engine. That's why sprig is swallowing/omitting any error
+		//errorHappen = 1.3
+	}
+	return []float64{
+		f,
+		integer,
+		invalidInput,
+		errorHappen,
 	}
 }
 
@@ -36,13 +58,13 @@ func regex() []bool {
 }
 
 func atoi() []int {
-	tmp_tuple_1 := helmette.Compact2(helmette.Atoi("234"))
-	positive := tmp_tuple_1.T1
-	tmp_tuple_2 := helmette.Compact2(helmette.Atoi("-23"))
-	negative := tmp_tuple_2.T1
-	tmp_tuple_3 := helmette.Compact2(helmette.Atoi("paokwdpo"))
-	err := tmp_tuple_3.T2
-	invalidInput := tmp_tuple_3.T1
+	tmp_tuple_4 := helmette.Compact2(helmette.Atoi("234"))
+	positive := tmp_tuple_4.T1
+	tmp_tuple_5 := helmette.Compact2(helmette.Atoi("-23"))
+	negative := tmp_tuple_5.T1
+	tmp_tuple_6 := helmette.Compact2(helmette.Atoi("paokwdpo"))
+	err := tmp_tuple_6.T2
+	invalidInput := tmp_tuple_6.T1
 	errorHappen := 0
 	if err != nil {
 		// The error will never happen in go template engine. That's why sprig is swallowing/omitting any error

@@ -756,6 +756,14 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 				&Literal{Value: "nil"},
 			},
 		}
+	case "helmette.Float64":
+		return &BuiltInCall{
+			FuncName: "list",
+			Arguments: []Node{
+				&BuiltInCall{FuncName: "float64", Arguments: args},
+				&Literal{Value: "nil"},
+			},
+		}
 	case "slices.Sort":
 		// TODO: This only works for strings :[
 		return &BuiltInCall{FuncName: "sortAlpha", Arguments: args}

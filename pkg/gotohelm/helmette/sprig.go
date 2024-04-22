@@ -192,3 +192,7 @@ func Concat[T any](lists ...[]T) []T {
 func Atoi(in string) (int, error) {
 	return strconv.Atoi(in)
 }
+
+func Float64(in string) (float64, error) {
+	return strconv.ParseFloat(in, 64)
+}

@@ -2,7 +2,24 @@
 
 {{- define "sprig.Sprig" -}}
 {{- range $_ := (list 1) -}}
-{{- (dict "r" (dict "concat" (get (fromJson (include "sprig.concat" (dict "a" (list ) ))) "r") "default" (get (fromJson (include "sprig.default_" (dict "a" (list ) ))) "r") "keys" (get (fromJson (include "sprig.keys" (dict "a" (list ) ))) "r") "empty" (get (fromJson (include "sprig.empty" (dict "a" (list ) ))) "r") "strings" (get (fromJson (include "sprig.stringsFunctions" (dict "a" (list ) ))) "r") "unset" (get (fromJson (include "sprig.unset" (dict "a" (list ) ))) "r") "regex" (get (fromJson (include "sprig.regex" (dict "a" (list ) ))) "r") "atoi" (get (fromJson (include "sprig.atoi" (dict "a" (list ) ))) "r") )) | toJson -}}
+{{- (dict "r" (dict "concat" (get (fromJson (include "sprig.concat" (dict "a" (list ) ))) "r") "default" (get (fromJson (include "sprig.default_" (dict "a" (list ) ))) "r") "keys" (get (fromJson (include "sprig.keys" (dict "a" (list ) ))) "r") "empty" (get (fromJson (include "sprig.empty" (dict "a" (list ) ))) "r") "strings" (get (fromJson (include "sprig.stringsFunctions" (dict "a" (list ) ))) "r") "unset" (get (fromJson (include "sprig.unset" (dict "a" (list ) ))) "r") "regex" (get (fromJson (include "sprig.regex" (dict "a" (list ) ))) "r") "atoi" (get (fromJson (include "sprig.atoi" (dict "a" (list ) ))) "r") "float" (get (fromJson (include "sprig.float" (dict "a" (list ) ))) "r") )) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "sprig.float" -}}
+{{- range $_ := (list 1) -}}
+{{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (list (float64 "3.2") nil)) ))) "r") -}}
+{{- $f := $tmp_tuple_1.T1 -}}
+{{- $tmp_tuple_2 := (get (fromJson (include "_shims.compact" (dict "a" (list (list (float64 "3") nil)) ))) "r") -}}
+{{- $integer := $tmp_tuple_2.T1 -}}
+{{- $tmp_tuple_3 := (get (fromJson (include "_shims.compact" (dict "a" (list (list (float64 "abc") nil)) ))) "r") -}}
+{{- $err := $tmp_tuple_3.T2 -}}
+{{- $invalidInput := $tmp_tuple_3.T1 -}}
+{{- $errorHappen := 0.3 -}}
+{{- if (ne $err (coalesce nil)) -}}
+{{- end -}}
+{{- (dict "r" (list $f $integer $invalidInput $errorHappen)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -16,13 +33,13 @@
 
 {{- define "sprig.atoi" -}}
 {{- range $_ := (list 1) -}}
-{{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (list (atoi "234") nil)) ))) "r") -}}
-{{- $positive := $tmp_tuple_1.T1 -}}
-{{- $tmp_tuple_2 := (get (fromJson (include "_shims.compact" (dict "a" (list (list (atoi "-23") nil)) ))) "r") -}}
-{{- $negative := $tmp_tuple_2.T1 -}}
-{{- $tmp_tuple_3 := (get (fromJson (include "_shims.compact" (dict "a" (list (list (atoi "paokwdpo") nil)) ))) "r") -}}
-{{- $err := $tmp_tuple_3.T2 -}}
-{{- $invalidInput := $tmp_tuple_3.T1 -}}
+{{- $tmp_tuple_4 := (get (fromJson (include "_shims.compact" (dict "a" (list (list (atoi "234") nil)) ))) "r") -}}
+{{- $positive := $tmp_tuple_4.T1 -}}
+{{- $tmp_tuple_5 := (get (fromJson (include "_shims.compact" (dict "a" (list (list (atoi "-23") nil)) ))) "r") -}}
+{{- $negative := $tmp_tuple_5.T1 -}}
+{{- $tmp_tuple_6 := (get (fromJson (include "_shims.compact" (dict "a" (list (list (atoi "paokwdpo") nil)) ))) "r") -}}
+{{- $err := $tmp_tuple_6.T2 -}}
+{{- $invalidInput := $tmp_tuple_6.T1 -}}
 {{- $errorHappen := 0 -}}
 {{- if (ne $err (coalesce nil)) -}}
 {{- end -}}
