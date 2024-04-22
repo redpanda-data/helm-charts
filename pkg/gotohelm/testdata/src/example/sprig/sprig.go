@@ -23,6 +23,24 @@ func Sprig() map[string]any {
 		"unset":   unset(),
 		"regex":   regex(),
 		"atoi":    atoi(),
+		"float":   float(),
+	}
+}
+
+func float() []float64 {
+	f, _ := helmette.Float64("3.2")
+	integer, _ := helmette.Float64("3")
+	invalidInput, err := helmette.Float64("abc")
+	errorHappen := 0.3
+	if err != nil {
+		// The error will never happen in go template engine. That's why sprig is swallowing/omitting any error
+		//errorHappen = 1.3
+	}
+	return []float64{
+		f,
+		integer,
+		invalidInput,
+		errorHappen,
 	}
 }
 
