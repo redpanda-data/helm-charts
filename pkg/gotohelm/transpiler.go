@@ -557,7 +557,6 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 			{"_", token.GEQ.String(), "_"}:                     f("gte"),
 			{"_", token.LEQ.String(), "_"}:                     f("lte"),
 			{"float32", token.QUO.String(), "float32"}:         wrapWithCast("divf", "float32"),
-			{"float64", token.QUO.String(), "float64"}:         wrapWithCast("divf", "float64"),
 			{"int", token.ADD.String(), "int"}:                 wrapWithCast("add", "int"),
 			{"int", token.SUB.String(), "int"}:                 wrapWithCast("sub", "int"),
 			{"int", token.MUL.String(), "int"}:                 wrapWithCast("mul", "int"),
@@ -570,6 +569,10 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 			{"int64", token.SUB.String(), "int64"}:             wrapWithCast("sub", "int64"),
 			{"int64", token.MUL.String(), "int64"}:             wrapWithCast("mul", "int64"),
 			{"int64", token.QUO.String(), "int64"}:             wrapWithCast("div", "int64"),
+			{"float64", token.ADD.String(), "float64"}:         wrapWithCast("addf", "float64"),
+			{"float64", token.SUB.String(), "float64"}:         wrapWithCast("subf", "float64"),
+			{"float64", token.MUL.String(), "float64"}:         wrapWithCast("mulf", "float64"),
+			{"float64", token.QUO.String(), "float64"}:         wrapWithCast("divf", "float64"),
 			{"untyped int", token.ADD.String(), "untyped int"}: f("add"),
 			{"untyped int", token.SUB.String(), "untyped int"}: f("sub"),
 			{"untyped int", token.MUL.String(), "untyped int"}: f("mul"),
@@ -678,6 +681,8 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 			return &BuiltInCall{FuncName: "int", Arguments: args}
 		case "int64":
 			return &BuiltInCall{FuncName: "int64", Arguments: args}
+		case "float64":
+			return &BuiltInCall{FuncName: "float64", Arguments: args}
 		case "panic":
 			return &BuiltInCall{FuncName: "fail", Arguments: args}
 		case "string":
