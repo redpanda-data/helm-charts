@@ -4,6 +4,7 @@ package redpanda
 import (
 	"github.com/invopop/jsonschema"
 	orderedmap "github.com/wk8/go-ordered-map/v2"
+	corev1 "k8s.io/api/core/v1"
 )
 
 // values.go contains a collection of go structs that (loosely) map to
@@ -226,9 +227,30 @@ type PostUpgradeJob struct {
 	// ExtraEnvFrom []corev1.EnvFromSource `json:"extraEnvFrom"`
 }
 
+type ContainerName string
+
+func (ContainerName) JSONSchemaExtend(s *jsonschema.Schema) {
+	s.Enum = append(s.Enum, RedpandaContainerName)
+}
+
+type Container struct {
+	Name ContainerName   `json:"name" jsonschema:"required"`
+	Env  []corev1.EnvVar `json:"env" jsonschema:"required"`
+}
+
+// PodSpec is a subset of [corev1.PodSpec] that will be merged into the objects
+// constructed by this helm chart via means of a [strategic merge
+// patch](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/#use-a-strategic-merge-patch-to-update-a-deployment).
+// NOTE: At the time of writing, merging is manually implemented for each
+// field. Ideally, a more generally applicable solution could be used.
+type PodSpec struct {
+	Containers []Container `json:"containers" jsonschema:"required"`
+}
+
 type PodTemplate struct {
-	Labels      map[string]string `json:"labels"`
+	Labels      map[string]string `json:"labels" jsonschema:"required"`
 	Annotations map[string]string `json:"annotations" jsonschema:"required"`
+	Spec        PodSpec           `json:"spec" jsonschema:"required"`
 }
 
 type Statefulset struct {
@@ -241,7 +263,7 @@ type Statefulset struct {
 	// Annotations are used only for `Statefulset.spec.template.metadata.annotations`. The StatefulSet does not have
 	// any dedicated annotation.
 	Annotations map[string]string `json:"annotations" jsonschema:"deprecated"`
-	PodTemplate PodTemplate       `json:"podTemplate"`
+	PodTemplate PodTemplate       `json:"podTemplate" jsonschema:"required"`
 	Budget      struct {
 		MaxUnavailable int `json:"maxUnavailable" jsonschema:"required"`
 	} `json:"budget" jsonschema:"required"`

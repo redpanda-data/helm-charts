@@ -645,6 +645,13 @@ statefulset:
     labels: {}
     # -- Additional annotations to apply to the Pods of this StatefulSet.
     annotations: {}
+    # -- A subset of Kubernetes' PodSpec type that will be merged into the redpanda StatefulSet via a [strategic merge patch](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/#use-a-strategic-merge-patch-to-update-a-deployment).
+    spec:
+      containers: []
+      # - name: redpanda
+      #   env:
+      #   - name: EXTRA_ENV_VAR
+      #     value: THIS_IS_AN_EXAMPLE
   # -- Adjust the period for your probes to meet your needs.
   # For details,
   # see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes).

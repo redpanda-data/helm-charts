@@ -4,6 +4,10 @@
 //+gotohelm:ignore=true
 package redpanda
 
+import (
+	corev1 "k8s.io/api/core/v1"
+)
+
 type PartialValues struct {
 	NameOverride     *string           `json:"nameOverride,omitempty"`
 	FullnameOverride *string           `json:"fullnameOverride,omitempty"`
@@ -176,9 +180,19 @@ type PartialPostUpgradeJob struct {
 	ExtraEnvFrom any                  `json:"extraEnvFrom,omitempty" jsonschema:"oneof_type=array;string"`
 }
 
+type PartialContainer struct {
+	Name ContainerName   `json:"name,omitempty" jsonschema:"required"`
+	Env  []corev1.EnvVar `json:"env,omitempty" jsonschema:"required"`
+}
+
+type PartialPodSpec struct {
+	Containers []PartialContainer `json:"containers,omitempty" jsonschema:"required"`
+}
+
 type PartialPodTemplate struct {
-	Labels      map[string]string `json:"labels,omitempty"`
+	Labels      map[string]string `json:"labels,omitempty" jsonschema:"required"`
 	Annotations map[string]string `json:"annotations,omitempty" jsonschema:"required"`
+	Spec        *PartialPodSpec   `json:"spec,omitempty" jsonschema:"required"`
 }
 
 type PartialStatefulset struct {
@@ -190,7 +204,7 @@ type PartialStatefulset struct {
 	AdditionalRedpandaCmdFlags []string `json:"additionalRedpandaCmdFlags,omitempty"`
 
 	Annotations map[string]string   `json:"annotations,omitempty" jsonschema:"deprecated"`
-	PodTemplate *PartialPodTemplate `json:"podTemplate,omitempty"`
+	PodTemplate *PartialPodTemplate `json:"podTemplate,omitempty" jsonschema:"required"`
 	Budget      struct {
 		MaxUnavailable *int `json:"maxUnavailable,omitempty" jsonschema:"required"`
 	} `json:"budget,omitempty" jsonschema:"required"`
