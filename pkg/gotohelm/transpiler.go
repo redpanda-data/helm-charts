@@ -681,6 +681,12 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 		case "panic":
 			return &BuiltInCall{FuncName: "fail", Arguments: args}
 		case "string":
+			x := t.typeOf(n.Args[0])
+			if x.String() == "byte" {
+				return &BuiltInCall{
+					FuncName:  "printf",
+					Arguments: append([]Node{&Literal{Value: "\"%c\""}}, args...)}
+			}
 			return &BuiltInCall{FuncName: "toString", Arguments: args}
 		case "len":
 			return &BuiltInCall{FuncName: "len", Arguments: args}

@@ -2,6 +2,7 @@
 package syntax
 
 import (
+	"fmt"
 	corev1 "k8s.io/api/core/v1"
 )
 
@@ -35,6 +36,21 @@ func Syntax() map[string]any {
 	_ = (true)
 
 	// SliceExpr
+	slice := sliceExpr()
+
+	// Ident
+	_ = AStrConst  // A reference to a string constant
+	_ = AnIntConst // A reference to an int constant
+
+	// SelectorExpr
+	_ = corev1.IPv4Protocol // A reference to an imported constant
+
+	return map[string]any{
+		"sliceExpr": slice,
+	}
+}
+
+func sliceExpr() map[string]any {
 	_ = []int{1, 2, 3}[:]
 	_ = []int{1, 2, 3}[1:]
 	_ = []int{1, 2, 3}[:2]
@@ -47,14 +63,28 @@ func Syntax() map[string]any {
 	s := "abcd"
 	_ = s[:len(s)-1]
 
-	// Ident
-	_ = AStrConst  // A reference to a string constant
-	_ = AnIntConst // A reference to an int constant
+	return workingWithString()
+}
 
-	// SelectorExpr
-	_ = corev1.IPv4Protocol // A reference to an imported constant
+func workingWithString() map[string]any {
+	amount := "2.5Gi"
+	unit := string(amount[len(amount)-1])
 
-	return map[string]any{}
+	savedUnit := unit
+	amount = amount[:len(amount)-1]
+
+	if unit == "i" {
+		// TODO string + string not implemented.
+		unit = fmt.Sprintf("%s%s", amount[len(amount)-1:], unit)
+		amount = amount[:len(amount)-1]
+	}
+
+	return map[string]any{
+		"unit":          unit,
+		"amount":        amount,
+		"unitIsEqual":   unit == "Gi",
+		"lastCharacter": savedUnit == "i",
+	}
 }
 
 // binaryExprs are a bit tricky because we need to care about the types beyond
