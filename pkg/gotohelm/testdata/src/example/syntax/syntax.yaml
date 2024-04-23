@@ -14,6 +14,17 @@
 {{- $_ = (len (dict )) -}}
 {{- $_ := (get (fromJson (include "syntax.binaryExprs" (dict "a" (list ) ))) "r") -}}
 {{- $_ = (true) -}}
+{{- $slice := (get (fromJson (include "syntax.sliceExpr" (dict "a" (list ) ))) "r") -}}
+{{- $_ = "1234" -}}
+{{- $_ = 1234 -}}
+{{- $_ = "IPv4" -}}
+{{- (dict "r" (dict "sliceExpr" $slice )) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "syntax.sliceExpr" -}}
+{{- range $_ := (list 1) -}}
 {{- $_ = (mustSlice (list 1 2 3) 0) -}}
 {{- $_ = (mustSlice (list 1 2 3) 1) -}}
 {{- $_ = (mustSlice (list 1 2 3) 0 2) -}}
@@ -25,10 +36,22 @@
 {{- $_ = (substr 1 2 "1234") -}}
 {{- $s := "abcd" -}}
 {{- $_ = (substr 0 (int (sub (len $s) 1)) $s) -}}
-{{- $_ = "1234" -}}
-{{- $_ = 1234 -}}
-{{- $_ = "IPv4" -}}
-{{- (dict "r" (dict )) | toJson -}}
+{{- (dict "r" (get (fromJson (include "syntax.workingWithString" (dict "a" (list ) ))) "r")) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "syntax.workingWithString" -}}
+{{- range $_ := (list 1) -}}
+{{- $amount := "2.5Gi" -}}
+{{- $unit := (printf "%c" (index $amount (int (sub (len $amount) 1)))) -}}
+{{- $savedUnit := $unit -}}
+{{- $amount = (substr 0 (int (sub (len $amount) 1)) $amount) -}}
+{{- if (eq $unit "i") -}}
+{{- $unit = (printf "%s%s" (substr (int (sub (len $amount) 1)) -1 $amount) $unit) -}}
+{{- $amount = (substr 0 (int (sub (len $amount) 1)) $amount) -}}
+{{- end -}}
+{{- (dict "r" (dict "unit" $unit "amount" $amount "unitIsEqual" (eq $unit "Gi") "lastCharacter" (eq $savedUnit "i") )) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
