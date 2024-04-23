@@ -849,6 +849,12 @@ Additional labels to apply to the Pods of this StatefulSet.
 
 **Default:** `{}`
 
+### [statefulset.podTemplate.spec](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.podTemplate.spec)
+
+A subset of Kubernetes' PodSpec type that will be merged into the redpanda StatefulSet via a [strategic merge patch](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/#use-a-strategic-merge-patch-to-update-a-deployment).
+
+**Default:** `{"containers":[]}`
+
 ### [statefulset.priorityClassName](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.priorityClassName)
 
 PriorityClassName given to Pods of this StatefulSet. For details, see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass).

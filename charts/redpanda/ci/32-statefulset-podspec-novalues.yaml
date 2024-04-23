@@ -1,0 +1,10 @@
+statefulset:
+  podTemplate:
+    spec:
+      containers:
+      - name: redpanda
+        env:
+        - name: EXTRA_ENV_VAR
+          value: THIS_IS_AN_EXAMPLE
+        - name: POD_IP
+          value: This is an override and will break the deployment

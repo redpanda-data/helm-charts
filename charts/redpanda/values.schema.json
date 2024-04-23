@@ -1252,10 +1252,115 @@
                 "type": "string"
               },
               "type": "object"
+            },
+            "spec": {
+              "properties": {
+                "containers": {
+                  "items": {
+                    "properties": {
+                      "env": {
+                        "items": {
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "value": {
+                              "type": "string"
+                            },
+                            "valueFrom": {
+                              "properties": {
+                                "configMapKeyRef": {
+                                  "properties": {
+                                    "key": {
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "type": "string"
+                                    },
+                                    "optional": {
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "type": "object"
+                                },
+                                "fieldRef": {
+                                  "properties": {
+                                    "apiVersion": {
+                                      "type": "string"
+                                    },
+                                    "fieldPath": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "type": "object"
+                                },
+                                "resourceFieldRef": {
+                                  "properties": {
+                                    "containerName": {
+                                      "type": "string"
+                                    },
+                                    "divisor": {
+                                      "properties": {
+                                        "Format": {
+                                          "type": "string"
+                                        }
+                                      },
+                                      "type": "object"
+                                    },
+                                    "resource": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "type": "object"
+                                },
+                                "secretKeyRef": {
+                                  "properties": {
+                                    "key": {
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "type": "string"
+                                    },
+                                    "optional": {
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "type": "object"
+                                }
+                              },
+                              "type": "object"
+                            }
+                          },
+                          "type": "object"
+                        },
+                        "type": "array"
+                      },
+                      "name": {
+                        "enum": [
+                          "redpanda"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "env"
+                    ],
+                    "type": "object"
+                  },
+                  "type": "array"
+                }
+              },
+              "required": [
+                "containers"
+              ],
+              "type": "object"
             }
           },
           "required": [
-            "annotations"
+            "labels",
+            "annotations",
+            "spec"
           ],
           "type": "object"
         },
@@ -1415,6 +1520,7 @@
       "required": [
         "replicas",
         "updateStrategy",
+        "podTemplate",
         "budget",
         "startupProbe",
         "livenessProbe",

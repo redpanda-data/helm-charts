@@ -178,19 +178,7 @@ spec:
       containers:
         - name: {{ template "redpanda.name" . }}
           image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
-          env:
-            - name: SERVICE_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: POD_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.podIP
-            - name: HOST_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.hostIP
+          env: {{ get ((include "redpanda.StatefulSetRedpandaEnv" (dict "a" (list .))) | fromJson) "r" | toYaml | nindent 12 }}
           # finish the lifecycle scripts with "true" to prevent them from terminating the pod prematurely
           lifecycle:
             postStart:
