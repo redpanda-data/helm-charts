@@ -25,14 +25,20 @@ import (
 // RedpandaAdditionalStartFlags returns a string list of flags suitable for use
 // as `additional_start_flags`. User provided flags will override any of those
 // set by default.
-func RedpandaAdditionalStartFlags(dot *helmette.Dot, smp, memory, reserveMemory string) []string {
+func RedpandaAdditionalStartFlags(dot *helmette.Dot, smp string) []string {
 	values := helmette.Unwrap[Values](dot.Values)
 
 	// All `additional_start_flags` that are set by the chart.
 	chartFlags := map[string]string{
-		"smp":               smp,
-		"memory":            fmt.Sprintf("%sM", memory),
-		"reserve-memory":    fmt.Sprintf("%sM", reserveMemory),
+		"smp": smp,
+		// TODO: The transpiled go template will return float64 from both RedpandaMemory and RedpandaReserveMemory
+		// By wrapping return value from that function the sprintf will work as expected
+		// https://github.com/redpanda-data/helm-charts/issues/1249
+		"memory": fmt.Sprintf("%dM", int(RedpandaMemory(dot))),
+		// TODO: The transpiled go template will return float64 from both RedpandaMemory and RedpandaReserveMemory
+		// By wrapping return value from that function the sprintf will work as expected
+		// https://github.com/redpanda-data/helm-charts/issues/1249
+		"reserve-memory":    fmt.Sprintf("%dM", int(RedpandaReserveMemory(dot))),
 		"default-log-level": values.Logging.LogLevel,
 	}
 

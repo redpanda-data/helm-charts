@@ -139,12 +139,21 @@ type PartialRedpandaResources struct {
 		Cores           any   `json:"cores,omitempty" jsonschema:"required,oneof_type=integer;string"`
 		Overprovisioned *bool `json:"overprovisioned,omitempty"`
 	} `json:"cpu,omitempty" jsonschema:"required"`
+
 	Memory struct {
 		EnableMemoryLocking *bool `json:"enable_memory_locking,omitempty"`
-		Container           struct {
+
+		Container struct {
 			Min *MemoryAmount `json:"min,omitempty"`
+
 			Max *MemoryAmount `json:"max,omitempty" jsonschema:"required"`
 		} `json:"container,omitempty" jsonschema:"required"`
+
+		Redpanda *struct {
+			Memory *MemoryAmount `json:"memory,omitempty" jsonschema:"oneof_type=integer;string"`
+
+			ReserveMemory *MemoryAmount `json:"reserveMemory,omitempty" jsonschema:"oneof_type=integer;string"`
+		} `json:"redpanda,omitempty"`
 	} `json:"memory,omitempty" jsonschema:"required"`
 }
 

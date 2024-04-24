@@ -145,66 +145,6 @@ Use AppVersion if image.tag is not set
 {{- toJson (dict "bool" (dig "enabled" false .Values.auth.sasl)) -}}
 {{- end -}}
 
-{{- define "SI-to-bytes" -}}
-  {{/*
-  This template converts the incoming SI value to whole number bytes.
-  Input can be: b | B | k | K | m | M | g | G | Ki | Mi | Gi
-  Or number without suffix
-  */}}
-  {{- $si := . -}}
-  {{- if not (typeIs "string" . ) -}}
-    {{- $si = int64 $si | toString -}}
-  {{- end -}}
-  {{- $bytes := 0 -}}
-  {{- if or (hasSuffix "B" $si) (hasSuffix "b" $si) -}}
-    {{- $bytes = $si | trimSuffix "B" | trimSuffix "b" | float64 | floor -}}
-  {{- else if or (hasSuffix "K" $si) (hasSuffix "k" $si) -}}
-    {{- $raw := $si | trimSuffix "K" | trimSuffix "k" | float64 -}}
-    {{- $bytes = mulf $raw (mul 1000) | floor -}}
-  {{- else if or (hasSuffix "M" $si) (hasSuffix "m" $si) -}}
-    {{- $raw := $si | trimSuffix "M" | trimSuffix "m" | float64 -}}
-    {{- $bytes = mulf $raw (mul 1000 1000) | floor -}}
-  {{- else if or (hasSuffix "G" $si) (hasSuffix "g" $si) -}}
-    {{- $raw := $si | trimSuffix "G" | trimSuffix "g" | float64 -}}
-    {{- $bytes = mulf $raw (mul 1000 1000 1000) | floor -}}
-  {{- else if hasSuffix "Ki" $si -}}
-    {{- $raw := $si | trimSuffix "Ki" | float64 -}}
-    {{- $bytes = mulf $raw (mul 1024) | floor -}}
-  {{- else if hasSuffix "Mi" $si -}}
-    {{- $raw := $si | trimSuffix "Mi" | float64 -}}
-    {{- $bytes = mulf $raw (mul 1024 1024) | floor -}}
-  {{- else if hasSuffix "Gi" $si -}}
-    {{- $raw := $si | trimSuffix "Gi" | float64 -}}
-    {{- $bytes = mulf $raw (mul 1024 1024 1024) | floor -}}
-  {{- else if (mustRegexMatch "^[0-9]+$" $si) -}}
-    {{- $bytes = $si -}}
-  {{- else -}}
-    {{- printf "\n%s is invalid SI quantity\nSuffixes can be: b | B | k | K | m | M | g | G | Ki | Mi | Gi or without any Suffixes" $si | fail -}}
-  {{- end -}}
-  {{- $bytes | int64 -}}
-{{- end -}}
-
-{{/* Resource variables */}}
-{{- define "redpanda-memoryToMi" -}}
-  {{/*
-  This template converts the incoming memory value to whole number mebibytes.
-  */}}
-  {{- div (include "SI-to-bytes" .) (mul 1024 1024) -}}
-{{- end -}}
-
-{{- define "container-memory" -}}
-  {{- $result := "" -}}
-  {{- if (hasKey .Values.resources.memory.container "min") -}}
-    {{- $result = .Values.resources.memory.container.min | include "redpanda-memoryToMi" -}}
-  {{- else -}}
-    {{- $result = .Values.resources.memory.container.max | include "redpanda-memoryToMi" -}}
-  {{- end -}}
-  {{- if eq $result "" -}}
-    {{- "unable to get memory value from container" | fail -}}
-  {{- end -}}
-  {{- $result -}}
-{{- end -}}
-
 {{- define "external-loadbalancer-enabled" -}}
 {{- $values := .Values -}}
 {{- $enabled := and .Values.external.enabled (eq .Values.external.type "LoadBalancer") -}}
@@ -216,63 +156,6 @@ Use AppVersion if image.tag is not set
   {{- end -}}
 {{- end -}}
 {{- toJson (dict "bool" $enabled) -}}
-{{- end -}}
-
-{{- define "redpanda-reserve-memory" -}}
-  {{/*
-  Determines the value of --reserve-memory flag (in mebibytes with M suffix, per Seastar).
-  This template looks at all locations where memory could be set.
-  These locations, in order of priority, are:
-  - .Values.resources.memory.redpanda.reserveMemory (commented out by default, users could uncomment)
-  - .Values.resources.memory.container.min (commented out by default, users could uncomment and
-    change to something lower than .Values.resources.memory.container.max)
-  - .Values.resources.memory.container.max (set by default)
-  */}}
-  {{- $result := 0 -}}
-  {{- if (hasKey .Values.resources.memory "redpanda") -}}
-    {{- $result = .Values.resources.memory.redpanda.reserveMemory | include "redpanda-memoryToMi" | int64 -}}
-  {{- else if (hasKey .Values.resources.memory.container "min") -}}
-    {{- $result = add (mulf (include "container-memory" .) 0.002) 200 -}}
-    {{- if gt $result 1000 -}}
-      {{- $result = 1000 -}}
-    {{- end -}}
-  {{- else -}}
-    {{- $result = add (mulf (include "container-memory" .) 0.002) 200 -}}
-    {{- if gt $result 1000 -}}
-      {{- $result = 1000 -}}
-    {{- end -}}
-  {{- end -}}
-  {{- $result -}}
-{{- end -}}
-
-{{- define "redpanda-memory" -}}
-  {{/*
-  Determines the value of --memory flag (in mebibytes with M suffix, per Seastar).
-  This template looks at all locations where memory could be set.
-  These locations, in order of priority, are:
-  - .Values.resources.memory.redpanda.memory (commented out by default, users could uncomment)
-  - .Values.resources.memory.container.min (commented out by default, users could uncomment and
-    change to something lower than .Values.resources.memory.container.max)
-  - .Values.resources.memory.container.max (set by default)
-  */}}
-  {{- $result := 0 -}}
-  {{- if (hasKey .Values.resources.memory "redpanda") -}}
-    {{- $result = .Values.resources.memory.redpanda.memory | include "redpanda-memoryToMi" | int64 -}}
-  {{- else -}}
-    {{- $result = mulf (include "container-memory" .) 0.8 | int64 -}}
-  {{- end -}}
-  {{- if eq $result 0 -}}
-    {{- "unable to get memory value redpanda-memory" | fail -}}
-  {{- end -}}
-  {{- if lt $result 256 -}}
-    {{- printf "\n%d is below the minimum value for Redpanda" $result | fail -}}
-  {{- end -}}
-  {{- if not .Values.config.node.developer_mode }}
-  {{- if gt (add $result (include "redpanda-reserve-memory" .)) (include "container-memory" . | int64) -}}
-    {{- printf "\nNot enough container memory for Redpanda memory values\nredpanda: %d, reserve: %d, container: %d" $result (include "redpanda-reserve-memory" . | int64) (include "container-memory" . | int64) | fail -}}
-  {{- end -}}
-  {{- end -}}
-  {{- $result -}}
 {{- end -}}
 
 {{/*
@@ -323,7 +206,11 @@ than 1 core.
 {{- define "storage-min-free-bytes" -}}
 {{- $fiveGiB := 5368709120 -}}
 {{- if dig "enabled" false .Values.storage.persistentVolume -}}
-  {{- min $fiveGiB (mulf (include "SI-to-bytes" .Values.storage.persistentVolume.size) 0.05 | int64) -}}
+  {{- if typeIs "string" .Values.storage.persistentVolume.size -}}
+    {{- min $fiveGiB (mulf (get ((include "redpanda.SIToBytes" (dict "a" (list .Values.storage.persistentVolume.size))) | fromJson) "r" ) 0.05 | int64) -}}
+  {{- else -}}
+    {{- min $fiveGiB (mulf .Values.storage.persistentVolume.size 0.05 | int64) -}}
+  {{- end -}}
 {{- else -}}
 {{- $fiveGiB -}}
 {{- end -}}
@@ -490,7 +377,7 @@ advertised-host returns a json string with the data needed for configuring the a
 */}}
 {{- define "warnings" -}}
   {{- $result := list -}}
-  {{- $warnings := list "redpanda-memory-warning" "redpanda-cpu-warning" -}}
+  {{- $warnings := list "redpanda-cpu-warning" -}}
   {{- range $t := $warnings -}}
     {{- $warning := include $t $ -}}
       {{- if $warning -}}
@@ -499,16 +386,6 @@ advertised-host returns a json string with the data needed for configuring the a
   {{- end -}}
   {{/* fromJson cannot decode list */}}
   {{- toJson (dict "result" $result) -}}
-{{- end -}}
-
-{{/*
-return a warning if the chart is configured with insufficient memory
-*/}}
-{{- define "redpanda-memory-warning" -}}
-  {{- $result := (include "redpanda-memory" .) | int -}}
-  {{- if lt $result 2000 -}}
-    {{- printf "%d is below the minimum recommended value for Redpanda" $result -}}
-  {{- end -}}
 {{- end -}}
 
 {{/*
@@ -860,8 +737,8 @@ REDPANDA_SASL_USERNAME REDPANDA_SASL_PASSWORD REDPANDA_SASL_MECHANISM
                 {{- $value := (get $config $key) -}}
 
                 {{/* Special case for cache size */}}
-                {{- if eq $key "cloud_storage_cache_size" -}}
-                    {{- $value = (include "SI-to-bytes" $value | int64) -}}
+                {{- if and (eq $key "cloud_storage_cache_size") (typeIs "string" $value) -}}
+                    {{- $value = (get ((include "redpanda.SIToBytes" (dict "a" (list $value))) | fromJson) "r") -}}
                 {{- end -}}
 
                 ,
