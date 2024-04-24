@@ -23,7 +23,7 @@ storage:
       cloud_storage_enabled: true
       cloud_storage_credentials_source: config_file
       cloud_storage_segment_max_upload_interval_sec: 1
-      cloud_storage_azure_storage_account: ${TEST_STORAGE_ACCOUNT}
+      cloud_storage_azure_storage_account: TestForStringThatShouldNotBeWrappedWithQuotes
       cloud_storage_azure_container: ${TEST_STORAGE_CONTAINER}
       cloud_storage_azure_shared_key: ${TEST_AZURE_SHARED_KEY}
 

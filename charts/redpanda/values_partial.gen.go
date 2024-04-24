@@ -84,7 +84,7 @@ type PartialAuditLogging struct {
 
 type PartialEnterprise struct {
 	License          *string `json:"license,omitempty"`
-	LicenseSecretRef struct {
+	LicenseSecretRef *struct {
 		Key  *string `json:"key,omitempty"`
 		Name *string `json:"name,omitempty"`
 	} `json:"licenseSecretRef,omitempty"`

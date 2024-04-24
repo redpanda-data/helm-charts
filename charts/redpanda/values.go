@@ -28,11 +28,11 @@ type Values struct {
 	Image            Image             `json:"image" jsonschema:"required,description=Values used to define the container image to be used for Redpanda"`
 	Service          *Service          `json:"service"`
 	// ImagePullSecrets []string `json:"imagePullSecrets"`
-	LicenseKey       string           `json:"license_key" jsonschema:"deprecated,pattern=^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?\\.(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$|^$"`
-	LicenseSecretRef LicenseSecretRef `json:"license_secret_ref" jsonschema:"deprecated"`
-	AuditLogging     AuditLogging     `json:"auditLogging"`
-	Enterprise       Enterprise       `json:"enterprise"`
-	RackAwareness    RackAwareness    `json:"rackAwareness"`
+	LicenseKey       string            `json:"license_key" jsonschema:"deprecated,pattern=^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?\\.(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$|^$"`
+	LicenseSecretRef *LicenseSecretRef `json:"license_secret_ref" jsonschema:"deprecated"`
+	AuditLogging     AuditLogging      `json:"auditLogging"`
+	Enterprise       Enterprise        `json:"enterprise"`
+	RackAwareness    RackAwareness     `json:"rackAwareness"`
 	// Console          any      `json:"console"`
 	// Connectors       any      `json:"connectors"`
 	Auth           Auth              `json:"auth"`
@@ -110,7 +110,7 @@ func (AuditLogging) JSONSchemaExtend(schema *jsonschema.Schema) {
 
 type Enterprise struct {
 	License          string `json:"license"`
-	LicenseSecretRef struct {
+	LicenseSecretRef *struct {
 		Key  string `json:"key"`
 		Name string `json:"name"`
 	} `json:"licenseSecretRef"`
@@ -650,11 +650,26 @@ type TieredStorageCredentials struct {
 	SecretKey        *SecretRef `json:"secretKey"`
 }
 
+func (tsc TieredStorageCredentials) IsAccessKeyReferenceValid() bool {
+	return tsc.AccessKey != nil && tsc.AccessKey.Name != "" && tsc.AccessKey.Key != ""
+}
+
+func (tsc TieredStorageCredentials) IsSecretKeyReferenceValid() bool {
+	return tsc.SecretKey != nil && tsc.SecretKey.Name != "" && tsc.SecretKey.Key != ""
+}
+
 func (TieredStorageCredentials) JSONSchemaExtend(schema *jsonschema.Schema) {
 	deprecate(schema, "configurationKey", "key", "name")
 }
 
 type TieredStorageConfig map[string]any
+
+func (tsc TieredStorageConfig) IsTieredStorageEnabled() bool {
+	if b, ok := tsc["cloud_storage_enabled"]; ok && b.(bool) {
+		return true
+	}
+	return false
+}
 
 func (TieredStorageConfig) JSONSchema() *jsonschema.Schema {
 	type schema struct {
