@@ -64,6 +64,7 @@ jobs:
 
       - name: install Redpanda
         run: |
+          helm repo add redpanda https://charts.redpanda.com
           helm dependency build charts/redpanda
           helm install --namespace redpanda --create-namespace redpanda charts/redpanda --wait --wait-for-jobs
 
