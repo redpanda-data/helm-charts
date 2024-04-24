@@ -1392,11 +1392,11 @@ spec:
         - name: RPK_CLOUD_STORAGE_ACCESS_KEY
           value: ${AWS_ACCESS_KEY_ID}
         - name: RPK_CLOUD_STORAGE_BUCKET
-          value: '"${TEST_BUCKET}"'
+          value: ${TEST_BUCKET}
         - name: RPK_CLOUD_STORAGE_CACHE_SIZE
           value: "5368709120"
         - name: RPK_CLOUD_STORAGE_CREDENTIALS_SOURCE
-          value: '"config_file"'
+          value: config_file
         - name: RPK_CLOUD_STORAGE_ENABLE_REMOTE_READ
           value: "true"
         - name: RPK_CLOUD_STORAGE_ENABLE_REMOTE_WRITE
@@ -1404,7 +1404,7 @@ spec:
         - name: RPK_CLOUD_STORAGE_ENABLED
           value: "true"
         - name: RPK_CLOUD_STORAGE_REGION
-          value: '"${AWS_REGION}"'
+          value: ${AWS_REGION}
         - name: RPK_CLOUD_STORAGE_SEGMENT_MAX_UPLOAD_INTERVAL_SEC
           value: "1"
         command: ["bash","-c"]

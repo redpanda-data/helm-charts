@@ -1347,11 +1347,11 @@ spec:
         - name: RPK_CLOUD_STORAGE_ACCESS_KEY
           value: test
         - name: RPK_CLOUD_STORAGE_BUCKET
-          value: '"test"'
+          value: test
         - name: RPK_CLOUD_STORAGE_CACHE_SIZE
           value: "11000000000"
         - name: RPK_CLOUD_STORAGE_CREDENTIALS_SOURCE
-          value: '"config_file"'
+          value: config_file
         - name: RPK_CLOUD_STORAGE_ENABLE_REMOTE_READ
           value: "true"
         - name: RPK_CLOUD_STORAGE_ENABLE_REMOTE_WRITE
@@ -1359,7 +1359,7 @@ spec:
         - name: RPK_CLOUD_STORAGE_ENABLED
           value: "true"
         - name: RPK_CLOUD_STORAGE_REGION
-          value: '"test"'
+          value: test
         command: ["bash","-c"]
         args:
           - |

@@ -1387,16 +1387,16 @@ spec:
         env:
         - name: REDPANDA_LICENSE
           value: ${REDPANDA_SAMPLE_LICENSE}
-        - name: RPK_CLOUD_STORAGE_AZURE_CONTAINER
-          value: '"${TEST_STORAGE_CONTAINER}"'
         - name: RPK_CLOUD_STORAGE_AZURE_SHARED_KEY
-          value: '"${TEST_AZURE_SHARED_KEY}"'
+          value: ${TEST_AZURE_SHARED_KEY}
+        - name: RPK_CLOUD_STORAGE_AZURE_CONTAINER
+          value: ${TEST_STORAGE_CONTAINER}
         - name: RPK_CLOUD_STORAGE_AZURE_STORAGE_ACCOUNT
-          value: '"${TEST_STORAGE_ACCOUNT}"'
+          value: ${TEST_STORAGE_ACCOUNT}
         - name: RPK_CLOUD_STORAGE_CACHE_SIZE
           value: "5368709120"
         - name: RPK_CLOUD_STORAGE_CREDENTIALS_SOURCE
-          value: '"config_file"'
+          value: config_file
         - name: RPK_CLOUD_STORAGE_ENABLE_REMOTE_READ
           value: "true"
         - name: RPK_CLOUD_STORAGE_ENABLE_REMOTE_WRITE
