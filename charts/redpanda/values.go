@@ -165,12 +165,65 @@ type RedpandaResources struct {
 		Cores           any  `json:"cores" jsonschema:"required,oneof_type=integer;string"`
 		Overprovisioned bool `json:"overprovisioned"`
 	} `json:"cpu" jsonschema:"required"`
+	// Memory resources
+	// For details,
+	// see the [Pod resources documentation](https://docs.redpanda.com/docs/manage/kubernetes/manage-resources/#configure-memory-resources).
 	Memory struct {
+		// Enables memory locking.
+		// For production, set to `true`.
 		EnableMemoryLocking bool `json:"enable_memory_locking"`
-		Container           struct {
+		// It is recommended to have at least 2Gi of memory per core for the Redpanda binary.
+		// This memory is taken from the total memory given to each container.
+		// The Helm chart allocates 80% of the container's memory to Redpanda, leaving the rest for
+		// the Seastar subsystem (reserveMemory) and other container processes.
+		// So at least 2.5Gi per core is recommended in order to ensure Redpanda has a full 2Gi.
+		//
+		// These values affect `--memory` and `--reserve-memory` flags passed to Redpanda and the memory
+		// requests/limits in the StatefulSet.
+		// Valid suffixes: k, M, G, T, P, E, Ki, Mi, Gi, Ti, Pi, Ei
+		// Suffixes are defined as International System of units (http://physics.nist.gov/cuu/Units/binary.html).
+		// To create `Guaranteed` Pod QoS for Redpanda brokers, provide both container max and min values for the container.
+		// For details, see
+		// https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-guaranteed
+		// * Every container in the Pod must have a memory limit and a memory request.
+		// * For every container in the Pod, the memory limit must equal the memory request.
+		Container struct {
+			// Minimum memory count for each Redpanda broker.
+			// If omitted, the `min` value is equal to the `max` value (requested resources defaults to limits).
+			// This setting is equivalent to `resources.requests.memory`.
+			// For production, use 10Gi or greater.
 			Min *MemoryAmount `json:"min"`
-			Max MemoryAmount  `json:"max" jsonschema:"required"`
+			// Maximum memory count for each Redpanda broker.
+			// Equivalent to `resources.limits.memory`.
+			// For production, use `10Gi` or greater.
+			Max MemoryAmount `json:"max" jsonschema:"required"`
 		} `json:"container" jsonschema:"required"`
+		// This optional `redpanda` object allows you to specify the memory size for both the Redpanda
+		// process and the underlying reserved memory used by Seastar.
+		// This section is omitted by default, and memory sizes are calculated automatically
+		// based on container memory.
+		// Uncommenting this section and setting memory and reserveMemory values will disable
+		// automatic calculation.
+		//
+		// If you are setting the following values manually, keep in mind the following guidelines.
+		// Getting this wrong may lead to performance issues, instability, and loss of data:
+		// The amount of memory to allocate to a container is determined by the sum of three values:
+		// 1. Redpanda (at least 2Gi per core, ~80% of the container's total memory)
+		// 2. Seastar subsystem (200Mi * 0.2% of the container's total memory, 200Mi < x < 1Gi)
+		// 3. Other container processes (whatever small amount remains)
+		Redpanda *struct {
+			// Memory for the Redpanda process.
+			// This must be lower than the container's memory (resources.memory.container.min if provided, otherwise
+			// resources.memory.container.max).
+			// Equivalent to --memory.
+			// For production, use 8Gi or greater.
+			Memory *MemoryAmount `json:"memory" jsonschema:"oneof_type=integer;string"`
+			// Memory reserved for the Seastar subsystem.
+			// Any value above 1Gi will provide diminishing performance benefits.
+			// Equivalent to --reserve-memory.
+			// For production, use 1Gi.
+			ReserveMemory *MemoryAmount `json:"reserveMemory" jsonschema:"oneof_type=integer;string"`
+		} `json:"redpanda"`
 	} `json:"memory" jsonschema:"required"`
 }
 

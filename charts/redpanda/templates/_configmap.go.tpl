@@ -3,11 +3,9 @@
 {{- define "redpanda.RedpandaAdditionalStartFlags" -}}
 {{- $dot := (index .a 0) -}}
 {{- $smp := (index .a 1) -}}
-{{- $memory := (index .a 2) -}}
-{{- $reserveMemory := (index .a 3) -}}
 {{- range $_ := (list 1) -}}
 {{- $values := $dot.Values.AsMap -}}
-{{- $chartFlags := (dict "smp" $smp "memory" (printf "%sM" $memory) "reserve-memory" (printf "%sM" $reserveMemory) "default-log-level" $values.logging.logLevel ) -}}
+{{- $chartFlags := (dict "smp" $smp "memory" (printf "%dM" (int (get (fromJson (include "redpanda.RedpandaMemory" (dict "a" (list $dot) ))) "r"))) "reserve-memory" (printf "%dM" (int (get (fromJson (include "redpanda.RedpandaReserveMemory" (dict "a" (list $dot) ))) "r"))) "default-log-level" $values.logging.logLevel ) -}}
 {{- if (eq (index $values.config.node "developer_mode") true) -}}
 {{- $_ := (unset $chartFlags "reserve-memory") -}}
 {{- end -}}

@@ -376,7 +376,11 @@ redpanda.yaml: |
   {{- range $key, $element := $tieredStorageConfig }}
     {{- if or (eq (typeOf $element) "bool") $element }}
       {{- if eq $key "cloud_storage_cache_size" }}
-        {{- dict $key (include "SI-to-bytes" $element) | toYaml | nindent 2 -}}
+        {{- if typeIs "string" $element -}}
+          {{- dict $key ((get (fromJson (include "redpanda.SIToBytes" (dict "a" (list $element)) )) "r") | int64 | toString) | toYaml | nindent 2 -}}
+        {{- else }}
+          {{- dict $key ($element | int64 | toString )| toYaml | nindent 2 -}}
+        {{- end }}
       {{- else }}
         {{- dict $key $element | toYaml | nindent 2 -}}
       {{- end }}
@@ -595,7 +599,7 @@ rpk:
   overprovisioned: {{ dig "cpu" "overprovisioned" false .Values.resources }}
   enable_memory_locking: {{ dig "memory" "enable_memory_locking" false .Values.resources }}
   additional_start_flags:
-  {{- get ((include "redpanda.RedpandaAdditionalStartFlags" (dict "a" (list . (include "redpanda-smp" .) (include "redpanda-memory" .) (include "redpanda-reserve-memory" .)))) | fromJson) "r" | toYaml | nindent 4 }}
+  {{- get ((include "redpanda.RedpandaAdditionalStartFlags" (dict "a" (list . (include "redpanda-smp" .) ))) | fromJson) "r" | toYaml | nindent 4 }}
 
   {{- with dig "config" "rpk" dict .Values.AsMap }}
   # config.rpk entries
