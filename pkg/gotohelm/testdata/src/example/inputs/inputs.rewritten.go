@@ -2,7 +2,7 @@
 package inputs
 
 import (
-	"slices"
+	"sort"
 
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	"golang.org/x/exp/maps"
@@ -48,7 +48,7 @@ func keys(globals *helmette.Dot) []string {
 	}
 
 	keys = maps.Keys(globals.Values)
-	slices.Sort(keys)
+	sort.Strings(keys)
 
 	return keys
 }

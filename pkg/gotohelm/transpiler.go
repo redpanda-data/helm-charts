@@ -72,6 +72,18 @@ func Transpile(pkg *packages.Package) (_ *Chart, err error) {
 		Fset:      pkg.Fset,
 		TypesInfo: pkg.TypesInfo,
 		Files:     pkg.Syntax,
+
+		packages: mkPkgTree(pkg),
+		builtins: map[string]string{
+			"fmt.Sprintf":                "printf",
+			"golang.org/x/exp/maps.Keys": "keys",
+			"maps.Keys":                  "keys",
+			"math.Floor":                 "floor",
+			"sort.Strings":               "sortAlpha",
+			"strings.ToLower":            "lower",
+			"strings.ToUpper":            "upper",
+			"strings.TrimPrefix":         "trimPrefix",
+		},
 	}
 
 	return t.Transpile(), nil
@@ -82,71 +94,25 @@ type Transpiler struct {
 	Fset      *token.FileSet
 	Files     []*ast.File
 	TypesInfo *types.Info
+
+	// builtins is a pre-populated cache of function id (fmt.Printf,
+	// github.com/my/pkg.Function) to an equivalent go template / sprig
+	// builtin. Functions may add a +gotohelm:builtin=blah directive to declare
+	// their builtin equivalent.
+	builtins map[string]string
+	packages map[string]*packages.Package
 }
 
 func (t *Transpiler) Transpile() *Chart {
 	var chart Chart
 	for _, f := range t.Files {
-		path := t.Fset.File(f.Pos()).Name()
-		name := filepath.Base(path)
-		source := filepath.Base(path)
-		name = source[:len(source)-3] + ".yaml"
-
-		isTestFile := strings.HasSuffix(name, "_test.go")
-		if isTestFile || name == "main.go" {
-			continue
+		if transpiled := t.transpileFile(f); transpiled != nil {
+			chart.Files = append(chart.Files, transpiled)
 		}
-
-		fileDirectives := parseDirectives(f.Doc.Text())
-		if _, ok := fileDirectives["filename"]; ok {
-			name = fileDirectives["filename"]
-		}
-
-		if _, ok := fileDirectives["ignore"]; ok {
-			continue
-		}
-
-		var funcs []*Func
-		for _, d := range f.Decls {
-			fn, ok := d.(*ast.FuncDecl)
-			if !ok {
-				continue
-			}
-
-			var params []Node
-			for _, param := range fn.Type.Params.List {
-				for _, name := range param.Names {
-					params = append(params, t.transpileExpr(name))
-				}
-			}
-
-			var statements []Node
-			for _, stmt := range fn.Body.List {
-				statements = append(statements, t.transpileStatement(stmt))
-			}
-
-			funcDirectives := parseDirectives(fn.Doc.Text())
-			name := funcDirectives["name"]
-			if name == "" {
-				name = fn.Name.String()
-			}
-
-			// TODO add a source field here? Ideally with a line number.
-			funcs = append(funcs, &Func{
-				Name:       name,
-				Namespace:  t.Package.Name,
-				Params:     params,
-				Statements: statements,
-			})
-		}
-
-		chart.Files = append(chart.Files, &File{
-			Name:   name,
-			Source: source,
-			Funcs:  funcs,
-		})
 	}
 
+	// Finally, include the shims file with all transpiled charts.
+	// NB: When the bootstrap package is transpiled shims is nil.
 	chart.Files = append(chart.Files, &File{
 		Source: "",
 		Name:   "_shims.tpl",
@@ -154,6 +120,75 @@ func (t *Transpiler) Transpile() *Chart {
 	})
 
 	return &chart
+}
+
+func (t *Transpiler) transpileFile(f *ast.File) *File {
+	path := t.Fset.File(f.Pos()).Name()
+	name := filepath.Base(path)
+	source := filepath.Base(path)
+	name = source[:len(source)-3] + ".yaml"
+
+	isTestFile := strings.HasSuffix(name, "_test.go")
+	if isTestFile || name == "main.go" {
+		return nil
+	}
+
+	fileDirectives := parseDirectives(f.Doc.Text())
+	if _, ok := fileDirectives["filename"]; ok {
+		name = fileDirectives["filename"]
+	}
+
+	if _, ok := fileDirectives["ignore"]; ok {
+		return nil
+	}
+
+	namespace := fileDirectives["namespace"]
+	if namespace == "" {
+		namespace = t.Package.Name
+	}
+
+	var funcs []*Func
+	for _, d := range f.Decls {
+		fn, ok := d.(*ast.FuncDecl)
+		if !ok {
+			continue
+		}
+
+		funcDirectives := parseDirectives(fn.Doc.Text())
+		if _, ok := funcDirectives["name"]; !ok {
+			funcDirectives["name"] = fn.Name.String()
+		}
+
+		if _, ok := funcDirectives["sprig"]; ok {
+			continue
+		}
+
+		var params []Node
+		for _, param := range fn.Type.Params.List {
+			for _, name := range param.Names {
+				params = append(params, t.transpileExpr(name))
+			}
+		}
+
+		var statements []Node
+		for _, stmt := range fn.Body.List {
+			statements = append(statements, t.transpileStatement(stmt))
+		}
+
+		// TODO add a source field here? Ideally with a line number.
+		funcs = append(funcs, &Func{
+			Name:       funcDirectives["name"],
+			Namespace:  namespace,
+			Params:     params,
+			Statements: statements,
+		})
+	}
+
+	return &File{
+		Name:   name,
+		Source: source,
+		Funcs:  funcs,
+	}
 }
 
 func (t *Transpiler) transpileStatement(stmt ast.Stmt) Node {
@@ -660,6 +695,32 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 	panic(fmt.Sprintf("unhandled Expr %T\n%s", n, b.String()))
 }
 
+// mkPkgTree "flattens" a loaded [packages.Package] and its dependencies into a
+// map keyed by path.
+func mkPkgTree(root *packages.Package) map[string]*packages.Package {
+	tree := map[string]*packages.Package{}
+	toVisit := []*packages.Package{root}
+
+	// The naive approach here is crazy slow so instead we do a memomized
+	// implementation.
+	var pkg *packages.Package
+	for len(toVisit) > 0 {
+		pkg, toVisit = toVisit[0], toVisit[1:]
+
+		if _, ok := tree[pkg.PkgPath]; ok {
+			continue
+		}
+
+		tree[pkg.PkgPath] = pkg
+
+		for _, imported := range pkg.Imports {
+			toVisit = append(toVisit, imported)
+		}
+	}
+
+	return tree
+}
+
 func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 	var args []Node
 	for _, arg := range n.Args {
@@ -668,9 +729,8 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 
 	callee := typeutil.Callee(t.TypesInfo, n)
 
-	switch {
 	// go builtins
-	case callee == nil, callee.Pkg() == nil:
+	if callee == nil || callee.Pkg() == nil {
 		switch n.Fun.(*ast.Ident).Name {
 		case "append":
 			if len(args) > 2 {
@@ -696,7 +756,8 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 			if x.String() == "byte" {
 				return &BuiltInCall{
 					FuncName:  "printf",
-					Arguments: append([]Node{&Literal{Value: "\"%c\""}}, args...)}
+					Arguments: append([]Node{&Literal{Value: "\"%c\""}}, args...),
+				}
 			}
 			return &BuiltInCall{FuncName: "toString", Arguments: args}
 		case "len":
@@ -708,9 +769,10 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 		default:
 			panic(fmt.Sprintf("unsupport golang builtin %q", n.Fun.(*ast.Ident).Name))
 		}
+	}
 
 	// Method call.
-	case callee.Type().(*types.Signature).Recv() != nil:
+	if callee.Type().(*types.Signature).Recv() != nil {
 		if len(args) != 0 {
 			panic(&Unsupported{Fset: t.Fset, Node: n, Msg: "method calls with arguments are not implemented"})
 		}
@@ -719,59 +781,50 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 		// the CallExpr. CallExpr.Fun will contain Foo.Bar.Baz. In the case of
 		// zero argument methods, text/template will automatically call them.
 		return t.transpileExpr(n.Fun)
+	}
 
-	// Call to function within the same package. A-Okay. It's
-	// transpiled.
-	case callee.Pkg().Name() == t.Package.Name:
+	id := callee.Pkg().Path() + "." + callee.Name()
+	signature := t.typeOf(n.Fun).(*types.Signature)
+
+	// Before checking anything else, search for a +gotohelm:builtin=X
+	// directive. If we find such a directive, we'll emit a BuiltInCall node
+	// with the contents of the directive. The results are cached in t.builtins
+	// as an optimization.
+	if _, ok := t.builtins[id]; !ok {
+		t.builtins[id] = ""
+		pkg := t.packages[callee.Pkg().Path()]
+
+		if fnDecl := findNearest[*ast.FuncDecl](pkg, callee.Pos()); fnDecl != nil {
+			directives := parseDirectives(fnDecl.Doc.Text())
+			t.builtins[id] = directives["builtin"]
+		}
+	}
+
+	if builtin := t.builtins[id]; builtin != "" {
+		return &BuiltInCall{FuncName: builtin, Arguments: args}
+	}
+
+	// Call to function within the same package. A-Okay. It's transpiled. NB:
+	// This is intentionally after the builtins check to support our bootstrap
+	// package's builtin bindings.
+	if callee.Pkg().Path() == t.Package.PkgPath {
+		// TODO need to support the namespace directive here when it's used
+		// outside of the bootstrap package.
 		return &Call{FuncName: fmt.Sprintf("%s.%s", t.Package.Name, callee.Name()), Arguments: args}
 	}
 
-	// Mapping of go functions to sprig/helm/template functions where arguments
-	// are also the same.
-	funcMapping := map[string]string{
-		"fmt.Sprintf":             "printf",
-		"helmette.Concat":         "concat",
-		"helmette.Default":        "default",
-		"helmette.Empty":          "empty",
-		"helmette.FromJSON":       "fromJson",
-		"helmette.HasKey":         "hasKey",
-		"helmette.Keys":           "keys",
-		"helmette.KindIs":         "kindIs",
-		"helmette.KindOf":         "kindOf",
-		"helmette.Lower":          "lower",
-		"helmette.MustFromJSON":   "mustFromJson",
-		"helmette.MustRegexMatch": "mustRegexMatch",
-		"helmette.MustToJSON":     "mustToJson",
-		"helmette.RegexMatch":     "regexMatch",
-		"helmette.SortAlpha":      "sortAlpha",
-		"helmette.ToJSON":         "toJson",
-		"helmette.Tpl":            "tpl",
-		"helmette.Trunc":          "trunc",
-		"helmette.TypeIs":         "typeIs",
-		"helmette.TypeOf":         "typeOf",
-		"helmette.Unset":          "unset",
-		"helmette.Upper":          "upper",
-		"helmette.Len":            "len",
-		"maps.Keys":               "keys",
-		"math.Floor":              "floor",
-		"strings.ToLower":         "lower",
-		"strings.ToUpper":         "upper",
-	}
+	// Finally, we fall to calls to any other functions. We'll handle any
+	// special cases that require a bit of extra fiddling to make work falling
+	// back to a not supported message.
 
-	// Call to any other function.
-	// This check's a bit... buggy
-	name := callee.Pkg().Name() + "." + callee.Name()
-
-	if tplFuncName, ok := funcMapping[name]; ok {
-		return &BuiltInCall{FuncName: tplFuncName, Arguments: args}
-	}
-
-	signature := t.typeOf(n.Fun).(*types.Signature)
-
-	// Mappings that are not 1:1 and require some argument fiddling to make
-	// them match up as expected.
-	switch name {
-	case "helmette.Atoi":
+	switch id {
+	case "sort.Strings":
+		return &BuiltInCall{FuncName: "sortAlpha", Arguments: args}
+	case "strings.TrimSuffix":
+		return &BuiltInCall{FuncName: "trimSuffix", Arguments: []Node{args[1], args[0]}}
+	case "strings.ReplaceAll":
+		return &BuiltInCall{FuncName: "replace", Arguments: []Node{args[1], args[2], args[0]}}
+	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.Atoi":
 		// NIL literal is included as the second item in list, because that will
 		// mimic go lang return parameters of int and error.
 		return &BuiltInCall{
@@ -781,7 +834,7 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 				&Literal{Value: "nil"},
 			},
 		}
-	case "helmette.Float64":
+	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.Float64":
 		return &BuiltInCall{
 			FuncName: "list",
 			Arguments: []Node{
@@ -789,34 +842,27 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 				&Literal{Value: "nil"},
 			},
 		}
-	case "slices.Sort":
-		// TODO: This only works for strings :[
-		return &BuiltInCall{FuncName: "sortAlpha", Arguments: args}
-	case "strings.TrimSuffix":
-		return &BuiltInCall{FuncName: "trimSuffix", Arguments: []Node{args[1], args[0]}}
-	case "strings.ReplaceAll":
-		return &BuiltInCall{FuncName: "replace", Arguments: []Node{args[1], args[2], args[0]}}
-	case "intstr.FromInt32", "intstr.FromInt", "intstr.FromString":
+	case "k8s.io/apimachinery/pkg/util/intstr.FromInt32", "k8s.io/apimachinery/pkg/util/intstr.FromInt", "k8s.io/apimachinery/pkg/util/intstr.FromString":
 		return args[0]
-	case "helmette.MustDuration":
+	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.MustDuration":
 		return args[0]
-	case "helmette.Dig":
+	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.Dig":
 		return &BuiltInCall{FuncName: "dig", Arguments: append(args[2:], args[1], args[0])}
-	case "helmette.Unwrap":
+	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.Unwrap":
 		return &Selector{Expr: args[0], Field: "AsMap"}
-	case "helmette.Compact2", "helmette.Compact3":
+	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.Compact2", "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.Compact3":
 		return &Call{FuncName: "_shims.compact", Arguments: args}
-	case "helmette.DictTest":
+	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.DictTest":
 		valueType := callee.(*types.Func).Type().(*types.Signature).TypeParams().At(1)
 		return &Call{FuncName: "_shims.dicttest", Arguments: append(args, t.zeroOf(valueType))}
-	case "helmette.TypeTest":
+	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.TypeTest":
 		typ := signature.Results().At(0).Type()
 		return &Call{FuncName: "_shims.typetest", Arguments: []Node{t.transpileTypeRepr(typ), args[0], t.zeroOf(typ)}}
-	case "helmette.Merge":
+	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.Merge":
 		dict := DictLiteral{}
 		return &BuiltInCall{FuncName: "merge", Arguments: append([]Node{&dict}, args...)}
 	default:
-		panic(fmt.Sprintf("unsupported function %s", name))
+		panic(fmt.Sprintf("unsupported function %q", id))
 	}
 }
 
