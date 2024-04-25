@@ -14,46 +14,59 @@ import (
 	"golang.org/x/exp/maps"
 )
 
-var (
-	// TrimPrefix is the go equivalent of sprig's `trimPrefix`
-	TrimPrefix = strings.TrimPrefix
+// TrimPrefix is the go equivalent of sprig's `trimPrefix`
+// +gotohelm:builtin=trimPrefix
+func TrimPrefix(prefix, s string) string {
+	return strings.TrimPrefix(s, prefix)
+}
 
-	// SortAlpha is the go equivalent of sprig's `sortAlpha`
-	SortAlpha = sort.Strings
+// SortAlpha is the go equivalent of sprig's `sortAlpha`
+// +gotohelm:builtin=sortAlpha
+func SortAlpha(x []string) {
+	sort.Strings(x)
+}
 
-	// SortAlpha is the go equivalent of text/templates's `printf`
-	Printf = fmt.Sprintf
-)
+// Printf is the go equivalent of text/templates's `printf`
+// +gotohelm:builtin=printf
+func Printf(format string, a ...any) string {
+	return fmt.Sprintf(format, a...)
+}
 
 // KindOf is the go equivalent of sprig's `kindOf`.
+// +gotohelm:builtin=kindOf
 func KindOf(v any) string {
 	return reflect.TypeOf(v).Kind().String()
 }
 
 // KindIs is the go equivalent of sprig's `kindIs`.
+// +gotohelm:builtin=kindIs
 func KindIs(kind string, v any) bool {
 	return KindOf(v) == kind
 }
 
 // TypeOf is the go equivalent of sprig's `typeOf`.
+// +gotohelm:builtin=typeOf
 func TypeOf(v any) string {
 	// https://github.com/Masterminds/sprig/blob/581758eb7d96ae4d113649668fa96acc74d46e7f/reflect.go#L18
 	return fmt.Sprintf("%T", v)
 }
 
 // KindIs is the go equivalent of sprig's `typeIs`.
+// +gotohelm:builtin=typeIs
 func TypeIs(typ string, v any) bool {
 	// https://github.com/Masterminds/sprig/blob/581758eb7d96ae4d113649668fa96acc74d46e7f/reflect.go#L9
 	return TypeOf(v) == typ
 }
 
 // HasKey is the go equivalent of sprig's `hasKey`.
+// +gotohelm:builtin=hasKey
 func HasKey[K comparable, V any](m map[K]V, key K) bool {
 	_, ok := m[key]
 	return ok
 }
 
 // Keys is the go equivalent of sprig's `keys`.
+// +gotohelm:builtin=keys
 func Keys[K comparable, V any](m map[K]V) []K {
 	return maps.Keys(m)
 }
@@ -90,6 +103,7 @@ func Dig(m map[string]any, fallback any, path ...string) any {
 }
 
 // Trunc is a go equivalent of sprig's `trunc`.
+// +gotohelm:builtin=trunc
 func Trunc(length int, in string) string {
 	if len(in) < length {
 		return in
@@ -98,6 +112,7 @@ func Trunc(length int, in string) string {
 }
 
 // Default is a go equivalent of sprig's `default`.
+// +gotohelm:builtin=default
 func Default(default_, value any) any {
 	if Empty(value) {
 		return default_
@@ -106,16 +121,19 @@ func Default(default_, value any) any {
 }
 
 // RegexMatch is the go equivalent of sprig's `regexMatch`.
+// +gotohelm:builtin=regexMatch
 func RegexMatch(pattern, s string) bool {
 	return regexp.MustCompile(pattern).MatchString(s)
 }
 
 // MustRegexMatch is the go equivalent of sprig's `mustRegexMatch`.
+// +gotohelm:builtin=mustRegexMatch
 func MustRegexMatch(pattern, s string) bool {
 	return RegexMatch(pattern, s)
 }
 
 // Coalesce is the go equivalent of sprig's `coalesce`.
+// +gotohelm:builtin=coalesce
 func Coalesce(values ...any) any {
 	for _, v := range values {
 		if !Empty(v) {
@@ -126,6 +144,7 @@ func Coalesce(values ...any) any {
 }
 
 // Empty is the go equivalent of sprig's `empty`.
+// +gotohelm:builtin=empty
 func Empty(value any) bool {
 	truthy, ok := template.IsTrue(value)
 	if !truthy || !ok {
@@ -135,6 +154,7 @@ func Empty(value any) bool {
 }
 
 // Required is the go equivalent of sprig's `required`.
+// +gotohelm:builtin=required
 func Required(msg string, value any) {
 	if Empty(value) {
 		Fail(msg)
@@ -142,11 +162,13 @@ func Required(msg string, value any) {
 }
 
 // Fail is the go equivalent of sprig's `fail`.
+// +gotohelm:builtin=fail
 func Fail(msg string) {
 	panic(msg)
 }
 
 // ToJSON is the go equivalent of sprig's `toJson`.
+// +gotohelm:builtin=toJson
 func ToJSON(value any) string {
 	marshalled, err := json.Marshal(value)
 	if err != nil {
@@ -156,6 +178,7 @@ func ToJSON(value any) string {
 }
 
 // MustToJSON is the go equivalent of sprig's `mustToJson`.
+// +gotohelm:builtin=mustToJson
 func MustToJSON(value any) string {
 	marshalled, err := json.Marshal(value)
 	if err != nil {
@@ -165,6 +188,7 @@ func MustToJSON(value any) string {
 }
 
 // FromJSON is the go equivalent of sprig's `fromJson`.
+// +gotohelm:builtin=fromJson
 func FromJSON(data string) any {
 	var out any
 	if err := json.Unmarshal([]byte(data), &out); err != nil {
@@ -174,6 +198,7 @@ func FromJSON(data string) any {
 }
 
 // MustFromJSON is the go equivalent of sprig's `mustFromJson`.
+// +gotohelm:builtin=mustFromJson
 func MustFromJSON(data string) any {
 	var out any
 	if err := json.Unmarshal([]byte(data), &out); err != nil {
@@ -183,21 +208,25 @@ func MustFromJSON(data string) any {
 }
 
 // Lower is the go equivalent of sprig's `lower`.
+// +gotohelm:builtin=lower
 func Lower(in string) string {
 	return strings.ToLower(in)
 }
 
 // Upper is the go equivalent of sprig's `upper`.
+// +gotohelm:builtin=upper
 func Upper(in string) string {
 	return strings.ToUpper(in)
 }
 
 // Unset is the go equivalent of sprig's `unset`.
+// +gotohelm:builtin=unset
 func Unset[K comparable, V any](d map[K]V, key K) {
 	delete(d, key)
 }
 
 // Concat is the go equivalent of sprig's `concat`.
+// +gotohelm:builtin=concat
 func Concat[T any](lists ...[]T) []T {
 	var out []T
 	for _, l := range lists {
@@ -215,6 +244,7 @@ func Float64(in string) (float64, error) {
 	return strconv.ParseFloat(in, 64)
 }
 
+// +gotohelm:builtin=len
 func Len(in any) int {
 	return reflect.ValueOf(in).Len()
 }
