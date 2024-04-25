@@ -9,9 +9,9 @@
 {{- $_ = `` -}}
 {{- $_ = true -}}
 {{- $_ = false -}}
-{{- $_ = (len "") -}}
-{{- $_ = (len (list )) -}}
-{{- $_ = (len (dict )) -}}
+{{- $_ = (int (get (fromJson (include "_shims.len" (dict "a" (list "") ))) "r")) -}}
+{{- $_ = (int (get (fromJson (include "_shims.len" (dict "a" (list (list )) ))) "r")) -}}
+{{- $_ = (int (get (fromJson (include "_shims.len" (dict "a" (list (dict )) ))) "r")) -}}
 {{- $_ := (get (fromJson (include "syntax.binaryExprs" (dict "a" (list ) ))) "r") -}}
 {{- $_ = (true) -}}
 {{- $slice := (get (fromJson (include "syntax.sliceExpr" (dict "a" (list ) ))) "r") -}}
@@ -40,7 +40,7 @@
 {{- $_ = (substr 0 2 "1234") -}}
 {{- $_ = (substr 1 2 "1234") -}}
 {{- $s := "abcd" -}}
-{{- $_ = (substr 0 (int (sub (len $s) 1)) $s) -}}
+{{- $_ = (substr 0 (int (sub (int (get (fromJson (include "_shims.len" (dict "a" (list $s) ))) "r")) 1)) $s) -}}
 {{- (dict "r" (get (fromJson (include "syntax.workingWithString" (dict "a" (list ) ))) "r")) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -49,12 +49,12 @@
 {{- define "syntax.workingWithString" -}}
 {{- range $_ := (list 1) -}}
 {{- $amount := "2.5Gi" -}}
-{{- $unit := (printf "%c" (index $amount (int (sub (len $amount) 1)))) -}}
+{{- $unit := (printf "%c" (index $amount (int (sub (int (get (fromJson (include "_shims.len" (dict "a" (list $amount) ))) "r")) 1)))) -}}
 {{- $savedUnit := $unit -}}
-{{- $amount = (substr 0 (int (sub (len $amount) 1)) $amount) -}}
+{{- $amount = (substr 0 (int (sub (int (get (fromJson (include "_shims.len" (dict "a" (list $amount) ))) "r")) 1)) $amount) -}}
 {{- if (eq $unit "i") -}}
-{{- $unit = (printf "%s%s" (substr (int (sub (len $amount) 1)) -1 $amount) $unit) -}}
-{{- $amount = (substr 0 (int (sub (len $amount) 1)) $amount) -}}
+{{- $unit = (printf "%s%s" (substr (int (sub (int (get (fromJson (include "_shims.len" (dict "a" (list $amount) ))) "r")) 1)) -1 $amount) $unit) -}}
+{{- $amount = (substr 0 (int (sub (int (get (fromJson (include "_shims.len" (dict "a" (list $amount) ))) "r")) 1)) $amount) -}}
 {{- end -}}
 {{- (dict "r" (dict "unit" $unit "amount" $amount "unitIsEqual" (eq $unit "Gi") "lastCharacter" (eq $savedUnit "i") )) | toJson -}}
 {{- break -}}

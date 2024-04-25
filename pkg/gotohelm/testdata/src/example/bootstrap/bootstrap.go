@@ -6,9 +6,9 @@
 // Because this file sets up basic utilities and bridges between go and
 // templating there are restricts on what may be used.
 //
-// - only sprig functions may be used from the `helmette` package.
-// - go primitives without direct template support (switches, multi-value
-//   returns, type assertions, etc) may not be used.
+//   - only sprig functions may be used from the `helmette` package.
+//   - go primitives without direct template support (switches, multi-value
+//     returns, type assertions, etc) may not be used.
 package bootstrap
 
 import (
@@ -51,4 +51,11 @@ func deref(ptr any) any {
 		panic("nil dereference")
 	}
 	return ptr
+}
+
+func len(m map[string]any) int {
+	if m == nil {
+		return 0
+	}
+	return helmette.Len(m)
 }

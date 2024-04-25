@@ -214,3 +214,7 @@ func Atoi(in string) (int, error) {
 func Float64(in string) (float64, error) {
 	return strconv.ParseFloat(in, 64)
 }
+
+func Len(in any) int {
+	return reflect.ValueOf(in).Len()
+}
