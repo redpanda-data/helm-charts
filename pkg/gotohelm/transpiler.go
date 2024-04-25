@@ -20,12 +20,8 @@ import (
 
 var directiveRE = regexp.MustCompile(`\+gotohelm:([\w\.-]+)=([\w\.-]+)`)
 
-// TODO need to ensure dict test returns the correct zero value...
-// TODO _shims.compact is a little bit hacky. It might malfunction if a slice
-// is one of the return values it's called with.
-//
-//go:embed shims.yaml
-var shimsYAML string
+//go:embed bootstrap.go
+var bootstrap string
 
 type Unsupported struct {
 	Node ast.Node
@@ -113,11 +109,7 @@ func (t *Transpiler) Transpile() *Chart {
 
 	// Finally, include the shims file with all transpiled charts.
 	// NB: When the bootstrap package is transpiled shims is nil.
-	chart.Files = append(chart.Files, &File{
-		Source: "",
-		Name:   "_shims.tpl",
-		Header: shimsYAML,
-	})
+	chart.Files = append(chart.Files, shims)
 
 	return &chart
 }
@@ -1134,22 +1126,18 @@ func findNearest[T ast.Node](pkg *packages.Package, pos token.Pos) T {
 		panic(errors.Newf("pos %d not located in pkg: %v", pos, pkg))
 	}
 
-	var result *T
+	var result T
 	ast.Inspect(file, func(n ast.Node) bool {
 		if n == nil || n.Pos() > pos || n.End() < pos {
 			return false
 		}
 
 		if asT, ok := n.(T); ok {
-			result = &asT
+			result = asT
 		}
 
 		return true
 	})
 
-	if result != nil {
-		return *result
-	}
-
-	return (ast.Node)(nil).(T)
+	return result
 }
