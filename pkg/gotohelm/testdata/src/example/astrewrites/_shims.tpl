@@ -1,4 +1,4 @@
-{{- /* Generated from "_shims.go" */ -}}
+{{- /* Generated from "bootstrap.go" */ -}}
 
 {{- define "_shims.typetest" -}}
 {{- $typ := (index .a 0) -}}
