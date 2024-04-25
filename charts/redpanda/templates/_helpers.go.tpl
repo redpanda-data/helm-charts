@@ -57,7 +57,7 @@
 {{- $existing := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
 {{- if (and $dot.Release.IsUpgrade (ne $existing (coalesce nil))) -}}
-{{- if (gt (len $existing.spec.selector.matchLabels) 0) -}}
+{{- if (gt (int (get (fromJson (include "_shims.len" (dict "a" (list $existing.spec.selector.matchLabels) ))) "r")) 0) -}}
 {{- (dict "r" $existing.spec.selector.matchLabels) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -79,7 +79,7 @@
 {{- $existing := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
 {{- if (and $dot.Release.IsUpgrade (ne $existing (coalesce nil))) -}}
-{{- if (gt (len $existing.spec.template.metadata.labels) 0) -}}
+{{- if (gt (int (get (fromJson (include "_shims.len" (dict "a" (list $existing.spec.template.metadata.labels) ))) "r")) 0) -}}
 {{- (dict "r" $existing.spec.template.metadata.labels) | toJson -}}
 {{- break -}}
 {{- end -}}

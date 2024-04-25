@@ -700,7 +700,9 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 			}
 			return &BuiltInCall{FuncName: "toString", Arguments: args}
 		case "len":
-			return &BuiltInCall{FuncName: "len", Arguments: args}
+			// BuiltInCall `int` is required as _shims.len is wrapped by fromJson which would change
+			// return type from `int` to `float64`.
+			return &BuiltInCall{FuncName: "int", Arguments: []Node{&Call{FuncName: "_shims.len", Arguments: args}}}
 		case "delete":
 			return &BuiltInCall{FuncName: "unset", Arguments: args}
 		default:
@@ -749,6 +751,7 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 		"helmette.TypeOf":         "typeOf",
 		"helmette.Unset":          "unset",
 		"helmette.Upper":          "upper",
+		"helmette.Len":            "len",
 		"maps.Keys":               "keys",
 		"math.Floor":              "floor",
 		"strings.ToLower":         "lower",

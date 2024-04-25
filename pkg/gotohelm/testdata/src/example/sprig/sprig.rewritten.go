@@ -25,6 +25,18 @@ func Sprig() map[string]any {
 		"regex":   regex(),
 		"atoi":    atoi(),
 		"float":   float(),
+		"len":     lenTest(),
+	}
+}
+
+func lenTest() []int {
+	mapWithKeys := map[string]string{
+		"test": "test",
+	}
+	initializedMap := map[string]string{}
+	return []int{
+		helmette.Len(mapWithKeys),
+		helmette.Len(initializedMap),
 	}
 }
 

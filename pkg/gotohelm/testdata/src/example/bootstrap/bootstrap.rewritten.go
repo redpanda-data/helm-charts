@@ -53,3 +53,10 @@ func deref(ptr any) any {
 	}
 	return ptr
 }
+
+func len(m map[string]any) int {
+	if m == nil {
+		return 0
+	}
+	return helmette.Len(m)
+}

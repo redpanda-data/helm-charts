@@ -63,3 +63,15 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "bootstrap.len" -}}
+{{- $m := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- if (eq $m (coalesce nil)) -}}
+{{- (dict "r" 0) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- (dict "r" (len $m)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
