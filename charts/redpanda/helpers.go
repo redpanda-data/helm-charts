@@ -129,7 +129,7 @@ func InternalDomain(dot *helmette.Dot) string {
 func TLSEnabled(dot *helmette.Dot) bool {
 	values := helmette.Unwrap[Values](dot.Values)
 
-	if values.TLS.Enabled != nil && *values.TLS.Enabled {
+	if values.TLS.Enabled {
 		return true
 	}
 

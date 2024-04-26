@@ -120,7 +120,7 @@
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $values := $dot.Values.AsMap -}}
-{{- if (and (ne $values.tls.enabled (coalesce nil)) $values.tls.enabled) -}}
+{{- if $values.tls.enabled -}}
 {{- (dict "r" true) | toJson -}}
 {{- break -}}
 {{- end -}}

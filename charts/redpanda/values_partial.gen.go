@@ -5,6 +5,7 @@
 package redpanda
 
 import (
+	cmmeta "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
 	corev1 "k8s.io/api/core/v1"
 )
 
@@ -386,14 +387,11 @@ type PartialPandaProxyClient struct {
 }
 
 type PartialTLSCert struct {
-	CAEnabled             *bool   `json:"caEnabled,omitempty" jsonschema:"required"`
-	Duration              *string `json:"duration,omitempty" jsonschema:"pattern=.*[smh]$"`
-	ApplyInternalDNSNames *bool   `json:"applyInternalDNSNames,omitempty"`
-	IssuerRef             struct {
-		Name *string        `json:"name,omitempty"`
-		Kind *IssuerRefKind `json:"kind,omitempty"`
-	} `json:"issuerRef,omitempty"`
-	SecretRef struct {
+	CAEnabled             *bool                   `json:"caEnabled,omitempty" jsonschema:"required"`
+	ApplyInternalDNSNames *bool                   `json:"applyInternalDNSNames,omitempty"`
+	Duration              *string                 `json:"duration,omitempty" jsonschema:"pattern=.*[smh]$"`
+	IssuerRef             *cmmeta.ObjectReference `json:"issuerRef,omitempty"`
+	SecretRef             struct {
 		Name *string `json:"name,omitempty"`
 	} `json:"secretRef,omitempty"`
 }
