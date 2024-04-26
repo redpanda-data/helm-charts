@@ -80,11 +80,11 @@ tasks:
     desc: "Generate files for the redpanda Helm chart"
     cmds:
       # Generate a "partial" version of the Values struct.
-      - nix run .#genpartial -- -out charts/redpanda/values_partial.gen.go -struct Values ./charts/redpanda
+      - go run ./cmd/genpartial -out charts/redpanda/values_partial.gen.go -struct Values ./charts/redpanda
       # Generate the values JSON schema from the Values struct
-      - nix run .#genschema > charts/redpanda/values.schema.json
+      - go run ./cmd/genschema > charts/redpanda/values.schema.json
       # Generate helm templates from Go definitions
-      - nix run .#gotohelm -- -write ./charts/redpanda/templates ./charts/redpanda 
+      - go run ./cmd/gotohelm -write ./charts/redpanda/templates ./charts/redpanda 
 
   go:generate:gotohelm:
     desc: "Generate files for the gotohelm go package"
