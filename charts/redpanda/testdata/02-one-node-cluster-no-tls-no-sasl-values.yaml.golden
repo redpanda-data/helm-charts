@@ -10,7 +10,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.41
+    helm.sh/chart: redpanda-5.8.0
     testlabel: exercise_common_labels_template
 spec:
   maxUnavailable: 1
@@ -19,7 +19,6 @@ spec:
       app.kubernetes.io/component: redpanda-statefulset
       app.kubernetes.io/instance: redpanda
       app.kubernetes.io/name: redpanda
-      testlabel: exercise_common_labels_template
       redpanda.com/poddisruptionbudget: redpanda
 ---
 # Source: redpanda/charts/console/templates/serviceaccount.yaml
@@ -46,7 +45,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.41
+    helm.sh/chart: redpanda-5.8.0
     testlabel: exercise_common_labels_template
 type: Opaque
 stringData:
@@ -142,7 +141,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.41
+    helm.sh/chart: redpanda-5.8.0
     testlabel: exercise_common_labels_template
 type: Opaque
 stringData:
@@ -173,7 +172,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.41
+    helm.sh/chart: redpanda-5.8.0
     testlabel: exercise_common_labels_template
 type: Opaque
 stringData:
@@ -221,7 +220,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.41
+    helm.sh/chart: redpanda-5.8.0
     testlabel: exercise_common_labels_template
 data: 
   
@@ -355,7 +354,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.41
+    helm.sh/chart: redpanda-5.8.0
     testlabel: exercise_common_labels_template
 data:
   profile: | 
@@ -438,7 +437,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.41
+    helm.sh/chart: redpanda-5.8.0
     testlabel: exercise_common_labels_template
 spec:
   type: ClusterIP
@@ -448,7 +447,6 @@ spec:
     app.kubernetes.io/component: redpanda-statefulset
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/name: redpanda
-    testlabel: exercise_common_labels_template
   ports:
     - name: admin
       protocol: TCP
@@ -482,7 +480,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.41
+    helm.sh/chart: redpanda-5.8.0
     testlabel: exercise_common_labels_template
   name: redpanda-external
   namespace: default
@@ -514,7 +512,6 @@ spec:
     app.kubernetes.io/component: redpanda-statefulset
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/name: redpanda
-    testlabel: exercise_common_labels_template
   sessionAffinity: None
   type: NodePort
 status:
@@ -609,7 +606,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.41
+    helm.sh/chart: redpanda-5.8.0
     testlabel: exercise_common_labels_template
 spec:
   selector:
@@ -617,7 +614,6 @@ spec:
       app.kubernetes.io/component: redpanda-statefulset
       app.kubernetes.io/instance: redpanda
       app.kubernetes.io/name: redpanda
-      testlabel: exercise_common_labels_template
   serviceName: redpanda
   replicas: 1
   updateStrategy:
@@ -630,7 +626,6 @@ spec:
         app.kubernetes.io/instance: redpanda
         app.kubernetes.io/name: redpanda
         redpanda.com/poddisruptionbudget: redpanda
-        testlabel: exercise_common_labels_template
       annotations:
         config.redpanda.com/checksum: c25c6cf5baf4214ae98067f0a26d62a97fd24d0d059b10724cbaadd0e8097d82
     spec:
@@ -856,7 +851,6 @@ spec:
               app.kubernetes.io/component: redpanda-statefulset
               app.kubernetes.io/instance: redpanda
               app.kubernetes.io/name: redpanda
-              testlabel: exercise_common_labels_template
       nodeSelector:
         {}
       affinity:
@@ -869,7 +863,6 @@ spec:
                 app.kubernetes.io/component: redpanda-statefulset
                 app.kubernetes.io/instance: redpanda
                 app.kubernetes.io/name: redpanda
-                testlabel: exercise_common_labels_template
       tolerations:
         []
   volumeClaimTemplates:
@@ -925,7 +918,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.41
+    helm.sh/chart: redpanda-5.8.0
     testlabel: exercise_common_labels_template
   annotations:
     # This is what defines this resource as a hook. Without this line, the
@@ -998,7 +991,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.7.41
+    helm.sh/chart: redpanda-5.8.0
     testlabel: exercise_common_labels_template
   annotations:
     "helm.sh/hook": post-upgrade

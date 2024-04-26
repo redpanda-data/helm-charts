@@ -63,13 +63,13 @@
 {{- end -}}
 {{- end -}}
 {{- $values := $dot.Values.AsMap -}}
-{{- $commonLabels := (dict ) -}}
-{{- if (ne $values.commonLabels (coalesce nil)) -}}
-{{- $commonLabels = $values.commonLabels -}}
+{{- $additionalSelectorLabels := (dict ) -}}
+{{- if (ne $values.statefulset.additionalSelectorLabels (coalesce nil)) -}}
+{{- $additionalSelectorLabels = $values.statefulset.additionalSelectorLabels -}}
 {{- end -}}
 {{- $component := (printf "%s-statefulset" (trimSuffix "-" (trunc 51 (get (fromJson (include "redpanda.Name" (dict "a" (list $dot) ))) "r")))) -}}
 {{- $defaults := (dict "app.kubernetes.io/component" $component "app.kubernetes.io/instance" $dot.Release.Name "app.kubernetes.io/name" (get (fromJson (include "redpanda.Name" (dict "a" (list $dot) ))) "r") ) -}}
-{{- (dict "r" (merge (dict ) $commonLabels $defaults)) | toJson -}}
+{{- (dict "r" (merge (dict ) $additionalSelectorLabels $defaults)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -89,8 +89,8 @@
 {{- if (ne $values.statefulset.podTemplate.labels (coalesce nil)) -}}
 {{- $statefulSetLabels = $values.statefulset.podTemplate.labels -}}
 {{- end -}}
-{{- $defults := (dict "redpanda.com/poddisruptionbudget" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r") ) -}}
-{{- (dict "r" (merge (dict ) $statefulSetLabels (get (fromJson (include "redpanda.StatefulSetPodLabelsSelector" (dict "a" (list $dot (coalesce nil)) ))) "r") $defults)) | toJson -}}
+{{- $defaults := (dict "redpanda.com/poddisruptionbudget" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r") ) -}}
+{{- (dict "r" (merge (dict ) $statefulSetLabels (get (fromJson (include "redpanda.StatefulSetPodLabelsSelector" (dict "a" (list $dot $existing) ))) "r") $defaults)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

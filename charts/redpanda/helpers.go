@@ -77,9 +77,9 @@ func StatefulSetPodLabelsSelector(dot *helmette.Dot, existing *appsv1.StatefulSe
 
 	values := helmette.Unwrap[Values](dot.Values)
 
-	commonLabels := map[string]string{}
-	if values.CommonLabels != nil {
-		commonLabels = values.CommonLabels
+	additionalSelectorLabels := map[string]string{}
+	if values.Statefulset.AdditionalSelectorLabels != nil {
+		additionalSelectorLabels = values.Statefulset.AdditionalSelectorLabels
 	}
 
 	component := fmt.Sprintf("%s-statefulset",
@@ -91,10 +91,10 @@ func StatefulSetPodLabelsSelector(dot *helmette.Dot, existing *appsv1.StatefulSe
 		"app.kubernetes.io/name":      Name(dot),
 	}
 
-	return helmette.Merge(commonLabels, defaults)
+	return helmette.Merge(additionalSelectorLabels, defaults)
 }
 
-// StatefulSetPodLabels returns the label that includs label selector for the Redpanda PodTemplate.
+// StatefulSetPodLabels returns the label that includes label selector for the Redpanda PodTemplate.
 // If this helm release is an upgrade, the existing statefulset's pod template labels will be used as it's an immutable field.
 func StatefulSetPodLabels(dot *helmette.Dot, existing *appsv1.StatefulSet) map[string]string {
 	if dot.Release.IsUpgrade && existing != nil {
@@ -110,11 +110,11 @@ func StatefulSetPodLabels(dot *helmette.Dot, existing *appsv1.StatefulSet) map[s
 		statefulSetLabels = values.Statefulset.PodTemplate.Labels
 	}
 
-	defults := map[string]string{
+	defaults := map[string]string{
 		"redpanda.com/poddisruptionbudget": Fullname(dot),
 	}
 
-	return helmette.Merge(statefulSetLabels, StatefulSetPodLabelsSelector(dot, nil), defults)
+	return helmette.Merge(statefulSetLabels, StatefulSetPodLabelsSelector(dot, existing), defaults)
 }
 
 // StatefulSetPodAnnotations returns the annotation for the Redpanda PodTemplate.
