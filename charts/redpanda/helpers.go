@@ -114,7 +114,7 @@ func StatefulSetPodLabels(dot *helmette.Dot, existing *appsv1.StatefulSet) map[s
 		"redpanda.com/poddisruptionbudget": Fullname(dot),
 	}
 
-	return helmette.Merge(statefulSetLabels, StatefulSetPodLabelsSelector(dot, statefulSet), defaults)
+	return helmette.Merge(statefulSetLabels, StatefulSetPodLabelsSelector(dot, existing), defaults)
 }
 
 // StatefulSetPodAnnotations returns the annotation for the Redpanda PodTemplate.
