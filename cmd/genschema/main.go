@@ -3,10 +3,12 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
 
 	"github.com/invopop/jsonschema"
 	"github.com/redpanda-data/helm-charts/charts/redpanda"
 	"github.com/redpanda-data/helm-charts/pkg/valuesutil"
+	corev1 "k8s.io/api/core/v1"
 )
 
 func Must[T any](value T, err error) T {
@@ -34,6 +36,25 @@ func main() {
 		// the underlying JSON is shaped and marshalled/unmarshalled. Instead,
 		// rely on explicitly set required tags.
 		RequiredFromJSONSchemaTags: true,
+
+		// Builtin Kubernetes types can generate a JSON schema but it's a built
+		// difficult to do so as all the information is stored in kubebuilder
+		// annotations. For now, we'll hard code any types that need to be
+		// enhanced.
+		Mapper: func(t reflect.Type) *jsonschema.Schema {
+			switch reflect.New(t).Interface().(type) {
+			case *corev1.PodFSGroupChangePolicy:
+				return &jsonschema.Schema{
+					Type: "string",
+					Enum: []any{
+						corev1.FSGroupChangeOnRootMismatch,
+						corev1.FSGroupChangeAlways,
+					},
+				}
+			default:
+				return nil
+			}
+		},
 	}
 
 	schema := r.Reflect(&redpanda.Values{})

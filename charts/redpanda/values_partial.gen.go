@@ -14,7 +14,7 @@ type PartialValues struct {
 	ClusterDomain    *string           `json:"clusterDomain,omitempty"`
 	CommonLabels     map[string]string `json:"commonLabels,omitempty"`
 	NodeSelector     map[string]string `json:"nodeSelector,omitempty"`
-	Affinity         *PartialAffinity  `json:"affinity,omitempty"`
+	Affinity         *PartialAffinity  `json:"affinity,omitempty" jsonschema:"required"`
 	Tolerations      []map[string]any  `json:"tolerations,omitempty"`
 	Image            *PartialImage     `json:"image,omitempty" jsonschema:"required,description=Values used to define the container image to be used for Redpanda"`
 	Service          *PartialService   `json:"service,omitempty"`
@@ -49,6 +49,15 @@ type PartialAffinity struct {
 	NodeAffinity    map[string]any `json:"nodeAffinity,omitempty"`
 	PodAffinity     map[string]any `json:"podAffinity,omitempty"`
 	PodAntiAffinity map[string]any `json:"podAntiAffinity,omitempty"`
+}
+
+type PartialSecurityContext struct {
+	RunAsUser                 *int64                         `json:"runAsUser,omitempty"`
+	RunAsGroup                *int64                         `json:"runAsGroup,omitempty"`
+	AllowPriviledgeEscalation *bool                          `json:"allowPriviledgeEscalation,omitempty"`
+	RunAsNonRoot              *bool                          `json:"runAsNonRoot,omitempty"`
+	FSGroup                   *int64                         `json:"fsGroup,omitempty"`
+	FSGroupChangePolicy       *corev1.PodFSGroupChangePolicy `json:"fsGroupChangePolicy,omitempty"`
 }
 
 type PartialImage struct {
@@ -248,27 +257,25 @@ type PartialStatefulset struct {
 		TopologyKey       *string `json:"topologyKey,omitempty"`
 		WhenUnsatisfiable *string `json:"whenUnsatisfiable,omitempty" jsonschema:"pattern=^(ScheduleAnyway|DoNotSchedule)$"`
 	} `json:"topologySpreadConstraints,omitempty" jsonschema:"required,minItems=1"`
-	Tolerations     []any `json:"tolerations,omitempty" jsonschema:"required"`
-	SecurityContext struct {
-		FSGroup             *int    `json:"fsGroup,omitempty" jsonschema:"required"`
-		RunAsUser           *int    `json:"runAsUser,omitempty" jsonschema:"required"`
-		FSGroupChangePolicy *string `json:"fsGroupChangePolicy,omitempty" jsonschema:"pattern=^(OnRootMismatch|Always)$"`
-	} `json:"securityContext,omitempty" jsonschema:"required"`
-	SideCars struct {
+	Tolerations []any `json:"tolerations,omitempty" jsonschema:"required"`
+
+	PodSecurityContext *PartialSecurityContext `json:"podSecurityContext,omitempty"`
+	SecurityContext    *PartialSecurityContext `json:"securityContext,omitempty" jsonschema:"required"`
+	SideCars           struct {
 		ConfigWatcher struct {
-			Enabled           *bool          `json:"enabled,omitempty"`
-			ExtraVolumeMounts *string        `json:"extraVolumeMounts,omitempty"`
-			Resources         map[string]any `json:"resources,omitempty"`
-			SecurityContext   map[string]any `json:"securityContext,omitempty"`
+			Enabled           *bool                   `json:"enabled,omitempty"`
+			ExtraVolumeMounts *string                 `json:"extraVolumeMounts,omitempty"`
+			Resources         map[string]any          `json:"resources,omitempty"`
+			SecurityContext   *corev1.SecurityContext `json:"securityContext,omitempty"`
 		} `json:"configWatcher,omitempty"`
 		Controllers struct {
 			Image struct {
 				Tag        *ImageTag        `json:"tag,omitempty" jsonschema:"required,default=Chart.appVersion"`
 				Repository *ImageRepository `json:"repository,omitempty" jsonschema:"required,default=docker.redpanda.com/redpandadata/redpanda-operator"`
 			} `json:"image,omitempty"`
-			Enabled         *bool `json:"enabled,omitempty"`
-			Resources       any   `json:"resources,omitempty"`
-			SecurityContext any   `json:"securityContext,omitempty"`
+			Enabled         *bool                   `json:"enabled,omitempty"`
+			Resources       any                     `json:"resources,omitempty"`
+			SecurityContext *corev1.SecurityContext `json:"securityContext,omitempty"`
 		} `json:"controllers,omitempty"`
 	} `json:"sideCars,omitempty" jsonschema:"required"`
 	ExtraVolumes      *string `json:"extraVolumes,omitempty"`

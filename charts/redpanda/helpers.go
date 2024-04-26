@@ -22,6 +22,8 @@ import (
 
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/utils/ptr"
 )
 
 // Create chart name and version as used by the chart label.
@@ -235,6 +237,35 @@ func ClientAuthRequired(dot *helmette.Dot) bool {
 		}
 	}
 	return false
+}
+
+// PodSecurityContext returns a subset of [corev1.PodSecurityContext] for the
+// redpanda Statefulset. It is also used as the default PodSecurityContext.
+func PodSecurityContext(dot *helmette.Dot) *corev1.PodSecurityContext {
+	values := helmette.Unwrap[Values](dot.Values)
+
+	sc := ptr.Deref(values.Statefulset.PodSecurityContext, values.Statefulset.SecurityContext)
+
+	return &corev1.PodSecurityContext{
+		FSGroup:             sc.FSGroup,
+		FSGroupChangePolicy: sc.FSGroupChangePolicy,
+	}
+}
+
+// ContainerSecurityContext returns a subset of [corev1.SecurityContext] for
+// the redpanda Statefulset. It is also used as the default
+// ContainerSecurityContext.
+func ContainerSecurityContext(dot *helmette.Dot) *corev1.SecurityContext {
+	values := helmette.Unwrap[Values](dot.Values)
+
+	sc := ptr.Deref(values.Statefulset.PodSecurityContext, values.Statefulset.SecurityContext)
+
+	return &corev1.SecurityContext{
+		RunAsUser:                sc.RunAsUser,
+		RunAsGroup:               helmette.Coalesce(sc.RunAsGroup, sc.FSGroup),
+		AllowPrivilegeEscalation: sc.AllowPriviledgeEscalation,
+		RunAsNonRoot:             sc.RunAsNonRoot,
+	}
 }
 
 func cleanForK8s(in string) string {

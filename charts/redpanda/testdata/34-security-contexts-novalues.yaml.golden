@@ -505,6 +505,218 @@ data:
       tls:
         enabled: true
 ---
+# Source: redpanda/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: redpanda
+  labels:
+    app.kubernetes.io/component: redpanda
+    app.kubernetes.io/instance: redpanda
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: redpanda
+    helm.sh/chart: redpanda-5.8.3
+rules:
+  - apiGroups:
+    - ""
+    resources:
+      - nodes
+    verbs:
+      - get
+      - list
+---
+# Source: redpanda/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: redpanda-rpk-bundle
+  labels:
+    app.kubernetes.io/component: redpanda
+    app.kubernetes.io/instance: redpanda
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: redpanda
+    helm.sh/chart: redpanda-5.8.3
+rules:
+  - apiGroups:
+    - ""
+    resources:
+      - configmaps
+      - endpoints
+      - events
+      - limitranges
+      - persistentvolumeclaims
+      - pods
+      - pods/log
+      - replicationcontrollers
+      - resourcequotas
+      - serviceaccounts
+      - services
+    verbs:
+      - get
+      - list
+---
+# Source: redpanda/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: redpanda-sidecar-controllers
+  labels:
+    app.kubernetes.io/component: redpanda
+    app.kubernetes.io/instance: redpanda
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: redpanda
+    helm.sh/chart: redpanda-5.8.3
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - persistentvolumes
+    verbs:
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+---
+# Source: redpanda/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: redpanda
+  labels:
+    app.kubernetes.io/component: redpanda
+    app.kubernetes.io/instance: redpanda
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: redpanda
+    helm.sh/chart: redpanda-5.8.3
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: redpanda
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: "default"
+---
+# Source: redpanda/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: redpanda-rpk-bundle
+  labels:
+    app.kubernetes.io/component: redpanda
+    app.kubernetes.io/instance: redpanda
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: redpanda
+    helm.sh/chart: redpanda-5.8.3
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: redpanda-rpk-bundle
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: "default"
+---
+# Source: redpanda/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: redpanda-sidecar-controllers
+  labels:
+    app.kubernetes.io/component: redpanda
+    app.kubernetes.io/instance: redpanda
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: redpanda
+    helm.sh/chart: redpanda-5.8.3
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: redpanda-sidecar-controllers
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: "default"
+---
+# Source: redpanda/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: redpanda-sidecar-controllers
+  labels:
+    app.kubernetes.io/component: redpanda
+    app.kubernetes.io/instance: redpanda
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: redpanda
+    helm.sh/chart: redpanda-5.8.3
+rules:
+  - apiGroups:
+      - apps
+    resources:
+      - statefulsets/status
+    verbs:
+      - patch
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+      - pods
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - apps
+    resources:
+      - statefulsets
+    verbs:
+      - get
+      - patch
+      - update
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - persistentvolumeclaims
+    verbs:
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+---
+# Source: redpanda/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: redpanda-sidecar-controllers
+  labels:
+    app.kubernetes.io/component: redpanda
+    app.kubernetes.io/instance: redpanda
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: redpanda
+    helm.sh/chart: redpanda-5.8.3
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: redpanda-sidecar-controllers
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: "default"
+---
 # Source: redpanda/charts/console/templates/service.yaml
 apiVersion: v1
 kind: Service
@@ -772,7 +984,7 @@ spec:
     spec:
       terminationGracePeriodSeconds: 90
       securityContext: 
-        fsGroup: 101
+        fsGroup: 3333
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
       initContainers:
@@ -794,8 +1006,6 @@ spec:
               mountPath: /etc/tls/certs/default
             - name: redpanda-external-cert
               mountPath: /etc/tls/certs/external
-            - name: test-extra-volume
-              mountPath: /fake/lifecycle
             - name: redpanda
               mountPath: /etc/redpanda
         - name: redpanda-configurator
@@ -822,37 +1032,21 @@ spec:
                   fieldPath: status.hostIP
           securityContext: 
             allowPrivilegeEscalation: null
-            runAsGroup: 101
+            runAsGroup: 2222
             runAsNonRoot: null
-            runAsUser: 101
+            runAsUser: 1111
           volumeMounts: 
             
             - name: redpanda-default-cert
               mountPath: /etc/tls/certs/default
             - name: redpanda-external-cert
               mountPath: /etc/tls/certs/external
-            - name: test-extra-volume
-              mountPath: /fake/lifecycle
             - name: config
               mountPath: /etc/redpanda
             - name: redpanda
               mountPath: /tmp/base-config
             - name: redpanda-configurator
               mountPath: /etc/secrets/configurator/scripts/
-          resources:
-            limits:
-              cpu: 200m
-              memory: 60Mi
-            requests:
-              cpu: 100m
-              memory: 20Mi
-        - name: "test-init-container"
-          image: "mintel/docker-alpine-bash-curl-jq:latest"
-          command: [ "/bin/bash", "-c" ]
-          args:
-            - |
-              set -xe
-              echo "Hello World!"
       containers:
         - name: redpanda
           image: docker.redpanda.com/redpandadata/redpanda:v24.1.1
@@ -957,17 +1151,15 @@ spec:
               containerPort: 8084
           securityContext: 
             allowPrivilegeEscalation: null
-            runAsGroup: 101
+            runAsGroup: 2222
             runAsNonRoot: null
-            runAsUser: 101
+            runAsUser: 1111
           volumeMounts: 
             
             - name: redpanda-default-cert
               mountPath: /etc/tls/certs/default
             - name: redpanda-external-cert
               mountPath: /etc/tls/certs/external
-            - name: test-extra-volume
-              mountPath: /fake/lifecycle
             - name: config
               mountPath: /etc/redpanda
             - name: redpanda
@@ -987,6 +1179,13 @@ spec:
           args:
             - -c
             - 'trap "exit 0" TERM; exec /etc/secrets/config-watcher/scripts/sasl-user.sh & wait $!'
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: false
+            runAsGroup: 7777
+            runAsNonRoot: true
+            runAsUser: 8888
           volumeMounts: 
             
             - name: redpanda-default-cert
@@ -997,8 +1196,26 @@ spec:
               mountPath: /etc/redpanda
             - name: redpanda-config-watcher
               mountPath: /etc/secrets/config-watcher/scripts
-            - name: test-extra-volume
-              mountPath: /fake/lifecycle
+        - name: redpanda-controllers
+          image: docker.redpanda.com/redpandadata/redpanda-operator:v2.1.10-23.2.18
+          command:
+            - /manager
+          args:
+            - --operator-mode=false
+            - --namespace=default
+            - --health-probe-bind-address=:8085
+            - --metrics-bind-address=:9082
+            - --additional-controllers=all
+          env:
+            - name: REDPANDA_HELM_RELEASE_NAME
+              value: redpanda
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: false
+            runAsGroup: 1234
+            runAsNonRoot: true
+            runAsUser: 5678
       volumes: 
         
         - name: redpanda-default-cert
@@ -1009,10 +1226,6 @@ spec:
           secret:
             secretName: redpanda-external-cert
             defaultMode: 0o440
-        - name: test-extra-volume
-          secret:
-            secretName: redpanda-sts-lifecycle
-            defaultMode: 0774
         - name: lifecycle-scripts
           secret:
             secretName: redpanda-sts-lifecycle
@@ -1324,7 +1537,7 @@ spec:
         {}
       restartPolicy: Never
       securityContext: 
-        fsGroup: 101
+        fsGroup: 3333
         fsGroupChangePolicy: OnRootMismatch
       containers:
       - name: redpanda-post-install
@@ -1354,9 +1567,9 @@ spec:
             rpk cluster config import -f /tmp/cfg.yml
         securityContext:
           allowPrivilegeEscalation: null
-          runAsGroup: 101
+          runAsGroup: 2222
           runAsNonRoot: null
-          runAsUser: 101
+          runAsUser: 1111
         volumeMounts:
           - name: config
             mountPath: /etc/redpanda
@@ -1407,7 +1620,7 @@ spec:
         {}
       restartPolicy: Never
       securityContext: 
-        fsGroup: 101
+        fsGroup: 3333
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
       containers:
@@ -1429,9 +1642,9 @@ spec:
             fi
         securityContext:
           allowPrivilegeEscalation: null
-          runAsGroup: 101
+          runAsGroup: 2222
           runAsNonRoot: null
-          runAsUser: 101
+          runAsUser: 1111
         volumeMounts:
           - name: config
             mountPath: /etc/redpanda
