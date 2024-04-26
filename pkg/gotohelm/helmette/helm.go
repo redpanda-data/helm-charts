@@ -35,6 +35,7 @@ func (v Values) AsMap() map[string]any {
 }
 
 // https://helm.sh/docs/howto/charts_tips_and_tricks/#using-the-tpl-function
+// +gotohelm:builtin=tpl
 func Tpl(tpl string, context any) string {
 	panic("not yet implemented in Go")
 }

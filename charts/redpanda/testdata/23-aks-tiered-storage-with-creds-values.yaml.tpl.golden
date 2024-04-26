@@ -1201,75 +1201,79 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: redpanda-default-cert
-  namespace: "default"
+  creationTimestamp: null
   labels:
     app.kubernetes.io/component: redpanda
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
     helm.sh/chart: redpanda-5.8.4
+  name: redpanda-default-cert
+  namespace: default
 spec:
   dnsNames:
-    - redpanda-cluster.redpanda.default.svc.cluster.local
-    - redpanda-cluster.redpanda.default.svc
-    - redpanda-cluster.redpanda.default
-    - "*.redpanda-cluster.redpanda.default.svc.cluster.local"
-    - "*.redpanda-cluster.redpanda.default.svc"
-    - "*.redpanda-cluster.redpanda.default"
-    - redpanda.default.svc.cluster.local
-    - redpanda.default.svc
-    - redpanda.default
-    - "*.redpanda.default.svc.cluster.local"
-    - "*.redpanda.default.svc"
-    - "*.redpanda.default"
+  - redpanda-cluster.redpanda.default.svc.cluster.local
+  - redpanda-cluster.redpanda.default.svc
+  - redpanda-cluster.redpanda.default
+  - '*.redpanda-cluster.redpanda.default.svc.cluster.local'
+  - '*.redpanda-cluster.redpanda.default.svc'
+  - '*.redpanda-cluster.redpanda.default'
+  - redpanda.default.svc.cluster.local
+  - redpanda.default.svc
+  - redpanda.default
+  - '*.redpanda.default.svc.cluster.local'
+  - '*.redpanda.default.svc'
+  - '*.redpanda.default'
   duration: 43800h
   isCA: false
-  secretName: redpanda-default-cert
+  issuerRef:
+    group: cert-manager.io
+    kind: Issuer
+    name: redpanda-default-root-issuer
   privateKey:
     algorithm: ECDSA
     size: 256
-  issuerRef:
-    name: redpanda-default-root-issuer
-    kind: Issuer
-    group: cert-manager.io
+  secretName: redpanda-default-cert
+status: {}
 ---
 # Source: redpanda/templates/certs.yaml
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: redpanda-external-cert
-  namespace: "default"
+  creationTimestamp: null
   labels:
     app.kubernetes.io/component: redpanda
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
     helm.sh/chart: redpanda-5.8.4
+  name: redpanda-external-cert
+  namespace: default
 spec:
   dnsNames:
-    - redpanda-cluster.redpanda.default.svc.cluster.local
-    - redpanda-cluster.redpanda.default.svc
-    - redpanda-cluster.redpanda.default
-    - "*.redpanda-cluster.redpanda.default.svc.cluster.local"
-    - "*.redpanda-cluster.redpanda.default.svc"
-    - "*.redpanda-cluster.redpanda.default"
-    - redpanda.default.svc.cluster.local
-    - redpanda.default.svc
-    - redpanda.default
-    - "*.redpanda.default.svc.cluster.local"
-    - "*.redpanda.default.svc"
-    - "*.redpanda.default"
+  - redpanda-cluster.redpanda.default.svc.cluster.local
+  - redpanda-cluster.redpanda.default.svc
+  - redpanda-cluster.redpanda.default
+  - '*.redpanda-cluster.redpanda.default.svc.cluster.local'
+  - '*.redpanda-cluster.redpanda.default.svc'
+  - '*.redpanda-cluster.redpanda.default'
+  - redpanda.default.svc.cluster.local
+  - redpanda.default.svc
+  - redpanda.default
+  - '*.redpanda.default.svc.cluster.local'
+  - '*.redpanda.default.svc'
+  - '*.redpanda.default'
   duration: 43800h
   isCA: false
-  secretName: redpanda-external-cert
+  issuerRef:
+    group: cert-manager.io
+    kind: Issuer
+    name: redpanda-external-root-issuer
   privateKey:
     algorithm: ECDSA
     size: 256
-  issuerRef:
-    name: redpanda-external-root-issuer
-    kind: Issuer
-    group: cert-manager.io
+  secretName: redpanda-external-cert
+status: {}
 ---
 # Source: redpanda/templates/cert-issuers.yaml
 # The self-signed issuer is used to create the self-signed CA
