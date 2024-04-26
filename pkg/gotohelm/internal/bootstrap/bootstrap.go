@@ -68,3 +68,19 @@ func len(m map[string]any) int {
 	}
 	return Len(m)
 }
+
+// re-implementation of k8s.io/utils/ptr.Deref.
+func ptr_Deref(ptr, def any) any {
+	if ptr != nil {
+		return ptr
+	}
+	return def
+}
+
+// re-implementation of k8s.io/utils/ptr.Equal.
+func ptr_Equal(a, b any) bool {
+	if a == nil && b == nil {
+		return true
+	}
+	return a == b
+}
