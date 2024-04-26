@@ -23,7 +23,7 @@ type Values struct {
 	ClusterDomain    string            `json:"clusterDomain"`
 	CommonLabels     map[string]string `json:"commonLabels"`
 	NodeSelector     map[string]string `json:"nodeSelector"`
-	Affinity         Affinity          `json:"affinity"`
+	Affinity         Affinity          `json:"affinity" jsonschema:"required"`
 	Tolerations      []map[string]any  `json:"tolerations"`
 	Image            Image             `json:"image" jsonschema:"required,description=Values used to define the container image to be used for Redpanda"`
 	Service          *Service          `json:"service"`
@@ -63,6 +63,20 @@ type Affinity struct {
 	NodeAffinity    map[string]any `json:"nodeAffinity"`
 	PodAffinity     map[string]any `json:"podAffinity"`
 	PodAntiAffinity map[string]any `json:"podAntiAffinity"`
+}
+
+// SecurityContext is a legacy mishmash of [corev1.PodSecurityContext] and
+// [corev1.SecurityContext]. It's type exists for backwards compat purposes
+// only.
+type SecurityContext struct {
+	RunAsUser                 *int64                         `json:"runAsUser"`
+	RunAsGroup                *int64                         `json:"runAsGroup"`
+	AllowPriviledgeEscalation *bool                          `json:"allowPriviledgeEscalation"`
+	RunAsNonRoot              *bool                          `json:"runAsNonRoot"`
+	FSGroup                   *int64                         `json:"fsGroup"`
+	FSGroupChangePolicy       *corev1.PodFSGroupChangePolicy `json:"fsGroupChangePolicy"`
+
+	// FSGroupChangePolicy string `json:"fsGroupChangePolicy" jsonschema:"pattern=^(OnRootMismatch|Always)$"`
 }
 
 type Image struct {
@@ -352,27 +366,26 @@ type Statefulset struct {
 		TopologyKey       string `json:"topologyKey"`
 		WhenUnsatisfiable string `json:"whenUnsatisfiable" jsonschema:"pattern=^(ScheduleAnyway|DoNotSchedule)$"`
 	} `json:"topologySpreadConstraints" jsonschema:"required,minItems=1"`
-	Tolerations     []any `json:"tolerations" jsonschema:"required"`
-	SecurityContext struct {
-		FSGroup             int    `json:"fsGroup" jsonschema:"required"`
-		RunAsUser           int    `json:"runAsUser" jsonschema:"required"`
-		FSGroupChangePolicy string `json:"fsGroupChangePolicy" jsonschema:"pattern=^(OnRootMismatch|Always)$"`
-	} `json:"securityContext" jsonschema:"required"`
-	SideCars struct {
+	Tolerations []any `json:"tolerations" jsonschema:"required"`
+	// DEPRECATED. Not to be confused with [corev1.PodSecurityContext], this
+	// field is a historical artifact that should be quickly removed.
+	PodSecurityContext *SecurityContext `json:"podSecurityContext"`
+	SecurityContext    SecurityContext  `json:"securityContext" jsonschema:"required"`
+	SideCars           struct {
 		ConfigWatcher struct {
-			Enabled           bool           `json:"enabled"`
-			ExtraVolumeMounts string         `json:"extraVolumeMounts"`
-			Resources         map[string]any `json:"resources"`
-			SecurityContext   map[string]any `json:"securityContext"`
+			Enabled           bool                    `json:"enabled"`
+			ExtraVolumeMounts string                  `json:"extraVolumeMounts"`
+			Resources         map[string]any          `json:"resources"`
+			SecurityContext   *corev1.SecurityContext `json:"securityContext"`
 		} `json:"configWatcher"`
 		Controllers struct {
 			Image struct {
 				Tag        ImageTag        `json:"tag" jsonschema:"required,default=Chart.appVersion"`
 				Repository ImageRepository `json:"repository" jsonschema:"required,default=docker.redpanda.com/redpandadata/redpanda-operator"`
 			} `json:"image"`
-			Enabled         bool `json:"enabled"`
-			Resources       any  `json:"resources"`
-			SecurityContext any  `json:"securityContext"`
+			Enabled         bool                    `json:"enabled"`
+			Resources       any                     `json:"resources"`
+			SecurityContext *corev1.SecurityContext `json:"securityContext"`
 		} `json:"controllers"`
 	} `json:"sideCars" jsonschema:"required"`
 	ExtraVolumes      string `json:"extraVolumes"`
@@ -405,6 +418,10 @@ type Statefulset struct {
 		} `json:"tuning"`
 		ExtraInitContainers string `json:"extraInitContainers"`
 	} `json:"initContainers"`
+}
+
+func (Statefulset) JSONSchemaExtend(schema *jsonschema.Schema) {
+	deprecate(schema, "podSecurityContext")
 }
 
 type ServiceAccount struct {

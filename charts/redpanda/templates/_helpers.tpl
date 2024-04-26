@@ -289,23 +289,12 @@ than 1 core.
 {{- toJson (dict "bool" $result) -}}
 {{- end -}}
 
-# manage backward compatibility with renaming podSecurityContext to securityContext
 {{- define "pod-security-context" -}}
-fsGroup: {{ dig "podSecurityContext" "fsGroup" .Values.statefulset.securityContext.fsGroup .Values.statefulset }}
-fsGroupChangePolicy: {{ dig "securityContext" "fsGroupChangePolicy" "OnRootMismatch" .Values.statefulset }}
+{{- get ((include "redpanda.PodSecurityContext" (dict "a" (list .))) | fromJson) "r" | toYaml }}
 {{- end -}}
 
-# for backward compatibility, force a default on releases that didn't
-# set the podSecurityContext.runAsUser before
 {{- define "container-security-context" -}}
-runAsUser: {{ dig "podSecurityContext" "runAsUser" .Values.statefulset.securityContext.runAsUser .Values.statefulset }}
-runAsGroup: {{ dig "podSecurityContext" "fsGroup" .Values.statefulset.securityContext.fsGroup .Values.statefulset }}
-{{- if hasKey .Values.statefulset.securityContext "allowPrivilegeEscalation" }}
-allowPrivilegeEscalation: {{ dig "podSecurityContext" "allowPrivilegeEscalation" .Values.statefulset.securityContext.allowPrivilegeEscalation .Values.statefulset }}
-{{- end -}}
-{{- if hasKey .Values.statefulset.securityContext "runAsNonRoot" }}
-runAsNonRoot: {{ dig "podSecurityContext" "runAsNonRoot" .Values.statefulset.securityContext.runAsNonRoot .Values.statefulset }}
-{{- end -}}
+{{- get ((include "redpanda.ContainerSecurityContext" (dict "a" (list .))) | fromJson) "r" | toYaml }}
 {{- end -}}
 
 {{- define "admin-tls-curl-flags" -}}

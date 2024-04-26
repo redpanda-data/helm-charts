@@ -819,8 +819,10 @@ spec:
                   apiVersion: v1
                   fieldPath: status.hostIP
           securityContext: 
-            runAsUser: 101
+            allowPrivilegeEscalation: null
             runAsGroup: 101
+            runAsNonRoot: null
+            runAsUser: 101
           volumeMounts: 
             
             - name: redpanda-default-cert
@@ -936,8 +938,10 @@ spec:
             - name: schema-default
               containerPort: 8084
           securityContext: 
-            runAsUser: 101
+            allowPrivilegeEscalation: null
             runAsGroup: 101
+            runAsNonRoot: null
+            runAsUser: 101
           volumeMounts: 
             
             - name: redpanda-default-cert
@@ -1322,7 +1326,9 @@ spec:
             
             rpk cluster config import -f /tmp/cfg.yml
         securityContext:
+          allowPrivilegeEscalation: null
           runAsGroup: 101
+          runAsNonRoot: null
           runAsUser: 101
         volumeMounts:
           - name: config
@@ -1395,7 +1401,9 @@ spec:
                 https://redpanda.default.svc.cluster.local.:9644/v1/debug/restart_service?service=schema-registry || true
             fi
         securityContext:
+          allowPrivilegeEscalation: null
           runAsGroup: 101
+          runAsNonRoot: null
           runAsUser: 101
         volumeMounts:
           - name: config

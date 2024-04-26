@@ -226,6 +226,26 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "redpanda.PodSecurityContext" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $values := $dot.Values.AsMap -}}
+{{- $sc := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $values.statefulset.podSecurityContext $values.statefulset.securityContext) ))) "r") -}}
+{{- (dict "r" (mustMergeOverwrite (dict ) (dict "fsGroup" $sc.fsGroup "fsGroupChangePolicy" $sc.fsGroupChangePolicy ))) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.ContainerSecurityContext" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $values := $dot.Values.AsMap -}}
+{{- $sc := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $values.statefulset.podSecurityContext $values.statefulset.securityContext) ))) "r") -}}
+{{- (dict "r" (mustMergeOverwrite (dict ) (dict "runAsUser" $sc.runAsUser "runAsGroup" (coalesce $sc.runAsGroup $sc.fsGroup) "allowPrivilegeEscalation" $sc.allowPriviledgeEscalation "runAsNonRoot" $sc.runAsNonRoot ))) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "redpanda.cleanForK8s" -}}
 {{- $in := (index .a 0) -}}
 {{- range $_ := (list 1) -}}

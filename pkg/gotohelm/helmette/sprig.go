@@ -113,7 +113,7 @@ func Trunc(length int, in string) string {
 
 // Default is a go equivalent of sprig's `default`.
 // +gotohelm:builtin=default
-func Default(default_, value any) any {
+func Default[T any](default_, value T) T {
 	if Empty(value) {
 		return default_
 	}
@@ -134,13 +134,14 @@ func MustRegexMatch(pattern, s string) bool {
 
 // Coalesce is the go equivalent of sprig's `coalesce`.
 // +gotohelm:builtin=coalesce
-func Coalesce(values ...any) any {
+func Coalesce[T any](values ...T) T {
 	for _, v := range values {
 		if !Empty(v) {
 			return v
 		}
 	}
-	return nil
+	var zero T
+	return zero
 }
 
 // Empty is the go equivalent of sprig's `empty`.
