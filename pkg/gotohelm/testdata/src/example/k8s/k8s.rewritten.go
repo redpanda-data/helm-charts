@@ -6,6 +6,7 @@ import (
 	policyv1 "k8s.io/api/policy/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
+	"k8s.io/utils/ptr"
 )
 
 func K8s() map[string]any {
@@ -21,6 +22,21 @@ func K8s() map[string]any {
 			intstr.FromInt(10),
 			intstr.FromInt32(11),
 			intstr.FromString("12"),
+		},
+		"ptr.Deref": []any{
+			ptr.Deref(ptr.To(3), 4),
+			ptr.Deref(nil, 3),
+			ptr.Deref(ptr.To(""), "oh?"),
+		},
+		"ptr.To": []any{
+			ptr.To("hello"),
+			ptr.To(0),
+			ptr.To(map[string]string{}),
+		},
+		"ptr.Equal": []bool{
+			ptr.Equal[int](nil, nil),
+			ptr.Equal(nil, ptr.To(3)),
+			ptr.Equal(ptr.To(3), ptr.To(3)),
 		},
 	}
 }

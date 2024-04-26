@@ -836,6 +836,12 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 		}
 	case "k8s.io/apimachinery/pkg/util/intstr.FromInt32", "k8s.io/apimachinery/pkg/util/intstr.FromInt", "k8s.io/apimachinery/pkg/util/intstr.FromString":
 		return args[0]
+	case "k8s.io/utils/ptr.Deref":
+		return &Call{FuncName: "_shims.ptr_Deref", Arguments: args}
+	case "k8s.io/utils/ptr.To":
+		return args[0]
+	case "k8s.io/utils/ptr.Equal":
+		return &Call{FuncName: "_shims.ptr_Equal", Arguments: args}
 	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.MustDuration":
 		return args[0]
 	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.Dig":
