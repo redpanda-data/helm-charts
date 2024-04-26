@@ -90,7 +90,7 @@
 {{- $statefulSetLabels = $values.statefulset.podTemplate.labels -}}
 {{- end -}}
 {{- $defaults := (dict "redpanda.com/poddisruptionbudget" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r") ) -}}
-{{- (dict "r" (merge (dict ) $statefulSetLabels (get (fromJson (include "redpanda.StatefulSetPodLabelsSelector" (dict "a" (list $dot $statefulSet) ))) "r") $defaults)) | toJson -}}
+{{- (dict "r" (merge (dict ) $statefulSetLabels (get (fromJson (include "redpanda.StatefulSetPodLabelsSelector" (dict "a" (list $dot $existing) ))) "r") $defaults)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
