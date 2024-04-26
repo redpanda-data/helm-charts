@@ -26,19 +26,19 @@ type PartialValues struct {
 	RackAwareness    *PartialRackAwareness    `json:"rackAwareness,omitempty"`
 
 	Auth           *PartialAuth              `json:"auth,omitempty"`
-	TLS            *PartialTLS               `json:"tls,omitempty"`
+	TLS            *PartialTLS               `json:"tls,omitempty" jsonschema:"required"`
 	External       *PartialExternalConfig    `json:"external,omitempty"`
 	Logging        *PartialLogging           `json:"logging,omitempty"`
 	Monitoring     *PartialMonitoring        `json:"monitoring,omitempty"`
 	Resources      *PartialRedpandaResources `json:"resources,omitempty"`
 	Storage        *PartialStorage           `json:"storage,omitempty"`
-	PostInstallJob *PartialPostInstallJob    `json:"post_install_job,omitempty"`
-	PostUpgradeJob *PartialPostUpgradeJob    `json:"post_upgrade_job,omitempty"`
+	PostInstallJob *PartialPostInstallJob    `json:"post_install_job,omitempty" jsonschema:"required"`
+	PostUpgradeJob *PartialPostUpgradeJob    `json:"post_upgrade_job,omitempty" jsonschema:"required"`
 	Statefulset    *PartialStatefulset       `json:"statefulset,omitempty"`
 	ServiceAccount *PartialServiceAccount    `json:"serviceAccount,omitempty"`
 	RBAC           *PartialRBAC              `json:"rbac,omitempty"`
 	Tuning         *PartialTuning            `json:"tuning,omitempty"`
-	Listeners      *PartialListeners         `json:"listeners,omitempty"`
+	Listeners      *PartialListeners         `json:"listeners,omitempty" jsonschema:"required"`
 	Config         *PartialConfig            `json:"config,omitempty"`
 	Tests          *struct {
 		Enabled *bool `json:"enabled,omitempty"`
@@ -101,7 +101,7 @@ type PartialAuth struct {
 
 type PartialTLS struct {
 	Enabled *bool              `json:"enabled,omitempty" jsonschema:"required"`
-	Certs   *PartialTLSCertMap `json:"certs,omitempty"`
+	Certs   *PartialTLSCertMap `json:"certs,omitempty" jsonschema:"required"`
 }
 
 type PartialExternalConfig struct {
@@ -206,7 +206,7 @@ type PartialPodTemplate struct {
 
 type PartialStatefulset struct {
 	NodeAffinity   map[string]any `json:"nodeAffinity,omitempty"`
-	Replicas       *int           `json:"replicas,omitempty" jsonschema:"required"`
+	Replicas       *int           `json:"replicas,omitempty" jsonschema:"required,maximum=250"`
 	UpdateStrategy struct {
 		Type *string `json:"type,omitempty" jsonschema:"required,pattern=^(RollingUpdate|OnDelete)$"`
 	} `json:"updateStrategy,omitempty" jsonschema:"required"`

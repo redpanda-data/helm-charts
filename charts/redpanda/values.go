@@ -36,19 +36,19 @@ type Values struct {
 	// Console          any      `json:"console"`
 	// Connectors       any      `json:"connectors"`
 	Auth           Auth              `json:"auth"`
-	TLS            TLS               `json:"tls"`
+	TLS            TLS               `json:"tls" jsonschema:"required"`
 	External       ExternalConfig    `json:"external"`
 	Logging        Logging           `json:"logging"`
 	Monitoring     Monitoring        `json:"monitoring"`
 	Resources      RedpandaResources `json:"resources"`
 	Storage        Storage           `json:"storage"`
-	PostInstallJob PostInstallJob    `json:"post_install_job"`
-	PostUpgradeJob PostUpgradeJob    `json:"post_upgrade_job"`
+	PostInstallJob PostInstallJob    `json:"post_install_job" jsonschema:"required"`
+	PostUpgradeJob PostUpgradeJob    `json:"post_upgrade_job" jsonschema:"required"`
 	Statefulset    Statefulset       `json:"statefulset"`
 	ServiceAccount ServiceAccount    `json:"serviceAccount"`
 	RBAC           RBAC              `json:"rbac"`
 	Tuning         Tuning            `json:"tuning"`
-	Listeners      Listeners         `json:"listeners"`
+	Listeners      Listeners         `json:"listeners" jsonschema:"required"`
 	Config         Config            `json:"config"`
 	Tests          *struct {
 		Enabled bool `json:"enabled"`
@@ -126,8 +126,8 @@ type Auth struct {
 }
 
 type TLS struct {
-	Enabled *bool       `json:"enabled" jsonschema:"required"`
-	Certs   *TLSCertMap `json:"certs"`
+	Enabled *bool      `json:"enabled" jsonschema:"required"`
+	Certs   TLSCertMap `json:"certs" jsonschema:"required"`
 }
 
 type ExternalConfig struct {
@@ -308,7 +308,7 @@ type PodTemplate struct {
 
 type Statefulset struct {
 	NodeAffinity   map[string]any `json:"nodeAffinity"`
-	Replicas       int            `json:"replicas" jsonschema:"required"`
+	Replicas       int            `json:"replicas" jsonschema:"required,maximum=250"`
 	UpdateStrategy struct {
 		Type string `json:"type" jsonschema:"required,pattern=^(RollingUpdate|OnDelete)$"`
 	} `json:"updateStrategy" jsonschema:"required"`
@@ -456,6 +456,7 @@ type JobResources struct {
 		Memory MemoryAmount `json:"memory"`
 	} `json:"requests"`
 }
+
 type SchemaRegistryClient struct {
 	Retries                     int `json:"retries"`
 	RetryBaseBackoffMS          int `json:"retry_base_backoff_ms"`

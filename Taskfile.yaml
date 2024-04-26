@@ -85,6 +85,14 @@ tasks:
       - nix run .#genschema > charts/redpanda/values.schema.json
       # Generate helm templates from Go definitions
       - nix run .#gotohelm -- -write ./charts/redpanda/templates ./charts/redpanda 
+      # Copy the most recent values.schema.json of each minor version, starting
+      # with 5.6.x into testdata for backwards compat assertions.
+      # TODO should probably find a way to automate this as we'll need to add
+      # in a line for each minor version bump.
+      - |
+        set -exuo pipefail
+        git show $(git for-each-ref --sort=authordate --format '%(refname)' 'refs/tags/redpanda-5.7.*' | tail -n 1):charts/redpanda/values.schema.json > ./charts/redpanda/testdata/schemas/5.7.x.schema.json
+        git show $(git for-each-ref --sort=authordate --format '%(refname)' 'refs/tags/redpanda-5.6.*' | tail -n 1):charts/redpanda/values.schema.json > ./charts/redpanda/testdata/schemas/5.6.x.schema.json
 
   go:generate:gotohelm:
     desc: "Generate files for the gotohelm go package"
