@@ -20,6 +20,7 @@ import (
 	"helm.sh/helm/v3/pkg/chartutil"
 	"helm.sh/helm/v3/pkg/cli"
 	"helm.sh/helm/v3/pkg/cli/values"
+	"helm.sh/helm/v3/pkg/helmpath"
 	"helm.sh/helm/v3/pkg/registry"
 	"helm.sh/helm/v3/pkg/release"
 	"helm.sh/helm/v3/pkg/storage"
@@ -138,7 +139,10 @@ func New(opts Options) (*Client, error) {
 		return nil, err
 	}
 
-	registryClient, err := registry.NewClient()
+	registryClient, err := registry.NewClient(registry.ClientOptDebug(true),
+		registry.ClientOptEnableCache(true),
+		registry.ClientOptWriter(os.Stderr),
+		registry.ClientOptPlainHTTP())
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
@@ -300,12 +304,18 @@ func (c *Client) Template(ctx context.Context, chart string, opts TemplateOption
 	// to set it ourselves.
 	client.ReleaseName = releaseName
 
+	previous := os.Getenv("HELM_CONFIG_HOME")
+	os.Setenv("HELM_CONFIG_HOME", path.Join(c.configHome, "helm-config"))
 	chart, err = client.ChartPathOptions.LocateChart(chart, &cli.EnvSettings{
-		Debug: true,
+		RegistryConfig:   envOr("HELM_REGISTRY_CONFIG", helmpath.ConfigPath("registry/config.json")),
+		RepositoryConfig: envOr("HELM_REPOSITORY_CONFIG", helmpath.ConfigPath("repositories.yaml")),
+		RepositoryCache:  envOr("HELM_REPOSITORY_CACHE", helmpath.CachePath("repository")),
+		Debug:            true,
 	})
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
+	os.Setenv("HELM_CONFIG_HOME", previous)
 
 	loadedChart, err := loader.Load(chart)
 	if err != nil {
@@ -354,6 +364,13 @@ func (c *Client) Template(ctx context.Context, chart string, opts TemplateOption
 	}
 
 	return manifest.Bytes(), nil
+}
+
+func envOr(name, def string) string {
+	if v, ok := os.LookupEnv(name); ok {
+		return v
+	}
+	return def
 }
 
 type UpgradeOptions struct {
@@ -419,6 +436,11 @@ func (c *Client) RepoList(ctx context.Context) ([]Repo, error) {
 
 func (c *Client) RepoAdd(ctx context.Context, name, url string) error {
 	_, _, err := c.runHelm(ctx, "repo", "add", name, url)
+	return err
+}
+
+func (c *Client) RepoUpdate(ctx context.Context) error {
+	_, _, err := c.runHelm(ctx, "repo", "update")
 	return err
 }
 

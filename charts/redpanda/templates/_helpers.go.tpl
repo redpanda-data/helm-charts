@@ -360,3 +360,63 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "redpanda.RedpandaSMP" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $values := $dot.Values.AsMap -}}
+{{- $coresInMillies := (((get (fromJson (include "redpanda.RedpandaCoresInMillis" (dict "a" (list $dot) ))) "r") | int) | int) -}}
+{{- if (lt $coresInMillies (1000 | int)) -}}
+{{- $_ := (set $values.resources.cpu "overprovisioned" true) -}}
+{{- (dict "r" (1 | int)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- (dict "r" ((floor ((divf ($coresInMillies | float64) 1000.0) | float64)) | int)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.RedpandaCoresInMillis" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $values := $dot.Values.AsMap -}}
+{{- $tmp_tuple_4 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asnumeric" (dict "a" (list $values.resources.cpu.cores) ))) "r")) ))) "r") -}}
+{{- $ok_8 := $tmp_tuple_4.T2 -}}
+{{- $cores_7 := ($tmp_tuple_4.T1 | float64) -}}
+{{- if $ok_8 -}}
+{{- (dict "r" (((mulf $cores_7 1000.0) | float64) | int)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- $tmp_tuple_5 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "string" $values.resources.cpu.cores "") ))) "r")) ))) "r") -}}
+{{- $ok_10 := $tmp_tuple_5.T2 -}}
+{{- $cores_9 := $tmp_tuple_5.T1 -}}
+{{- if $ok_10 -}}
+{{- $suffix := (regexReplaceAll "^[0-9.]+(.*)" $cores_9 "${1}") -}}
+{{- if (eq $suffix "m") -}}
+{{- $c := (trimSuffix $suffix $cores_9) -}}
+{{- $tmp_tuple_6 := (get (fromJson (include "_shims.compact" (dict "a" (list (list (atoi $c) nil)) ))) "r") -}}
+{{- $err := $tmp_tuple_6.T2 -}}
+{{- $coreMilli := ($tmp_tuple_6.T1 | int) -}}
+{{- if (ne $err (coalesce nil)) -}}
+{{- $_ := (fail (printf "cores is not integer with 'm' suffix: %s" $cores_9)) -}}
+{{- end -}}
+{{- (dict "r" $coreMilli) | toJson -}}
+{{- break -}}
+{{- else -}}{{- if (eq $suffix "") -}}
+{{- $tmp_tuple_7 := (get (fromJson (include "_shims.compact" (dict "a" (list (list (atoi $cores_9) nil)) ))) "r") -}}
+{{- $err := $tmp_tuple_7.T2 -}}
+{{- $c := ($tmp_tuple_7.T1 | int) -}}
+{{- if (ne $err (coalesce nil)) -}}
+{{- $_ := (fail (printf "cores is not integer with 'm' suffix: %s" $cores_9)) -}}
+{{- end -}}
+{{- (dict "r" ((mul $c (1000 | int)) | int)) | toJson -}}
+{{- break -}}
+{{- else -}}
+{{- $_ := (fail (printf "Unrecognized CPU unit '%s'" $suffix)) -}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- (dict "r" (1 | int)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+

@@ -386,6 +386,20 @@
                     },
                     "port": {
                       "type": "integer"
+                    },
+                    "tls": {
+                      "properties": {
+                        "cert": {
+                          "type": "string"
+                        },
+                        "enabled": {
+                          "type": "boolean"
+                        },
+                        "requireClientAuth": {
+                          "type": "boolean"
+                        }
+                      },
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -792,8 +806,14 @@
         },
         "usageStats": {
           "properties": {
+            "clusterId": {
+              "type": "string"
+            },
             "enabled": {
               "type": "boolean"
+            },
+            "organization": {
+              "type": "string"
             }
           },
           "required": [
@@ -1895,7 +1915,6 @@
           "type": "string"
         },
         "persistentVolume": {
-          "deprecated": true,
           "properties": {
             "annotations": {
               "additionalProperties": {
@@ -2129,7 +2148,6 @@
           "type": "object"
         },
         "tieredConfig": {
-          "deprecated": true,
           "properties": {
             "cloud_storage_access_key": {
               "type": "string"
@@ -2227,14 +2245,17 @@
               "type": "integer"
             }
           },
+          "required": [
+            "cloud_storage_enabled",
+            "cloud_storage_bucket",
+            "cloud_storage_region"
+          ],
           "type": "object"
         },
         "tieredStorageHostPath": {
-          "deprecated": true,
           "type": "string"
         },
         "tieredStoragePersistentVolume": {
-          "deprecated": true,
           "properties": {
             "annotations": {
               "additionalProperties": {

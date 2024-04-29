@@ -135,7 +135,9 @@ type PartialExternalConfig struct {
 type PartialLogging struct {
 	LogLevel    *string `json:"logLevel,omitempty" jsonschema:"required,pattern=^(error|warn|info|debug|trace)$"`
 	UseageStats struct {
-		Enabled *bool `json:"enabled,omitempty" jsonschema:"required"`
+		Enabled      *bool   `json:"enabled,omitempty" jsonschema:"required"`
+		Organization *string `json:"organization,omitempty"`
+		ClusterID    *string `json:"clusterId,omitempty"`
 	} `json:"usageStats,omitempty" jsonschema:"required"`
 }
 
@@ -436,9 +438,10 @@ type PartialAdminListeners struct {
 }
 
 type PartialAdminExternal struct {
-	AdvertisedPorts []int32 `json:"advertisedPorts,omitempty" jsonschema:"minItems=1"`
-	Enabled         *bool   `json:"enabled,omitempty"`
-	Port            *int32  `json:"port,omitempty" jsonschema:"required"`
+	AdvertisedPorts []int32             `json:"advertisedPorts,omitempty" jsonschema:"minItems=1"`
+	Enabled         *bool               `json:"enabled,omitempty"`
+	Port            *int32              `json:"port,omitempty" jsonschema:"required"`
+	TLS             *PartialExternalTLS `json:"tls,omitempty"`
 }
 
 type PartialHTTPListeners struct {

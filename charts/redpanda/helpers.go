@@ -18,11 +18,13 @@ package redpanda
 
 import (
 	"fmt"
+	"math"
 	"strings"
 
-	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/utils/ptr"
+
+	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 )
 
 const (
@@ -381,4 +383,49 @@ func redpandaAtLeast(dot *helmette.Dot, constraint string) bool {
 
 func cleanForK8s(in string) string {
 	return strings.TrimSuffix(helmette.Trunc(63, in), "-")
+}
+
+func RedpandaSMP(dot *helmette.Dot) int {
+	values := helmette.Unwrap[Values](dot.Values)
+
+	coresInMillies := int(RedpandaCoresInMillis(dot))
+
+	if coresInMillies < 1000 {
+		values.Resources.CPU.Overprovisioned = ptr.To(true)
+		return 1
+	}
+
+	return int(math.Floor(float64(coresInMillies) / 1000))
+}
+
+func RedpandaCoresInMillis(dot *helmette.Dot) int {
+	values := helmette.Unwrap[Values](dot.Values)
+
+	if cores, ok := helmette.AsNumeric(values.Resources.CPU.Cores); ok {
+		return int(cores * 1000)
+	}
+
+	if cores, ok := values.Resources.CPU.Cores.(string); ok {
+		suffix := helmette.RegexReplaceAll("^[0-9.]+(.*)", cores, "${1}")
+		if suffix == "m" {
+			c := helmette.TrimSuffix(suffix, cores)
+			coreMilli, err := helmette.Atoi(c)
+			if err != nil {
+				panic(fmt.Sprintf("cores is not integer with 'm' suffix: %s", cores))
+			}
+
+			return coreMilli
+		} else if suffix == "" {
+			c, err := helmette.Atoi(cores)
+			if err != nil {
+				panic(fmt.Sprintf("cores is not integer with 'm' suffix: %s", cores))
+			}
+
+			return c * 1000
+		} else {
+			panic(fmt.Sprintf("Unrecognized CPU unit '%s'", suffix))
+		}
+	}
+
+	return 1
 }

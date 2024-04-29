@@ -8,6 +8,7 @@ import (
 	"go/parser"
 	"go/token"
 	"go/types"
+	"strings"
 
 	"github.com/cockroachdb/errors"
 
@@ -143,10 +144,18 @@ func typeToNode(pkg *packages.Package, typ types.Type) ast.Expr {
 
 	expr, err := parser.ParseExpr(s)
 	if err != nil {
-		panic(err)
+		panic(fmt.Sprintf("pkg errors (%s): %v", JoinPackagesErrors(pkg.Errors), err))
 	}
 
 	return expr
+}
+
+func JoinPackagesErrors[T error](errors []T) string {
+	result := []string{}
+	for _, e := range errors {
+		result = append(result, e.Error())
+	}
+	return strings.Join(result, "; ")
 }
 
 // rewriteMultiValueReturns rewrites instances of multi-value returns into an

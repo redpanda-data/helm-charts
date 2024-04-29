@@ -17,20 +17,6 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// ToYAML is the go equivalent of helm's `toYaml`.
-//
-// Reference
-// https://github.com/helm/helm/blob/e90b456d655e78d7c72a32a52a9b70bc1984c33f/pkg/engine/funcs.go#L51
-// https://github.com/helm/helm/blob/e90b456d655e78d7c72a32a52a9b70bc1984c33f/pkg/engine/funcs.go#L78-L89
-// +gotohelm:builtin=toYaml
-func ToYaml(value any) string {
-	marshalled, err := yaml.Marshal(value)
-	if err != nil {
-		return ""
-	}
-	return string(marshalled)
-}
-
 // Min is the go equivalent of sprig's `min`
 // +gotohelm:builtin=min
 func Min(in ...int) int {
@@ -327,4 +313,24 @@ func ToString(input any) string {
 func SemverCompare(constraint, version string) (bool, error) {
 	fn := sprig.FuncMap()["semverCompare"].(func(string, string) (bool, error))
 	return fn(constraint, version)
+}
+
+// +gotohelm:builtin=regexReplaceAll
+func RegexReplaceAll(regex, s, repl string) string {
+	r := regexp.MustCompile(regex)
+	return r.ReplaceAllString(s, repl)
+}
+
+// ToYAML is the go equivalent of helm's `toYaml`.
+//
+// Reference
+// https://github.com/helm/helm/blob/e90b456d655e78d7c72a32a52a9b70bc1984c33f/pkg/engine/funcs.go#L51
+// https://github.com/helm/helm/blob/e90b456d655e78d7c72a32a52a9b70bc1984c33f/pkg/engine/funcs.go#L78-L89
+// +gotohelm:builtin=toYaml
+func ToYaml(value any) string {
+	marshalled, err := yaml.Marshal(value)
+	if err != nil {
+		return ""
+	}
+	return string(marshalled)
 }

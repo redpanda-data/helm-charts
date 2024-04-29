@@ -1,13 +1,17 @@
-// +gotohelm:ignore=true
+// +gotohelm:filename=values.go.tpl
 package redpanda
 
 import (
+	"fmt"
+
 	certmanagerv1 "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
 	cmmeta "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
 	"github.com/invopop/jsonschema"
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
+	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	orderedmap "github.com/wk8/go-ordered-map/v2"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/utils/ptr"
 )
 
 // values.go contains a collection of go structs that (loosely) map to
@@ -58,6 +62,7 @@ type Values struct {
 	} `json:"tests"`
 }
 
+// +gotohelm:skip=true
 func (Values) JSONSchemaExtend(schema *jsonschema.Schema) {
 	deprecate(schema, "license_key", "license_secret_ref")
 }
@@ -88,6 +93,7 @@ type Image struct {
 	PullPolicy string   `json:"pullPolicy" jsonschema:"required,pattern=^(Always|Never|IfNotPresent)$,description=The Kubernetes Pod image pull policy."`
 }
 
+// +gotohelm:skip=true
 func (Image) JSONSchemaExtend(schema *jsonschema.Schema) {
 	tag, _ := schema.Properties.Get("tag")
 	repo, _ := schema.Properties.Get("repository")
@@ -118,9 +124,58 @@ type AuditLogging struct {
 	ClientMaxBufferSize        int      `json:"clientMaxBufferSize"`
 	QueueDrainIntervalMS       int      `json:"queueDrainIntervalMs"`
 	QueueMaxBufferSizeperShard int      `json:"queueMaxBufferSizePerShard"`
-	ReplicationFactor          *int     `json:"replicationFactor"`
+	ReplicationFactor          int      `json:"replicationFactor"`
 }
 
+func (a *AuditLogging) Translate(dot *helmette.Dot, isSASLEnabled bool) map[string]any {
+	result := map[string]any{}
+
+	if !RedpandaAtLeast_23_3_0(dot) {
+		return result
+	}
+
+	enabled := a.Enabled && isSASLEnabled
+	result["audit_enabled"] = enabled
+	if !enabled {
+		return result
+	}
+
+	if int(a.ClientMaxBufferSize) != 16777216 {
+		result["audit_client_max_buffer_size"] = a.ClientMaxBufferSize
+	}
+
+	if int(a.QueueDrainIntervalMS) != 500 {
+		result["audit_queue_drain_interval_ms"] = a.QueueDrainIntervalMS
+	}
+
+	if int(a.QueueMaxBufferSizeperShard) != 1048576 {
+		result["audit_queue_max_buffer_size_per_shard"] = a.QueueMaxBufferSizeperShard
+	}
+
+	if int(a.Partitions) != 12 {
+		result["audit_log_num_partitions"] = a.Partitions
+	}
+
+	if a.ReplicationFactor != 0 {
+		result["audit_log_replication_factor"] = a.ReplicationFactor
+	}
+
+	if len(a.EnabledEventTypes) > 0 {
+		result["audit_enabled_event_types"] = a.EnabledEventTypes
+	}
+
+	if len(a.ExcludedTopics) > 0 {
+		result["audit_excluded_topics"] = a.ExcludedTopics
+	}
+
+	if len(a.ExcludedPrincipals) > 0 {
+		result["audit_excluded_principals"] = a.ExcludedPrincipals
+	}
+
+	return result
+}
+
+// +gotohelm:skip=true
 func (AuditLogging) JSONSchemaExtend(schema *jsonschema.Schema) {
 	makeNullable(schema, "replicationFactor", "enabledEventTypes", "excludedPrincipals", "excludedTopics")
 }
@@ -140,6 +195,34 @@ type RackAwareness struct {
 
 type Auth struct {
 	SASL *SASLAuth `json:"sasl" jsonschema:"required"`
+}
+
+func (a *Auth) IsSASLEnabled() bool {
+	if a.SASL == nil {
+		return false
+	}
+
+	return a.SASL.Enabled
+}
+
+func (a *Auth) Translate(isSASLEnabled bool) map[string]any {
+	result := map[string]any{}
+	if a.SASL == nil || !isSASLEnabled {
+		return result
+	}
+
+	if len(a.SASL.Users) == 0 {
+		return result
+	}
+
+	users := []string{}
+	for _, u := range a.SASL.Users {
+		users = append(users, u.Name)
+	}
+
+	result["superusers"] = users
+
+	return result
 }
 
 type TLS struct {
@@ -166,8 +249,20 @@ type ExternalConfig struct {
 type Logging struct {
 	LogLevel    string `json:"logLevel" jsonschema:"required,pattern=^(error|warn|info|debug|trace)$"`
 	UseageStats struct {
-		Enabled bool `json:"enabled" jsonschema:"required"`
+		Enabled      bool    `json:"enabled" jsonschema:"required"`
+		Organization *string `json:"organization"`
+		ClusterID    *string `json:"clusterId"`
 	} `json:"usageStats" jsonschema:"required"`
+}
+
+func (l *Logging) Translate() map[string]any {
+	result := map[string]any{}
+
+	if clusterID := ptr.Deref(l.UseageStats.ClusterID, ""); clusterID != "" {
+		result["cluster_id"] = clusterID
+	}
+
+	return result
 }
 
 type Monitoring struct {
@@ -180,8 +275,8 @@ type Monitoring struct {
 
 type RedpandaResources struct {
 	CPU struct {
-		Cores           any  `json:"cores" jsonschema:"required,oneof_type=integer;string"`
-		Overprovisioned bool `json:"overprovisioned"`
+		Cores           any   `json:"cores" jsonschema:"required,oneof_type=integer;string"`
+		Overprovisioned *bool `json:"overprovisioned"`
 	} `json:"cpu" jsonschema:"required"`
 	// Memory resources
 	// For details,
@@ -189,7 +284,7 @@ type RedpandaResources struct {
 	Memory struct {
 		// Enables memory locking.
 		// For production, set to `true`.
-		EnableMemoryLocking bool `json:"enable_memory_locking"`
+		EnableMemoryLocking *bool `json:"enable_memory_locking"`
 		// It is recommended to have at least 2Gi of memory per core for the Redpanda binary.
 		// This memory is taken from the total memory given to each container.
 		// The Helm chart allocates 80% of the container's memory to Redpanda, leaving the rest for
@@ -265,7 +360,79 @@ type Storage struct {
 	} `json:"tieredStoragePersistentVolume" jsonschema:"deprecated"`
 }
 
-func (Storage) JSONSchemaExtend(schema *jsonschema.Schema) {
+func (s *Storage) Translate() map[string]any {
+	result := map[string]any{}
+
+	if !s.IsTieredStorageEnabled() {
+		return result
+	}
+
+	tieredStorageConfig := s.GetTieredStorageConfig()
+	for k, v := range tieredStorageConfig {
+		if v == nil || helmette.Empty(v) {
+			continue
+		}
+
+		// cloud_storage_cache_size can be represented as Resource.Quantity that why value can be converted
+		// from value with SI suffix to bytes number.
+		if asStr, isStr := v.(string); k == "cloud_storage_cache_size" && isStr && asStr != "" {
+			result[k] = helmette.ToJSON(SIToBytes(v.(string)))
+			continue
+		}
+		if k == "cloud_storage_cache_size" {
+			if str, isStr := v.(string); isStr && str != "" {
+				result[k] = helmette.ToJSON(SIToBytes(str))
+			} else if f, isFloat := helmette.AsNumeric(v); isFloat {
+				result[k] = helmette.ToJSON(SIToBytes(helmette.ToString(int(f))))
+			}
+			continue
+		}
+
+		if str, ok := v.(string); ok {
+			result[k] = str
+		} else if b, ok := v.(bool); ok {
+			result[k] = b
+		} else if f, isFloat := helmette.AsNumeric(v); isFloat {
+			result[k] = int(f)
+		} else {
+			result[k] = helmette.MustToJSON(v)
+		}
+	}
+
+	return result
+}
+
+func (s *Storage) IsTieredStorageEnabled() bool {
+	conf := s.GetTieredStorageConfig()
+
+	b, ok := conf["cloud_storage_enabled"]
+	return ok && b.(bool)
+}
+
+func (s *Storage) GetTieredStorageConfig() TieredStorageConfig {
+	result := s.Tiered.Config
+
+	if len(s.TieredConfig) > 0 {
+		result = s.TieredConfig
+	}
+
+	return result
+}
+
+const fiveGiB = 5368709120
+
+func (s *Storage) StorageMinFreeBytes() int {
+	if s.PersistentVolume != nil && !s.PersistentVolume.Enabled {
+		// Five GiB literal
+		return fiveGiB
+	}
+
+	minimumFreeBytes := float64(SIToBytes(string(s.PersistentVolume.Size))) * 0.05
+	return helmette.Min(fiveGiB, int(minimumFreeBytes))
+}
+
+// +gotohelm:skip=true
+func (*Storage) JSONSchemaExtend(schema *jsonschema.Schema) {
 	deprecate(schema, "tieredConfig", "persistentVolume", "tieredStorageHostPath", "tieredStoragePersistentVolume")
 
 	// TODO note why we do this.
@@ -300,6 +467,7 @@ type PostUpgradeJob struct {
 
 type ContainerName string
 
+// +gotohelm:skip=true
 func (ContainerName) JSONSchemaExtend(s *jsonschema.Schema) {
 	s.Enum = append(s.Enum, RedpandaContainerName)
 }
@@ -424,6 +592,7 @@ type Statefulset struct {
 	} `json:"initContainers"`
 }
 
+// +gotohelm:skip=true
 func (Statefulset) JSONSchemaExtend(schema *jsonschema.Schema) {
 	deprecate(schema, "podSecurityContext")
 }
@@ -448,6 +617,22 @@ type Tuning struct {
 	WellKnownIO     string `json:"well_known_io"`
 }
 
+func (t *Tuning) Translate() map[string]any {
+	result := map[string]any{}
+
+	s := helmette.ToJSON(t)
+	tune := helmette.FromJSON(s)
+	m, ok := tune.(map[string]any)
+	if !ok {
+		return map[string]any{}
+	}
+	for k, v := range m {
+		result[k] = v
+	}
+
+	return result
+}
+
 type Listeners struct {
 	Admin          *AdminListeners          `json:"admin" jsonschema:"required"`
 	HTTP           *HTTPListeners           `json:"http" jsonschema:"required"`
@@ -459,6 +644,31 @@ type Listeners struct {
 	} `json:"rpc" jsonschema:"required"`
 }
 
+func (l *Listeners) CreateSeedServers(replicas int, fullname, internalDomain string) []map[string]any {
+	result := []map[string]any{}
+
+	for i := 0; i < replicas; i++ {
+		result = append(result, map[string]any{
+			"host": map[string]any{
+				"address": fmt.Sprintf("%s-%d.%s", fullname, i, internalDomain),
+				"port":    l.RPC.Port,
+			},
+		})
+	}
+
+	return result
+}
+
+func (l *Listeners) AdminList(replicas int, fullname, internalDomain string) []string {
+	result := []string{}
+
+	for i := 0; i < replicas; i++ {
+		result = append(result, fmt.Sprintf("%s-%d.%s:%d", fullname, i, internalDomain, int(l.Admin.Port)))
+	}
+
+	return result
+}
+
 type Config struct {
 	Cluster              ClusterConfig         `json:"cluster" jsonschema:"required"`
 	Node                 NodeConfig            `json:"node" jsonschema:"required"`
@@ -466,6 +676,16 @@ type Config struct {
 	SchemaRegistryClient *SchemaRegistryClient `json:"schema_registry_client"`
 	PandaProxyClient     *PandaProxyClient     `json:"pandaproxy_client"`
 	Tunable              *TunableConfig        `json:"tunable" jsonschema:"required"`
+}
+
+func (c *Config) CreateRPKConfiguration() map[string]any {
+	result := map[string]any{}
+
+	for k, v := range c.RPK {
+		result[k] = v
+	}
+
+	return result
 }
 
 type JobResources struct {
@@ -518,6 +738,7 @@ type NameOnlySecretRef struct {
 	Name string `json:"name"`
 }
 
+// +gotohelm:skip=true
 func (TLSCert) JSONSchemaExtend(schema *jsonschema.Schema) {
 	// An object reference could allow anything but we want to require that the
 	// reference is to either a ClusterIssuer or Issuer.
@@ -531,6 +752,7 @@ func (TLSCert) JSONSchemaExtend(schema *jsonschema.Schema) {
 
 type TLSCertMap map[string]TLSCert
 
+// +gotohelm:skip=true
 func (TLSCertMap) JSONSchemaExtend(schema *jsonschema.Schema) {
 	schema.PatternProperties = map[string]*jsonschema.Schema{
 		"^[A-Za-z_][A-Za-z0-9_]*$": schema.AdditionalProperties,
@@ -581,20 +803,62 @@ type AdminListeners struct {
 }
 
 type AdminExternal struct {
-	AdvertisedPorts []int32 `json:"advertisedPorts" jsonschema:"minItems=1"`
-	Enabled         *bool   `json:"enabled"`
-	Port            int32   `json:"port" jsonschema:"required"`
+	AdvertisedPorts []int32      `json:"advertisedPorts" jsonschema:"minItems=1"`
+	Enabled         *bool        `json:"enabled"`
+	Port            int32        `json:"port" jsonschema:"required"`
+	TLS             *ExternalTLS `json:"tls"`
 }
 
 type HTTPListeners struct {
 	Enabled              bool                            `json:"enabled" jsonschema:"required"`
 	External             ExternalListeners[HTTPExternal] `json:"external"`
-	AuthenticationMethod HTTPAuthenticationMethod        `json:"authenticationMethod"`
+	AuthenticationMethod *HTTPAuthenticationMethod       `json:"authenticationMethod"`
 	TLS                  InternalTLS                     `json:"tls" jsonschema:"required"`
 	KafkaEndpoint        string                          `json:"kafkaEndpoint" jsonschema:"required,pattern=^[A-Za-z_-][A-Za-z0-9_-]*$"`
 	Port                 int                             `json:"port" jsonschema:"required"`
 }
 
+func (l *HTTPListeners) Listeners(saslEnabled bool) []map[string]any {
+	internal := createInternalListenerCfg(l.Port)
+
+	if saslEnabled {
+		internal["authentication_method"] = "http_basic"
+	}
+
+	if am := ptr.Deref(l.AuthenticationMethod, ""); am != "" {
+		internal["authentication_method"] = am
+	}
+
+	result := []map[string]any{
+		internal,
+	}
+
+	for k, l := range l.External {
+		if !(ptr.Deref(l.Enabled, true) && int(l.Port) > 0) {
+			continue
+		}
+
+		listener := map[string]any{
+			"name":    k,
+			"port":    l.Port,
+			"address": "0.0.0.0",
+		}
+
+		if saslEnabled {
+			listener["authentication_method"] = "http_basic"
+		}
+
+		if am := ptr.Deref(l.AuthenticationMethod, ""); am != "" {
+			listener["authentication_method"] = am
+		}
+
+		result = append(result, listener)
+	}
+
+	return result
+}
+
+// +gotohelm:skip=true
 func (HTTPListeners) JSONSchemaExtend(schema *jsonschema.Schema) {
 	makeNullable(schema, "authenticationMethod")
 }
@@ -608,6 +872,7 @@ type HTTPExternal struct {
 	TLS                  *ExternalTLS              `json:"tls" jsonschema:"required"`
 }
 
+// +gotohelm:skip=true
 func (HTTPExternal) JSONSchemaExtend(schema *jsonschema.Schema) {
 	makeNullable(schema, "authenticationMethod")
 	// TODO document me. Legacy matching needs to be removed in a minor bump.
@@ -617,12 +882,13 @@ func (HTTPExternal) JSONSchemaExtend(schema *jsonschema.Schema) {
 }
 
 type KafkaListeners struct {
-	AuthenticationMethod KafkaAuthenticationMethod        `json:"authenticationMethod"`
+	AuthenticationMethod *KafkaAuthenticationMethod       `json:"authenticationMethod"`
 	External             ExternalListeners[KafkaExternal] `json:"external"`
 	TLS                  InternalTLS                      `json:"tls" jsonschema:"required"`
 	Port                 int                              `json:"port" jsonschema:"required"`
 }
 
+// +gotohelm:skip=true
 func (KafkaListeners) JSONSchemaExtend(schema *jsonschema.Schema) {
 	makeNullable(schema, "authenticationMethod")
 }
@@ -636,6 +902,23 @@ type KafkaExternal struct {
 	TLS                  *ExternalTLS               `json:"tls"`
 }
 
+func (e *ExternalTLS) IsEnabled() *bool {
+	if e == nil {
+		return ptr.To(false)
+	}
+
+	return e.Enabled
+}
+
+func (e *ExternalTLS) GetCert() *string {
+	if e == nil {
+		return nil
+	}
+
+	return e.Cert
+}
+
+// +gotohelm:skip=true
 func (KafkaExternal) JSONSchemaExtend(schema *jsonschema.Schema) {
 	makeNullable(schema, "authenticationMethod")
 }
@@ -649,6 +932,47 @@ type SchemaRegistryListeners struct {
 	TLS                  InternalTLS                               `json:"tls" jsonschema:"required"`
 }
 
+func (sr *SchemaRegistryListeners) Listeners(saslEnabled bool) []map[string]any {
+	internal := createInternalListenerCfg(sr.Port)
+
+	if saslEnabled {
+		internal["authentication_method"] = "http_basic"
+	}
+
+	if am := ptr.Deref(sr.AuthenticationMethod, ""); am != "" {
+		internal["authentication_method"] = am
+	}
+
+	result := []map[string]any{
+		internal,
+	}
+
+	for k, l := range sr.External {
+		if !(ptr.Deref(l.Enabled, true) && int(l.Port) > 0) {
+			continue
+		}
+
+		listener := map[string]any{
+			"name":    k,
+			"port":    l.Port,
+			"address": "0.0.0.0",
+		}
+
+		if saslEnabled {
+			listener["authentication_method"] = "http_basic"
+		}
+
+		if am := ptr.Deref(l.AuthenticationMethod, ""); am != "" {
+			listener["authentication_method"] = am
+		}
+
+		result = append(result, listener)
+	}
+
+	return result
+}
+
+// +gotohelm:skip=true
 func (SchemaRegistryListeners) JSONSchemaExtend(schema *jsonschema.Schema) {
 	makeNullable(schema, "authenticationMethod")
 }
@@ -661,6 +985,7 @@ type SchemaRegistryExternal struct {
 	TLS                  *ExternalTLS              `json:"tls"`
 }
 
+// +gotohelm:skip=true
 func (SchemaRegistryExternal) JSONSchemaExtend(schema *jsonschema.Schema) {
 	makeNullable(schema, "authenticationMethod")
 	// TODO this as well
@@ -670,6 +995,22 @@ func (SchemaRegistryExternal) JSONSchemaExtend(schema *jsonschema.Schema) {
 
 type TunableConfig map[string]any
 
+func (c *TunableConfig) Translate() map[string]any {
+	if c == nil {
+		return nil
+	}
+
+	result := map[string]any{}
+
+	for k, v := range *c {
+		if !helmette.Empty(v) {
+			result[k] = v
+		}
+	}
+	return result
+}
+
+// +gotohelm:skip=true
 func (TunableConfig) JSONSchemaExtend(schema *jsonschema.Schema) {
 	schema.AdditionalProperties = jsonschema.TrueSchema
 	schema.Properties = orderedmap.New[string, *jsonschema.Schema]()
@@ -683,7 +1024,47 @@ func (TunableConfig) JSONSchemaExtend(schema *jsonschema.Schema) {
 
 type NodeConfig map[string]any
 
+func (c *NodeConfig) Translate() map[string]any {
+	result := map[string]any{}
+
+	for k, v := range *c {
+		if !helmette.Empty(v) {
+			result[k] = helmette.ToYaml(v)
+		}
+	}
+
+	return result
+}
+
 type ClusterConfig map[string]any
+
+func (c *ClusterConfig) Translate(replicas int, skipDefaultTopic bool) map[string]any {
+	result := map[string]any{}
+
+	for k, v := range *c {
+		if k == "default_topic_replications" && !skipDefaultTopic {
+			r := int(replicas)
+			input := int(r)
+			if num, ok := helmette.AsIntegral[int](v); ok {
+				input = num
+			}
+			if f, ok := helmette.AsNumeric(v); ok {
+				input = int(f)
+			}
+			result[k] = helmette.Min(input, r+(r%2)-1)
+			continue
+		}
+		if b, ok := v.(bool); ok {
+			result[k] = b
+			continue
+		}
+		if !helmette.Empty(v) {
+			result[k] = v
+		}
+	}
+
+	return result
+}
 
 type SecretRef struct {
 	ConfigurationKey string `json:"configurationKey"`
@@ -699,27 +1080,22 @@ type TieredStorageCredentials struct {
 	SecretKey        *SecretRef `json:"secretKey"`
 }
 
-func (tsc TieredStorageCredentials) IsAccessKeyReferenceValid() bool {
+func (tsc *TieredStorageCredentials) IsAccessKeyReferenceValid() bool {
 	return tsc.AccessKey != nil && tsc.AccessKey.Name != "" && tsc.AccessKey.Key != ""
 }
 
-func (tsc TieredStorageCredentials) IsSecretKeyReferenceValid() bool {
+func (tsc *TieredStorageCredentials) IsSecretKeyReferenceValid() bool {
 	return tsc.SecretKey != nil && tsc.SecretKey.Name != "" && tsc.SecretKey.Key != ""
 }
 
+// +gotohelm:skip=true
 func (TieredStorageCredentials) JSONSchemaExtend(schema *jsonschema.Schema) {
 	deprecate(schema, "configurationKey", "key", "name")
 }
 
 type TieredStorageConfig map[string]any
 
-func (tsc TieredStorageConfig) IsTieredStorageEnabled() bool {
-	if b, ok := tsc["cloud_storage_enabled"]; ok && b.(bool) {
-		return true
-	}
-	return false
-}
-
+// +gotohelm:skip=true
 func (TieredStorageConfig) JSONSchema() *jsonschema.Schema {
 	type schema struct {
 		CloudStorageEnabled                     bool   `json:"cloud_storage_enabled" jsonschema:"required"`
