@@ -530,6 +530,9 @@ storage:
       # Note that the container must belong to the account specified by `cloud_storage_azure_storage_account`.
       # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_azure_container).
       cloud_storage_azure_container: null
+      # The managed identity ID to access the Azure storage account.
+      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_azure_managed_identity_id).
+      cloud_storage_azure_managed_identity_id: null
       # -- Name of the Azure storage account to use with Tiered Storage (required for ABS/ADLS).
       # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_azure_storage_account).
       cloud_storage_azure_storage_account: null
@@ -546,6 +549,8 @@ storage:
       # * `aws_instance_metadata`
       # * `sts`
       # * `gcp_instance_metadata`
+      # * `azure_aks_oidc_federation`
+      # * `azure_vm_instance_metadata`
       # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_credentials_source).
       cloud_storage_credentials_source: config_file
 
