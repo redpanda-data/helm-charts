@@ -1,0 +1,9 @@
+statefulset:
+  initContainers:
+    fsValidator:
+      enabled: true
+    setDataDirOwnership:
+      enabled: true
+  sideCars:
+    controllers:
+      enabled: true

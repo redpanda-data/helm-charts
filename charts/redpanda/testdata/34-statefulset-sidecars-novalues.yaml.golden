@@ -216,6 +216,60 @@ stringData:
 
     rpk redpanda config --config "$CONFIG" set pandaproxy.advertised_pandaproxy_api[1] "${ADVERTISED_HTTP_ADDRESSES[$POD_ORDINAL]}"
 ---
+# Source: redpanda/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: redpanda-fs-validator
+  namespace: "default"
+  labels:
+    app.kubernetes.io/component: redpanda
+    app.kubernetes.io/instance: redpanda
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: redpanda
+    helm.sh/chart: redpanda-5.8.1
+type: Opaque
+stringData:
+  fsValidator.sh: |-
+    set -e
+    EXPECTED_FS_TYPE=$1
+
+    DATA_DIR="/var/lib/redpanda/data"
+    TEST_FILE="testfile"
+
+    echo "checking data directory exist..."
+    if [ ! -d "${DATA_DIR}" ]; then
+      echo "data directory does not exists, exiting"
+      exit 1
+    fi
+
+    echo "checking filesystem type..."
+    FS_TYPE=$(df -T $DATA_DIR  | tail -n +2 | awk '{print $2}')
+
+    if [ "${FS_TYPE}" != "${EXPECTED_FS_TYPE}" ]; then
+      echo "file system found to be ${FS_TYPE} when expected ${EXPECTED_FS_TYPE}"
+      exit 1
+    fi
+
+    echo "checking if able to create a test file..."
+
+    touch ${DATA_DIR}/${TEST_FILE}
+    result=$(touch ${DATA_DIR}/${TEST_FILE} 2> /dev/null; echo $?)
+    if [ "${result}" != "0" ]; then
+      echo "could not write testfile, may not have write permission"
+      exit 1
+    fi
+
+    echo "checking if able to delete a test file..."
+
+    result=$(rm ${DATA_DIR}/${TEST_FILE} 2> /dev/null; echo $?)
+    if [ "${result}" != "0" ]; then
+      echo "could not delete testfile"
+      exit 1
+    fi
+
+    echo "passed"
+---
 # Source: redpanda/templates/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
@@ -497,6 +551,129 @@ data:
         - https://redpanda-2.redpanda.default.svc.cluster.local.:8081
       tls:
         enabled: true
+---
+# Source: redpanda/templates/rbac.yaml
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: redpanda-sidecar-controllers
+  labels:
+    app.kubernetes.io/component: redpanda
+    app.kubernetes.io/instance: redpanda
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: redpanda
+    helm.sh/chart: redpanda-5.8.1
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - nodes
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - persistentvolumes
+    verbs:
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+---
+# Source: redpanda/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: redpanda-sidecar-controllers
+  labels:
+    app.kubernetes.io/component: redpanda
+    app.kubernetes.io/instance: redpanda
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: redpanda
+    helm.sh/chart: redpanda-5.8.1
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: redpanda-sidecar-controllers
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: "default"
+---
+# Source: redpanda/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: redpanda-sidecar-controllers
+  labels:
+    app.kubernetes.io/component: redpanda
+    app.kubernetes.io/instance: redpanda
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: redpanda
+    helm.sh/chart: redpanda-5.8.1
+rules:
+  - apiGroups:
+      - apps
+    resources:
+      - statefulsets/status
+    verbs:
+      - patch
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+      - pods
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - apps
+    resources:
+      - statefulsets
+    verbs:
+      - get
+      - patch
+      - update
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - persistentvolumeclaims
+    verbs:
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+---
+# Source: redpanda/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: redpanda-sidecar-controllers
+  labels:
+    app.kubernetes.io/component: redpanda
+    app.kubernetes.io/instance: redpanda
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: redpanda
+    helm.sh/chart: redpanda-5.8.1
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: redpanda-sidecar-controllers
+subjects:
+  - kind: ServiceAccount
+    name: default
+    namespace: "default"
 ---
 # Source: redpanda/charts/console/templates/service.yaml
 apiVersion: v1
@@ -789,6 +966,37 @@ spec:
               mountPath: /etc/tls/certs/external
             - name: redpanda
               mountPath: /etc/redpanda
+        - name: set-datadir-ownership
+          image: busybox:latest
+          command: ["/bin/sh", "-c", "chown 101:101 -R /var/lib/redpanda/data"]
+          volumeMounts: 
+            
+            - name: redpanda-default-cert
+              mountPath: /etc/tls/certs/default
+            - name: redpanda-external-cert
+              mountPath: /etc/tls/certs/external
+            - name: datadir
+              mountPath: /var/lib/redpanda/data
+        - name: fs-validator
+          image: docker.redpanda.com/redpandadata/redpanda:v23.3.11
+          command:
+            - /bin/sh
+          args:
+            - -c
+            - 'trap "exit 0" TERM; exec /etc/secrets/fs-validator/scripts/fsValidator.sh xfs & wait $!'
+          securityContext: 
+            runAsUser: 101
+            runAsGroup: 101
+          volumeMounts: 
+            
+            - name: redpanda-default-cert
+              mountPath: /etc/tls/certs/default
+            - name: redpanda-external-cert
+              mountPath: /etc/tls/certs/external
+            - name: redpanda-fs-validator
+              mountPath: /etc/secrets/fs-validator/scripts/
+            - name: datadir
+              mountPath: /var/lib/redpanda/data
         - name: redpanda-configurator
           image: docker.redpanda.com/redpandadata/redpanda:v23.3.11
           command:
@@ -842,10 +1050,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.hostIP
-            - name: EXTRA_ENV_VAR
-              value: THIS_IS_AN_EXAMPLE
-            - name: POD_IP
-              value: This is an override and will break the deployment
           # finish the lifecycle scripts with "true" to prevent them from terminating the pod prematurely
           lifecycle:
             postStart:
