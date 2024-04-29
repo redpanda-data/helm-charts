@@ -106,6 +106,7 @@ spec:
           args:
             - -c
             - 'trap "exit 0" TERM; exec /etc/secrets/fs-validator/scripts/fsValidator.sh {{ .Values.statefulset.initContainers.fsValidator.expectedFS }} & wait $!'
+          securityContext: {{ include "container-security-context" . | nindent 12 }}
           volumeMounts: {{ include "common-mounts" . | nindent 12 }}
   {{- if dig "initContainers" "fsValidator" "extraVolumeMounts" false .Values.statefulset -}}
     {{ tpl .Values.statefulset.initContainers.fsValidator.extraVolumeMounts . | nindent 12 }}
