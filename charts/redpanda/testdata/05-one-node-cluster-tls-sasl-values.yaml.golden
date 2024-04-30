@@ -174,8 +174,15 @@ stringData:
 
     set -e
 
+    # rpk cluster health can exit non-zero if it's unable to dial brokers. This
+    # can happen for many reasons but we never want this script to crash as it
+    # would take down yet another broker and make a bad situation worse.
+    # Instead, just wait for the command to eventually exit zero.
     echo "Waiting for cluster to be ready"
-    rpk cluster health --watch --exit-when-healthy
+    until rpk cluster health --watch --exit-when-healthy; do
+      echo "rpk cluster health failed. Waiting 5 seconds before trying again..."
+      sleep 5
+    done
     while true; do
       echo "RUNNING: Monitoring and Updating SASL users"
       USERS_DIR="/etc/secrets/users"
