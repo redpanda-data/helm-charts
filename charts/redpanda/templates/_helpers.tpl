@@ -257,28 +257,28 @@ than 1 core.
 {{- end -}}
 
 {{- define "redpanda-atleast-22-2-0" -}}
-{{- toJson (dict "bool" (or (not (eq .Values.image.repository "docker.redpanda.com/redpandadata/redpanda")) (include "redpanda.semver" . | semverCompare ">=22.2.0-0 || <0.0.1-0"))) -}}
+{{- toJson (dict "bool" (get ((include "redpanda.RedpandaAtLeast_22_2_0" (dict "a" (list .))) | fromJson) "r")) }}
 {{- end -}}
 {{- define "redpanda-atleast-22-3-0" -}}
-{{- toJson (dict "bool" (or (not (eq .Values.image.repository "docker.redpanda.com/redpandadata/redpanda")) (include "redpanda.semver" . | semverCompare ">=22.3.0-0 || <0.0.1-0"))) -}}
+{{- toJson (dict "bool" (get ((include "redpanda.RedpandaAtLeast_22_3_0" (dict "a" (list .))) | fromJson) "r")) }}
 {{- end -}}
 {{- define "redpanda-atleast-23-1-1" -}}
-{{- toJson (dict "bool" (or (not (eq .Values.image.repository "docker.redpanda.com/redpandadata/redpanda")) (include "redpanda.semver" . | semverCompare ">=23.1.1-0 || <0.0.1-0"))) -}}
+{{- toJson (dict "bool" (get ((include "redpanda.RedpandaAtLeast_23_1_1" (dict "a" (list .))) | fromJson) "r")) }}
 {{- end -}}
 {{- define "redpanda-atleast-23-1-2" -}}
-{{- toJson (dict "bool" (or (not (eq .Values.image.repository "docker.redpanda.com/redpandadata/redpanda")) (include "redpanda.semver" . | semverCompare ">=23.1.2-0 || <0.0.1-0"))) -}}
+{{- toJson (dict "bool" (get ((include "redpanda.RedpandaAtLeast_23_1_2" (dict "a" (list .))) | fromJson) "r")) }}
 {{- end -}}
 {{- define "redpanda-22-3-atleast-22-3-13" -}}
-{{- toJson (dict "bool" (or (not (eq .Values.image.repository "docker.redpanda.com/redpandadata/redpanda")) (include "redpanda.semver" . | semverCompare ">=22.3.13-0,<22.4"))) -}}
+{{- toJson (dict "bool" (get ((include "redpanda.RedpandaAtLeast_22_3_atleast_22_3_13" (dict "a" (list .))) | fromJson) "r")) }}
 {{- end -}}
 {{- define "redpanda-22-2-atleast-22-2-10" -}}
-{{- toJson (dict "bool" (or (not (eq .Values.image.repository "docker.redpanda.com/redpandadata/redpanda")) (include "redpanda.semver" . | semverCompare ">=22.2.10-0,<22.3"))) -}}
+{{- toJson (dict "bool" (get ((include "redpanda.RedpandaAtLeast_22_2_atleast_22_2_10" (dict "a" (list .))) | fromJson) "r")) }}
 {{- end -}}
 {{- define "redpanda-atleast-23-2-1" -}}
-{{- toJson (dict "bool" (or (not (eq .Values.image.repository "docker.redpanda.com/redpandadata/redpanda")) (include "redpanda.semver" . | semverCompare ">=23.2.1-0 || <0.0.1-0"))) -}}
+{{- toJson (dict "bool" (get ((include "redpanda.RedpandaAtLeast_23_2_1" (dict "a" (list .))) | fromJson) "r")) }}
 {{- end -}}
 {{- define "redpanda-atleast-23-3-0" -}}
-{{- toJson (dict "bool" (or (not (eq .Values.image.repository "docker.redpanda.com/redpandadata/redpanda")) (include "redpanda.semver" . | semverCompare ">=23.3.0-0 || <0.0.1-0"))) -}}
+{{- toJson (dict "bool" (get ((include "redpanda.RedpandaAtLeast_23_3_0" (dict "a" (list .))) | fromJson) "r")) }}
 {{- end -}}
 
 {{- define "redpanda-22-2-x-without-sasl" -}}

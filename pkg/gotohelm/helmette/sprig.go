@@ -11,6 +11,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/Masterminds/sprig/v3"
 	"github.com/imdario/mergo"
 	"golang.org/x/exp/maps"
 )
@@ -305,4 +306,10 @@ func ToString(input any) string {
 	default:
 		return fmt.Sprintf("%v", v)
 	}
+}
+
+// +gotohelm:builtin=semverCompare
+func SemverCompare(constraint, version string) (bool, error) {
+	fn := sprig.FuncMap()["semverCompare"].(func(string, string) (bool, error))
+	return fn(constraint, version)
 }
