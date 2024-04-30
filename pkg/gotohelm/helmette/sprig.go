@@ -10,6 +10,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/Masterminds/sprig/v3"
 	"github.com/imdario/mergo"
 	"golang.org/x/exp/maps"
 )
@@ -250,4 +251,10 @@ func Float64(in string) (float64, error) {
 // +gotohelm:builtin=len
 func Len(in any) int {
 	return reflect.ValueOf(in).Len()
+}
+
+// +gotohelm:builtin=semverCompare
+func SemverCompare(constraint, version string) (bool, error) {
+	fn := sprig.FuncMap()["semverCompare"].(func(string, string) (bool, error))
+	return fn(constraint, version)
 }

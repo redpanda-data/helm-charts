@@ -25,6 +25,17 @@ import (
 	"k8s.io/utils/ptr"
 )
 
+const (
+	redpanda_22_2_0               = ">=22.2.0-0 || <0.0.1-0"
+	redpanda_22_3_0               = ">=22.3.0-0 || <0.0.1-0"
+	redpanda_23_1_1               = ">=23.1.1-0 || <0.0.1-0"
+	redpanda_23_1_2               = ">=23.1.2-0 || <0.0.1-0"
+	redpanda_22_3_atleast_22_3_13 = ">=22.3.13-0,<22.4"
+	redpanda_22_2_atleast_22_2_10 = ">=22.2.10-0,<22.3"
+	redpanda_23_2_1               = ">=23.2.1-0 || <0.0.1-0"
+	redpanda_23_3_0               = ">=23.3.0-0 || <0.0.1-0"
+)
+
 // Create chart name and version as used by the chart label.
 func Chart(dot *helmette.Dot) string {
 	return cleanForK8s(strings.ReplaceAll(fmt.Sprintf("%s-%s", dot.Chart.Name, dot.Chart.Version), "+", "_"))
@@ -199,6 +210,54 @@ func ContainerSecurityContext(dot *helmette.Dot) *corev1.SecurityContext {
 		AllowPrivilegeEscalation: sc.AllowPriviledgeEscalation,
 		RunAsNonRoot:             sc.RunAsNonRoot,
 	}
+}
+
+func RedpandaAtLeast_22_2_0(dot *helmette.Dot) bool {
+	return redpandaAtLeast(dot, redpanda_22_2_0)
+}
+
+func RedpandaAtLeast_22_3_0(dot *helmette.Dot) bool {
+	return redpandaAtLeast(dot, redpanda_23_3_0)
+}
+
+func RedpandaAtLeast_23_1_1(dot *helmette.Dot) bool {
+	return redpandaAtLeast(dot, redpanda_23_1_1)
+}
+
+func RedpandaAtLeast_23_1_2(dot *helmette.Dot) bool {
+	return redpandaAtLeast(dot, redpanda_23_1_2)
+}
+
+func RedpandaAtLeast_22_3_atleast_22_3_13(dot *helmette.Dot) bool {
+	return redpandaAtLeast(dot, redpanda_22_3_atleast_22_3_13)
+}
+
+func RedpandaAtLeast_22_2_atleast_22_2_10(dot *helmette.Dot) bool {
+	return redpandaAtLeast(dot, redpanda_22_2_atleast_22_2_10)
+}
+
+func RedpandaAtLeast_23_2_1(dot *helmette.Dot) bool {
+	return redpandaAtLeast(dot, redpanda_23_2_1)
+}
+
+func RedpandaAtLeast_23_3_0(dot *helmette.Dot) bool {
+	return redpandaAtLeast(dot, redpanda_23_3_0)
+}
+
+func redpandaAtLeast(dot *helmette.Dot, constraint string) bool {
+	values := helmette.Unwrap[Values](dot.Values)
+
+	if values.Image.Repository != "docker.redpanda.com/redpandadata/redpanda" {
+		return true
+	}
+
+	version := strings.TrimPrefix(Tag(dot), "v")
+
+	result, err := helmette.SemverCompare(constraint, version)
+	if err != nil {
+		panic(err)
+	}
+	return result
 }
 
 func cleanForK8s(in string) string {
