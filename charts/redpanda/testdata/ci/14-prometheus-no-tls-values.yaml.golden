@@ -1037,12 +1037,12 @@ spec:
           runAsNonRoot: null
           runAsUser: 101
         volumeMounts:
-          - name: config
-            mountPath: /etc/redpanda
+          - mountPath: /etc/redpanda
+            name: config
       volumes: 
-        - name: config
-          configMap:
+        - configMap:
             name: redpanda
+          name: config
       serviceAccountName: default
 ---
 # Source: redpanda/templates/post-upgrade.yaml
@@ -1100,9 +1100,9 @@ spec:
           runAsNonRoot: null
           runAsUser: 101
         volumeMounts:
-          - name: config
-            mountPath: /etc/redpanda
+          - mountPath: /etc/redpanda
+            name: config
       volumes: 
-        - name: config
-          configMap:
+        - configMap:
             name: redpanda
+          name: config

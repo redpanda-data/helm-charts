@@ -393,7 +393,7 @@ type PartialTLSCert struct {
 	ApplyInternalDNSNames *bool                   `json:"applyInternalDNSNames,omitempty"`
 	Duration              *string                 `json:"duration,omitempty" jsonschema:"pattern=.*[smh]$"`
 	IssuerRef             *cmmeta.ObjectReference `json:"issuerRef,omitempty"`
-	SecretRef             struct {
+	SecretRef             *struct {
 		Name *string `json:"name,omitempty"`
 	} `json:"secretRef,omitempty"`
 }

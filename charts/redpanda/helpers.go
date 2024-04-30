@@ -183,6 +183,125 @@ func ClientAuthRequired(dot *helmette.Dot) bool {
 	return false
 }
 
+// mounts that are common to most containers
+func DefaultMounts(dot *helmette.Dot) []corev1.VolumeMount {
+	return append([]corev1.VolumeMount{
+		{
+			Name:      "config",
+			MountPath: "/etc/redpanda",
+		},
+	}, CommonMounts(dot)...)
+}
+
+// mounts that are common to all containers
+func CommonMounts(dot *helmette.Dot) []corev1.VolumeMount {
+	values := helmette.Unwrap[Values](dot.Values)
+
+	mounts := []corev1.VolumeMount{}
+
+	if sasl := values.Auth.SASL; sasl.Enabled && sasl.SecretRef != "" {
+		mounts = append(mounts, corev1.VolumeMount{
+			Name:      "users",
+			MountPath: "/etc/secrets/users",
+			ReadOnly:  true,
+		})
+	}
+
+	if TLSEnabled(dot) {
+		certNames := helmette.Keys(values.TLS.Certs)
+		helmette.SortAlpha(certNames)
+
+		for _, name := range certNames {
+			mounts = append(mounts, corev1.VolumeMount{
+				Name:      fmt.Sprintf("redpanda-%s-cert", name),
+				MountPath: fmt.Sprintf("/etc/tls/certs/%s", name),
+			})
+		}
+
+		if ClientAuthRequired(dot) {
+			mounts = append(mounts, corev1.VolumeMount{
+				Name:      "mtls-client",
+				MountPath: fmt.Sprintf("/etc/tls/certs/%s-client", Fullname(dot)),
+			})
+		}
+	}
+
+	return mounts
+}
+
+func DefaultVolumes(dot *helmette.Dot) []corev1.Volume {
+	return append([]corev1.Volume{
+		{
+			Name: "config",
+			VolumeSource: corev1.VolumeSource{
+				ConfigMap: &corev1.ConfigMapVolumeSource{
+					LocalObjectReference: corev1.LocalObjectReference{
+						Name: Fullname(dot),
+					},
+				},
+			},
+		},
+	}, CommonVolumes(dot)...)
+}
+
+// volumes that are common to all pods
+func CommonVolumes(dot *helmette.Dot) []corev1.Volume {
+	volumes := []corev1.Volume{}
+	values := helmette.Unwrap[Values](dot.Values)
+
+	if TLSEnabled(dot) {
+		certNames := helmette.Keys(values.TLS.Certs)
+		helmette.SortAlpha(certNames)
+
+		for _, name := range certNames {
+			cert := values.TLS.Certs[name]
+
+			volumes = append(volumes, corev1.Volume{
+				Name: fmt.Sprintf("redpanda-%s-cert", name),
+				VolumeSource: corev1.VolumeSource{
+					Secret: &corev1.SecretVolumeSource{
+						SecretName: CertSecretName(dot, name, &cert),
+						DefaultMode: ptr.To[int32](0o440),
+					},
+				},
+			})
+		}
+
+		if ClientAuthRequired(dot) {
+			volumes = append(volumes, corev1.Volume{
+				Name: "mtls-client",
+				VolumeSource: corev1.VolumeSource{
+					Secret: &corev1.SecretVolumeSource{
+						SecretName: fmt.Sprintf("%s-client", Fullname(dot)),
+						DefaultMode: ptr.To[int32](0o440),
+					},
+				},
+			})
+		}
+	}
+
+	if sasl := values.Auth.SASL; sasl.Enabled && sasl.SecretRef != "" {
+		volumes = append(volumes, corev1.Volume{
+			Name: "users",
+			VolumeSource: corev1.VolumeSource{
+				Secret: &corev1.SecretVolumeSource{
+					SecretName: sasl.SecretRef,
+				},
+			},
+		})
+	}
+
+	return volumes
+}
+
+// return correct secretName to use based if secretRef exists
+func CertSecretName(dot *helmette.Dot, certName string, cert *TLSCert) string {
+	if cert.SecretRef != nil {
+		return cert.SecretRef.Name
+	}
+	return fmt.Sprintf("%s-%s-cert", Fullname(dot), certName)
+}
+
 // PodSecurityContext returns a subset of [corev1.PodSecurityContext] for the
 // redpanda Statefulset. It is also used as the default PodSecurityContext.
 func PodSecurityContext(dot *helmette.Dot) *corev1.PodSecurityContext {

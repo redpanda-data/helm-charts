@@ -510,7 +510,7 @@ type TLSCert struct {
 	ApplyInternalDNSNames *bool                   `json:"applyInternalDNSNames"`
 	Duration              string                  `json:"duration" jsonschema:"pattern=.*[smh]$"`
 	IssuerRef             *cmmeta.ObjectReference `json:"issuerRef"`
-	SecretRef             struct {
+	SecretRef             *struct {
 		Name string `json:"name"`
 	} `json:"secretRef"`
 }
