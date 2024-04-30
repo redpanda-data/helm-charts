@@ -994,14 +994,13 @@ spec:
             runAsUser: 0
             runAsGroup: 0
           volumeMounts: 
-            
-            - name: users
-              mountPath: /etc/secrets/users
+            - mountPath: /etc/secrets/users
+              name: users
               readOnly: true
-            - name: redpanda-default-cert
-              mountPath: /etc/tls/certs/default
-            - name: redpanda-external-cert
-              mountPath: /etc/tls/certs/external
+            - mountPath: /etc/tls/certs/default
+              name: redpanda-default-cert
+            - mountPath: /etc/tls/certs/external
+              name: redpanda-external-cert
             - name: redpanda
               mountPath: /etc/redpanda
         - name: redpanda-configurator
@@ -1032,14 +1031,13 @@ spec:
             runAsNonRoot: null
             runAsUser: 101
           volumeMounts: 
-            
-            - name: users
-              mountPath: /etc/secrets/users
+            - mountPath: /etc/secrets/users
+              name: users
               readOnly: true
-            - name: redpanda-default-cert
-              mountPath: /etc/tls/certs/default
-            - name: redpanda-external-cert
-              mountPath: /etc/tls/certs/external
+            - mountPath: /etc/tls/certs/default
+              name: redpanda-default-cert
+            - mountPath: /etc/tls/certs/external
+              name: redpanda-external-cert
             - name: config
               mountPath: /etc/redpanda
             - name: redpanda
@@ -1154,14 +1152,13 @@ spec:
             runAsNonRoot: null
             runAsUser: 101
           volumeMounts: 
-            
-            - name: users
-              mountPath: /etc/secrets/users
+            - mountPath: /etc/secrets/users
+              name: users
               readOnly: true
-            - name: redpanda-default-cert
-              mountPath: /etc/tls/certs/default
-            - name: redpanda-external-cert
-              mountPath: /etc/tls/certs/external
+            - mountPath: /etc/tls/certs/default
+              name: redpanda-default-cert
+            - mountPath: /etc/tls/certs/external
+              name: redpanda-external-cert
             - name: config
               mountPath: /etc/redpanda
             - name: redpanda
@@ -1182,28 +1179,26 @@ spec:
             - -c
             - 'trap "exit 0" TERM; exec /etc/secrets/config-watcher/scripts/sasl-user.sh & wait $!'
           volumeMounts: 
-            
-            - name: users
-              mountPath: /etc/secrets/users
+            - mountPath: /etc/secrets/users
+              name: users
               readOnly: true
-            - name: redpanda-default-cert
-              mountPath: /etc/tls/certs/default
-            - name: redpanda-external-cert
-              mountPath: /etc/tls/certs/external
+            - mountPath: /etc/tls/certs/default
+              name: redpanda-default-cert
+            - mountPath: /etc/tls/certs/external
+              name: redpanda-external-cert
             - name: config
               mountPath: /etc/redpanda
             - name: redpanda-config-watcher
               mountPath: /etc/secrets/config-watcher/scripts
       volumes: 
-        
         - name: redpanda-default-cert
           secret:
+            defaultMode: 288
             secretName: redpanda-default-cert
-            defaultMode: 0o440
         - name: redpanda-external-cert
           secret:
+            defaultMode: 288
             secretName: redpanda-external-cert
-            defaultMode: 0o440
         - name: users
           secret:
             secretName: redpanda-users
@@ -1558,27 +1553,27 @@ spec:
           runAsNonRoot: null
           runAsUser: 101
         volumeMounts:
-          - name: config
-            mountPath: /etc/redpanda
-          - name: users
-            mountPath: /etc/secrets/users
+          - mountPath: /etc/redpanda
+            name: config
+          - mountPath: /etc/secrets/users
+            name: users
             readOnly: true
-          - name: redpanda-default-cert
-            mountPath: /etc/tls/certs/default
-          - name: redpanda-external-cert
-            mountPath: /etc/tls/certs/external
+          - mountPath: /etc/tls/certs/default
+            name: redpanda-default-cert
+          - mountPath: /etc/tls/certs/external
+            name: redpanda-external-cert
       volumes: 
-        - name: config
-          configMap:
+        - configMap:
             name: redpanda
+          name: config
         - name: redpanda-default-cert
           secret:
+            defaultMode: 288
             secretName: redpanda-default-cert
-            defaultMode: 0o440
         - name: redpanda-external-cert
           secret:
+            defaultMode: 288
             secretName: redpanda-external-cert
-            defaultMode: 0o440
         - name: users
           secret:
             secretName: redpanda-users
@@ -1639,27 +1634,27 @@ spec:
           runAsNonRoot: null
           runAsUser: 101
         volumeMounts:
-          - name: config
-            mountPath: /etc/redpanda
-          - name: users
-            mountPath: /etc/secrets/users
+          - mountPath: /etc/redpanda
+            name: config
+          - mountPath: /etc/secrets/users
+            name: users
             readOnly: true
-          - name: redpanda-default-cert
-            mountPath: /etc/tls/certs/default
-          - name: redpanda-external-cert
-            mountPath: /etc/tls/certs/external
+          - mountPath: /etc/tls/certs/default
+            name: redpanda-default-cert
+          - mountPath: /etc/tls/certs/external
+            name: redpanda-external-cert
       volumes: 
-        - name: config
-          configMap:
+        - configMap:
             name: redpanda
+          name: config
         - name: redpanda-default-cert
           secret:
+            defaultMode: 288
             secretName: redpanda-default-cert
-            defaultMode: 0o440
         - name: redpanda-external-cert
           secret:
+            defaultMode: 288
             secretName: redpanda-external-cert
-            defaultMode: 0o440
         - name: users
           secret:
             secretName: redpanda-users

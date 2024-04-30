@@ -772,9 +772,8 @@ spec:
             runAsUser: 0
             runAsGroup: 0
           volumeMounts: 
-            
-            - name: users
-              mountPath: /etc/secrets/users
+            - mountPath: /etc/secrets/users
+              name: users
               readOnly: true
             - name: redpanda
               mountPath: /etc/redpanda
@@ -806,9 +805,8 @@ spec:
             runAsNonRoot: null
             runAsUser: 101
           volumeMounts: 
-            
-            - name: users
-              mountPath: /etc/secrets/users
+            - mountPath: /etc/secrets/users
+              name: users
               readOnly: true
             - name: config
               mountPath: /etc/redpanda
@@ -924,9 +922,8 @@ spec:
             runAsNonRoot: null
             runAsUser: 101
           volumeMounts: 
-            
-            - name: users
-              mountPath: /etc/secrets/users
+            - mountPath: /etc/secrets/users
+              name: users
               readOnly: true
             - name: config
               mountPath: /etc/redpanda
@@ -948,16 +945,14 @@ spec:
             - -c
             - 'trap "exit 0" TERM; exec /etc/secrets/config-watcher/scripts/sasl-user.sh & wait $!'
           volumeMounts: 
-            
-            - name: users
-              mountPath: /etc/secrets/users
+            - mountPath: /etc/secrets/users
+              name: users
               readOnly: true
             - name: config
               mountPath: /etc/redpanda
             - name: redpanda-config-watcher
               mountPath: /etc/secrets/config-watcher/scripts
       volumes: 
-        
         - name: users
           secret:
             secretName: redpanda-users
@@ -1114,15 +1109,15 @@ spec:
           runAsNonRoot: null
           runAsUser: 101
         volumeMounts:
-          - name: config
-            mountPath: /etc/redpanda
-          - name: users
-            mountPath: /etc/secrets/users
+          - mountPath: /etc/redpanda
+            name: config
+          - mountPath: /etc/secrets/users
+            name: users
             readOnly: true
       volumes: 
-        - name: config
-          configMap:
+        - configMap:
             name: redpanda
+          name: config
         - name: users
           secret:
             secretName: redpanda-users
@@ -1183,15 +1178,15 @@ spec:
           runAsNonRoot: null
           runAsUser: 101
         volumeMounts:
-          - name: config
-            mountPath: /etc/redpanda
-          - name: users
-            mountPath: /etc/secrets/users
+          - mountPath: /etc/redpanda
+            name: config
+          - mountPath: /etc/secrets/users
+            name: users
             readOnly: true
       volumes: 
-        - name: config
-          configMap:
+        - configMap:
             name: redpanda
+          name: config
         - name: users
           secret:
             secretName: redpanda-users
