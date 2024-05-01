@@ -1847,6 +1847,51 @@ entries:
           description: Define a Redpanda cluster
       artifacthub.io/images: |
         - name: redpanda-operator
+          image: docker.redpanda.com/redpandadata/redpanda-operator:v2.1.18-23.3.13
+        - name: configurator
+          image: docker.redpanda.com/redpandadata/configurator:v2.1.18-23.3.13
+        - name: redpanda
+          image: docker.redpanda.com/redpandadata/redpanda:v24.1.1
+        - name: kube-rbac-proxy
+          image: gcr.io/kubebuilder/kube-rbac-proxy:v0.14.0
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://docs.redpanda.com
+        - name: "Helm (>= 3.6.0)"
+          url: https://helm.sh/docs/intro/install/
+      artifacthub.io/operator: "true"
+      artifacthub.io/operatorCapabilities: Seamless Upgrades
+    apiVersion: v2
+    appVersion: v2.1.18-23.3.13
+    created: "2024-05-01T14:45:04.415015419Z"
+    dependencies:
+    - condition: monitoring.deployPrometheusKubeStack
+      name: kube-prometheus-stack
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 51.2.0
+    description: Redpanda operator helm chart
+    digest: 871f37a3e857f675cd6f79a9b7d9ccd21f72a6222096928b5e178da33143b8dc
+    icon: https://go.redpanda.com/hubfs/Redpandas/operator-panda.png
+    maintainers:
+    - name: redpanda-data
+      url: https://github.com/orgs/redpanda-data/people
+    name: operator
+    sources:
+    - https://github.com/redpanda-data/helm-charts
+    type: application
+    urls:
+    - https://github.com/redpanda-data/helm-charts/releases/download/operator-0.4.22/operator-0.4.22.tgz
+    version: 0.4.22
+  - annotations:
+      artifacthub.io/crds: |
+        - kind: Redpanda
+          version: v1alpha1
+          name: redpanda
+          displayName: Redpanda
+          description: Define a Redpanda cluster
+      artifacthub.io/images: |
+        - name: redpanda-operator
           image: docker.redpanda.com/redpandadata/redpanda-operator:v2.1.16-23.3.11
         - name: configurator
           image: docker.redpanda.com/redpandadata/configurator:v2.1.16-23.3.11
@@ -3931,6 +3976,46 @@ entries:
     - https://github.com/redpanda-data/helm-charts/releases/download/operator-0.3.1/operator-0.3.1.tgz
     version: 0.3.1
   redpanda:
+  - annotations:
+      artifacthub.io/images: |
+        - name: redpanda
+          image: docker.redpanda.com/redpandadata/redpanda:v24.1.1
+        - name: busybox
+          image: busybox:latest
+        - name: mintel/docker-alpine-bash-curl-jq
+          image: mintel/docker-alpine-bash-curl-jq:latest
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://docs.redpanda.com
+        - name: "Helm (>= 3.10.0)"
+          url: https://helm.sh/docs/intro/install/
+    apiVersion: v2
+    appVersion: v24.1.1
+    created: "2024-05-01T14:45:04.552264675Z"
+    dependencies:
+    - condition: console.enabled
+      name: console
+      repository: https://charts.redpanda.com
+      version: '>=0.5 <1.0'
+    - condition: connectors.enabled
+      name: connectors
+      repository: https://charts.redpanda.com
+      version: '>=0.1.2 <1.0'
+    description: Redpanda is the real-time engine for modern apps.
+    digest: df5f0b2e2638c6b55ee7baf5e296391ca7ed3f20c68243aff7e080d775abd3a1
+    icon: https://images.ctfassets.net/paqvtpyf8rwu/3cYHw5UzhXCbKuR24GDFGO/73fb682e6157d11c10d5b2b5da1d5af0/skate-stand-panda.svg
+    kubeVersion: ^1.21.0-0
+    maintainers:
+    - name: redpanda-data
+      url: https://github.com/orgs/redpanda-data/people
+    name: redpanda
+    sources:
+    - https://github.com/redpanda-data/helm-charts
+    type: application
+    urls:
+    - https://github.com/redpanda-data/helm-charts/releases/download/redpanda-5.8.3/redpanda-5.8.3.tgz
+    version: 5.8.3
   - annotations:
       artifacthub.io/images: |
         - name: redpanda
@@ -15125,4 +15210,4 @@ entries:
     urls:
     - https://charts.redpanda.com/redpanda-0.1.0.tgz
     version: 0.1.0
-generated: "2024-04-29T19:56:21.942863857Z"
+generated: "2024-05-01T14:45:04.553319548Z"
