@@ -4,11 +4,7 @@
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $values := $dot.Values.AsMap -}}
-{{- $monitoringEnabled := false -}}
-{{- if (ne $values.monitoring.enabled (coalesce nil)) -}}
-{{- $monitoringEnabled = $values.monitoring.enabled -}}
-{{- end -}}
-{{- if (not $monitoringEnabled) -}}
+{{- if (not $values.monitoring.enabled) -}}
 {{- (dict "r" (coalesce nil)) | toJson -}}
 {{- break -}}
 {{- end -}}

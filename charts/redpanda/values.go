@@ -169,7 +169,7 @@ type Logging struct {
 }
 
 type Monitoring struct {
-	Enabled        *bool                   `json:"enabled" jsonschema:"required"`
+	Enabled        bool                    `json:"enabled" jsonschema:"required"`
 	ScrapeInterval monitoringv1.Duration   `json:"scrapeInterval" jsonschema:"required"`
 	Labels         map[string]string       `json:"labels"`
 	TLSConfig      *monitoringv1.TLSConfig `json:"tlsConfig"`

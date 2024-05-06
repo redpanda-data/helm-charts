@@ -24,13 +24,8 @@ import (
 
 func ServiceMonitor(dot *helmette.Dot) *monitoringv1.ServiceMonitor {
 	values := helmette.Unwrap[Values](dot.Values)
-
-	monitoringEnabled := false
-	if values.Monitoring.Enabled != nil {
-		monitoringEnabled = *values.Monitoring.Enabled
-	}
-
-	if !monitoringEnabled {
+	
+	if !values.Monitoring.Enabled {
 		return nil
 	}
 
@@ -53,7 +48,7 @@ func ServiceMonitor(dot *helmette.Dot) *monitoringv1.ServiceMonitor {
 			},
 		}
 	}
-	
+
 	return &monitoringv1.ServiceMonitor{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      Fullname(dot),
