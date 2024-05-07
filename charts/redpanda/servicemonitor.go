@@ -24,7 +24,7 @@ import (
 
 func ServiceMonitor(dot *helmette.Dot) *monitoringv1.ServiceMonitor {
 	values := helmette.Unwrap[Values](dot.Values)
-	
+
 	if !values.Monitoring.Enabled {
 		return nil
 	}
@@ -39,6 +39,8 @@ func ServiceMonitor(dot *helmette.Dot) *monitoringv1.ServiceMonitor {
 
 	tlsConfig := values.Monitoring.TLSConfig
 
+	// tslConfig is not let to be nil because of prexisting logic to
+	// disable verify tls (scheme is always hptts) if not defined.
 	if tlsConfig != nil {
 		tlsConfig.SafeTLSConfig.InsecureSkipVerify = false
 	} else {
