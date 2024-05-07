@@ -54,7 +54,8 @@ func main() {
 				}
 			case monitoringv1.Duration:
 				return &jsonschema.Schema{
-					Type: "string",
+					Type:    "string",
+					Pattern: "^(0|(([0-9]+)y)?(([0-9]+)w)?(([0-9]+)d)?(([0-9]+)h)?(([0-9]+)m)?(([0-9]+)s)?(([0-9]+)ms)?)$",
 				}
 			default:
 				return nil
