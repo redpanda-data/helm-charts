@@ -838,7 +838,9 @@ spec:
       labels: 
         app.kubernetes.io/component: redpanda-statefulset
         app.kubernetes.io/instance: redpanda
+        app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: redpanda
+        helm.sh/chart: redpanda-5.8.3
         redpanda.com/poddisruptionbudget: redpanda
       annotations:
         config.redpanda.com/checksum: f94f7fd418c58083ac8bdc922323a6019ca82079aa612ee7b1c5d31dec880cd2
