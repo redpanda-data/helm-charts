@@ -103,6 +103,7 @@ func binaryExprs() {
 	_ = 1 + 1
 	_ = 1 - 1
 	_ = 1 / 1
+	_ = 1 % 1
 	_ = 1 == 1
 	_ = 1 != 1
 	// typed ints
@@ -110,6 +111,7 @@ func binaryExprs() {
 	_ = int(1) + int(1)
 	_ = int(1) - int(1)
 	_ = int(1) / int(1)
+	_ = int(1) % int(1)
 	_ = int(1) == int(1)
 	_ = int(1) != int(1)
 	// int32s
@@ -117,12 +119,14 @@ func binaryExprs() {
 	_ = int32(1) + int32(1)
 	_ = int32(1) - int32(1)
 	_ = int32(1) / int32(1)
+	_ = int32(1) % int32(1)
 	_ = int32(1) == int32(1)
 	_ = int32(1) != int32(1)
 	// int64s
 	_ = int64(1) * int64(1)
 	_ = int64(1) + int64(1)
 	_ = int64(1) - int64(1)
+	_ = int64(1) % int64(1)
 	_ = int64(1) / int64(1)
 	_ = int64(1) == int64(1)
 	_ = int64(1) != int64(1)
