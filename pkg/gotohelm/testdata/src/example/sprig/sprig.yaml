@@ -2,7 +2,7 @@
 
 {{- define "sprig.Sprig" -}}
 {{- range $_ := (list 1) -}}
-{{- (dict "r" (dict "concat" (get (fromJson (include "sprig.concat" (dict "a" (list ) ))) "r") "default" (get (fromJson (include "sprig.default_" (dict "a" (list ) ))) "r") "keys" (get (fromJson (include "sprig.keys" (dict "a" (list ) ))) "r") "empty" (get (fromJson (include "sprig.empty" (dict "a" (list ) ))) "r") "strings" (get (fromJson (include "sprig.stringsFunctions" (dict "a" (list ) ))) "r") "unset" (get (fromJson (include "sprig.unset" (dict "a" (list ) ))) "r") "regex" (get (fromJson (include "sprig.regex" (dict "a" (list ) ))) "r") "atoi" (get (fromJson (include "sprig.atoi" (dict "a" (list ) ))) "r") "float" (get (fromJson (include "sprig.float" (dict "a" (list ) ))) "r") "len" (get (fromJson (include "sprig.lenTest" (dict "a" (list ) ))) "r") "first" (get (fromJson (include "sprig.first" (dict "a" (list ) ))) "r") "toString" (get (fromJson (include "sprig.toString" (dict "a" (list ) ))) "r") "min" (get (fromJson (include "sprig.minFunc" (dict "a" (list ) ))) "r") "trim" (get (fromJson (include "sprig.trim" (dict "a" (list ) ))) "r") )) | toJson -}}
+{{- (dict "r" (dict "atoi" (get (fromJson (include "sprig.atoi" (dict "a" (list ) ))) "r") "concat" (get (fromJson (include "sprig.concat" (dict "a" (list ) ))) "r") "default" (get (fromJson (include "sprig.default_" (dict "a" (list ) ))) "r") "empty" (get (fromJson (include "sprig.empty" (dict "a" (list ) ))) "r") "errTypes" (get (fromJson (include "sprig.errTypes" (dict "a" (list ) ))) "r") "first" (get (fromJson (include "sprig.first" (dict "a" (list ) ))) "r") "float" (get (fromJson (include "sprig.float" (dict "a" (list ) ))) "r") "keys" (get (fromJson (include "sprig.keys" (dict "a" (list ) ))) "r") "len" (get (fromJson (include "sprig.lenTest" (dict "a" (list ) ))) "r") "min" (get (fromJson (include "sprig.minFunc" (dict "a" (list ) ))) "r") "regex" (get (fromJson (include "sprig.regex" (dict "a" (list ) ))) "r") "strings" (get (fromJson (include "sprig.stringsFunctions" (dict "a" (list ) ))) "r") "toString" (get (fromJson (include "sprig.toString" (dict "a" (list ) ))) "r") "trim" (get (fromJson (include "sprig.trim" (dict "a" (list ) ))) "r") "unset" (get (fromJson (include "sprig.unset" (dict "a" (list ) ))) "r") )) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -136,6 +136,13 @@
 {{- define "sprig.empty" -}}
 {{- range $_ := (list 1) -}}
 {{- (dict "r" (list (empty (coalesce nil)) (empty (list )) (empty (list "")) (empty (dict )) (empty (dict "key" (coalesce nil) )) (empty 1) (empty 0) (empty false) (empty true) (empty "") (empty "hello") (empty (mustMergeOverwrite (dict "Value" 0 ) (dict ))) (empty (mustMergeOverwrite (dict "Value" 0 ) (dict "Value" 0 ))) (empty (mustMergeOverwrite (dict "Value" 0 ) (dict "Value" 1 ))))) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "sprig.errTypes" -}}
+{{- range $_ := (list 1) -}}
+{{- (dict "r" (list (get (fromJson (include "_shims.compact" (dict "a" (list (list (atoi "1") nil)) ))) "r") (get (fromJson (include "_shims.compact" (dict "a" (list (list (float64 "1.1") nil)) ))) "r"))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
