@@ -276,10 +276,12 @@ func Concat[T any](lists ...[]T) []T {
 }
 
 // Atoi is the go equivalent of sprig's `atoi`.
+// +gotohelm:builtin=atoi
 func Atoi(in string) (int, error) {
 	return strconv.Atoi(in)
 }
 
+// +gotohelm:builtin=float64
 func Float64(in string) (float64, error) {
 	return strconv.ParseFloat(in, 64)
 }

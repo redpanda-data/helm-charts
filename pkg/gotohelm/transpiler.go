@@ -888,7 +888,31 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 	}
 
 	if builtin := t.builtins[id]; builtin != "" {
-		return &BuiltInCall{FuncName: builtin, Arguments: args}
+		if signature.Results().Len() < 2 {
+			return &BuiltInCall{FuncName: builtin, Arguments: args}
+		}
+
+		// Special case, if the return signature is (T, error). We'll
+		// automagically wrap the builtin invocation with (list CALLEXPR nil)
+		// so it looks like this function returns an error similar to its go
+		// counter part. In reality, there's no error handling in templates as
+		// the template execution will be halted whenever a helper returns a
+		// non-nil error.
+		if named, ok := signature.Results().At(1).Type().(*types.Named); ok && named.Obj().Pkg() == nil && named.Obj().Name() == "error" {
+			return &BuiltInCall{
+				FuncName: "list",
+				Arguments: []Node{
+					&BuiltInCall{FuncName: builtin, Arguments: args},
+					&Literal{Value: "nil"},
+				},
+			}
+		}
+
+		panic(&Unsupported{
+			Fset: t.Fset,
+			Node: n,
+			Msg:  fmt.Sprintf("unsupported usage of builtin directive for signature: %v", signature),
+		})
 	}
 
 	// Call to function within the same package. A-Okay. It's transpiled. NB:
@@ -911,24 +935,6 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 		return &BuiltInCall{FuncName: "trimSuffix", Arguments: []Node{args[1], args[0]}}
 	case "strings.ReplaceAll":
 		return &BuiltInCall{FuncName: "replace", Arguments: []Node{args[1], args[2], args[0]}}
-	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.Atoi":
-		// NIL literal is included as the second item in list, because that will
-		// mimic go lang return parameters of int and error.
-		return &BuiltInCall{
-			FuncName: "list",
-			Arguments: []Node{
-				&BuiltInCall{FuncName: "atoi", Arguments: args},
-				&Literal{Value: "nil"},
-			},
-		}
-	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.Float64":
-		return &BuiltInCall{
-			FuncName: "list",
-			Arguments: []Node{
-				&BuiltInCall{FuncName: "float64", Arguments: args},
-				&Literal{Value: "nil"},
-			},
-		}
 	case "k8s.io/apimachinery/pkg/util/intstr.FromInt32", "k8s.io/apimachinery/pkg/util/intstr.FromInt", "k8s.io/apimachinery/pkg/util/intstr.FromString":
 		return args[0]
 	case "k8s.io/utils/ptr.Deref":
