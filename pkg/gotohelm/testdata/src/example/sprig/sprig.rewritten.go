@@ -16,16 +16,17 @@ type AStruct struct {
 // in helmette return the same values as the transpiled versions.
 func Sprig() map[string]any {
 	return map[string]any{
-		"concat":  concat(),
-		"default": default_(),
-		"keys":    keys(),
-		"empty":   empty(),
-		"strings": stringsFunctions(),
-		"unset":   unset(),
-		"regex":   regex(),
-		"atoi":    atoi(),
-		"float":   float(),
-		"len":     lenTest(),
+		"concat":   concat(),
+		"default":  default_(),
+		"keys":     keys(),
+		"empty":    empty(),
+		"strings":  stringsFunctions(),
+		"unset":    unset(),
+		"regex":    regex(),
+		"atoi":     atoi(),
+		"float":    float(),
+		"len":      lenTest(),
+		"errTypes": errTypes(),
 	}
 }
 
@@ -51,7 +52,7 @@ func float() []float64 {
 	errorHappen := 0.3
 	if err != nil {
 		// The error will never happen in go template engine. That's why sprig is swallowing/omitting any error
-		//errorHappen = 1.3
+		// errorHappen = 1.3
 	}
 	return []float64{
 		f,
@@ -80,7 +81,7 @@ func atoi() []int {
 	errorHappen := 0
 	if err != nil {
 		// The error will never happen in go template engine. That's why sprig is swallowing/omitting any error
-		//errorHappen = 1
+		// errorHappen = 1
 	}
 	return []int{
 		positive,
@@ -166,5 +167,16 @@ func empty() []bool {
 		helmette.Empty(AStruct{}),
 		helmette.Empty(AStruct{Value: 0}),
 		helmette.Empty(AStruct{Value: 1}),
+	}
+}
+
+func errTypes() []any {
+	// Tests for sprig functions that should technically return (T, error) but
+	// can't due to template limitation.
+	// We can't currently exercise failure cases here as the test harness
+	// doesn't handle it.
+	return []any{
+		helmette.Compact2(helmette.Atoi("1")),
+		helmette.Compact2(helmette.Float64("1.1")),
 	}
 }
