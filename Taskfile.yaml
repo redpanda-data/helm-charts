@@ -56,12 +56,7 @@ tasks:
 
   ci:lint:
     cmds:
-      # Regenerate any generated files.
-      - helm-docs -c ./charts/
-      - task: chart:generate:redpanda
-      - go mod tidy
-      # Ensure flake.nix has been formatted.
-      - nix fmt
+      - task: generate
       # Fail on any generated diffs.
       - git diff --exit-code
       # Actually run linters.
@@ -72,6 +67,19 @@ tasks:
       - .github/check-ci-files.sh charts/operator/ci
       - .github/check-ci-files.sh charts/redpanda/ci
       - go vet ./...
+
+  generate:
+    desc: "Run all file generation tasks"
+    cmds:
+      # Generate chart README.md's
+      - nix develop -c helm-docs -c ./charts/
+      - task: chart:generate:redpanda
+      # Ensure go deps are up to date
+      - go mod tidy
+      # Ensure go deps in the gotohelm test package are up to date
+      - cd ./pkg/gotohelm/testdata/src/example && go mod tidy
+      # Ensure flake.nix has been formatted.
+      - nix fmt
 
   chart:generate:redpanda:
     desc: "Generate files for the redpanda Helm chart"

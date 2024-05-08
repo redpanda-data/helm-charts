@@ -2,16 +2,20 @@ package redpanda_test
 
 import (
 	"bytes"
+	"maps"
 	"os"
 	"os/exec"
 	"testing"
 
 	"github.com/redpanda-data/helm-charts/charts/redpanda"
+	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	"github.com/redpanda-data/helm-charts/pkg/helm"
 	"github.com/redpanda-data/helm-charts/pkg/helm/helmtest"
 	"github.com/redpanda-data/helm-charts/pkg/kube"
 	"github.com/redpanda-data/helm-charts/pkg/testutil"
+	"github.com/redpanda-data/helm-charts/pkg/valuesutil"
 	"github.com/stretchr/testify/require"
+	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -142,7 +146,7 @@ func TestTemplate(t *testing.T) {
 				t.Logf("kube-linter error(s) found for %q: \n%s", v.Name(), errKubeLinter)
 			}
 			// TODO: remove comment below and the logging above once we agree to linter
-			//require.NoError(t, errKubeLinter)
+			// require.NoError(t, errKubeLinter)
 
 			testutil.AssertGolden(t, testutil.YAML, "./testdata/"+v.Name()+".golden", out)
 		})
@@ -194,4 +198,67 @@ func TestChart(t *testing.T) {
 		require.Equal(t, true, config["cloud_storage_enabled"])
 		require.Equal(t, "from-secret-access-key", config["cloud_storage_access_key"])
 	})
+}
+
+func TestLabels(t *testing.T) {
+	ctx := testutil.Context(t)
+	client, err := helm.New(helm.Options{ConfigHome: testutil.TempDir(t)})
+	require.NoError(t, err)
+
+	for _, labels := range []map[string]string{
+		{"foo": "bar"},
+		{"baz": "1", "quux": "2"},
+		// TODO: Add a test for asserting the behavior of adding a commonLabel
+		// overriding a builtin value (app.kubernetes.io/name) once the
+		// expected behavior is decided.
+	} {
+		values := &redpanda.PartialValues{
+			CommonLabels: labels,
+		}
+
+		helmValues, err := valuesutil.UnmarshalInto[helmette.Values](values)
+		require.NoError(t, err)
+
+		dot := &helmette.Dot{
+			Values: helmValues,
+			Chart:  redpanda.ChartMeta(),
+			Release: helmette.Release{
+				Name:      "redpanda",
+				Namespace: "redpanda",
+				Service:   "Helm",
+			},
+		}
+
+		manifests, err := client.Template(ctx, ".", helm.TemplateOptions{
+			Name:      dot.Release.Name,
+			Namespace: dot.Release.Namespace,
+			// This guarantee does not currently extend to console.
+			Set: []string{"console.enabled=false"},
+			// Nor does it extend to tests.
+			SkipTests: true,
+			Values:    values,
+		})
+		require.NoError(t, err)
+
+		objs, err := kube.DecodeYAML(manifests, redpanda.Scheme)
+		require.NoError(t, err)
+
+		expectedLabels := redpanda.FullLabels(dot)
+		require.Subset(t, expectedLabels, values.CommonLabels, "FullLabels does not contain CommonLabels")
+
+		for _, obj := range objs {
+			// Assert that CommonLabels is included on all top level objects.
+			require.Subset(t, obj.GetLabels(), expectedLabels, "%T %q", obj, obj.GetName())
+
+			// For other objects (replication controllers) we want to assert
+			// that common labels are also included on whatever object (Pod)
+			// they generate/contain a template of.
+			switch obj := obj.(type) {
+			case *appsv1.StatefulSet:
+				expectedLabels := maps.Clone(expectedLabels)
+				expectedLabels["app.kubernetes.io/component"] += "-statefulset"
+				require.Subset(t, obj.Spec.Template.GetLabels(), expectedLabels, "%T/%s's %T", obj, obj.Name, obj.Spec.Template)
+			}
+		}
+	}
 }

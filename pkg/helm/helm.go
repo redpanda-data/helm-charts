@@ -235,6 +235,7 @@ type TemplateOptions struct {
 	GenerateName bool     `flag:"generate-name"`
 	ValuesFile   string   `flag:"values"`
 	Set          []string `flag:"set"`
+	SkipTests    bool     `flag:"skip-tests"`
 }
 
 func (c *Client) Template(ctx context.Context, chart string, opts TemplateOptions) ([]byte, error) {
@@ -420,5 +421,5 @@ func UpdateChartLock(chartLock ChartLock, filepath string) error {
 		return err
 	}
 
-	return os.WriteFile(filepath, b, 0644)
+	return os.WriteFile(filepath, b, 0o644)
 }
