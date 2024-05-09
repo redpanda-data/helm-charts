@@ -10,7 +10,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.4
+    helm.sh/chart: redpanda-5.8.5
 spec:
   maxUnavailable: 1
   selector:
@@ -44,7 +44,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.4
+    helm.sh/chart: redpanda-5.8.5
 type: Opaque
 stringData:
   common.sh: |-
@@ -138,7 +138,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.4
+    helm.sh/chart: redpanda-5.8.5
 type: Opaque
 stringData:
   sasl-user.sh: |-
@@ -175,7 +175,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.4
+    helm.sh/chart: redpanda-5.8.5
 type: Opaque
 stringData:
   configurator.sh: |-
@@ -223,6 +223,60 @@ stringData:
 
     rpk redpanda config --config "$CONFIG" set pandaproxy.advertised_pandaproxy_api[1] "${ADVERTISED_HTTP_ADDRESSES[$POD_ORDINAL]}"
 ---
+# Source: redpanda/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: redpanda-fs-validator
+  namespace: "default"
+  labels:
+    app.kubernetes.io/component: redpanda
+    app.kubernetes.io/instance: redpanda
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: redpanda
+    helm.sh/chart: redpanda-5.8.5
+type: Opaque
+stringData:
+  fsValidator.sh: |-
+    set -e
+    EXPECTED_FS_TYPE=$1
+
+    DATA_DIR="/var/lib/redpanda/data"
+    TEST_FILE="testfile"
+
+    echo "checking data directory exist..."
+    if [ ! -d "${DATA_DIR}" ]; then
+      echo "data directory does not exists, exiting"
+      exit 1
+    fi
+
+    echo "checking filesystem type..."
+    FS_TYPE=$(df -T $DATA_DIR  | tail -n +2 | awk '{print $2}')
+
+    if [ "${FS_TYPE}" != "${EXPECTED_FS_TYPE}" ]; then
+      echo "file system found to be ${FS_TYPE} when expected ${EXPECTED_FS_TYPE}"
+      exit 1
+    fi
+
+    echo "checking if able to create a test file..."
+
+    touch ${DATA_DIR}/${TEST_FILE}
+    result=$(touch ${DATA_DIR}/${TEST_FILE} 2> /dev/null; echo $?)
+    if [ "${result}" != "0" ]; then
+      echo "could not write testfile, may not have write permission"
+      exit 1
+    fi
+
+    echo "checking if able to delete a test file..."
+
+    result=$(rm ${DATA_DIR}/${TEST_FILE} 2> /dev/null; echo $?)
+    if [ "${result}" != "0" ]; then
+      echo "could not delete testfile"
+      exit 1
+    fi
+
+    echo "passed"
+---
 # Source: redpanda/templates/configmap.yaml
 apiVersion: v1
 kind: ConfigMap
@@ -234,7 +288,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.4
+    helm.sh/chart: redpanda-5.8.5
 data: 
   
   bootstrap.yaml: |
@@ -451,7 +505,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.4
+    helm.sh/chart: redpanda-5.8.5
 data:
   profile: | 
     name: default
@@ -543,7 +597,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.4
+    helm.sh/chart: redpanda-5.8.5
 spec:
   type: ClusterIP
   publishNotReadyAddresses: true
@@ -585,7 +639,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.4
+    helm.sh/chart: redpanda-5.8.5
   name: redpanda-external
   namespace: default
 spec:
@@ -748,7 +802,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.4
+    helm.sh/chart: redpanda-5.8.5
 spec:
   selector:
     matchLabels: 
@@ -767,7 +821,7 @@ spec:
         app.kubernetes.io/instance: redpanda
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: redpanda
-        helm.sh/chart: redpanda-5.8.4
+        helm.sh/chart: redpanda-5.8.5
         redpanda.com/poddisruptionbudget: redpanda
       annotations:
         config.redpanda.com/checksum: bdc12c59ed4146a58b5b4bfca4bdd4495b1b9e19e49457cce50c827e3d8977ea
@@ -800,6 +854,55 @@ spec:
               mountPath: /fake/lifecycle
             - name: redpanda
               mountPath: /etc/redpanda
+        - name: set-datadir-ownership
+          image: busybox:latest
+          command: ["/bin/sh", "-c", "chown 101:101 -R /var/lib/redpanda/data"]
+          volumeMounts: 
+            
+            - name: redpanda-default-cert
+              mountPath: /etc/tls/certs/default
+            - name: redpanda-external-cert
+              mountPath: /etc/tls/certs/external
+            - name: test-extra-volume
+              mountPath: /fake/lifecycle
+            - name: datadir
+              mountPath: /var/lib/redpanda/data
+          resources:
+            limits:
+              cpu: 200m
+              memory: 60Mi
+            requests:
+              cpu: 100m
+              memory: 20Mi
+        - name: fs-validator
+          image: docker.redpanda.com/redpandadata/redpanda:v24.1.1
+          command:
+            - /bin/sh
+          args:
+            - -c
+            - 'trap "exit 0" TERM; exec /etc/secrets/fs-validator/scripts/fsValidator.sh ext4 & wait $!'
+          securityContext: 
+            allowPrivilegeEscalation: null
+            runAsGroup: 101
+            runAsNonRoot: null
+            runAsUser: 101
+          volumeMounts: 
+            
+            - name: redpanda-default-cert
+              mountPath: /etc/tls/certs/default
+            - name: redpanda-external-cert
+              mountPath: /etc/tls/certs/external
+            - name: redpanda-fs-validator
+              mountPath: /etc/secrets/fs-validator/scripts/
+            - name: datadir
+              mountPath: /var/lib/redpanda/data
+          resources:
+            limits:
+              cpu: 200m
+              memory: 60Mi
+            requests:
+              cpu: 100m
+              memory: 20Mi
         - name: redpanda-configurator
           image: docker.redpanda.com/redpandadata/redpanda:v24.1.1
           command:
@@ -1092,7 +1195,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.4
+    helm.sh/chart: redpanda-5.8.5
 spec:
   duration: 43800h
   isCA: true
@@ -1118,7 +1221,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.4
+    helm.sh/chart: redpanda-5.8.5
 spec:
   duration: 43800h
   isCA: true
@@ -1142,7 +1245,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.4
+    helm.sh/chart: redpanda-5.8.5
   name: redpanda-default-cert
   namespace: default
 spec:
@@ -1181,7 +1284,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.4
+    helm.sh/chart: redpanda-5.8.5
   name: redpanda-external-cert
   namespace: default
 spec:
@@ -1222,7 +1325,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.4
+    helm.sh/chart: redpanda-5.8.5
 spec:
   selfSigned: {}
 ---
@@ -1238,7 +1341,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.4
+    helm.sh/chart: redpanda-5.8.5
 spec:
   ca:
     secretName: redpanda-default-root-certificate
@@ -1255,7 +1358,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.4
+    helm.sh/chart: redpanda-5.8.5
 spec:
   selfSigned: {}
 ---
@@ -1271,7 +1374,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.4
+    helm.sh/chart: redpanda-5.8.5
 spec:
   ca:
     secretName: redpanda-external-root-certificate
@@ -1310,7 +1413,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.4
+    helm.sh/chart: redpanda-5.8.5
   annotations:
     # This is what defines this resource as a hook. Without this line, the
     # job is considered part of the release.
@@ -1395,7 +1498,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.4
+    helm.sh/chart: redpanda-5.8.5
   annotations:
     "helm.sh/hook": post-upgrade
     "helm.sh/hook-delete-policy": before-hook-creation
