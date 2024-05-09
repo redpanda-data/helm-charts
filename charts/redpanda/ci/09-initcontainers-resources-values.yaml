@@ -20,6 +20,16 @@ statefulset:
         - name: test-extra-volume
           mountPath: /fake/lifecycle
   initContainers:
+    fsValidator:
+      enabled: true
+      expectedFS: ext4 # KIND clusters from github actions use ext4
+      resources:
+        requests:
+          memory: "20Mi"
+          cpu: "100m"
+        limits:
+          memory: "60Mi"
+          cpu: "200m"
     configurator:
       resources:
         requests:
@@ -36,10 +46,26 @@ statefulset:
         - name: test-extra-volume
           mountPath: /fake/lifecycle
     setDataDirOwnership:
+      enabled: true
+      resources:
+        requests:
+          memory: "20Mi"
+          cpu: "100m"
+        limits:
+          memory: "60Mi"
+          cpu: "200m"
       extraVolumeMounts: |-
         - name: test-extra-volume
           mountPath: /fake/lifecycle
     setTieredStorageCacheDirOwnership:
+      enabled: true
+      resources:
+        requests:
+          memory: "20Mi"
+          cpu: "100m"
+        limits:
+          memory: "60Mi"
+          cpu: "200m"
       extraVolumeMounts: |-
         - name: test-extra-volume
           mountPath: /fake/lifecycle

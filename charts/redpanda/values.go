@@ -404,8 +404,8 @@ type Statefulset struct {
 			ExpectedFS        string         `json:"expectedFS"`
 		} `json:"fsValidator"`
 		SetDataDirOwnership struct {
-			Resources         map[string]any `json:"resources"`
 			Enabled           bool           `json:"enabled"`
+			Resources         map[string]any `json:"resources"`
 			ExtraVolumeMounts string         `json:"extraVolumeMounts"`
 		} `json:"setDataDirOwnership"`
 		SetTieredStorageCacheDirOwnership struct {

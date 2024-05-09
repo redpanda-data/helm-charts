@@ -293,8 +293,8 @@ type PartialStatefulset struct {
 			ExpectedFS        *string        `json:"expectedFS,omitempty"`
 		} `json:"fsValidator,omitempty"`
 		SetDataDirOwnership struct {
-			Resources         map[string]any `json:"resources,omitempty"`
 			Enabled           *bool          `json:"enabled,omitempty"`
+			Resources         map[string]any `json:"resources,omitempty"`
 			ExtraVolumeMounts *string        `json:"extraVolumeMounts,omitempty"`
 		} `json:"setDataDirOwnership,omitempty"`
 		SetTieredStorageCacheDirOwnership struct {
