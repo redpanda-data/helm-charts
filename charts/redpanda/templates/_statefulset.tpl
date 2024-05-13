@@ -20,8 +20,7 @@ limitations under the License.
   StatefulSets cannot change their selector. Use the existing one even if it's broken.
   New installs will get better selectors.
 */ -}}
-{{- $sts := lookup "apps/v1" "StatefulSet" .Release.Namespace (include "redpanda.fullname" .) -}}
-{{- get ((include "redpanda.StatefulSetPodLabelsSelector" (dict "a" (list . $sts))) | fromJson) "r" | toYaml }}
+{{- get (include "redpanda.StatefulSetPodLabelsSelector" (dict "a" (list .)) | fromJson) "r" | toYaml }}
 {{- end -}}
 
 {{- define "statefulset-pod-labels" -}}
@@ -29,8 +28,7 @@ limitations under the License.
   StatefulSets cannot change their selector. Use the existing one even if it's broken.
   New installs will get better selectors.
 */ -}}
-{{- $sts := lookup "apps/v1" "StatefulSet" .Release.Namespace (include "redpanda.fullname" .) -}}
-{{- get ((include "redpanda.StatefulSetPodLabels" (dict "a" (list . $sts))) | fromJson) "r" | toYaml }}
+{{- get (include "redpanda.StatefulSetPodLabels" (dict "a" (list .)) | fromJson) "r" | toYaml }}
 {{- end -}}
 
 {{/*

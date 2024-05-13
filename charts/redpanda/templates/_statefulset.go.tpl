@@ -17,11 +17,13 @@
 
 {{- define "redpanda.StatefulSetPodLabelsSelector" -}}
 {{- $dot := (index .a 0) -}}
-{{- $existing := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
-{{- if (and $dot.Release.IsUpgrade (ne $existing (coalesce nil))) -}}
-{{- if (gt (int (get (fromJson (include "_shims.len" (dict "a" (list $existing.spec.selector.matchLabels) ))) "r")) 0) -}}
-{{- (dict "r" $existing.spec.selector.matchLabels) | toJson -}}
+{{- if $dot.Release.IsUpgrade -}}
+{{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.lookup" (dict "a" (list "apps/v1" "StatefulSet" $dot.Release.Namespace (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r")) ))) "r")) ))) "r") -}}
+{{- $ok_2 := $tmp_tuple_1.T2 -}}
+{{- $existing_1 := $tmp_tuple_1.T1 -}}
+{{- if (and $ok_2 (gt (int (get (fromJson (include "_shims.len" (dict "a" (list $existing_1.spec.selector.matchLabels) ))) "r")) 0)) -}}
+{{- (dict "r" $existing_1.spec.selector.matchLabels) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -39,11 +41,13 @@
 
 {{- define "redpanda.StatefulSetPodLabels" -}}
 {{- $dot := (index .a 0) -}}
-{{- $existing := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
-{{- if (and $dot.Release.IsUpgrade (ne $existing (coalesce nil))) -}}
-{{- if (gt (int (get (fromJson (include "_shims.len" (dict "a" (list $existing.spec.template.metadata.labels) ))) "r")) 0) -}}
-{{- (dict "r" $existing.spec.template.metadata.labels) | toJson -}}
+{{- if $dot.Release.IsUpgrade -}}
+{{- $tmp_tuple_2 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.lookup" (dict "a" (list "apps/v1" "StatefulSet" $dot.Release.Namespace (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r")) ))) "r")) ))) "r") -}}
+{{- $ok_4 := $tmp_tuple_2.T2 -}}
+{{- $existing_3 := $tmp_tuple_2.T1 -}}
+{{- if (and $ok_4 (gt (int (get (fromJson (include "_shims.len" (dict "a" (list $existing_3.spec.template.metadata.labels) ))) "r")) 0)) -}}
+{{- (dict "r" $existing_3.spec.template.metadata.labels) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -53,7 +57,7 @@
 {{- $statefulSetLabels = $values.statefulset.podTemplate.labels -}}
 {{- end -}}
 {{- $defaults := (dict "redpanda.com/poddisruptionbudget" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r") ) -}}
-{{- (dict "r" (merge (dict ) $statefulSetLabels (get (fromJson (include "redpanda.StatefulSetPodLabelsSelector" (dict "a" (list $dot $existing) ))) "r") $defaults (get (fromJson (include "redpanda.FullLabels" (dict "a" (list $dot) ))) "r"))) | toJson -}}
+{{- (dict "r" (merge (dict ) $statefulSetLabels (get (fromJson (include "redpanda.StatefulSetPodLabelsSelector" (dict "a" (list $dot) ))) "r") $defaults (get (fromJson (include "redpanda.FullLabels" (dict "a" (list $dot) ))) "r"))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

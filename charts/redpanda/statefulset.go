@@ -82,9 +82,11 @@ func StatefulSetRedpandaEnv(dot *helmette.Dot) []corev1.EnvVar {
 
 // StatefulSetPodLabelsSelector returns the label selector for the Redpanda StatefulSet.
 // If this helm release is an upgrade, the existing statefulset's label selector will be used as it's an immutable field.
-func StatefulSetPodLabelsSelector(dot *helmette.Dot, existing *appsv1.StatefulSet) map[string]string {
-	if dot.Release.IsUpgrade && existing != nil {
-		if len(existing.Spec.Selector.MatchLabels) > 0 {
+func StatefulSetPodLabelsSelector(dot *helmette.Dot) map[string]string {
+	// StatefulSets cannot change their selector. Use the existing one even if it's broken.
+	// New installs will get better selectors.
+	if dot.Release.IsUpgrade {
+		if existing, ok := helmette.Lookup[appsv1.StatefulSet](dot, dot.Release.Namespace, Fullname(dot)); ok && len(existing.Spec.Selector.MatchLabels) > 0 {
 			return existing.Spec.Selector.MatchLabels
 		}
 	}
@@ -110,9 +112,11 @@ func StatefulSetPodLabelsSelector(dot *helmette.Dot, existing *appsv1.StatefulSe
 
 // StatefulSetPodLabels returns the label that includes label selector for the Redpanda PodTemplate.
 // If this helm release is an upgrade, the existing statefulset's pod template labels will be used as it's an immutable field.
-func StatefulSetPodLabels(dot *helmette.Dot, existing *appsv1.StatefulSet) map[string]string {
-	if dot.Release.IsUpgrade && existing != nil {
-		if len(existing.Spec.Template.ObjectMeta.Labels) > 0 {
+func StatefulSetPodLabels(dot *helmette.Dot) map[string]string {
+	// StatefulSets cannot change their selector. Use the existing one even if it's broken.
+	// New installs will get better selectors.
+	if dot.Release.IsUpgrade {
+		if existing, ok := helmette.Lookup[appsv1.StatefulSet](dot, dot.Release.Namespace, Fullname(dot)); ok && len(existing.Spec.Template.ObjectMeta.Labels) > 0 {
 			return existing.Spec.Template.ObjectMeta.Labels
 		}
 	}
@@ -128,7 +132,7 @@ func StatefulSetPodLabels(dot *helmette.Dot, existing *appsv1.StatefulSet) map[s
 		"redpanda.com/poddisruptionbudget": Fullname(dot),
 	}
 
-	return helmette.Merge(statefulSetLabels, StatefulSetPodLabelsSelector(dot, existing), defaults, FullLabels(dot))
+	return helmette.Merge(statefulSetLabels, StatefulSetPodLabelsSelector(dot), defaults, FullLabels(dot))
 }
 
 // StatefulSetPodAnnotations returns the annotation for the Redpanda PodTemplate.

@@ -131,7 +131,7 @@ func NodePortService(dot *helmette.Dot) *corev1.Service {
 			ExternalTrafficPolicy:    corev1.ServiceExternalTrafficPolicyLocal,
 			Ports:                    ports,
 			PublishNotReadyAddresses: true,
-			Selector:                 StatefulSetPodLabelsSelector(dot, nil /* TODO this probably needs to be filled out */),
+			Selector:                 StatefulSetPodLabelsSelector(dot),
 			SessionAffinity:          corev1.ServiceAffinityNone,
 			Type:                     corev1.ServiceTypeNodePort,
 		},
