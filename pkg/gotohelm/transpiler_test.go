@@ -17,6 +17,7 @@ import (
 	"github.com/cockroachdb/errors"
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	"github.com/redpanda-data/helm-charts/pkg/testutil"
+	"github.com/redpanda-data/helm-charts/pkg/valuesutil"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/net/context"
 	"golang.org/x/tools/go/packages"
@@ -130,26 +131,7 @@ func TestTranspile(t *testing.T) {
 				testutil.AssertGolden(t, testutil.Text, output, actual.Bytes())
 			}
 
-			// Ensure syntactic validity of generated values.
-			var tpl *template.Template
-			funcs := sprig.FuncMap()
-			funcs["include"] = func(template string, args ...any) (string, error) {
-				if len(args) > 1 {
-					return "", fmt.Errorf("include accepts either 0 or 1 arguments. got: %d", len(args))
-				}
-
-				args = append(args, nil)
-
-				var b bytes.Buffer
-				if err := tpl.ExecuteTemplate(&b, template, args[0]); err != nil {
-					return "", err
-				}
-				t.Logf("%q(%#v) -> %s", template, args[0], b.String())
-				return b.String(), nil
-			}
-			tpl, err = template.New(pkg.Name).Funcs(funcs).ParseGlob(filepath.Join(td, "src", "example", pkg.Name, "*.yaml"))
-			require.NoError(t, err)
-			tpl, err = tpl.ParseFiles(filepath.Join(td, "src", "example", pkg.Name, "_shims.tpl"))
+			helmRunner, err := NewHelmRunner(pkg.Name, filepath.Join(td, "src", "example", pkg.Name), t.Logf)
 			require.NoError(t, err)
 
 			// If .Values isn't explicitly specified, default to an empty object.
@@ -180,34 +162,23 @@ func TestTranspile(t *testing.T) {
 					// Numbers should always be integers :[ (TODO: Can Yaml
 					// technically encode the difference between ints and
 					// floats?)
-					dotJSON, err := json.Marshal(dot)
+					dot, err = valuesutil.RoundTripThrough[map[string]any](dot)
 					require.NoError(t, err)
-					require.NoError(t, json.Unmarshal(dotJSON, &dot))
-					var clonedDot helmette.Dot
-					require.NoError(t, json.Unmarshal(dotJSON, &clonedDot))
 
-					actualJSON := map[string]any{}
-					for _, tpl := range tpl.Templates() {
-						spl := strings.Split(tpl.Name(), ".")
-						if len(spl) != 2 || !unicode.IsUpper(rune(spl[1][0])) {
-							continue
-						}
+					clonedDot, err := valuesutil.RoundTripThrough[map[string]any](dot)
+					require.NoError(t, err)
 
-						var b bytes.Buffer
-						require.NoError(t, tpl.Execute(&b, map[string]any{"a": []any{dot}}))
-						if spec.ValuesChanged {
-							require.NotEqual(t, clonedDot, dot)
-						} else {
-							require.Equal(t, clonedDot, dot)
-						}
-
-						var x map[string]any
-						require.NoError(t, json.Unmarshal(b.Bytes(), &x))
-						actualJSON[spl[1]] = x["r"] // HACK
-					}
+					actualJSON, err := helmRunner.Render(ctx, &dot)
+					require.NoError(t, err)
 
 					gocodeJSON, err := runner.Render(ctx, &dot)
 					require.NoError(t, err)
+
+					if spec.ValuesChanged {
+						require.NotEqual(t, clonedDot, dot)
+					} else {
+						require.Equal(t, clonedDot, dot)
+					}
 
 					goPretty, err := json.MarshalIndent(gocodeJSON, "", "\t")
 					require.NoError(t, err)
@@ -223,6 +194,80 @@ func TestTranspile(t *testing.T) {
 			}
 		})
 	}
+}
+
+type HelmRunner struct {
+	tpl  *template.Template
+	logf func(string, ...any)
+}
+
+func NewHelmRunner(chartName, chartDir string, logf func(string, ...any)) (*HelmRunner, error) {
+	runner := &HelmRunner{tpl: template.New(chartName), logf: logf}
+
+	funcs := sprig.FuncMap()
+	funcs["include"] = runner.includeFn
+	funcs["lookup"] = runner.lookupFn
+
+	runner.tpl = runner.tpl.Funcs(funcs)
+
+	logf("loading %q/*.yaml...", chartDir)
+	var err error
+	runner.tpl, err = runner.tpl.ParseGlob(filepath.Join(chartDir, "*.yaml"))
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	runner.tpl, err = runner.tpl.ParseGlob(filepath.Join(chartDir, "*.tpl"))
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	return runner, nil
+}
+
+func (r *HelmRunner) Render(ctx context.Context, dot *helmette.Dot) (map[string]any, error) {
+	out := map[string]any{}
+	for _, tpl := range r.tpl.Templates() {
+		spl := strings.Split(tpl.Name(), ".")
+		if len(spl) != 2 || !unicode.IsUpper(rune(spl[1][0])) {
+			continue
+		}
+
+		r.logf("rendering %q...", spl[1])
+
+		var b bytes.Buffer
+		if err := tpl.Execute(&b, map[string]any{"a": []any{dot}}); err != nil {
+			return nil, errors.WithStack(err)
+		}
+
+		var x map[string]any
+		if err := json.NewDecoder(&b).Decode(&x); err != nil {
+			return nil, errors.WithStack(err)
+		}
+
+		out[spl[1]] = x["r"] // HACK
+	}
+
+	return out, nil
+}
+
+func (r *HelmRunner) includeFn(template string, args ...any) (string, error) {
+	if len(args) > 1 {
+		return "", fmt.Errorf("include accepts either 0 or 1 arguments. got: %d", len(args))
+	}
+
+	args = append(args, nil)
+
+	var b bytes.Buffer
+	if err := r.tpl.ExecuteTemplate(&b, template, args[0]); err != nil {
+		return "", err
+	}
+	r.logf("%q(%#v) -> %s", template, args[0], b.String())
+	return b.String(), nil
+}
+
+func (r *HelmRunner) lookupFn() (map[string]any, error) {
+	return nil, fmt.Errorf("not implemented")
 }
 
 type GoRunner struct {
@@ -299,7 +344,7 @@ func (g *GoRunner) Run(ctx context.Context) error {
 		select {
 		case in = <-g.inputCh:
 		case <-ctx.Done():
-			return ctx.Err()
+			return nil
 		}
 
 		if err := enc.Encode(in); err != nil {
@@ -316,7 +361,7 @@ func (g *GoRunner) Run(ctx context.Context) error {
 		select {
 		case g.outputCh <- out:
 		case <-ctx.Done():
-			return ctx.Err()
+			return nil
 		}
 	}
 }
