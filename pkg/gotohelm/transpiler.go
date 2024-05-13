@@ -16,6 +16,7 @@ import (
 	"github.com/cockroachdb/errors"
 	"golang.org/x/tools/go/packages"
 	"golang.org/x/tools/go/types/typeutil"
+	"k8s.io/client-go/kubernetes/scheme"
 )
 
 var directiveRE = regexp.MustCompile(`\+gotohelm:([\w\.-]+)=([\w\.-]+)`)
@@ -873,6 +874,37 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.Merge":
 		dict := DictLiteral{}
 		return &BuiltInCall{FuncName: "merge", Arguments: append([]Node{&dict}, args...)}
+
+	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.Lookup":
+		// Super ugly but it's fairly safe to assume that the return type of
+		// Lookup will always be a pointer as only pointers implement
+		// kube.Object.
+		// Type params are difficult to work with so its easiest to extract the
+		// return value (Which it a generic in Lookup) of the "instance" of the
+		// function signature.
+		k8sType := signature.Results().At(0).Type().(*types.Pointer).Elem().(*types.Named).Obj()
+
+		// Step through the client set's Scheme to automatically infer the
+		// APIVersion and Kind of objects. We don't want any accidental typos
+		// or mistyping to occur.
+		for gvk, typ := range scheme.Scheme.AllKnownTypes() {
+			if typ.PkgPath() == k8sType.Pkg().Path() && typ.Name() == k8sType.Name() {
+				apiVersion, kind := gvk.ToAPIVersionAndKind()
+
+				// Inject the apiVersion and kind as arguments and snip `dot`
+				// from the arguments list.
+				args := append([]Node{NewLiteral(apiVersion), NewLiteral(kind)}, args[1:]...)
+
+				return &Call{FuncName: "_shims.lookup", Arguments: args}
+			}
+		}
+
+		// If we couldn't find the object in the scheme, panic. It's probably
+		// due to the usage of a 3rd party resource. If you hit this, just
+		// inject a Scheme into the transpiler instead of relying on the kube
+		// client's builtin scheme.
+		panic(fmt.Sprintf("unrecognized type: %v", k8sType))
+
 	default:
 		panic(fmt.Sprintf("unsupported function %q", id))
 	}

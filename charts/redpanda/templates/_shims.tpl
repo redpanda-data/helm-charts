@@ -101,3 +101,19 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "_shims.lookup" -}}
+{{- $apiVersion := (index .a 0) -}}
+{{- $kind := (index .a 1) -}}
+{{- $namespace := (index .a 2) -}}
+{{- $name := (index .a 3) -}}
+{{- range $_ := (list 1) -}}
+{{- $result := (lookup $apiVersion $kind $namespace $name) -}}
+{{- if (empty $result) -}}
+{{- (dict "r" (list (coalesce nil) false)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- (dict "r" (list $result true)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
