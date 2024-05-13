@@ -16,12 +16,40 @@ import (
 	"github.com/Masterminds/sprig/v3"
 	"github.com/cockroachdb/errors"
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
+	"github.com/redpanda-data/helm-charts/pkg/kube"
+	"github.com/redpanda-data/helm-charts/pkg/kube/kubetest"
 	"github.com/redpanda-data/helm-charts/pkg/testutil"
 	"github.com/redpanda-data/helm-charts/pkg/valuesutil"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/net/context"
 	"golang.org/x/tools/go/packages"
+	corev1 "k8s.io/api/core/v1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/client-go/kubernetes/scheme"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
+
+// seedObjects is a slice of kubernetes objects that will be seeded into the
+// testenv for the purpose of exercising helm's `lookup` function.
+var seedObjects = []kube.Object{
+	&corev1.Namespace{
+		ObjectMeta: v1.ObjectMeta{
+			Name: "namespace",
+		},
+	},
+	&corev1.Service{
+		ObjectMeta: v1.ObjectMeta{
+			Namespace: "namespace",
+			Name:      "name",
+		},
+		Spec: corev1.ServiceSpec{
+			Ports: []corev1.ServicePort{
+				{Name: "hello", Port: 123},
+			},
+		},
+	},
+}
 
 type TestSpec struct {
 	Unsupported bool
@@ -101,16 +129,19 @@ func TestTranspile(t *testing.T) {
 		}
 	}
 
-	ctx := testutil.Context(t)
-	runner := NewGoRunner(td)
+	// Create and populate the test environment.
+	ctl := kubetest.NewEnv(t)
+	for _, obj := range seedObjects {
+		require.NoError(t, ctl.Create(context.Background(), obj))
+	}
 
-	go func() {
-		require.NoError(t, runner.Run(ctx))
-	}()
+	runner := NewGoRunner(t, td)
 
 	for _, pkg := range pkgs {
 		pkg := pkg
 		t.Run(pkg.Name, func(t *testing.T) {
+			ctx := testutil.Context(t)
+
 			spec, ok := testSpecs[pkg.Name]
 			if !ok {
 				t.Skipf("no test spec for %q", pkg.Name)
@@ -131,7 +162,7 @@ func TestTranspile(t *testing.T) {
 				testutil.AssertGolden(t, testutil.Text, output, actual.Bytes())
 			}
 
-			helmRunner, err := NewHelmRunner(pkg.Name, filepath.Join(td, "src", "example", pkg.Name), t.Logf)
+			helmRunner, err := NewHelmRunner(pkg.Name, filepath.Join(td, "src", "example", pkg.Name), ctl.RestConfig(), t.Logf)
 			require.NoError(t, err)
 
 			// If .Values isn't explicitly specified, default to an empty object.
@@ -155,6 +186,7 @@ func TestTranspile(t *testing.T) {
 							Name:      "release-name",
 							Namespace: "release-namespace",
 						},
+						KubeConfig: kube.RestToConfig(ctl.RestConfig()),
 					}
 
 					// MUST round trip values through JSON marshalling to
@@ -197,12 +229,22 @@ func TestTranspile(t *testing.T) {
 }
 
 type HelmRunner struct {
-	tpl  *template.Template
-	logf func(string, ...any)
+	tpl    *template.Template
+	logf   func(string, ...any)
+	client client.Client
 }
 
-func NewHelmRunner(chartName, chartDir string, logf func(string, ...any)) (*HelmRunner, error) {
-	runner := &HelmRunner{tpl: template.New(chartName), logf: logf}
+func NewHelmRunner(chartName, chartDir string, cfg *kube.RESTConfig, logf func(string, ...any)) (*HelmRunner, error) {
+	c, err := client.New(cfg, client.Options{})
+	if err != nil {
+		return nil, err
+	}
+
+	runner := &HelmRunner{
+		tpl:    template.New(chartName),
+		logf:   logf,
+		client: c,
+	}
 
 	funcs := sprig.FuncMap()
 	funcs["include"] = runner.includeFn
@@ -211,7 +253,7 @@ func NewHelmRunner(chartName, chartDir string, logf func(string, ...any)) (*Helm
 	runner.tpl = runner.tpl.Funcs(funcs)
 
 	logf("loading %q/*.yaml...", chartDir)
-	var err error
+
 	runner.tpl, err = runner.tpl.ParseGlob(filepath.Join(chartDir, "*.yaml"))
 	if err != nil {
 		return nil, errors.WithStack(err)
@@ -266,8 +308,23 @@ func (r *HelmRunner) includeFn(template string, args ...any) (string, error) {
 	return b.String(), nil
 }
 
-func (r *HelmRunner) lookupFn() (map[string]any, error) {
-	return nil, fmt.Errorf("not implemented")
+func (r *HelmRunner) lookupFn(apiVersion, kind, namespace, name string) (map[string]any, error) {
+	gvk := schema.FromAPIVersionAndKind(apiVersion, kind)
+	key := client.ObjectKey{Namespace: namespace, Name: name}
+
+	obj, err := scheme.Scheme.New(gvk)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	if err := r.client.Get(context.Background(), key, obj.(client.Object)); err != nil {
+		// Match the behavior of helm which is to return an empty dictionary if
+		// the object is not found.
+		return map[string]any{}, client.IgnoreNotFound(err)
+	}
+
+	// Convert into an unstructured object the fun way.
+	return valuesutil.UnmarshalInto[map[string]any](obj)
 }
 
 type GoRunner struct {
@@ -276,7 +333,7 @@ type GoRunner struct {
 	cmd      *exec.Cmd
 }
 
-func NewGoRunner(root string) *GoRunner {
+func NewGoRunner(t *testing.T, root string) *GoRunner {
 	cmd := exec.Command("go", "run", "main.go")
 	cmd.Dir = filepath.Join(root, "src", "example")
 	cmd.Env = append(
@@ -285,11 +342,26 @@ func NewGoRunner(root string) *GoRunner {
 		"GO111MODULE=on",
 	)
 
-	return &GoRunner{
+	runner := &GoRunner{
 		cmd:      cmd,
 		inputCh:  make(chan *helmette.Dot),
 		outputCh: make(chan map[string]any),
 	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	errChan := make(chan error, 1)
+
+	go func() {
+		defer cancel()
+		errChan <- runner.run(ctx)
+	}()
+
+	t.Cleanup(func() {
+		cancel()
+		require.NoError(t, <-errChan)
+	})
+
+	return runner
 }
 
 func (g *GoRunner) Render(ctx context.Context, dot *helmette.Dot) (map[string]any, error) {
@@ -313,7 +385,7 @@ func (g *GoRunner) Render(ctx context.Context, dot *helmette.Dot) (map[string]an
 	}
 }
 
-func (g *GoRunner) Run(ctx context.Context) error {
+func (g *GoRunner) run(ctx context.Context) error {
 	defer close(g.inputCh)
 	defer close(g.outputCh)
 

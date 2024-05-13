@@ -1,6 +1,10 @@
 package k8s
 
 import (
+	"fmt"
+
+	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
+	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	policyv1 "k8s.io/api/policy/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -8,7 +12,7 @@ import (
 	"k8s.io/utils/ptr"
 )
 
-func K8s() map[string]any {
+func K8s(dot *helmette.Dot) map[string]any {
 	return map[string]any{
 		"Objects": []metav1.Object{
 			pod(),
@@ -37,6 +41,7 @@ func K8s() map[string]any {
 			ptr.Equal(nil, ptr.To(3)),
 			ptr.Equal(ptr.To(3), ptr.To(3)),
 		},
+		"lookup": lookup(dot),
 	}
 }
 
@@ -78,4 +83,15 @@ func service() *corev1.Service {
 			},
 		},
 	}
+}
+
+func lookup(dot *helmette.Dot) []any {
+	svc, ok1 := helmette.Lookup[corev1.Service](dot, "namespace", "name")
+	if !ok1 {
+		panic(fmt.Sprintf("%T %q not found. Test setup should have created it?", corev1.Service{}, "name"))
+	}
+
+	sts, ok2 := helmette.Lookup[appsv1.StatefulSet](dot, "spacename", "eman")
+
+	return []any{svc, ok1, sts, ok2}
 }

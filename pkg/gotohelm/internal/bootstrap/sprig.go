@@ -23,3 +23,13 @@ func HasKey(map[string]any, string) bool {
 func Len(any) int {
 	panic("not implemented")
 }
+
+// +gotohelm:builtin=lookup
+func Lookup(apiVersion, kind, namespace, name string) map[string]any {
+	panic("not implemented")
+}
+
+// +gotohelm:builtin=empty
+func Empty(any) bool {
+	panic("not implemented")
+}

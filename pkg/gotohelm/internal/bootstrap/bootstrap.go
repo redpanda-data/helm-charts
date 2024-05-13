@@ -84,3 +84,18 @@ func ptr_Equal(a, b any) bool {
 	}
 	return a == b
 }
+
+// wrapper around helm's lookup.
+func lookup(apiVersion, kind, namespace, name string) (map[string]any, bool) {
+	result := Lookup(apiVersion, kind, namespace, name)
+	// Helm's builtin lookup returns an empty dict for some godforsaken
+	// reason. We return nil, false similar to how a map look up works
+	// (sanely).
+
+	// Helm recommends using `(empty result)` to test if there is a value or
+	// not.
+	if Empty(result) {
+		return nil, false
+	}
+	return result, true
+}
