@@ -6,7 +6,10 @@ import (
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 )
 
-type RESTConfig = rest.Config
+type (
+	Config     = clientcmdapi.Config
+	RESTConfig = rest.Config
+)
 
 var WriteToFile = clientcmd.WriteToFile
 
@@ -39,4 +42,9 @@ func RestToConfig(cfg *rest.Config) clientcmdapi.Config {
 		CurrentContext: "default-context",
 		AuthInfos:      authinfos,
 	}
+}
+
+func ConfigToRest(cfg Config) (*RESTConfig, error) {
+	clientConfig := clientcmd.NewNonInteractiveClientConfig(cfg, cfg.CurrentContext, &clientcmd.ConfigOverrides{}, nil)
+	return clientConfig.ClientConfig()
 }

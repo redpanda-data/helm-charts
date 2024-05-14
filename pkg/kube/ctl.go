@@ -41,6 +41,23 @@ func FromEnv() (*Ctl, error) {
 	}, nil
 }
 
+func FromConfig(cfg Config) (*Ctl, error) {
+	rest, err := ConfigToRest(cfg)
+	if err != nil {
+		return nil, err
+	}
+	return FromRESTConfig(rest)
+}
+
+func FromRESTConfig(cfg *RESTConfig) (*Ctl, error) {
+	c, err := client.New(cfg, client.Options{})
+	if err != nil {
+		return nil, err
+	}
+
+	return &Ctl{config: cfg, client: c}, nil
+}
+
 // Ctl is a Kubernetes client inspired by the shape of the `kubectl` CLI with a
 // focus on being ergonomic.
 type Ctl struct {
