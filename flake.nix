@@ -23,6 +23,7 @@
                 chart-releaser = pkgs.callPackage ./.github/chart-releaser.nix { };
                 chart-testing = pkgs.callPackage ./.github/chart-testing.nix { };
                 docker-tag-list = pkgs.callPackage ./.github/docker-tag-list.nix { };
+                setup-envtest = pkgs.callPackage ./.github/setup-envtest.nix { };
               })
             ];
           };
@@ -48,6 +49,7 @@
               pkgs.kubectl
               pkgs.kubernetes-helm
               pkgs.kustomize
+              pkgs.setup-envtest
               pkgs.yq # jq but for YAML
             ];
           };
