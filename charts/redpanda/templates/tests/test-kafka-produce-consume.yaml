@@ -16,8 +16,6 @@ limitations under the License.
 */}}
 {{- if .Values.tests.enabled }}
 {{- $sasl := .Values.auth.sasl }}
-{{- $root := deepCopy . }}
-{{- $rpk := deepCopy . }}
 apiVersion: v1
 kind: Pod
 metadata:

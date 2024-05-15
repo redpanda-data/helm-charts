@@ -15,7 +15,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */}}
 {{- if (include "tls-enabled" . | fromJson).bool }}
-  {{- $root := deepCopy . }}
   {{- $release := .Release }}
   {{- $values := .Values }}
   {{- range $name, $data := $values.tls.certs }}
@@ -34,7 +33,7 @@ metadata:
   name: {{ template "redpanda.fullname" $ }}-{{ $name }}-selfsigned-issuer
   namespace: {{ $release.Namespace | quote }}
   labels:
-{{- with include "full.labels" $root }}
+{{- with include "full.labels" $ }}
   {{- . | nindent 4 }}
 {{- end }}
 spec:
@@ -48,7 +47,7 @@ metadata:
   name: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-issuer
   namespace: {{ $release.Namespace | quote }}
   labels:
-{{- with include "full.labels" $root }}
+{{- with include "full.labels" $ }}
   {{- . | nindent 4 }}
 {{- end }}
 spec:
@@ -62,7 +61,7 @@ metadata:
   name: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-certificate
   namespace: {{ $release.Namespace | quote }}
   labels:
-{{- with include "full.labels" $root }}
+{{- with include "full.labels" $ }}
   {{- . | nindent 4 }}
 {{- end }}
 spec:

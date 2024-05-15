@@ -101,8 +101,7 @@ limitations under the License.
 
 {{ $connectorsValues := merge $connectorsValues (dict "Values" (dict "deployment" (dict "create" (not .Values.connectors.deployment.create)))) }}
 {{ $connectorsValues := merge $connectorsValues (dict "Values" (dict "test" (dict "create" (not .Values.connectors.test.create)))) }}
-{{ $helmVars := deepCopy .Subcharts.connectors }}
-{{ $helmVars := merge $connectorsValues $helmVars }}
+{{ $helmVars := merge $connectorsValues .Subcharts.connectors }}
 {{ include (print .Subcharts.connectors.Template.BasePath "/deployment.yaml") $helmVars }}
 ---
 {{ include (print .Subcharts.connectors.Template.BasePath "/tests/01-mm2-values.yaml") $helmVars }}

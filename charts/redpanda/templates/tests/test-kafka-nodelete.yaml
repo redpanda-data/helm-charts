@@ -17,8 +17,6 @@ limitations under the License.
 {{- if and .Values.tests.enabled (dig "kafka_nodelete_topics" "[]" $.Values.config.cluster) }}
 {{- $noDeleteTopics := .Values.config.cluster.kafka_nodelete_topics }}
 {{- $sasl := .Values.auth.sasl }}
-{{- $root := deepCopy . }}
-{{- $rpk := deepCopy . }}
 apiVersion: v1
 kind: Pod
 metadata:

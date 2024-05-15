@@ -17,7 +17,6 @@ limitations under the License.
 {{- if and .Values.tests.enabled (include "http-internal-tls-enabled" . | fromJson).bool .Values.listeners.http.enabled (include "redpanda-22-2-x-without-sasl" . | fromJson).bool -}}
   {{- $service := .Values.listeners.http -}}
   {{- $cert := get .Values.tls.certs $service.tls.cert -}}
-  {{- $root := deepCopy . }}
   {{- $sasl := .Values.auth.sasl }}
 apiVersion: v1
 kind: Pod

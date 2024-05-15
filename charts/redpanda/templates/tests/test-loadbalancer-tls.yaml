@@ -16,7 +16,6 @@
   */}}
 {{- if and .Values.tests.enabled .Values.tls.enabled ( eq .Values.external.type "LoadBalancer" ) -}}
   {{- $values := .Values }}
-  {{- $root := deepCopy . }}
 apiVersion: v1
 kind: Pod
 metadata:
@@ -93,7 +92,7 @@ spec:
           done
       {{- end }}
 
-    {{- if (include "redpanda-22-2-x-without-sasl" $root | fromJson).bool }}
+    {{- if (include "redpanda-22-2-x-without-sasl" $ | fromJson).bool }}
       {{- if eq $values.listeners.schemaRegistry.external.default.tls.cert $name }}
           echo "-----> testing external tls: schema registry"
           {{- $port := ( first $values.listeners.schemaRegistry.external.default.advertisedPorts ) }}

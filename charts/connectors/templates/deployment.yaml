@@ -15,7 +15,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */}}
 {{- if .Values.deployment.create -}}
-{{- $root := deepCopy . }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -234,7 +233,7 @@ spec:
       topologySpreadConstraints:
     {{- range $spread := .Values.deployment.topologySpreadConstraints }}
         - labelSelector:
-            matchLabels:  {{ include "connectors-pod-labels" $root | nindent 14 }}
+            matchLabels:  {{ include "connectors-pod-labels" $ | nindent 14 }}
           maxSkew: {{ $spread.maxSkew }}
           topologyKey: {{ $spread.topologyKey }}
           whenUnsatisfiable: {{ $spread.whenUnsatisfiable }}

@@ -23,30 +23,30 @@ and tested in a test.
 
 {{/* tested in tests/test-kafka-sasl-status.yaml */}}
 {{- define "rpk-acl-user-create" -}}
-{{ .rpk }} acl user create myuser --new-password changeme --mechanism {{ include "sasl-mechanism" . }}
+rpk acl user create myuser --new-password changeme --mechanism {{ include "sasl-mechanism" . }}
 {{- end -}}
 
 {{/* tested in tests/test-kafka-sasl-status.yaml */}}
 {{- define "rpk-acl-create" -}}
-{{ .rpk }} acl create --allow-principal 'myuser' --allow-host '*' --operation all --topic 'test-topic'
+rpk acl create --allow-principal 'myuser' --allow-host '*' --operation all --topic 'test-topic'
 {{- end -}}
 
 {{/* tested in tests/test-kafka-sasl-status.yaml */}}
 {{- define "rpk-cluster-info" -}}
-{{ .rpk }} cluster info
+rpk cluster info
 {{- end -}}
 
 {{/* tested in tests/test-kafka-sasl-status.yaml */}}
 {{- define "rpk-topic-create" -}}
-{{ .rpk }} topic create test-topic -p 3 -r {{ min (int64 .Values.statefulset.replicas) 3 }}
+rpk topic create test-topic -p 3 -r {{ min (int64 .Values.statefulset.replicas) 3 }}
 {{- end -}}
 
 {{/* tested in tests/test-kafka-sasl-status.yaml */}}
 {{- define "rpk-topic-describe" -}}
-{{ .rpk }} topic describe test-topic
+rpk topic describe test-topic
 {{- end -}}
 
 {{/* tested in tests/test-kafka-sasl-status.yaml */}}
 {{- define "rpk-topic-delete" -}}
-{{ .rpk }} topic delete test-topic
+rpk topic delete test-topic
 {{- end -}}

@@ -19,10 +19,7 @@
   as part of setting auditLogging being enabled.
 */}}
 {{- if and .Values.tests.enabled .Values.auditLogging.enabled (include "redpanda-atleast-23-3-0" . | fromJson).bool }}
-{{- $rpk := deepCopy . }}
 {{- $sasl := .Values.auth.sasl }}
-{{- $_ := set $rpk "rpk" "rpk" }}
-{{- $_ := set $rpk "dummySasl" false }}
 apiVersion: v1
 kind: Pod
 metadata:

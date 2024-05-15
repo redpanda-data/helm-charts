@@ -22,7 +22,6 @@ limitations under the License.
 {{- $internalAdvertiseAddress := printf "%s.%s" "$(SERVICE_NAME)" (include "redpanda.internal.domain" .) -}}
 {{- $uid := dig "podSecurityContext" "runAsUser" .Values.statefulset.securityContext.runAsUser .Values.statefulset -}}
 {{- $gid := dig "podSecurityContext" "fsGroup" .Values.statefulset.securityContext.fsGroup .Values.statefulset -}}
-{{- $root := deepCopy . }}
 
 {{- if not (include "redpanda-atleast-22-2-0" . | fromJson).bool -}}
   {{- if eq (get .Values "force" | default false) false -}}

@@ -35,9 +35,6 @@ Any rpk command that's given to the user in in this file must be defined in _exa
 -}}
 
 {{- $anySASL := (include "sasl-enabled" . | fromJson).bool }}
-{{- $rpk := deepCopy . }}
-
-{{- $_ := set $rpk "rpk" "rpk" }}
 
 Congratulations on installing {{ .Chart.Name }}!
 
@@ -82,26 +79,26 @@ Try some sample commands:
 {{- if and $anySASL }}
 Create a user:
 
-  {{ include "rpk-acl-user-create" $rpk }}
+  {{ include "rpk-acl-user-create" . }}
 
 Give the user permissions:
 
-  {{ include "rpk-acl-create" $rpk }}
+  {{ include "rpk-acl-create" . }}
 
 {{- end }}
 
 Get the api status:
 
-  {{ include "rpk-cluster-info" $rpk }}
+  {{ include "rpk-cluster-info" . }}
 
 Create a topic
 
-  {{ include "rpk-topic-create" $rpk }}
+  {{ include "rpk-topic-create" . }}
 
 Describe the topic:
 
-  {{ include "rpk-topic-describe" $rpk }}
+  {{ include "rpk-topic-describe" . }}
 
 Delete the topic:
 
-  {{ include "rpk-topic-delete" $rpk }}
+  {{ include "rpk-topic-delete" . }}

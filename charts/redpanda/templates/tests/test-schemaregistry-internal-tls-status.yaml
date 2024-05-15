@@ -17,7 +17,6 @@ limitations under the License.
 {{- if and .Values.tests.enabled (include "schemaRegistry-internal-tls-enabled" . | fromJson).bool .Values.listeners.schemaRegistry.enabled (include "redpanda-22-2-x-without-sasl" . | fromJson).bool -}}
   {{- $service := .Values.listeners.schemaRegistry -}}
   {{- $cert := get .Values.tls.certs $service.tls.cert -}}
-  {{- $root := deepCopy . }}
   {{- $sasl := .Values.auth.sasl }}
   {{- $randNumber := randNumeric 3 }}
 apiVersion: v1
