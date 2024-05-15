@@ -2,9 +2,11 @@ package redpanda_test
 
 import (
 	"bytes"
+	"fmt"
 	"maps"
 	"os"
 	"os/exec"
+	"path"
 	"testing"
 
 	"github.com/redpanda-data/helm-charts/charts/redpanda"
@@ -18,6 +20,7 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/utils/ptr"
 )
 
 func TieredStorageStatic(t *testing.T) redpanda.PartialValues {
@@ -95,6 +98,93 @@ func TieredStorageSecretRefs(t *testing.T, secret *corev1.Secret) redpanda.Parti
 	}
 }
 
+type TemplateTestCase struct {
+	Name         string
+	Values       any
+	ValuesFile   string
+	AssertGolden func(*testing.T, []byte)
+}
+
+func CITestCases(t *testing.T) []TemplateTestCase {
+	values, err := os.ReadDir("./ci")
+	require.NoError(t, err)
+
+	cases := make([]TemplateTestCase, len(values))
+	for i, f := range values {
+		name := f.Name()
+		cases[i] = TemplateTestCase{
+			Name:       name,
+			ValuesFile: "./ci/" + name,
+			AssertGolden: func(t *testing.T, b []byte) {
+				testutil.AssertGolden(t, testutil.YAML, path.Join("testdata", "ci", name+".golden"), b)
+			},
+		}
+	}
+	return cases
+}
+
+func VersionTestsCases(t *testing.T) []TemplateTestCase {
+	// A collection of versions that should trigger all the gates guarded by
+	// "redpanda-atleast-*" helpers.
+	versions := []redpanda.PartialImage{
+		{Tag: ptr.To(redpanda.ImageTag("v22.2.0"))},
+		{Tag: ptr.To(redpanda.ImageTag("v22.3.0"))},
+		{Tag: ptr.To(redpanda.ImageTag("v22.3.14"))},
+		{Tag: ptr.To(redpanda.ImageTag("v22.4.0"))},
+		{Tag: ptr.To(redpanda.ImageTag("v23.1.1"))},
+		{Tag: ptr.To(redpanda.ImageTag("v23.1.2"))},
+		{Tag: ptr.To(redpanda.ImageTag("v23.1.3"))},
+		{Tag: ptr.To(redpanda.ImageTag("v23.2.1"))},
+		{Tag: ptr.To(redpanda.ImageTag("v23.3.0"))},
+		{Tag: ptr.To(redpanda.ImageTag("v24.1.0"))},
+		{Repository: ptr.To("somecustomrepo"), Tag: ptr.To(redpanda.ImageTag("v24.1.0"))},
+	}
+
+	// A collection of features that are protected by the various above version
+	// gates.
+	permutations := []redpanda.PartialValues{
+		{
+			Config: &redpanda.PartialConfig{
+				Tunable: &redpanda.PartialTunableConfig{
+					"log_segment_size_min":  100,
+					"log_segment_size_max":  99999,
+					"kafka_batch_max_bytes": 7777,
+				},
+			},
+		},
+		{
+			Enterprise: &redpanda.PartialEnterprise{License: ptr.To("ATOTALLYVALIDLICENSE")},
+		},
+		{
+			RackAwareness: &redpanda.PartialRackAwareness{
+				Enabled:        ptr.To(true),
+				NodeAnnotation: ptr.To("topology-label"),
+			},
+		},
+	}
+
+	var cases []TemplateTestCase
+	for _, version := range versions {
+		for i, perm := range permutations {
+			values, err := valuesutil.UnmarshalInto[redpanda.PartialValues](perm)
+			require.NoError(t, err)
+
+			values.Image = &version
+
+			name := fmt.Sprintf("%s-%s-%d", ptr.Deref(version.Repository, "default"), *version.Tag, i)
+
+			cases = append(cases, TemplateTestCase{
+				Name:   name,
+				Values: values,
+				AssertGolden: func(t *testing.T, b []byte) {
+					testutil.AssertGolden(t, testutil.YAML, path.Join("testdata", "versions", name+".yaml.golden"), b)
+				},
+			})
+		}
+	}
+	return cases
+}
+
 func TestTemplate(t *testing.T) {
 	ctx := testutil.Context(t)
 	client, err := helm.New(helm.Options{ConfigHome: testutil.TempDir(t)})
@@ -106,17 +196,18 @@ func TestTemplate(t *testing.T) {
 	require.NoError(t, client.RepoAdd(ctx, "redpanda", "https://charts.redpanda.com"))
 	require.NoError(t, client.DependencyBuild(ctx, "."), "failed to refresh helm dependencies")
 
-	values, err := os.ReadDir("./ci")
-	require.NoError(t, err)
+	cases := CITestCases(t)
+	cases = append(cases, VersionTestsCases(t)...)
 
-	for _, v := range values {
-		v := v
-		t.Run(v.Name(), func(t *testing.T) {
+	for _, tc := range cases {
+		tc := tc
+		t.Run(tc.Name, func(t *testing.T) {
 			t.Parallel()
 
 			out, err := client.Template(ctx, ".", helm.TemplateOptions{
 				Name:       "redpanda",
-				ValuesFile: "./ci/" + v.Name(),
+				Values:     tc.Values,
+				ValuesFile: tc.ValuesFile,
 				Set: []string{
 					// Tests utilize some non-deterministic helpers (rng). We don't
 					// really care about the stability of their output, so globally
@@ -128,6 +219,8 @@ func TestTemplate(t *testing.T) {
 				},
 			})
 			require.NoError(t, err)
+
+			tc.AssertGolden(t, out)
 
 			// kube-lint template file
 			var stdout bytes.Buffer
@@ -141,14 +234,12 @@ func TestTemplate(t *testing.T) {
 
 			errKubeLinter := cmd.Run()
 			if errKubeLinter != nil && len(stderr.String()) > 0 {
-				t.Logf("kube-linter error(s) found for %q: \n%s\nstderr:\n%s", v.Name(), stdout.String(), stderr.String())
+				t.Logf("kube-linter error(s) found for %q: \n%s\nstderr:\n%s", tc.Name, stdout.String(), stderr.String())
 			} else if errKubeLinter != nil {
-				t.Logf("kube-linter error(s) found for %q: \n%s", v.Name(), errKubeLinter)
+				t.Logf("kube-linter error(s) found for %q: \n%s", tc.Name, errKubeLinter)
 			}
 			// TODO: remove comment below and the logging above once we agree to linter
 			// require.NoError(t, errKubeLinter)
-
-			testutil.AssertGolden(t, testutil.YAML, "./testdata/"+v.Name()+".golden", out)
 		})
 	}
 }
