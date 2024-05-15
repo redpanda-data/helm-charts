@@ -15,6 +15,15 @@ import (
 
 	"github.com/cockroachdb/errors"
 	"github.com/redpanda-data/helm-charts/pkg/kube"
+	"helm.sh/helm/v3/pkg/action"
+	"helm.sh/helm/v3/pkg/chart/loader"
+	"helm.sh/helm/v3/pkg/chartutil"
+	"helm.sh/helm/v3/pkg/cli"
+	"helm.sh/helm/v3/pkg/cli/values"
+	"helm.sh/helm/v3/pkg/registry"
+	"helm.sh/helm/v3/pkg/release"
+	"helm.sh/helm/v3/pkg/storage"
+	"helm.sh/helm/v3/pkg/storage/driver"
 	"k8s.io/client-go/rest"
 	"sigs.k8s.io/yaml"
 )
@@ -90,6 +99,7 @@ type Release struct {
 type Client struct {
 	env        []string
 	configHome string
+	config     *action.Configuration
 }
 
 type Options struct {
@@ -128,7 +138,20 @@ func New(opts Options) (*Client, error) {
 		return nil, err
 	}
 
+	registryClient, err := registry.NewClient()
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
 	return &Client{
+		config: &action.Configuration{
+			// NB: Currently, only `helm template` is "in process" as opposed
+			// to sub processing everything. If anything else is migrated to
+			// use this configuration, we'll probably want to use the secret
+			// storage engine for compatibilities with the `helm` CLI.
+			Releases:       storage.Init(driver.NewMemory()),
+			RegistryClient: registryClient,
+		},
 		configHome: opts.ConfigHome,
 		env:        append(os.Environ(), env...),
 	}, nil
@@ -239,32 +262,98 @@ type TemplateOptions struct {
 }
 
 func (c *Client) Template(ctx context.Context, chart string, opts TemplateOptions) ([]byte, error) {
-	if opts.Name == "" {
-		opts.GenerateName = true
+	// NOTE: Unlike other methods, Template calls into helm directly. This is
+	// to minimize any potential overhead from go/helm/cobra's start up time
+	// and allow us to be much more aggressive with writing tests through
+	// Template.
+	// TODO: Support IsUpgrade and the like and find a nice way to inject a
+	// fake KubeClient.
+	client := action.NewInstall(c.config)
+
+	// Options taken, more or less, directly from helm. This make the template
+	// command not interact with a Kube APIServer.
+	// https://github.com/helm/helm/blob/51a07e7e78cba05126a84c0d890851d7490d2e20/cmd/helm/template.go#L89-L94
+	client.APIVersions = chartutil.DefaultVersionSet
+	client.ClientOnly = true
+	client.DryRun = true
+	client.GenerateName = opts.GenerateName
+	client.Namespace = opts.Namespace
+	client.ReleaseName = opts.Name
+	client.Replace = true // Skips "name" checks.
+
+	if client.Namespace == "" {
+		client.Namespace = "default"
 	}
+
+	// TODO figure out how to remove this. Without it helm complains about K8s
+	// compat issues.
+	client.KubeVersion = &chartutil.KubeVersion{Version: "v1.21.0", Minor: "21", Major: "1"}
+
+	releaseName, chart, err := client.NameAndChart([]string{chart})
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	// Strange but helm does exactly this. The `client` handles figuring out if
+	// it needs to generate a name from .ReleaseName and returns it instead of
+	// storing it. It also reads the release name from .ReleaseName so we have
+	// to set it ourselves.
+	client.ReleaseName = releaseName
+
+	chart, err = client.ChartPathOptions.LocateChart(chart, &cli.EnvSettings{
+		Debug: true,
+	})
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	loadedChart, err := loader.Load(chart)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	if err := action.CheckDependencies(loadedChart, loadedChart.Metadata.Dependencies); err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	vOpts := values.Options{Values: opts.Set}
 
 	if opts.Values != nil {
-		var err error
-		opts.ValuesFile, err = c.writeValues(opts.Values)
+		valuesFile, err := c.writeValues(opts.Values)
 		if err != nil {
-			return nil, err
+			return nil, errors.WithStack(err)
 		}
+
+		vOpts.ValueFiles = append(vOpts.ValueFiles, valuesFile)
 	}
 
-	// TODO figure out how to remove kube-version.
-	args := []string{"template", chart, "--dry-run=client", "--kube-version=v1.21.0", "--debug"}
-	args = append(args, ToFlags(opts)...)
-
-	if opts.Name != "" {
-		args = slices.Insert(args, 1, opts.Name)
+	if opts.ValuesFile != "" {
+		vOpts.ValueFiles = append(vOpts.ValueFiles, opts.ValuesFile)
 	}
 
-	stdout, _, err := c.runHelm(ctx, args...)
+	values, err := vOpts.MergeValues(nil /* getter.Providers that's not used unless a URL is provided. */)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	rel, err := client.RunWithContext(ctx, loadedChart, values)
 	if err != nil {
 		return nil, err
 	}
 
-	return stdout, nil
+	manifest := bytes.NewBuffer([]byte(rel.Manifest))
+
+	// Hooks are not included in .Manifest and need to be injected into our
+	// output. We copy helm's convention of adding a "Source:" header to each
+	// file.
+	for _, hook := range rel.Hooks {
+		if opts.SkipTests && slices.Contains(hook.Events, release.HookTest) {
+			continue
+		}
+		fmt.Fprintf(manifest, "---\n# Source: %s\n%s\n", hook.Path, hook.Manifest)
+	}
+
+	return manifest.Bytes(), nil
 }
 
 type UpgradeOptions struct {
