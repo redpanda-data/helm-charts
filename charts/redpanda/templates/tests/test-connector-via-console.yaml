@@ -16,10 +16,9 @@ limitations under the License.
 */}}
 {{- if and .Values.tests.enabled .Values.connectors.enabled .Values.console.enabled }}
 {{- $sasl := .Values.auth.sasl }}
-{{- $root := deepCopy . }}
 {{- $values := .Values }}
-{{ $consoleValues := dict "Values" (deepCopy .Values.console) "Release" .Release "Chart" .Subcharts.console.Chart }}
-{{ $connectorsVars := dict "Values" (deepCopy .Values.connectors) "Release" .Release "Chart" .Subcharts.connectors.Chart }}
+{{ $consoleValues := dict "Values" .Values.console "Release" .Release "Chart" .Subcharts.console.Chart }}
+{{ $connectorsVars := dict "Values" .Values.connectors "Release" .Release "Chart" .Subcharts.connectors.Chart }}
 {{/* brokers */}}
 {{- $kafkaBrokers := list }}
 {{- range (include "seed-server-list" . | mustFromJson) }}
@@ -62,13 +61,13 @@ spec:
 
           connectorsState () {
             echo check connectors expand status
-            curl {{ template "curl-options" . }} http://{{ include "connectors.serviceName" $connectorsVars }}:{{ (deepCopy .Values.connectors).connectors.restPort }}/connectors?expand=status
+            curl {{ template "curl-options" . }} http://{{ include "connectors.serviceName" $connectorsVars }}:{{ .Values.connectors.connectors.restPort }}/connectors?expand=status
             echo check connectors expand info
-            curl {{ template "curl-options" . }} http://{{ include "connectors.serviceName" $connectorsVars }}:{{ (deepCopy .Values.connectors).connectors.restPort }}/connectors?expand=info
+            curl {{ template "curl-options" . }} http://{{ include "connectors.serviceName" $connectorsVars }}:{{ .Values.connectors.connectors.restPort }}/connectors?expand=info
             echo check connector configuration
-            curl {{ template "curl-options" . }} http://{{ include "connectors.serviceName" $connectorsVars }}:{{ (deepCopy .Values.connectors).connectors.restPort }}/connectors/$CONNECTOR_NAME
+            curl {{ template "curl-options" . }} http://{{ include "connectors.serviceName" $connectorsVars }}:{{ .Values.connectors.connectors.restPort }}/connectors/$CONNECTOR_NAME
             echo check connector topics
-            curl {{ template "curl-options" . }} http://{{ include "connectors.serviceName" $connectorsVars }}:{{ (deepCopy .Values.connectors).connectors.restPort }}/connectors/$CONNECTOR_NAME/topics
+            curl {{ template "curl-options" . }} http://{{ include "connectors.serviceName" $connectorsVars }}:{{ .Values.connectors.connectors.restPort }}/connectors/$CONNECTOR_NAME/topics
           }
           
           {{- if .Values.auth.sasl.enabled }}

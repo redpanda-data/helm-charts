@@ -14,7 +14,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{ $values := .Values }}
 
 {{/* Secret */}}
 {{ $secretConfig := dict ( dict
@@ -39,8 +38,7 @@ limitations under the License.
   "secret" $secretConfig
   )}}
 
-{{ $console := deepCopy .Subcharts.console }}
-{{ $console = merge $config $console }}
+{{ $console := merge $config .Subcharts.console }}
 ---
 {{ include (print .Subcharts.console.Template.BasePath "/secret.yaml") $console }}
   {{ end }}
@@ -56,7 +54,7 @@ limitations under the License.
 {{/* brokers */}}
 {{ $kafkaBrokers := list }}
 {{ range (include "seed-server-list" . | mustFromJson) }}
-  {{ $kafkaBrokers = append $kafkaBrokers (printf "%s:%d" . (int $values.listeners.kafka.port)) }}
+  {{ $kafkaBrokers = append $kafkaBrokers (printf "%s:%d" . (int $.Values.listeners.kafka.port)) }}
 {{ end }}
 
 {{/* sasl */}}
@@ -73,7 +71,7 @@ limitations under the License.
 {{ if (include "schemaRegistry-internal-tls-enabled" . | fromJson).bool }}
   {{ $proto = "https" }}
 {{ end }}
-{{ $port := int $values.listeners.schemaRegistry.port }}
+{{ $port := int $.Values.listeners.schemaRegistry.port }}
 {{ range (include "seed-server-list" . | mustFromJson) }}
   {{ $urls = append $urls (printf "%s://%s:%d" $proto . $port) }}
 {{ end }}
@@ -83,16 +81,15 @@ limitations under the License.
 
 {{ $connectConfig := dict }}
 {{ if .Values.connectors.enabled }}
-{{ $connectorsValues := deepCopy .Subcharts.connectors }}
-{{ $connectorsValues = merge $connectorsValues .Values.connectors }}
+{{ $connectorsValues = merge (dict) $.Subcharts.connector .Values.connectors }}
 {{/* Connector */}}
 {{/* Currently Kafka connect helm chart does not support TLS configuraiton. That's why tls enabled is set explicitly to false*/}}
 {{/* Currently Kafka connect helm chart does not support basic auth. That's why username and password is set explicitly to empty string*/}}
 {{ $connectConfig = dict
-  "enabled" $values.connectors.enabled
+  "enabled" $.Values.connectors.enabled
   "clusters" (list
     (dict
-      "url" (printf "http://%s.%s.svc.%s:%s" (include "connectors.serviceName" $connectorsValues) .Release.Namespace ($values.clusterDomain | trimSuffix ".") ($values.connectors.connectors.restPort | toString ))
+      "url" (printf "http://%s.%s.svc.%s:%s" (include "connectors.serviceName" $connectorsValues) .Release.Namespace ($.Values.clusterDomain | trimSuffix ".") ($.Values.connectors.connectors.restPort | toString ))
       "name" "connectors"
       "tls" (dict
         "enabled" "false"
@@ -125,7 +122,7 @@ limitations under the License.
       "connect" $connectConfig
 }}
 
-{{ $consoleConfig := deepCopy .Values.console.config | merge $consoleConfig  }}
+{{ $consoleConfig := merge $consoleConfig .Values.console.config }}
 
 {{ $config := dict
     "Values" (dict
@@ -135,8 +132,7 @@ limitations under the License.
     )
 }}
 
-{{ $console := deepCopy .Subcharts.console }}
-{{ $console = merge $config $console }}
+{{ $console := merge $config .Subcharts.console }}
 ---
 {{ include (print .Subcharts.console.Template.BasePath "/configmap.yaml") $console }}
 {{ $configmap = include (print .Subcharts.console.Template.BasePath "/configmap.yaml") $console }}
@@ -285,7 +281,7 @@ limitations under the License.
   "extraEnv" $extraEnv
   "secret" $secretConfig
   "enterprise" $enterprise
-  "image" $values.console.image
+  "image" $.Values.console.image
   "autoscaling" .Values.console.autoscaling
   "replicaCount" .Values.console.replicaCount
   "strategy" .Values.console.strategy
@@ -317,8 +313,7 @@ limitations under the License.
 {{ $consoleValues := merge $consoleValues (dict "Values" (dict "podAnnotations" (dict "checksum-redpanda-chart/config" ( $configmap | toYaml | sha256sum )))) }}
 {{ end }}
 
-{{ $helmVars := deepCopy .Subcharts.console }}
-{{ $helmVars := merge $consoleValues $helmVars }}
+{{ $helmVars := merge $consoleValues .Subcharts.console }}
 
 ---
 {{ include (print .Subcharts.console.Template.BasePath "/deployment.yaml") $helmVars }}

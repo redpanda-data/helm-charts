@@ -16,10 +16,6 @@ limitations under the License.
 */}}
 
 {{- if and .Values.tests.enabled (include "sasl-enabled" . | fromJson).bool (eq .Values.auth.sasl.secretRef "some-users") -}}
-    {{- $rpk := deepCopy . }}
-    {{- $sasl := .Values.auth.sasl }}
-    {{- $_ := set $rpk "rpk" "rpk" }}
-    {{- $_ := set $rpk "dummySasl" false }}
 apiVersion: v1
 kind: Pod
 metadata:
@@ -66,7 +62,7 @@ spec:
           done
 
           # check that sasl is not broken
-          {{ include "rpk-cluster-info" $rpk }}
+          {{ include "rpk-cluster-info" $ }}
       volumeMounts: {{ include "default-mounts" . | nindent 8 }}
       resources:
 {{- toYaml .Values.statefulset.resources | nindent 12 }}

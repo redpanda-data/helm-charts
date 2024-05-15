@@ -17,7 +17,6 @@ limitations under the License.
 {{- if .Values.post_upgrade_job.enabled }}
 {{- $service := .Values.listeners.admin -}}
 {{- $cert := get .Values.tls.certs $service.tls.cert -}}
-{{- $root := deepCopy . }}
 apiVersion: batch/v1
 kind: Job
 metadata:
