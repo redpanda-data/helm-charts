@@ -67,7 +67,7 @@ jobs:
 
       - name: Install CRDs
         run: |
-          kubectl kustomize https://github.com/redpanda-data/redpanda-operator//src/go/k8s/config/crd?ref="$(yq -r .appVersion charts/operator/Chart.yaml)" | kubectl apply -f -
+          kubectl kustomize https://github.com/redpanda-data/redpanda-operator//src/go/k8s/config/crd?ref="$(yq -r .appVersion charts/operator/Chart.yaml)" | kubectl apply --server-side -f -
 
         # Chart-testing requires there to be a branch on the local repository
         # for diffing. This will create such a branch without performing a
