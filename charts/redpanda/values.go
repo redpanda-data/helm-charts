@@ -584,7 +584,7 @@ type HTTPExternal struct {
 	Enabled              *bool                     `json:"enabled"`
 	Port                 int32                     `json:"port" jsonschema:"required"`
 	AuthenticationMethod *HTTPAuthenticationMethod `json:"authenticationMethod"`
-	PrefixTemplate       string                    `json:"prefixTemplate"`
+	PrefixTemplate       *string                    `json:"prefixTemplate"`
 	TLS                  *ExternalTLS              `json:"tls" jsonschema:"required"`
 }
 
@@ -612,7 +612,7 @@ type KafkaExternal struct {
 	Enabled              *bool                      `json:"enabled"`
 	Port                 int32                      `json:"port" jsonschema:"required"`
 	AuthenticationMethod *KafkaAuthenticationMethod `json:"authenticationMethod"`
-	PrefixTemplate       string                     `json:"prefixTemplate"`
+	PrefixTemplate       *string                     `json:"prefixTemplate"`
 }
 
 func (KafkaExternal) JSONSchemaExtend(schema *jsonschema.Schema) {

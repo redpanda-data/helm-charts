@@ -43,11 +43,17 @@ func NodePortService(dot *helmette.Dot) *corev1.Service {
 		if listener.Enabled != nil && *listener.Enabled == false {
 			continue
 		}
+
+		nodePort := listener.Port
+		if len(listener.AdvertisedPorts) > 0 {
+			nodePort = listener.AdvertisedPorts[0]
+		}
+
 		ports = append(ports, corev1.ServicePort{
 			Name:     fmt.Sprintf("admin-%s", name),
 			Protocol: corev1.ProtocolTCP,
 			Port:     listener.Port,
-			NodePort: listener.AdvertisedPorts[0],
+			NodePort: nodePort,
 		})
 	}
 
@@ -55,11 +61,17 @@ func NodePortService(dot *helmette.Dot) *corev1.Service {
 		if listener.Enabled != nil && *listener.Enabled == false {
 			continue
 		}
+
+		nodePort := listener.Port
+		if len(listener.AdvertisedPorts) > 0 {
+			nodePort = listener.AdvertisedPorts[0]
+		}
+
 		ports = append(ports, corev1.ServicePort{
 			Name:     fmt.Sprintf("kafka-%s", name),
 			Protocol: corev1.ProtocolTCP,
 			Port:     listener.Port,
-			NodePort: listener.AdvertisedPorts[0],
+			NodePort: nodePort,
 		})
 	}
 
@@ -67,11 +79,17 @@ func NodePortService(dot *helmette.Dot) *corev1.Service {
 		if listener.Enabled != nil && *listener.Enabled == false {
 			continue
 		}
+
+		nodePort := listener.Port
+		if len(listener.AdvertisedPorts) > 0 {
+			nodePort = listener.AdvertisedPorts[0]
+		}
+
 		ports = append(ports, corev1.ServicePort{
 			Name:     fmt.Sprintf("http-%s", name),
 			Protocol: corev1.ProtocolTCP,
 			Port:     listener.Port,
-			NodePort: listener.AdvertisedPorts[0],
+			NodePort: nodePort,
 		})
 	}
 
@@ -79,11 +97,17 @@ func NodePortService(dot *helmette.Dot) *corev1.Service {
 		if listener.Enabled != nil && *listener.Enabled == false {
 			continue
 		}
+
+		nodePort := listener.Port
+		if len(listener.AdvertisedPorts) > 0 {
+			nodePort = listener.AdvertisedPorts[0]
+		}
+
 		ports = append(ports, corev1.ServicePort{
 			Name:     fmt.Sprintf("schema-%s", name),
 			Protocol: corev1.ProtocolTCP,
 			Port:     listener.Port,
-			NodePort: listener.AdvertisedPorts[0],
+			NodePort: nodePort,
 		})
 	}
 
