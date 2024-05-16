@@ -31,7 +31,7 @@ jobs:
       fail-fast: true
     runs-on: ubuntu-22.04
     steps:
-      - uses: cachix/install-nix-action@v26
+      - uses: cachix/install-nix-action@V27
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
 
