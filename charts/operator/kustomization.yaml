@@ -1,6 +1,6 @@
 resources:
-  - https://github.com/redpanda-data/redpanda-operator//src/go/k8s/config/rbac?ref=v2.1.18-23.3.13
-  - https://github.com/redpanda-data/redpanda-operator//src/go/k8s/config/webhook?ref=v2.1.18-23.3.13
+  - https://github.com/redpanda-data/redpanda-operator//src/go/k8s/config/rbac?ref=v2.1.19-24.1.2
+  - https://github.com/redpanda-data/redpanda-operator//src/go/k8s/config/webhook?ref=v2.1.19-24.1.2
 namePrefix: '{{ include "redpanda-operator.fullname" $ }}-'
 namespace: '{{ $.Release.Namespace }}'
 patches:
