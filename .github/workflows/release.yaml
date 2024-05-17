@@ -87,6 +87,12 @@ jobs:
           git commit -m "[Auto Commit] Update testdata golden files"
           git push
 
+      - name: Checkout kustomize
+        uses: actions/checkout@v4 # v3.5.3
+        with:
+          ref: kustomize
+          path: kustomize
+
       - name: Build dependencies for the operator chart
         run: |
           mkdir -p kustomize/operator
