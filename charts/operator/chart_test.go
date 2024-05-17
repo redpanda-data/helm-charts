@@ -29,8 +29,9 @@ func TestTemplate(t *testing.T) {
 	require.NoError(t, client.DependencyBuild(ctx, "."), "failed to refresh helm dependencies")
 
 	scheme := runtime.NewScheme()
-	require.NoError(t, clientscheme.AddToScheme(scheme))
+	require.NoError(t, apiextensionsv1.AddToScheme(scheme))
 	require.NoError(t, certmanagerv1.AddToScheme(scheme))
+	require.NoError(t, clientscheme.AddToScheme(scheme))
 
 	testCases := []struct {
 		Name   string

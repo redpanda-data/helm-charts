@@ -6,9 +6,9 @@ metadata:
   name: redpanda-operator
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.22
+    helm.sh/chart: operator-0.4.23
     app.kubernetes.io/instance: redpanda-operator
-    app.kubernetes.io/version: "v2.1.18-23.3.13"
+    app.kubernetes.io/version: "v2.1.19-24.1.2"
     app.kubernetes.io/managed-by: Helm
 ---
 # Source: operator/templates/configmap.yaml
@@ -18,327 +18,327 @@ metadata:
   name: redpanda-operator-config
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.22
+    helm.sh/chart: operator-0.4.23
     app.kubernetes.io/instance: redpanda-operator
-    app.kubernetes.io/version: "v2.1.18-23.3.13"
+    app.kubernetes.io/version: "v2.1.19-24.1.2"
     app.kubernetes.io/managed-by: Helm
     
 data:
   controller_manager_config.yaml: |
     map[apiVersion:controller-runtime.sigs.k8s.io/v1alpha1 health:map[healthProbeBindAddress::8081] kind:ControllerManagerConfig leaderElection:map[leaderElect:true resourceName:aa9fc693.vectorized.io] metrics:map[bindAddress:127.0.0.1:8080] webhook:map[port:9443]]
 ---
-# Source: operator/templates/clusterrole.yaml
+# Source: operator/templates/helmify-kustomized-manifest.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: redpanda-operator
+  annotations: {}
   labels:
-    app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.22
     app.kubernetes.io/instance: redpanda-operator
-    app.kubernetes.io/version: "v2.1.18-23.3.13"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: operator
+    app.kubernetes.io/version: v2.1.19-24.1.2
+    helm.sh/chart: operator-0.4.23
+  name: redpanda-operator-manager-role
 rules:
 - apiGroups:
-    - ""
+  - apps
   resources:
-    - persistentvolumes
+  - deployments
   verbs:
-    - delete
-    - get
-    - list
-    - patch
-    - update
-    - watch
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
 - apiGroups:
-    - apps
+  - apps
   resources:
-    - deployments
+  - statefulsets
   verbs:
-    - create
-    - delete
-    - get
-    - list
-    - patch
-    - update
-    - watch
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
 - apiGroups:
-    - apps
+  - cert-manager.io
   resources:
-    - statefulsets
+  - certificates
+  - issuers
   verbs:
-    - create
-    - delete
-    - get
-    - list
-    - patch
-    - update
-    - watch
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
 - apiGroups:
-    - cert-manager.io
+  - cert-manager.io
   resources:
-    - certificates
-    - issuers
+  - clusterissuers
   verbs:
-    - create
-    - delete
-    - get
-    - list
-    - patch
-    - update
-    - watch
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
 - apiGroups:
-    - cert-manager.io
+  - cluster.redpanda.com
   resources:
-    - clusterissuers
+  - topics
   verbs:
-    - create
-    - delete
-    - get
-    - list
-    - patch
-    - update
-    - watch
+  - get
+  - list
+  - patch
+  - update
+  - watch
 - apiGroups:
-    - ""
+  - cluster.redpanda.com
   resources:
-    - configmaps
+  - topics/finalizers
   verbs:
-    - create
-    - delete
-    - get
-    - list
-    - patch
-    - update
-    - watch
+  - update
 - apiGroups:
-    - ""
+  - cluster.redpanda.com
   resources:
-    - events
+  - topics/status
   verbs:
-    - create
-    - get
-    - list
-    - patch
-    - update
-    - watch
+  - get
+  - patch
+  - update
 - apiGroups:
-    - ""
+  - ""
   resources:
-    - nodes
+  - configmaps
   verbs:
-    - get
-    - list
-    - watch
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
 - apiGroups:
-    - ""
+  - ""
   resources:
-    - persistentvolumeclaims
+  - events
   verbs:
-    - delete
-    - get
-    - list
-    - watch
+  - create
+  - get
+  - list
+  - patch
+  - update
+  - watch
 - apiGroups:
-    - ""
+  - ""
   resources:
-    - pods
+  - nodes
   verbs:
-    - delete
-    - get
-    - list
-    - update
-    - watch
+  - get
+  - list
+  - watch
 - apiGroups:
-    - ""
+  - ""
   resources:
-    - pods/finalizers
+  - persistentvolumeclaims
   verbs:
-    - update
+  - delete
+  - get
+  - list
+  - watch
 - apiGroups:
-    - ""
+  - ""
   resources:
-    - pods/status
+  - persistentvolumes
   verbs:
-    - patch
-    - update
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
 - apiGroups:
-    - ""
+  - ""
   resources:
-    - secrets
+  - pods
   verbs:
-    - create
-    - get
-    - list
-    - patch
-    - update
-    - watch
+  - delete
+  - get
+  - list
+  - update
+  - watch
 - apiGroups:
-    - ""
+  - ""
   resources:
-    - serviceaccounts
+  - pods/finalizers
   verbs:
-    - create
-    - get
-    - list
-    - patch
-    - update
-    - watch
+  - update
 - apiGroups:
-    - ""
+  - ""
   resources:
-    - services
+  - pods/status
   verbs:
-    - create
-    - get
-    - list
-    - patch
-    - update
-    - watch
+  - patch
+  - update
 - apiGroups:
-    - networking.k8s.io
+  - ""
   resources:
-    - ingresses
+  - secrets
   verbs:
-    - create
-    - delete
-    - get
-    - list
-    - patch
-    - update
-    - watch
+  - create
+  - get
+  - list
+  - patch
+  - update
+  - watch
 - apiGroups:
-    - policy
+  - ""
   resources:
-    - poddisruptionbudgets
+  - serviceaccounts
   verbs:
-    - create
-    - delete
-    - get
-    - list
-    - patch
-    - update
-    - watch
+  - create
+  - get
+  - list
+  - patch
+  - update
+  - watch
 - apiGroups:
-    - rbac.authorization.k8s.io
+  - ""
   resources:
-    - clusterrolebindings
-    - clusterroles
+  - services
   verbs:
-    - create
-    - get
-    - list
-    - patch
-    - update
-    - watch
+  - create
+  - get
+  - list
+  - patch
+  - update
+  - watch
 - apiGroups:
-    - redpanda.vectorized.io
+  - networking.k8s.io
   resources:
-    - clusters
+  - ingresses
   verbs:
-    - create
-    - delete
-    - get
-    - list
-    - patch
-    - update
-    - watch
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
 - apiGroups:
-    - redpanda.vectorized.io
+  - policy
   resources:
-    - clusters/finalizers
+  - poddisruptionbudgets
   verbs:
-    - update
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
 - apiGroups:
-    - redpanda.vectorized.io
+  - rbac.authorization.k8s.io
   resources:
-    - clusters/status
+  - clusterrolebindings
+  - clusterroles
   verbs:
-    - get
-    - patch
-    - update
+  - create
+  - get
+  - list
+  - patch
+  - update
+  - watch
 - apiGroups:
-    - redpanda.vectorized.io
+  - redpanda.vectorized.io
   resources:
-    - consoles
+  - clusters
   verbs:
-    - create
-    - delete
-    - get
-    - list
-    - patch
-    - update
-    - watch
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
 - apiGroups:
-    - redpanda.vectorized.io
+  - redpanda.vectorized.io
   resources:
-    - consoles/finalizers
+  - clusters/finalizers
   verbs:
-    - update
+  - update
 - apiGroups:
-    - redpanda.vectorized.io
+  - redpanda.vectorized.io
   resources:
-    - consoles/status
+  - clusters/status
   verbs:
-    - get
-    - patch
-    - update
+  - get
+  - patch
+  - update
 - apiGroups:
-    - cluster.redpanda.com
+  - redpanda.vectorized.io
   resources:
-    - topics
+  - consoles
   verbs:
-    - get
-    - list
-    - patch
-    - update
-    - watch
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
 - apiGroups:
-    - cluster.redpanda.com
+  - redpanda.vectorized.io
   resources:
-    - topics/finalizers
+  - consoles/finalizers
   verbs:
-    - update
+  - update
 - apiGroups:
-    - cluster.redpanda.com
+  - redpanda.vectorized.io
   resources:
-    - topics/status
+  - consoles/status
   verbs:
-    - get
-    - patch
-    - update
+  - get
+  - patch
+  - update
 ---
-# Source: operator/templates/clusterrole_metrics.yaml
+# Source: operator/templates/helmify-kustomized-manifest.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: redpanda-operator-metrics-reader
+  annotations: {}
   labels:
-    app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.22
     app.kubernetes.io/instance: redpanda-operator
-    app.kubernetes.io/version: "v2.1.18-23.3.13"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: operator
+    app.kubernetes.io/version: v2.1.19-24.1.2
+    helm.sh/chart: operator-0.4.23
+  name: redpanda-operator-metrics-reader
 rules:
 - nonResourceURLs:
   - /metrics
   verbs:
   - get
 ---
-# Source: operator/templates/clusterrole_proxy.yaml
+# Source: operator/templates/helmify-kustomized-manifest.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: redpanda-operator-proxy-role
+  annotations: {}
   labels:
-    app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.22
     app.kubernetes.io/instance: redpanda-operator
-    app.kubernetes.io/version: "v2.1.18-23.3.13"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: operator
+    app.kubernetes.io/version: v2.1.19-24.1.2
+    helm.sh/chart: operator-0.4.23
+  name: redpanda-operator-proxy-role
 rules:
 - apiGroups:
   - authentication.k8s.io
@@ -353,39 +353,39 @@ rules:
   verbs:
   - create
 ---
-# Source: operator/templates/clusterrole_binding.yaml
+# Source: operator/templates/helmify-kustomized-manifest.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: redpanda-operator
+  annotations: {}
   labels:
-    app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.22
     app.kubernetes.io/instance: redpanda-operator
-    app.kubernetes.io/version: "v2.1.18-23.3.13"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: operator
+    app.kubernetes.io/version: v2.1.19-24.1.2
+    helm.sh/chart: operator-0.4.23
+  name: redpanda-operator-manager-role
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: redpanda-operator
+  name: redpanda-operator-manager-role
 subjects:
 - kind: ServiceAccount
   name: redpanda-operator
   namespace: default
 ---
-# Source: operator/templates/clusterrole_proxy_binding.yaml
+# Source: operator/templates/helmify-kustomized-manifest.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: redpanda-operator-proxy-role
+  annotations: {}
   labels:
-    app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.22
     app.kubernetes.io/instance: redpanda-operator
-    app.kubernetes.io/version: "v2.1.18-23.3.13"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: operator
+    app.kubernetes.io/version: v2.1.19-24.1.2
+    helm.sh/chart: operator-0.4.23
+  name: redpanda-operator-proxy-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -395,136 +395,540 @@ subjects:
   name: redpanda-operator
   namespace: default
 ---
-# Source: operator/templates/extra_role.yaml
+# Source: operator/templates/helmify-kustomized-manifest.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: redpanda-operator-pvc
+  annotations: {}
   labels:
-    app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.22
     app.kubernetes.io/instance: redpanda-operator
-    app.kubernetes.io/version: "v2.1.18-23.3.13"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: operator
+    app.kubernetes.io/version: v2.1.19-24.1.2
+    helm.sh/chart: operator-0.4.23
+  name: redpanda-operator-manager-role
+  namespace: default
 rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - replicasets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - statefulsets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - statefulsets/status
+  verbs:
+  - patch
+  - update
+- apiGroups:
+  - batch
+  resources:
+  - jobs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - cert-manager.io
+  resources:
+  - certificates
+  verbs:
+  - create
+  - delete
+  - get
+  - patch
+  - update
+- apiGroups:
+  - cert-manager.io
+  resources:
+  - issuers
+  verbs:
+  - create
+  - delete
+  - get
+  - patch
+  - update
+- apiGroups:
+  - cluster.redpanda.com
+  resources:
+  - redpandas
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - cluster.redpanda.com
+  resources:
+  - redpandas/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - cluster.redpanda.com
+  resources:
+  - redpandas/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - cluster.redpanda.com
+  resources:
+  - topics
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - cluster.redpanda.com
+  resources:
+  - topics/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - cluster.redpanda.com
+  resources:
+  - topics/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
 - apiGroups:
   - ""
   resources:
   - persistentvolumeclaims
   verbs:
-  - list
   - delete
----
-# Source: operator/templates/role.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: redpanda-operator-election-role
-  labels:
-    app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.22
-    app.kubernetes.io/instance: redpanda-operator
-    app.kubernetes.io/version: "v2.1.18-23.3.13"
-    app.kubernetes.io/managed-by: Helm
-    
-rules:
+  - get
+  - list
+  - patch
+  - update
+  - watch
 - apiGroups:
   - ""
-  - coordination.k8s.io
   resources:
-  - leases
+  - pods
+  verbs:
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods/status
+  verbs:
+  - patch
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - serviceaccounts
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - services
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - helm.toolkit.fluxcd.io
+  resources:
+  - helmreleases
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - helm.toolkit.fluxcd.io
+  resources:
+  - helmreleases/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - helm.toolkit.fluxcd.io
+  resources:
+  - helmreleases/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - monitoring.coreos.com
+  resources:
+  - servicemonitors
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - policy
+  resources:
+  - poddisruptionbudgets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - rolebindings
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - roles
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - redpanda.vectorized.io
+  resources:
+  - clusters
   verbs:
   - get
   - list
-  - watch
-  - create
-  - update
   - patch
+  - update
+  - watch
+- apiGroups:
+  - redpanda.vectorized.io
+  resources:
+  - consoles
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - source.toolkit.fluxcd.io
+  resources:
+  - buckets
+  verbs:
+  - create
   - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - source.toolkit.fluxcd.io
+  resources:
+  - gitrepositories
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - source.toolkit.fluxcd.io
+  resources:
+  - gitrepository
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - source.toolkit.fluxcd.io
+  resources:
+  - gitrepository/finalizers
+  verbs:
+  - create
+  - delete
+  - get
+  - patch
+  - update
+- apiGroups:
+  - source.toolkit.fluxcd.io
+  resources:
+  - gitrepository/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - source.toolkit.fluxcd.io
+  resources:
+  - helmcharts
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - source.toolkit.fluxcd.io
+  resources:
+  - helmcharts/finalizers
+  verbs:
+  - create
+  - delete
+  - get
+  - patch
+  - update
+- apiGroups:
+  - source.toolkit.fluxcd.io
+  resources:
+  - helmcharts/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - source.toolkit.fluxcd.io
+  resources:
+  - helmrepositories
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - source.toolkit.fluxcd.io
+  resources:
+  - helmrepositories/finalizers
+  verbs:
+  - create
+  - delete
+  - get
+  - patch
+  - update
+- apiGroups:
+  - source.toolkit.fluxcd.io
+  resources:
+  - helmrepositories/status
+  verbs:
+  - get
+  - patch
+  - update
 ---
-# Source: operator/templates/extra_role.yaml
-kind: RoleBinding
+# Source: operator/templates/helmify-kustomized-manifest.yaml
 apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
 metadata:
-  name: redpanda-operator-pvc
+  annotations: {}
   labels:
-    app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.22
     app.kubernetes.io/instance: redpanda-operator
-    app.kubernetes.io/version: "v2.1.18-23.3.13"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: operator
+    app.kubernetes.io/version: v2.1.19-24.1.2
+    helm.sh/chart: operator-0.4.23
+  name: redpanda-operator-manager-role
+  namespace: default
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: redpanda-operator-pvc
-subjects:
-  - kind: ServiceAccount
-    name: redpanda-operator
-    namespace: default
----
-# Source: operator/templates/role_binding.yaml
-kind: RoleBinding
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: redpanda-operator-election-rolebinding
-  labels:
-    app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.22
-    app.kubernetes.io/instance: redpanda-operator
-    app.kubernetes.io/version: "v2.1.18-23.3.13"
-    app.kubernetes.io/managed-by: Helm
-    
+  name: redpanda-operator-manager-role
 subjects:
 - kind: ServiceAccount
   name: redpanda-operator
   namespace: default
-roleRef:
-  kind: Role
-  name: redpanda-operator-election-role
-  apiGroup: rbac.authorization.k8s.io
 ---
-# Source: operator/templates/service_metrics.yaml
+# Source: operator/templates/helmify-kustomized-manifest.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: operator-metrics-service
+  annotations: {}
   labels:
-    app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.22
     app.kubernetes.io/instance: redpanda-operator
-    app.kubernetes.io/version: "v2.1.18-23.3.13"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: operator
+    app.kubernetes.io/version: v2.1.19-24.1.2
+    control-plane: controller-manager
+    helm.sh/chart: operator-0.4.23
+  name: redpanda-operator-controller-manager-metrics-service
+  namespace: default
 spec:
   ports:
   - name: https
     port: 8443
     targetPort: https
   selector:
-    app.kubernetes.io/name: operator
     app.kubernetes.io/instance: redpanda-operator
+    app.kubernetes.io/name: operator
 ---
-# Source: operator/templates/service_webhook.yaml
+# Source: operator/templates/helmify-kustomized-manifest.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: operator-webhook-service
+  annotations:
+    cert-manager.io/inject-ca-from: redpanda-operator/redpanda-serving-cert
   labels:
-    app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.22
     app.kubernetes.io/instance: redpanda-operator
-    app.kubernetes.io/version: "v2.1.18-23.3.13"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: operator
+    app.kubernetes.io/version: v2.1.19-24.1.2
+    helm.sh/chart: operator-0.4.23
+  name: redpanda-operator-webhook-service
+  namespace: default
 spec:
   ports:
   - port: 443
     targetPort: 9443
   selector:
-    app.kubernetes.io/name: operator
     app.kubernetes.io/instance: redpanda-operator
+    app.kubernetes.io/name: operator
 ---
 # Source: operator/templates/deployment.yaml
 apiVersion: apps/v1
@@ -534,9 +938,9 @@ metadata:
   labels:
     
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.22
+    helm.sh/chart: operator-0.4.23
     app.kubernetes.io/instance: redpanda-operator
-    app.kubernetes.io/version: "v2.1.18-23.3.13"
+    app.kubernetes.io/version: "v2.1.19-24.1.2"
     app.kubernetes.io/managed-by: Helm
     
 spec:
@@ -555,13 +959,13 @@ spec:
       serviceAccountName: redpanda-operator
       containers:
       - name: manager
-        image: "docker.redpanda.com/redpandadata/redpanda-operator:v2.1.18-23.3.13"
+        image: "docker.redpanda.com/redpandadata/redpanda-operator:v2.1.19-24.1.2"
         imagePullPolicy: IfNotPresent
         args:
         - --health-probe-bind-address=:8081
         - --metrics-bind-address=127.0.0.1:8080
         - --leader-elect
-        - --configurator-tag=v2.1.18-23.3.13
+        - --configurator-tag=v2.1.19-24.1.2
         - --configurator-base-image=docker.redpanda.com/redpandadata/configurator
         - --webhook-enabled=true
         command:
@@ -617,9 +1021,9 @@ metadata:
   name: redpanda-serving-cert
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.22
+    helm.sh/chart: operator-0.4.23
     app.kubernetes.io/instance: redpanda-operator
-    app.kubernetes.io/version: "v2.1.18-23.3.13"
+    app.kubernetes.io/version: "v2.1.19-24.1.2"
     app.kubernetes.io/managed-by: Helm
     
 spec:
@@ -640,75 +1044,125 @@ metadata:
   name: redpanda-operator-selfsigned-issuer
   labels:
     app.kubernetes.io/name: operator
-    helm.sh/chart: operator-0.4.22
+    helm.sh/chart: operator-0.4.23
     app.kubernetes.io/instance: redpanda-operator
-    app.kubernetes.io/version: "v2.1.18-23.3.13"
+    app.kubernetes.io/version: "v2.1.19-24.1.2"
     app.kubernetes.io/managed-by: Helm
     
 spec:
   selfSigned: {}
 ---
-# Source: operator/templates/mutating_webhook.yaml
+# Source: operator/templates/helmify-kustomized-manifest.yaml
 apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration
 metadata:
-  annotations:
-    cert-manager.io/inject-ca-from: default/redpanda-serving-cert
+  annotations: {}
+  labels:
+    app.kubernetes.io/instance: redpanda-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: operator
+    app.kubernetes.io/version: v2.1.19-24.1.2
+    helm.sh/chart: operator-0.4.23
   name: redpanda-operator-mutating-webhook-configuration
 webhooks:
-  - admissionReviewVersions:
-    - v1
-    - v1beta1
-    clientConfig:
-      service:
-        name: operator-webhook-service
-        namespace: default
-        path: /mutate-redpanda-vectorized-io-v1alpha1-cluster
-    failurePolicy: Fail
-    name: mcluster.kb.io
-    rules:
-    - apiGroups:
-      - redpanda.vectorized.io
-      apiVersions:
-      - v1alpha1
-      operations:
-      - CREATE
-      - UPDATE
-      resources:
-      - clusters
-    sideEffects: None
+- admissionReviewVersions:
+  - v1
+  - v1beta1
+  clientConfig:
+    service:
+      name: redpanda-operator-webhook-service
+      namespace: default
+      path: /mutate-redpanda-vectorized-io-v1alpha1-cluster
+  failurePolicy: Fail
+  name: mcluster.kb.io
+  rules:
+  - apiGroups:
+    - redpanda.vectorized.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - clusters
+  sideEffects: None
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    service:
+      name: redpanda-operator-webhook-service
+      namespace: default
+      path: /mutate-redpanda-vectorized-io-v1alpha1-console
+  failurePolicy: Fail
+  name: mconsole.kb.io
+  rules:
+  - apiGroups:
+    - redpanda.vectorized.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - consoles
+  sideEffects: None
 ---
-# Source: operator/templates/validating_webhook.yaml
+# Source: operator/templates/helmify-kustomized-manifest.yaml
 apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingWebhookConfiguration
 metadata:
-  annotations:
-    cert-manager.io/inject-ca-from: default/redpanda-serving-cert
+  annotations: {}
+  labels:
+    app.kubernetes.io/instance: redpanda-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: operator
+    app.kubernetes.io/version: v2.1.19-24.1.2
+    helm.sh/chart: operator-0.4.23
   name: redpanda-operator-validating-webhook-configuration
 webhooks:
-  - admissionReviewVersions:
-    - v1
-    - v1beta1
-    clientConfig:
-      service:
-        name: operator-webhook-service
-        namespace: default
-        path: /validate-redpanda-vectorized-io-v1alpha1-cluster
-    failurePolicy: Fail
-    name: mcluster.kb.io
-    rules:
-    - apiGroups:
-      - redpanda.vectorized.io
-      apiVersions:
-      - v1alpha1
-      operations:
-      - CREATE
-      - UPDATE
-      resources:
-      - clusters
-    sideEffects: None
+- admissionReviewVersions:
+  - v1
+  - v1beta1
+  clientConfig:
+    service:
+      name: redpanda-operator-webhook-service
+      namespace: default
+      path: /validate-redpanda-vectorized-io-v1alpha1-cluster
+  failurePolicy: Fail
+  name: vcluster.kb.io
+  rules:
+  - apiGroups:
+    - redpanda.vectorized.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - clusters
+  sideEffects: None
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    service:
+      name: redpanda-operator-webhook-service
+      namespace: default
+      path: /validate-redpanda-vectorized-io-v1alpha1-console
+  failurePolicy: Fail
+  name: vconsole.kb.io
+  rules:
+  - apiGroups:
+    - redpanda.vectorized.io
+    apiVersions:
+    - v1alpha1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - consoles
+  sideEffects: None
 ---
-# Source: operator/templates/tests/create-topic-with-client-auth.yaml
+# Source: operator/templates/tests/create-topic-v1-with-client-auth.yaml
 apiVersion: v1
 kind: Pod
 metadata:
@@ -828,6 +1282,232 @@ spec:
               pandaproxyApi:
               - port: 8082
               developerMode: true
+          EOF
+          $KUBECTL -n default delete pvc --all
+  restartPolicy: Never
+---
+# Source: operator/templates/tests/create-topic-v2-with-client-auth.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: create-test-topic-tls
+  annotations:
+    helm.sh/hook: test
+    helm.sh/hook-delete-policy: before-hook-creation
+    helm.sh/hook-weight: "2"
+spec:
+  serviceAccount: redpanda-operator
+  containers:
+    - name: rpk
+      image: docker.redpanda.com/redpandadata/redpanda:latest
+      env:
+        - name: KUBECTL_VERSION
+          value: v1.27.4
+      command:
+        - /bin/bash
+        - -c
+        - |
+          set -xeuo pipefail
+
+          # Setup for the test
+          mkdir -p /etc/redpanda
+          cat > /etc/redpanda/redpanda.yaml << EOF
+          redpanda:
+          rpk:
+            kafka_api:
+              brokers:
+                - cluster-tls-0.cluster-tls.default.svc.cluster.local:9092
+                - cluster-tls-1.cluster-tls.default.svc.cluster.local:9092
+                - cluster-tls-2.cluster-tls.default.svc.cluster.local:9092
+              tls:
+                enabled: true
+                key_file: /tmp/tls.key
+                cert_file: /tmp/tls.crt
+                truststore_file: /tmp/ca.crt
+          EOF
+          curl -Ls https://dl.k8s.io/${KUBECTL_VERSION}/bin/linux/amd64/kubectl -o /tmp/kubectl-${KUBECTL_VERSION}
+          echo "$(curl -Ls https://dl.k8s.io/${KUBECTL_VERSION}/bin/linux/amd64/kubectl.sha256) /tmp/kubectl-${KUBECTL_VERSION}" | sha256sum --check
+          chmod +x /tmp/kubectl-${KUBECTL_VERSION}
+          KUBECTL=/tmp/kubectl-${KUBECTL_VERSION}
+
+          # Create the Redpanda resource
+          $KUBECTL -n default apply -f - <<EOF
+          apiVersion: cluster.redpanda.com/v1alpha2
+          kind: Redpanda
+          metadata:
+            name: cluster-tls
+          spec:
+            chartRef:
+              chartVersion: ">4.0.0"
+            clusterSpec:
+              console:
+                enabled: false
+              image:
+                repository: docker.redpanda.com/redpandadata/redpanda
+                tag: v23.2.2
+              listeners:
+                admin:
+                  external: {}
+                  port: 9644
+                  tls:
+                    cert: ""
+                    enabled: false
+                    requireClientAuth: false
+                http:
+                  authenticationMethod: none
+                  enabled: true
+                  external: {}
+                  kafkaEndpoint: kafka-default
+                  port: 8082
+                  tls:
+                    cert: ""
+                    enabled: false
+                    requireClientAuth: false
+                kafka:
+                  authenticationMethod: none
+                  external: {}
+                  port: 9092
+                  tls:
+                    cert: kafka-internal-0
+                    enabled: true
+                    requireClientAuth: true
+                rpc:
+                  port: 33145
+              logging:
+                logLevel: trace
+                usageStats:
+                  enabled: false
+              resources:
+                cpu:
+                  cores: 1
+                memory:
+                  container:
+                    max: 2Gi
+                    min: 2Gi
+              statefulset:
+                replicas: 3
+              storage:
+                persistentVolume:
+                  enabled: true
+                  size: 100Gi
+              tls:
+                certs:
+                  kafka-internal-0:
+                    caEnabled: true
+                enabled: true
+          ---
+          apiVersion: cert-manager.io/v1
+          kind: Certificate
+          metadata:
+            name: cluster-tls-user-client
+          spec:
+            emailAddresses:
+              - test@domain.dom
+            duration: 43800h0m0s
+            issuerRef:
+              group: cert-manager.io
+              kind: Issuer
+              name: cluster-tls-kafka-internal-0-root-issuer
+            privateKey:
+              algorithm: ECDSA
+              size: 256
+            secretName: cluster-tls-user-client
+          EOF
+
+          # Wait for things to be ready
+          $KUBECTL -n default wait --for=condition=ClusterConfigured --timeout=10m redpanda/cluster-tls
+          $KUBECTL -n default wait --for=jsonpath='{.status.restarting}'=false --timeout=10m redpanda/cluster-tls
+          $KUBECTL -n default wait --for=jsonpath='{.status.upgrading}'=false --timeout=10m redpanda/cluster-tls
+          $KUBECTL -n default wait --for=jsonpath='{.metadata.name}'=cluster-tls-user-client --timeout=10m secret/cluster-tls-user-client
+          $KUBECTL -n default get secret cluster-tls-user-client -o go-template='{{ base64decode (index .data "tls.crt") }}' > /tmp/tls.crt
+          $KUBECTL -n default get secret cluster-tls-user-client -o go-template='{{ base64decode (index .data "tls.key") }}' > /tmp/tls.key
+          $KUBECTL -n default get secret cluster-tls-user-client -o go-template='{{ base64decode (index .data "ca.crt") }}' > /tmp/ca.crt
+
+          # Make sure Redpanda works
+          rpk topic create test -v
+
+          # Clean up
+          $KUBECTL -n default delete -f - <<EOF
+          apiVersion: cluster.redpanda.com/v1alpha2
+          kind: Redpanda
+          metadata:
+            name: cluster-tls
+          spec:
+            chartRef:
+              chartVersion: ">4.0.0"
+            clusterSpec:
+              console:
+                enabled: false
+              image:
+                repository: docker.redpanda.com/redpandadata/redpanda
+                tag: v23.2.2
+              listeners:
+                admin:
+                  external: {}
+                  port: 9644
+                  tls:
+                    cert: ""
+                    enabled: false
+                    requireClientAuth: false
+                http:
+                  authenticationMethod: none
+                  enabled: true
+                  external: {}
+                  kafkaEndpoint: kafka-default
+                  port: 8082
+                  tls:
+                    cert: ""
+                    enabled: false
+                    requireClientAuth: false
+                kafka:
+                  authenticationMethod: none
+                  external: {}
+                  port: 9092
+                  tls:
+                    cert: kafka-internal-0
+                    enabled: true
+                    requireClientAuth: true
+                rpc:
+                  port: 33145
+              logging:
+                logLevel: trace
+                usageStats:
+                  enabled: false
+              resources:
+                cpu:
+                  cores: 1
+                memory:
+                  container:
+                    max: 2Gi
+                    min: 2Gi
+              statefulset:
+                replicas: 3
+              storage:
+                persistentVolume:
+                  enabled: true
+                  size: 100Gi
+              tls:
+                certs:
+                  kafka-internal-0:
+                    caEnabled: true
+                enabled: true
+          ---
+          apiVersion: cert-manager.io/v1
+          kind: Certificate
+          metadata:
+            name: cluster-tls-user-client
+          spec:
+            emailAddresses:
+              - test@domain.dom
+            duration: 43800h0m0s
+            issuerRef:
+              group: cert-manager.io
+              kind: Issuer
+              name: cluster-tls-kafka-internal-0-root-issuer
+            privateKey:
+              algorithm: ECDSA
+              size: 256
+            secretName: cluster-tls-user-client
           EOF
           $KUBECTL -n default delete pvc --all
   restartPolicy: Never

@@ -87,10 +87,10 @@ rbac:
   # -- Create RBAC cluster roles needed for the Redpanda Helm chart's 'rbac.enabled' feature.
   createRPKBundleCRs: false
 
-# -- Specifies whether to create Webhook resources both to intercept and potentially modify or reject Kubernetes API requests as well as authenticate requests to the Kubernetes API. Only valid when `scope` is set to Cluster.
+# -- Specifies whether to create Webhook resources both to intercept and potentially modify or reject Kubernetes API requests as well as authenticate requests to the Kubernetes API.
 webhook:
   # -- Creates the Webhook resources.
-  enabled: false
+  enabled: true
 
 # -- Service account management.
 serviceAccount:
@@ -155,4 +155,9 @@ webhookSecretName: webhook-server-cert
 # -- Sets the scope of the Redpanda Operator.
 # Valid values are `Cluster` or `Namespace`.
 # The Cluster scope is deprecated because it deploys the deprecated version of the Redpanda Operator. Use the default Namespace scope. In the Namespace scope, the Redpanda Operator manages Redpanda resources that are deployed in the same namespace as itself.
+# WARNING: This field does not do what you think it does. For historical
+# purposes, scope controls the mode of operation for the operator. "Namespace"
+# will run operator V2 AKA the Redpanda reconciler and "Cluster" will run
+# operator V1 AKA the Cluster reconciler. Do not change this unless you know
+# what this warning message means.
 scope: Namespace

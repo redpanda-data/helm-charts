@@ -2,17 +2,121 @@
 ---
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+kind: ClusterRole
 metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/instance: redpanda-operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.1.18-23.3.13
-    helm.sh/chart: operator-0.4.22
-  name: redpanda-operator
+    app.kubernetes.io/version: v2.1.19-24.1.2
+    helm.sh/chart: operator-0.4.23
+  name: redpanda-operator-manager-role
 rules:
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - statefulsets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - cert-manager.io
+  resources:
+  - certificates
+  - issuers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - cert-manager.io
+  resources:
+  - clusterissuers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - cluster.redpanda.com
+  resources:
+  - topics
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - cluster.redpanda.com
+  resources:
+  - topics/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - cluster.redpanda.com
+  resources:
+  - topics/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - get
+  - list
+  - watch
 - apiGroups:
   - ""
   resources:
@@ -21,9 +125,200 @@ rules:
   - delete
   - get
   - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - persistentvolumes
+  verbs:
+  - delete
+  - get
+  - list
   - patch
   - update
   - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - delete
+  - get
+  - list
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - pods/status
+  verbs:
+  - patch
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - create
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - serviceaccounts
+  verbs:
+  - create
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - services
+  verbs:
+  - create
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - policy
+  resources:
+  - poddisruptionbudgets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - clusterrolebindings
+  - clusterroles
+  verbs:
+  - create
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - redpanda.vectorized.io
+  resources:
+  - clusters
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - redpanda.vectorized.io
+  resources:
+  - clusters/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - redpanda.vectorized.io
+  resources:
+  - clusters/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - redpanda.vectorized.io
+  resources:
+  - consoles
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - redpanda.vectorized.io
+  resources:
+  - consoles/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - redpanda.vectorized.io
+  resources:
+  - consoles/status
+  verbs:
+  - get
+  - patch
+  - update
+---
+---
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/instance: redpanda-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: operator
+    app.kubernetes.io/version: v2.1.19-24.1.2
+    helm.sh/chart: operator-0.4.23
+  name: redpanda-operator-manager-role
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: redpanda-operator-manager-role
+subjects:
+- kind: ServiceAccount
+  name: redpanda-operator
+  namespace: default
+---
+---
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/instance: redpanda-operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: operator
+    app.kubernetes.io/version: v2.1.19-24.1.2
+    helm.sh/chart: operator-0.4.23
+  name: redpanda-operator-manager-role
+  namespace: default
+rules:
 - apiGroups:
   - ""
   resources:
@@ -65,13 +360,13 @@ rules:
   resources:
   - statefulsets
   verbs:
-  - list
-  - watch
   - create
   - delete
   - get
+  - list
   - patch
   - update
+  - watch
 - apiGroups:
   - apps
   resources:
@@ -138,6 +433,30 @@ rules:
   - patch
   - update
 - apiGroups:
+  - cluster.redpanda.com
+  resources:
+  - topics
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - cluster.redpanda.com
+  resources:
+  - topics/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - cluster.redpanda.com
+  resources:
+  - topics/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
   - coordination.k8s.io
   resources:
   - leases
@@ -171,21 +490,8 @@ rules:
 - apiGroups:
   - ""
   resources:
-  - secrets
+  - persistentvolumeclaims
   verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - serviceaccounts
-  verbs:
-  - create
   - delete
   - get
   - list
@@ -210,6 +516,30 @@ rules:
   verbs:
   - patch
   - update
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - serviceaccounts
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
 - apiGroups:
   - ""
   resources:
@@ -248,18 +578,6 @@ rules:
   - get
   - patch
   - update
-- apiGroups:
-  - monitoring.coreos.com
-  resources:
-  - podmonitors
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
 - apiGroups:
   - monitoring.coreos.com
   resources:
@@ -454,30 +772,6 @@ rules:
   - get
   - patch
   - update
-- apiGroups:
-  - cluster.redpanda.com
-  resources:
-  - topics
-  verbs:
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - cluster.redpanda.com
-  resources:
-  - topics/finalizers
-  verbs:
-  - update
-- apiGroups:
-  - cluster.redpanda.com
-  resources:
-  - topics/status
-  verbs:
-  - get
-  - patch
-  - update
 ---
 ---
 ---
@@ -489,114 +783,8 @@ metadata:
     app.kubernetes.io/instance: redpanda-operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.1.18-23.3.13
-    helm.sh/chart: operator-0.4.22
-  name: redpanda-operator-additional-controllers
-rules:
-- apiGroups:
-  - ""
-  resources:
-  - nodes
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - persistentvolumes
-  verbs:
-  - get
-  - list
-  - patch
-  - update
-  - watch
-  - delete
----
----
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/instance: redpanda-operator
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.1.18-23.3.13
-    helm.sh/chart: operator-0.4.22
-  name: redpanda-operator-additional-controllers
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: redpanda-operator-additional-controllers
-subjects:
-- kind: ServiceAccount
-  name: redpanda-operator
-  namespace: default
----
----
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/instance: redpanda-operator
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.1.18-23.3.13
-    helm.sh/chart: operator-0.4.22
-  name: redpanda-operator-election-role
-rules:
-- apiGroups:
-  - ""
-  - coordination.k8s.io
-  resources:
-  - leases
-  verbs:
-  - get
-  - list
-  - watch
-  - create
-  - update
-  - patch
-  - delete
----
----
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/instance: redpanda-operator
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.1.18-23.3.13
-    helm.sh/chart: operator-0.4.22
-  name: redpanda-operator-election-rolebinding
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: redpanda-operator-election-role
-subjects:
-- kind: ServiceAccount
-  name: redpanda-operator
-  namespace: default
----
----
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/instance: redpanda-operator
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.1.18-23.3.13
-    helm.sh/chart: operator-0.4.22
+    app.kubernetes.io/version: v2.1.19-24.1.2
+    helm.sh/chart: operator-0.4.23
   name: redpanda-operator-metrics-reader
 rules:
 - nonResourceURLs:
@@ -614,8 +802,8 @@ metadata:
     app.kubernetes.io/instance: redpanda-operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.1.18-23.3.13
-    helm.sh/chart: operator-0.4.22
+    app.kubernetes.io/version: v2.1.19-24.1.2
+    helm.sh/chart: operator-0.4.23
   name: redpanda-operator-proxy-role
 rules:
 - apiGroups:
@@ -641,57 +829,13 @@ metadata:
     app.kubernetes.io/instance: redpanda-operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.1.18-23.3.13
-    helm.sh/chart: operator-0.4.22
-  name: redpanda-operator-proxy-role
+    app.kubernetes.io/version: v2.1.19-24.1.2
+    helm.sh/chart: operator-0.4.23
+  name: redpanda-operator-proxy-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: redpanda-operator-proxy-role
-subjects:
-- kind: ServiceAccount
-  name: redpanda-operator
-  namespace: default
----
----
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/instance: redpanda-operator
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.1.18-23.3.13
-    helm.sh/chart: operator-0.4.22
-  name: redpanda-operator-pvc
-rules:
-- apiGroups:
-  - ""
-  resources:
-  - persistentvolumeclaims
-  verbs:
-  - list
-  - delete
----
----
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/instance: redpanda-operator
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.1.18-23.3.13
-    helm.sh/chart: operator-0.4.22
-  name: redpanda-operator-pvc
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: redpanda-operator-pvc
 subjects:
 - kind: ServiceAccount
   name: redpanda-operator
@@ -707,8 +851,8 @@ metadata:
     app.kubernetes.io/instance: redpanda-operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.1.18-23.3.13
-    helm.sh/chart: operator-0.4.22
+    app.kubernetes.io/version: v2.1.19-24.1.2
+    helm.sh/chart: operator-0.4.23
   name: redpanda-operator-rpk-bundle
 rules:
 - apiGroups:
@@ -760,8 +904,8 @@ metadata:
     app.kubernetes.io/instance: redpanda-operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.1.18-23.3.13
-    helm.sh/chart: operator-0.4.22
+    app.kubernetes.io/version: v2.1.19-24.1.2
+    helm.sh/chart: operator-0.4.23
   name: redpanda-operator-rpk-bundle
 roleRef:
   apiGroup: rbac.authorization.k8s.io

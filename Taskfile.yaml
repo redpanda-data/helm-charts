@@ -74,6 +74,7 @@ tasks:
       # Generate chart README.md's
       - nix develop -c helm-docs -c ./charts/
       - task: chart:generate:redpanda
+      - task: chart:generate:operator
       # Ensure go deps are up to date
       - go mod tidy
       # Ensure go deps in the gotohelm test package are up to date
@@ -90,6 +91,24 @@ tasks:
       - go run ./cmd/genschema > charts/redpanda/values.schema.json
       # Generate helm templates from Go definitions
       - go run ./cmd/gotohelm -write ./charts/redpanda/templates ./charts/redpanda 
+
+  chart:generate:operator:
+    desc: "Generate files for the operator Helm chart"
+    vars:
+      OPERATOR_VERSION:
+        sh: yq -r .appVersion charts/operator/Chart.yaml
+      OPERATOR_URL: "https://github.com/redpanda-data/redpanda-operator//src/go/k8s/config"
+      # Couldn't come up with a better way to handle this.
+      KUSTOMIZATION_RESOURCES: '["{{.OPERATOR_URL}}/rbac?ref={{.OPERATOR_VERSION}}","{{.OPERATOR_URL}}/webhook?ref={{.OPERATOR_VERSION}}"]'
+    cmds:
+      # yq / jq suffer from the inability to edit a file it's reading. So we
+      # dump it out to a temp file and them move it into place of the
+      # kustomization.yaml we're reading.
+      - |
+        export TMP=$(mktemp)
+        yq -Y '.resources = {{ .KUSTOMIZATION_RESOURCES }}' charts/operator/kustomization.yaml > $TMP
+        mv $TMP ./charts/operator/kustomization.yaml
+      - kubectl kustomize ./charts/operator/ > ./charts/operator/kustomized-manifest.yaml
 
   create-test-rack-awareness:
     cmds:

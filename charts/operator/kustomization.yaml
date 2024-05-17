@@ -1,0 +1,40 @@
+resources:
+  - https://github.com/redpanda-data/redpanda-operator//src/go/k8s/config/rbac?ref=v2.1.18-23.3.13
+  - https://github.com/redpanda-data/redpanda-operator//src/go/k8s/config/webhook?ref=v2.1.18-23.3.13
+namePrefix: '{{ include "redpanda-operator.fullname" $ }}-'
+namespace: '{{ $.Release.Namespace }}'
+patches:
+  - target:
+      kind: ClusterRoleBinding
+    patch: |-
+      - op: replace
+        path: /subjects/0/name
+        value: '{{ include "redpanda-operator.serviceAccountName" $ }}'
+      - op: replace
+        path: /subjects/0/namespace
+        value: '{{ $.Release.Namespace }}'
+  - target:
+      kind: RoleBinding
+    patch: |-
+      - op: replace
+        path: /subjects/0/name
+        value: '{{ include "redpanda-operator.serviceAccountName" $ }}'
+      - op: replace
+        path: /subjects/0/namespace
+        value: '{{ $.Release.Namespace }}'
+  - target:
+      kind: Service
+    patch: |-
+      - op: replace
+        path: /spec/selector
+        value:
+          app.kubernetes.io/name: '{{ include "redpanda-operator.name" $ }}'
+          app.kubernetes.io/instance: '{{ $.Release.Name }}'
+  - target:
+      name: "webhook-service"
+      kind: Service
+    patch: |-
+      - op: replace
+        path: /metadata/annotations
+        value:
+          cert-manager.io/inject-ca-from: '{{ $.Release.Name }}/redpanda-serving-cert'
