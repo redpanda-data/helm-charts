@@ -78,10 +78,12 @@ jobs:
       - name: Update testdata
         run: |
           go test ./charts/redpanda -update -short
+          go test ./charts/operator -update -short
 
       - name: Commit changes for testdata golden files
         run: |
           git add charts/redpanda/testdata
+          git add charts/operator/testdata
           git commit -m "[Auto Commit] Update testdata golden files"
           git push
 

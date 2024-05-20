@@ -320,7 +320,7 @@ Sets resources requests/limits for Redpanda Operator Pods. By default requests a
 
 ### [scope](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=scope)
 
-Sets the scope of the Redpanda Operator. Valid values are `Cluster` or `Namespace`. The Cluster scope is deprecated because it deploys the deprecated version of the Redpanda Operator. Use the default Namespace scope. In the Namespace scope, the Redpanda Operator manages Redpanda resources that are deployed in the same namespace as itself.
+Sets the scope of the Redpanda Operator. Valid values are `Cluster` or `Namespace`. The Cluster scope is deprecated because it deploys the deprecated version of the Redpanda Operator. Use the default Namespace scope. In the Namespace scope, the Redpanda Operator manages Redpanda resources that are deployed in the same namespace as itself. WARNING: This field does not do what you think it does. For historical purposes, scope controls the mode of operation for the operator. "Namespace" will run operator V2 AKA the Redpanda reconciler and "Cluster" will run operator V1 AKA the Cluster reconciler. Do not change this unless you know what this warning message means.
 
 **Default:** `"Namespace"`
 
@@ -350,15 +350,15 @@ Taints to be tolerated by Pods. For details, see the [Kubernetes documentation](
 
 ### [webhook](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=webhook)
 
-Specifies whether to create Webhook resources both to intercept and potentially modify or reject Kubernetes API requests as well as authenticate requests to the Kubernetes API. Only valid when `scope` is set to Cluster.
+Specifies whether to create Webhook resources both to intercept and potentially modify or reject Kubernetes API requests as well as authenticate requests to the Kubernetes API.
 
-**Default:** `{"enabled":false}`
+**Default:** `{"enabled":true}`
 
 ### [webhook.enabled](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=webhook.enabled)
 
 Creates the Webhook resources.
 
-**Default:** `false`
+**Default:** `true`
 
 ### [webhookSecretName](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=webhookSecretName)
 

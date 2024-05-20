@@ -1,11 +1,5 @@
 {{- $file := "files/three_node_redpanda.yaml" -}}
 {{- $resourceType := "redpanda" -}}
-{{- if and .Values.webhook.enabled (eq .Values.scope "Cluster" ) -}}
-  {{- $file = "files/three_node_cluster.yaml" -}}
-  {{- $resourceType = "cluster" -}}
-{{- else if ne .Values.scope "Namespace" -}}
-  {{ fail "invalid combination of scope and webhook.enabled" }}
-{{- end -}}
 ---
 apiVersion: v1
 kind: Pod

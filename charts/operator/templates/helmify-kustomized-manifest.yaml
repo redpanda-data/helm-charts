@@ -1,0 +1,37 @@
+{{/*
+Copyright 2024 Redpanda Data, Inc.
+
+Use of this software is governed by the Business Source License
+included in the file licenses/BSL.md
+
+As of the Change Date specified in that file, in accordance with
+the Business Source License, use of this software will be governed
+by the Apache License, Version 2.0
+*/}}
+{{- $manifestStrs := .Files.Get "kustomized-manifest.yaml" -}}
+{{- $manifestStrs := tpl $manifestStrs $ -}}
+
+{{- $labels := (include "redpanda-operator.labels" . | fromYaml) -}}
+
+{{ range $_, $manifestStr := ($manifestStrs | split "---\n") }}
+{{ $obj := fromYaml $manifestStr }}
+{{- $_ := set $obj.metadata "labels" (default (dict) $obj.metadata.labels) -}}
+{{- $_ := set $obj.metadata "annotations" (default (dict) $obj.metadata.annotations) -}}
+
+{{- $_ := set $obj.metadata "labels" (merge $obj.metadata.labels $labels) -}}
+
+{{/*{{- if (has $obj.kind (list "Role" "RoleBinding" "ClusterRole")) -}}*/}}
+{{/*  {{- if not (and $.Values.rbac.create (eq $.Values.scope "Cluster")) -}}*/}}
+{{/*    {{- continue -}}*/}}
+{{/*  {{- end -}}*/}}
+{{/*{{- end -}}*/}}
+
+{{- if (has $obj.kind (list "MutatingWebhookConfiguration" "ValidatingWebhookConfiguration")) -}}
+  {{- if not (and $.Values.webhook.enabled (eq $.Values.scope "Cluster")) -}}
+    {{- continue -}}
+  {{- end -}}
+{{- end -}}
+
+---
+{{ toYaml $obj }}
+{{ end }}
