@@ -62,9 +62,9 @@ type PartialSecurityContext struct {
 }
 
 type PartialImage struct {
-	Repository *ImageRepository `json:"repository,omitempty" jsonschema:"required,default=docker.redpanda.com/redpandadata/redpanda"`
-	Tag        *ImageTag        `json:"tag,omitempty" jsonschema:"default=Chart.appVersion"`
-	PullPolicy *string          `json:"pullPolicy,omitempty" jsonschema:"required,pattern=^(Always|Never|IfNotPresent)$,description=The Kubernetes Pod image pull policy."`
+	Repository *string   `json:"repository,omitempty" jsonschema:"required,default=docker.redpanda.com/redpandadata/redpanda"`
+	Tag        *ImageTag `json:"tag,omitempty" jsonschema:"default=Chart.appVersion"`
+	PullPolicy *string   `json:"pullPolicy,omitempty" jsonschema:"required,pattern=^(Always|Never|IfNotPresent)$,description=The Kubernetes Pod image pull policy."`
 }
 
 type PartialService struct {
@@ -271,8 +271,8 @@ type PartialStatefulset struct {
 		} `json:"configWatcher,omitempty"`
 		Controllers struct {
 			Image struct {
-				Tag        *ImageTag        `json:"tag,omitempty" jsonschema:"required,default=Chart.appVersion"`
-				Repository *ImageRepository `json:"repository,omitempty" jsonschema:"required,default=docker.redpanda.com/redpandadata/redpanda-operator"`
+				Tag        *ImageTag `json:"tag,omitempty" jsonschema:"required,default=Chart.appVersion"`
+				Repository *string   `json:"repository,omitempty" jsonschema:"required,default=docker.redpanda.com/redpandadata/redpanda-operator"`
 			} `json:"image,omitempty"`
 			Enabled         *bool                   `json:"enabled,omitempty"`
 			Resources       any                     `json:"resources,omitempty"`

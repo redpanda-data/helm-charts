@@ -82,7 +82,7 @@ type SecurityContext struct {
 }
 
 type Image struct {
-	Repository ImageRepository `json:"repository" jsonschema:"required,default=docker.redpanda.com/redpandadata/redpanda"`
+	Repository string `json:"repository" jsonschema:"required,default=docker.redpanda.com/redpandadata/redpanda"`
 	Tag        ImageTag        `json:"tag" jsonschema:"default=Chart.appVersion"`
 	PullPolicy string          `json:"pullPolicy" jsonschema:"required,pattern=^(Always|Never|IfNotPresent)$,description=The Kubernetes Pod image pull policy."`
 }
@@ -383,7 +383,7 @@ type Statefulset struct {
 		Controllers struct {
 			Image struct {
 				Tag        ImageTag        `json:"tag" jsonschema:"required,default=Chart.appVersion"`
-				Repository ImageRepository `json:"repository" jsonschema:"required,default=docker.redpanda.com/redpandadata/redpanda-operator"`
+				Repository string `json:"repository" jsonschema:"required,default=docker.redpanda.com/redpandadata/redpanda-operator"`
 			} `json:"image"`
 			Enabled         bool                    `json:"enabled"`
 			Resources       any                     `json:"resources"`
