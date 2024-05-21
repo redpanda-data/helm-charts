@@ -13,12 +13,6 @@ func (ImageTag) JSONSchemaExtend(schema *jsonschema.Schema) {
 	schema.Pattern = `^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$|^$`
 }
 
-type ImageRepository string
-
-func (ImageRepository) JSONSchemaExtend(schema *jsonschema.Schema) {
-	schema.Pattern = "^[a-z0-9-_/.]+$"
-}
-
 type MemoryAmount string
 
 func (MemoryAmount) JSONSchemaExtend(schema *jsonschema.Schema) {

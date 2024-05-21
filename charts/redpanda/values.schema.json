@@ -333,7 +333,6 @@
         "repository": {
           "default": "docker.redpanda.com/redpandadata/redpanda",
           "description": "container image repository",
-          "pattern": "^[a-z0-9-_/.]+$",
           "type": "string"
         },
         "tag": {
@@ -1590,7 +1589,6 @@
                   "properties": {
                     "repository": {
                       "default": "docker.redpanda.com/redpandadata/redpanda-operator",
-                      "pattern": "^[a-z0-9-_/.]+$",
                       "type": "string"
                     },
                     "tag": {
