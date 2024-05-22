@@ -53,6 +53,7 @@ func Syntax() map[string]any {
 
 	return map[string]any{
 		"sliceExpr": slice,
+		"forExpr":   forExpr(10),
 	}
 }
 
@@ -133,4 +134,45 @@ func binaryExprs() {
 	_ = map[string]any{} != nil
 	// TODO strings
 	// TODO floats
+}
+
+func forExpr(interation int) [][]string {
+	result := [][]string{}
+
+	// ["0","1","2","3","4","5","6","7","8","9"]
+	test := []string{}
+	for i := 0; i < interation; i++ {
+		test = append(test, fmt.Sprintf("%d", i))
+	}
+	result = append(result, test)
+
+	// ["2","3","4","5","6","7","8","9"]
+	test = []string{}
+	for i := 2; i < interation; i++ {
+		test = append(test, fmt.Sprintf("%d", i))
+	}
+	result = append(result, test)
+
+	// ["2","4","6","8"]
+	test = []string{}
+	for i := 2; i < interation; i += 2 {
+		test = append(test, fmt.Sprintf("%d", i))
+	}
+	result = append(result, test)
+
+	// ["17","15","13","11"]
+	test = []string{}
+	for i := 17; i > interation; i -= 2 {
+		test = append(test, fmt.Sprintf("%d", i))
+	}
+	result = append(result, test)
+
+	// This for loop is noop as the condition should be greater than. The test array will be empty.
+	test = []string{}
+	for i := 17; i < interation; i -= 2 {
+		test = append(test, fmt.Sprintf("%d", i))
+	}
+	result = append(result, test)
+
+	return result
 }

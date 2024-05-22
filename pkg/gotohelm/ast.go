@@ -10,6 +10,34 @@ type Node interface {
 	Write(io.Writer)
 }
 
+type Until struct {
+	Expr Node
+}
+
+func (u *Until) Write(w io.Writer) {
+	w.Write([]byte("until ("))
+	u.Expr.Write(w)
+	w.Write([]byte("|int)"))
+}
+
+type UntilStep struct {
+	Start Node
+	Stop  Node
+	Step  Node
+}
+
+func (u *UntilStep) Write(w io.Writer) {
+	w.Write([]byte("untilStep ("))
+	u.Start.Write(w)
+	w.Write([]byte("|int)"))
+	w.Write([]byte(" ("))
+	u.Stop.Write(w)
+	w.Write([]byte("|int)"))
+	w.Write([]byte(" ("))
+	u.Step.Write(w)
+	w.Write([]byte("|int)"))
+}
+
 type ParenExpr struct {
 	Expr Node
 }
