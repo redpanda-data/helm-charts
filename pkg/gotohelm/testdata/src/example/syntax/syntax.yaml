@@ -23,7 +23,7 @@
 {{- $_ = (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list (printf "[]%s" "interface {}") $x (coalesce nil)) ))) "r")) ))) "r") -}}
 {{- $_ = (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list (printf "[]%s" "string") $x (coalesce nil)) ))) "r")) ))) "r") -}}
 {{- $_ = (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list (printf "map[%s]%s" "string" "interface {}") $x (coalesce nil)) ))) "r")) ))) "r") -}}
-{{- (dict "r" (dict "sliceExpr" $slice )) | toJson -}}
+{{- (dict "r" (dict "sliceExpr" $slice "forExpr" (get (fromJson (include "syntax.forExpr" (dict "a" (list 10) ))) "r") )) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -93,6 +93,40 @@
 {{- $_ = (ne (int64 1) (int64 1)) -}}
 {{- $_ = (eq (dict ) (coalesce nil)) -}}
 {{- $_ = (ne (dict ) (coalesce nil)) -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "syntax.forExpr" -}}
+{{- $interation := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $result := (list ) -}}
+{{- $test := (list ) -}}
+{{- range $_, $i := untilStep (0|int) ($interation|int) (1|int) -}}
+{{- $test = (mustAppend $test (printf "%d" $i)) -}}
+{{- end -}}
+{{- $result = (mustAppend $result $test) -}}
+{{- $test = (list ) -}}
+{{- range $_, $i := untilStep (2|int) ($interation|int) (1|int) -}}
+{{- $test = (mustAppend $test (printf "%d" $i)) -}}
+{{- end -}}
+{{- $result = (mustAppend $result $test) -}}
+{{- $test = (list ) -}}
+{{- range $_, $i := untilStep (2|int) ($interation|int) (2|int) -}}
+{{- $test = (mustAppend $test (printf "%d" $i)) -}}
+{{- end -}}
+{{- $result = (mustAppend $result $test) -}}
+{{- $test = (list ) -}}
+{{- range $_, $i := untilStep (17|int) ($interation|int) (-2|int) -}}
+{{- $test = (mustAppend $test (printf "%d" $i)) -}}
+{{- end -}}
+{{- $result = (mustAppend $result $test) -}}
+{{- $test = (list ) -}}
+{{- range $_, $i := untilStep ($interation|int) (17|int) (-2|int) -}}
+{{- $test = (mustAppend $test (printf "%d" $i)) -}}
+{{- end -}}
+{{- $result = (mustAppend $result $test) -}}
+{{- (dict "r" $result) | toJson -}}
+{{- break -}}
 {{- end -}}
 {{- end -}}
 

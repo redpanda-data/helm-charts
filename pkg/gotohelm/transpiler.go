@@ -339,6 +339,80 @@ func (t *Transpiler) transpileStatement(stmt ast.Stmt) Node {
 			Body: t.transpileStatement(stmt.Body),
 			Else: t.transpileStatement(stmt.Else),
 		}
+	case *ast.ForStmt:
+		var start, stop Node
+		if b, ok := stmt.Cond.(*ast.BinaryExpr); ok {
+			switch b.Op {
+			case token.LSS, token.LEQ:
+				if declaration, ok := b.X.(*ast.Ident).Obj.Decl.(*ast.AssignStmt); ok {
+					start = t.transpileExpr(declaration.Rhs[0])
+				} else {
+					start = t.transpileExpr(b.X)
+				}
+				if declaration, ok := b.Y.(*ast.Ident).Obj.Decl.(*ast.AssignStmt); ok {
+					stop = t.transpileExpr(declaration.Rhs[0])
+				} else {
+					stop = t.transpileExpr(b.Y)
+				}
+			case token.GTR, token.GEQ:
+				if declaration, ok := b.X.(*ast.Ident).Obj.Decl.(*ast.AssignStmt); ok {
+					stop = t.transpileExpr(declaration.Rhs[0])
+				} else {
+					stop = t.transpileExpr(b.X)
+				}
+				if declaration, ok := b.Y.(*ast.Ident).Obj.Decl.(*ast.AssignStmt); ok {
+					start = t.transpileExpr(declaration.Rhs[0])
+				} else {
+					start = t.transpileExpr(b.Y)
+				}
+			default:
+				panic(&Unsupported{
+					Node: stmt,
+					Fset: t.Fset,
+					Msg:  fmt.Sprintf("%T of %s is not supported in for condition", b, b.Op),
+				})
+			}
+		}
+
+		var step Node
+		switch p := stmt.Post.(type) {
+		case *ast.AssignStmt:
+			if b, ok := p.Rhs[0].(*ast.BasicLit); ok && p.Tok == token.SUB_ASSIGN {
+				b.Value = fmt.Sprintf("-%s", b.Value)
+				// switch start with stop expression as step is decreasing
+				step = start
+				start = stop
+				stop = step
+
+				step = t.transpileExpr(b)
+			} else {
+				step = t.transpileExpr(b)
+			}
+		case *ast.IncDecStmt:
+			switch p.Tok {
+			case token.INC:
+				step = &Literal{Value: "1"}
+			case token.DEC:
+				step = &Literal{Value: "-1"}
+			}
+		default:
+			panic(&Unsupported{
+				Node: stmt,
+				Fset: t.Fset,
+				Msg:  "unhandled ast.ForStmt",
+			})
+		}
+
+		return &Range{
+			Key:   &Ident{Name: "_"},
+			Value: &Literal{Value: fmt.Sprintf("$%s", stmt.Init.(*ast.AssignStmt).Lhs[0].(*ast.Ident).Name)},
+			Over: &UntilStep{
+				Start: start,
+				Stop:  stop,
+				Step:  step,
+			},
+			Body: t.transpileStatement(stmt.Body),
+		}
 	}
 
 	panic(&Unsupported{
