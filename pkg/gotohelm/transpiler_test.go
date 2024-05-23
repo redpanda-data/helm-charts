@@ -249,6 +249,7 @@ func NewHelmRunner(chartName, chartDir string, cfg *kube.RESTConfig, logf func(s
 	funcs := sprig.FuncMap()
 	funcs["include"] = runner.includeFn
 	funcs["lookup"] = runner.lookupFn
+	funcs["toYaml"] = helmette.ToYaml
 
 	runner.tpl = runner.tpl.Funcs(funcs)
 

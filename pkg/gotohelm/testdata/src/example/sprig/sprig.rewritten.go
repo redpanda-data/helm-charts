@@ -31,6 +31,18 @@ func Sprig() map[string]any {
 		"toString": toString(),
 		"trim":     trim(),
 		"unset":    unset(),
+		"yaml":     yaml(),
+	}
+}
+
+func yaml() any {
+	return []string{
+		helmette.ToYaml(nil),
+		helmette.ToYaml(map[string]string{
+			"test": "test",
+		}),
+		helmette.ToYaml(map[string]string{}),
+		helmette.ToYaml([]string{"test", "test2"}),
 	}
 }
 
