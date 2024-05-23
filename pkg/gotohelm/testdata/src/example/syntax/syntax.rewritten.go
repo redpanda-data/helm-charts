@@ -54,8 +54,9 @@ func Syntax() map[string]any {
 	_ = helmette.Compact2(helmette.TypeTest[map[string]any](x))
 
 	return map[string]any{
-		"sliceExpr": slice,
-		"forExpr":   forExpr(10),
+		"sliceExpr":       slice,
+		"negativeNumbers": []int{-2, -4},
+		"forExpr":         forExpr(10),
 	}
 }
 

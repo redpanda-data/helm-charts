@@ -53,6 +53,7 @@ func Syntax() map[string]any {
 
 	return map[string]any{
 		"sliceExpr": slice,
+		"negativeNumbers": []int{-2, -4},
 		"forExpr":   forExpr(10),
 	}
 }
