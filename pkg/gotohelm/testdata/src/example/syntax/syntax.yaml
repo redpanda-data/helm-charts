@@ -23,7 +23,7 @@
 {{- $_ = (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list (printf "[]%s" "interface {}") $x (coalesce nil)) ))) "r")) ))) "r") -}}
 {{- $_ = (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list (printf "[]%s" "string") $x (coalesce nil)) ))) "r")) ))) "r") -}}
 {{- $_ = (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list (printf "map[%s]%s" "string" "interface {}") $x (coalesce nil)) ))) "r")) ))) "r") -}}
-{{- (dict "r" (dict "sliceExpr" $slice "forExpr" (get (fromJson (include "syntax.forExpr" (dict "a" (list 10) ))) "r") )) | toJson -}}
+{{- (dict "r" (dict "sliceExpr" $slice "negativeNumbers" (list -2 -4) "forExpr" (get (fromJson (include "syntax.forExpr" (dict "a" (list 10) ))) "r") )) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

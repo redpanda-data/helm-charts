@@ -748,6 +748,10 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 		case token.AND:
 			// Can't take addresses in templates so just return the variable.
 			return t.transpileExpr(n.X)
+		case token.SUB:
+			if i, ok := n.X.(*ast.BasicLit); ok {
+				return &Literal{Value: fmt.Sprintf("-%s", i.Value)}
+			}
 		}
 
 	case *ast.IndexExpr:
