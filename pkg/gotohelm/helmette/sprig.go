@@ -3,6 +3,7 @@ package helmette
 import (
 	"encoding/json"
 	"fmt"
+	"math"
 	"reflect"
 	"regexp"
 	"sort"
@@ -13,6 +14,18 @@ import (
 	"github.com/imdario/mergo"
 	"golang.org/x/exp/maps"
 )
+
+// Min is the go equivalent of sprig's `min`
+// +gotohelm:builtin=min
+func Min(in ...int) int {
+	result := math.MaxInt
+	for _, i := range in {
+		if i < result {
+			result = i
+		}
+	}
+	return result
+}
 
 // First function can not return `T` as sprig implementation
 // will return nil if array is of the size 0.
