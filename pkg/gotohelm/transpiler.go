@@ -617,11 +617,13 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 				typ = p.Elem()
 			}
 
+			// pod.Metadata.Name = "foo" -> (pod.name)
 			for _, f := range t.getFields(typ.Underlying().(*types.Struct)) {
 				if f.Field.Name() == n.Sel.Name {
 					return &Selector{
 						Expr:  t.transpileExpr(n.X),
 						Field: f.JSONName(),
+						Inlined: f.JSONInline(),
 					}
 				}
 			}
@@ -1072,7 +1074,6 @@ func (t *Transpiler) zeroOf(typ types.Type) Node {
 		return &Nil{}
 
 	case *types.Struct:
-		var embedded []Node
 		var out DictLiteral
 
 		// Skip fields that json Marshalling would itself skip.
@@ -1082,7 +1083,6 @@ func (t *Transpiler) zeroOf(typ types.Type) Node {
 			}
 
 			if field.JSONInline() {
-				embedded = append(embedded, t.zeroOf(field.Field.Type()))
 				continue
 			}
 
@@ -1091,29 +1091,50 @@ func (t *Transpiler) zeroOf(typ types.Type) Node {
 				Value: t.zeroOf(field.Field.Type()),
 			})
 		}
-		if len(embedded) < 1 {
-			return &out
-		}
-		return &BuiltInCall{
-			FuncName:  "mustMergeOverwrite",
-			Arguments: append(embedded, &out),
-		}
+		return &out
 
 	default:
 		panic(fmt.Sprintf("unsupported type: %#v", typ))
 	}
 }
 
-func (t *Transpiler) getFields(s *types.Struct) []structField {
-	_, spec := t.getStructType(s)
+// getFields returns a _flattened_ list (embedded structs) of structFields for
+// the given struct type.
+func (t *Transpiler) getFields(root *types.Struct) []structField {
+	_, rootSpec := t.getStructType(root)
+
+	// Would be nice to have a tuple type but it's a bit too verbose for my
+	// test.
+	typs := []*types.Struct{root}
+	specs := []*ast.StructType{rootSpec}
 
 	var fields []structField
-	for i, astField := range spec.Fields.List {
-		fields = append(fields, structField{
-			Field:      s.Field(i),
-			Tag:        parseTag(s.Tag(i)),
-			Definition: astField,
-		})
+	for len(typs) > 0 && len(specs) > 0 {
+		s := typs[0]
+		spec := specs[0]
+
+		typs = typs[1:]
+		specs = specs[1:]
+
+		for i, astField := range spec.Fields.List {
+			field := structField{
+				Field:      s.Field(i),
+				Tag:        parseTag(s.Tag(i)),
+				Definition: astField,
+			}
+
+			// If we encounter a JSON inlined field (See JSONInline for
+			// details), merge the embedded struct into our list of fields to
+			// support direct access thereof, just list go.
+			if field.JSONInline() {
+				embeddedType := field.Field.Type().(*types.Named).Underlying().(*types.Struct)
+				_, embeddedSpec := t.getStructType(embeddedType)
+				typs = append(typs, embeddedType)
+				specs = append(specs, embeddedSpec)
+			}
+
+			fields = append(fields, field)
+		}
 	}
 
 	return fields

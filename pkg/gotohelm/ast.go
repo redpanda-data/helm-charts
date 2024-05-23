@@ -51,11 +51,18 @@ func (s *ParenExpr) Write(w io.Writer) {
 type Selector struct {
 	Expr  Node
 	Field string
+	// Inlined indicates if `Field` is a JSON inlined (embedded) field or not.
+	Inlined bool
 }
 
 func (s *Selector) Write(w io.Writer) {
 	s.Expr.Write(w)
-	fmt.Fprintf(w, ".%s", s.Field)
+	// If this Selector is referencing an inlined field, don't emit it as
+	// gotohelm's "object model" is the JSON representation of structs, not
+	// go's representation.
+	if !s.Inlined {
+		fmt.Fprintf(w, ".%s", s.Field)
+	}
 }
 
 type Nil struct{}

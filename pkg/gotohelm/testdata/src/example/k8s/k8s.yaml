@@ -10,7 +10,7 @@
 
 {{- define "k8s.pod" -}}
 {{- range $_ := (list 1) -}}
-{{- (dict "r" (mustMergeOverwrite (mustMergeOverwrite (dict ) (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) "spec" (dict "containers" (coalesce nil) ) "status" (dict ) )) (mustMergeOverwrite (dict ) (dict "apiVersion" "v1" "kind" "Pod" )) (dict "metadata" (mustMergeOverwrite (dict "creationTimestamp" (coalesce nil) ) (dict "namespace" "spacename" "name" "eman" )) ))) | toJson -}}
+{{- (dict "r" (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) "spec" (dict "containers" (coalesce nil) ) "status" (dict ) ) (mustMergeOverwrite (dict ) (dict "apiVersion" "v1" "kind" "Pod" )) (dict "metadata" (mustMergeOverwrite (dict "creationTimestamp" (coalesce nil) ) (dict "namespace" "spacename" "name" "eman" )) ))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -18,14 +18,14 @@
 {{- define "k8s.pdb" -}}
 {{- range $_ := (list 1) -}}
 {{- $minAvail := 3 -}}
-{{- (dict "r" (mustMergeOverwrite (mustMergeOverwrite (dict ) (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) "spec" (dict ) "status" (dict "disruptionsAllowed" 0 "currentHealthy" 0 "desiredHealthy" 0 "expectedPods" 0 ) )) (mustMergeOverwrite (dict ) (dict "apiVersion" "policyv1" "kind" "PodDisruptionBudget" )) (dict "spec" (mustMergeOverwrite (dict ) (dict "minAvailable" $minAvail )) ))) | toJson -}}
+{{- (dict "r" (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) "spec" (dict ) "status" (dict "disruptionsAllowed" 0 "currentHealthy" 0 "desiredHealthy" 0 "expectedPods" 0 ) ) (mustMergeOverwrite (dict ) (dict "apiVersion" "policyv1" "kind" "PodDisruptionBudget" )) (dict "spec" (mustMergeOverwrite (dict ) (dict "minAvailable" $minAvail )) ))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
 
 {{- define "k8s.service" -}}
 {{- range $_ := (list 1) -}}
-{{- (dict "r" (mustMergeOverwrite (mustMergeOverwrite (dict ) (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) "spec" (dict ) "status" (dict "loadBalancer" (dict ) ) )) (mustMergeOverwrite (dict ) (dict "apiVersion" "v1" "kind" "Service" )) (dict "spec" (mustMergeOverwrite (dict ) (dict "ports" (list (mustMergeOverwrite (dict "port" 0 "targetPort" 0 ) (dict ))) )) ))) | toJson -}}
+{{- (dict "r" (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) "spec" (dict ) "status" (dict "loadBalancer" (dict ) ) ) (mustMergeOverwrite (dict ) (dict "apiVersion" "v1" "kind" "Service" )) (dict "spec" (mustMergeOverwrite (dict ) (dict "ports" (list (mustMergeOverwrite (dict "port" 0 "targetPort" 0 ) (dict ))) )) ))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -37,7 +37,7 @@
 {{- $ok1 := $tmp_tuple_1.T2 -}}
 {{- $svc := $tmp_tuple_1.T1 -}}
 {{- if (not $ok1) -}}
-{{- $_ := (fail (printf "%T %q not found. Test setup should have created it?" (mustMergeOverwrite (mustMergeOverwrite (dict ) (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) "spec" (dict ) "status" (dict "loadBalancer" (dict ) ) )) (dict )) "name")) -}}
+{{- $_ := (fail (printf "%T %q not found. Test setup should have created it?" (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) "spec" (dict ) "status" (dict "loadBalancer" (dict ) ) ) (dict )) "name")) -}}
 {{- end -}}
 {{- $tmp_tuple_2 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.lookup" (dict "a" (list "apps/v1" "StatefulSet" "spacename" "eman") ))) "r")) ))) "r") -}}
 {{- $ok2 := $tmp_tuple_2.T2 -}}
