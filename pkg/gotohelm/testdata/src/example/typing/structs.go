@@ -2,6 +2,10 @@ package typing
 
 import "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 
+type NestedEmbeds struct {
+	WithEmbed
+}
+
 type Object struct {
 	Key     string
 	WithTag int `json:"with_tag"`
@@ -59,13 +63,19 @@ func nestedFieldAccess() string {
 	return x.Children[0].Children[0].Value
 }
 
-// func settingFields() string {
-// 	var out WithEmbed
-//
-// 	out.Object = Object{Key: "foo"}
-// 	out.Object.Key = "bar"
-// 	return out.Object.Key
-// }
+func settingFields() []string {
+	var out NestedEmbeds
+
+	out.WithEmbed = WithEmbed{Object: Object{Key: "foo"}}
+	out.Object = Object{Key: "bar"}
+	out.Key = "quux"
+
+	return []string{
+		out.Key,
+		out.Object.Key,
+		out.WithEmbed.Key,
+	}
+}
 
 func compileMe() Object {
 	return Object{

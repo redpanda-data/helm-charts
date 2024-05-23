@@ -73,7 +73,7 @@
 {{- (dict "r" (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_ACCESS_KEY" "value" (get (fromJson (include "_shims.typeassertion" (dict "a" (list "string" $v_7) ))) "r") )))) | toJson -}}
 {{- break -}}
 {{- else -}}{{- if (and (and (ne $ak_9 (coalesce nil)) (not (empty $ak_9.name))) (not (empty $ak_9.key))) -}}
-{{- (dict "r" (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_ACCESS_KEY" "valueFrom" (mustMergeOverwrite (dict ) (dict "secretKeyRef" (mustMergeOverwrite (mustMergeOverwrite (dict ) (dict "key" "" )) (mustMergeOverwrite (dict ) (dict "name" $ak_9.name )) (dict "key" $ak_9.key )) )) )))) | toJson -}}
+{{- (dict "r" (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_ACCESS_KEY" "valueFrom" (mustMergeOverwrite (dict ) (dict "secretKeyRef" (mustMergeOverwrite (dict "key" "" ) (mustMergeOverwrite (dict ) (dict "name" $ak_9.name )) (dict "key" $ak_9.key )) )) )))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -94,7 +94,7 @@
 {{- (dict "r" (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_SECRET_KEY" "value" (get (fromJson (include "_shims.typeassertion" (dict "a" (list "string" $v_10) ))) "r") )))) | toJson -}}
 {{- break -}}
 {{- else -}}{{- if (and (and (ne $sk_12 (coalesce nil)) (not (empty $sk_12.name))) (not (empty $sk_12.key))) -}}
-{{- (dict "r" (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_SECRET_KEY" "valueFrom" (mustMergeOverwrite (dict ) (dict "secretKeyRef" (mustMergeOverwrite (mustMergeOverwrite (dict ) (dict "key" "" )) (mustMergeOverwrite (dict ) (dict "name" $sk_12.name )) (dict "key" $sk_12.key )) )) )))) | toJson -}}
+{{- (dict "r" (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_SECRET_KEY" "valueFrom" (mustMergeOverwrite (dict ) (dict "secretKeyRef" (mustMergeOverwrite (dict "key" "" ) (mustMergeOverwrite (dict ) (dict "name" $sk_12.name )) (dict "key" $sk_12.key )) )) )))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -115,7 +115,7 @@
 {{- (dict "r" (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_AZURE_SHARED_KEY" "value" (get (fromJson (include "_shims.typeassertion" (dict "a" (list "string" $v_13) ))) "r") )))) | toJson -}}
 {{- break -}}
 {{- else -}}{{- if (and (and (ne $sk_15 (coalesce nil)) (not (empty $sk_15.name))) (not (empty $sk_15.key))) -}}
-{{- (dict "r" (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_AZURE_SHARED_KEY" "valueFrom" (mustMergeOverwrite (dict ) (dict "secretKeyRef" (mustMergeOverwrite (mustMergeOverwrite (dict ) (dict "key" "" )) (mustMergeOverwrite (dict ) (dict "name" $sk_15.name )) (dict "key" $sk_15.key )) )) )))) | toJson -}}
+{{- (dict "r" (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_AZURE_SHARED_KEY" "valueFrom" (mustMergeOverwrite (dict ) (dict "secretKeyRef" (mustMergeOverwrite (dict "key" "" ) (mustMergeOverwrite (dict ) (dict "name" $sk_15.name )) (dict "key" $sk_15.key )) )) )))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -142,10 +142,10 @@
 {{- range $_ := (list 1) -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- if (not (empty $values.enterprise.licenseSecretRef)) -}}
-{{- (dict "r" (mustMergeOverwrite (mustMergeOverwrite (dict ) (dict "key" "" )) (mustMergeOverwrite (dict ) (dict "name" $values.enterprise.licenseSecretRef.name )) (dict "key" $values.enterprise.licenseSecretRef.key ))) | toJson -}}
+{{- (dict "r" (mustMergeOverwrite (dict "key" "" ) (mustMergeOverwrite (dict ) (dict "name" $values.enterprise.licenseSecretRef.name )) (dict "key" $values.enterprise.licenseSecretRef.key ))) | toJson -}}
 {{- break -}}
 {{- else -}}{{- if (not (empty $values.license_secret_ref)) -}}
-{{- (dict "r" (mustMergeOverwrite (mustMergeOverwrite (dict ) (dict "key" "" )) (mustMergeOverwrite (dict ) (dict "name" $values.license_secret_ref.secret_name )) (dict "key" $values.license_secret_ref.secret_key ))) | toJson -}}
+{{- (dict "r" (mustMergeOverwrite (dict "key" "" ) (mustMergeOverwrite (dict ) (dict "name" $values.license_secret_ref.secret_name )) (dict "key" $values.license_secret_ref.secret_key ))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

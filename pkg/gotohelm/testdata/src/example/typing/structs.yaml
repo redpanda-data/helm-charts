@@ -13,7 +13,7 @@
 {{- $number := (coalesce nil) -}}
 {{- $str := (coalesce nil) -}}
 {{- $stru := (coalesce nil) -}}
-{{- (dict "r" (list (mustMergeOverwrite (dict "Key" "" "with_tag" 0 ) (dict )) (mustMergeOverwrite (mustMergeOverwrite (dict "Key" "" "with_tag" 0 ) (dict "Nilable" (coalesce nil) )) (dict )) $number $str $stru)) | toJson -}}
+{{- (dict "r" (list (mustMergeOverwrite (dict "Key" "" "with_tag" 0 ) (dict )) (mustMergeOverwrite (dict "Nilable" (coalesce nil) "Key" "" "with_tag" 0 ) (dict )) $number $str $stru)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -22,6 +22,17 @@
 {{- range $_ := (list 1) -}}
 {{- $x := (mustMergeOverwrite (dict ) (dict "childs" (list (mustMergeOverwrite (dict ) (dict "childs" (list (mustMergeOverwrite (dict ) (dict "val" "Hello!" ))) ))) )) -}}
 {{- (dict "r" (index (index $x.childs 0).childs 0).val) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "typing.settingFields" -}}
+{{- range $_ := (list 1) -}}
+{{- $out := (dict "Nilable" (coalesce nil) "Key" "" "with_tag" 0 ) -}}
+{{- $_ := (set $out "WithEmbed" (mustMergeOverwrite (dict "Nilable" (coalesce nil) "Key" "" "with_tag" 0 ) (mustMergeOverwrite (dict "Key" "" "with_tag" 0 ) (dict "Key" "foo" )) (dict ))) -}}
+{{- $_ := (set $out "Object" (mustMergeOverwrite (dict "Key" "" "with_tag" 0 ) (dict "Key" "bar" ))) -}}
+{{- $_ := (set $out "Key" "quux") -}}
+{{- (dict "r" (list $out.Key $out.Key $out.Key)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -35,7 +46,7 @@
 
 {{- define "typing.alsoMe" -}}
 {{- range $_ := (list 1) -}}
-{{- (dict "r" (mustMergeOverwrite (mustMergeOverwrite (dict "Key" "" "with_tag" 0 ) (dict "Nilable" (coalesce nil) )) (mustMergeOverwrite (dict "Key" "" "with_tag" 0 ) (dict "Key" "Foo" )) (dict ))) | toJson -}}
+{{- (dict "r" (mustMergeOverwrite (dict "Nilable" (coalesce nil) "Key" "" "with_tag" 0 ) (mustMergeOverwrite (dict "Key" "" "with_tag" 0 ) (dict "Key" "Foo" )) (dict ))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
