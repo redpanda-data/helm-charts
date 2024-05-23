@@ -117,3 +117,39 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "_shims.asnumeric" -}}
+{{- $value := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- if (typeIs "float64" $value) -}}
+{{- (dict "r" (list $value true)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- if (typeIs "int64" $value) -}}
+{{- (dict "r" (list $value true)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- if (typeIs "int" $value) -}}
+{{- (dict "r" (list $value true)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- (dict "r" (list (0 | int) false)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "_shims.asintegral" -}}
+{{- $value := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- if (or (typeIs "int64" $value) (typeIs "int" $value)) -}}
+{{- (dict "r" (list $value true)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- if (and (typeIs "float64" $value) (eq (floor $value) $value)) -}}
+{{- (dict "r" (list $value true)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- (dict "r" (list (0 | int) false)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+

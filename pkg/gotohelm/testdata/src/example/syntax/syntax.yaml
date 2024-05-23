@@ -15,7 +15,7 @@
 {{- $_ = (true) -}}
 {{- $slice := (get (fromJson (include "syntax.sliceExpr" (dict "a" (list ) ))) "r") -}}
 {{- $_ = "1234" -}}
-{{- $_ = 1234 -}}
+{{- $_ = (1234 | int) -}}
 {{- $_ = 0.1 -}}
 {{- $_ = "IPv4" -}}
 {{- $_ = 2.718281828459045 -}}
@@ -64,13 +64,13 @@
 
 {{- define "syntax.binaryExprs" -}}
 {{- range $_ := (list 1) -}}
-{{- $_ = (mul 1 1) -}}
-{{- $_ = (add 1 1) -}}
-{{- $_ = (sub 1 1) -}}
-{{- $_ = (div 1 1) -}}
-{{- $_ = (mod 1 1) -}}
-{{- $_ = (eq 1 1) -}}
-{{- $_ = (ne 1 1) -}}
+{{- $_ = (mul (1 | int) (1 | int)) -}}
+{{- $_ = (add (1 | int) (1 | int)) -}}
+{{- $_ = (sub (1 | int) (1 | int)) -}}
+{{- $_ = (div (1 | int) (1 | int)) -}}
+{{- $_ = (mod (1 | int) (1 | int)) -}}
+{{- $_ = (eq (1 | int) (1 | int)) -}}
+{{- $_ = (ne (1 | int) (1 | int)) -}}
 {{- $_ = ((mul ((1 | int) | int) ((1 | int) | int)) | int) -}}
 {{- $_ = ((add ((1 | int) | int) ((1 | int) | int)) | int) -}}
 {{- $_ = ((sub ((1 | int) | int) ((1 | int) | int)) | int) -}}
@@ -94,7 +94,7 @@
 {{- $_ = (ne ((1 | int64) | int64) ((1 | int64) | int64)) -}}
 {{- $_ = (eq (dict ) (coalesce nil)) -}}
 {{- $_ = (ne (dict ) (coalesce nil)) -}}
-{{- $result := (list (gt 1 2) (lt 1 2) (ge 1 2) (le 1 2) (ge 2 2) (le 2 2)) -}}
+{{- $result := (list (gt (1 | int) (2 | int)) (lt (1 | int) (2 | int)) (ge (1 | int) (2 | int)) (le (1 | int) (2 | int)) (ge (2 | int) (2 | int)) (le (2 | int) (2 | int))) -}}
 {{- (dict "r" $result) | toJson -}}
 {{- break -}}
 {{- end -}}

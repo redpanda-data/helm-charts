@@ -945,6 +945,10 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 		return &Selector{Expr: args[0], Field: "AsMap"}
 	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.Compact2", "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.Compact3":
 		return &Call{FuncName: "_shims.compact", Arguments: args}
+	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.AsIntegral":
+		return &Call{FuncName: "_shims.asintegral", Arguments: args}
+	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.AsNumeric":
+		return &Call{FuncName: "_shims.asnumeric", Arguments: args}
 	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.DictTest":
 		valueType := callee.(*types.Func).Type().(*types.Signature).TypeParams().At(1)
 		return &Call{FuncName: "_shims.dicttest", Arguments: append(args, t.zeroOf(valueType))}

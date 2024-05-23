@@ -3,7 +3,7 @@
 {{- define "sprig.numericTestInputs" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
-{{- (dict "r" (list "" ((0 | int) | int) ((1 | float64) | float64) (list ) (dict ) (index $dot.Values "numeric"))) | toJson -}}
+{{- (dict "r" (list "" ((0 | int) | int) (1.0 | float64) (list ) (dict ) (index $dot.Values "numeric"))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -12,7 +12,7 @@
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $inputs := (get (fromJson (include "sprig.numericTestInputs" (dict "a" (list $dot) ))) "r") -}}
-{{- $inputs = (concat $inputs (list ((10 | int) | int) (1.5 | float64) (index $dot.Values "numeric"))) -}}
+{{- $inputs = (concat $inputs (list ((10 | int) | int) 1.5 (index $dot.Values "numeric"))) -}}
 {{- $outputs := (list ) -}}
 {{- range $_, $in := $inputs -}}
 {{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asnumeric" (dict "a" (list $in) ))) "r")) ))) "r") -}}
@@ -29,7 +29,7 @@
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $inputs := (get (fromJson (include "sprig.numericTestInputs" (dict "a" (list $dot) ))) "r") -}}
-{{- $inputs = (concat $inputs (list ((10 | int) | int) (1.5 | float64) (index $dot.Values "numeric"))) -}}
+{{- $inputs = (concat $inputs (list ((10 | int) | int) 1.5 (index $dot.Values "numeric"))) -}}
 {{- $outputs := (list ) -}}
 {{- range $_, $in := $inputs -}}
 {{- $tmp_tuple_2 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asintegral" (dict "a" (list $in) ))) "r")) ))) "r") -}}
@@ -37,7 +37,7 @@
 {{- $value := ($tmp_tuple_2.T1 | int) -}}
 {{- $outputs = (mustAppend $outputs (list $in $value $isIntegral)) -}}
 {{- end -}}
-{{- (dict "r" (coalesce nil)) | toJson -}}
+{{- (dict "r" $outputs) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

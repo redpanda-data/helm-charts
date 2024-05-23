@@ -12,7 +12,7 @@
 {{- end -}}
 {{- $_ := (fail (printf "Redpanda.ReserveMemory (%v) is not type of string" $rpMem_1.reserveMemory)) -}}
 {{- end -}}
-{{- (dict "r" ((add (((mulf (((get (fromJson (include "redpanda.ContainerMemory" (dict "a" (list $dot) ))) "r") | int) | float64) (0.002 | float64)) | float64) | int) (200 | int)) | int)) | toJson -}}
+{{- (dict "r" ((add (((mulf (((get (fromJson (include "redpanda.ContainerMemory" (dict "a" (list $dot) ))) "r") | int) | float64) 0.002) | float64) | int) (200 | int)) | int)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -31,7 +31,7 @@
 {{- $_ := (fail (printf "Redpanda.Memory (%v) is not type of string" $rpMem_2.reserveMemory)) -}}
 {{- end -}}
 {{- else -}}
-{{- $memory = (((mulf ($containerMemory | float64) (0.8 | float64)) | float64) | int) -}}
+{{- $memory = (((mulf ($containerMemory | float64) 0.8) | float64) | int) -}}
 {{- end -}}
 {{- if (eq $memory (0 | int)) -}}
 {{- $_ := (fail "unable to get memory value redpanda-memory") -}}
@@ -132,7 +132,7 @@
 {{- define "redpanda.RedpandaMemoryToMi" -}}
 {{- $amount := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
-{{- (dict "r" ((div ((get (fromJson (include "redpanda.SIToBytes" (dict "a" (list (toString $amount)) ))) "r") | int) ((mul 1024 1024))) | int)) | toJson -}}
+{{- (dict "r" ((div ((get (fromJson (include "redpanda.SIToBytes" (dict "a" (list (toString $amount)) ))) "r") | int) ((mul (1024 | int) (1024 | int)))) | int)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
