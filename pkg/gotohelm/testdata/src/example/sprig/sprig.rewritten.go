@@ -28,6 +28,19 @@ func Sprig() map[string]any {
 		"len":      lenTest(),
 		"first":    first(),
 		"toString": toString(),
+		"min":      minFunc(),
+	}
+}
+
+func minFunc() []int {
+	return []int{
+		// spig Min function does not allow to not pass parameters. Error returned from helm template:
+		// wrong number of args for min: want at least 1 got 0
+		//helmette.Min(),
+		helmette.Min(-1, 0, 1),
+		helmette.Min(1),
+		helmette.Min(2, 1),
+		helmette.Min(1, 1, 2),
 	}
 }
 
