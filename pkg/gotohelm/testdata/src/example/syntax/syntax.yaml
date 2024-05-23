@@ -12,7 +12,6 @@
 {{- $_ = (int (get (fromJson (include "_shims.len" (dict "a" (list "") ))) "r")) -}}
 {{- $_ = (int (get (fromJson (include "_shims.len" (dict "a" (list (list )) ))) "r")) -}}
 {{- $_ = (int (get (fromJson (include "_shims.len" (dict "a" (list (dict )) ))) "r")) -}}
-{{- $_ := (get (fromJson (include "syntax.binaryExprs" (dict "a" (list ) ))) "r") -}}
 {{- $_ = (true) -}}
 {{- $slice := (get (fromJson (include "syntax.sliceExpr" (dict "a" (list ) ))) "r") -}}
 {{- $_ = "1234" -}}
@@ -23,7 +22,7 @@
 {{- $_ = (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list (printf "[]%s" "interface {}") $x (coalesce nil)) ))) "r")) ))) "r") -}}
 {{- $_ = (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list (printf "[]%s" "string") $x (coalesce nil)) ))) "r")) ))) "r") -}}
 {{- $_ = (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list (printf "map[%s]%s" "string" "interface {}") $x (coalesce nil)) ))) "r")) ))) "r") -}}
-{{- (dict "r" (dict "sliceExpr" $slice "negativeNumbers" (list -2 -4) "forExpr" (get (fromJson (include "syntax.forExpr" (dict "a" (list 10) ))) "r") )) | toJson -}}
+{{- (dict "r" (dict "sliceExpr" $slice "negativeNumbers" (list -2 -4) "forExpr" (get (fromJson (include "syntax.forExpr" (dict "a" (list 10) ))) "r") "binaryExprs" (get (fromJson (include "syntax.binaryExprs" (dict "a" (list ) ))) "r") )) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -93,6 +92,9 @@
 {{- $_ = (ne (int64 1) (int64 1)) -}}
 {{- $_ = (eq (dict ) (coalesce nil)) -}}
 {{- $_ = (ne (dict ) (coalesce nil)) -}}
+{{- $result := (list (gt 1 2) (lt 1 2) (ge 1 2) (le 1 2) (ge 2 2) (le 2 2)) -}}
+{{- (dict "r" $result) | toJson -}}
+{{- break -}}
 {{- end -}}
 {{- end -}}
 
