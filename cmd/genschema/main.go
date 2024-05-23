@@ -6,6 +6,7 @@ import (
 	"reflect"
 
 	"github.com/invopop/jsonschema"
+	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 	"github.com/redpanda-data/helm-charts/charts/redpanda"
 	"github.com/redpanda-data/helm-charts/pkg/valuesutil"
 	corev1 "k8s.io/api/core/v1"
@@ -50,6 +51,11 @@ func main() {
 						corev1.FSGroupChangeOnRootMismatch,
 						corev1.FSGroupChangeAlways,
 					},
+				}
+			case monitoringv1.Duration:
+				return &jsonschema.Schema{
+					Type:    "string",
+					Pattern: "^(0|(([0-9]+)y)?(([0-9]+)w)?(([0-9]+)d)?(([0-9]+)h)?(([0-9]+)m)?(([0-9]+)s)?(([0-9]+)ms)?)$",
 				}
 			default:
 				return nil

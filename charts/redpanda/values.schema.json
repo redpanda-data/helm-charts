@@ -796,6 +796,9 @@
     },
     "monitoring": {
       "properties": {
+        "enableHttp2": {
+          "type": "boolean"
+        },
         "enabled": {
           "type": "boolean"
         },
@@ -806,10 +809,106 @@
           "type": "object"
         },
         "scrapeInterval": {
-          "pattern": ".*[smh]$",
           "type": "string"
         },
         "tlsConfig": {
+          "properties": {
+            "ca": {
+              "properties": {
+                "configMap": {
+                  "properties": {
+                    "key": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "optional": {
+                      "type": "boolean"
+                    }
+                  },
+                  "type": "object"
+                },
+                "secret": {
+                  "properties": {
+                    "key": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "optional": {
+                      "type": "boolean"
+                    }
+                  },
+                  "type": "object"
+                }
+              },
+              "type": "object"
+            },
+            "caFile": {
+              "type": "string"
+            },
+            "cert": {
+              "properties": {
+                "configMap": {
+                  "properties": {
+                    "key": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "optional": {
+                      "type": "boolean"
+                    }
+                  },
+                  "type": "object"
+                },
+                "secret": {
+                  "properties": {
+                    "key": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "optional": {
+                      "type": "boolean"
+                    }
+                  },
+                  "type": "object"
+                }
+              },
+              "type": "object"
+            },
+            "certFile": {
+              "type": "string"
+            },
+            "insecureSkipVerify": {
+              "type": "boolean"
+            },
+            "keyFile": {
+              "type": "string"
+            },
+            "keySecret": {
+              "properties": {
+                "key": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "optional": {
+                  "type": "boolean"
+                }
+              },
+              "type": "object"
+            },
+            "serverName": {
+              "type": "string"
+            }
+          },
           "type": "object"
         }
       },

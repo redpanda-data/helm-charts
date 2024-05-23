@@ -7,6 +7,7 @@ package redpanda
 import (
 	cmmeta "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
 	corev1 "k8s.io/api/core/v1"
+	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 )
 
 type PartialValues struct {
@@ -138,10 +139,11 @@ type PartialLogging struct {
 }
 
 type PartialMonitoring struct {
-	Enabled        *bool             `json:"enabled,omitempty" jsonschema:"required"`
-	ScrapeInterval *string           `json:"scrapeInterval,omitempty" jsonschema:"required,pattern=.*[smh]$"`
-	Labels         map[string]string `json:"labels,omitempty"`
-	TLSConfig      map[string]any    `json:"tlsConfig,omitempty"`
+	Enabled        *bool                   `json:"enabled,omitempty" jsonschema:"required"`
+	ScrapeInterval monitoringv1.Duration   `json:"scrapeInterval,omitempty" jsonschema:"required"`
+	Labels         map[string]string       `json:"labels,omitempty"`
+	TLSConfig      *monitoringv1.TLSConfig `json:"tlsConfig,omitempty"`
+	EnableHttp2    *bool                   `json:"enableHttp2,omitempty"`
 }
 
 type PartialRedpandaResources struct {
