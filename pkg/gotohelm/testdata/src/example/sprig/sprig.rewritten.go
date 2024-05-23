@@ -26,6 +26,28 @@ func Sprig() map[string]any {
 		"atoi":    atoi(),
 		"float":   float(),
 		"len":     lenTest(),
+		"first":   first(),
+	}
+}
+
+func first() []any {
+	return []any{
+		helmette.First[string]([]string{"one", "two"}),
+		helmette.First[int]([]int{-3, -4}),
+		helmette.First[float64]([]float64{5.5, 6.6}),
+		helmette.First[uint]([]uint{7, 8}),
+		helmette.First[bool]([]bool{true, false}),
+		helmette.First[bool]([]bool{false, true}),
+		// Empty arrays
+		helmette.First[bool]([]bool{}),
+		helmette.First[uint]([]uint{}),
+		helmette.First[float64]([]float64{}),
+		helmette.First[int]([]int{}),
+		helmette.First[string]([]string{}),
+		helmette.First[byte]([]byte{}),
+		// The []bytes array that is represented as string in go template
+		// the first function will panic as string is not array.
+		//helmette.First[byte]([]byte{"test"}),
 	}
 }
 
