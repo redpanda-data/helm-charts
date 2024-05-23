@@ -1,6 +1,7 @@
 package helmette
 
 import (
+	"math"
 	"time"
 
 	"github.com/mitchellh/mapstructure"
@@ -37,6 +38,58 @@ func MustDuration(duration string) *metav1.Duration {
 		panic(err)
 	}
 	return &metav1.Duration{Duration: d}
+}
+
+// AsNumeric attempts to interpret the provided value as a helm friendly
+// "numeric" (float64). It should be used in place of type assertions to
+// numeric types.
+// Due to helm's, sprig's, and gotohelm's use of untyped JSON marshalling all
+// numeric values are cast to float64s. To ensure that gocode and helm code
+// function the same way, AsNumeric must be used.
+func AsNumeric(value any) (float64, bool) {
+	switch value := value.(type) {
+	case int:
+		return float64(value), true
+	case int64:
+		return float64(value), true
+	case float32:
+		return float64(value), true
+	case float64:
+		return value, true
+	}
+
+	return 0, false
+}
+
+// HelmNumber is a union type of valid numeric primitives within the context of
+// helm templates.
+type HelmNumber interface {
+	~float64 | ~int | ~int64
+}
+
+// AsIntegral is a helm-specific replacement for type assertions/tests of
+// numeric types. The combination of helm, text/template, and sprig prevent us from
+// being able to reasonably distinguish between the various types of numeric
+// types. Instead we must rely on loose heuristic to determine if a value could
+// reasonably be interpreted as anything other than a float64.
+func AsIntegral[T HelmNumber](value any) (T, bool) {
+	switch value := value.(type) {
+	case int:
+		return T(value), true
+	case int32:
+		return T(value), true
+	case int64:
+		return T(value), true
+	case float32:
+		if math.Floor(float64(value)) == float64(value) {
+			return T(value), true
+		}
+	case float64:
+		if math.Floor(value) == value {
+			return T(value), true
+		}
+	}
+	return 0, false
 }
 
 // Unwrap "unwraps" .Values into a golang struct.

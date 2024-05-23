@@ -6,9 +6,9 @@
 {{- $t := (index $dot.Values "t") -}}
 {{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "string" $t "") ))) "r")) ))) "r") -}}
 {{- $ok_1 := $tmp_tuple_1.T2 -}}
-{{- $tmp_tuple_2 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "int" $t 0) ))) "r")) ))) "r") -}}
+{{- $tmp_tuple_2 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asintegral" (dict "a" (list $t) ))) "r")) ))) "r") -}}
 {{- $ok_2 := $tmp_tuple_2.T2 -}}
-{{- $tmp_tuple_3 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "float64" $t (float64 0)) ))) "r")) ))) "r") -}}
+{{- $tmp_tuple_3 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asnumeric" (dict "a" (list $t) ))) "r")) ))) "r") -}}
 {{- $ok_3 := $tmp_tuple_3.T2 -}}
 {{- if $ok_1 -}}
 {{- (dict "r" "it's a string!") | toJson -}}

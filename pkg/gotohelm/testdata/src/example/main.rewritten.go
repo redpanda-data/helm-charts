@@ -75,7 +75,7 @@ func runChart(dot *helmette.Dot) (_ map[string]any, err any) {
 
 	case "sprig":
 		return map[string]any{
-			"Sprig": sprig.Sprig(),
+			"Sprig": sprig.Sprig(dot),
 		}, nil
 
 	case "typing":

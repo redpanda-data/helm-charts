@@ -1,8 +1,6 @@
 //go:build rewrites
 package typing
 
-import "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
-
 type NestedEmbeds struct {
 	WithEmbed
 }
@@ -22,18 +20,6 @@ type WithEmbed struct {
 type JSONKeys struct {
 	Value    string      `json:"val,omitempty"`
 	Children []*JSONKeys `json:"childs,omitempty"`
-}
-
-func Typing(dot *helmette.Dot) map[string]any {
-	return map[string]any{
-		"zeros": zeros(),
-		// "settingFields":     settingFields(),
-		"compileMe":         compileMe(),
-		"typeTesting":       typeTesting(dot),
-		"typeAssertions":    typeSwitching(dot),
-		"typeSwitching":     typeSwitching(dot),
-		"nestedFieldAccess": nestedFieldAccess(),
-	}
 }
 
 func zeros() []any {

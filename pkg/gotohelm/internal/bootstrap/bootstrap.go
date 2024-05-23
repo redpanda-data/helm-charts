@@ -99,3 +99,31 @@ func lookup(apiVersion, kind, namespace, name string) (map[string]any, bool) {
 	}
 	return result, true
 }
+
+func asnumeric(value any) (any, bool) {
+	if TypeIs("float64", value) {
+		return value, true
+	}
+
+	if TypeIs("int64", value) {
+		return value, true
+	}
+
+	if TypeIs("int", value) {
+		return value, true
+	}
+
+	return 0, false
+}
+
+func asintegral(value any) (any, bool) {
+	if TypeIs("int64", value) || TypeIs("int", value) {
+		return value, true
+	}
+
+	if TypeIs("float64", value) && Floor(value) == value {
+		return value, true
+	}
+
+	return 0, false
+}

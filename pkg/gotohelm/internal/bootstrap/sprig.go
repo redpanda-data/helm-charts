@@ -33,3 +33,13 @@ func Lookup(apiVersion, kind, namespace, name string) map[string]any {
 func Empty(any) bool {
 	panic("not implemented")
 }
+
+// +gotohelm:builtin=mulf
+func Mulf(any, any) float64 {
+	panic("not implemented")
+}
+
+// +gotohelm:builtin=floor
+func Floor(any) float64 {
+	panic("not implemented")
+}

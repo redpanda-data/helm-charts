@@ -65,8 +65,16 @@ var testSpecs = map[string]TestSpec{
 	"directives":  {},
 	"k8s":         {},
 	"mutability":  {},
-	"sprig":       {},
-	"syntax":      {},
+	"sprig": {
+		Values: []map[string]any{
+			{"numeric": 0},
+			{"numeric": 3},
+			{"numeric": 1.5},
+			{"numeric": true},
+			{"numeric": ""},
+		},
+	},
+	"syntax": {},
 	"labels": {
 		Values: []map[string]any{
 			{"commonLabels": map[string]any{"test": "test"}},

@@ -1,13 +1,5 @@
 {{- /* Generated from "structs.go" */ -}}
 
-{{- define "typing.Typing" -}}
-{{- $dot := (index .a 0) -}}
-{{- range $_ := (list 1) -}}
-{{- (dict "r" (dict "zeros" (get (fromJson (include "typing.zeros" (dict "a" (list ) ))) "r") "compileMe" (get (fromJson (include "typing.compileMe" (dict "a" (list ) ))) "r") "typeTesting" (get (fromJson (include "typing.typeTesting" (dict "a" (list $dot) ))) "r") "typeAssertions" (get (fromJson (include "typing.typeSwitching" (dict "a" (list $dot) ))) "r") "typeSwitching" (get (fromJson (include "typing.typeSwitching" (dict "a" (list $dot) ))) "r") "nestedFieldAccess" (get (fromJson (include "typing.nestedFieldAccess" (dict "a" (list ) ))) "r") )) | toJson -}}
-{{- break -}}
-{{- end -}}
-{{- end -}}
-
 {{- define "typing.zeros" -}}
 {{- range $_ := (list 1) -}}
 {{- $number := (coalesce nil) -}}

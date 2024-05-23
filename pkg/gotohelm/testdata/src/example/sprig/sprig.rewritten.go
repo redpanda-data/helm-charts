@@ -14,24 +14,26 @@ type AStruct struct {
 // Sprig runs a variety of values through various sprig functions. Assertions
 // are no performed within this code, we're merely testing that the functions
 // in helmette return the same values as the transpiled versions.
-func Sprig() map[string]any {
+func Sprig(dot *helmette.Dot) map[string]any {
 	return map[string]any{
-		"atoi":     atoi(),
-		"concat":   concat(),
-		"default":  default_(),
-		"empty":    empty(),
-		"errTypes": errTypes(),
-		"first":    first(),
-		"float":    float(),
-		"keys":     keys(),
-		"len":      lenTest(),
-		"min":      minFunc(),
-		"regex":    regex(),
-		"strings":  stringsFunctions(),
-		"toString": toString(),
-		"trim":     trim(),
-		"unset":    unset(),
-		"yaml":     yaml(),
+		"asIntegral": asIntegral(dot),
+		"asNumeric":  asNumeric(dot),
+		"atoi":       atoi(),
+		"concat":     concat(),
+		"default":    default_(),
+		"empty":      empty(),
+		"errTypes":   errTypes(),
+		"first":      first(),
+		"float":      float(),
+		"keys":       keys(),
+		"len":        lenTest(),
+		"min":        minFunc(),
+		"regex":      regex(),
+		"strings":    stringsFunctions(),
+		"toString":   toString(),
+		"trim":       trim(),
+		"unset":      unset(),
+		"yaml":       yaml(),
 	}
 }
 
@@ -61,7 +63,7 @@ func minFunc() []int {
 	return []int{
 		// spig Min function does not allow to not pass parameters. Error returned from helm template:
 		// wrong number of args for min: want at least 1 got 0
-		//helmette.Min(),
+		// helmette.Min(),
 		helmette.Min(-1, 0, 1),
 		helmette.Min(1),
 		helmette.Min(2, 1),
@@ -100,7 +102,7 @@ func first() []any {
 		helmette.First[byte]([]byte{}),
 		// The []bytes array that is represented as string in go template
 		// the first function will panic as string is not array.
-		//helmette.First[byte]([]byte{"test"}),
+		// helmette.First[byte]([]byte{"test"}),
 	}
 }
 
