@@ -263,3 +263,19 @@ func Float64(in string) (float64, error) {
 func Len(in any) int {
 	return reflect.ValueOf(in).Len()
 }
+
+// +gotohelm:builtin=toString
+func ToString(input any) string {
+	switch v := input.(type) {
+	case string:
+		return v
+	case []byte:
+		return string(v)
+	case error:
+		return v.Error()
+	case fmt.Stringer:
+		return v.String()
+	default:
+		return fmt.Sprintf("%v", v)
+	}
+}

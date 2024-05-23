@@ -2,7 +2,14 @@
 
 {{- define "sprig.Sprig" -}}
 {{- range $_ := (list 1) -}}
-{{- (dict "r" (dict "concat" (get (fromJson (include "sprig.concat" (dict "a" (list ) ))) "r") "default" (get (fromJson (include "sprig.default_" (dict "a" (list ) ))) "r") "keys" (get (fromJson (include "sprig.keys" (dict "a" (list ) ))) "r") "empty" (get (fromJson (include "sprig.empty" (dict "a" (list ) ))) "r") "strings" (get (fromJson (include "sprig.stringsFunctions" (dict "a" (list ) ))) "r") "unset" (get (fromJson (include "sprig.unset" (dict "a" (list ) ))) "r") "regex" (get (fromJson (include "sprig.regex" (dict "a" (list ) ))) "r") "atoi" (get (fromJson (include "sprig.atoi" (dict "a" (list ) ))) "r") "float" (get (fromJson (include "sprig.float" (dict "a" (list ) ))) "r") "len" (get (fromJson (include "sprig.lenTest" (dict "a" (list ) ))) "r") "first" (get (fromJson (include "sprig.first" (dict "a" (list ) ))) "r") )) | toJson -}}
+{{- (dict "r" (dict "concat" (get (fromJson (include "sprig.concat" (dict "a" (list ) ))) "r") "default" (get (fromJson (include "sprig.default_" (dict "a" (list ) ))) "r") "keys" (get (fromJson (include "sprig.keys" (dict "a" (list ) ))) "r") "empty" (get (fromJson (include "sprig.empty" (dict "a" (list ) ))) "r") "strings" (get (fromJson (include "sprig.stringsFunctions" (dict "a" (list ) ))) "r") "unset" (get (fromJson (include "sprig.unset" (dict "a" (list ) ))) "r") "regex" (get (fromJson (include "sprig.regex" (dict "a" (list ) ))) "r") "atoi" (get (fromJson (include "sprig.atoi" (dict "a" (list ) ))) "r") "float" (get (fromJson (include "sprig.float" (dict "a" (list ) ))) "r") "len" (get (fromJson (include "sprig.lenTest" (dict "a" (list ) ))) "r") "first" (get (fromJson (include "sprig.first" (dict "a" (list ) ))) "r") "toString" (get (fromJson (include "sprig.toString" (dict "a" (list ) ))) "r") )) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "sprig.toString" -}}
+{{- range $_ := (list 1) -}}
+{{- (dict "r" (list (toString 1) (toString -2) (toString "test") (toString (dict "test" "test" )) (toString (list 2.3 3.5)) (toString (list "a" "b" "c")) (toString (list true false)))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

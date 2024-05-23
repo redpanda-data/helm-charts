@@ -16,17 +16,32 @@ type AStruct struct {
 // in helmette return the same values as the transpiled versions.
 func Sprig() map[string]any {
 	return map[string]any{
-		"concat":  concat(),
-		"default": default_(),
-		"keys":    keys(),
-		"empty":   empty(),
-		"strings": stringsFunctions(),
-		"unset":   unset(),
-		"regex":   regex(),
-		"atoi":    atoi(),
-		"float":   float(),
-		"len":     lenTest(),
-		"first":   first(),
+		"concat":   concat(),
+		"default":  default_(),
+		"keys":     keys(),
+		"empty":    empty(),
+		"strings":  stringsFunctions(),
+		"unset":    unset(),
+		"regex":    regex(),
+		"atoi":     atoi(),
+		"float":    float(),
+		"len":      lenTest(),
+		"first":    first(),
+		"toString": toString(),
+	}
+}
+
+func toString() []string {
+	return []string{
+		helmette.ToString(1),
+		helmette.ToString(-2),
+		helmette.ToString("test"),
+		helmette.ToString(map[string]string{
+			"test": "test",
+		}),
+		helmette.ToString([]float64{2.3, 3.5}),
+		helmette.ToString([]string{"a", "b", "c"}),
+		helmette.ToString([]bool{true, false}),
 	}
 }
 
