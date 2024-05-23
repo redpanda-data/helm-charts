@@ -924,28 +924,30 @@ spec:
 # since if we do include a license we MUST also print all secret items.
 ---
 # Source: redpanda/templates/servicemonitor.yaml
-# This servicemonitor is used by Prometheus Operator to scrape the metrics
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: redpanda
-  namespace: "default"
+  creationTimestamp: null
   labels:
     app.kubernetes.io/component: redpanda
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
     helm.sh/chart: redpanda-5.8.7
+  name: redpanda
+  namespace: default
 spec:
   endpoints:
-  - interval: 30s
+  - enableHttp2: null
+    interval: 30s
     path: /public_metrics
     port: admin
+  namespaceSelector: {}
   selector:
     matchLabels:
-      monitoring.redpanda.com/enabled: "true"
+      app.kubernetes.io/instance: redpanda
       app.kubernetes.io/name: redpanda
-      app.kubernetes.io/instance: "redpanda"
+      monitoring.redpanda.com/enabled: "true"
 ---
 # Source: redpanda/charts/console/templates/tests/test-connection.yaml
 apiVersion: v1

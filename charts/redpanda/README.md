@@ -528,7 +528,7 @@ Monitoring. This will create a ServiceMonitor that can be used by Prometheus-Ope
 **Default:**
 
 ```
-{"enabled":false,"labels":{},"scrapeInterval":"30s","tlsConfig":{}}
+{"enabled":false,"labels":{},"scrapeInterval":"30s"}
 ```
 
 ### [nameOverride](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=nameOverride)
