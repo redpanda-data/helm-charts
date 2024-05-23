@@ -665,8 +665,8 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 			{"_", token.LOR.String(), "_"}:  f("or"),
 			{"_", token.GTR.String(), "_"}:  f("gt"),
 			{"_", token.LSS.String(), "_"}:  f("lt"),
-			{"_", token.GEQ.String(), "_"}:  f("gte"),
-			{"_", token.LEQ.String(), "_"}:  f("lte"),
+			{"_", token.GEQ.String(), "_"}:  f("ge"),
+			{"_", token.LEQ.String(), "_"}:  f("le"),
 
 			{"float32", token.ADD.String(), "float32"}: wrapWithCast("addf", "float64"),
 			{"float32", token.MUL.String(), "float32"}: wrapWithCast("mulf", "float64"),

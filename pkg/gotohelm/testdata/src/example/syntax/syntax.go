@@ -28,9 +28,6 @@ func Syntax() map[string]any {
 	_ = len([]int{})
 	_ = len(map[string]any{})
 
-	// BinaryExprs
-	binaryExprs()
-
 	// ParenExpr
 	_ = (true)
 
@@ -55,6 +52,7 @@ func Syntax() map[string]any {
 		"sliceExpr": slice,
 		"negativeNumbers": []int{-2, -4},
 		"forExpr":   forExpr(10),
+		"binaryExprs": binaryExprs(),
 	}
 }
 
@@ -97,7 +95,7 @@ func workingWithString() map[string]any {
 
 // binaryExprs are a bit tricky because we need to care about the types beyond
 // the syntax. It get's its own function because it's so expansive.
-func binaryExprs() {
+func binaryExprs() []bool {
 	// untyped ints
 	_ = 1 * 1
 	_ = 1 + 1
@@ -135,6 +133,17 @@ func binaryExprs() {
 	_ = map[string]any{} != nil
 	// TODO strings
 	// TODO floats
+
+	result := []bool{
+		1 > 2,
+		1 < 2,
+		1 >= 2,
+		1 <= 2,
+		2 >= 2,
+		2 <= 2,
+	}
+
+	return result
 }
 
 func forExpr(interation int) [][]string {
