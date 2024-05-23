@@ -95,6 +95,30 @@ func TieredStorageSecretRefs(t *testing.T, secret *corev1.Secret) redpanda.Parti
 	}
 }
 
+type ValuesTestCase struct {
+	Name         string
+	Values       any
+	ValuesFile   string
+	AssertGolden func(*testing.T, testutil.GoldenAssertion, string, []byte)
+}
+
+func CITestCases(t *testing.T) []ValuesTestCase {
+	values, err := os.ReadDir("./ci")
+	require.NoError(t, err)
+
+	expected := testutil.NewTxTar(t, "testdata/template-ci.txtar")
+
+	cases := make([]ValuesTestCase, len(values))
+	for i, f := range values {
+		cases[i] = ValuesTestCase{
+			Name:         f.Name(),
+			ValuesFile:   "./ci/" + f.Name(),
+			AssertGolden: expected.AssertGolden,
+		}
+	}
+	return cases
+}
+
 func TestTemplate(t *testing.T) {
 	ctx := testutil.Context(t)
 	client, err := helm.New(helm.Options{ConfigHome: testutil.TempDir(t)})
@@ -106,22 +130,23 @@ func TestTemplate(t *testing.T) {
 	require.NoError(t, client.RepoAdd(ctx, "redpanda", "https://charts.redpanda.com"))
 	require.NoError(t, client.DependencyBuild(ctx, "."), "failed to refresh helm dependencies")
 
-	values, err := os.ReadDir("./ci")
-	require.NoError(t, err)
+	cases := CITestCases(t)
 
-	for _, v := range values {
-		v := v
-		t.Run(v.Name(), func(t *testing.T) {
+	for _, c := range cases {
+		c := c
+		t.Run(c.Name, func(t *testing.T) {
 			t.Parallel()
 
 			out, err := client.Template(ctx, ".", helm.TemplateOptions{
 				Name:       "redpanda",
-				ValuesFile: "./ci/" + v.Name(),
+				Values:     c.Values,
+				ValuesFile: c.ValuesFile,
+				// Tests utilize some non-deterministic helpers (rng). We don't
+				// really care about the stability of their output, so globally
+				// disable them.
+				SkipTests: true,
 				Set: []string{
-					// Tests utilize some non-deterministic helpers (rng). We don't
-					// really care about the stability of their output, so globally
-					// disable them.
-					"tests.enabled=false",
+					"test.enabled=false",
 					// jwtSecret defaults to a random string. Can't have that
 					// in snapshot testing so set it to a static value.
 					"console.secret.login.jwtSecret=SECRETKEY",
@@ -129,9 +154,10 @@ func TestTemplate(t *testing.T) {
 			})
 			require.NoError(t, err)
 
-			// kube-lint template file
-			var stdout bytes.Buffer
+			c.AssertGolden(t, testutil.YAML, c.Name, out)
+
 			var stderr bytes.Buffer
+			var stdout bytes.Buffer
 			inputYaml := bytes.NewBuffer(out)
 
 			cmd := exec.CommandContext(ctx, "kube-linter", "lint", "-", "--format", "json")
@@ -141,14 +167,12 @@ func TestTemplate(t *testing.T) {
 
 			errKubeLinter := cmd.Run()
 			if errKubeLinter != nil && len(stderr.String()) > 0 {
-				t.Logf("kube-linter error(s) found for %q: \n%s\nstderr:\n%s", v.Name(), stdout.String(), stderr.String())
+				t.Logf("kube-linter error(s) found for %q: \n%s\nstderr:\n%s", c.Name, stdout.String(), stderr.String())
 			} else if errKubeLinter != nil {
-				t.Logf("kube-linter error(s) found for %q: \n%s", v.Name(), errKubeLinter)
+				t.Logf("kube-linter error(s) found for %q: \n%s", c.Name, errKubeLinter)
 			}
 			// TODO: remove comment below and the logging above once we agree to linter
 			// require.NoError(t, errKubeLinter)
-
-			testutil.AssertGolden(t, testutil.YAML, "./testdata/"+v.Name()+".golden", out)
 		})
 	}
 }
