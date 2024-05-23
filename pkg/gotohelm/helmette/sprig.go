@@ -41,10 +41,22 @@ func First[T any](x []T) any {
 	return x[0]
 }
 
+// TrimSuffix is the go equivalent of sprig's `trimSuffix`
+// +gotohelm:builtin=trimSuffix
+func TrimSuffix(suffix, s string) string {
+	if strings.HasSuffix(s, suffix) {
+		return strings.TrimSuffix(s, suffix)
+	}
+	return s
+}
+
 // TrimPrefix is the go equivalent of sprig's `trimPrefix`
 // +gotohelm:builtin=trimPrefix
 func TrimPrefix(prefix, s string) string {
-	return strings.TrimPrefix(s, prefix)
+	if strings.HasSuffix(s, prefix) {
+		return strings.TrimPrefix(s, prefix)
+	}
+	return s
 }
 
 // SortAlpha is the go equivalent of sprig's `sortAlpha`
