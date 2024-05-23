@@ -14,6 +14,20 @@ import (
 	"golang.org/x/exp/maps"
 )
 
+// First function can not return `T` as sprig implementation
+// will return nil if array is of the size 0.
+//
+// # Reference
+// https://github.com/Masterminds/sprig/blob/581758eb7d96ae4d113649668fa96acc74d46e7f/list.go#L161-L163
+// +gotohelm:builtin=first
+func First[T any](x []T) any {
+	if len(x) == 0 {
+		return nil
+	}
+
+	return x[0]
+}
+
 // TrimPrefix is the go equivalent of sprig's `trimPrefix`
 // +gotohelm:builtin=trimPrefix
 func TrimPrefix(prefix, s string) string {
