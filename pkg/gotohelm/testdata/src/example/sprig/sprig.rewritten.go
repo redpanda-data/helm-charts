@@ -29,6 +29,18 @@ func Sprig() map[string]any {
 		"first":    first(),
 		"toString": toString(),
 		"min":      minFunc(),
+		"trim":     trim(),
+	}
+}
+
+func trim() []string {
+	return []string{
+		helmette.TrimSuffix("test-kd", "-kd"),
+		helmette.TrimPrefix("test-kd", "test"),
+		helmette.TrimSuffix("test-kd", "none"),
+		helmette.TrimPrefix("test-kd", "none"),
+		helmette.TrimSuffix("test-kd", ""),
+		helmette.TrimPrefix("test-kd", ""),
 	}
 }
 
