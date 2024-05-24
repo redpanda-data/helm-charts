@@ -19,6 +19,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "console.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
   labels:
     {{- include "console.labels" . | nindent 4 }}
   {{- with .Values.annotations }}
