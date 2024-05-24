@@ -26,7 +26,7 @@ func ClientCerts(dot *helmette.Dot) []certmanagerv1.Certificate {
 
 	certs := []certmanagerv1.Certificate{}
 	for name, data := range values.TLS.Certs {
-		if !helmette.Empty(data.SecretRef) {
+		if !helmette.Empty(data.SecretRef) || !ptr.Deref(data.Enabled, true) {
 			continue
 		}
 
@@ -85,7 +85,11 @@ func ClientCerts(dot *helmette.Dot) []certmanagerv1.Certificate {
 	name := values.Listeners.Kafka.TLS.Cert
 
 	data, ok := values.TLS.Certs[name]
-	if !ok || (helmette.Empty(data.SecretRef) && !ClientAuthRequired(dot)) {
+	if !ok {
+		panic(fmt.Sprintf("Certificate %q referenced but not defined", name))
+	}
+
+	if helmette.Empty(data.SecretRef) || !ClientAuthRequired(dot) {
 		return certs
 	}
 

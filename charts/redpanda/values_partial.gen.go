@@ -338,7 +338,7 @@ type PartialListeners struct {
 	SchemaRegistry *PartialSchemaRegistryListeners `json:"schemaRegistry,omitempty" jsonschema:"required"`
 	RPC            struct {
 		Port *int                `json:"port,omitempty" jsonschema:"required"`
-		TLS  *PartialExternalTLS `json:"tls,omitempty" jsonschema:"required"`
+		TLS  *PartialInternalTLS `json:"tls,omitempty" jsonschema:"required"`
 	} `json:"rpc,omitempty" jsonschema:"required"`
 }
 
@@ -389,13 +389,16 @@ type PartialPandaProxyClient struct {
 }
 
 type PartialTLSCert struct {
-	CAEnabled             *bool                   `json:"caEnabled,omitempty" jsonschema:"required"`
-	ApplyInternalDNSNames *bool                   `json:"applyInternalDNSNames,omitempty"`
-	Duration              *string                 `json:"duration,omitempty" jsonschema:"pattern=.*[smh]$"`
-	IssuerRef             *cmmeta.ObjectReference `json:"issuerRef,omitempty"`
-	SecretRef             *struct {
-		Name *string `json:"name,omitempty"`
-	} `json:"secretRef,omitempty"`
+	Enabled               *bool                     `json:"enabled,omitempty"`
+	CAEnabled             *bool                     `json:"caEnabled,omitempty" jsonschema:"required"`
+	ApplyInternalDNSNames *bool                     `json:"applyInternalDNSNames,omitempty"`
+	Duration              *string                   `json:"duration,omitempty" jsonschema:"pattern=.*[smh]$"`
+	IssuerRef             *cmmeta.ObjectReference   `json:"issuerRef,omitempty"`
+	SecretRef             *PartialNameOnlySecretRef `json:"secretRef,omitempty"`
+}
+
+type PartialNameOnlySecretRef struct {
+	Name *string `json:"name,omitempty"`
 }
 
 type PartialTLSCertMap map[string]PartialTLSCert
@@ -413,16 +416,22 @@ type PartialSASLAuth struct {
 	Users     []PartialSASLUser `json:"users,omitempty"`
 }
 
-type PartialExternalTLS struct {
+type PartialInternalTLS struct {
 	Cert              *string `json:"cert,omitempty" jsonschema:"required"`
 	Enabled           *bool   `json:"enabled,omitempty"`
 	RequireClientAuth *bool   `json:"requireClientAuth,omitempty" jsonschema:"required"`
 }
 
+type PartialExternalTLS struct {
+	Cert              *string `json:"cert,omitempty"`
+	Enabled           *bool   `json:"enabled,omitempty"`
+	RequireClientAuth *bool   `json:"requireClientAuth,omitempty"`
+}
+
 type PartialAdminListeners struct {
 	External PartialExternalListeners[PartialAdminExternal] `json:"external,omitempty"`
 	Port     *int                                           `json:"port,omitempty" jsonschema:"required"`
-	TLS      *PartialExternalTLS                            `json:"tls,omitempty" jsonschema:"required"`
+	TLS      *PartialInternalTLS                            `json:"tls,omitempty" jsonschema:"required"`
 }
 
 type PartialAdminExternal struct {
@@ -435,7 +444,7 @@ type PartialHTTPListeners struct {
 	Enabled              *bool                                         `json:"enabled,omitempty" jsonschema:"required"`
 	External             PartialExternalListeners[PartialHTTPExternal] `json:"external,omitempty"`
 	AuthenticationMethod *HTTPAuthenticationMethod                     `json:"authenticationMethod,omitempty"`
-	TLS                  *PartialExternalTLS                           `json:"tls,omitempty" jsonschema:"required"`
+	TLS                  *PartialInternalTLS                           `json:"tls,omitempty" jsonschema:"required"`
 	KafkaEndpoint        *string                                       `json:"kafkaEndpoint,omitempty" jsonschema:"required,pattern=^[A-Za-z_-][A-Za-z0-9_-]*$"`
 	Port                 *int                                          `json:"port,omitempty" jsonschema:"required"`
 }
@@ -452,7 +461,7 @@ type PartialHTTPExternal struct {
 type PartialKafkaListeners struct {
 	AuthenticationMethod *KafkaAuthenticationMethod                     `json:"authenticationMethod,omitempty"`
 	External             PartialExternalListeners[PartialKafkaExternal] `json:"external,omitempty"`
-	TLS                  *PartialExternalTLS                            `json:"tls,omitempty" jsonschema:"required"`
+	TLS                  *PartialInternalTLS                            `json:"tls,omitempty" jsonschema:"required"`
 	Port                 *int                                           `json:"port,omitempty" jsonschema:"required"`
 }
 
@@ -462,6 +471,7 @@ type PartialKafkaExternal struct {
 	Port                 *int32                     `json:"port,omitempty" jsonschema:"required"`
 	AuthenticationMethod *KafkaAuthenticationMethod `json:"authenticationMethod,omitempty"`
 	PrefixTemplate       *string                    `json:"prefixTemplate,omitempty"`
+	TLS                  *PartialExternalTLS        `json:"tls,omitempty"`
 }
 
 type PartialSchemaRegistryListeners struct {
@@ -470,7 +480,7 @@ type PartialSchemaRegistryListeners struct {
 	AuthenticationMethod *HTTPAuthenticationMethod                               `json:"authenticationMethod,omitempty"`
 	KafkaEndpoint        *string                                                 `json:"kafkaEndpoint,omitempty" jsonschema:"required,pattern=^[A-Za-z_-][A-Za-z0-9_-]*$"`
 	Port                 *int                                                    `json:"port,omitempty" jsonschema:"required"`
-	TLS                  *PartialExternalTLS                                     `json:"tls,omitempty" jsonschema:"required"`
+	TLS                  *PartialInternalTLS                                     `json:"tls,omitempty" jsonschema:"required"`
 }
 
 type PartialSchemaRegistryExternal struct {
