@@ -81,7 +81,7 @@ limitations under the License.
 
 {{ $connectConfig := dict }}
 {{ if .Values.connectors.enabled }}
-{{ $connectorsValues = merge (dict) $.Subcharts.connector .Values.connectors }}
+{{ $connectorsValues := merge (dict) $.Subcharts.connectors .Values.connectors }}
 {{/* Connector */}}
 {{/* Currently Kafka connect helm chart does not support TLS configuraiton. That's why tls enabled is set explicitly to false*/}}
 {{/* Currently Kafka connect helm chart does not support basic auth. That's why username and password is set explicitly to empty string*/}}
