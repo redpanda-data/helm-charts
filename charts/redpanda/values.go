@@ -83,9 +83,9 @@ type SecurityContext struct {
 }
 
 type Image struct {
-	Repository string `json:"repository" jsonschema:"required,default=docker.redpanda.com/redpandadata/redpanda"`
-	Tag        ImageTag        `json:"tag" jsonschema:"default=Chart.appVersion"`
-	PullPolicy string          `json:"pullPolicy" jsonschema:"required,pattern=^(Always|Never|IfNotPresent)$,description=The Kubernetes Pod image pull policy."`
+	Repository string   `json:"repository" jsonschema:"required,default=docker.redpanda.com/redpandadata/redpanda"`
+	Tag        ImageTag `json:"tag" jsonschema:"default=Chart.appVersion"`
+	PullPolicy string   `json:"pullPolicy" jsonschema:"required,pattern=^(Always|Never|IfNotPresent)$,description=The Kubernetes Pod image pull policy."`
 }
 
 func (Image) JSONSchemaExtend(schema *jsonschema.Schema) {
@@ -171,11 +171,11 @@ type Logging struct {
 }
 
 type Monitoring struct {
-	Enabled        bool                   `json:"enabled" jsonschema:"required"`
-	ScrapeInterval monitoringv1.Duration  `json:"scrapeInterval" jsonschema:"required"`
-	Labels         map[string]string      `json:"labels"`
+	Enabled        bool                    `json:"enabled" jsonschema:"required"`
+	ScrapeInterval monitoringv1.Duration   `json:"scrapeInterval" jsonschema:"required"`
+	Labels         map[string]string       `json:"labels"`
 	TLSConfig      *monitoringv1.TLSConfig `json:"tlsConfig"`
-	EnableHttp2    *bool                  `json:"enableHttp2"`
+	EnableHttp2    *bool                   `json:"enableHttp2"`
 }
 
 type RedpandaResources struct {
@@ -384,8 +384,8 @@ type Statefulset struct {
 		} `json:"configWatcher"`
 		Controllers struct {
 			Image struct {
-				Tag        ImageTag        `json:"tag" jsonschema:"required,default=Chart.appVersion"`
-				Repository string `json:"repository" jsonschema:"required,default=docker.redpanda.com/redpandadata/redpanda-operator"`
+				Tag        ImageTag `json:"tag" jsonschema:"required,default=Chart.appVersion"`
+				Repository string   `json:"repository" jsonschema:"required,default=docker.redpanda.com/redpandadata/redpanda-operator"`
 			} `json:"image"`
 			Enabled         bool                    `json:"enabled"`
 			Resources       any                     `json:"resources"`
@@ -454,8 +454,8 @@ type Listeners struct {
 	Kafka          *KafkaListeners          `json:"kafka" jsonschema:"required"`
 	SchemaRegistry *SchemaRegistryListeners `json:"schemaRegistry" jsonschema:"required"`
 	RPC            struct {
-		Port int          `json:"port" jsonschema:"required"`
-		TLS  *ExternalTLS `json:"tls" jsonschema:"required"`
+		Port int         `json:"port" jsonschema:"required"`
+		TLS  InternalTLS `json:"tls" jsonschema:"required"`
 	} `json:"rpc" jsonschema:"required"`
 }
 
@@ -505,14 +505,17 @@ type PandaProxyClient struct {
 }
 
 type TLSCert struct {
-	// Enabled   bool   `json:"enabled"`
+	// Enabled should be interpreted as `true` if not set.
+	Enabled               *bool                   `json:"enabled"`
 	CAEnabled             bool                    `json:"caEnabled" jsonschema:"required"`
 	ApplyInternalDNSNames *bool                   `json:"applyInternalDNSNames"`
 	Duration              string                  `json:"duration" jsonschema:"pattern=.*[smh]$"`
 	IssuerRef             *cmmeta.ObjectReference `json:"issuerRef"`
-	SecretRef             *struct {
-		Name string `json:"name"`
-	} `json:"secretRef"`
+	SecretRef             *NameOnlySecretRef      `json:"secretRef"`
+}
+
+type NameOnlySecretRef struct {
+	Name string `json:"name"`
 }
 
 func (TLSCert) JSONSchemaExtend(schema *jsonschema.Schema) {
@@ -550,16 +553,31 @@ type SASLAuth struct {
 	Users     []SASLUser `json:"users"`
 }
 
-type ExternalTLS struct {
+// InternalTLS is the TLS configuration for "internal" listeners. Internal
+// listeners all have default values specified within values.yaml which allows
+// us to be more strict about the schema here.
+// TODO Unify this struct with ExternalTLS and/or remove the concept of
+// internal and external listeners all together.
+type InternalTLS struct {
 	Cert              string `json:"cert" jsonschema:"required"`
-	Enabled           bool   `json:"enabled"`
-	RequireClientAuth *bool  `json:"requireClientAuth" jsonschema:"required"`
+	Enabled           *bool  `json:"enabled"`
+	RequireClientAuth bool   `json:"requireClientAuth" jsonschema:"required"`
+}
+
+// ExternalTLS is the TLS configuration associated with a given "external"
+// listener. The schema is more loose than InternalTLS. All fields have default
+// values but are interpreted differently depending on their context (IE kafka
+// vs schemaRegistry) tread lightly.
+type ExternalTLS struct {
+	Cert              *string `json:"cert"`
+	Enabled           *bool   `json:"enabled"`
+	RequireClientAuth *bool   `json:"requireClientAuth"`
 }
 
 type AdminListeners struct {
 	External ExternalListeners[AdminExternal] `json:"external"`
 	Port     int                              `json:"port" jsonschema:"required"`
-	TLS      *ExternalTLS                     `json:"tls" jsonschema:"required"`
+	TLS      InternalTLS                      `json:"tls" jsonschema:"required"`
 }
 
 type AdminExternal struct {
@@ -572,7 +590,7 @@ type HTTPListeners struct {
 	Enabled              bool                            `json:"enabled" jsonschema:"required"`
 	External             ExternalListeners[HTTPExternal] `json:"external"`
 	AuthenticationMethod HTTPAuthenticationMethod        `json:"authenticationMethod"`
-	TLS                  *ExternalTLS                    `json:"tls" jsonschema:"required"`
+	TLS                  InternalTLS                     `json:"tls" jsonschema:"required"`
 	KafkaEndpoint        string                          `json:"kafkaEndpoint" jsonschema:"required,pattern=^[A-Za-z_-][A-Za-z0-9_-]*$"`
 	Port                 int                             `json:"port" jsonschema:"required"`
 }
@@ -586,7 +604,7 @@ type HTTPExternal struct {
 	Enabled              *bool                     `json:"enabled"`
 	Port                 int32                     `json:"port" jsonschema:"required"`
 	AuthenticationMethod *HTTPAuthenticationMethod `json:"authenticationMethod"`
-	PrefixTemplate       *string                    `json:"prefixTemplate"`
+	PrefixTemplate       *string                   `json:"prefixTemplate"`
 	TLS                  *ExternalTLS              `json:"tls" jsonschema:"required"`
 }
 
@@ -601,7 +619,7 @@ func (HTTPExternal) JSONSchemaExtend(schema *jsonschema.Schema) {
 type KafkaListeners struct {
 	AuthenticationMethod KafkaAuthenticationMethod        `json:"authenticationMethod"`
 	External             ExternalListeners[KafkaExternal] `json:"external"`
-	TLS                  *ExternalTLS                     `json:"tls" jsonschema:"required"`
+	TLS                  InternalTLS                      `json:"tls" jsonschema:"required"`
 	Port                 int                              `json:"port" jsonschema:"required"`
 }
 
@@ -614,7 +632,8 @@ type KafkaExternal struct {
 	Enabled              *bool                      `json:"enabled"`
 	Port                 int32                      `json:"port" jsonschema:"required"`
 	AuthenticationMethod *KafkaAuthenticationMethod `json:"authenticationMethod"`
-	PrefixTemplate       *string                     `json:"prefixTemplate"`
+	PrefixTemplate       *string                    `json:"prefixTemplate"`
+	TLS                  *ExternalTLS               `json:"tls"`
 }
 
 func (KafkaExternal) JSONSchemaExtend(schema *jsonschema.Schema) {
@@ -627,7 +646,7 @@ type SchemaRegistryListeners struct {
 	AuthenticationMethod *HTTPAuthenticationMethod                 `json:"authenticationMethod"`
 	KafkaEndpoint        string                                    `json:"kafkaEndpoint" jsonschema:"required,pattern=^[A-Za-z_-][A-Za-z0-9_-]*$"`
 	Port                 int                                       `json:"port" jsonschema:"required"`
-	TLS                  *ExternalTLS                              `json:"tls" jsonschema:"required"`
+	TLS                  InternalTLS                               `json:"tls" jsonschema:"required"`
 }
 
 func (SchemaRegistryListeners) JSONSchemaExtend(schema *jsonschema.Schema) {

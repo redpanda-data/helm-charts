@@ -14,7 +14,7 @@
 {{- $domain := (trimSuffix "." $values.clusterDomain) -}}
 {{- $certs := (list ) -}}
 {{- range $name, $data := $values.tls.certs -}}
-{{- if (not (empty $data.secretRef)) -}}
+{{- if (or (not (empty $data.secretRef)) (not (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $data.enabled true) ))) "r"))) -}}
 {{- continue -}}
 {{- end -}}
 {{- $names := (list ) -}}
@@ -44,7 +44,10 @@
 {{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $values.tls.certs $name (coalesce nil)) ))) "r")) ))) "r") -}}
 {{- $ok := $tmp_tuple_1.T2 -}}
 {{- $data := $tmp_tuple_1.T1 -}}
-{{- if (or (not $ok) ((and (empty $data.secretRef) (not (get (fromJson (include "redpanda.ClientAuthRequired" (dict "a" (list $dot) ))) "r"))))) -}}
+{{- if (not $ok) -}}
+{{- $_ := (fail (printf "Certificate %q referenced but not defined" $name)) -}}
+{{- end -}}
+{{- if (or (empty $data.secretRef) (not (get (fromJson (include "redpanda.ClientAuthRequired" (dict "a" (list $dot) ))) "r"))) -}}
 {{- (dict "r" $certs) | toJson -}}
 {{- break -}}
 {{- end -}}

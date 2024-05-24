@@ -587,6 +587,20 @@
                     },
                     "prefixTemplate": {
                       "type": "string"
+                    },
+                    "tls": {
+                      "properties": {
+                        "cert": {
+                          "type": "string"
+                        },
+                        "enabled": {
+                          "type": "boolean"
+                        },
+                        "requireClientAuth": {
+                          "type": "boolean"
+                        }
+                      },
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -2281,6 +2295,9 @@
                 "duration": {
                   "pattern": ".*[smh]$",
                   "type": "string"
+                },
+                "enabled": {
+                  "type": "boolean"
                 },
                 "issuerRef": {
                   "properties": {
