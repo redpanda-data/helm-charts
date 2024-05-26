@@ -945,6 +945,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: redpanda
+  namespace: "default"
   labels:
     app.kubernetes.io/component: redpanda
     app.kubernetes.io/instance: redpanda
