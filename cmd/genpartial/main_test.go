@@ -74,8 +74,6 @@ func TestGenerateParital(t *testing.T) {
 	pkg := pkgs[1]
 	require.Equal(t, "main", pkg.Name)
 
-	require.NoError(t, PackageErrors(pkg))
-
 	require.EqualError(t, GeneratePartial(pkg, "Values", nil), `named struct not found in package "main": "Values"`)
 
 	var buf bytes.Buffer

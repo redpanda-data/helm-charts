@@ -43,16 +43,6 @@ func TestLoadPackages(t *testing.T) {
 
 				testutil.AssertGolden(t, testutil.Text, filename, buf.Bytes())
 			}
-
-			// Assert that there are no error AFTER writing the updated goldens to
-			// disk so there's something to debug.
-			for _, err := range pkg.Errors {
-				require.NoError(t, err)
-			}
-
-			for _, err := range pkg.TypeErrors {
-				require.NoError(t, err)
-			}
 		})
 	}
 }

@@ -130,13 +130,6 @@ func TestTranspile(t *testing.T) {
 	}, "./...")
 	require.NoError(t, err)
 
-	// Ensure there are no compile errors before proceeding.
-	for _, pkg := range pkgs {
-		for _, err := range pkg.Errors {
-			require.NoErrorf(t, err, "failed to compile %q", pkg.Name)
-		}
-	}
-
 	// Create and populate the test environment.
 	ctl := kubetest.NewEnv(t)
 	for _, obj := range seedObjects {

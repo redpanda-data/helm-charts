@@ -66,19 +66,6 @@ func main() {
 	}
 }
 
-// PackageErrors returns any error reported by pkg during load or nil.
-func PackageErrors(pkg *packages.Package) error {
-	for _, err := range pkg.Errors {
-		return err
-	}
-
-	for _, err := range pkg.TypeErrors {
-		return err
-	}
-
-	return nil
-}
-
 func GeneratePartial(pkg *packages.Package, structName string, out io.Writer) error {
 	root := pkg.Types.Scope().Lookup(structName)
 
