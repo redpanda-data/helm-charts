@@ -55,15 +55,6 @@ func Transpile(pkg *packages.Package) (_ *Chart, err error) {
 		}
 	}()
 
-	// Ensure there are no errors in the package before we transpile it.
-	for _, err := range pkg.TypeErrors {
-		return nil, err
-	}
-
-	for _, err := range pkg.Errors {
-		return nil, err
-	}
-
 	t := &Transpiler{
 		Package:   pkg,
 		Fset:      pkg.Fset,

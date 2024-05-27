@@ -9,6 +9,8 @@ import (
 	"go/token"
 	"go/types"
 
+	"github.com/cockroachdb/errors"
+
 	"golang.org/x/tools/go/ast/astutil"
 	"golang.org/x/tools/go/packages"
 )
@@ -50,6 +52,21 @@ func LoadPackages(cfg *packages.Config, patterns ...string) ([]*packages.Package
 	}
 
 	for _, pkg := range pkgs {
+		var errs []error
+		for i := range pkg.Errors {
+			e := pkg.Errors[i]
+			errs = append(errs, e)
+		}
+
+		for i := range pkg.TypeErrors {
+			e := pkg.Errors[i]
+			errs = append(errs, e)
+		}
+
+		if len(errs) > 0 {
+			return nil, errors.Wrapf(errors.Join(errs...), "package %s", pkg.Name)
+		}
+
 		for _, parsed := range pkg.Syntax {
 			filename := pkg.Fset.File(parsed.Pos()).Name()
 
@@ -73,7 +90,27 @@ func LoadPackages(cfg *packages.Config, patterns ...string) ([]*packages.Package
 		}
 	}
 
-	return packages.Load(cfg, patterns...)
+	pkgs, err = packages.Load(cfg, patterns...)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, pkg := range pkgs {
+		var errs []error
+		for _, e := range pkg.Errors {
+			errs = append(errs, e)
+		}
+
+		for _, e := range pkg.TypeErrors {
+			errs = append(errs, e)
+		}
+
+		if len(errs) > 0 {
+			return nil, errors.Wrapf(errors.Join(errs...), "package %s", pkg.Name)
+		}
+	}
+
+	return pkgs, nil
 }
 
 // typeToNode returns an [ast.Expr] representing the provided type.
