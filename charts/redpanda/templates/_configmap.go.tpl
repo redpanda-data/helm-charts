@@ -5,7 +5,7 @@
 {{- $smp := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
 {{- $values := $dot.Values.AsMap -}}
-{{- $chartFlags := (dict "smp" $smp "memory" (printf "%dM" (int (get (fromJson (include "redpanda.RedpandaMemory" (dict "a" (list $dot) ))) "r"))) "reserve-memory" (printf "%dM" (int (get (fromJson (include "redpanda.RedpandaReserveMemory" (dict "a" (list $dot) ))) "r"))) "default-log-level" $values.logging.logLevel ) -}}
+{{- $chartFlags := (dict "smp" $smp "memory" (printf "%dM" (((get (fromJson (include "redpanda.RedpandaMemory" (dict "a" (list $dot) ))) "r") | int) | int)) "reserve-memory" (printf "%dM" (((get (fromJson (include "redpanda.RedpandaReserveMemory" (dict "a" (list $dot) ))) "r") | int) | int)) "default-log-level" $values.logging.logLevel ) -}}
 {{- if (eq (index $values.config.node "developer_mode") true) -}}
 {{- $_ := (unset $chartFlags "reserve-memory") -}}
 {{- end -}}

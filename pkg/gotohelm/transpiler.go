@@ -200,6 +200,7 @@ func (t *Transpiler) transpileStatement(stmt ast.Stmt) Node {
 					Msg:  "declarations may only contain 1 spec",
 				})
 			}
+
 			spec := d.Specs[0].(*ast.ValueSpec)
 
 			if len(spec.Names) > 1 || len(spec.Values) > 1 {
@@ -428,7 +429,7 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 		return nil
 
 	case *ast.BasicLit:
-		return &Literal{Value: n.Value}
+		return t.maybeCast(&Literal{Value: n.Value}, t.typeOf(n))
 
 	case *ast.ParenExpr:
 		return &ParenExpr{Expr: t.transpileExpr(n.X)}
@@ -610,11 +611,11 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 			// pod.Metadata.Name = "foo" -> (pod.name)
 			for _, f := range t.getFields(typ.Underlying().(*types.Struct)) {
 				if f.Field.Name() == n.Sel.Name {
-					return &Selector{
+					return t.maybeCast(&Selector{
 						Expr:    t.transpileExpr(n.X),
 						Field:   f.JSONName(),
 						Inlined: f.JSONInline(),
-					}
+					}, t.typeOf(n))
 				}
 			}
 		}
@@ -637,15 +638,7 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 
 		wrapWithCast := func(op, cast string) func(a, b Node) Node {
 			return func(a, b Node) Node {
-				return &BuiltInCall{
-					FuncName: cast,
-					Arguments: []Node{
-						&BuiltInCall{
-							FuncName:  op,
-							Arguments: []Node{a, b},
-						},
-					},
-				}
+				return &Cast{To: cast, X: &BuiltInCall{FuncName: op, Arguments: []Node{a, b}}}
 			}
 		}
 
@@ -821,11 +814,13 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 			}
 			return &BuiltInCall{FuncName: "mustAppend", Arguments: args}
 		case "int", "int32":
-			return &BuiltInCall{FuncName: "int", Arguments: args}
+			return &Cast{X: args[0], To: "int"}
 		case "int64":
-			return &BuiltInCall{FuncName: "int64", Arguments: args}
+			return &Cast{X: args[0], To: "int64"}
 		case "float64":
-			return &BuiltInCall{FuncName: "float64", Arguments: args}
+			return &Cast{X: args[0], To: "float64"}
+		case "any":
+			return args[0]
 		case "panic":
 			return &BuiltInCall{FuncName: "fail", Arguments: args}
 		case "string":
@@ -838,9 +833,7 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 			}
 			return &BuiltInCall{FuncName: "toString", Arguments: args}
 		case "len":
-			// BuiltInCall `int` is required as _shims.len is wrapped by fromJson which would change
-			// return type from `int` to `float64`.
-			return &BuiltInCall{FuncName: "int", Arguments: []Node{&Call{FuncName: "_shims.len", Arguments: args}}}
+			return t.maybeCast(&Call{FuncName: "_shims.len", Arguments: args}, types.Typ[types.Int])
 		case "delete":
 			return &BuiltInCall{FuncName: "unset", Arguments: args}
 		default:
@@ -911,7 +904,16 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 	if callee.Pkg().Path() == t.Package.PkgPath {
 		// TODO need to support the namespace directive here when it's used
 		// outside of the bootstrap package.
-		return &Call{FuncName: fmt.Sprintf("%s.%s", t.Package.Name, callee.Name()), Arguments: args}
+		call := &Call{FuncName: fmt.Sprintf("%s.%s", t.Package.Name, callee.Name()), Arguments: args}
+
+		// If there's only a single return value, we'll possibly want to wrap
+		// the value in a cast for safety. If there are multiple return values,
+		// any casting will be handled by the transpilation of selector
+		// expressions.
+		if signature.Results().Len() == 1 {
+			return t.maybeCast(call, signature.Results().At(0).Type())
+		}
+		return call
 	}
 
 	// Finally, we fall to calls to any other functions. We'll handle any
@@ -930,7 +932,7 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 	case "k8s.io/apimachinery/pkg/util/intstr.FromInt32", "k8s.io/apimachinery/pkg/util/intstr.FromInt", "k8s.io/apimachinery/pkg/util/intstr.FromString":
 		return args[0]
 	case "k8s.io/utils/ptr.Deref":
-		return &Call{FuncName: "_shims.ptr_Deref", Arguments: args}
+		return t.maybeCast(&Call{FuncName: "_shims.ptr_Deref", Arguments: args}, signature.Results().At(0).Type())
 	case "k8s.io/utils/ptr.To":
 		return args[0]
 	case "k8s.io/utils/ptr.Equal":
@@ -1030,7 +1032,7 @@ func (t *Transpiler) transpileConst(c *types.Const) Node {
 	// definitions.
 
 	if c.Val().Kind() != constant.Float {
-		return &Literal{Value: c.Val().ExactString()}
+		return t.maybeCast(&Literal{Value: c.Val().ExactString()}, c.Type())
 	}
 
 	// Floats are a bit weird. Go may store them as a quotient in some cases to
@@ -1043,7 +1045,7 @@ func (t *Transpiler) transpileConst(c *types.Const) Node {
 	// that go's float64 values have the exact same problem, we're going to
 	// ignore it for now and hope it's not a terrible mistake.
 	as64, _ := constant.Float64Val(c.Val())
-	return &Literal{Value: strconv.FormatFloat(as64, 'f', -1, 64)}
+	return t.maybeCast(&Literal{Value: strconv.FormatFloat(as64, 'f', -1, 64)}, c.Type())
 }
 
 func (t *Transpiler) isString(e ast.Expr) bool {
@@ -1158,6 +1160,35 @@ func (t *Transpiler) getFields(root *types.Struct) []structField {
 	}
 
 	return fields
+}
+
+// maybeCast may wrap the provided [Node] with a [Cast] to the provided
+// [types.Type] if it's possible that text/template or sprig would misinterpret
+// the value.
+// For example: go can infer that `1` should be a float64 in some situations.
+// text/template would require an explicit cast.
+func (t *Transpiler) maybeCast(n Node, to types.Type) Node {
+	// TODO: This can probably be optimized to not cast as frequently but
+	// should otherwise perform just fine.
+	if basic, ok := to.(*types.Basic); ok {
+		switch basic.Kind() {
+		case types.Int, types.Int32, types.UntypedInt:
+			return &Cast{X: n, To: "int"}
+		case types.Int64:
+			return &Cast{X: n, To: "int64"}
+		case types.Float64, types.UntypedFloat:
+			// As a special case, floating point literals just need to contain
+			// a decimal point (.) to be interpreted correctly.
+			if lit, ok := n.(*Literal); ok {
+				if !strings.Contains(lit.Value, ".") {
+					lit.Value += ".0"
+				}
+				return lit
+			}
+			return &Cast{X: n, To: "float64"}
+		}
+	}
+	return n
 }
 
 // getTypeSpec returns the [ast.StructType] for the given named type and the

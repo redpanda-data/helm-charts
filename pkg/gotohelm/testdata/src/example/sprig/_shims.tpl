@@ -45,7 +45,7 @@
 {{- range $_ := (list 1) -}}
 {{- $out := (dict ) -}}
 {{- range $i, $e := $args -}}
-{{- $_ := (set $out (printf "T%d" (int (add 1 $i))) $e) -}}
+{{- $_ := (set $out (printf "T%d" ((add (1 | int) $i) | int)) $e) -}}
 {{- end -}}
 {{- (dict "r" $out) | toJson -}}
 {{- break -}}
@@ -67,7 +67,7 @@
 {{- $m := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- if (eq $m (coalesce nil)) -}}
-{{- (dict "r" 0) | toJson -}}
+{{- (dict "r" (0 | int)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- (dict "r" (len $m)) | toJson -}}

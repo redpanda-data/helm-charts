@@ -22,7 +22,7 @@
 {{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.lookup" (dict "a" (list "apps/v1" "StatefulSet" $dot.Release.Namespace (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r")) ))) "r")) ))) "r") -}}
 {{- $ok_2 := $tmp_tuple_1.T2 -}}
 {{- $existing_1 := $tmp_tuple_1.T1 -}}
-{{- if (and $ok_2 (gt (int (get (fromJson (include "_shims.len" (dict "a" (list $existing_1.spec.selector.matchLabels) ))) "r")) 0)) -}}
+{{- if (and $ok_2 (gt ((get (fromJson (include "_shims.len" (dict "a" (list $existing_1.spec.selector.matchLabels) ))) "r") | int) (0 | int))) -}}
 {{- (dict "r" $existing_1.spec.selector.matchLabels) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -32,7 +32,7 @@
 {{- if (ne $values.statefulset.additionalSelectorLabels (coalesce nil)) -}}
 {{- $additionalSelectorLabels = $values.statefulset.additionalSelectorLabels -}}
 {{- end -}}
-{{- $component := (printf "%s-statefulset" (trimSuffix "-" (trunc 51 (get (fromJson (include "redpanda.Name" (dict "a" (list $dot) ))) "r")))) -}}
+{{- $component := (printf "%s-statefulset" (trimSuffix "-" (trunc (51 | int) (get (fromJson (include "redpanda.Name" (dict "a" (list $dot) ))) "r")))) -}}
 {{- $defaults := (dict "app.kubernetes.io/component" $component "app.kubernetes.io/instance" $dot.Release.Name "app.kubernetes.io/name" (get (fromJson (include "redpanda.Name" (dict "a" (list $dot) ))) "r") ) -}}
 {{- (dict "r" (merge (dict ) $additionalSelectorLabels $defaults)) | toJson -}}
 {{- break -}}
@@ -46,7 +46,7 @@
 {{- $tmp_tuple_2 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.lookup" (dict "a" (list "apps/v1" "StatefulSet" $dot.Release.Namespace (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r")) ))) "r")) ))) "r") -}}
 {{- $ok_4 := $tmp_tuple_2.T2 -}}
 {{- $existing_3 := $tmp_tuple_2.T1 -}}
-{{- if (and $ok_4 (gt (int (get (fromJson (include "_shims.len" (dict "a" (list $existing_3.spec.template.metadata.labels) ))) "r")) 0)) -}}
+{{- if (and $ok_4 (gt ((get (fromJson (include "_shims.len" (dict "a" (list $existing_3.spec.template.metadata.labels) ))) "r") | int) (0 | int))) -}}
 {{- (dict "r" $existing_3.spec.template.metadata.labels) | toJson -}}
 {{- break -}}
 {{- end -}}

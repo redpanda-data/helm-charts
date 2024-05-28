@@ -21,7 +21,7 @@
 {{- define "typing.nestedFieldAccess" -}}
 {{- range $_ := (list 1) -}}
 {{- $x := (mustMergeOverwrite (dict ) (dict "childs" (list (mustMergeOverwrite (dict ) (dict "childs" (list (mustMergeOverwrite (dict ) (dict "val" "Hello!" ))) ))) )) -}}
-{{- (dict "r" (index (index $x.childs 0).childs 0).val) | toJson -}}
+{{- (dict "r" (index (index $x.childs (0 | int)).childs (0 | int)).val) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

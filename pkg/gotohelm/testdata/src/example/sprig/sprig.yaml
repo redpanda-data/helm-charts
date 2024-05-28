@@ -23,21 +23,21 @@
 
 {{- define "sprig.minFunc" -}}
 {{- range $_ := (list 1) -}}
-{{- (dict "r" (list (min -1 0 1) (min 1) (min 2 1) (min 1 1 2))) | toJson -}}
+{{- (dict "r" (list (min -1 (0 | int) (1 | int)) (min (1 | int)) (min (2 | int) (1 | int)) (min (1 | int) (1 | int) (2 | int)))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
 
 {{- define "sprig.toString" -}}
 {{- range $_ := (list 1) -}}
-{{- (dict "r" (list (toString 1) (toString -2) (toString "test") (toString (dict "test" "test" )) (toString (list 2.3 3.5)) (toString (list "a" "b" "c")) (toString (list true false)))) | toJson -}}
+{{- (dict "r" (list (toString (1 | int)) (toString -2) (toString "test") (toString (dict "test" "test" )) (toString (list (2.3 | float64) (3.5 | float64))) (toString (list "a" "b" "c")) (toString (list true false)))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
 
 {{- define "sprig.first" -}}
 {{- range $_ := (list 1) -}}
-{{- (dict "r" (list (first (list "one" "two")) (first (list -3 -4)) (first (list 5.5 6.6)) (first (list 7 8)) (first (list true false)) (first (list false true)) (first (list )) (first (list )) (first (list )) (first (list )) (first (list )) (first (list )))) | toJson -}}
+{{- (dict "r" (list (first (list "one" "two")) (first (list -3 -4)) (first (list (5.5 | float64) (6.6 | float64))) (first (list 7 8)) (first (list true false)) (first (list false true)) (first (list )) (first (list )) (first (list )) (first (list )) (first (list )) (first (list )))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -54,13 +54,13 @@
 {{- define "sprig.float" -}}
 {{- range $_ := (list 1) -}}
 {{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (list (float64 "3.2") nil)) ))) "r") -}}
-{{- $f := $tmp_tuple_1.T1 -}}
+{{- $f := ($tmp_tuple_1.T1 | float64) -}}
 {{- $tmp_tuple_2 := (get (fromJson (include "_shims.compact" (dict "a" (list (list (float64 "3") nil)) ))) "r") -}}
-{{- $integer := $tmp_tuple_2.T1 -}}
+{{- $integer := ($tmp_tuple_2.T1 | float64) -}}
 {{- $tmp_tuple_3 := (get (fromJson (include "_shims.compact" (dict "a" (list (list (float64 "abc") nil)) ))) "r") -}}
 {{- $err := $tmp_tuple_3.T2 -}}
-{{- $invalidInput := $tmp_tuple_3.T1 -}}
-{{- $errorHappen := 0.3 -}}
+{{- $invalidInput := ($tmp_tuple_3.T1 | float64) -}}
+{{- $errorHappen := (0.3 | float64) -}}
 {{- if (ne $err (coalesce nil)) -}}
 {{- end -}}
 {{- (dict "r" (list $f $integer $invalidInput $errorHappen)) | toJson -}}
@@ -78,13 +78,13 @@
 {{- define "sprig.atoi" -}}
 {{- range $_ := (list 1) -}}
 {{- $tmp_tuple_4 := (get (fromJson (include "_shims.compact" (dict "a" (list (list (atoi "234") nil)) ))) "r") -}}
-{{- $positive := $tmp_tuple_4.T1 -}}
+{{- $positive := ($tmp_tuple_4.T1 | int) -}}
 {{- $tmp_tuple_5 := (get (fromJson (include "_shims.compact" (dict "a" (list (list (atoi "-23") nil)) ))) "r") -}}
-{{- $negative := $tmp_tuple_5.T1 -}}
+{{- $negative := ($tmp_tuple_5.T1 | int) -}}
 {{- $tmp_tuple_6 := (get (fromJson (include "_shims.compact" (dict "a" (list (list (atoi "paokwdpo") nil)) ))) "r") -}}
 {{- $err := $tmp_tuple_6.T2 -}}
-{{- $invalidInput := $tmp_tuple_6.T1 -}}
-{{- $errorHappen := 0 -}}
+{{- $invalidInput := ($tmp_tuple_6.T1 | int) -}}
+{{- $errorHappen := (0 | int) -}}
 {{- if (ne $err (coalesce nil)) -}}
 {{- end -}}
 {{- (dict "r" (list $positive $negative $errorHappen $invalidInput)) | toJson -}}
@@ -101,7 +101,7 @@
 
 {{- define "sprig.keys" -}}
 {{- range $_ := (list 1) -}}
-{{- $keys := (keys (dict "0" 0 "1" 1 )) -}}
+{{- $keys := (keys (dict "0" (0 | int) "1" (1 | int) )) -}}
 {{- $_ := (sortAlpha $keys) -}}
 {{- (dict "r" (list $keys (keys (dict )))) | toJson -}}
 {{- break -}}
@@ -110,17 +110,17 @@
 
 {{- define "sprig.concat" -}}
 {{- range $_ := (list 1) -}}
-{{- (dict "r" (list (concat (list 1 2) (list 3 4)) (concat (list 1 2) (list 3 4) (list 5 6)) (concat (list 1 2) (list 3 4)) (concat (list 1 2) (list 3 4)))) | toJson -}}
+{{- (dict "r" (list (concat (list (1 | int) (2 | int)) (list (3 | int) (4 | int))) (concat (list (1 | int) (2 | int)) (list (3 | int) (4 | int)) (list (5 | int) (6 | int))) (concat (list (1 | int) (2 | int)) (list (3 | int) (4 | int))) (concat (list (1 | int) (2 | int)) (list (3 | int) (4 | int))))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
 
 {{- define "sprig.unset" -}}
 {{- range $_ := (list 1) -}}
-{{- $m1 := (dict "0" 0 "1" 1 "2" 2 ) -}}
-{{- $m2 := (dict "0" 0 "1" 1 "2" 2 ) -}}
-{{- $m3 := (dict "0" 0 "1" 1 "2" 2 ) -}}
-{{- $m4 := (dict "0" 0 "1" 1 "2" 2 ) -}}
+{{- $m1 := (dict "0" (0 | int) "1" (1 | int) "2" (2 | int) ) -}}
+{{- $m2 := (dict "0" (0 | int) "1" (1 | int) "2" (2 | int) ) -}}
+{{- $m3 := (dict "0" (0 | int) "1" (1 | int) "2" (2 | int) ) -}}
+{{- $m4 := (dict "0" (0 | int) "1" (1 | int) "2" (2 | int) ) -}}
 {{- $_ := (unset $m2 "0") -}}
 {{- $_ := (unset $m3 "2") -}}
 {{- $_ := (unset $m3 "1") -}}
@@ -133,16 +133,16 @@
 {{- define "sprig.default_" -}}
 {{- range $_ := (list 1) -}}
 {{- $defaultStr := "DEFAULT" -}}
-{{- $defaultInt := 1234 -}}
+{{- $defaultInt := (1234 | int) -}}
 {{- $defaultStrSlice := (list $defaultStr) -}}
-{{- (dict "r" (list (default "" $defaultStr) (default "value" $defaultStr) (default (coalesce nil) $defaultStrSlice) (default (list ) $defaultStrSlice) (default 0 $defaultInt) (default 1 $defaultInt))) | toJson -}}
+{{- (dict "r" (list (default "" $defaultStr) (default "value" $defaultStr) (default (coalesce nil) $defaultStrSlice) (default (list ) $defaultStrSlice) (default (0 | int) $defaultInt) (default (1 | int) $defaultInt))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
 
 {{- define "sprig.empty" -}}
 {{- range $_ := (list 1) -}}
-{{- (dict "r" (list (empty (coalesce nil)) (empty (list )) (empty (list "")) (empty (dict )) (empty (dict "key" (coalesce nil) )) (empty 1) (empty 0) (empty false) (empty true) (empty "") (empty "hello") (empty (mustMergeOverwrite (dict "Value" 0 ) (dict ))) (empty (mustMergeOverwrite (dict "Value" 0 ) (dict "Value" 0 ))) (empty (mustMergeOverwrite (dict "Value" 0 ) (dict "Value" 1 ))))) | toJson -}}
+{{- (dict "r" (list (empty (coalesce nil)) (empty (list )) (empty (list "")) (empty (dict )) (empty (dict "key" (coalesce nil) )) (empty (1 | int)) (empty (0 | int)) (empty false) (empty true) (empty "") (empty "hello") (empty (mustMergeOverwrite (dict "Value" 0 ) (dict ))) (empty (mustMergeOverwrite (dict "Value" 0 ) (dict "Value" (0 | int) ))) (empty (mustMergeOverwrite (dict "Value" 0 ) (dict "Value" (1 | int) ))))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

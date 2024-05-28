@@ -33,13 +33,13 @@
 {{- (dict "r" "oneToFour not specified!") | toJson -}}
 {{- break -}}
 {{- end -}}
-{{- if (eq (int (get (fromJson (include "_shims.typeassertion" (dict "a" (list "float64" $oneToFour) ))) "r")) 1) -}}
+{{- if (eq ((get (fromJson (include "_shims.typeassertion" (dict "a" (list "float64" $oneToFour) ))) "r") | int) (1 | int)) -}}
 {{- (dict "r" "It's 1") | toJson -}}
 {{- break -}}
-{{- else -}}{{- if (eq (int (get (fromJson (include "_shims.typeassertion" (dict "a" (list "float64" $oneToFour) ))) "r")) 2) -}}
+{{- else -}}{{- if (eq ((get (fromJson (include "_shims.typeassertion" (dict "a" (list "float64" $oneToFour) ))) "r") | int) (2 | int)) -}}
 {{- (dict "r" "It's 2") | toJson -}}
 {{- break -}}
-{{- else -}}{{- if (eq (int (get (fromJson (include "_shims.typeassertion" (dict "a" (list "float64" $oneToFour) ))) "r")) 3) -}}
+{{- else -}}{{- if (eq ((get (fromJson (include "_shims.typeassertion" (dict "a" (list "float64" $oneToFour) ))) "r") | int) (3 | int)) -}}
 {{- (dict "r" "It's 3") | toJson -}}
 {{- break -}}
 {{- else -}}
@@ -63,9 +63,9 @@
 {{- $intsAny = (list ) -}}
 {{- end -}}
 {{- $ints := (get (fromJson (include "_shims.typeassertion" (dict "a" (list (printf "[]%s" "interface {}") $intsAny) ))) "r") -}}
-{{- $sumOfIndexes := 0 -}}
+{{- $sumOfIndexes := (0 | int) -}}
 {{- range $i, $_ := $ints -}}
-{{- $sumOfIndexes = (int (add $sumOfIndexes $i)) -}}
+{{- $sumOfIndexes = ((add $sumOfIndexes $i) | int) -}}
 {{- end -}}
 {{- $continuesWork := true -}}
 {{- range $_, $_ := $ints -}}
@@ -85,13 +85,13 @@
 {{- define "flowcontrol.mapRanges" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
-{{- $m := (dict "1" 1 "2" 2 "3" 3 ) -}}
+{{- $m := (dict "1" (1 | int) "2" (2 | int) "3" (3 | int) ) -}}
 {{- range $k, $_ := $m -}}
 {{- $_ = $k -}}
 {{- end -}}
-{{- $sum := 0 -}}
+{{- $sum := (0 | int) -}}
 {{- range $_, $v := $m -}}
-{{- $sum = (int (add $sum $v)) -}}
+{{- $sum = ((add $sum $v) | int) -}}
 {{- end -}}
 {{- (dict "r" (list $sum)) | toJson -}}
 {{- break -}}
@@ -100,10 +100,10 @@
 
 {{- define "flowcontrol.intBinaryExprs" -}}
 {{- range $_ := (list 1) -}}
-{{- $x := 1 -}}
-{{- $y := 2 -}}
-{{- $z := 3 -}}
-{{- (dict "r" (list $z (int (sub $x $y)) (int (add $x $y)) (int (div $x $y)) (int (mul $x $y)))) | toJson -}}
+{{- $x := (1 | int) -}}
+{{- $y := (2 | int) -}}
+{{- $z := (3 | int) -}}
+{{- (dict "r" (list $z ((sub $x $y) | int) ((add $x $y) | int) ((div $x $y) | int) ((mul $x $y) | int))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

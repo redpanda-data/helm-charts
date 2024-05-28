@@ -2,16 +2,16 @@
 
 {{- define "syntax.Syntax" -}}
 {{- range $_ := (list 1) -}}
-{{- $_ = 0 -}}
+{{- $_ = (0 | int) -}}
 {{- $_ = "" -}}
 {{- $_ = (dict ) -}}
 {{- $_ = (list ) -}}
 {{- $_ = `` -}}
 {{- $_ = true -}}
 {{- $_ = false -}}
-{{- $_ = (int (get (fromJson (include "_shims.len" (dict "a" (list "") ))) "r")) -}}
-{{- $_ = (int (get (fromJson (include "_shims.len" (dict "a" (list (list )) ))) "r")) -}}
-{{- $_ = (int (get (fromJson (include "_shims.len" (dict "a" (list (dict )) ))) "r")) -}}
+{{- $_ = ((get (fromJson (include "_shims.len" (dict "a" (list "") ))) "r") | int) -}}
+{{- $_ = ((get (fromJson (include "_shims.len" (dict "a" (list (list )) ))) "r") | int) -}}
+{{- $_ = ((get (fromJson (include "_shims.len" (dict "a" (list (dict )) ))) "r") | int) -}}
 {{- $_ = (true) -}}
 {{- $slice := (get (fromJson (include "syntax.sliceExpr" (dict "a" (list ) ))) "r") -}}
 {{- $_ = "1234" -}}
@@ -24,24 +24,24 @@
 {{- $_ = (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list (printf "[]%s" "interface {}") $x (coalesce nil)) ))) "r")) ))) "r") -}}
 {{- $_ = (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list (printf "[]%s" "string") $x (coalesce nil)) ))) "r")) ))) "r") -}}
 {{- $_ = (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list (printf "map[%s]%s" "string" "interface {}") $x (coalesce nil)) ))) "r")) ))) "r") -}}
-{{- (dict "r" (dict "sliceExpr" $slice "negativeNumbers" (list -2 -4) "forExpr" (get (fromJson (include "syntax.forExpr" (dict "a" (list 10) ))) "r") "binaryExprs" (get (fromJson (include "syntax.binaryExprs" (dict "a" (list ) ))) "r") )) | toJson -}}
+{{- (dict "r" (dict "sliceExpr" $slice "negativeNumbers" (list -2 -4) "forExpr" (get (fromJson (include "syntax.forExpr" (dict "a" (list (10 | int)) ))) "r") "binaryExprs" (get (fromJson (include "syntax.binaryExprs" (dict "a" (list ) ))) "r") )) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
 
 {{- define "syntax.sliceExpr" -}}
 {{- range $_ := (list 1) -}}
-{{- $_ = (mustSlice (list 1 2 3) 0) -}}
-{{- $_ = (mustSlice (list 1 2 3) 1) -}}
-{{- $_ = (mustSlice (list 1 2 3) 0 2) -}}
-{{- $_ = (mustSlice (list 1 2 3) 1 2) -}}
-{{- $_ = (mustSlice (list 1 2 3) 1 2 3) -}}
+{{- $_ = (mustSlice (list (1 | int) (2 | int) (3 | int)) 0) -}}
+{{- $_ = (mustSlice (list (1 | int) (2 | int) (3 | int)) (1 | int)) -}}
+{{- $_ = (mustSlice (list (1 | int) (2 | int) (3 | int)) 0 (2 | int)) -}}
+{{- $_ = (mustSlice (list (1 | int) (2 | int) (3 | int)) (1 | int) (2 | int)) -}}
+{{- $_ = (mustSlice (list (1 | int) (2 | int) (3 | int)) (1 | int) (2 | int) (3 | int)) -}}
 {{- $_ = (substr 0 -1 "1234") -}}
-{{- $_ = (substr 1 -1 "1234") -}}
-{{- $_ = (substr 0 2 "1234") -}}
-{{- $_ = (substr 1 2 "1234") -}}
+{{- $_ = (substr (1 | int) -1 "1234") -}}
+{{- $_ = (substr 0 (2 | int) "1234") -}}
+{{- $_ = (substr (1 | int) (2 | int) "1234") -}}
 {{- $s := "abcd" -}}
-{{- $_ = (substr 0 (int (sub (int (get (fromJson (include "_shims.len" (dict "a" (list $s) ))) "r")) 1)) $s) -}}
+{{- $_ = (substr 0 ((sub ((get (fromJson (include "_shims.len" (dict "a" (list $s) ))) "r") | int) (1 | int)) | int) $s) -}}
 {{- (dict "r" (get (fromJson (include "syntax.workingWithString" (dict "a" (list ) ))) "r")) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -50,12 +50,12 @@
 {{- define "syntax.workingWithString" -}}
 {{- range $_ := (list 1) -}}
 {{- $amount := "2.5Gi" -}}
-{{- $unit := (printf "%c" (index $amount (int (sub (int (get (fromJson (include "_shims.len" (dict "a" (list $amount) ))) "r")) 1)))) -}}
+{{- $unit := (printf "%c" (index $amount ((sub ((get (fromJson (include "_shims.len" (dict "a" (list $amount) ))) "r") | int) (1 | int)) | int))) -}}
 {{- $savedUnit := $unit -}}
-{{- $amount = (substr 0 (int (sub (int (get (fromJson (include "_shims.len" (dict "a" (list $amount) ))) "r")) 1)) $amount) -}}
+{{- $amount = (substr 0 ((sub ((get (fromJson (include "_shims.len" (dict "a" (list $amount) ))) "r") | int) (1 | int)) | int) $amount) -}}
 {{- if (eq $unit "i") -}}
-{{- $unit = (printf "%s%s" (substr (int (sub (int (get (fromJson (include "_shims.len" (dict "a" (list $amount) ))) "r")) 1)) -1 $amount) $unit) -}}
-{{- $amount = (substr 0 (int (sub (int (get (fromJson (include "_shims.len" (dict "a" (list $amount) ))) "r")) 1)) $amount) -}}
+{{- $unit = (printf "%s%s" (substr ((sub ((get (fromJson (include "_shims.len" (dict "a" (list $amount) ))) "r") | int) (1 | int)) | int) -1 $amount) $unit) -}}
+{{- $amount = (substr 0 ((sub ((get (fromJson (include "_shims.len" (dict "a" (list $amount) ))) "r") | int) (1 | int)) | int) $amount) -}}
 {{- end -}}
 {{- (dict "r" (dict "unit" $unit "amount" $amount "unitIsEqual" (eq $unit "Gi") "lastCharacter" (eq $savedUnit "i") )) | toJson -}}
 {{- break -}}
@@ -71,27 +71,27 @@
 {{- $_ = (mod 1 1) -}}
 {{- $_ = (eq 1 1) -}}
 {{- $_ = (ne 1 1) -}}
-{{- $_ = (int (mul (int 1) (int 1))) -}}
-{{- $_ = (int (add (int 1) (int 1))) -}}
-{{- $_ = (int (sub (int 1) (int 1))) -}}
-{{- $_ = (int (div (int 1) (int 1))) -}}
-{{- $_ = (int (mod (int 1) (int 1))) -}}
-{{- $_ = (eq (int 1) (int 1)) -}}
-{{- $_ = (ne (int 1) (int 1)) -}}
-{{- $_ = (int (mul (int 1) (int 1))) -}}
-{{- $_ = (int (add (int 1) (int 1))) -}}
-{{- $_ = (int (sub (int 1) (int 1))) -}}
-{{- $_ = (int (div (int 1) (int 1))) -}}
-{{- $_ = (int (mod (int 1) (int 1))) -}}
-{{- $_ = (eq (int 1) (int 1)) -}}
-{{- $_ = (ne (int 1) (int 1)) -}}
-{{- $_ = (int64 (mul (int64 1) (int64 1))) -}}
-{{- $_ = (int64 (add (int64 1) (int64 1))) -}}
-{{- $_ = (int64 (sub (int64 1) (int64 1))) -}}
-{{- $_ = (int64 (mod (int64 1) (int64 1))) -}}
-{{- $_ = (int64 (div (int64 1) (int64 1))) -}}
-{{- $_ = (eq (int64 1) (int64 1)) -}}
-{{- $_ = (ne (int64 1) (int64 1)) -}}
+{{- $_ = ((mul ((1 | int) | int) ((1 | int) | int)) | int) -}}
+{{- $_ = ((add ((1 | int) | int) ((1 | int) | int)) | int) -}}
+{{- $_ = ((sub ((1 | int) | int) ((1 | int) | int)) | int) -}}
+{{- $_ = ((div ((1 | int) | int) ((1 | int) | int)) | int) -}}
+{{- $_ = ((mod ((1 | int) | int) ((1 | int) | int)) | int) -}}
+{{- $_ = (eq ((1 | int) | int) ((1 | int) | int)) -}}
+{{- $_ = (ne ((1 | int) | int) ((1 | int) | int)) -}}
+{{- $_ = ((mul ((1 | int) | int) ((1 | int) | int)) | int) -}}
+{{- $_ = ((add ((1 | int) | int) ((1 | int) | int)) | int) -}}
+{{- $_ = ((sub ((1 | int) | int) ((1 | int) | int)) | int) -}}
+{{- $_ = ((div ((1 | int) | int) ((1 | int) | int)) | int) -}}
+{{- $_ = ((mod ((1 | int) | int) ((1 | int) | int)) | int) -}}
+{{- $_ = (eq ((1 | int) | int) ((1 | int) | int)) -}}
+{{- $_ = (ne ((1 | int) | int) ((1 | int) | int)) -}}
+{{- $_ = ((mul ((1 | int64) | int64) ((1 | int64) | int64)) | int64) -}}
+{{- $_ = ((add ((1 | int64) | int64) ((1 | int64) | int64)) | int64) -}}
+{{- $_ = ((sub ((1 | int64) | int64) ((1 | int64) | int64)) | int64) -}}
+{{- $_ = ((mod ((1 | int64) | int64) ((1 | int64) | int64)) | int64) -}}
+{{- $_ = ((div ((1 | int64) | int64) ((1 | int64) | int64)) | int64) -}}
+{{- $_ = (eq ((1 | int64) | int64) ((1 | int64) | int64)) -}}
+{{- $_ = (ne ((1 | int64) | int64) ((1 | int64) | int64)) -}}
 {{- $_ = (eq (dict ) (coalesce nil)) -}}
 {{- $_ = (ne (dict ) (coalesce nil)) -}}
 {{- $result := (list (gt 1 2) (lt 1 2) (ge 1 2) (le 1 2) (ge 2 2) (le 2 2)) -}}
@@ -105,27 +105,27 @@
 {{- range $_ := (list 1) -}}
 {{- $result := (list ) -}}
 {{- $test := (list ) -}}
-{{- range $_, $i := untilStep (0|int) ($interation|int) (1|int) -}}
+{{- range $_, $i := untilStep ((0 | int)|int) ($interation|int) (1|int) -}}
 {{- $test = (mustAppend $test (printf "%d" $i)) -}}
 {{- end -}}
 {{- $result = (mustAppend $result $test) -}}
 {{- $test = (list ) -}}
-{{- range $_, $i := untilStep (2|int) ($interation|int) (1|int) -}}
+{{- range $_, $i := untilStep ((2 | int)|int) ($interation|int) (1|int) -}}
 {{- $test = (mustAppend $test (printf "%d" $i)) -}}
 {{- end -}}
 {{- $result = (mustAppend $result $test) -}}
 {{- $test = (list ) -}}
-{{- range $_, $i := untilStep (2|int) ($interation|int) (2|int) -}}
+{{- range $_, $i := untilStep ((2 | int)|int) ($interation|int) ((2 | int)|int) -}}
 {{- $test = (mustAppend $test (printf "%d" $i)) -}}
 {{- end -}}
 {{- $result = (mustAppend $result $test) -}}
 {{- $test = (list ) -}}
-{{- range $_, $i := untilStep (17|int) ($interation|int) (-2|int) -}}
+{{- range $_, $i := untilStep ((17 | int)|int) ($interation|int) ((-2 | int)|int) -}}
 {{- $test = (mustAppend $test (printf "%d" $i)) -}}
 {{- end -}}
 {{- $result = (mustAppend $result $test) -}}
 {{- $test = (list ) -}}
-{{- range $_, $i := untilStep ($interation|int) (17|int) (-2|int) -}}
+{{- range $_, $i := untilStep ($interation|int) ((17 | int)|int) ((-2 | int)|int) -}}
 {{- $test = (mustAppend $test (printf "%d" $i)) -}}
 {{- end -}}
 {{- $result = (mustAppend $result $test) -}}
