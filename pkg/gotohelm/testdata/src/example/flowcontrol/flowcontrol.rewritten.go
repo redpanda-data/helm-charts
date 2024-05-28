@@ -28,18 +28,18 @@ func earlyReturn(dot *helmette.Dot) string {
 }
 
 func ifElse(dot *helmette.Dot) string {
-	tmp_tuple_2 := helmette.Compact2(helmette.DictTest[string, any](dot.Values, "oneToFour"))
+	tmp_tuple_2 := helmette.Compact2(helmette.AsIntegral[int](dot.Values["oneToFour"]))
 	ok := tmp_tuple_2.T2
 	oneToFour := tmp_tuple_2.T1
 	if !ok {
 		return "oneToFour not specified!"
 	}
 
-	if int(oneToFour.(float64)) == 1 {
+	if oneToFour == 1 {
 		return "It's 1"
-	} else if int(oneToFour.(float64)) == 2 {
+	} else if oneToFour == 2 {
 		return "It's 2"
-	} else if int(oneToFour.(float64)) == 3 {
+	} else if oneToFour == 3 {
 		return "It's 3"
 	} else {
 		return "It's 4"
