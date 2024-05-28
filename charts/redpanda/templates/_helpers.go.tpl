@@ -218,10 +218,10 @@
 {{- $_ := (sortAlpha $certNames) -}}
 {{- range $_, $name := $certNames -}}
 {{- $cert := (index $values.tls.certs $name) -}}
-{{- $volumes = (mustAppend $volumes (mustMergeOverwrite (dict "name" "" ) (mustMergeOverwrite (dict ) (dict "secret" (mustMergeOverwrite (dict ) (dict "secretName" (get (fromJson (include "redpanda.CertSecretName" (dict "a" (list $dot $name $cert) ))) "r") "defaultMode" 0o440 )) )) (dict "name" (printf "redpanda-%s-cert" $name) ))) -}}
+{{- $volumes = (mustAppend $volumes (mustMergeOverwrite (dict "name" "" ) (mustMergeOverwrite (dict ) (dict "secret" (mustMergeOverwrite (dict ) (dict "secretName" (get (fromJson (include "redpanda.CertSecretName" (dict "a" (list $dot $name $cert) ))) "r") "defaultMode" (0o440 | int) )) )) (dict "name" (printf "redpanda-%s-cert" $name) ))) -}}
 {{- end -}}
 {{- if (get (fromJson (include "redpanda.ClientAuthRequired" (dict "a" (list $dot) ))) "r") -}}
-{{- $volumes = (mustAppend $volumes (mustMergeOverwrite (dict "name" "" ) (mustMergeOverwrite (dict ) (dict "secret" (mustMergeOverwrite (dict ) (dict "secretName" (printf "%s-client" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r")) "defaultMode" 0o440 )) )) (dict "name" "mtls-client" ))) -}}
+{{- $volumes = (mustAppend $volumes (mustMergeOverwrite (dict "name" "" ) (mustMergeOverwrite (dict ) (dict "secret" (mustMergeOverwrite (dict ) (dict "secretName" (printf "%s-client" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r")) "defaultMode" (0o440 | int) )) )) (dict "name" "mtls-client" ))) -}}
 {{- end -}}
 {{- end -}}
 {{- $sasl_6 := $values.auth.sasl -}}
@@ -355,7 +355,7 @@
 {{- define "redpanda.cleanForK8s" -}}
 {{- $in := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
-{{- (dict "r" (trimSuffix "-" (trunc 63 $in))) | toJson -}}
+{{- (dict "r" (trimSuffix "-" (trunc (63 | int) $in))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

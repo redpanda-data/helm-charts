@@ -129,6 +129,17 @@ func (c *BuiltInCall) Write(w io.Writer) {
 	fmt.Fprintf(w, ")")
 }
 
+type Cast struct {
+	To string
+	X  Node
+}
+
+func (c *Cast) Write(w io.Writer) {
+	fmt.Fprintf(w, "(")
+	c.X.Write(w)
+	fmt.Fprintf(w, " | %s)", c.To)
+}
+
 type Call struct {
 	FuncName  string
 	Arguments []Node

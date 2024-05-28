@@ -3,7 +3,7 @@
 {{- define "k8s.K8s" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
-{{- (dict "r" (dict "Objects" (list (get (fromJson (include "k8s.pod" (dict "a" (list ) ))) "r") (get (fromJson (include "k8s.pdb" (dict "a" (list ) ))) "r") (get (fromJson (include "k8s.service" (dict "a" (list ) ))) "r")) "intstr" (list 10 11 "12") "ptr.Deref" (list (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list 3 4) ))) "r") (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list (coalesce nil) 3) ))) "r") (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list "" "oh?") ))) "r")) "ptr.To" (list "hello" 0 (dict )) "ptr.Equal" (list (get (fromJson (include "_shims.ptr_Equal" (dict "a" (list (coalesce nil) (coalesce nil)) ))) "r") (get (fromJson (include "_shims.ptr_Equal" (dict "a" (list (coalesce nil) 3) ))) "r") (get (fromJson (include "_shims.ptr_Equal" (dict "a" (list 3 3) ))) "r")) "lookup" (get (fromJson (include "k8s.lookup" (dict "a" (list $dot) ))) "r") )) | toJson -}}
+{{- (dict "r" (dict "Objects" (list (get (fromJson (include "k8s.pod" (dict "a" (list ) ))) "r") (get (fromJson (include "k8s.pdb" (dict "a" (list ) ))) "r") (get (fromJson (include "k8s.service" (dict "a" (list ) ))) "r")) "intstr" (list (10 | int) (11 | int) "12") "ptr.Deref" (list ((get (fromJson (include "_shims.ptr_Deref" (dict "a" (list (3 | int) (4 | int)) ))) "r") | int) ((get (fromJson (include "_shims.ptr_Deref" (dict "a" (list (coalesce nil) (3 | int)) ))) "r") | int) (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list "" "oh?") ))) "r")) "ptr.To" (list "hello" (0 | int) (dict )) "ptr.Equal" (list (get (fromJson (include "_shims.ptr_Equal" (dict "a" (list (coalesce nil) (coalesce nil)) ))) "r") (get (fromJson (include "_shims.ptr_Equal" (dict "a" (list (coalesce nil) (3 | int)) ))) "r") (get (fromJson (include "_shims.ptr_Equal" (dict "a" (list (3 | int) (3 | int)) ))) "r")) "lookup" (get (fromJson (include "k8s.lookup" (dict "a" (list $dot) ))) "r") )) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -17,7 +17,7 @@
 
 {{- define "k8s.pdb" -}}
 {{- range $_ := (list 1) -}}
-{{- $minAvail := 3 -}}
+{{- $minAvail := (3 | int) -}}
 {{- (dict "r" (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) "spec" (dict ) "status" (dict "disruptionsAllowed" 0 "currentHealthy" 0 "desiredHealthy" 0 "expectedPods" 0 ) ) (mustMergeOverwrite (dict ) (dict "apiVersion" "policyv1" "kind" "PodDisruptionBudget" )) (dict "spec" (mustMergeOverwrite (dict ) (dict "minAvailable" $minAvail )) ))) | toJson -}}
 {{- break -}}
 {{- end -}}

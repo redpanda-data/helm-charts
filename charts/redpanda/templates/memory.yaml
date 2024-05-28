@@ -7,12 +7,12 @@
 {{- $rpMem_1 := $values.resources.memory.redpanda -}}
 {{- if (and (ne $rpMem_1 (coalesce nil)) (ne $rpMem_1.reserveMemory (coalesce nil))) -}}
 {{- if (kindIs "string" $rpMem_1.reserveMemory) -}}
-{{- (dict "r" (get (fromJson (include "redpanda.RedpandaMemoryToMi" (dict "a" (list $rpMem_1.reserveMemory) ))) "r")) | toJson -}}
+{{- (dict "r" ((get (fromJson (include "redpanda.RedpandaMemoryToMi" (dict "a" (list $rpMem_1.reserveMemory) ))) "r") | int)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- $_ := (fail (printf "Redpanda.ReserveMemory (%v) is not type of string" $rpMem_1.reserveMemory)) -}}
 {{- end -}}
-{{- (dict "r" (int (add (int (float64 (mulf (float64 (get (fromJson (include "redpanda.ContainerMemory" (dict "a" (list $dot) ))) "r")) 0.002))) 200))) | toJson -}}
+{{- (dict "r" ((add (((mulf (((get (fromJson (include "redpanda.ContainerMemory" (dict "a" (list $dot) ))) "r") | int) | float64) (0.002 | float64)) | float64) | int) (200 | int)) | int)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -21,26 +21,26 @@
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $values := $dot.Values.AsMap -}}
-{{- $memory := 0 -}}
-{{- $containerMemory := (get (fromJson (include "redpanda.ContainerMemory" (dict "a" (list $dot) ))) "r") -}}
+{{- $memory := (0 | int) -}}
+{{- $containerMemory := ((get (fromJson (include "redpanda.ContainerMemory" (dict "a" (list $dot) ))) "r") | int) -}}
 {{- $rpMem_2 := $values.resources.memory.redpanda -}}
 {{- if (and (ne $rpMem_2 (coalesce nil)) (ne $rpMem_2.memory (coalesce nil))) -}}
 {{- if (kindIs "string" $rpMem_2.memory) -}}
-{{- $memory = (int (get (fromJson (include "redpanda.RedpandaMemoryToMi" (dict "a" (list $rpMem_2.memory) ))) "r")) -}}
+{{- $memory = (((get (fromJson (include "redpanda.RedpandaMemoryToMi" (dict "a" (list $rpMem_2.memory) ))) "r") | int) | int) -}}
 {{- else -}}
 {{- $_ := (fail (printf "Redpanda.Memory (%v) is not type of string" $rpMem_2.reserveMemory)) -}}
 {{- end -}}
 {{- else -}}
-{{- $memory = (int (float64 (mulf (float64 $containerMemory) 0.8))) -}}
+{{- $memory = (((mulf ($containerMemory | float64) (0.8 | float64)) | float64) | int) -}}
 {{- end -}}
-{{- if (eq $memory 0) -}}
+{{- if (eq $memory (0 | int)) -}}
 {{- $_ := (fail "unable to get memory value redpanda-memory") -}}
 {{- end -}}
-{{- if (lt $memory 256) -}}
+{{- if (lt $memory (256 | int)) -}}
 {{- $_ := (fail (printf "%d is below the minimum value for Redpanda" $memory)) -}}
 {{- end -}}
-{{- if (gt (int (add $memory (int (get (fromJson (include "redpanda.RedpandaReserveMemory" (dict "a" (list $dot) ))) "r")))) (int $containerMemory)) -}}
-{{- $_ := (fail (printf "Not enough container memory for Redpanda memory values where Redpanda: %d, reserve: %d, container: %d" $memory (get (fromJson (include "redpanda.RedpandaReserveMemory" (dict "a" (list $dot) ))) "r") $containerMemory)) -}}
+{{- if (gt ((add $memory (((get (fromJson (include "redpanda.RedpandaReserveMemory" (dict "a" (list $dot) ))) "r") | int) | int)) | int) ($containerMemory | int)) -}}
+{{- $_ := (fail (printf "Not enough container memory for Redpanda memory values where Redpanda: %d, reserve: %d, container: %d" $memory ((get (fromJson (include "redpanda.RedpandaReserveMemory" (dict "a" (list $dot) ))) "r") | int) $containerMemory)) -}}
 {{- end -}}
 {{- (dict "r" $memory) | toJson -}}
 {{- break -}}
@@ -54,64 +54,64 @@
 {{- if (not $matched) -}}
 {{- $_ := (fail (printf "amount (%s) does not match regex" $amount)) -}}
 {{- end -}}
-{{- $unit := (substr (int (sub (int (get (fromJson (include "_shims.len" (dict "a" (list $amount) ))) "r")) 1)) -1 $amount) -}}
-{{- $amount = (substr 0 (int (sub (int (get (fromJson (include "_shims.len" (dict "a" (list $amount) ))) "r")) 1)) $amount) -}}
+{{- $unit := (substr ((sub ((get (fromJson (include "_shims.len" (dict "a" (list $amount) ))) "r") | int) (1 | int)) | int) -1 $amount) -}}
+{{- $amount = (substr 0 ((sub ((get (fromJson (include "_shims.len" (dict "a" (list $amount) ))) "r") | int) (1 | int)) | int) $amount) -}}
 {{- if (eq $unit "i") -}}
-{{- $unit = (printf "%s%s" (substr (int (sub (int (get (fromJson (include "_shims.len" (dict "a" (list $amount) ))) "r")) 1)) -1 $amount) $unit) -}}
-{{- $amount = (substr 0 (int (sub (int (get (fromJson (include "_shims.len" (dict "a" (list $amount) ))) "r")) 1)) $amount) -}}
+{{- $unit = (printf "%s%s" (substr ((sub ((get (fromJson (include "_shims.len" (dict "a" (list $amount) ))) "r") | int) (1 | int)) | int) -1 $amount) $unit) -}}
+{{- $amount = (substr 0 ((sub ((get (fromJson (include "_shims.len" (dict "a" (list $amount) ))) "r") | int) (1 | int)) | int) $amount) -}}
 {{- else -}}{{- if (regexMatch `\d` $unit) -}}
 {{- $amount = (printf "%s%s" $amount $unit) -}}
 {{- $unit = "" -}}
 {{- end -}}
 {{- end -}}
-{{- $k := 1000 -}}
-{{- $m := (int (mul $k $k)) -}}
-{{- $g := (int (mul (int (mul $k $k)) $k)) -}}
-{{- $t := (int (mul (int (mul (int (mul $k $k)) $k)) $k)) -}}
-{{- $p := (int (mul (int (mul (int (mul (int (mul $k $k)) $k)) $k)) $k)) -}}
-{{- $ki := 1024 -}}
-{{- $mi := (int (mul $ki $ki)) -}}
-{{- $gi := (int (mul (int (mul $ki $ki)) $ki)) -}}
-{{- $ti := (int (mul (int (mul (int (mul $ki $ki)) $ki)) $ki)) -}}
-{{- $pi := (int (mul (int (mul (int (mul (int (mul $ki $ki)) $ki)) $ki)) $ki)) -}}
+{{- $k := (1000 | int) -}}
+{{- $m := ((mul $k $k) | int) -}}
+{{- $g := ((mul ((mul $k $k) | int) $k) | int) -}}
+{{- $t := ((mul ((mul ((mul $k $k) | int) $k) | int) $k) | int) -}}
+{{- $p := ((mul ((mul ((mul ((mul $k $k) | int) $k) | int) $k) | int) $k) | int) -}}
+{{- $ki := (1024 | int) -}}
+{{- $mi := ((mul $ki $ki) | int) -}}
+{{- $gi := ((mul ((mul $ki $ki) | int) $ki) | int) -}}
+{{- $ti := ((mul ((mul ((mul $ki $ki) | int) $ki) | int) $ki) | int) -}}
+{{- $pi := ((mul ((mul ((mul ((mul $ki $ki) | int) $ki) | int) $ki) | int) $ki) | int) -}}
 {{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (list (float64 $amount) nil)) ))) "r") -}}
 {{- $err := $tmp_tuple_1.T2 -}}
-{{- $amountFloat := $tmp_tuple_1.T1 -}}
+{{- $amountFloat := ($tmp_tuple_1.T1 | float64) -}}
 {{- if (ne $err (coalesce nil)) -}}
 {{- $_ := (fail (printf "SI to bytes conversion : %v" $err)) -}}
 {{- end -}}
 {{- if (eq $unit "") -}}
-{{- (dict "r" (int $amountFloat)) | toJson -}}
+{{- (dict "r" ($amountFloat | int)) | toJson -}}
 {{- break -}}
 {{- else -}}{{- if (eq $unit "k") -}}
-{{- (dict "r" (int (float64 (mulf $amountFloat (float64 $k))))) | toJson -}}
+{{- (dict "r" (((mulf $amountFloat ($k | float64)) | float64) | int)) | toJson -}}
 {{- break -}}
 {{- else -}}{{- if (eq $unit "M") -}}
-{{- (dict "r" (int (float64 (mulf $amountFloat (float64 $m))))) | toJson -}}
+{{- (dict "r" (((mulf $amountFloat ($m | float64)) | float64) | int)) | toJson -}}
 {{- break -}}
 {{- else -}}{{- if (eq $unit "G") -}}
-{{- (dict "r" (int (float64 (mulf $amountFloat (float64 $g))))) | toJson -}}
+{{- (dict "r" (((mulf $amountFloat ($g | float64)) | float64) | int)) | toJson -}}
 {{- break -}}
 {{- else -}}{{- if (eq $unit "T") -}}
-{{- (dict "r" (int (float64 (mulf $amountFloat (float64 $t))))) | toJson -}}
+{{- (dict "r" (((mulf $amountFloat ($t | float64)) | float64) | int)) | toJson -}}
 {{- break -}}
 {{- else -}}{{- if (eq $unit "P") -}}
-{{- (dict "r" (int (float64 (mulf $amountFloat (float64 $p))))) | toJson -}}
+{{- (dict "r" (((mulf $amountFloat ($p | float64)) | float64) | int)) | toJson -}}
 {{- break -}}
 {{- else -}}{{- if (eq $unit "Ki") -}}
-{{- (dict "r" (int (float64 (mulf $amountFloat (float64 $ki))))) | toJson -}}
+{{- (dict "r" (((mulf $amountFloat ($ki | float64)) | float64) | int)) | toJson -}}
 {{- break -}}
 {{- else -}}{{- if (eq $unit "Mi") -}}
-{{- (dict "r" (int (float64 (mulf $amountFloat (float64 $mi))))) | toJson -}}
+{{- (dict "r" (((mulf $amountFloat ($mi | float64)) | float64) | int)) | toJson -}}
 {{- break -}}
 {{- else -}}{{- if (eq $unit "Gi") -}}
-{{- (dict "r" (int (float64 (mulf $amountFloat (float64 $gi))))) | toJson -}}
+{{- (dict "r" (((mulf $amountFloat ($gi | float64)) | float64) | int)) | toJson -}}
 {{- break -}}
 {{- else -}}{{- if (eq $unit "Ti") -}}
-{{- (dict "r" (int (float64 (mulf $amountFloat (float64 $ti))))) | toJson -}}
+{{- (dict "r" (((mulf $amountFloat ($ti | float64)) | float64) | int)) | toJson -}}
 {{- break -}}
 {{- else -}}{{- if (eq $unit "Pi") -}}
-{{- (dict "r" (int (float64 (mulf $amountFloat (float64 $pi))))) | toJson -}}
+{{- (dict "r" (((mulf $amountFloat ($pi | float64)) | float64) | int)) | toJson -}}
 {{- break -}}
 {{- else -}}
 {{- $_ := (fail (printf "unknown unit: %q" $unit)) -}}
@@ -132,7 +132,7 @@
 {{- define "redpanda.RedpandaMemoryToMi" -}}
 {{- $amount := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
-{{- (dict "r" (int (div (get (fromJson (include "redpanda.SIToBytes" (dict "a" (list (toString $amount)) ))) "r") ((mul 1024 1024))))) | toJson -}}
+{{- (dict "r" ((div ((get (fromJson (include "redpanda.SIToBytes" (dict "a" (list (toString $amount)) ))) "r") | int) ((mul 1024 1024))) | int)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -142,10 +142,10 @@
 {{- range $_ := (list 1) -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- if (ne $values.resources.memory.container.min (coalesce nil)) -}}
-{{- (dict "r" (get (fromJson (include "redpanda.RedpandaMemoryToMi" (dict "a" (list $values.resources.memory.container.min) ))) "r")) | toJson -}}
+{{- (dict "r" ((get (fromJson (include "redpanda.RedpandaMemoryToMi" (dict "a" (list $values.resources.memory.container.min) ))) "r") | int)) | toJson -}}
 {{- break -}}
 {{- end -}}
-{{- (dict "r" (get (fromJson (include "redpanda.RedpandaMemoryToMi" (dict "a" (list $values.resources.memory.container.max) ))) "r")) | toJson -}}
+{{- (dict "r" ((get (fromJson (include "redpanda.RedpandaMemoryToMi" (dict "a" (list $values.resources.memory.container.max) ))) "r") | int)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

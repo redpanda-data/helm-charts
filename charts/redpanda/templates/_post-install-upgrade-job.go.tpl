@@ -14,7 +14,7 @@
 {{- end -}}
 {{- end -}}
 {{- $tieredStorageConfig := $values.storage.tiered.config -}}
-{{- if (gt (int (get (fromJson (include "_shims.len" (dict "a" (list $values.storage.tieredConfig) ))) "r")) 0) -}}
+{{- if (gt ((get (fromJson (include "_shims.len" (dict "a" (list $values.storage.tieredConfig) ))) "r") | int) (0 | int)) -}}
 {{- $tieredStorageConfig = $values.storage.tieredConfig -}}
 {{- end -}}
 {{- if (not (get (fromJson (include "redpanda.IsTieredStorageEnabled" (dict "a" (list $tieredStorageConfig) ))) "r")) -}}
@@ -44,7 +44,7 @@
 {{- $isStr_4 := $tmp_tuple_3.T2 -}}
 {{- $asStr_3 := $tmp_tuple_3.T1 -}}
 {{- if (and (and (eq $k "cloud_storage_cache_size") $isStr_4) (ne $asStr_3 "")) -}}
-{{- $envars = (mustAppend $envars (mustMergeOverwrite (dict "name" "" ) (dict "name" (printf "RPK_%s" (upper $k)) "value" (toJson (get (fromJson (include "redpanda.SIToBytes" (dict "a" (list (get (fromJson (include "_shims.typeassertion" (dict "a" (list "string" $v) ))) "r")) ))) "r")) ))) -}}
+{{- $envars = (mustAppend $envars (mustMergeOverwrite (dict "name" "" ) (dict "name" (printf "RPK_%s" (upper $k)) "value" (toJson ((get (fromJson (include "redpanda.SIToBytes" (dict "a" (list (get (fromJson (include "_shims.typeassertion" (dict "a" (list "string" $v) ))) "r")) ))) "r") | int)) ))) -}}
 {{- continue -}}
 {{- end -}}
 {{- $tmp_tuple_4 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "string" $v "") ))) "r")) ))) "r") -}}
