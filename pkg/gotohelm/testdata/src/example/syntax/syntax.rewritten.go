@@ -50,8 +50,9 @@ func Syntax() map[string]any {
 
 	// TypeAssertExpr
 	var x any
-	_ = helmette.Compact2(helmette.TypeTest[int](x))
-	_ = helmette.Compact2(helmette.TypeTest[[]any](x))
+	_ = helmette.
+		// _, _ = x.(int) // Numeric types will generate an error.
+		Compact2(helmette.TypeTest[[]any](x))
 	_ = helmette.Compact2(helmette.TypeTest[[]string](x))
 	_ = helmette.Compact2(helmette.TypeTest[map[string]any](x))
 

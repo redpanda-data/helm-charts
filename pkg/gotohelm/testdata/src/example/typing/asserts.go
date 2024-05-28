@@ -10,9 +10,7 @@ func typeTesting(dot *helmette.Dot) string {
 	if _, ok := t.(string); ok {
 		return "it's a string!"
 	} else if _, ok := helmette.AsIntegral[int](t); ok {
-	// } else if _, ok := t.(int); ok {
 		return "it's an int!"
-	// } else if _, ok := t.(float64); ok {
 	} else if _, ok := helmette.AsNumeric(t); ok {
 		return "it's a float!"
 	}

@@ -749,10 +749,20 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 		}
 
 	case *ast.TypeAssertExpr:
+		typ := t.typeOf(n.Type)
+
+		if basic, ok := typ.(*types.Basic); ok && (basic.Info()&types.IsNumeric != 0) {
+			panic(&Unsupported{
+				Node: n,
+				Fset: t.Fset,
+				Msg:  "type assertions on numeric types are unreliable due to JSON casting all numbers to float64's. Instead use `helmette.IsNumeric` or `helmette.AsIntegral`",
+			})
+		}
+
 		return &Call{
 			FuncName: "_shims.typeassertion",
 			Arguments: []Node{
-				t.transpileTypeRepr(t.typeOf(n.Type)),
+				t.transpileTypeRepr(typ),
 				t.transpileExpr(n.X),
 			},
 		}
@@ -952,9 +962,6 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.DictTest":
 		valueType := callee.(*types.Func).Type().(*types.Signature).TypeParams().At(1)
 		return &Call{FuncName: "_shims.dicttest", Arguments: append(args, t.zeroOf(valueType))}
-	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.TypeTest":
-		typ := signature.Results().At(0).Type()
-		return &Call{FuncName: "_shims.typetest", Arguments: []Node{t.transpileTypeRepr(typ), args[0], t.zeroOf(typ)}}
 	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.Merge":
 		dict := DictLiteral{}
 		return &BuiltInCall{FuncName: "merge", Arguments: append([]Node{&dict}, args...)}
@@ -989,6 +996,18 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 		// client's builtin scheme.
 		panic(fmt.Sprintf("unrecognized type: %v", k8sType))
 
+	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.TypeTest":
+		typ := signature.Results().At(0).Type()
+		if basic, ok := typ.(*types.Basic); ok {
+			if basic.Info()&types.IsNumeric != 0 {
+				panic(&Unsupported{
+					Fset: t.Fset,
+					Node: n,
+					Msg:  "type checks on numeric types are unreliable due to JSON casting all numbers to float64's. Instead use `helmette.IsNumeric` or `helmette.AsIntegral`",
+				})
+			}
+		}
+		return &Call{FuncName: "_shims.typetest", Arguments: []Node{t.transpileTypeRepr(typ), args[0], t.zeroOf(typ)}}
 	default:
 		panic(fmt.Sprintf("unsupported function %q", id))
 	}

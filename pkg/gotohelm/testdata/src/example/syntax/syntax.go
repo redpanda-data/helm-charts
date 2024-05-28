@@ -48,7 +48,7 @@ func Syntax() map[string]any {
 
 	// TypeAssertExpr
 	var x any
-	_, _ = x.(int)
+	// _, _ = x.(int) // Numeric types will generate an error.
 	_, _ = x.([]any)
 	_, _ = x.([]string)
 	_, _ = x.(map[string]any)

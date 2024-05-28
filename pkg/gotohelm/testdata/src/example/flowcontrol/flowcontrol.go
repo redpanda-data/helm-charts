@@ -23,16 +23,16 @@ func earlyReturn(dot *helmette.Dot) string {
 }
 
 func ifElse(dot *helmette.Dot) string {
-	oneToFour, ok := dot.Values["oneToFour"]
+	oneToFour, ok := helmette.AsIntegral[int](dot.Values["oneToFour"])
 	if !ok {
 		return "oneToFour not specified!"
 	}
 
-	if int(oneToFour.(float64)) == 1 {
+	if oneToFour == 1 {
 		return "It's 1"
-	} else if int(oneToFour.(float64)) == 2 {
+	} else if oneToFour == 2 {
 		return "It's 2"
-	} else if int(oneToFour.(float64)) == 3 {
+	} else if oneToFour == 3 {
 		return "It's 3"
 	} else {
 		return "It's 4"
