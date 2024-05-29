@@ -4,11 +4,11 @@
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $values := $dot.Values.AsMap -}}
-{{- if (or (not $values.external.enabled) (ne $values.external.type "NodePort")) -}}
+{{- if (or (not $values.external.enabled) (not $values.external.service.enabled)) -}}
 {{- (dict "r" (coalesce nil)) | toJson -}}
 {{- break -}}
 {{- end -}}
-{{- if (or (eq $values.external.service (coalesce nil)) (not $values.external.service.enabled)) -}}
+{{- if (ne $values.external.type "NodePort") -}}
 {{- (dict "r" (coalesce nil)) | toJson -}}
 {{- break -}}
 {{- end -}}

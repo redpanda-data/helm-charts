@@ -301,6 +301,9 @@
               "type": "boolean"
             }
           },
+          "required": [
+            "enabled"
+          ],
           "type": "object"
         },
         "sourceRanges": {
@@ -383,6 +386,9 @@
                     },
                     "enabled": {
                       "type": "boolean"
+                    },
+                    "nodePort": {
+                      "type": "integer"
                     },
                     "port": {
                       "type": "integer"
@@ -471,6 +477,9 @@
                     },
                     "enabled": {
                       "type": "boolean"
+                    },
+                    "nodePort": {
+                      "type": "integer"
                     },
                     "port": {
                       "type": "integer"
@@ -581,6 +590,9 @@
                     },
                     "enabled": {
                       "type": "boolean"
+                    },
+                    "nodePort": {
+                      "type": "integer"
                     },
                     "port": {
                       "type": "integer"
@@ -716,6 +728,9 @@
                     },
                     "enabled": {
                       "type": "boolean"
+                    },
+                    "nodePort": {
+                      "type": "integer"
                     },
                     "port": {
                       "type": "integer"
