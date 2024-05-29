@@ -302,7 +302,6 @@ data:
     topic_partitions_per_shard: 1000
     storage_min_free_bytes: 1073741824
   
-    audit_enabled: false
   
   redpanda.yaml: |
     config_file: /etc/redpanda/redpanda.yaml
@@ -323,7 +322,6 @@ data:
       storage_min_free_bytes: 1073741824
         
       crash_loop_limit: "5"
-      audit_enabled: false
   
   
       admin:
@@ -834,7 +832,7 @@ spec:
         helm.sh/chart: redpanda-5.8.7
         redpanda.com/poddisruptionbudget: redpanda
       annotations:
-        config.redpanda.com/checksum: bdc12c59ed4146a58b5b4bfca4bdd4495b1b9e19e49457cce50c827e3d8977ea
+        config.redpanda.com/checksum: d1e291a24be8559f13da0b896d54577a43390ff46b3fefca7b46db1c2872548d
     spec:
       terminationGracePeriodSeconds: 90
       securityContext: 
@@ -843,7 +841,7 @@ spec:
       serviceAccountName: default
       initContainers:
         - name: tuning
-          image: somecustomrepo:v24.1.0
+          image: docker.redpanda.com/redpandadata/redpanda:v23.1.3
           command:
             - /bin/bash
             - -c
@@ -863,7 +861,7 @@ spec:
             - name: redpanda
               mountPath: /etc/redpanda
         - name: redpanda-configurator
-          image: somecustomrepo:v24.1.0
+          image: docker.redpanda.com/redpandadata/redpanda:v23.1.3
           command:
             - /bin/bash
             - -c
@@ -903,7 +901,7 @@ spec:
               mountPath: /etc/secrets/configurator/scripts/
       containers:
         - name: redpanda
-          image: somecustomrepo:v24.1.0
+          image: docker.redpanda.com/redpandadata/redpanda:v23.1.3
           env: 
             - name: SERVICE_NAME
               valueFrom:
@@ -1027,7 +1025,7 @@ spec:
               cpu: 1
               memory: 2.5Gi
         - name: config-watcher
-          image: somecustomrepo:v24.1.0
+          image: docker.redpanda.com/redpandadata/redpanda:v23.1.3
           command:
             - /bin/sh
           args:
@@ -1372,7 +1370,7 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
       containers:
       - name: redpanda-post-install
-        image: somecustomrepo:v24.1.0
+        image: docker.redpanda.com/redpandadata/redpanda:v23.1.3
         
         env:
         - name: REDPANDA_LICENSE
@@ -1458,7 +1456,7 @@ spec:
       serviceAccountName: default
       containers:
       - name: redpanda-post-upgrade
-        image: somecustomrepo:v24.1.0
+        image: docker.redpanda.com/redpandadata/redpanda:v23.1.3
         command: ["/bin/bash", "-c"]
         args:
           - |
@@ -1466,13 +1464,6 @@ spec:
     
             rpk cluster config set default_topic_replications 3
             rpk cluster config set storage_min_free_bytes 1073741824
-            if [ -d "/etc/secrets/users/" ]; then
-                IFS=":" read -r USER_NAME PASSWORD MECHANISM < <(grep "" $(find /etc/secrets/users/* -print))
-                curl -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors --ssl-reqd \
-                --cacert /etc/tls/certs/default/ca.crt \
-                -X PUT -u ${USER_NAME}:${PASSWORD} \
-                https://redpanda.default.svc.cluster.local.:9644/v1/debug/restart_service?service=schema-registry || true
-            fi
         securityContext:
           allowPrivilegeEscalation: null
           runAsGroup: 101
