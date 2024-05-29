@@ -91,7 +91,7 @@ podAntiAffinity:
     podAffinityTerm:
       topologyKey: {{ .Values.statefulset.podAntiAffinity.topologyKey }}
       labelSelector:
-        matchLabels: {{ include "statefulset-pod-labels-selector" . | nindent 8 }}
+        matchLabels: {{ include "statefulset-pod-labels-selector" . | nindent 10 }}
   {{- else if eq .Values.statefulset.podAntiAffinity.type "custom" -}}
     {{- toYaml .Values.statefulset.podAntiAffinity.custom | nindent 2 }}
   {{- end -}}
