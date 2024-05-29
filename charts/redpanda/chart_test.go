@@ -99,10 +99,10 @@ func TieredStorageSecretRefs(t *testing.T, secret *corev1.Secret) redpanda.Parti
 }
 
 type TemplateTestCase struct {
-	Name         string
-	Values       any
-	ValuesFile   string
-	AssertGolden func(*testing.T, []byte)
+	Name       string
+	Values     any
+	ValuesFile string
+	Assert     func(*testing.T, []byte, error)
 }
 
 func CITestCases(t *testing.T) []TemplateTestCase {
@@ -115,7 +115,8 @@ func CITestCases(t *testing.T) []TemplateTestCase {
 		cases[i] = TemplateTestCase{
 			Name:       name,
 			ValuesFile: "./ci/" + name,
-			AssertGolden: func(t *testing.T, b []byte) {
+			Assert: func(t *testing.T, b []byte, err error) {
+				require.NoError(t, err)
 				testutil.AssertGolden(t, testutil.YAML, path.Join("testdata", "ci", name+".golden"), b)
 			},
 		}
@@ -126,18 +127,51 @@ func CITestCases(t *testing.T) []TemplateTestCase {
 func VersionTestsCases(t *testing.T) []TemplateTestCase {
 	// A collection of versions that should trigger all the gates guarded by
 	// "redpanda-atleast-*" helpers.
-	versions := []redpanda.PartialImage{
-		{Tag: ptr.To(redpanda.ImageTag("v22.2.0"))},
-		{Tag: ptr.To(redpanda.ImageTag("v22.3.0"))},
-		{Tag: ptr.To(redpanda.ImageTag("v22.3.14"))},
-		{Tag: ptr.To(redpanda.ImageTag("v22.4.0"))},
-		{Tag: ptr.To(redpanda.ImageTag("v23.1.1"))},
-		{Tag: ptr.To(redpanda.ImageTag("v23.1.2"))},
-		{Tag: ptr.To(redpanda.ImageTag("v23.1.3"))},
-		{Tag: ptr.To(redpanda.ImageTag("v23.2.1"))},
-		{Tag: ptr.To(redpanda.ImageTag("v23.3.0"))},
-		{Tag: ptr.To(redpanda.ImageTag("v24.1.0"))},
-		{Repository: ptr.To("somecustomrepo"), Tag: ptr.To(redpanda.ImageTag("v24.1.0"))},
+	versions := []struct {
+		Image  redpanda.PartialImage
+		ErrMsg *string
+	}{
+		{
+			Image:  redpanda.PartialImage{Tag: ptr.To(redpanda.ImageTag("v22.1.0"))},
+			ErrMsg: ptr.To("no longer supported"),
+		},
+		{
+			Image:  redpanda.PartialImage{Tag: ptr.To(redpanda.ImageTag("v22.2.0"))},
+			ErrMsg: ptr.To("does not support TLS on the RPC port. Please upgrade. See technical service bulletin 2023-01."),
+		},
+		{
+			Image:  redpanda.PartialImage{Tag: ptr.To(redpanda.ImageTag("v22.3.0"))},
+			ErrMsg: ptr.To("does not support TLS on the RPC port. Please upgrade. See technical service bulletin 2023-01."),
+		},
+		{
+			Image: redpanda.PartialImage{Tag: ptr.To(redpanda.ImageTag("v22.3.14"))},
+		},
+		{
+			Image:  redpanda.PartialImage{Tag: ptr.To(redpanda.ImageTag("v22.4.0"))},
+			ErrMsg: ptr.To("does not support TLS on the RPC port. Please upgrade. See technical service bulletin 2023-01."),
+		},
+		{
+			Image:  redpanda.PartialImage{Tag: ptr.To(redpanda.ImageTag("v23.1.1"))},
+			ErrMsg: ptr.To("does not support TLS on the RPC port. Please upgrade. See technical service bulletin 2023-01."),
+		},
+		{
+			Image: redpanda.PartialImage{Tag: ptr.To(redpanda.ImageTag("v23.1.2"))},
+		},
+		{
+			Image: redpanda.PartialImage{Tag: ptr.To(redpanda.ImageTag("v23.1.3"))},
+		},
+		{
+			Image: redpanda.PartialImage{Tag: ptr.To(redpanda.ImageTag("v23.2.1"))},
+		},
+		{
+			Image: redpanda.PartialImage{Tag: ptr.To(redpanda.ImageTag("v23.3.0"))},
+		},
+		{
+			Image: redpanda.PartialImage{Tag: ptr.To(redpanda.ImageTag("v24.1.0"))},
+		},
+		{
+			Image: redpanda.PartialImage{Repository: ptr.To("somecustomrepo"), Tag: ptr.To(redpanda.ImageTag("v24.1.0"))},
+		},
 	}
 
 	// A collection of features that are protected by the various above version
@@ -165,18 +199,25 @@ func VersionTestsCases(t *testing.T) []TemplateTestCase {
 
 	var cases []TemplateTestCase
 	for _, version := range versions {
+		version := version
 		for i, perm := range permutations {
 			values, err := valuesutil.UnmarshalInto[redpanda.PartialValues](perm)
 			require.NoError(t, err)
 
-			values.Image = &version
+			values.Image = &version.Image
 
-			name := fmt.Sprintf("%s-%s-%d", ptr.Deref(version.Repository, "default"), *version.Tag, i)
+			name := fmt.Sprintf("%s-%s-%d", ptr.Deref(version.Image.Repository, "default"), *version.Image.Tag, i)
 
 			cases = append(cases, TemplateTestCase{
 				Name:   name,
 				Values: values,
-				AssertGolden: func(t *testing.T, b []byte) {
+				Assert: func(t *testing.T, b []byte, err error) {
+					if version.ErrMsg != nil {
+						require.Error(t, err, "expected an error containing %q", *version.ErrMsg)
+						require.Contains(t, err.Error(), *version.ErrMsg, "expected an error containing %q", *version.ErrMsg)
+						return
+					}
+					require.NoError(t, err)
 					testutil.AssertGolden(t, testutil.YAML, path.Join("testdata", "versions", name+".yaml.golden"), b)
 				},
 			})
@@ -218,9 +259,8 @@ func TestTemplate(t *testing.T) {
 					"console.secret.login.jwtSecret=SECRETKEY",
 				},
 			})
-			require.NoError(t, err)
 
-			tc.AssertGolden(t, out)
+			tc.Assert(t, out, err)
 
 			// kube-lint template file
 			var stdout bytes.Buffer
