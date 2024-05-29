@@ -145,19 +145,6 @@ Use AppVersion if image.tag is not set
 {{- toJson (dict "bool" (dig "enabled" false .Values.auth.sasl)) -}}
 {{- end -}}
 
-{{- define "external-loadbalancer-enabled" -}}
-{{- $values := .Values -}}
-{{- $enabled := and .Values.external.enabled (eq .Values.external.type "LoadBalancer") -}}
-{{- range $listener := .Values.listeners -}}
-  {{- range $external := $listener.external -}}
-    {{- if and (dig "enabled" false $external) (eq (dig "type" $values.external.type $external) "LoadBalancer") -}}
-      {{- $enabled = true -}}
-    {{- end -}}
-  {{- end -}}
-{{- end -}}
-{{- toJson (dict "bool" $enabled) -}}
-{{- end -}}
-
 {{/*
 Returns the value of "resources.cpu.cores" in millicores. And ensures CPU units
 are using known suffix (really only "m") or no suffix at all.

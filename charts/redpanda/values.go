@@ -148,19 +148,19 @@ type TLS struct {
 }
 
 type ExternalConfig struct {
-	Addresses      []string          `json:"addresses"`
-	Annotations    map[string]string `json:"annotations"`
-	Domain         *string           `json:"domain"`
-	Enabled        bool              `json:"enabled" jsonschema:"required"`
-	Type           string            `json:"type" jsonschema:"pattern=^(LoadBalancer|NodePort)$"`
-	PrefixTemplate string            `json:"prefixTemplate"`
-	SourceRanges   []string          `json:"sourceRanges"`
-	Service        *struct {
-		Enabled bool `json:"enabled"`
-	} `json:"service"`
-	ExternalDNS *struct {
-		Enabled bool `json:"enabled" jsonschema:"required"`
-	} `json:"externalDns"`
+	Addresses      []string           `json:"addresses"`
+	Annotations    map[string]string  `json:"annotations"`
+	Domain         *string            `json:"domain"`
+	Enabled        bool               `json:"enabled" jsonschema:"required"`
+	Type           corev1.ServiceType `json:"type" jsonschema:"pattern=^(LoadBalancer|NodePort)$"`
+	PrefixTemplate string             `json:"prefixTemplate"`
+	SourceRanges   []string           `json:"sourceRanges"`
+	Service        Enableable         `json:"service"`
+	ExternalDNS    *Enableable        `json:"externalDns"`
+}
+
+type Enableable struct {
+	Enabled bool `json:"enabled" jsonschema:"required"`
 }
 
 type Logging struct {
@@ -576,14 +576,17 @@ type ExternalTLS struct {
 
 type AdminListeners struct {
 	External ExternalListeners[AdminExternal] `json:"external"`
-	Port     int                              `json:"port" jsonschema:"required"`
+	Port     int32                            `json:"port" jsonschema:"required"`
 	TLS      InternalTLS                      `json:"tls" jsonschema:"required"`
 }
 
 type AdminExternal struct {
 	AdvertisedPorts []int32 `json:"advertisedPorts" jsonschema:"minItems=1"`
-	Enabled         *bool   `json:"enabled"`
-	Port            int32   `json:"port" jsonschema:"required"`
+	// Enabled indicates if this listener is enabled. If not specified,
+	// defaults to the value of [ExternalConfig.Enabled].
+	Enabled  *bool  `json:"enabled"`
+	Port     int32  `json:"port" jsonschema:"required"`
+	NodePort *int32 `json:"nodePort"`
 }
 
 type HTTPListeners struct {
@@ -592,7 +595,7 @@ type HTTPListeners struct {
 	AuthenticationMethod HTTPAuthenticationMethod        `json:"authenticationMethod"`
 	TLS                  InternalTLS                     `json:"tls" jsonschema:"required"`
 	KafkaEndpoint        string                          `json:"kafkaEndpoint" jsonschema:"required,pattern=^[A-Za-z_-][A-Za-z0-9_-]*$"`
-	Port                 int                             `json:"port" jsonschema:"required"`
+	Port                 int32                           `json:"port" jsonschema:"required"`
 }
 
 func (HTTPListeners) JSONSchemaExtend(schema *jsonschema.Schema) {
@@ -600,9 +603,12 @@ func (HTTPListeners) JSONSchemaExtend(schema *jsonschema.Schema) {
 }
 
 type HTTPExternal struct {
-	AdvertisedPorts      []int32                   `json:"advertisedPorts" jsonschema:"minItems=1"`
+	AdvertisedPorts []int32 `json:"advertisedPorts" jsonschema:"minItems=1"`
+	// Enabled indicates if this listener is enabled. If not specified,
+	// defaults to the value of [ExternalConfig.Enabled].
 	Enabled              *bool                     `json:"enabled"`
 	Port                 int32                     `json:"port" jsonschema:"required"`
+	NodePort             *int32                    `json:"nodePort"`
 	AuthenticationMethod *HTTPAuthenticationMethod `json:"authenticationMethod"`
 	PrefixTemplate       *string                   `json:"prefixTemplate"`
 	TLS                  *ExternalTLS              `json:"tls" jsonschema:"required"`
@@ -620,7 +626,7 @@ type KafkaListeners struct {
 	AuthenticationMethod KafkaAuthenticationMethod        `json:"authenticationMethod"`
 	External             ExternalListeners[KafkaExternal] `json:"external"`
 	TLS                  InternalTLS                      `json:"tls" jsonschema:"required"`
-	Port                 int                              `json:"port" jsonschema:"required"`
+	Port                 int32                            `json:"port" jsonschema:"required"`
 }
 
 func (KafkaListeners) JSONSchemaExtend(schema *jsonschema.Schema) {
@@ -628,9 +634,12 @@ func (KafkaListeners) JSONSchemaExtend(schema *jsonschema.Schema) {
 }
 
 type KafkaExternal struct {
-	AdvertisedPorts      []int32                    `json:"advertisedPorts" jsonschema:"minItems=1"`
+	AdvertisedPorts []int32 `json:"advertisedPorts" jsonschema:"minItems=1"`
+	// Enabled indicates if this listener is enabled. If not specified,
+	// defaults to the value of [ExternalConfig.Enabled].
 	Enabled              *bool                      `json:"enabled"`
 	Port                 int32                      `json:"port" jsonschema:"required"`
+	NodePort             *int32                     `json:"nodePort"`
 	AuthenticationMethod *KafkaAuthenticationMethod `json:"authenticationMethod"`
 	PrefixTemplate       *string                    `json:"prefixTemplate"`
 	TLS                  *ExternalTLS               `json:"tls"`
@@ -641,11 +650,13 @@ func (KafkaExternal) JSONSchemaExtend(schema *jsonschema.Schema) {
 }
 
 type SchemaRegistryListeners struct {
+	// Enabled indicates if this listener is enabled. If not specified,
+	// defaults to the value of [ExternalConfig.Enabled].
 	Enabled              bool                                      `json:"enabled" jsonschema:"required"`
 	External             ExternalListeners[SchemaRegistryExternal] `json:"external"`
 	AuthenticationMethod *HTTPAuthenticationMethod                 `json:"authenticationMethod"`
 	KafkaEndpoint        string                                    `json:"kafkaEndpoint" jsonschema:"required,pattern=^[A-Za-z_-][A-Za-z0-9_-]*$"`
-	Port                 int                                       `json:"port" jsonschema:"required"`
+	Port                 int32                                     `json:"port" jsonschema:"required"`
 	TLS                  InternalTLS                               `json:"tls" jsonschema:"required"`
 }
 
@@ -654,9 +665,12 @@ func (SchemaRegistryListeners) JSONSchemaExtend(schema *jsonschema.Schema) {
 }
 
 type SchemaRegistryExternal struct {
-	AdvertisedPorts      []int32                   `json:"advertisedPorts" jsonschema:"minItems=1"`
+	AdvertisedPorts []int32 `json:"advertisedPorts" jsonschema:"minItems=1"`
+	// Enabled indicates if this listener is enabled. If not specified,
+	// defaults to the value of [ExternalConfig.Enabled].
 	Enabled              *bool                     `json:"enabled"`
 	Port                 int32                     `json:"port"`
+	NodePort             *int32                    `json:"nodePort"`
 	AuthenticationMethod *HTTPAuthenticationMethod `json:"authenticationMethod"`
 	TLS                  *ExternalTLS              `json:"tls"`
 }

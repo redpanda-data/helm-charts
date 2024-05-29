@@ -578,124 +578,139 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: lb-redpanda-0
-  namespace: default
+  annotations: {}
+  creationTimestamp: null
   labels:
     app.kubernetes.io/component: redpanda
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
     helm.sh/chart: redpanda-5.8.8
-    repdanda.com/type: "loadbalancer"
+    repdanda.com/type: loadbalancer
+  name: lb-redpanda-0
+  namespace: default
 spec:
-  type: LoadBalancer
-  publishNotReadyAddresses: true
   externalTrafficPolicy: Local
-  sessionAffinity: None
+  loadBalancerSourceRanges: null
   ports:
-    - name: admin-default
-      protocol: TCP
-      targetPort: 9644
-      port: 31644
-    - name: kafka-default
-      protocol: TCP
-      targetPort: 9094
-      port: 31092
-    - name: http-default
-      protocol: TCP
-      targetPort: 8083
-      port: 30082
-    - name: schema-default
-      protocol: TCP
-      targetPort: 8084
-      port: 30081
-  selector: 
+  - name: admin-default
+    port: 31644
+    protocol: TCP
+    targetPort: 9645
+  - name: kafka-default
+    port: 31092
+    protocol: TCP
+    targetPort: 9094
+  - name: http-default
+    port: 30082
+    protocol: TCP
+    targetPort: 8083
+  - name: schema-default
+    port: 30081
+    protocol: TCP
+    targetPort: 8084
+  publishNotReadyAddresses: true
+  selector:
     app.kubernetes.io/component: redpanda-statefulset
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/name: redpanda
     statefulset.kubernetes.io/pod-name: redpanda-0
+  sessionAffinity: None
+  type: LoadBalancer
+status:
+  loadBalancer: {}
 ---
 # Source: redpanda/templates/service.loadbalancer.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: lb-redpanda-1
-  namespace: default
+  annotations: {}
+  creationTimestamp: null
   labels:
     app.kubernetes.io/component: redpanda
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
     helm.sh/chart: redpanda-5.8.8
-    repdanda.com/type: "loadbalancer"
+    repdanda.com/type: loadbalancer
+  name: lb-redpanda-1
+  namespace: default
 spec:
-  type: LoadBalancer
-  publishNotReadyAddresses: true
   externalTrafficPolicy: Local
-  sessionAffinity: None
+  loadBalancerSourceRanges: null
   ports:
-    - name: admin-default
-      protocol: TCP
-      targetPort: 9644
-      port: 31644
-    - name: kafka-default
-      protocol: TCP
-      targetPort: 9094
-      port: 31092
-    - name: http-default
-      protocol: TCP
-      targetPort: 8083
-      port: 30082
-    - name: schema-default
-      protocol: TCP
-      targetPort: 8084
-      port: 30081
-  selector: 
+  - name: admin-default
+    port: 31644
+    protocol: TCP
+    targetPort: 9645
+  - name: kafka-default
+    port: 31092
+    protocol: TCP
+    targetPort: 9094
+  - name: http-default
+    port: 30082
+    protocol: TCP
+    targetPort: 8083
+  - name: schema-default
+    port: 30081
+    protocol: TCP
+    targetPort: 8084
+  publishNotReadyAddresses: true
+  selector:
     app.kubernetes.io/component: redpanda-statefulset
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/name: redpanda
     statefulset.kubernetes.io/pod-name: redpanda-1
+  sessionAffinity: None
+  type: LoadBalancer
+status:
+  loadBalancer: {}
 ---
 # Source: redpanda/templates/service.loadbalancer.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: lb-redpanda-2
-  namespace: default
+  annotations: {}
+  creationTimestamp: null
   labels:
     app.kubernetes.io/component: redpanda
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
     helm.sh/chart: redpanda-5.8.8
-    repdanda.com/type: "loadbalancer"
+    repdanda.com/type: loadbalancer
+  name: lb-redpanda-2
+  namespace: default
 spec:
-  type: LoadBalancer
-  publishNotReadyAddresses: true
   externalTrafficPolicy: Local
-  sessionAffinity: None
+  loadBalancerSourceRanges: null
   ports:
-    - name: admin-default
-      protocol: TCP
-      targetPort: 9644
-      port: 31644
-    - name: kafka-default
-      protocol: TCP
-      targetPort: 9094
-      port: 31092
-    - name: http-default
-      protocol: TCP
-      targetPort: 8083
-      port: 30082
-    - name: schema-default
-      protocol: TCP
-      targetPort: 8084
-      port: 30081
-  selector: 
+  - name: admin-default
+    port: 31644
+    protocol: TCP
+    targetPort: 9645
+  - name: kafka-default
+    port: 31092
+    protocol: TCP
+    targetPort: 9094
+  - name: http-default
+    port: 30082
+    protocol: TCP
+    targetPort: 8083
+  - name: schema-default
+    port: 30081
+    protocol: TCP
+    targetPort: 8084
+  publishNotReadyAddresses: true
+  selector:
     app.kubernetes.io/component: redpanda-statefulset
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/name: redpanda
     statefulset.kubernetes.io/pod-name: redpanda-2
+  sessionAffinity: None
+  type: LoadBalancer
+status:
+  loadBalancer: {}
 ---
 # Source: redpanda/templates/console/configmap-and-deployment.yaml
 apiVersion: apps/v1

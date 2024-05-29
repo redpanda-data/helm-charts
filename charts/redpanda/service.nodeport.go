@@ -27,11 +27,11 @@ import (
 func NodePortService(dot *helmette.Dot) *corev1.Service {
 	values := helmette.Unwrap[Values](dot.Values)
 
-	if !values.External.Enabled || values.External.Type != "NodePort" {
+	if !values.External.Enabled || !values.External.Service.Enabled {
 		return nil
 	}
 
-	if values.External.Service == nil || !values.External.Service.Enabled {
+	if values.External.Type != corev1.ServiceTypeNodePort {
 		return nil
 	}
 
