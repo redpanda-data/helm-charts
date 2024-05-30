@@ -1,7 +1,8 @@
 {{- /* Generated from "directives.go" */ -}}
 
-{{- define "directives.Directives" -}}
+{{- define "_directives.Directives" -}}
 {{- range $_ := (list 1) -}}
+{{- $_ := (get (fromJson (include "_directives.does-something" (dict "a" (list ) ))) "r") -}}
 {{- (dict "r" true) | toJson -}}
 {{- break -}}
 {{- end -}}

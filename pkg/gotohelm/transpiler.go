@@ -18,6 +18,7 @@ import (
 	"golang.org/x/tools/go/packages"
 	"golang.org/x/tools/go/types/typeutil"
 	"k8s.io/client-go/kubernetes/scheme"
+	"k8s.io/utils/ptr"
 )
 
 var directiveRE = regexp.MustCompile(`\+gotohelm:([\w\.-]+)=([\w\.-]+)`)
@@ -61,7 +62,9 @@ func Transpile(pkg *packages.Package) (_ *Chart, err error) {
 		TypesInfo: pkg.TypesInfo,
 		Files:     pkg.Syntax,
 
-		packages: mkPkgTree(pkg),
+		packages:   mkPkgTree(pkg),
+		namespaces: map[*types.Package]string{},
+		names:      map[*types.Func]string{},
 		builtins: map[string]string{
 			"fmt.Sprintf":                "printf",
 			"golang.org/x/exp/maps.Keys": "keys",
@@ -88,6 +91,12 @@ type Transpiler struct {
 	// their builtin equivalent.
 	builtins map[string]string
 	packages map[string]*packages.Package
+	// namespaces is a cache for holding the namespace package directive. It's
+	// exclusively used by `namespaceFor`.
+	namespaces map[*types.Package]string
+	// namespaces is a cache for holding the transpiled name of a function.
+	// It's exclusively used by `funcNameFor`.
+	names map[*types.Func]string
 }
 
 func (t *Transpiler) Transpile() *Chart {
@@ -124,11 +133,6 @@ func (t *Transpiler) transpileFile(f *ast.File) *File {
 		return nil
 	}
 
-	namespace := fileDirectives["namespace"]
-	if namespace == "" {
-		namespace = t.Package.Name
-	}
-
 	var funcs []*Func
 	for _, d := range f.Decls {
 		fn, ok := d.(*ast.FuncDecl)
@@ -138,26 +142,6 @@ func (t *Transpiler) transpileFile(f *ast.File) *File {
 
 		funcDirectives := parseDirectives(fn.Doc.Text())
 		if v, ok := funcDirectives["ignore"]; ok && v == "true" {
-			continue
-		}
-
-		// To not clash with the same method name in the same package
-		// which can be declared in multiple struct the package and function
-		// name could be separated with the name of the struct type.
-		// package example
-		//
-		// func FunExample() {} => {{- define "example.FunExample" -}}
-		//
-		// func (e *Example) MethodExample() {} => {{- define "example.Example.MethodExample" -}}
-		if _, ok := funcDirectives["name"]; !ok {
-			funName := fn.Name.String()
-			if fn.Recv != nil {
-				funName = fmt.Sprintf("%s.%s", baseTypeName(fn.Recv.List[0].Type), funName)
-			}
-			funcDirectives["name"] = funName
-		}
-
-		if _, ok := funcDirectives["sprig"]; ok {
 			continue
 		}
 
@@ -183,8 +167,8 @@ func (t *Transpiler) transpileFile(f *ast.File) *File {
 
 		// TODO add a source field here? Ideally with a line number.
 		funcs = append(funcs, &Func{
-			Name:       funcDirectives["name"],
-			Namespace:  namespace,
+			Name:       t.funcNameFor(t.Package.TypesInfo.ObjectOf(fn.Name).(*types.Func)),
+			Namespace:  t.namespaceFor(t.Package.Types),
 			Params:     params,
 			Statements: statements,
 		})
@@ -195,31 +179,6 @@ func (t *Transpiler) transpileFile(f *ast.File) *File {
 		Source: source,
 		Funcs:  funcs,
 	}
-}
-
-// baseTypeName returns the type name of the Expression
-// Reference
-// https://github.com/golang/go/blob/beaf7f3282c2548267d3c894417cc4ecacc5d575/src/go/doc/reader.go#L123-L145
-func baseTypeName(x ast.Expr) (name string) {
-	switch t := x.(type) {
-	case *ast.Ident:
-		return t.Name
-	case *ast.IndexExpr:
-		return baseTypeName(t.X)
-	case *ast.IndexListExpr:
-		return baseTypeName(t.X)
-	case *ast.SelectorExpr:
-		if _, ok := t.X.(*ast.Ident); ok {
-			// only possible for qualified type names;
-			// assume type is imported
-			return t.Sel.Name
-		}
-	case *ast.ParenExpr:
-		return baseTypeName(t.X)
-	case *ast.StarExpr:
-		return baseTypeName(t.X)
-	}
-	return ""
 }
 
 func (t *Transpiler) transpileStatement(stmt ast.Stmt) Node {
@@ -978,31 +937,29 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 				mutable = true
 			}
 
-			if baseTypeName, ok := typ.(*types.Named); ok {
-				var receiverArg Node
-
-				// When receiver is a pointer then dictionary can be passed as is.
-				// When receiver is not a pointer then dictionary is a deep copied.
-				receiverArg = &BuiltInCall{FuncName: "deepCopy", Arguments: []Node{t.transpileExpr(n.Fun.(*ast.SelectorExpr).X)}}
-				if mutable {
-					receiverArg = t.transpileExpr(n.Fun.(*ast.SelectorExpr).X)
-				}
-
-				return &Call{
-					FuncName: fmt.Sprintf("%s.%s.%s", t.Package.Name, baseTypeName.Obj().Name(), callee.Name()),
-					// Method calls come in as a "top level" CallExpr where .Fun is the
-					// selector up to that call. e.g. `Foo.Bar.Baz()` will be a `CallExpr`.
-					// It's `.Fun` is a `SelectorExpr` where `.X` is `Foo.Bar`, the receiver,
-					// and `.Sel` is `Baz`, the method name.
-					Arguments: append([]Node{receiverArg}, args...),
-				}
+			if _, ok := typ.(*types.Named); !ok {
+				panic(&Unsupported{Fset: t.Fset, Node: n, Msg: "method calls with not pointer type with named type"})
 			}
-			panic(&Unsupported{Fset: t.Fset, Node: n, Msg: "method calls with not pointer type with named type"})
+			var receiverArg Node
+
+			// When receiver is a pointer then dictionary can be passed as is.
+			// When receiver is not a pointer then dictionary is a deep copied.
+			receiverArg = &BuiltInCall{FuncName: "deepCopy", Arguments: []Node{t.transpileExpr(n.Fun.(*ast.SelectorExpr).X)}}
+			if mutable {
+				receiverArg = t.transpileExpr(n.Fun.(*ast.SelectorExpr).X)
+			}
+
+			return &Call{
+				FuncName: fmt.Sprintf("%s.%s", t.namespaceFor(callee.Pkg()), t.funcNameFor(callee.(*types.Func))),
+				// Method calls come in as a "top level" CallExpr where .Fun is the
+				// selector up to that call. e.g. `Foo.Bar.Baz()` will be a `CallExpr`.
+				// It's `.Fun` is a `SelectorExpr` where `.X` is `Foo.Bar`, the receiver,
+				// and `.Sel` is `Baz`, the method name.
+				Arguments: append([]Node{receiverArg}, args...),
+			}
 		}
 
-		// TODO need to support the namespace directive here when it's used
-		// outside of the bootstrap package.
-		call := &Call{FuncName: fmt.Sprintf("%s.%s", t.Package.Name, callee.Name()), Arguments: args}
+		call := &Call{FuncName: fmt.Sprintf("%s.%s", t.namespaceFor(callee.Pkg()), t.funcNameFor(callee.(*types.Func))), Arguments: args}
 
 		// If there's only a single return value, we'll possibly want to wrap
 		// the value in a cast for safety. If there are multiple return values,
@@ -1317,6 +1274,76 @@ func (t *Transpiler) getStructType(typ *types.Struct) (*packages.Package, *ast.S
 	}
 
 	return pack, spec
+}
+
+// namespaceFor returns the "namespace" for the given package that was
+// specified in a gotohelm namespace directive. It defaults to pkg.Name() if
+// not specified.
+func (t *Transpiler) namespaceFor(pkg *types.Package) string {
+	if ns, ok := t.namespaces[pkg]; ok {
+		return ns
+	}
+
+	var namespace *string
+	for _, f := range t.packages[pkg.Path()].Syntax {
+		directives := parseDirectives(f.Doc.Text())
+
+		ns, ok := directives["namespace"]
+		if !ok {
+			continue
+		}
+
+		if namespace != nil {
+			panic(fmt.Sprintf("multiple namespace directives encountered in %q: %q and %q", pkg.Path(), ns, *namespace))
+		}
+
+		namespace = &ns
+	}
+
+	t.namespaces[pkg] = ptr.Deref(namespace, pkg.Name())
+
+	return t.namespaces[pkg]
+}
+
+// funcNameFor returns the transpiled "function" name for a given function
+// taking into account directives and receivers, if any.
+func (t *Transpiler) funcNameFor(fn *types.Func) string {
+	if name, ok := t.names[fn]; ok {
+		return name
+	}
+
+	// TODO should probably make a directives cache if this ever gets to be too
+	// slow.
+	decl := findNearest[*ast.FuncDecl](t.packages[fn.Pkg().Path()], fn.Pos())
+
+	directives := parseDirectives(decl.Doc.Text())
+
+	fnName := fn.Name()
+	if name, ok := directives["name"]; ok {
+		fnName = name
+	}
+
+	// To not clash with the same method name in the same package
+	// which can be declared in multiple struct the package and function
+	// name could be separated with the name of the struct type.
+	// package example
+	//
+	// func FunExample() {} => {{- define "example.FunExample" -}}
+	//
+	// func (e *Example) MethodExample() {} => {{- define "example.Example.MethodExample" -}}
+	if recv := fn.Type().(*types.Signature).Recv(); recv != nil {
+		rtyp := recv.Type()
+
+		if ptr, ok := rtyp.(*types.Pointer); ok {
+			rtyp = ptr.Elem()
+		}
+
+		fnName = fmt.Sprintf("%s.%s", rtyp.(*types.Named).Obj().Name(), fnName)
+	}
+
+	t.names[fn] = fnName
+
+	return fnName
 }
 
 // omitemptyRespected return true if the `omitempty` JSON tag would be
