@@ -136,7 +136,7 @@ func TestTranspile(t *testing.T) {
 		require.NoError(t, ctl.Create(context.Background(), obj))
 	}
 
-	runner := NewGoRunner(t, td)
+	goRunner := NewGoRunner(t, td)
 
 	for _, pkg := range pkgs {
 		pkg := pkg
@@ -202,10 +202,10 @@ func TestTranspile(t *testing.T) {
 					require.NoError(t, err)
 
 					actualJSON, err := helmRunner.Render(ctx, &dot)
-					require.NoError(t, err)
+					require.NoError(t, err, "error from helm runner")
 
-					gocodeJSON, err := runner.Render(ctx, &dot)
-					require.NoError(t, err)
+					gocodeJSON, err := goRunner.Render(ctx, &dot)
+					require.NoError(t, err, "error from go runner")
 
 					if spec.ValuesChanged {
 						require.NotEqual(t, clonedDot, dot)
@@ -351,6 +351,7 @@ func (r *HelmRunner) tplFn(template string, context any) (string, error) {
 }
 
 type GoRunner struct {
+	doneCh   chan struct{}
 	inputCh  chan *helmette.Dot
 	outputCh chan map[string]any
 	cmd      *exec.Cmd
@@ -367,20 +368,19 @@ func NewGoRunner(t *testing.T, root string) *GoRunner {
 
 	runner := &GoRunner{
 		cmd:      cmd,
+		doneCh:   make(chan struct{}),
 		inputCh:  make(chan *helmette.Dot),
 		outputCh: make(chan map[string]any),
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
 	errChan := make(chan error, 1)
 
 	go func() {
-		defer cancel()
-		errChan <- runner.run(ctx)
+		errChan <- runner.run()
 	}()
 
 	t.Cleanup(func() {
-		cancel()
+		close(runner.doneCh)
 		require.NoError(t, <-errChan)
 	})
 
@@ -388,6 +388,21 @@ func NewGoRunner(t *testing.T, root string) *GoRunner {
 }
 
 func (g *GoRunner) Render(ctx context.Context, dot *helmette.Dot) (map[string]any, error) {
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	go func() {
+		// Convoluted way of "joining" the provided context with the internal
+		// doneCh to prevent hanging forever when the runner shuts down. We
+		// need to listen for both ctx and .doneCh as we'd otherwise be leaking
+		// goroutines.
+		defer cancel()
+		select {
+		case <-ctx.Done():
+		case <-g.doneCh:
+		}
+	}()
+
 	select {
 	case g.inputCh <- dot:
 	case <-ctx.Done():
@@ -408,10 +423,7 @@ func (g *GoRunner) Render(ctx context.Context, dot *helmette.Dot) (map[string]an
 	}
 }
 
-func (g *GoRunner) run(ctx context.Context) error {
-	defer close(g.inputCh)
-	defer close(g.outputCh)
-
+func (g *GoRunner) run() error {
 	stdin, err := g.cmd.StdinPipe()
 	if err != nil {
 		return err
@@ -438,7 +450,7 @@ func (g *GoRunner) run(ctx context.Context) error {
 
 		select {
 		case in = <-g.inputCh:
-		case <-ctx.Done():
+		case <-g.doneCh:
 			return nil
 		}
 
@@ -455,7 +467,7 @@ func (g *GoRunner) run(ctx context.Context) error {
 
 		select {
 		case g.outputCh <- out:
-		case <-ctx.Done():
+		case <-g.doneCh:
 			return nil
 		}
 	}
