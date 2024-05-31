@@ -38,7 +38,7 @@
 
 {{- define "sprig.minFunc" -}}
 {{- range $_ := (list 1) -}}
-{{- (dict "r" (list (min -1 (0 | int) (1 | int)) (min (1 | int)) (min (2 | int) (1 | int)) (min (1 | int) (1 | int) (2 | int)))) | toJson -}}
+{{- (dict "r" (list (min -1 (0 | int64) (1 | int64)) (min (1 | int64)) (min (2 | int64) (1 | int64)) (min (1 | int64) (1 | int64) (2 | int64)))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

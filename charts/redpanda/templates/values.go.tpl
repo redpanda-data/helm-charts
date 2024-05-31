@@ -240,7 +240,7 @@
 {{- break -}}
 {{- end -}}
 {{- $minimumFreeBytes := ((mulf (((get (fromJson (include "redpanda.SIToBytes" (dict "a" (list (toString $s.persistentVolume.size)) ))) "r") | int) | float64) 0.05) | float64) -}}
-{{- (dict "r" (min (5368709120 | int) ($minimumFreeBytes | int))) | toJson -}}
+{{- (dict "r" (min (5368709120 | int) ($minimumFreeBytes | int64))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -672,7 +672,7 @@
 {{- if $ok_29 -}}
 {{- $input = ($f_28 | int) -}}
 {{- end -}}
-{{- $_ := (set $result $k (min $input ((sub ((add $r (((mod $r (2 | int)) | int))) | int) (1 | int)) | int))) -}}
+{{- $_ := (set $result $k (min ($input | int64) (((sub ((add $r (((mod $r (2 | int)) | int))) | int) (1 | int)) | int) | int64))) -}}
 {{- continue -}}
 {{- end -}}
 {{- $tmp_tuple_24 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "bool" $v false) ))) "r")) ))) "r") -}}

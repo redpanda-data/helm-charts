@@ -2,9 +2,13 @@ package helmette
 
 import (
 	"math"
+	"reflect"
 	"time"
 
+	"github.com/cockroachdb/errors"
 	"github.com/mitchellh/mapstructure"
+	"github.com/redpanda-data/helm-charts/pkg/valuesutil"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -96,7 +100,7 @@ func AsIntegral[T HelmNumber](value any) (T, bool) {
 // DANGER: Unwrap performs no defaulting or validation. At the helm level, this
 // is transpiled into .Values.AsMap.
 // Callers are responsible for verifying that T is appropriately validated by
-// the charts values.json.schema.
+// the charts values.schema.json.
 func Unwrap[T any](from Values) T {
 	// TODO might be beneficial to have the helm side of this merge values with
 	// a zero value of the struct?
@@ -104,14 +108,22 @@ func Unwrap[T any](from Values) T {
 	decoder, err := mapstructure.NewDecoder(&mapstructure.DecoderConfig{
 		TagName: "json",
 		Result:  &out,
+		DecodeHook: mapstructure.DecodeHookFuncType(func(from, to reflect.Type, val interface{}) (interface{}, error) {
+			switch reflect.New(to).Interface().(type) {
+			case *resource.Quantity:
+				return valuesutil.UnmarshalInto[*resource.Quantity](val)
+			}
+			return val, nil
+		}),
 	})
 	if err != nil {
-		panic(err)
+		panic(errors.WithStack(err))
 	}
 
 	if err := decoder.Decode(from.AsMap()); err != nil {
-		panic(err)
+		panic(errors.WithStack(err))
 	}
+
 	return out
 }
 

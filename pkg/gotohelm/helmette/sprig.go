@@ -33,8 +33,8 @@ func ToYaml(value any) string {
 
 // Min is the go equivalent of sprig's `min`
 // +gotohelm:builtin=min
-func Min(in ...int) int {
-	result := math.MaxInt
+func Min(in ...int64) int64 {
+	result := int64(math.MaxInt64)
 	for _, i := range in {
 		if i < result {
 			result = i

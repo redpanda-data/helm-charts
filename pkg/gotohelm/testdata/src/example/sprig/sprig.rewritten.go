@@ -78,8 +78,8 @@ func trim() []string {
 	}
 }
 
-func minFunc() []int {
-	return []int{
+func minFunc() []int64 {
+	return []int64{
 		// spig Min function does not allow to not pass parameters. Error returned from helm template:
 		// wrong number of args for min: want at least 1 got 0
 		// helmette.Min(),

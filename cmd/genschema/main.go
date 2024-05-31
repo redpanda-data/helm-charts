@@ -10,6 +10,7 @@ import (
 	"github.com/redpanda-data/helm-charts/charts/redpanda"
 	"github.com/redpanda-data/helm-charts/pkg/valuesutil"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 )
 
 func Must[T any](value T, err error) T {
@@ -56,6 +57,13 @@ func main() {
 				return &jsonschema.Schema{
 					Type:    "string",
 					Pattern: "^(0|(([0-9]+)y)?(([0-9]+)w)?(([0-9]+)d)?(([0-9]+)h)?(([0-9]+)m)?(([0-9]+)s)?(([0-9]+)ms)?)$",
+				}
+			case *resource.Quantity:
+				return &jsonschema.Schema{
+					OneOf: []*jsonschema.Schema{
+						{Type: "integer"},
+						{Type: "string", Pattern: "^[0-9]+(\\.[0-9]){0,1}(m|k|M|G|T|P|Ki|Mi|Gi|Ti|Pi)?$"},
+					},
 				}
 			default:
 				return nil

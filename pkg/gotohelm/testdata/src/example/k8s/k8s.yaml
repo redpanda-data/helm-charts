@@ -3,7 +3,7 @@
 {{- define "k8s.K8s" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
-{{- (dict "r" (dict "Objects" (list (get (fromJson (include "k8s.pod" (dict "a" (list ) ))) "r") (get (fromJson (include "k8s.pdb" (dict "a" (list ) ))) "r") (get (fromJson (include "k8s.service" (dict "a" (list ) ))) "r")) "intstr" (list (10 | int) (11 | int) "12") "ptr.Deref" (list ((get (fromJson (include "_shims.ptr_Deref" (dict "a" (list (3 | int) (4 | int)) ))) "r") | int) ((get (fromJson (include "_shims.ptr_Deref" (dict "a" (list (coalesce nil) (3 | int)) ))) "r") | int) (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list "" "oh?") ))) "r")) "ptr.To" (list "hello" (0 | int) (dict )) "ptr.Equal" (list (get (fromJson (include "_shims.ptr_Equal" (dict "a" (list (coalesce nil) (coalesce nil)) ))) "r") (get (fromJson (include "_shims.ptr_Equal" (dict "a" (list (coalesce nil) (3 | int)) ))) "r") (get (fromJson (include "_shims.ptr_Equal" (dict "a" (list (3 | int) (3 | int)) ))) "r")) "lookup" (get (fromJson (include "k8s.lookup" (dict "a" (list $dot) ))) "r") )) | toJson -}}
+{{- (dict "r" (dict "Objects" (list (get (fromJson (include "k8s.pod" (dict "a" (list ) ))) "r") (get (fromJson (include "k8s.pdb" (dict "a" (list ) ))) "r") (get (fromJson (include "k8s.service" (dict "a" (list ) ))) "r")) "intstr" (list (10 | int) (11 | int) "12") "ptr.Deref" (list ((get (fromJson (include "_shims.ptr_Deref" (dict "a" (list (3 | int) (4 | int)) ))) "r") | int) ((get (fromJson (include "_shims.ptr_Deref" (dict "a" (list (coalesce nil) (3 | int)) ))) "r") | int) (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list "" "oh?") ))) "r")) "ptr.To" (list "hello" (0 | int) (dict )) "ptr.Equal" (list (get (fromJson (include "_shims.ptr_Equal" (dict "a" (list (coalesce nil) (coalesce nil)) ))) "r") (get (fromJson (include "_shims.ptr_Equal" (dict "a" (list (coalesce nil) (3 | int)) ))) "r") (get (fromJson (include "_shims.ptr_Equal" (dict "a" (list (3 | int) (3 | int)) ))) "r")) "lookup" (get (fromJson (include "k8s.lookup" (dict "a" (list $dot) ))) "r") "quantity" (get (fromJson (include "k8s.quantity" (dict "a" (list $dot) ))) "r") )) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -43,6 +43,31 @@
 {{- $ok2 := $tmp_tuple_2.T2 -}}
 {{- $sts := $tmp_tuple_2.T1 -}}
 {{- (dict "r" (list $svc $ok1 $sts $ok2)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "k8s.quantity" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $values := $dot.Values.AsMap -}}
+{{- $inputs := (list "10" "100m" "10G" "8Gi" "55Mi" "140k") -}}
+{{- $quantities := (coalesce nil) -}}
+{{- range $_, $in := $inputs -}}
+{{- $quantities = (concat (default (list ) $quantities) (list (get (fromJson (include "_shims.resource_MustParse" (dict "a" (list $in) ))) "r"))) -}}
+{{- end -}}
+{{- if (ne $values.Quantity (coalesce nil)) -}}
+{{- $quantities = (concat (default (list ) $quantities) (list (get (fromJson (include "_shims.resource_MustParse" (dict "a" (list $values.Quantity) ))) "r"))) -}}
+{{- end -}}
+{{- $millis := (coalesce nil) -}}
+{{- $strs := (coalesce nil) -}}
+{{- $value := (coalesce nil) -}}
+{{- range $_, $q := $quantities -}}
+{{- $millis = (concat (default (list ) $millis) (list ((get (fromJson (include "_shims.resource_MilliValue" (dict "a" (list $q) ))) "r") | int64))) -}}
+{{- $strs = (concat (default (list ) $strs) (list (get (fromJson (include "_shims.resource_MustParse" (dict "a" (list $q) ))) "r"))) -}}
+{{- $value = (concat (default (list ) $value) (list ((get (fromJson (include "_shims.resource_Value" (dict "a" (list $q) ))) "r") | int64))) -}}
+{{- end -}}
+{{- (dict "r" (dict "MustParse" $quantities "Value" $value "String" $strs )) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

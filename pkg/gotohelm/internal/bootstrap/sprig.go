@@ -43,3 +43,43 @@ func Mulf(any, any) float64 {
 func Floor(any) float64 {
 	panic("not implemented")
 }
+
+// +gotohelm:builtin=ceil
+func Ceil(any) string {
+	panic("not implemented")
+}
+
+// +gotohelm:builtin=int
+func Int(any) int {
+	panic("not implemented")
+}
+
+// +gotohelm:builtin=int64
+func Int64(any) int64 {
+	panic("not implemented")
+}
+
+// +gotohelm:builtin=float64
+func Float64(any) float64 {
+	panic("not implemented")
+}
+
+// +gotohelm:builtin=regexMatch
+func RegexMatch(string, any) bool {
+	panic("not implemented")
+}
+
+// +gotohelm:builtin=regexFind
+func RegexFind(string, any) string {
+	panic("not implemented")
+}
+
+// +gotohelm:builtin=substr
+func Substr(int, int, any) string {
+	panic("not implemented")
+}
+
+// +gotohelm:builtin=toString
+func ToString(any) string {
+	panic("not implemented")
+}
