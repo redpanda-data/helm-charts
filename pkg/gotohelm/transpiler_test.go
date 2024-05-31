@@ -63,8 +63,19 @@ var testSpecs = map[string]TestSpec{
 	"astrewrites": {},
 	"bootstrap":   {},
 	"directives":  {},
-	"k8s":         {},
-	"mutability":  {},
+	"k8s": {
+		Values: []map[string]any{
+			{},                     // Quantity not specified.
+			{"Quantity": "10"},     // String with no scale.
+			{"Quantity": "10Mi"},   // String with scale.
+			{"Quantity": 500},      // "Integer" (float64 but without a decimal).
+			{"Quantity": 1234.567}, // Float64.
+			// These two values intentionally left disabled. See k8s.go in
+			// examples/ for details.
+			// {"Quantity": 999.110},  // Float64 which rounds down
+			// {"Quantity": 999.999},  // Float64 which rounds up
+		},
+	},
 	"sprig": {
 		Values: []map[string]any{
 			{"numeric": 0},
@@ -222,7 +233,7 @@ func TestTranspile(t *testing.T) {
 					t.Logf("go code output:\n%s", goPretty)
 					t.Logf("template output:\n%s", tplPretty)
 
-					require.Equal(t, gocodeJSON, actualJSON, "Divergence between Go code and generated template")
+					require.Equal(t, gocodeJSON, actualJSON, "Divergence between Go code and generated template\nHint: Go (Expected) is prefixed with -\n      Helm (Actual) is prefixed with +")
 				})
 			}
 		})
@@ -301,13 +312,20 @@ func (r *HelmRunner) includeFn(template string, args ...any) (string, error) {
 		return "", fmt.Errorf("include accepts either 0 or 1 arguments. got: %d", len(args))
 	}
 
-	args = append(args, nil)
-
 	var b bytes.Buffer
 	if err := r.tpl.ExecuteTemplate(&b, template, args[0]); err != nil {
 		return "", err
 	}
-	r.logf("%q(%#v) -> %s", template, args[0], b.String())
+	// Log out a Prettified version of include calls by hacking through the
+	// gotohelm calling conventions. Pull the argument array "a" out of args
+	// and trim the wrapper JSON off the return value (If there is a return
+	// value). If you're debugging gotohelm itself, you may want to remove the
+	// prettification.
+	var res string
+	if b.Len() > 0 {
+		res = b.String()[5 : len(b.String())-1]
+	}
+	r.logf("%s(%#v) -> %s", template, args[0].(map[string]any)["a"], res)
 	return b.String(), nil
 }
 

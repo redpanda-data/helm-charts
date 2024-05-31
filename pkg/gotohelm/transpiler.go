@@ -905,7 +905,29 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 	}
 
 	id := callee.Pkg().Path() + "." + callee.Name()
+
 	signature := t.typeOf(n.Fun).(*types.Signature)
+
+	var reciever Node
+	if recv := callee.Type().(*types.Signature).Recv(); recv != nil {
+		// If a function invocation has a receiver, it's reasonably safe to
+		// assume that it's a SelectorExpr as the form should always be
+		// `mystruct.MyMethod`.
+		// In theory this could panic in the case of something like:
+		// `x := mystruct.MyMethod; x()`
+		// That's not supported any how.
+		reciever = t.transpileExpr(n.Fun.(*ast.SelectorExpr).X)
+
+		recieverName := ""
+		switch x := recv.Type().(type) {
+		case *types.Named:
+			recieverName = x.Obj().Name()
+		case *types.Pointer:
+			recieverName = "*" + x.Elem().(*types.Named).Obj().Name()
+		}
+		// Try to make a string that looks like something from reflect.
+		id = callee.Pkg().Path() + ".(" + recieverName + ")." + callee.Name()
+	}
 
 	// Before checking anything else, search for a +gotohelm:builtin=X
 	// directive. If we find such a directive, we'll emit a BuiltInCall node
@@ -1034,11 +1056,11 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.DictTest":
 		valueType := callee.(*types.Func).Type().(*types.Signature).TypeParams().At(1)
 		return &Call{FuncName: "_shims.dicttest", Arguments: append(args, t.zeroOf(valueType))}
-	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.AsMap":
-		return t.transpileExpr(n.Fun)
 	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.Merge":
 		dict := DictLiteral{}
 		return &BuiltInCall{FuncName: "merge", Arguments: append([]Node{&dict}, args...)}
+	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.(Values).AsMap":
+		return &Selector{Expr: reciever, Field: "AsMap"}
 
 	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.Lookup":
 		// Super ugly but it's fairly safe to assume that the return type of
@@ -1082,6 +1104,31 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 			}
 		}
 		return &Call{FuncName: "_shims.typetest", Arguments: []Node{t.transpileTypeRepr(typ), args[0], t.zeroOf(typ)}}
+
+	// Support for resource.Quantity. In helm world, resource.Quantity is
+	// always represented as it's JSON representation of either a string or a
+	// number with polyfills in the bootstrap package for the following
+	// methods.
+	// WARNING: There is not 100% compatibility and this is on purpose.
+	case "k8s.io/apimachinery/pkg/api/resource.MustParse":
+		return &Call{FuncName: "_shims.resource_MustParse", Arguments: args}
+	case "k8s.io/apimachinery/pkg/api/resource.(*Quantity).Value":
+		return &Cast{To: "int64", X: &Call{FuncName: "_shims.resource_Value", Arguments: append([]Node{reciever}, args...)}}
+	case "k8s.io/apimachinery/pkg/api/resource.(*Quantity).MilliValue":
+		return &Cast{To: "int64", X: &Call{FuncName: "_shims.resource_MilliValue", Arguments: append([]Node{reciever}, args...)}}
+	case "k8s.io/apimachinery/pkg/api/resource.(*Quantity).String":
+		// Similarly to DeepCopy, we're exploit the JSON representation of
+		// resource.Quantity here and rely on MustParse to simply normalize the
+		// representation.
+		return &Call{FuncName: "_shims.resource_MustParse", Arguments: []Node{reciever}}
+	case "k8s.io/apimachinery/pkg/api/resource.(Quantity).DeepCopy":
+		// DeepCopy is supported in a bit of a hacky way. We call "MustParse"
+		// which takes the JSON (string) representation of a resource.Quantity
+		// and parses it returning a new resource.Quantity, which is
+		// functionally equivalent. It has the added benefit of normalizing the
+		// string form of the Quantity.
+		return &Call{FuncName: "_shims.resource_MustParse", Arguments: []Node{reciever}}
+
 	default:
 		panic(fmt.Sprintf("unsupported function %q", id))
 	}

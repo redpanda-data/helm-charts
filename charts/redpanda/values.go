@@ -469,14 +469,14 @@ func (s *Storage) Translate() map[string]any {
 	return result
 }
 
-func (s *Storage) StorageMinFreeBytes() int {
+func (s *Storage) StorageMinFreeBytes() int64 {
 	if s.PersistentVolume != nil && !s.PersistentVolume.Enabled {
 		// Five GiB literal
 		return fiveGiB
 	}
 
 	minimumFreeBytes := float64(SIToBytes(string(s.PersistentVolume.Size))) * 0.05
-	return helmette.Min(fiveGiB, int(minimumFreeBytes))
+	return helmette.Min(fiveGiB, int64(minimumFreeBytes))
 }
 
 type PostInstallJob struct {
@@ -1328,7 +1328,7 @@ func (c *ClusterConfig) Translate(replicas int, skipDefaultTopic bool) map[strin
 				input = int(f)
 			}
 
-			result[k] = helmette.Min(input, r+(r%2)-1)
+			result[k] = helmette.Min(int64(input), int64(r+(r%2)-1))
 			continue
 		}
 

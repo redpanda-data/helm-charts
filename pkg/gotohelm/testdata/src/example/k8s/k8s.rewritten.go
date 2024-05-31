@@ -8,10 +8,15 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	policyv1 "k8s.io/api/policy/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/utils/ptr"
 )
+
+type Values struct {
+	Quantity *resource.Quantity
+}
 
 func K8s(dot *helmette.Dot) map[string]any {
 	return map[string]any{
@@ -42,7 +47,8 @@ func K8s(dot *helmette.Dot) map[string]any {
 			ptr.Equal(nil, ptr.To(3)),
 			ptr.Equal(ptr.To(3), ptr.To(3)),
 		},
-		"lookup": lookup(dot),
+		"lookup":   lookup(dot),
+		"quantity": quantity(dot),
 	}
 }
 
@@ -98,4 +104,56 @@ func lookup(dot *helmette.Dot) []any {
 	sts := tmp_tuple_2.T1
 
 	return []any{svc, ok1, sts, ok2}
+}
+
+func quantity(dot *helmette.Dot) map[string]any {
+	values := helmette.Unwrap[Values](dot.Values)
+
+	inputs := []string{
+		"10",
+		"100m", // 100 "milicores"
+		"10G",
+		"8Gi",
+		"55Mi",
+		"140k",
+		// NB: Fractional values are intentionally left disabled as
+		// resource.Quantity will rewrite these values to a normalized integral
+		// form. This behavior is not required for correctness and therefore is
+		// not (currently) being implemented.
+		// "0.5",
+		// "0.5Gi",
+	}
+
+	var quantities []resource.Quantity
+	for _, in := range inputs {
+		quantities = append(quantities, resource.MustParse(in))
+	}
+
+	if values.Quantity != nil {
+		// NB: This is a bit of a hack. gotohelm's Unwrap will leave .Values
+		// untouched as we expect it to a correct JSON representation of
+		// .Values. This test receives a float64 as input for values.Quantity
+		// which is a valid JSON representation as far as
+		// resource.Quantity.UnmarshalJSON is concerned. However,
+		// resource.Quantity.MarshalJSON always returns a string. To prevent
+		// the test fixture from complaining about the difference, we copy the
+		// quantity so gotohelm will actually transform the value to the go
+		// equivalent.
+		quantities = append(quantities, values.Quantity.DeepCopy())
+	}
+
+	var millis []int64
+	var strs []string
+	var value []int64
+	for _, q := range quantities {
+		millis = append(millis, q.MilliValue())
+		strs = append(strs, q.String())
+		value = append(value, q.Value())
+	}
+
+	return map[string]any{
+		"MustParse": quantities,
+		"Value":     value,
+		"String":    strs,
+	}
 }
