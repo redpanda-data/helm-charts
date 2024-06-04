@@ -29,7 +29,7 @@ func TieredStorageStatic(t *testing.T) redpanda.PartialValues {
 
 	return redpanda.PartialValues{
 		Config: &redpanda.PartialConfig{
-			Node: &redpanda.PartialNodeConfig{
+			Node: redpanda.PartialNodeConfig{
 				"developer_mode": true,
 			},
 		},
@@ -38,7 +38,7 @@ func TieredStorageStatic(t *testing.T) redpanda.PartialValues {
 		},
 		Storage: &redpanda.PartialStorage{
 			Tiered: &redpanda.PartialTiered{
-				Config: &redpanda.PartialTieredStorageConfig{
+				Config: redpanda.PartialTieredStorageConfig{
 					"cloud_storage_enabled":    true,
 					"cloud_storage_region":     "static-region",
 					"cloud_storage_bucket":     "static-bucket",
@@ -73,7 +73,7 @@ func TieredStorageSecretRefs(t *testing.T, secret *corev1.Secret) redpanda.Parti
 	secretKey := "secret"
 	return redpanda.PartialValues{
 		Config: &redpanda.PartialConfig{
-			Node: &redpanda.PartialNodeConfig{
+			Node: redpanda.PartialNodeConfig{
 				"developer_mode": true,
 			},
 		},
@@ -86,7 +86,7 @@ func TieredStorageSecretRefs(t *testing.T, secret *corev1.Secret) redpanda.Parti
 					AccessKey: &redpanda.PartialSecretRef{Name: &secret.Name, Key: &access},
 					SecretKey: &redpanda.PartialSecretRef{Name: &secret.Name, Key: &secretKey},
 				},
-				Config: &redpanda.PartialTieredStorageConfig{
+				Config: redpanda.PartialTieredStorageConfig{
 					"cloud_storage_enabled": true,
 					"cloud_storage_region":  "a-region",
 					"cloud_storage_bucket":  "a-bucket",
@@ -114,7 +114,7 @@ func TestChart(t *testing.T) {
 		rpRelease := env.Install(redpandaChart, helm.InstallOptions{
 			Values: redpanda.PartialValues{
 				Config: &redpanda.PartialConfig{
-					Node: &redpanda.PartialNodeConfig{
+					Node: redpanda.PartialNodeConfig{
 						"developer_mode": true,
 					},
 				},

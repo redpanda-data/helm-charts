@@ -162,7 +162,7 @@ func VersionGoldenTestsCases(t *testing.T) []TemplateTestCase {
 	permutations := []redpanda.PartialValues{
 		{
 			Config: &redpanda.PartialConfig{
-				Tunable: &redpanda.PartialTunableConfig{
+				Tunable: redpanda.PartialTunableConfig{
 					"log_segment_size_min":  100,
 					"log_segment_size_max":  99999,
 					"kafka_batch_max_bytes": 7777,
