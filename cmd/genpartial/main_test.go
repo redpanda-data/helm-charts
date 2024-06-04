@@ -3,8 +3,8 @@ package main
 
 import (
 	"bytes"
+	alias2 "bytes"
 	alias1 "os"
-	alias2 "os"
 	"testing"
 
 	"github.com/redpanda-data/helm-charts/pkg/testutil"
@@ -14,7 +14,7 @@ import (
 
 type (
 	IntAlias          int
-	MapStructAlias    map[string]int
+	MapAlias          map[string]int
 	MapGeneric[T any] map[string]T
 )
 
@@ -24,6 +24,11 @@ type ExampleStruct struct {
 	A2 MapGeneric[NestedStruct]
 	A3 MapGeneric[*NestedStruct]
 	A4 MapGeneric[IntAlias]
+	A5 MapGeneric[MapGeneric[IntAlias]]
+	A6 MapGeneric[MapGeneric[alias1.File]]
+	A7 MapGeneric[MapGeneric[alias1.FileInfo]]
+	A8 GenericStruct[string]
+	A9 GenericStruct[GenericStruct[*int]]
 
 	// BasicTypes
 	B1 int
@@ -44,6 +49,9 @@ type ExampleStruct struct {
 	E1 []any
 	E2 []int
 	E3 []*int
+	E4 []map[string]struct{ Foo string }
+	E5 []map[string]NestedStruct
+	E6 []map[string]GenericStruct[NestedStruct]
 
 	// Tags
 	F1 []*int `json:"L"`
@@ -53,11 +61,22 @@ type ExampleStruct struct {
 	// Struct from another package
 	G1 bytes.Buffer
 	G2 alias1.File
-	G3 alias2.FileMode
+	G3 alias2.Reader
+
+	// Maps
+	H1 map[string]any
+	H2 map[string]NestedStruct
+	H3 map[string]GenericStruct[int]
+	H4 map[string]GenericStruct[NestedStruct]
+	H5 MapAlias
 }
 
 type NestedStruct struct {
 	Map map[string]string
+}
+
+type GenericStruct[T any] struct {
+	Foo T
 }
 
 func TestGenerateParital(t *testing.T) {

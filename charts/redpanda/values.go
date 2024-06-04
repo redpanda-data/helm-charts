@@ -705,7 +705,7 @@ type Config struct {
 	RPK                  map[string]any        `json:"rpk"`
 	SchemaRegistryClient *SchemaRegistryClient `json:"schema_registry_client"`
 	PandaProxyClient     *PandaProxyClient     `json:"pandaproxy_client"`
-	Tunable              *TunableConfig        `json:"tunable" jsonschema:"required"`
+	Tunable              TunableConfig         `json:"tunable" jsonschema:"required"`
 }
 
 func (c *Config) CreateRPKConfiguration() map[string]any {
