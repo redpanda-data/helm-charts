@@ -62,6 +62,14 @@ limitations under the License.
 {{- end -}}
 
 bootstrap.yaml: |
+{{- if .Values.logging.usageStats.enabled }}
+  {{- with (dig "usageStats" "organization" "" .Values.logging) }}
+  organization: {{ . }}
+  {{- end }}
+  {{- with (dig "usageStats" "clusterId" "" .Values.logging) }}
+  cluster_id: {{ . }}
+  {{- end }}
+{{- end }}
   kafka_enable_authorization: {{ (include "sasl-enabled" . | fromJson).bool }}
   enable_sasl: {{ (include "sasl-enabled" . | fromJson).bool }}
   enable_rack_awareness: {{ .Values.rackAwareness.enabled }}
@@ -134,15 +142,15 @@ bootstrap.yaml: |
 
 redpanda.yaml: |
   config_file: /etc/redpanda/redpanda.yaml
+  redpanda:
 {{- if .Values.logging.usageStats.enabled }}
   {{- with (dig "usageStats" "organization" "" .Values.logging) }}
-  organization: {{ . }}
+    organization: {{ . }}
   {{- end }}
   {{- with (dig "usageStats" "clusterId" "" .Values.logging) }}
-  cluster_id: {{ . }}
+    cluster_id: {{ . }}
   {{- end }}
 {{- end }}
-  redpanda:
 {{- if (include "redpanda-atleast-22-3-0" . | fromJson).bool }}
     empty_seed_starts_cluster: false
 {{- end }}

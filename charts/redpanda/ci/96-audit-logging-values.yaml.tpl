@@ -35,3 +35,7 @@ console:
     registry: redpandadata
     repository: console-unstable
     tag: master-8a51854
+
+logging:
+  usageStats:
+    clusterId: cluster-id-test
