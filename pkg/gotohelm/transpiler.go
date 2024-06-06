@@ -148,8 +148,20 @@ func (t *Transpiler) transpileFile(f *ast.File) *File {
 		}
 
 		funcDirectives := parseDirectives(fn.Doc.Text())
+		// To not clash with the same method name in the same package
+		// which can be declared in multiple struct the package and function
+		// name could be separated with the name of the struct type.
+		// package example
+		//
+		// func FunExample() {} => {{- define "example.FunExample" -}}
+		//
+		// func (e *Example) MethodExample() {} => {{- define "example.Example.MethodExample" -}}
 		if _, ok := funcDirectives["name"]; !ok {
-			funcDirectives["name"] = fn.Name.String()
+			funName := fn.Name.String()
+			if fn.Recv != nil {
+				funName = fmt.Sprintf("%s.%s", baseTypeName(fn.Recv.List[0].Type), funName)
+			}
+			funcDirectives["name"] = funName
 		}
 
 		if _, ok := funcDirectives["sprig"]; ok {
@@ -157,6 +169,14 @@ func (t *Transpiler) transpileFile(f *ast.File) *File {
 		}
 
 		var params []Node
+		if fn.Recv != nil {
+			for _, param := range fn.Recv.List {
+				for _, name := range param.Names {
+					params = append(params, t.transpileExpr(name))
+				}
+			}
+		}
+
 		for _, param := range fn.Type.Params.List {
 			for _, name := range param.Names {
 				params = append(params, t.transpileExpr(name))
@@ -182,6 +202,31 @@ func (t *Transpiler) transpileFile(f *ast.File) *File {
 		Source: source,
 		Funcs:  funcs,
 	}
+}
+
+// baseTypeName returns the type name of the Expression
+// Reference
+// https://github.com/golang/go/blob/beaf7f3282c2548267d3c894417cc4ecacc5d575/src/go/doc/reader.go#L123-L145
+func baseTypeName(x ast.Expr) (name string) {
+	switch t := x.(type) {
+	case *ast.Ident:
+		return t.Name
+	case *ast.IndexExpr:
+		return baseTypeName(t.X)
+	case *ast.IndexListExpr:
+		return baseTypeName(t.X)
+	case *ast.SelectorExpr:
+		if _, ok := t.X.(*ast.Ident); ok {
+			// only possible for qualified type names;
+			// assume type is imported
+			return t.Sel.Name
+		}
+	case *ast.ParenExpr:
+		return baseTypeName(t.X)
+	case *ast.StarExpr:
+		return baseTypeName(t.X)
+	}
+	return ""
 }
 
 func (t *Transpiler) transpileStatement(stmt ast.Stmt) Node {
@@ -851,18 +896,6 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 		}
 	}
 
-	// Method call.
-	if callee.Type().(*types.Signature).Recv() != nil {
-		if len(args) != 0 {
-			panic(&Unsupported{Fset: t.Fset, Node: n, Msg: "method calls with arguments are not implemented"})
-		}
-		// Method calls come in as a "top level" CallExpr where .Fun is the
-		// selector up to that call. IE all of `Foo.Bar.Baz()` will be "within"
-		// the CallExpr. CallExpr.Fun will contain Foo.Bar.Baz. In the case of
-		// zero argument methods, text/template will automatically call them.
-		return t.transpileExpr(n.Fun)
-	}
-
 	id := callee.Pkg().Path() + "." + callee.Name()
 	signature := t.typeOf(n.Fun).(*types.Signature)
 
@@ -912,6 +945,26 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 	// This is intentionally after the builtins check to support our bootstrap
 	// package's builtin bindings.
 	if callee.Pkg().Path() == t.Package.PkgPath {
+		// Method call.
+		if r := callee.Type().(*types.Signature).Recv(); r != nil {
+			if len(args) != 0 {
+				panic(&Unsupported{Fset: t.Fset, Node: n, Msg: "method calls with arguments are not implemented"})
+			}
+
+			if typeName, ok := r.Type().(*types.Pointer); ok {
+				if baseTypeName, ok := typeName.Elem().(*types.Named); ok {
+					return &Call{
+						FuncName: fmt.Sprintf("%s.%s.%s", t.Package.Name, baseTypeName.Obj().Name(), callee.Name()),
+						// Method calls come in as a "top level" CallExpr where .Fun is the
+						// selector up to that call. e.g. `Foo.Bar.Baz()` will be a `CallExpr`.
+						// It's `.Fun` is a `SelectorExpr` where `.X` is `Foo.Bar`, the receiver,
+						// and `.Sel` is `Baz`, the method name.
+						Arguments: []Node{t.transpileExpr(n.Fun.(*ast.SelectorExpr).X)},
+					}
+				}
+			}
+			panic(&Unsupported{Fset: t.Fset, Node: n, Msg: "method calls with not pointer type with named type"})
+		}
 		// TODO need to support the namespace directive here when it's used
 		// outside of the bootstrap package.
 		call := &Call{FuncName: fmt.Sprintf("%s.%s", t.Package.Name, callee.Name()), Arguments: args}
@@ -962,6 +1015,8 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.DictTest":
 		valueType := callee.(*types.Func).Type().(*types.Signature).TypeParams().At(1)
 		return &Call{FuncName: "_shims.dicttest", Arguments: append(args, t.zeroOf(valueType))}
+	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.AsMap":
+		return t.transpileExpr(n.Fun)
 	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.Merge":
 		dict := DictLiteral{}
 		return &BuiltInCall{FuncName: "merge", Arguments: append([]Node{&dict}, args...)}

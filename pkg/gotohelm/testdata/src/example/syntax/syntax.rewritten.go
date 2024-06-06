@@ -61,6 +61,28 @@ func Syntax() map[string]any {
 		"negativeNumbers": []int{-2, -4},
 		"forExpr":         forExpr(10),
 		"binaryExprs":     binaryExprs(),
+		"instance-method": instanceMethod(),
+	}
+}
+
+type TestStruct struct {
+	TestBoolean bool
+}
+
+func (ts *TestStruct) InstanceMethod() bool {
+	return ts.TestBoolean
+}
+
+func instanceMethod() any {
+	t := TestStruct{
+		TestBoolean: true,
+	}
+	f := TestStruct{
+		TestBoolean: false,
+	}
+	return []bool{
+		t.InstanceMethod(),
+		f.InstanceMethod(),
 	}
 }
 
