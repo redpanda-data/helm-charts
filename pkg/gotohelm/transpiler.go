@@ -947,20 +947,37 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 	if callee.Pkg().Path() == t.Package.PkgPath {
 		// Method call.
 		if r := callee.Type().(*types.Signature).Recv(); r != nil {
-			if typeName, ok := r.Type().(*types.Pointer); ok {
-				if baseTypeName, ok := typeName.Elem().(*types.Named); ok {
-					return &Call{
-						FuncName: fmt.Sprintf("%s.%s.%s", t.Package.Name, baseTypeName.Obj().Name(), callee.Name()),
-						// Method calls come in as a "top level" CallExpr where .Fun is the
-						// selector up to that call. e.g. `Foo.Bar.Baz()` will be a `CallExpr`.
-						// It's `.Fun` is a `SelectorExpr` where `.X` is `Foo.Bar`, the receiver,
-						// and `.Sel` is `Baz`, the method name.
-						Arguments: append([]Node{t.transpileExpr(n.Fun.(*ast.SelectorExpr).X)}, args...),
-					}
+			typ := r.Type()
+
+			mutable := false
+			switch typ.(type) {
+			case *types.Pointer:
+				typ = typ.(*types.Pointer).Elem()
+				mutable = true
+			}
+
+			if baseTypeName, ok := typ.(*types.Named); ok {
+				var receiverArg Node
+
+				// When receiver is a pointer then dictionary can be passed as is.
+				// When receiver is not a pointer then dictionary is a deep copied.
+				receiverArg = &BuiltInCall{FuncName: "deepCopy", Arguments: []Node{t.transpileExpr(n.Fun.(*ast.SelectorExpr).X)}}
+				if mutable {
+					receiverArg = t.transpileExpr(n.Fun.(*ast.SelectorExpr).X)
+				}
+
+				return &Call{
+					FuncName: fmt.Sprintf("%s.%s.%s", t.Package.Name, baseTypeName.Obj().Name(), callee.Name()),
+					// Method calls come in as a "top level" CallExpr where .Fun is the
+					// selector up to that call. e.g. `Foo.Bar.Baz()` will be a `CallExpr`.
+					// It's `.Fun` is a `SelectorExpr` where `.X` is `Foo.Bar`, the receiver,
+					// and `.Sel` is `Baz`, the method name.
+					Arguments: append([]Node{receiverArg}, args...),
 				}
 			}
 			panic(&Unsupported{Fset: t.Fset, Node: n, Msg: "method calls with not pointer type with named type"})
 		}
+
 		// TODO need to support the namespace directive here when it's used
 		// outside of the bootstrap package.
 		call := &Call{FuncName: fmt.Sprintf("%s.%s", t.Package.Name, callee.Name()), Arguments: args}

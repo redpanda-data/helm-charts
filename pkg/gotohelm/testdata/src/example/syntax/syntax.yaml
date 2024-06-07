@@ -28,6 +28,22 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "syntax.TestStruct.MutateString" -}}
+{{- $ts := (index .a 0) -}}
+{{- $input := (index .a 1) -}}
+{{- range $_ := (list 1) -}}
+{{- $_ := (set $ts "SomeString" $input) -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "syntax.TestStruct.DoNotMutateString" -}}
+{{- $ts := (index .a 0) -}}
+{{- $input := (index .a 1) -}}
+{{- range $_ := (list 1) -}}
+{{- $_ := (set $ts "SomeString" $input) -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "syntax.TestStruct.Double" -}}
 {{- $ts := (index .a 0) -}}
 {{- $input := (index .a 1) -}}
@@ -54,11 +70,23 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "syntax.TestStruct.String" -}}
+{{- $ts := (index .a 0) -}}
+{{- $arg1 := (index .a 1) -}}
+{{- $arg2 := (index .a 2) -}}
+{{- range $_ := (list 1) -}}
+{{- (dict "r" (printf $ts.SomeString $arg1 $arg2)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "syntax.instanceMethod" -}}
 {{- range $_ := (list 1) -}}
-{{- $t := (mustMergeOverwrite (dict "TestBoolean" false "Mult" 0 ) (dict "TestBoolean" true "Mult" (4 | int) )) -}}
-{{- $f := (mustMergeOverwrite (dict "TestBoolean" false "Mult" 0 ) (dict "TestBoolean" false "Mult" (5 | int) )) -}}
-{{- (dict "r" (list (get (fromJson (include "syntax.TestStruct.InstanceMethod" (dict "a" (list $t) ))) "r") (get (fromJson (include "syntax.TestStruct.InstanceMethod" (dict "a" (list $f) ))) "r") (get (fromJson (include "syntax.TestStruct.Double" (dict "a" (list $t (2 | int)) ))) "r") (get (fromJson (include "syntax.TestStruct.Double" (dict "a" (list $t (4 | int)) ))) "r") (get (fromJson (include "syntax.TestStruct.Multiplayer" (dict "a" (list $t (6 | int)) ))) "r") (get (fromJson (include "syntax.TestStruct.Multiplayer" (dict "a" (list $f (6 | int)) ))) "r"))) | toJson -}}
+{{- $t := (mustMergeOverwrite (dict "TestBoolean" false "Mult" 0 "SomeString" "" ) (dict "TestBoolean" true "Mult" (4 | int) "SomeString" "%s and %s" )) -}}
+{{- $f := (mustMergeOverwrite (dict "TestBoolean" false "Mult" 0 "SomeString" "" ) (dict "TestBoolean" false "Mult" (5 | int) )) -}}
+{{- $_ := (get (fromJson (include "syntax.TestStruct.MutateString" (dict "a" (list $f "Change string") ))) "r") -}}
+{{- $_ := (get (fromJson (include "syntax.TestStruct.DoNotMutateString" (dict "a" (list (deepCopy $f) "do not change") ))) "r") -}}
+{{- (dict "r" (list (get (fromJson (include "syntax.TestStruct.InstanceMethod" (dict "a" (list $t) ))) "r") (get (fromJson (include "syntax.TestStruct.InstanceMethod" (dict "a" (list $f) ))) "r") (get (fromJson (include "syntax.TestStruct.Double" (dict "a" (list $t (2 | int)) ))) "r") (get (fromJson (include "syntax.TestStruct.Double" (dict "a" (list $t (4 | int)) ))) "r") (get (fromJson (include "syntax.TestStruct.Multiplayer" (dict "a" (list $t (6 | int)) ))) "r") (get (fromJson (include "syntax.TestStruct.Multiplayer" (dict "a" (list $f (6 | int)) ))) "r") (get (fromJson (include "syntax.TestStruct.String" (dict "a" (list (deepCopy $t) "one" "two") ))) "r") (eq $f.SomeString "Change string"))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

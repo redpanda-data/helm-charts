@@ -65,6 +65,15 @@ func Syntax() map[string]any {
 type TestStruct struct {
 	TestBoolean bool
 	Mult        int
+	SomeString  string
+}
+
+func (ts *TestStruct) MutateString(input string) {
+	ts.SomeString = input
+}
+
+func (ts TestStruct) DoNotMutateString(input string) {
+	ts.SomeString = input
 }
 
 func (ts *TestStruct) Double(input int) int {
@@ -79,15 +88,23 @@ func (ts *TestStruct) InstanceMethod() bool {
 	return ts.TestBoolean
 }
 
+func (ts TestStruct) String(arg1, arg2 string) string {
+	return fmt.Sprintf(ts.SomeString, arg1, arg2)
+}
+
 func instanceMethod() any {
 	t := TestStruct{
 		TestBoolean: true,
 		Mult:        4,
+		SomeString:  "%s and %s",
 	}
 	f := TestStruct{
 		TestBoolean: false,
 		Mult:        5,
 	}
+
+	f.MutateString("Change string")
+	f.DoNotMutateString("do not change")
 	return []any{
 		t.InstanceMethod(),
 		f.InstanceMethod(),
@@ -95,6 +112,8 @@ func instanceMethod() any {
 		t.Double(4),
 		t.Multiplayer(6),
 		f.Multiplayer(6),
+		t.String("one", "two"),
+		f.SomeString == "Change string",
 	}
 }
 
