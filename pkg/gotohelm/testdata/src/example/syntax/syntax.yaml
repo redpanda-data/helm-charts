@@ -28,6 +28,24 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "syntax.TestStruct.Double" -}}
+{{- $ts := (index .a 0) -}}
+{{- $input := (index .a 1) -}}
+{{- range $_ := (list 1) -}}
+{{- (dict "r" ((mul $input (2 | int)) | int)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "syntax.TestStruct.Multiplayer" -}}
+{{- $ts := (index .a 0) -}}
+{{- $input := (index .a 1) -}}
+{{- range $_ := (list 1) -}}
+{{- (dict "r" ((mul $input ($ts.Mult | int)) | int)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "syntax.TestStruct.InstanceMethod" -}}
 {{- $ts := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
@@ -38,9 +56,9 @@
 
 {{- define "syntax.instanceMethod" -}}
 {{- range $_ := (list 1) -}}
-{{- $t := (mustMergeOverwrite (dict "TestBoolean" false ) (dict "TestBoolean" true )) -}}
-{{- $f := (mustMergeOverwrite (dict "TestBoolean" false ) (dict "TestBoolean" false )) -}}
-{{- (dict "r" (list (get (fromJson (include "syntax.TestStruct.InstanceMethod" (dict "a" (list $t) ))) "r") (get (fromJson (include "syntax.TestStruct.InstanceMethod" (dict "a" (list $f) ))) "r"))) | toJson -}}
+{{- $t := (mustMergeOverwrite (dict "TestBoolean" false "Mult" 0 ) (dict "TestBoolean" true "Mult" (4 | int) )) -}}
+{{- $f := (mustMergeOverwrite (dict "TestBoolean" false "Mult" 0 ) (dict "TestBoolean" false "Mult" (5 | int) )) -}}
+{{- (dict "r" (list (get (fromJson (include "syntax.TestStruct.InstanceMethod" (dict "a" (list $t) ))) "r") (get (fromJson (include "syntax.TestStruct.InstanceMethod" (dict "a" (list $f) ))) "r") (get (fromJson (include "syntax.TestStruct.Double" (dict "a" (list $t (2 | int)) ))) "r") (get (fromJson (include "syntax.TestStruct.Double" (dict "a" (list $t (4 | int)) ))) "r") (get (fromJson (include "syntax.TestStruct.Multiplayer" (dict "a" (list $t (6 | int)) ))) "r") (get (fromJson (include "syntax.TestStruct.Multiplayer" (dict "a" (list $f (6 | int)) ))) "r"))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
