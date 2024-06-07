@@ -947,10 +947,6 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 	if callee.Pkg().Path() == t.Package.PkgPath {
 		// Method call.
 		if r := callee.Type().(*types.Signature).Recv(); r != nil {
-			if len(args) != 0 {
-				panic(&Unsupported{Fset: t.Fset, Node: n, Msg: "method calls with arguments are not implemented"})
-			}
-
 			if typeName, ok := r.Type().(*types.Pointer); ok {
 				if baseTypeName, ok := typeName.Elem().(*types.Named); ok {
 					return &Call{
@@ -959,7 +955,7 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 						// selector up to that call. e.g. `Foo.Bar.Baz()` will be a `CallExpr`.
 						// It's `.Fun` is a `SelectorExpr` where `.X` is `Foo.Bar`, the receiver,
 						// and `.Sel` is `Baz`, the method name.
-						Arguments: []Node{t.transpileExpr(n.Fun.(*ast.SelectorExpr).X)},
+						Arguments: append([]Node{t.transpileExpr(n.Fun.(*ast.SelectorExpr).X)}, args...),
 					}
 				}
 			}

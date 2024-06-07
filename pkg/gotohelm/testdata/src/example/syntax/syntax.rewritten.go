@@ -67,6 +67,15 @@ func Syntax() map[string]any {
 
 type TestStruct struct {
 	TestBoolean bool
+	Mult        int
+}
+
+func (ts *TestStruct) Double(input int) int {
+	return input * 2
+}
+
+func (ts *TestStruct) Multiplayer(input int) int {
+	return input * ts.Mult
 }
 
 func (ts *TestStruct) InstanceMethod() bool {
@@ -76,13 +85,19 @@ func (ts *TestStruct) InstanceMethod() bool {
 func instanceMethod() any {
 	t := TestStruct{
 		TestBoolean: true,
+		Mult:        4,
 	}
 	f := TestStruct{
 		TestBoolean: false,
+		Mult:        5,
 	}
-	return []bool{
+	return []any{
 		t.InstanceMethod(),
 		f.InstanceMethod(),
+		t.Double(2),
+		t.Double(4),
+		t.Multiplayer(6),
+		f.Multiplayer(6),
 	}
 }
 
