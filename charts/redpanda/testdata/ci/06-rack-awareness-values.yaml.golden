@@ -524,91 +524,99 @@ data:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: redpanda
+  annotations: {}
+  creationTimestamp: null
   labels:
     app.kubernetes.io/component: redpanda
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
     helm.sh/chart: redpanda-5.8.11
+  name: redpanda
 rules:
-  - apiGroups:
-    - ""
-    resources:
-      - nodes
-    verbs:
-      - get
-      - list
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - get
+  - list
 ---
 # Source: redpanda/templates/rbac.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: redpanda-rpk-bundle
+  annotations: {}
+  creationTimestamp: null
   labels:
     app.kubernetes.io/component: redpanda
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
     helm.sh/chart: redpanda-5.8.11
+  name: redpanda-rpk-bundle
 rules:
-  - apiGroups:
-    - ""
-    resources:
-      - configmaps
-      - endpoints
-      - events
-      - limitranges
-      - persistentvolumeclaims
-      - pods
-      - pods/log
-      - replicationcontrollers
-      - resourcequotas
-      - serviceaccounts
-      - services
-    verbs:
-      - get
-      - list
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  - endpoints
+  - events
+  - limitranges
+  - persistentvolumeclaims
+  - pods
+  - pods/log
+  - replicationcontrollers
+  - resourcequotas
+  - serviceaccounts
+  - services
+  verbs:
+  - get
+  - list
 ---
 # Source: redpanda/templates/rbac.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: redpanda
+  annotations: {}
+  creationTimestamp: null
   labels:
     app.kubernetes.io/component: redpanda
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
     helm.sh/chart: redpanda-5.8.11
+  name: redpanda
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: redpanda
 subjects:
-  - kind: ServiceAccount
-    name: redpanda
-    namespace: "default"
+- kind: ServiceAccount
+  name: redpanda
+  namespace: default
 ---
 # Source: redpanda/templates/rbac.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: redpanda-rpk-bundle
+  annotations: {}
+  creationTimestamp: null
   labels:
     app.kubernetes.io/component: redpanda
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
     helm.sh/chart: redpanda-5.8.11
+  name: redpanda-rpk-bundle
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: redpanda-rpk-bundle
 subjects:
-  - kind: ServiceAccount
-    name: redpanda
-    namespace: "default"
+- kind: ServiceAccount
+  name: redpanda
+  namespace: default
 ---
 # Source: redpanda/charts/console/templates/service.yaml
 apiVersion: v1
