@@ -543,6 +543,7 @@ type Statefulset struct {
 				Repository string   `json:"repository" jsonschema:"required,default=docker.redpanda.com/redpandadata/redpanda-operator"`
 			} `json:"image"`
 			Enabled         bool                    `json:"enabled"`
+			CreateRBAC      bool                    `json:"createRBAC"`
 			Resources       any                     `json:"resources"`
 			SecurityContext *corev1.SecurityContext `json:"securityContext"`
 		} `json:"controllers"`

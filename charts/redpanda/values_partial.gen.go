@@ -6,7 +6,7 @@
 package redpanda
 
 import (
-	cmmeta "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
+	cmmetav1 "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -235,6 +235,7 @@ type PartialStatefulset struct {
 				Repository *string   "json:\"repository,omitempty\" jsonschema:\"required,default=docker.redpanda.com/redpandadata/redpanda-operator\""
 			} "json:\"image,omitempty\""
 			Enabled         *bool                   "json:\"enabled,omitempty\""
+			CreateRBAC      *bool                   "json:\"createRBAC,omitempty\""
 			Resources       any                     "json:\"resources,omitempty\""
 			SecurityContext *corev1.SecurityContext "json:\"securityContext,omitempty\""
 		} "json:\"controllers,omitempty\""
@@ -441,7 +442,7 @@ type PartialTLSCert struct {
 	CAEnabled             *bool                        "json:\"caEnabled,omitempty\" jsonschema:\"required\""
 	ApplyInternalDNSNames *bool                        "json:\"applyInternalDNSNames,omitempty\""
 	Duration              *string                      "json:\"duration,omitempty\" jsonschema:\"pattern=.*[smh]$\""
-	IssuerRef             *cmmeta.ObjectReference      "json:\"issuerRef,omitempty\""
+	IssuerRef             *cmmetav1.ObjectReference    "json:\"issuerRef,omitempty\""
 	SecretRef             *corev1.LocalObjectReference "json:\"secretRef,omitempty\""
 }
 
