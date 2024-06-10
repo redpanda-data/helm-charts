@@ -3,13 +3,16 @@ package syntax
 
 import (
 	"fmt"
+	"math"
+
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	corev1 "k8s.io/api/core/v1"
 )
 
 const (
-	AStrConst  = "1234"
-	AnIntConst = 1234
+	AStrConst           = "1234"
+	AnIntConst          = 1234
+	ARationalFloatConst = 0.1
 )
 
 // Syntax only returns an empty map but it contains a variety of go syntax to
@@ -37,11 +40,13 @@ func Syntax() map[string]any {
 	slice := sliceExpr()
 
 	// Ident
-	_ = AStrConst  // A reference to a string constant
-	_ = AnIntConst // A reference to an int constant
+	_ = AStrConst           // A reference to a string constant
+	_ = AnIntConst          // A reference to an int constant
+	_ = ARationalFloatConst // A reference to a rational float constant
 
 	// SelectorExpr
 	_ = corev1.IPv4Protocol // A reference to an imported constant
+	_ = math.E              // reference to an irrational float constant
 
 	// TypeAssertExpr
 	var x any
