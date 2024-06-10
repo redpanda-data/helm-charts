@@ -16,7 +16,9 @@
 {{- $slice := (get (fromJson (include "syntax.sliceExpr" (dict "a" (list ) ))) "r") -}}
 {{- $_ = "1234" -}}
 {{- $_ = 1234 -}}
+{{- $_ = 0.1 -}}
 {{- $_ = "IPv4" -}}
+{{- $_ = 2.718281828459045 -}}
 {{- $x := (coalesce nil) -}}
 {{- $_ = (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "int" $x 0) ))) "r")) ))) "r") -}}
 {{- $_ = (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list (printf "[]%s" "interface {}") $x (coalesce nil)) ))) "r")) ))) "r") -}}

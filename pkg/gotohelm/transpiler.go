@@ -5,6 +5,7 @@ import (
 	_ "embed"
 	"fmt"
 	"go/ast"
+	"go/constant"
 	"go/format"
 	"go/token"
 	"go/types"
@@ -561,12 +562,7 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 	case *ast.Ident:
 		switch obj := t.TypesInfo.ObjectOf(n).(type) {
 		case *types.Const:
-			// We could include definitions to constants and then reference
-			// them. For now, it's easier to turn constants into their
-			// definitions.
-			return &Literal{
-				Value: obj.Val().ExactString(),
-			}
+			return t.transpileConst(obj)
 
 		case *types.Nil:
 			return &Nil{}
@@ -593,12 +589,7 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 	case *ast.SelectorExpr:
 		switch obj := t.TypesInfo.ObjectOf(n.Sel).(type) {
 		case *types.Const:
-			// We could include definitions to constants and then reference
-			// them. For now, it's easier to turn constants into their
-			// definitions.
-			return &Literal{
-				Value: obj.Val().ExactString(),
-			}
+			return t.transpileConst(obj)
 
 		case *types.Func:
 			// TODO this needs better documentation
@@ -620,8 +611,8 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 			for _, f := range t.getFields(typ.Underlying().(*types.Struct)) {
 				if f.Field.Name() == n.Sel.Name {
 					return &Selector{
-						Expr:  t.transpileExpr(n.X),
-						Field: f.JSONName(),
+						Expr:    t.transpileExpr(n.X),
+						Field:   f.JSONName(),
 						Inlined: f.JSONInline(),
 					}
 				}
@@ -1031,6 +1022,28 @@ func (t *Transpiler) transpileTypeRepr(typ types.Type) Node {
 		}
 	}
 	panic(fmt.Sprintf("unsupported type: %v", typ))
+}
+
+func (t *Transpiler) transpileConst(c *types.Const) Node {
+	// We could include definitions to constants and then reference
+	// them. For now, it's easier to turn constants into their
+	// definitions.
+
+	if c.Val().Kind() != constant.Float {
+		return &Literal{Value: c.Val().ExactString()}
+	}
+
+	// Floats are a bit weird. Go may store them as a quotient in some cases to
+	// have an exact version of the value. .ExactString() will return the
+	// quotient form (e.g. 0.1 is "1/10"). .String() will return a possibly
+	// truncated value. The only other option is to get the value as a float64.
+	// The second return value here is reporting if this is an exact
+	// representation. It will be false for values like e, pi, and 0.1. That is
+	// to say, there's not a reasonable way to handle it returning false. Given
+	// that go's float64 values have the exact same problem, we're going to
+	// ignore it for now and hope it's not a terrible mistake.
+	as64, _ := constant.Float64Val(c.Val())
+	return &Literal{Value: strconv.FormatFloat(as64, 'f', -1, 64)}
 }
 
 func (t *Transpiler) isString(e ast.Expr) bool {
