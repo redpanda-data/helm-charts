@@ -963,14 +963,14 @@ spec:
               name: redpanda-default-cert
             - mountPath: /etc/tls/certs/external
               name: redpanda-external-cert
-            - name: config
-              mountPath: /etc/redpanda
-            - name: redpanda
-              mountPath: /tmp/base-config
-            - name: lifecycle-scripts
-              mountPath: /var/lifecycle
-            - name: datadir
-              mountPath: /var/lib/redpanda/data
+            - mountPath: /etc/redpanda
+              name: config
+            - mountPath: /tmp/base-config
+              name: redpanda
+            - mountPath: /var/lifecycle
+              name: lifecycle-scripts
+            - mountPath: /var/lib/redpanda/data
+              name: datadir
           resources:
             limits:
               cpu: 1
@@ -1002,28 +1002,28 @@ spec:
             secretName: redpanda-external-cert
         - name: lifecycle-scripts
           secret:
+            defaultMode: 509
             secretName: redpanda-sts-lifecycle
-            defaultMode: 0o775
+        - configMap:
+            name: redpanda
+          name: redpanda
+        - emptyDir: {}
+          name: config
+        - name: redpanda-configurator
+          secret:
+            defaultMode: 509
+            secretName: redpanda-configurator
+        - name: redpanda-config-watcher
+          secret:
+            defaultMode: 509
+            secretName: redpanda-config-watcher
+        - name: redpanda-fs-validator
+          secret:
+            defaultMode: 509
+            secretName: redpanda-fs-validator
         - name: datadir
           persistentVolumeClaim:
             claimName: datadir
-        - name: redpanda
-          configMap:
-            name: redpanda
-        - name: config
-          emptyDir: {}
-        - name: redpanda-configurator
-          secret:
-            secretName: redpanda-configurator
-            defaultMode: 0o775
-        - name: redpanda-config-watcher
-          secret:
-            secretName: redpanda-config-watcher
-            defaultMode: 0o775
-        - name: redpanda-fs-validator
-          secret:
-            secretName: redpanda-fs-validator
-            defaultMode: 0o775
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: topology.kubernetes.io/zone
