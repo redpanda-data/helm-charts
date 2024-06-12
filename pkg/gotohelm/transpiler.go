@@ -35,9 +35,11 @@ func (u *Unsupported) Error() string {
 	var b bytes.Buffer
 	fmt.Fprintf(&b, "unsupported ast.Node: %T\n", u.Node)
 	fmt.Fprintf(&b, "%s\n", u.Msg)
+	fmt.Fprintf(&b, "%s\n\t", u.Fset.PositionFor(u.Node.Pos(), false).String())
 	if err := format.Node(&b, u.Fset, u.Node); err != nil {
 		panic(err) // Oh the irony
 	}
+
 	return b.String()
 }
 
