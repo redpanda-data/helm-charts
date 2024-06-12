@@ -23,6 +23,7 @@ import (
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/utils/ptr"
 )
 
 const (
@@ -148,4 +149,85 @@ func StatefulSetPodAnnotations(dot *helmette.Dot, configMapChecksum string) map[
 	}
 
 	return helmette.Merge(values.Statefulset.Annotations, configMapChecksumAnnotation)
+}
+
+// StatefulSetVolumes returns the [corev1.Volume]s for the Redpanda StatefulSet.
+func StatefulSetVolumes(dot *helmette.Dot) []corev1.Volume {
+	volumes := CommonVolumes(dot)
+
+	fullname := Fullname(dot)
+
+	// NOTE extraVolumes, datadir, and tiered-storage-dir are NOT in this
+	// function. TODO: Migrate them into this function.
+	volumes = append(volumes, []corev1.Volume{
+		{
+			Name: "lifecycle-scripts",
+			VolumeSource: corev1.VolumeSource{
+				Secret: &corev1.SecretVolumeSource{
+					SecretName:  fmt.Sprintf("%.50s-sts-lifecycle", fullname),
+					DefaultMode: ptr.To[int32](0o775),
+				},
+			},
+		},
+		{
+			Name: fullname,
+			VolumeSource: corev1.VolumeSource{
+				ConfigMap: &corev1.ConfigMapVolumeSource{
+					LocalObjectReference: corev1.LocalObjectReference{Name: fullname},
+				},
+			},
+		},
+		{
+			Name: "config",
+			VolumeSource: corev1.VolumeSource{
+				EmptyDir: &corev1.EmptyDirVolumeSource{},
+			},
+		},
+		{
+			Name: fmt.Sprintf("%.51s-configurator", fullname),
+			VolumeSource: corev1.VolumeSource{
+				Secret: &corev1.SecretVolumeSource{
+					SecretName:  fmt.Sprintf("%.51s-configurator", fullname),
+					DefaultMode: ptr.To[int32](0o775),
+				},
+			},
+		},
+		{
+			Name: fmt.Sprintf("%s-config-watcher", fullname),
+			VolumeSource: corev1.VolumeSource{
+				Secret: &corev1.SecretVolumeSource{
+					SecretName:  fmt.Sprintf("%s-config-watcher", fullname),
+					DefaultMode: ptr.To[int32](0o775),
+				},
+			},
+		},
+		{
+			Name: fmt.Sprintf("%.49s-fs-validator", fullname),
+			VolumeSource: corev1.VolumeSource{
+				Secret: &corev1.SecretVolumeSource{
+					SecretName:  fmt.Sprintf("%.49s-fs-validator", fullname),
+					DefaultMode: ptr.To[int32](0o775),
+				},
+			},
+		},
+	}...)
+
+	return volumes
+}
+
+// StatefulSetRedpandaMounts returns the VolumeMounts for the Redpanda
+// Container of the Redpanda StatefulSet.
+func StatefulSetVolumeMounts(dot *helmette.Dot) []corev1.VolumeMount {
+	mounts := CommonMounts(dot)
+
+	// NOTE extraVolumeMounts and tiered-storage-dir are still handled in helm.
+	// TODO: Migrate them into this function.
+	mounts = append(mounts, []corev1.VolumeMount{
+		{Name: "config", MountPath: "/etc/redpanda"},
+		{Name: Fullname(dot), MountPath: "/tmp/base-config"},
+		{Name: "lifecycle-scripts", MountPath: "/var/lifecycle"},
+		{Name: "datadir", MountPath: "/var/lib/redpanda/data"},
+	}...)
+
+	return mounts
 }
