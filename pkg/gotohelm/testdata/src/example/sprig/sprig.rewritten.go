@@ -34,6 +34,7 @@ func Sprig(dot *helmette.Dot) map[string]any {
 		"trim":       trim(),
 		"unset":      unset(),
 		"yaml":       yaml(),
+		"tpl":        tpl(),
 	}
 }
 
@@ -45,6 +46,14 @@ func yaml() any {
 		}),
 		helmette.ToYaml(map[string]string{}),
 		helmette.ToYaml([]string{"test", "test2"}),
+	}
+}
+
+func tpl() []string {
+	return []string{
+		helmette.Tpl(`hello world`, nil),
+		helmette.Tpl(`{{ .Foo }}`, map[string]any{"Foo": "bar"}),
+		helmette.Tpl(`{{ . }}`, 3),
 	}
 }
 

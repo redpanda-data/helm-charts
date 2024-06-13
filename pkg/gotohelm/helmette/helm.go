@@ -1,7 +1,9 @@
 package helmette
 
 import (
+	"bytes"
 	"context"
+	"text/template"
 
 	"github.com/redpanda-data/helm-charts/pkg/kube"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -50,7 +52,12 @@ func (v Values) AsMap() map[string]any {
 // https://helm.sh/docs/howto/charts_tips_and_tricks/#using-the-tpl-function
 // +gotohelm:builtin=tpl
 func Tpl(tpl string, context any) string {
-	panic("not yet implemented in Go")
+	var b bytes.Buffer
+	tmpl := template.Must(template.New("").Parse(tpl))
+	if err := tmpl.Execute(&b, context); err != nil {
+		panic(err)
+	}
+	return b.String()
 }
 
 // Lookup is a wrapper around helm's builtin lookup function that instead

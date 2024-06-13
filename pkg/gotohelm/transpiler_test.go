@@ -251,6 +251,7 @@ func NewHelmRunner(chartName, chartDir string, cfg *kube.RESTConfig, logf func(s
 	funcs["include"] = runner.includeFn
 	funcs["lookup"] = runner.lookupFn
 	funcs["toYaml"] = helmette.ToYaml
+	funcs["tpl"] = runner.tplFn
 
 	runner.tpl = runner.tpl.Funcs(funcs)
 
@@ -327,6 +328,26 @@ func (r *HelmRunner) lookupFn(apiVersion, kind, namespace, name string) (map[str
 
 	// Convert into an unstructured object the fun way.
 	return valuesutil.UnmarshalInto[map[string]any](obj)
+}
+
+// tplFn is a poorman's implement of `tpl`.
+// See https://github.com/helm/helm/blob/15f76cf83c670a329b62c2b5ddeb0864ec99daec/pkg/engine/engine.go#L148
+func (r *HelmRunner) tplFn(template string, context any) (string, error) {
+	t, err := r.tpl.Clone()
+	if err != nil {
+		return "", err
+	}
+
+	t, err = t.Parse(template)
+	if err != nil {
+		return "", err
+	}
+
+	var b bytes.Buffer
+	if err := t.Execute(&b, context); err != nil {
+		return "", err
+	}
+	return b.String(), nil
 }
 
 type GoRunner struct {
