@@ -81,7 +81,8 @@ func TestPostInstallUpgradeEnvironmentVariables(t *testing.T) {
 						"cloud_storage_azure_shared_key":      "fake-shared-key",
 						"cloud_storage_azure_container":       "fake-azure-container",
 						"cloud_storage_azure_storage_account": "fake-storage-account",
-					}}},
+					},
+				}},
 			},
 			expectedEnvVars: []corev1.EnvVar{
 				{Name: "RPK_CLOUD_STORAGE_ENABLED", Value: "true"},
@@ -129,7 +130,8 @@ func TestPostInstallUpgradeEnvironmentVariables(t *testing.T) {
 						"cloud_storage_azure_shared_key":      "fake-shared-key",
 						"cloud_storage_azure_container":       nil,
 						"cloud_storage_azure_storage_account": nil,
-					}}},
+					},
+				}},
 			},
 			expectedEnvVars: []corev1.EnvVar{
 				{Name: "RPK_CLOUD_STORAGE_ENABLED", Value: "true"},
@@ -143,7 +145,8 @@ func TestPostInstallUpgradeEnvironmentVariables(t *testing.T) {
 						"cloud_storage_enabled":    true,
 						"cloud_storage_secret_key": "fake-secret-key",
 						"cloud_storage_access_key": "fake-access-key",
-					}}},
+					},
+				}},
 			},
 			expectedEnvVars: []corev1.EnvVar{
 				{Name: "RPK_CLOUD_STORAGE_ENABLED", Value: "true"},
@@ -195,7 +198,8 @@ func TestPostInstallUpgradeEnvironmentVariables(t *testing.T) {
 						"cloud_storage_secret_key":                      "fake-secret-key",
 						"cloud_storage_segment_max_upload_interval_sec": 1,
 						"cloud_storage_cache_size":                      "20Gi",
-					}}},
+					},
+				}},
 			},
 			expectedEnvVars: []corev1.EnvVar{
 				{Name: "RPK_CLOUD_STORAGE_ENABLED", Value: "true"},
@@ -226,7 +230,8 @@ func TestPostInstallUpgradeEnvironmentVariables(t *testing.T) {
 					Config: TieredStorageConfig{
 						"cloud_storage_enabled": true,
 						"invalid-configuration": nil,
-					}}},
+					},
+				}},
 			},
 			expectedEnvVars: []corev1.EnvVar{
 				{Name: "RPK_CLOUD_STORAGE_ENABLED", Value: "true"},

@@ -22,9 +22,6 @@ import (
 
 var directiveRE = regexp.MustCompile(`\+gotohelm:([\w\.-]+)=([\w\.-]+)`)
 
-//go:embed bootstrap.go
-var bootstrap string
-
 type Unsupported struct {
 	Node ast.Node
 	Msg  string
@@ -119,9 +116,8 @@ func (t *Transpiler) Transpile() *Chart {
 
 func (t *Transpiler) transpileFile(f *ast.File) *File {
 	path := t.Fset.File(f.Pos()).Name()
-	name := filepath.Base(path)
 	source := filepath.Base(path)
-	name = source[:len(source)-3] + ".yaml"
+	name := source[:len(source)-3] + ".yaml"
 
 	isTestFile := strings.HasSuffix(name, "_test.go")
 	if isTestFile || name == "main.go" {
@@ -952,9 +948,9 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 			typ := r.Type()
 
 			mutable := false
-			switch typ.(type) {
+			switch t := typ.(type) {
 			case *types.Pointer:
-				typ = typ.(*types.Pointer).Elem()
+				typ = t.Elem()
 				mutable = true
 			}
 
@@ -1143,13 +1139,6 @@ func (t *Transpiler) transpileConst(c *types.Const) Node {
 
 func (t *Transpiler) isString(e ast.Expr) bool {
 	return types.AssignableTo(t.TypesInfo.TypeOf(e), types.Typ[types.String])
-}
-
-func (t *Transpiler) isBasic(e ast.Expr, typ types.BasicKind) bool {
-	if b, ok := t.typeOf(e).(*types.Basic); ok && b.Kind() == typ {
-		return true
-	}
-	return false
 }
 
 func (t *Transpiler) typeOf(expr ast.Expr) types.Type {

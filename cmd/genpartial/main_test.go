@@ -1,3 +1,4 @@
+//lint:file-ignore ST1019 duplicate imports are on purpose
 package main
 
 import (

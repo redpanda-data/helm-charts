@@ -343,7 +343,7 @@ type Statefulset struct {
 		InitialDelaySeconds int `json:"initialDelaySeconds" jsonschema:"required"`
 		FailureThreshold    int `json:"failureThreshold" jsonschema:"required"`
 		PeriodSeconds       int `json:"periodSeconds" jsonschema:"required"`
-	} `json:"startupProbe" jsonschema:"required" jsonschema:"required"`
+	} `json:"startupProbe" jsonschema:"required"`
 	LivenessProbe struct {
 		InitialDelaySeconds int `json:"initialDelaySeconds" jsonschema:"required"`
 		FailureThreshold    int `json:"failureThreshold" jsonschema:"required"`
