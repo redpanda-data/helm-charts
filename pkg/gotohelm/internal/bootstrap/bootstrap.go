@@ -14,6 +14,8 @@
 //
 // +gotohelm:filename=_shims.tpl
 // +gotohelm:namespace=_shims
+//
+//lint:file-ignore U1000 Ignore all unused code, it's exported into gotohelm templates
 package bootstrap
 
 import (

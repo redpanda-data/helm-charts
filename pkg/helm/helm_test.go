@@ -15,6 +15,7 @@ func TestHelm(t *testing.T) {
 	configDir := path.Join(t.TempDir(), "helm-1")
 
 	c, err := helm.New(helm.Options{ConfigHome: configDir})
+	require.NoError(t, err)
 
 	repos := []helm.Repo{
 		{Name: "redpanda", URL: "https://charts.redpanda.com"},

@@ -40,7 +40,7 @@ func TestGenerate(t *testing.T) {
 		}, cfg); err != nil {
 			err := err.(*quick.CheckError)
 			schema := err.In[0].(*jsonschema.Schema)
-			instance := err.In[1].(any)
+			instance := err.In[1]
 
 			t.Logf("Schema: %#v", schema)
 			t.Logf("Invalid Generated Value: %#v", instance)

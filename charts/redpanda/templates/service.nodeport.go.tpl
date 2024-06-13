@@ -14,7 +14,7 @@
 {{- end -}}
 {{- $ports := (list ) -}}
 {{- range $name, $listener := $values.listeners.admin.external -}}
-{{- if (and (ne $listener.enabled (coalesce nil)) (eq $listener.enabled false)) -}}
+{{- if (and (ne $listener.enabled (coalesce nil)) (not $listener.enabled)) -}}
 {{- continue -}}
 {{- end -}}
 {{- $nodePort := ($listener.port | int) -}}
@@ -24,7 +24,7 @@
 {{- $ports = (mustAppend $ports (mustMergeOverwrite (dict "port" 0 "targetPort" 0 ) (dict "name" (printf "admin-%s" $name) "protocol" "TCP" "port" ($listener.port | int) "nodePort" $nodePort ))) -}}
 {{- end -}}
 {{- range $name, $listener := $values.listeners.kafka.external -}}
-{{- if (and (ne $listener.enabled (coalesce nil)) (eq $listener.enabled false)) -}}
+{{- if (and (ne $listener.enabled (coalesce nil)) (not $listener.enabled)) -}}
 {{- continue -}}
 {{- end -}}
 {{- $nodePort := ($listener.port | int) -}}
@@ -34,7 +34,7 @@
 {{- $ports = (mustAppend $ports (mustMergeOverwrite (dict "port" 0 "targetPort" 0 ) (dict "name" (printf "kafka-%s" $name) "protocol" "TCP" "port" ($listener.port | int) "nodePort" $nodePort ))) -}}
 {{- end -}}
 {{- range $name, $listener := $values.listeners.http.external -}}
-{{- if (and (ne $listener.enabled (coalesce nil)) (eq $listener.enabled false)) -}}
+{{- if (and (ne $listener.enabled (coalesce nil)) (not $listener.enabled)) -}}
 {{- continue -}}
 {{- end -}}
 {{- $nodePort := ($listener.port | int) -}}
@@ -44,7 +44,7 @@
 {{- $ports = (mustAppend $ports (mustMergeOverwrite (dict "port" 0 "targetPort" 0 ) (dict "name" (printf "http-%s" $name) "protocol" "TCP" "port" ($listener.port | int) "nodePort" $nodePort ))) -}}
 {{- end -}}
 {{- range $name, $listener := $values.listeners.schemaRegistry.external -}}
-{{- if (and (ne $listener.enabled (coalesce nil)) (eq $listener.enabled false)) -}}
+{{- if (and (ne $listener.enabled (coalesce nil)) (not $listener.enabled)) -}}
 {{- continue -}}
 {{- end -}}
 {{- $nodePort := ($listener.port | int) -}}

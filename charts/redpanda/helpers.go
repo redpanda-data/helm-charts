@@ -55,7 +55,7 @@ func Fullname(dot *helmette.Dot) string {
 	if override, ok := dot.Values["fullnameOverride"].(string); ok && override != "" {
 		return cleanForK8s(override)
 	}
-	return cleanForK8s(fmt.Sprintf("%s", dot.Release.Name))
+	return cleanForK8s(dot.Release.Name)
 }
 
 // full helm labels + common labels
@@ -260,7 +260,7 @@ func CommonVolumes(dot *helmette.Dot) []corev1.Volume {
 				Name: fmt.Sprintf("redpanda-%s-cert", name),
 				VolumeSource: corev1.VolumeSource{
 					Secret: &corev1.SecretVolumeSource{
-						SecretName: CertSecretName(dot, name, &cert),
+						SecretName:  CertSecretName(dot, name, &cert),
 						DefaultMode: ptr.To[int32](0o440),
 					},
 				},
@@ -272,7 +272,7 @@ func CommonVolumes(dot *helmette.Dot) []corev1.Volume {
 				Name: "mtls-client",
 				VolumeSource: corev1.VolumeSource{
 					Secret: &corev1.SecretVolumeSource{
-						SecretName: fmt.Sprintf("%s-client", Fullname(dot)),
+						SecretName:  fmt.Sprintf("%s-client", Fullname(dot)),
 						DefaultMode: ptr.To[int32](0o440),
 					},
 				},

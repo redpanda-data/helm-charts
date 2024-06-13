@@ -14,10 +14,10 @@ import (
 // tripped through the redpanda.PartialValues structs (sans comments of
 // course).
 func TestPartialValuesRoundTrip(t *testing.T) {
+	t.Skip("Currently failing due to missing fields within our schema.")
+
 	values, err := os.ReadDir("./ci")
 	require.NoError(t, err)
-
-	t.Skip("Currently failing due to missing fields within our schema.")
 
 	for _, v := range values {
 		v := v

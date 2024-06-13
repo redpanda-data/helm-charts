@@ -42,6 +42,8 @@
               pkgs.git
               pkgs.go
               pkgs.go-task
+              pkgs.go-tools
+              pkgs.gofumpt
               pkgs.helm-docs
               pkgs.jq # CLI JSON swiss army knife
               pkgs.kind

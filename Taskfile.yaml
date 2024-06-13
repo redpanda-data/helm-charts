@@ -57,6 +57,7 @@ tasks:
   ci:lint:
     cmds:
       - task: generate
+      - gofumpt -w .
       # Fail on any generated diffs.
       - git diff --exit-code
       # Actually run linters.
@@ -66,7 +67,7 @@ tasks:
       - .github/check-ci-files.sh charts/kminion/ci
       - .github/check-ci-files.sh charts/operator/ci
       - .github/check-ci-files.sh charts/redpanda/ci
-      - go vet ./...
+      - staticcheck ./...
 
   generate:
     desc: "Run all file generation tasks"

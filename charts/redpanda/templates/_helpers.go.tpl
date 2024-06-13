@@ -33,7 +33,7 @@
 {{- (dict "r" (get (fromJson (include "redpanda.cleanForK8s" (dict "a" (list $override_3) ))) "r")) | toJson -}}
 {{- break -}}
 {{- end -}}
-{{- (dict "r" (get (fromJson (include "redpanda.cleanForK8s" (dict "a" (list (printf "%s" $dot.Release.Name)) ))) "r")) | toJson -}}
+{{- (dict "r" (get (fromJson (include "redpanda.cleanForK8s" (dict "a" (list $dot.Release.Name) ))) "r")) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
