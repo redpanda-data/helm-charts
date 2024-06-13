@@ -1,6 +1,6 @@
 module github.com/redpanda-data/helm-charts
 
-go 1.21.5
+go 1.22.4
 
 require (
 	github.com/Masterminds/sprig/v3 v3.2.3
