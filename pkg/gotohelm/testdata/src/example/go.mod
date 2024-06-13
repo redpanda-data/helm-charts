@@ -1,6 +1,6 @@
 module example.com/example
 
-go 1.21.5
+go 1.22.4
 
 require (
 	github.com/redpanda-data/helm-charts v0.0.0-00010101000000-000000000000
