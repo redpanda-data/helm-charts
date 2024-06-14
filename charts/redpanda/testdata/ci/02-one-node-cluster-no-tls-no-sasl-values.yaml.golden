@@ -3,8 +3,7 @@
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name: redpanda
-  namespace: default
+  creationTimestamp: null
   labels:
     app.kubernetes.io/component: redpanda
     app.kubernetes.io/instance: redpanda
@@ -12,14 +11,21 @@ metadata:
     app.kubernetes.io/name: redpanda
     helm.sh/chart: redpanda-5.8.8
     testlabel: exercise_common_labels_template
+  name: redpanda
+  namespace: default
 spec:
   maxUnavailable: 1
   selector:
-    matchLabels: 
+    matchLabels:
       app.kubernetes.io/component: redpanda-statefulset
       app.kubernetes.io/instance: redpanda
       app.kubernetes.io/name: redpanda
       redpanda.com/poddisruptionbudget: redpanda
+status:
+  currentHealthy: 0
+  desiredHealthy: 0
+  disruptionsAllowed: 0
+  expectedPods: 0
 ---
 # Source: redpanda/charts/console/templates/serviceaccount.yaml
 apiVersion: v1
