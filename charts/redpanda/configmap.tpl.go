@@ -377,22 +377,28 @@ func kafkaClient(dot *helmette.Dot) map[string]any {
 }
 
 func configureListeners(redpanda map[string]any, dot *helmette.Dot) {
-	redpanda["admin"] = adminListeners(dot)
+	values := helmette.Unwrap[Values](dot.Values)
+
+	redpanda["admin"] = values.Listeners.Admin.Listeners()
+	redpanda["kafka_api"] = values.Listeners.Kafka.Listeners(&values.Auth)
+	redpanda["rpc_server"] = rpcListeners(dot)
+
+	// Backwards compatibility layer, if any of the *_tls keys are an empty
+	// slice, they should instead be nil.
+
 	redpanda["admin_api_tls"] = nil
-	tls := adminListenersTLS(dot)
-	if len(tls) > 0 {
+	if tls := values.Listeners.Admin.ListenersTLS(&values.TLS); len(tls) > 0 {
 		redpanda["admin_api_tls"] = tls
 	}
-	redpanda["kafka_api"] = kafkaListeners(dot)
+
 	redpanda["kafka_api_tls"] = nil
-	tls = kafkaListenersTLS(dot)
-	if len(tls) > 0 {
+	if tls := values.Listeners.Kafka.ListenersTLS(&values.TLS); len(tls) > 0 {
 		redpanda["kafka_api_tls"] = tls
 	}
-	redpanda["rpc_server"] = rpcListeners(dot)
-	rpcTLS := rpcListenersTLS(dot)
-	if len(rpcTLS) > 0 {
-		redpanda["rpc_server_tls"] = rpcTLS
+
+	// With the exception of rpc_server_tls, it should just not be specified.
+	if tls := rpcListenersTLS(dot); len(tls) > 0 {
+		redpanda["rpc_server_tls"] = tls
 	}
 }
 
@@ -402,41 +408,11 @@ func pandaProxyListener(dot *helmette.Dot) map[string]any {
 	pandaProxy := map[string]any{}
 
 	pandaProxy["pandaproxy_api"] = values.Listeners.HTTP.Listeners(values.Auth.IsSASLEnabled())
-	tls := pandaProxyListenersTLS(dot)
 	pandaProxy["pandaproxy_api_tls"] = nil
-	if len(tls) > 0 {
+	if tls := values.Listeners.HTTP.ListenersTLS(&values.TLS); len(tls) > 0 {
 		pandaProxy["pandaproxy_api_tls"] = tls
 	}
 	return pandaProxy
-}
-
-func pandaProxyListenersTLS(dot *helmette.Dot) []map[string]any {
-	values := helmette.Unwrap[Values](dot.Values)
-
-	pp := []map[string]any{}
-
-	internal := createInternalListenerTLSCfg(&values.TLS, values.Listeners.HTTP.TLS)
-	if len(internal) > 0 {
-		pp = append(pp, internal)
-	}
-
-	for k, l := range values.Listeners.HTTP.External {
-		if !l.IsEnabled() || !l.TLS.IsEnabled(&values.Listeners.HTTP.TLS, &values.TLS) {
-			continue
-		}
-
-		certName := l.TLS.GetCertName(&values.Listeners.HTTP.TLS)
-
-		pp = append(pp, map[string]any{
-			"name":                k,
-			"enabled":             true,
-			"cert_file":           fmt.Sprintf("/etc/tls/certs/%s/tls.crt", certName),
-			"key_file":            fmt.Sprintf("/etc/tls/certs/%s/tls.key", certName),
-			"require_client_auth": ptr.Deref(l.TLS.RequireClientAuth, false),
-			"truststore_file":     getCertificate(&values.TLS.Certs, certName),
-		})
-	}
-	return pp
 }
 
 func schemaRegistry(dot *helmette.Dot) map[string]any {
@@ -445,41 +421,11 @@ func schemaRegistry(dot *helmette.Dot) map[string]any {
 	schemaReg := map[string]any{}
 
 	schemaReg["schema_registry_api"] = values.Listeners.SchemaRegistry.Listeners(values.Auth.IsSASLEnabled())
-	tls := schemaRegistryListenersTLS(dot)
 	schemaReg["schema_registry_api_tls"] = nil
-	if len(tls) > 0 {
+	if tls := values.Listeners.SchemaRegistry.ListenersTLS(&values.TLS); len(tls) > 0 {
 		schemaReg["schema_registry_api_tls"] = tls
 	}
 	return schemaReg
-}
-
-func schemaRegistryListenersTLS(dot *helmette.Dot) []map[string]any {
-	values := helmette.Unwrap[Values](dot.Values)
-
-	sr := []map[string]any{}
-
-	internal := createInternalListenerTLSCfg(&values.TLS, values.Listeners.SchemaRegistry.TLS)
-	if len(internal) > 0 {
-		sr = append(sr, internal)
-	}
-
-	for k, l := range values.Listeners.SchemaRegistry.External {
-		if !l.IsEnabled() || !l.TLS.IsEnabled(&values.Listeners.SchemaRegistry.TLS, &values.TLS) {
-			continue
-		}
-
-		certName := l.TLS.GetCertName(&values.Listeners.SchemaRegistry.TLS)
-
-		sr = append(sr, map[string]any{
-			"name":                k,
-			"enabled":             true,
-			"cert_file":           fmt.Sprintf("/etc/tls/certs/%s/tls.crt", certName),
-			"key_file":            fmt.Sprintf("/etc/tls/certs/%s/tls.key", certName),
-			"require_client_auth": ptr.Deref(l.TLS.RequireClientAuth, false),
-			"truststore_file":     getCertificate(&values.TLS.Certs, certName),
-		})
-	}
-	return sr
 }
 
 func rpcListenersTLS(dot *helmette.Dot) map[string]any {
@@ -511,35 +457,6 @@ func rpcListeners(dot *helmette.Dot) map[string]any {
 	}
 }
 
-func kafkaListenersTLS(dot *helmette.Dot) []map[string]any {
-	values := helmette.Unwrap[Values](dot.Values)
-
-	kafka := []map[string]any{}
-
-	internal := createInternalListenerTLSCfg(&values.TLS, values.Listeners.Kafka.TLS)
-	if len(internal) > 0 {
-		kafka = append(kafka, internal)
-	}
-
-	for k, l := range values.Listeners.Kafka.External {
-		if !l.IsEnabled() || !l.TLS.IsEnabled(&values.Listeners.Kafka.TLS, &values.TLS) {
-			continue
-		}
-
-		certName := l.TLS.GetCertName(&values.Listeners.Kafka.TLS)
-
-		kafka = append(kafka, map[string]any{
-			"name":                k,
-			"enabled":             true,
-			"cert_file":           fmt.Sprintf("/etc/tls/certs/%s/tls.crt", certName),
-			"key_file":            fmt.Sprintf("/etc/tls/certs/%s/tls.key", certName),
-			"require_client_auth": ptr.Deref(l.TLS.RequireClientAuth, false),
-			"truststore_file":     getCertificate(&values.TLS.Certs, certName),
-		})
-	}
-	return kafka
-}
-
 func getCertificate(certs *TLSCertMap, certName string) string {
 	defaultTruststorePath := "/etc/ssl/certs/ca-certificates.crt"
 	// TLSCertMap is not defined inside each listener as TLSCertMap can be shared
@@ -558,77 +475,6 @@ func getCertificate(certs *TLSCertMap, certName string) string {
 		panic(fmt.Sprintf("Certificate name reference (%s) defined in listener, but not found in the tls.certs map", certName))
 	}
 	return defaultTruststorePath
-}
-
-func kafkaListeners(dot *helmette.Dot) []map[string]any {
-	values := helmette.Unwrap[Values](dot.Values)
-
-	kf := values.Listeners.Kafka
-	internal := createInternalListenerCfg(values.Listeners.Kafka.Port)
-
-	if values.Auth.IsSASLEnabled() {
-		internal["authentication_method"] = "sasl"
-	}
-
-	if am := ptr.Deref(kf.AuthenticationMethod, ""); am != "" {
-		internal["authentication_method"] = am
-	}
-
-	kafka := []map[string]any{
-		internal,
-	}
-
-	for k, l := range kf.External {
-		if !l.IsEnabled() {
-			continue
-		}
-
-		listener := map[string]any{
-			"name":    k,
-			"port":    l.Port,
-			"address": "0.0.0.0",
-		}
-
-		if values.Auth.IsSASLEnabled() {
-			listener["authentication_method"] = "sasl"
-		}
-
-		if am := ptr.Deref(l.AuthenticationMethod, ""); am != "" {
-			listener["authentication_method"] = am
-		}
-
-		kafka = append(kafka, listener)
-	}
-	return kafka
-}
-
-func adminListenersTLS(dot *helmette.Dot) []map[string]any {
-	values := helmette.Unwrap[Values](dot.Values)
-
-	admin := []map[string]any{}
-
-	internal := createInternalListenerTLSCfg(&values.TLS, values.Listeners.Admin.TLS)
-	if len(internal) > 0 {
-		admin = append(admin, internal)
-	}
-
-	for k, l := range values.Listeners.Admin.External {
-		if !l.IsEnabled() || !l.TLS.IsEnabled(&values.Listeners.Admin.TLS, &values.TLS) {
-			continue
-		}
-
-		certName := l.TLS.GetCertName(&values.Listeners.Admin.TLS)
-
-		admin = append(admin, map[string]any{
-			"name":                k,
-			"enabled":             true,
-			"cert_file":           fmt.Sprintf("/etc/tls/certs/%s/tls.crt", certName),
-			"key_file":            fmt.Sprintf("/etc/tls/certs/%s/tls.key", certName),
-			"require_client_auth": ptr.Deref(l.TLS.RequireClientAuth, false),
-			"truststore_file":     getCertificate(&values.TLS.Certs, certName),
-		})
-	}
-	return admin
 }
 
 // First parameter defaultTLSEnabled must come from `values.tls.enabled`.
@@ -653,26 +499,6 @@ func createInternalListenerCfg(port int) map[string]any {
 		"address": "0.0.0.0",
 		"port":    port,
 	}
-}
-
-func adminListeners(dot *helmette.Dot) []map[string]any {
-	values := helmette.Unwrap[Values](dot.Values)
-
-	admin := []map[string]any{
-		createInternalListenerCfg(values.Listeners.Admin.Port),
-	}
-	for k, l := range values.Listeners.Admin.External {
-		if !l.IsEnabled() {
-			continue
-		}
-
-		admin = append(admin, map[string]any{
-			"name":    k,
-			"port":    l.Port,
-			"address": "0.0.0.0",
-		})
-	}
-	return admin
 }
 
 // RedpandaAdditionalStartFlags returns a string list of flags suitable for use

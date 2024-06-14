@@ -834,6 +834,52 @@ type AdminListeners struct {
 	TLS      InternalTLS                      `json:"tls" jsonschema:"required"`
 }
 
+func (l *AdminListeners) Listeners() []map[string]any {
+	admin := []map[string]any{
+		createInternalListenerCfg(l.Port),
+	}
+
+	for k, lis := range l.External {
+		if !lis.IsEnabled() {
+			continue
+		}
+
+		admin = append(admin, map[string]any{
+			"name":    k,
+			"port":    lis.Port,
+			"address": "0.0.0.0",
+		})
+	}
+	return admin
+}
+
+func (l *AdminListeners) ListenersTLS(tls *TLS) []map[string]any {
+	admin := []map[string]any{}
+
+	internal := createInternalListenerTLSCfg(tls, l.TLS)
+	if len(internal) > 0 {
+		admin = append(admin, internal)
+	}
+
+	for k, lis := range l.External {
+		if !lis.IsEnabled() || !lis.TLS.IsEnabled(&l.TLS, tls) {
+			continue
+		}
+
+		certName := lis.TLS.GetCertName(&l.TLS)
+
+		admin = append(admin, map[string]any{
+			"name":                k,
+			"enabled":             true,
+			"cert_file":           fmt.Sprintf("/etc/tls/certs/%s/tls.crt", certName),
+			"key_file":            fmt.Sprintf("/etc/tls/certs/%s/tls.key", certName),
+			"require_client_auth": ptr.Deref(lis.TLS.RequireClientAuth, false),
+			"truststore_file":     getCertificate(&tls.Certs, certName),
+		})
+	}
+	return admin
+}
+
 type AdminExternal struct {
 	AdvertisedPorts []int32      `json:"advertisedPorts" jsonschema:"minItems=1"`
 	Enabled         *bool        `json:"enabled"`
@@ -894,6 +940,33 @@ func (l *HTTPListeners) Listeners(saslEnabled bool) []map[string]any {
 	return result
 }
 
+func (l *HTTPListeners) ListenersTLS(tls *TLS) []map[string]any {
+	pp := []map[string]any{}
+
+	internal := createInternalListenerTLSCfg(tls, l.TLS)
+	if len(internal) > 0 {
+		pp = append(pp, internal)
+	}
+
+	for k, lis := range l.External {
+		if !lis.IsEnabled() || !lis.TLS.IsEnabled(&l.TLS, tls) {
+			continue
+		}
+
+		certName := lis.TLS.GetCertName(&l.TLS)
+
+		pp = append(pp, map[string]any{
+			"name":                k,
+			"enabled":             true,
+			"cert_file":           fmt.Sprintf("/etc/tls/certs/%s/tls.crt", certName),
+			"key_file":            fmt.Sprintf("/etc/tls/certs/%s/tls.key", certName),
+			"require_client_auth": ptr.Deref(lis.TLS.RequireClientAuth, false),
+			"truststore_file":     getCertificate(&tls.Certs, certName),
+		})
+	}
+	return pp
+}
+
 // +gotohelm:skip=true
 func (HTTPListeners) JSONSchemaExtend(schema *jsonschema.Schema) {
 	makeNullable(schema, "authenticationMethod")
@@ -931,6 +1004,77 @@ type KafkaListeners struct {
 // +gotohelm:skip=true
 func (KafkaListeners) JSONSchemaExtend(schema *jsonschema.Schema) {
 	makeNullable(schema, "authenticationMethod")
+}
+
+// Listeners returns a slice of maps suitable for use as the value of
+// `kafka_api` in a redpanda.yml file.
+func (l *KafkaListeners) Listeners(auth *Auth) []map[string]any {
+	internal := createInternalListenerCfg(l.Port)
+
+	if auth.IsSASLEnabled() {
+		internal["authentication_method"] = "sasl"
+	}
+
+	if am := ptr.Deref(l.AuthenticationMethod, ""); am != "" {
+		internal["authentication_method"] = am
+	}
+
+	kafka := []map[string]any{
+		internal,
+	}
+
+	for k, l := range l.External {
+		if !l.IsEnabled() {
+			continue
+		}
+
+		listener := map[string]any{
+			"name":    k,
+			"port":    l.Port,
+			"address": "0.0.0.0",
+		}
+
+		if auth.IsSASLEnabled() {
+			listener["authentication_method"] = "sasl"
+		}
+
+		if am := ptr.Deref(l.AuthenticationMethod, ""); am != "" {
+			listener["authentication_method"] = am
+		}
+
+		kafka = append(kafka, listener)
+	}
+
+	return kafka
+}
+
+// ListenersTLS returns a slice of maps suitable for use as the value of
+// `kafka_api_tls` in a redpanda.yml file.
+func (l *KafkaListeners) ListenersTLS(tls *TLS) []map[string]any {
+	kafka := []map[string]any{}
+
+	internal := createInternalListenerTLSCfg(tls, l.TLS)
+	if len(internal) > 0 {
+		kafka = append(kafka, internal)
+	}
+
+	for k, lis := range l.External {
+		if !lis.IsEnabled() || !lis.TLS.IsEnabled(&l.TLS, tls) {
+			continue
+		}
+
+		certName := lis.TLS.GetCertName(&l.TLS)
+
+		kafka = append(kafka, map[string]any{
+			"name":                k,
+			"enabled":             true,
+			"cert_file":           fmt.Sprintf("/etc/tls/certs/%s/tls.crt", certName),
+			"key_file":            fmt.Sprintf("/etc/tls/certs/%s/tls.key", certName),
+			"require_client_auth": ptr.Deref(lis.TLS.RequireClientAuth, false),
+			"truststore_file":     getCertificate(&tls.Certs, certName),
+		})
+	}
+	return kafka
 }
 
 type KafkaExternal struct {
@@ -998,6 +1142,33 @@ func (sr *SchemaRegistryListeners) Listeners(saslEnabled bool) []map[string]any 
 	}
 
 	return result
+}
+
+func (l *SchemaRegistryListeners) ListenersTLS(tls *TLS) []map[string]any {
+	listeners := []map[string]any{}
+
+	internal := createInternalListenerTLSCfg(tls, l.TLS)
+	if len(internal) > 0 {
+		listeners = append(listeners, internal)
+	}
+
+	for k, lis := range l.External {
+		if !lis.IsEnabled() || !lis.TLS.IsEnabled(&l.TLS, tls) {
+			continue
+		}
+
+		certName := lis.TLS.GetCertName(&l.TLS)
+
+		listeners = append(listeners, map[string]any{
+			"name":                k,
+			"enabled":             true,
+			"cert_file":           fmt.Sprintf("/etc/tls/certs/%s/tls.crt", certName),
+			"key_file":            fmt.Sprintf("/etc/tls/certs/%s/tls.key", certName),
+			"require_client_auth": ptr.Deref(lis.TLS.RequireClientAuth, false),
+			"truststore_file":     getCertificate(&tls.Certs, certName),
+		})
+	}
+	return listeners
 }
 
 // +gotohelm:skip=true
