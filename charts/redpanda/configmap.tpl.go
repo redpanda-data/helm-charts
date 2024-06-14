@@ -300,17 +300,12 @@ func rpkConfiguration(dot *helmette.Dot) map[string]any {
 func brokersTLSConfiguration(dot *helmette.Dot) map[string]any {
 	values := helmette.Unwrap[Values](dot.Values)
 
+	if !values.Listeners.Kafka.TLS.IsEnabled(&values.TLS) {
+		return map[string]any{}
+	}
+
 	result := map[string]any{}
-	k := values.Listeners.Kafka.TLS
-	if !ptr.Deref(k.Enabled, true) {
-		return result
-	}
-
-	if !values.TLS.Enabled || k.Cert == "" {
-		return result
-	}
-
-	certName := k.Cert
+	certName := values.Listeners.Kafka.TLS.Cert
 
 	if cert, ok := values.TLS.Certs[certName]; ok && cert.CAEnabled {
 		result["truststore_file"] = fmt.Sprintf("/etc/tls/certs/%s/ca.crt", values.Listeners.Kafka.TLS.Cert)
@@ -328,8 +323,7 @@ func adminTLSConfiguration(dot *helmette.Dot) map[string]any {
 	values := helmette.Unwrap[Values](dot.Values)
 
 	result := map[string]any{}
-	if !values.TLS.Enabled || values.Listeners.Admin.TLS.Cert == "" {
-		// if !values.TLS.Enabled || (values.Listeners.Admin.TLS.Cert == nil || values.Listeners.Admin.TLS.Cert != nil && *values.Listeners.Admin.TLS.Cert == "") {
+	if !values.Listeners.Admin.TLS.IsEnabled(&values.TLS) {
 		return result
 	}
 
@@ -362,7 +356,7 @@ func kafkaClient(dot *helmette.Dot) map[string]any {
 	kafkaTLS := values.Listeners.Kafka.TLS
 
 	var brokerTLS map[string]any
-	if isInternalListenerTLSAvailable(values.TLS.Enabled, values.Listeners.Kafka.TLS) {
+	if values.Listeners.Kafka.TLS.IsEnabled(&values.TLS) {
 		brokerTLS = map[string]any{
 			"enabled":             true,
 			"cert_file":           fmt.Sprintf("/etc/tls/certs/%s/tls.crt", kafkaTLS.Cert),
@@ -421,24 +415,17 @@ func pandaProxyListenersTLS(dot *helmette.Dot) []map[string]any {
 
 	pp := []map[string]any{}
 
-	internal := createInternalListenerTLSCfg(values.TLS.Enabled, values.Listeners.HTTP.TLS, &values.TLS.Certs)
+	internal := createInternalListenerTLSCfg(&values.TLS, values.Listeners.HTTP.TLS)
 	if len(internal) > 0 {
 		pp = append(pp, internal)
 	}
 
 	for k, l := range values.Listeners.HTTP.External {
-		if !isListenerTLSCfgAvailable(
-			l.Enabled,
-			l.TLS.IsEnabled(),
-			values.Listeners.HTTP.TLS.Enabled,
-			values.TLS.Enabled,
-			values.Listeners.HTTP.TLS.Cert,
-			l.TLS.GetCert(),
-			values.TLS.Certs) {
+		if !l.IsEnabled() || !l.TLS.IsEnabled(&values.Listeners.HTTP.TLS, &values.TLS) {
 			continue
 		}
 
-		certName := ptr.Deref(l.TLS.GetCert(), values.Listeners.HTTP.TLS.Cert)
+		certName := l.TLS.GetCertName(&values.Listeners.HTTP.TLS)
 
 		pp = append(pp, map[string]any{
 			"name":                k,
@@ -471,24 +458,17 @@ func schemaRegistryListenersTLS(dot *helmette.Dot) []map[string]any {
 
 	sr := []map[string]any{}
 
-	internal := createInternalListenerTLSCfg(values.TLS.Enabled, values.Listeners.SchemaRegistry.TLS, &values.TLS.Certs)
+	internal := createInternalListenerTLSCfg(&values.TLS, values.Listeners.SchemaRegistry.TLS)
 	if len(internal) > 0 {
 		sr = append(sr, internal)
 	}
 
 	for k, l := range values.Listeners.SchemaRegistry.External {
-		if !isListenerTLSCfgAvailable(
-			l.Enabled,
-			l.TLS.IsEnabled(),
-			values.Listeners.SchemaRegistry.TLS.Enabled,
-			values.TLS.Enabled,
-			values.Listeners.SchemaRegistry.TLS.Cert,
-			l.TLS.GetCert(),
-			values.TLS.Certs) {
+		if !l.IsEnabled() || !l.TLS.IsEnabled(&values.Listeners.SchemaRegistry.TLS, &values.TLS) {
 			continue
 		}
 
-		certName := ptr.Deref(l.TLS.GetCert(), values.Listeners.SchemaRegistry.TLS.Cert)
+		certName := l.TLS.GetCertName(&values.Listeners.SchemaRegistry.TLS)
 
 		sr = append(sr, map[string]any{
 			"name":                k,
@@ -502,62 +482,16 @@ func schemaRegistryListenersTLS(dot *helmette.Dot) []map[string]any {
 	return sr
 }
 
-// `internalTLSEnabled` is a parameter from SchemaRegistryListeners definition
-func isListenerTLSCfgAvailable(
-	listenerEnabled, listenerTLSEnabled, internalTLSEnabled *bool,
-	globalTLSEnabled bool,
-	internalCertName string, listenerCertName *string, certMap TLSCertMap,
-) bool {
-	// SchemaRegistryExternal listener could have enabled flag defined. If the flag is provided,
-	// then check it. If the flag is missing, then allow such config.
-	if !ptr.Deref(listenerEnabled, true) {
-		return false
-	}
-
-	// listener TLS enabled exist
-	if !ptr.Deref(listenerTLSEnabled, true) {
-		return false
-	}
-
-	// When TLS.Enabled is not defined, then internalTLSEnabled flag could disable TLS generation
-	if listenerTLSEnabled == nil && internalTLSEnabled != nil && !*internalTLSEnabled {
-		return false
-	}
-
-	// When TLS.Enabled is not defined, then  flag could disable TLS generation
-	if listenerTLSEnabled == nil && internalTLSEnabled == nil && !globalTLSEnabled {
-		return false
-	}
-
-	certName := internalCertName
-
-	if listenerCertName != nil {
-		certName = *listenerCertName
-	}
-
-	_, ok := certMap[certName]
-	return ok
-}
-
 func rpcListenersTLS(dot *helmette.Dot) map[string]any {
 	values := helmette.Unwrap[Values](dot.Values)
 
 	r := values.Listeners.RPC
 
-	if r.TLS.Enabled == nil && !values.TLS.Enabled {
+	if !r.TLS.IsEnabled(&values.TLS) {
 		return map[string]any{}
-	}
-
-	if r.TLS.Enabled != nil && !*r.TLS.Enabled {
-		if !values.TLS.Enabled {
-			return map[string]any{}
-		}
 	}
 
 	certName := r.TLS.Cert
-	if certName == "" {
-		return map[string]any{}
-	}
 
 	return map[string]any{
 		"enabled":             true,
@@ -582,24 +516,17 @@ func kafkaListenersTLS(dot *helmette.Dot) []map[string]any {
 
 	kafka := []map[string]any{}
 
-	internal := createInternalListenerTLSCfg(values.TLS.Enabled, values.Listeners.Kafka.TLS, &values.TLS.Certs)
+	internal := createInternalListenerTLSCfg(&values.TLS, values.Listeners.Kafka.TLS)
 	if len(internal) > 0 {
 		kafka = append(kafka, internal)
 	}
 
 	for k, l := range values.Listeners.Kafka.External {
-		if !isListenerTLSCfgAvailable(
-			l.Enabled,
-			l.TLS.IsEnabled(),
-			values.Listeners.Kafka.TLS.Enabled,
-			values.TLS.Enabled,
-			values.Listeners.Kafka.TLS.Cert,
-			l.TLS.GetCert(),
-			values.TLS.Certs) {
+		if !l.IsEnabled() || !l.TLS.IsEnabled(&values.Listeners.Kafka.TLS, &values.TLS) {
 			continue
 		}
 
-		certName := ptr.Deref(l.TLS.GetCert(), values.Listeners.Kafka.TLS.Cert)
+		certName := l.TLS.GetCertName(&values.Listeners.Kafka.TLS)
 
 		kafka = append(kafka, map[string]any{
 			"name":                k,
@@ -652,7 +579,7 @@ func kafkaListeners(dot *helmette.Dot) []map[string]any {
 	}
 
 	for k, l := range kf.External {
-		if !(ptr.Deref(l.Enabled, true) && int(l.Port) > 0) {
+		if !l.IsEnabled() {
 			continue
 		}
 
@@ -680,24 +607,17 @@ func adminListenersTLS(dot *helmette.Dot) []map[string]any {
 
 	admin := []map[string]any{}
 
-	internal := createInternalListenerTLSCfg(values.TLS.Enabled, values.Listeners.Admin.TLS, &values.TLS.Certs)
+	internal := createInternalListenerTLSCfg(&values.TLS, values.Listeners.Admin.TLS)
 	if len(internal) > 0 {
 		admin = append(admin, internal)
 	}
 
 	for k, l := range values.Listeners.Admin.External {
-		if !isListenerTLSCfgAvailable(
-			l.Enabled,
-			l.TLS.IsEnabled(),
-			values.Listeners.Admin.TLS.Enabled,
-			values.TLS.Enabled,
-			values.Listeners.Admin.TLS.Cert,
-			l.TLS.GetCert(),
-			values.TLS.Certs) {
+		if !l.IsEnabled() || !l.TLS.IsEnabled(&values.Listeners.Admin.TLS, &values.TLS) {
 			continue
 		}
 
-		certName := ptr.Deref(l.TLS.GetCert(), values.Listeners.Admin.TLS.Cert)
+		certName := l.TLS.GetCertName(&values.Listeners.Admin.TLS)
 
 		admin = append(admin, map[string]any{
 			"name":                k,
@@ -711,35 +631,19 @@ func adminListenersTLS(dot *helmette.Dot) []map[string]any {
 	return admin
 }
 
-func isInternalListenerTLSAvailable(defaultTLSEnabled bool, externalTLS InternalTLS) bool {
-	if externalTLS.Enabled == nil && !defaultTLSEnabled {
-		return false
-	}
-
-	if externalTLS.Enabled != nil && !*externalTLS.Enabled {
-		return false
-	}
-
-	if externalTLS.Cert == "" {
-		// if externalTLS.Cert == nil || externalTLS.Cert != nil && *externalTLS.Cert == "" {
-		return false
-	}
-	return true
-}
-
 // First parameter defaultTLSEnabled must come from `values.tls.enabled`.
-func createInternalListenerTLSCfg(defaultTLSEnabled bool, externalTLS InternalTLS, certs *TLSCertMap) map[string]any {
-	if !isInternalListenerTLSAvailable(defaultTLSEnabled, externalTLS) {
+func createInternalListenerTLSCfg(tls *TLS, internal InternalTLS) map[string]any {
+	if !internal.IsEnabled(tls) {
 		return map[string]any{}
 	}
 
 	return map[string]any{
 		"name":                "internal",
 		"enabled":             true,
-		"cert_file":           fmt.Sprintf("/etc/tls/certs/%s/tls.crt", externalTLS.Cert),
-		"key_file":            fmt.Sprintf("/etc/tls/certs/%s/tls.key", externalTLS.Cert),
-		"require_client_auth": externalTLS.RequireClientAuth,
-		"truststore_file":     getCertificate(certs, externalTLS.Cert),
+		"cert_file":           fmt.Sprintf("/etc/tls/certs/%s/tls.crt", internal.Cert),
+		"key_file":            fmt.Sprintf("/etc/tls/certs/%s/tls.key", internal.Cert),
+		"require_client_auth": internal.RequireClientAuth,
+		"truststore_file":     getCertificate(&tls.Certs, internal.Cert),
 	}
 }
 
@@ -758,7 +662,7 @@ func adminListeners(dot *helmette.Dot) []map[string]any {
 		createInternalListenerCfg(values.Listeners.Admin.Port),
 	}
 	for k, l := range values.Listeners.Admin.External {
-		if !(ptr.Deref(l.Enabled, true) && int(l.Port) > 0) {
+		if !l.IsEnabled() {
 			continue
 		}
 

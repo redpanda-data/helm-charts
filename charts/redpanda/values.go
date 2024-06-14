@@ -726,16 +726,12 @@ type PandaProxyClient struct {
 
 type TLSCert struct {
 	// Enabled should be interpreted as `true` if not set.
-	Enabled               *bool                   `json:"enabled"`
-	CAEnabled             bool                    `json:"caEnabled" jsonschema:"required"`
-	ApplyInternalDNSNames *bool                   `json:"applyInternalDNSNames"`
-	Duration              string                  `json:"duration" jsonschema:"pattern=.*[smh]$"`
-	IssuerRef             *cmmeta.ObjectReference `json:"issuerRef"`
-	SecretRef             *NameOnlySecretRef      `json:"secretRef"`
-}
-
-type NameOnlySecretRef struct {
-	Name string `json:"name"`
+	Enabled               *bool                        `json:"enabled"`
+	CAEnabled             bool                         `json:"caEnabled" jsonschema:"required"`
+	ApplyInternalDNSNames *bool                        `json:"applyInternalDNSNames"`
+	Duration              string                       `json:"duration" jsonschema:"pattern=.*[smh]$"`
+	IssuerRef             *cmmeta.ObjectReference      `json:"issuerRef"`
+	SecretRef             *corev1.LocalObjectReference `json:"secretRef"`
 }
 
 // +gotohelm:skip=true
@@ -762,6 +758,14 @@ func (TLSCertMap) JSONSchemaExtend(schema *jsonschema.Schema) {
 	schema.AdditionalProperties = nil
 }
 
+func (m TLSCertMap) MustGet(name string) *TLSCert {
+	cert, ok := m[name]
+	if !ok {
+		panic("TODO")
+	}
+	return &cert
+}
+
 type SASLUser struct {
 	Name      string `json:"name"`
 	Password  string `json:"password"`
@@ -781,9 +785,16 @@ type SASLAuth struct {
 // TODO Unify this struct with ExternalTLS and/or remove the concept of
 // internal and external listeners all together.
 type InternalTLS struct {
-	Cert              string `json:"cert" jsonschema:"required"`
 	Enabled           *bool  `json:"enabled"`
+	Cert              string `json:"cert" jsonschema:"required"`
 	RequireClientAuth bool   `json:"requireClientAuth" jsonschema:"required"`
+}
+
+// IsEnabled reports the value of [InternalTLS.Enabled], falling back to
+// [TLS.Enabled] if not specified.
+func (t *InternalTLS) IsEnabled(tls *TLS) bool {
+	// Default Enabled to the value of the global TLS struct.
+	return ptr.Deref(t.Enabled, tls.Enabled) && t.Cert != ""
 }
 
 // ExternalTLS is the TLS configuration associated with a given "external"
@@ -791,9 +802,30 @@ type InternalTLS struct {
 // values but are interpreted differently depending on their context (IE kafka
 // vs schemaRegistry) tread lightly.
 type ExternalTLS struct {
-	Cert              *string `json:"cert"`
+	// Enabled, when `false`, indicates that this struct should treated as if
+	// it was not specified. If `nil`, defaults to [InternalTLS.Enabled].
+	// Prefer to use `IsEnabled` rather than checking this field directly.
 	Enabled           *bool   `json:"enabled"`
+	Cert              *string `json:"cert"`
 	RequireClientAuth *bool   `json:"requireClientAuth"`
+}
+
+func (t *ExternalTLS) GetCert(i *InternalTLS, tls *TLS) *TLSCert {
+	return tls.Certs.MustGet(t.GetCertName(i))
+}
+
+func (t *ExternalTLS) GetCertName(i *InternalTLS) string {
+	return ptr.Deref(t.Cert, i.Cert)
+}
+
+// IsEnabled reports the value of [ExternalTLS.Enabled], falling back to
+// [InternalTLS.IsEnabled] if not specified.
+func (t *ExternalTLS) IsEnabled(i *InternalTLS, tls *TLS) bool {
+	// If t is nil, interpret Enabled as false.
+	if t == nil {
+		return false
+	}
+	return t.GetCertName(i) != "" && ptr.Deref(t.Enabled, i.IsEnabled(tls))
 }
 
 type AdminListeners struct {
@@ -807,6 +839,10 @@ type AdminExternal struct {
 	Enabled         *bool        `json:"enabled"`
 	Port            int32        `json:"port" jsonschema:"required"`
 	TLS             *ExternalTLS `json:"tls"`
+}
+
+func (l *AdminExternal) IsEnabled() bool {
+	return ptr.Deref(l.Enabled, true) && l.Port > 0
 }
 
 type HTTPListeners struct {
@@ -834,7 +870,7 @@ func (l *HTTPListeners) Listeners(saslEnabled bool) []map[string]any {
 	}
 
 	for k, l := range l.External {
-		if !(ptr.Deref(l.Enabled, true) && int(l.Port) > 0) {
+		if !l.IsEnabled() {
 			continue
 		}
 
@@ -872,6 +908,10 @@ type HTTPExternal struct {
 	TLS                  *ExternalTLS              `json:"tls" jsonschema:"required"`
 }
 
+func (l *HTTPExternal) IsEnabled() bool {
+	return ptr.Deref(l.Enabled, true) && l.Port > 0
+}
+
 // +gotohelm:skip=true
 func (HTTPExternal) JSONSchemaExtend(schema *jsonschema.Schema) {
 	makeNullable(schema, "authenticationMethod")
@@ -902,20 +942,8 @@ type KafkaExternal struct {
 	TLS                  *ExternalTLS               `json:"tls"`
 }
 
-func (e *ExternalTLS) IsEnabled() *bool {
-	if e == nil {
-		return ptr.To(false)
-	}
-
-	return e.Enabled
-}
-
-func (e *ExternalTLS) GetCert() *string {
-	if e == nil {
-		return nil
-	}
-
-	return e.Cert
+func (l *KafkaExternal) IsEnabled() bool {
+	return ptr.Deref(l.Enabled, true) && l.Port > 0
 }
 
 // +gotohelm:skip=true
@@ -948,7 +976,7 @@ func (sr *SchemaRegistryListeners) Listeners(saslEnabled bool) []map[string]any 
 	}
 
 	for k, l := range sr.External {
-		if !(ptr.Deref(l.Enabled, true) && int(l.Port) > 0) {
+		if !l.IsEnabled() {
 			continue
 		}
 
@@ -983,6 +1011,10 @@ type SchemaRegistryExternal struct {
 	Port                 int32                     `json:"port"`
 	AuthenticationMethod *HTTPAuthenticationMethod `json:"authenticationMethod"`
 	TLS                  *ExternalTLS              `json:"tls"`
+}
+
+func (l *SchemaRegistryExternal) IsEnabled() bool {
+	return ptr.Deref(l.Enabled, true) && l.Port > 0
 }
 
 // +gotohelm:skip=true

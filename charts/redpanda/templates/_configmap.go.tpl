@@ -186,17 +186,12 @@
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $values := $dot.Values.AsMap -}}
+{{- if (not (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $values.listeners.kafka.tls $values.tls) ))) "r")) -}}
+{{- (dict "r" (dict )) | toJson -}}
+{{- break -}}
+{{- end -}}
 {{- $result := (dict ) -}}
-{{- $k := $values.listeners.kafka.tls -}}
-{{- if (not (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $k.enabled true) ))) "r")) -}}
-{{- (dict "r" $result) | toJson -}}
-{{- break -}}
-{{- end -}}
-{{- if (or (not $values.tls.enabled) (eq $k.cert "")) -}}
-{{- (dict "r" $result) | toJson -}}
-{{- break -}}
-{{- end -}}
-{{- $certName := $k.cert -}}
+{{- $certName := $values.listeners.kafka.tls.cert -}}
 {{- $tmp_tuple_3 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $values.tls.certs $certName (coalesce nil)) ))) "r")) ))) "r") -}}
 {{- $ok_6 := $tmp_tuple_3.T2 -}}
 {{- $cert_5 := $tmp_tuple_3.T1 -}}
@@ -217,7 +212,7 @@
 {{- range $_ := (list 1) -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $result := (dict ) -}}
-{{- if (or (not $values.tls.enabled) (eq $values.listeners.admin.tls.cert "")) -}}
+{{- if (not (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $values.listeners.admin.tls $values.tls) ))) "r")) -}}
 {{- (dict "r" $result) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -247,7 +242,7 @@
 {{- end -}}
 {{- $kafkaTLS := $values.listeners.kafka.tls -}}
 {{- $brokerTLS := (coalesce nil) -}}
-{{- if (get (fromJson (include "redpanda.isInternalListenerTLSAvailable" (dict "a" (list $values.tls.enabled $values.listeners.kafka.tls) ))) "r") -}}
+{{- if (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $values.listeners.kafka.tls $values.tls) ))) "r") -}}
 {{- $brokerTLS = (dict "enabled" true "cert_file" (printf "/etc/tls/certs/%s/tls.crt" $kafkaTLS.cert) "key_file" (printf "/etc/tls/certs/%s/tls.key" $kafkaTLS.cert) "require_client_auth" $kafkaTLS.requireClientAuth "truststore_file" (get (fromJson (include "redpanda.getCertificate" (dict "a" (list $values.tls.certs $kafkaTLS.cert) ))) "r") ) -}}
 {{- end -}}
 {{- $cfg := (dict "brokers" $brokerList ) -}}
@@ -304,15 +299,15 @@
 {{- range $_ := (list 1) -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $pp := (list ) -}}
-{{- $internal := (get (fromJson (include "redpanda.createInternalListenerTLSCfg" (dict "a" (list $values.tls.enabled $values.listeners.http.tls $values.tls.certs) ))) "r") -}}
+{{- $internal := (get (fromJson (include "redpanda.createInternalListenerTLSCfg" (dict "a" (list $values.tls $values.listeners.http.tls) ))) "r") -}}
 {{- if (gt ((get (fromJson (include "_shims.len" (dict "a" (list $internal) ))) "r") | int) (0 | int)) -}}
 {{- $pp = (mustAppend $pp $internal) -}}
 {{- end -}}
 {{- range $k, $l := $values.listeners.http.external -}}
-{{- if (not (get (fromJson (include "redpanda.isListenerTLSCfgAvailable" (dict "a" (list $l.enabled (get (fromJson (include "redpanda.ExternalTLS.IsEnabled" (dict "a" (list $l.tls) ))) "r") $values.listeners.http.tls.enabled $values.tls.enabled $values.listeners.http.tls.cert (get (fromJson (include "redpanda.ExternalTLS.GetCert" (dict "a" (list $l.tls) ))) "r") $values.tls.certs) ))) "r")) -}}
+{{- if (or (not (get (fromJson (include "redpanda.HTTPExternal.IsEnabled" (dict "a" (list $l) ))) "r")) (not (get (fromJson (include "redpanda.ExternalTLS.IsEnabled" (dict "a" (list $l.tls $values.listeners.http.tls $values.tls) ))) "r"))) -}}
 {{- continue -}}
 {{- end -}}
-{{- $certName := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list (get (fromJson (include "redpanda.ExternalTLS.GetCert" (dict "a" (list $l.tls) ))) "r") $values.listeners.http.tls.cert) ))) "r") -}}
+{{- $certName := (get (fromJson (include "redpanda.ExternalTLS.GetCertName" (dict "a" (list $l.tls $values.listeners.http.tls) ))) "r") -}}
 {{- $pp = (mustAppend $pp (dict "name" $k "enabled" true "cert_file" (printf "/etc/tls/certs/%s/tls.crt" $certName) "key_file" (printf "/etc/tls/certs/%s/tls.key" $certName) "require_client_auth" (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $l.tls.requireClientAuth false) ))) "r") "truststore_file" (get (fromJson (include "redpanda.getCertificate" (dict "a" (list $values.tls.certs $certName) ))) "r") )) -}}
 {{- end -}}
 {{- (dict "r" $pp) | toJson -}}
@@ -341,54 +336,18 @@
 {{- range $_ := (list 1) -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $sr := (list ) -}}
-{{- $internal := (get (fromJson (include "redpanda.createInternalListenerTLSCfg" (dict "a" (list $values.tls.enabled $values.listeners.schemaRegistry.tls $values.tls.certs) ))) "r") -}}
+{{- $internal := (get (fromJson (include "redpanda.createInternalListenerTLSCfg" (dict "a" (list $values.tls $values.listeners.schemaRegistry.tls) ))) "r") -}}
 {{- if (gt ((get (fromJson (include "_shims.len" (dict "a" (list $internal) ))) "r") | int) (0 | int)) -}}
 {{- $sr = (mustAppend $sr $internal) -}}
 {{- end -}}
 {{- range $k, $l := $values.listeners.schemaRegistry.external -}}
-{{- if (not (get (fromJson (include "redpanda.isListenerTLSCfgAvailable" (dict "a" (list $l.enabled (get (fromJson (include "redpanda.ExternalTLS.IsEnabled" (dict "a" (list $l.tls) ))) "r") $values.listeners.schemaRegistry.tls.enabled $values.tls.enabled $values.listeners.schemaRegistry.tls.cert (get (fromJson (include "redpanda.ExternalTLS.GetCert" (dict "a" (list $l.tls) ))) "r") $values.tls.certs) ))) "r")) -}}
+{{- if (or (not (get (fromJson (include "redpanda.SchemaRegistryExternal.IsEnabled" (dict "a" (list $l) ))) "r")) (not (get (fromJson (include "redpanda.ExternalTLS.IsEnabled" (dict "a" (list $l.tls $values.listeners.schemaRegistry.tls $values.tls) ))) "r"))) -}}
 {{- continue -}}
 {{- end -}}
-{{- $certName := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list (get (fromJson (include "redpanda.ExternalTLS.GetCert" (dict "a" (list $l.tls) ))) "r") $values.listeners.schemaRegistry.tls.cert) ))) "r") -}}
+{{- $certName := (get (fromJson (include "redpanda.ExternalTLS.GetCertName" (dict "a" (list $l.tls $values.listeners.schemaRegistry.tls) ))) "r") -}}
 {{- $sr = (mustAppend $sr (dict "name" $k "enabled" true "cert_file" (printf "/etc/tls/certs/%s/tls.crt" $certName) "key_file" (printf "/etc/tls/certs/%s/tls.key" $certName) "require_client_auth" (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $l.tls.requireClientAuth false) ))) "r") "truststore_file" (get (fromJson (include "redpanda.getCertificate" (dict "a" (list $values.tls.certs $certName) ))) "r") )) -}}
 {{- end -}}
 {{- (dict "r" $sr) | toJson -}}
-{{- break -}}
-{{- end -}}
-{{- end -}}
-
-{{- define "redpanda.isListenerTLSCfgAvailable" -}}
-{{- $listenerEnabled := (index .a 0) -}}
-{{- $listenerTLSEnabled := (index .a 1) -}}
-{{- $internalTLSEnabled := (index .a 2) -}}
-{{- $globalTLSEnabled := (index .a 3) -}}
-{{- $internalCertName := (index .a 4) -}}
-{{- $listenerCertName := (index .a 5) -}}
-{{- $certMap := (index .a 6) -}}
-{{- range $_ := (list 1) -}}
-{{- if (not (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $listenerEnabled true) ))) "r")) -}}
-{{- (dict "r" false) | toJson -}}
-{{- break -}}
-{{- end -}}
-{{- if (not (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $listenerTLSEnabled true) ))) "r")) -}}
-{{- (dict "r" false) | toJson -}}
-{{- break -}}
-{{- end -}}
-{{- if (and (and (eq $listenerTLSEnabled (coalesce nil)) (ne $internalTLSEnabled (coalesce nil))) (not $internalTLSEnabled)) -}}
-{{- (dict "r" false) | toJson -}}
-{{- break -}}
-{{- end -}}
-{{- if (and (and (eq $listenerTLSEnabled (coalesce nil)) (eq $internalTLSEnabled (coalesce nil))) (not $globalTLSEnabled)) -}}
-{{- (dict "r" false) | toJson -}}
-{{- break -}}
-{{- end -}}
-{{- $certName := $internalCertName -}}
-{{- if (ne $listenerCertName (coalesce nil)) -}}
-{{- $certName = $listenerCertName -}}
-{{- end -}}
-{{- $tmp_tuple_5 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $certMap $certName (coalesce nil)) ))) "r")) ))) "r") -}}
-{{- $ok := $tmp_tuple_5.T2 -}}
-{{- (dict "r" $ok) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -398,21 +357,11 @@
 {{- range $_ := (list 1) -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $r := $values.listeners.rpc -}}
-{{- if (and (eq $r.tls.enabled (coalesce nil)) (not $values.tls.enabled)) -}}
+{{- if (not (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $r.tls $values.tls) ))) "r")) -}}
 {{- (dict "r" (dict )) | toJson -}}
 {{- break -}}
-{{- end -}}
-{{- if (and (ne $r.tls.enabled (coalesce nil)) (not $r.tls.enabled)) -}}
-{{- if (not $values.tls.enabled) -}}
-{{- (dict "r" (dict )) | toJson -}}
-{{- break -}}
-{{- end -}}
 {{- end -}}
 {{- $certName := $r.tls.cert -}}
-{{- if (eq $certName "") -}}
-{{- (dict "r" (dict )) | toJson -}}
-{{- break -}}
-{{- end -}}
 {{- (dict "r" (dict "enabled" true "cert_file" (printf "/etc/tls/certs/%s/tls.crt" $certName) "key_file" (printf "/etc/tls/certs/%s/tls.key" $certName) "require_client_auth" $r.tls.requireClientAuth "truststore_file" (get (fromJson (include "redpanda.getCertificate" (dict "a" (list $values.tls.certs $certName) ))) "r") )) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -432,15 +381,15 @@
 {{- range $_ := (list 1) -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $kafka := (list ) -}}
-{{- $internal := (get (fromJson (include "redpanda.createInternalListenerTLSCfg" (dict "a" (list $values.tls.enabled $values.listeners.kafka.tls $values.tls.certs) ))) "r") -}}
+{{- $internal := (get (fromJson (include "redpanda.createInternalListenerTLSCfg" (dict "a" (list $values.tls $values.listeners.kafka.tls) ))) "r") -}}
 {{- if (gt ((get (fromJson (include "_shims.len" (dict "a" (list $internal) ))) "r") | int) (0 | int)) -}}
 {{- $kafka = (mustAppend $kafka $internal) -}}
 {{- end -}}
 {{- range $k, $l := $values.listeners.kafka.external -}}
-{{- if (not (get (fromJson (include "redpanda.isListenerTLSCfgAvailable" (dict "a" (list $l.enabled (get (fromJson (include "redpanda.ExternalTLS.IsEnabled" (dict "a" (list $l.tls) ))) "r") $values.listeners.kafka.tls.enabled $values.tls.enabled $values.listeners.kafka.tls.cert (get (fromJson (include "redpanda.ExternalTLS.GetCert" (dict "a" (list $l.tls) ))) "r") $values.tls.certs) ))) "r")) -}}
+{{- if (or (not (get (fromJson (include "redpanda.KafkaExternal.IsEnabled" (dict "a" (list $l) ))) "r")) (not (get (fromJson (include "redpanda.ExternalTLS.IsEnabled" (dict "a" (list $l.tls $values.listeners.kafka.tls $values.tls) ))) "r"))) -}}
 {{- continue -}}
 {{- end -}}
-{{- $certName := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list (get (fromJson (include "redpanda.ExternalTLS.GetCert" (dict "a" (list $l.tls) ))) "r") $values.listeners.kafka.tls.cert) ))) "r") -}}
+{{- $certName := (get (fromJson (include "redpanda.ExternalTLS.GetCertName" (dict "a" (list $l.tls $values.listeners.kafka.tls) ))) "r") -}}
 {{- $kafka = (mustAppend $kafka (dict "name" $k "enabled" true "cert_file" (printf "/etc/tls/certs/%s/tls.crt" $certName) "key_file" (printf "/etc/tls/certs/%s/tls.key" $certName) "require_client_auth" (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $l.tls.requireClientAuth false) ))) "r") "truststore_file" (get (fromJson (include "redpanda.getCertificate" (dict "a" (list $values.tls.certs $certName) ))) "r") )) -}}
 {{- end -}}
 {{- (dict "r" $kafka) | toJson -}}
@@ -461,9 +410,9 @@
 {{- break -}}
 {{- end -}}
 {{- $c := $certs -}}
-{{- $tmp_tuple_6 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $c $certName (coalesce nil)) ))) "r")) ))) "r") -}}
-{{- $ok_10 := $tmp_tuple_6.T2 -}}
-{{- $crt_9 := $tmp_tuple_6.T1 -}}
+{{- $tmp_tuple_5 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $c $certName (coalesce nil)) ))) "r")) ))) "r") -}}
+{{- $ok_10 := $tmp_tuple_5.T2 -}}
+{{- $crt_9 := $tmp_tuple_5.T1 -}}
 {{- if (and $ok_10 $crt_9.caEnabled) -}}
 {{- (dict "r" (printf "/etc/tls/certs/%s/ca.crt" $certName)) | toJson -}}
 {{- break -}}
@@ -491,7 +440,7 @@
 {{- end -}}
 {{- $kafka := (list $internal) -}}
 {{- range $k, $l := $kf.external -}}
-{{- if (not ((and (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $l.enabled true) ))) "r") (gt (($l.port | int) | int) (0 | int))))) -}}
+{{- if (not (get (fromJson (include "redpanda.KafkaExternal.IsEnabled" (dict "a" (list $l) ))) "r")) -}}
 {{- continue -}}
 {{- end -}}
 {{- $listener := (dict "name" $k "port" ($l.port | int) "address" "0.0.0.0" ) -}}
@@ -514,15 +463,15 @@
 {{- range $_ := (list 1) -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $admin := (list ) -}}
-{{- $internal := (get (fromJson (include "redpanda.createInternalListenerTLSCfg" (dict "a" (list $values.tls.enabled $values.listeners.admin.tls $values.tls.certs) ))) "r") -}}
+{{- $internal := (get (fromJson (include "redpanda.createInternalListenerTLSCfg" (dict "a" (list $values.tls $values.listeners.admin.tls) ))) "r") -}}
 {{- if (gt ((get (fromJson (include "_shims.len" (dict "a" (list $internal) ))) "r") | int) (0 | int)) -}}
 {{- $admin = (mustAppend $admin $internal) -}}
 {{- end -}}
 {{- range $k, $l := $values.listeners.admin.external -}}
-{{- if (not (get (fromJson (include "redpanda.isListenerTLSCfgAvailable" (dict "a" (list $l.enabled (get (fromJson (include "redpanda.ExternalTLS.IsEnabled" (dict "a" (list $l.tls) ))) "r") $values.listeners.admin.tls.enabled $values.tls.enabled $values.listeners.admin.tls.cert (get (fromJson (include "redpanda.ExternalTLS.GetCert" (dict "a" (list $l.tls) ))) "r") $values.tls.certs) ))) "r")) -}}
+{{- if (or (not (get (fromJson (include "redpanda.AdminExternal.IsEnabled" (dict "a" (list $l) ))) "r")) (not (get (fromJson (include "redpanda.ExternalTLS.IsEnabled" (dict "a" (list $l.tls $values.listeners.admin.tls $values.tls) ))) "r"))) -}}
 {{- continue -}}
 {{- end -}}
-{{- $certName := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list (get (fromJson (include "redpanda.ExternalTLS.GetCert" (dict "a" (list $l.tls) ))) "r") $values.listeners.admin.tls.cert) ))) "r") -}}
+{{- $certName := (get (fromJson (include "redpanda.ExternalTLS.GetCertName" (dict "a" (list $l.tls $values.listeners.admin.tls) ))) "r") -}}
 {{- $admin = (mustAppend $admin (dict "name" $k "enabled" true "cert_file" (printf "/etc/tls/certs/%s/tls.crt" $certName) "key_file" (printf "/etc/tls/certs/%s/tls.key" $certName) "require_client_auth" (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $l.tls.requireClientAuth false) ))) "r") "truststore_file" (get (fromJson (include "redpanda.getCertificate" (dict "a" (list $values.tls.certs $certName) ))) "r") )) -}}
 {{- end -}}
 {{- (dict "r" $admin) | toJson -}}
@@ -530,37 +479,15 @@
 {{- end -}}
 {{- end -}}
 
-{{- define "redpanda.isInternalListenerTLSAvailable" -}}
-{{- $defaultTLSEnabled := (index .a 0) -}}
-{{- $externalTLS := (index .a 1) -}}
-{{- range $_ := (list 1) -}}
-{{- if (and (eq $externalTLS.enabled (coalesce nil)) (not $defaultTLSEnabled)) -}}
-{{- (dict "r" false) | toJson -}}
-{{- break -}}
-{{- end -}}
-{{- if (and (ne $externalTLS.enabled (coalesce nil)) (not $externalTLS.enabled)) -}}
-{{- (dict "r" false) | toJson -}}
-{{- break -}}
-{{- end -}}
-{{- if (eq $externalTLS.cert "") -}}
-{{- (dict "r" false) | toJson -}}
-{{- break -}}
-{{- end -}}
-{{- (dict "r" true) | toJson -}}
-{{- break -}}
-{{- end -}}
-{{- end -}}
-
 {{- define "redpanda.createInternalListenerTLSCfg" -}}
-{{- $defaultTLSEnabled := (index .a 0) -}}
-{{- $externalTLS := (index .a 1) -}}
-{{- $certs := (index .a 2) -}}
+{{- $tls := (index .a 0) -}}
+{{- $internal := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
-{{- if (not (get (fromJson (include "redpanda.isInternalListenerTLSAvailable" (dict "a" (list $defaultTLSEnabled $externalTLS) ))) "r")) -}}
+{{- if (not (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $internal $tls) ))) "r")) -}}
 {{- (dict "r" (dict )) | toJson -}}
 {{- break -}}
 {{- end -}}
-{{- (dict "r" (dict "name" "internal" "enabled" true "cert_file" (printf "/etc/tls/certs/%s/tls.crt" $externalTLS.cert) "key_file" (printf "/etc/tls/certs/%s/tls.key" $externalTLS.cert) "require_client_auth" $externalTLS.requireClientAuth "truststore_file" (get (fromJson (include "redpanda.getCertificate" (dict "a" (list $certs $externalTLS.cert) ))) "r") )) | toJson -}}
+{{- (dict "r" (dict "name" "internal" "enabled" true "cert_file" (printf "/etc/tls/certs/%s/tls.crt" $internal.cert) "key_file" (printf "/etc/tls/certs/%s/tls.key" $internal.cert) "require_client_auth" $internal.requireClientAuth "truststore_file" (get (fromJson (include "redpanda.getCertificate" (dict "a" (list $tls.certs $internal.cert) ))) "r") )) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -579,7 +506,7 @@
 {{- $values := $dot.Values.AsMap -}}
 {{- $admin := (list (get (fromJson (include "redpanda.createInternalListenerCfg" (dict "a" (list ($values.listeners.admin.port | int)) ))) "r")) -}}
 {{- range $k, $l := $values.listeners.admin.external -}}
-{{- if (not ((and (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $l.enabled true) ))) "r") (gt (($l.port | int) | int) (0 | int))))) -}}
+{{- if (not (get (fromJson (include "redpanda.AdminExternal.IsEnabled" (dict "a" (list $l) ))) "r")) -}}
 {{- continue -}}
 {{- end -}}
 {{- $admin = (mustAppend $admin (dict "name" $k "port" ($l.port | int) "address" "0.0.0.0" )) -}}

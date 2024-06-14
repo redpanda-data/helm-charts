@@ -392,16 +392,12 @@ type PartialPandaProxyClient struct {
 }
 
 type PartialTLSCert struct {
-	Enabled               *bool                     `json:"enabled,omitempty"`
-	CAEnabled             *bool                     `json:"caEnabled,omitempty" jsonschema:"required"`
-	ApplyInternalDNSNames *bool                     `json:"applyInternalDNSNames,omitempty"`
-	Duration              *string                   `json:"duration,omitempty" jsonschema:"pattern=.*[smh]$"`
-	IssuerRef             *cmmeta.ObjectReference   `json:"issuerRef,omitempty"`
-	SecretRef             *PartialNameOnlySecretRef `json:"secretRef,omitempty"`
-}
-
-type PartialNameOnlySecretRef struct {
-	Name *string `json:"name,omitempty"`
+	Enabled               *bool                        `json:"enabled,omitempty"`
+	CAEnabled             *bool                        `json:"caEnabled,omitempty" jsonschema:"required"`
+	ApplyInternalDNSNames *bool                        `json:"applyInternalDNSNames,omitempty"`
+	Duration              *string                      `json:"duration,omitempty" jsonschema:"pattern=.*[smh]$"`
+	IssuerRef             *cmmeta.ObjectReference      `json:"issuerRef,omitempty"`
+	SecretRef             *corev1.LocalObjectReference `json:"secretRef,omitempty"`
 }
 
 type PartialTLSCertMap map[string]PartialTLSCert
@@ -420,14 +416,14 @@ type PartialSASLAuth struct {
 }
 
 type PartialInternalTLS struct {
-	Cert              *string `json:"cert,omitempty" jsonschema:"required"`
 	Enabled           *bool   `json:"enabled,omitempty"`
+	Cert              *string `json:"cert,omitempty" jsonschema:"required"`
 	RequireClientAuth *bool   `json:"requireClientAuth,omitempty" jsonschema:"required"`
 }
 
 type PartialExternalTLS struct {
-	Cert              *string `json:"cert,omitempty"`
 	Enabled           *bool   `json:"enabled,omitempty"`
+	Cert              *string `json:"cert,omitempty"`
 	RequireClientAuth *bool   `json:"requireClientAuth,omitempty"`
 }
 

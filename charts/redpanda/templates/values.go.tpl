@@ -254,6 +254,71 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "redpanda.TLSCertMap.MustGet" -}}
+{{- $m := (index .a 0) -}}
+{{- $name := (index .a 1) -}}
+{{- range $_ := (list 1) -}}
+{{- $tmp_tuple_14 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $m $name (coalesce nil)) ))) "r")) ))) "r") -}}
+{{- $ok := $tmp_tuple_14.T2 -}}
+{{- $cert := $tmp_tuple_14.T1 -}}
+{{- if (not $ok) -}}
+{{- $_ := (fail "TODO") -}}
+{{- end -}}
+{{- (dict "r" $cert) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.InternalTLS.IsEnabled" -}}
+{{- $t := (index .a 0) -}}
+{{- $tls := (index .a 1) -}}
+{{- range $_ := (list 1) -}}
+{{- (dict "r" (and (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $t.enabled $tls.enabled) ))) "r") (ne $t.cert ""))) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.ExternalTLS.GetCert" -}}
+{{- $t := (index .a 0) -}}
+{{- $i := (index .a 1) -}}
+{{- $tls := (index .a 2) -}}
+{{- range $_ := (list 1) -}}
+{{- (dict "r" (get (fromJson (include "redpanda.TLSCertMap.MustGet" (dict "a" (list (deepCopy $tls.certs) (get (fromJson (include "redpanda.ExternalTLS.GetCertName" (dict "a" (list $t $i) ))) "r")) ))) "r")) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.ExternalTLS.GetCertName" -}}
+{{- $t := (index .a 0) -}}
+{{- $i := (index .a 1) -}}
+{{- range $_ := (list 1) -}}
+{{- (dict "r" (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $t.cert $i.cert) ))) "r")) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.ExternalTLS.IsEnabled" -}}
+{{- $t := (index .a 0) -}}
+{{- $i := (index .a 1) -}}
+{{- $tls := (index .a 2) -}}
+{{- range $_ := (list 1) -}}
+{{- if (eq $t (coalesce nil)) -}}
+{{- (dict "r" false) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- (dict "r" (and (ne (get (fromJson (include "redpanda.ExternalTLS.GetCertName" (dict "a" (list $t $i) ))) "r") "") (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $t.enabled (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $i $tls) ))) "r")) ))) "r"))) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.AdminExternal.IsEnabled" -}}
+{{- $l := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- (dict "r" (and (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $l.enabled true) ))) "r") (gt ($l.port | int) (0 | int)))) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "redpanda.HTTPListeners.Listeners" -}}
 {{- $l := (index .a 0) -}}
 {{- $saslEnabled := (index .a 1) -}}
@@ -268,7 +333,7 @@
 {{- end -}}
 {{- $result := (list $internal) -}}
 {{- range $k, $l := $l.external -}}
-{{- if (not ((and (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $l.enabled true) ))) "r") (gt (($l.port | int) | int) (0 | int))))) -}}
+{{- if (not (get (fromJson (include "redpanda.HTTPExternal.IsEnabled" (dict "a" (list $l) ))) "r")) -}}
 {{- continue -}}
 {{- end -}}
 {{- $listener := (dict "name" $k "port" ($l.port | int) "address" "0.0.0.0" ) -}}
@@ -286,26 +351,18 @@
 {{- end -}}
 {{- end -}}
 
-{{- define "redpanda.ExternalTLS.IsEnabled" -}}
-{{- $e := (index .a 0) -}}
+{{- define "redpanda.HTTPExternal.IsEnabled" -}}
+{{- $l := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
-{{- if (eq $e (coalesce nil)) -}}
-{{- (dict "r" false) | toJson -}}
-{{- break -}}
-{{- end -}}
-{{- (dict "r" $e.enabled) | toJson -}}
+{{- (dict "r" (and (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $l.enabled true) ))) "r") (gt ($l.port | int) (0 | int)))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
 
-{{- define "redpanda.ExternalTLS.GetCert" -}}
-{{- $e := (index .a 0) -}}
+{{- define "redpanda.KafkaExternal.IsEnabled" -}}
+{{- $l := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
-{{- if (eq $e (coalesce nil)) -}}
-{{- (dict "r" (coalesce nil)) | toJson -}}
-{{- break -}}
-{{- end -}}
-{{- (dict "r" $e.cert) | toJson -}}
+{{- (dict "r" (and (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $l.enabled true) ))) "r") (gt ($l.port | int) (0 | int)))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -324,7 +381,7 @@
 {{- end -}}
 {{- $result := (list $internal) -}}
 {{- range $k, $l := $sr.external -}}
-{{- if (not ((and (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $l.enabled true) ))) "r") (gt (($l.port | int) | int) (0 | int))))) -}}
+{{- if (not (get (fromJson (include "redpanda.SchemaRegistryExternal.IsEnabled" (dict "a" (list $l) ))) "r")) -}}
 {{- continue -}}
 {{- end -}}
 {{- $listener := (dict "name" $k "port" ($l.port | int) "address" "0.0.0.0" ) -}}
@@ -338,6 +395,14 @@
 {{- $result = (mustAppend $result $listener) -}}
 {{- end -}}
 {{- (dict "r" $result) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.SchemaRegistryExternal.IsEnabled" -}}
+{{- $l := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- (dict "r" (and (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $l.enabled true) ))) "r") (gt ($l.port | int) (0 | int)))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -384,24 +449,24 @@
 {{- if (and (eq $k "default_topic_replications") (not $skipDefaultTopic)) -}}
 {{- $r := ($replicas | int) -}}
 {{- $input := ($r | int) -}}
-{{- $tmp_tuple_16 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asintegral" (dict "a" (list $v) ))) "r")) ))) "r") -}}
-{{- $ok_19 := $tmp_tuple_16.T2 -}}
-{{- $num_18 := ($tmp_tuple_16.T1 | int) -}}
+{{- $tmp_tuple_17 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asintegral" (dict "a" (list $v) ))) "r")) ))) "r") -}}
+{{- $ok_19 := $tmp_tuple_17.T2 -}}
+{{- $num_18 := ($tmp_tuple_17.T1 | int) -}}
 {{- if $ok_19 -}}
 {{- $input = $num_18 -}}
 {{- end -}}
-{{- $tmp_tuple_17 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asnumeric" (dict "a" (list $v) ))) "r")) ))) "r") -}}
-{{- $ok_21 := $tmp_tuple_17.T2 -}}
-{{- $f_20 := ($tmp_tuple_17.T1 | float64) -}}
+{{- $tmp_tuple_18 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asnumeric" (dict "a" (list $v) ))) "r")) ))) "r") -}}
+{{- $ok_21 := $tmp_tuple_18.T2 -}}
+{{- $f_20 := ($tmp_tuple_18.T1 | float64) -}}
 {{- if $ok_21 -}}
 {{- $input = ($f_20 | int) -}}
 {{- end -}}
 {{- $_ := (set $result $k (min $input ((sub ((add $r (((mod $r (2 | int)) | int))) | int) (1 | int)) | int))) -}}
 {{- continue -}}
 {{- end -}}
-{{- $tmp_tuple_18 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "bool" $v false) ))) "r")) ))) "r") -}}
-{{- $ok_23 := $tmp_tuple_18.T2 -}}
-{{- $b_22 := $tmp_tuple_18.T1 -}}
+{{- $tmp_tuple_19 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "bool" $v false) ))) "r")) ))) "r") -}}
+{{- $ok_23 := $tmp_tuple_19.T2 -}}
+{{- $b_22 := $tmp_tuple_19.T1 -}}
 {{- if $ok_23 -}}
 {{- $_ := (set $result $k $b_22) -}}
 {{- continue -}}
