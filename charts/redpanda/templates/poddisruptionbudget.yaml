@@ -14,25 +14,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- $budget := .Values.statefulset.budget.maxUnavailable -}}
-{{- /* to maintain quorum, raft cannot lose more than half its members */ -}}
-{{- $minReplicas := divf .Values.statefulset.replicas 2 | floor -}}
-{{- /* the lowest we can go is 1 so allow that always */ -}}
-{{- if and (gt $budget (float64 1)) (gt $budget $minReplicas) -}}
-  {{ fail "statefulset.budget.maxUnavailable is set too high to maintain quorum: $budget > $minReplicas" }}
+{{- $pdb := (get ((include "redpanda.PodDisruptionBudget" (dict "a" (list .))) | fromJson) "r") }}
+{{- if ne $pdb nil -}}
+---
+{{toYaml $pdb}}
 {{- end -}}
-
-apiVersion: policy/v1
-kind: PodDisruptionBudget
-metadata:
-  name: {{ template "redpanda.fullname" . }}
-  namespace: {{ .Release.Namespace }}
-  labels:
-{{- with include "full.labels" . }}
-  {{- . | nindent 4 }}
-{{- end }}
-spec:
-  maxUnavailable: {{ $budget | int64 }}
-  selector:
-    matchLabels: {{ (include "statefulset-pod-labels-selector" .) | nindent 6 }}
-      redpanda.com/poddisruptionbudget: {{ template "redpanda.fullname" . }}
