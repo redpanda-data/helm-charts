@@ -137,6 +137,10 @@ func (t *Transpiler) transpileFile(f *ast.File) *File {
 		}
 
 		funcDirectives := parseDirectives(fn.Doc.Text())
+		if v, ok := funcDirectives["ignore"]; ok && v == "true" {
+			continue
+		}
+
 		// To not clash with the same method name in the same package
 		// which can be declared in multiple struct the package and function
 		// name could be separated with the name of the struct type.
