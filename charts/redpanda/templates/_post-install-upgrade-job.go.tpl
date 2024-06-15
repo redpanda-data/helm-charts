@@ -13,14 +13,11 @@
 {{- $envars = (mustAppend $envars (mustMergeOverwrite (dict "name" "" ) (dict "name" "REDPANDA_LICENSE" "valueFrom" (mustMergeOverwrite (dict ) (dict "secretKeyRef" $secretReference_2 )) ))) -}}
 {{- end -}}
 {{- end -}}
-{{- $tieredStorageConfig := $values.storage.tiered.config -}}
-{{- if (gt ((get (fromJson (include "_shims.len" (dict "a" (list $values.storage.tieredConfig) ))) "r") | int) (0 | int)) -}}
-{{- $tieredStorageConfig = $values.storage.tieredConfig -}}
-{{- end -}}
-{{- if (not (get (fromJson (include "redpanda.IsTieredStorageEnabled" (dict "a" (list $tieredStorageConfig) ))) "r")) -}}
+{{- if (not (get (fromJson (include "redpanda.Storage.IsTieredStorageEnabled" (dict "a" (list $values.storage) ))) "r")) -}}
 {{- (dict "r" $envars) | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- $tieredStorageConfig := (get (fromJson (include "redpanda.Storage.GetTieredStorageConfig" (dict "a" (list $values.storage) ))) "r") -}}
 {{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $tieredStorageConfig "cloud_storage_azure_container" (coalesce nil)) ))) "r")) ))) "r") -}}
 {{- $azureContainerExists := $tmp_tuple_1.T2 -}}
 {{- $ac := $tmp_tuple_1.T1 -}}
@@ -150,21 +147,6 @@
 {{- end -}}
 {{- end -}}
 {{- (dict "r" (coalesce nil)) | toJson -}}
-{{- break -}}
-{{- end -}}
-{{- end -}}
-
-{{- define "redpanda.IsTieredStorageEnabled" -}}
-{{- $tieredStorageConfig := (index .a 0) -}}
-{{- range $_ := (list 1) -}}
-{{- $tmp_tuple_8 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $tieredStorageConfig "cloud_storage_enabled" (coalesce nil)) ))) "r")) ))) "r") -}}
-{{- $ok_17 := $tmp_tuple_8.T2 -}}
-{{- $b_16 := $tmp_tuple_8.T1 -}}
-{{- if (and $ok_17 (get (fromJson (include "_shims.typeassertion" (dict "a" (list "bool" $b_16) ))) "r")) -}}
-{{- (dict "r" true) | toJson -}}
-{{- break -}}
-{{- end -}}
-{{- (dict "r" false) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
