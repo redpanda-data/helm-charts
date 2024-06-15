@@ -268,6 +268,21 @@ type Storage struct {
 	} `json:"tieredStoragePersistentVolume" jsonschema:"deprecated"`
 }
 
+func (s *Storage) IsTieredStorageEnabled() bool {
+	conf := s.GetTieredStorageConfig()
+
+	b, ok := conf["cloud_storage_enabled"]
+	return ok && b.(bool)
+}
+
+func (s *Storage) GetTieredStorageConfig() TieredStorageConfig {
+	if len(s.TieredConfig) > 0 {
+		return s.TieredConfig
+	}
+
+	return s.Tiered.Config
+}
+
 // +gotohelm:ignore=true
 func (Storage) JSONSchemaExtend(schema *jsonschema.Schema) {
 	deprecate(schema, "tieredConfig", "persistentVolume", "tieredStorageHostPath", "tieredStoragePersistentVolume")
@@ -742,13 +757,6 @@ func (TieredStorageCredentials) JSONSchemaExtend(schema *jsonschema.Schema) {
 }
 
 type TieredStorageConfig map[string]any
-
-func (tsc TieredStorageConfig) IsTieredStorageEnabled() bool {
-	if b, ok := tsc["cloud_storage_enabled"]; ok && b.(bool) {
-		return true
-	}
-	return false
-}
 
 // +gotohelm:ignore=true
 func (TieredStorageConfig) JSONSchema() *jsonschema.Schema {
