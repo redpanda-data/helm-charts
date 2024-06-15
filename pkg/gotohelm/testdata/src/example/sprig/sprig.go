@@ -15,25 +15,35 @@ type AStruct struct {
 // in helmette return the same values as the transpiled versions.
 func Sprig(dot *helmette.Dot) map[string]any {
 	return map[string]any{
-		"asIntegral": asIntegral(dot),
-		"asNumeric":  asNumeric(dot),
-		"atoi":       atoi(),
-		"concat":     concat(),
-		"default":    default_(),
-		"empty":      empty(),
-		"errTypes":   errTypes(),
-		"first":      first(),
-		"float":      float(),
-		"keys":       keys(),
-		"len":        lenTest(),
-		"min":        minFunc(),
-		"regex":      regex(),
-		"strings":    stringsFunctions(),
-		"toString":   toString(),
-		"trim":       trim(),
-		"unset":      unset(),
-		"yaml":       yaml(),
-		"tpl":        tpl(),
+		"asIntegral":      asIntegral(dot),
+		"asNumeric":       asNumeric(dot),
+		"atoi":            atoi(),
+		"concat":          concat(),
+		"default":         default_(),
+		"empty":           empty(),
+		"errTypes":        errTypes(),
+		"first":           first(),
+		"float":           float(),
+		"keys":            keys(),
+		"len":             lenTest(),
+		"min":             minFunc(),
+		"regex":           regex(),
+		"strings":         stringsFunctions(),
+		"toString":        toString(),
+		"trim":            trim(),
+		"unset":           unset(),
+		"yaml":            yaml(),
+		"tpl":             tpl(),
+		"regexReplaceAll": regexReplaceAll(),
+	}
+}
+
+func regexReplaceAll() any {
+	return []string{
+		helmette.RegexReplaceAll("", "", ""),
+		helmette.RegexReplaceAll("ab", "abbabaab", "w"),
+		helmette.RegexReplaceAll("test", "kodwptestpwo", "x"),
+		helmette.RegexReplaceAll(" ", "wko pdodk wej ndj ow", "_"),
 	}
 }
 
