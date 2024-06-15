@@ -23,7 +23,7 @@
 {{- $_ = (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list (printf "[]%s" "interface {}") $x (coalesce nil)) ))) "r")) ))) "r") -}}
 {{- $_ = (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list (printf "[]%s" "string") $x (coalesce nil)) ))) "r")) ))) "r") -}}
 {{- $_ = (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list (printf "map[%s]%s" "string" "interface {}") $x (coalesce nil)) ))) "r")) ))) "r") -}}
-{{- (dict "r" (dict "sliceExpr" $slice "negativeNumbers" (list -2 -4) "forExpr" (get (fromJson (include "syntax.forExpr" (dict "a" (list (10 | int)) ))) "r") "binaryExprs" (get (fromJson (include "syntax.binaryExprs" (dict "a" (list ) ))) "r") "instance-method" (get (fromJson (include "syntax.instanceMethod" (dict "a" (list ) ))) "r") )) | toJson -}}
+{{- (dict "r" (dict "sliceExpr" $slice "negativeNumbers" (list -2 -4) "forExpr" (get (fromJson (include "syntax.forExpr" (dict "a" (list (10 | int) (mustMergeOverwrite (dict "Iterations" 0 ) (dict "Iterations" (5 | int) ))) ))) "r") "binaryExprs" (get (fromJson (include "syntax.binaryExprs" (dict "a" (list ) ))) "r") "instance-method" (get (fromJson (include "syntax.instanceMethod" (dict "a" (list ) ))) "r") )) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -164,9 +164,15 @@
 
 {{- define "syntax.forExpr" -}}
 {{- $iteration := (index .a 0) -}}
+{{- $in := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
 {{- $result := (list ) -}}
 {{- $test := (list ) -}}
+{{- range $_, $i := untilStep ((0 | int)|int) (($in.Iterations | int)|int) (1|int) -}}
+{{- $test = (mustAppend $test (printf "%d" $i)) -}}
+{{- end -}}
+{{- $result = (mustAppend $result $test) -}}
+{{- $test = (list ) -}}
 {{- range $_, $i := untilStep ((0 | int)|int) ($iteration|int) (1|int) -}}
 {{- $test = (mustAppend $test (printf "%d" $i)) -}}
 {{- end -}}
@@ -177,12 +183,27 @@
 {{- end -}}
 {{- $result = (mustAppend $result $test) -}}
 {{- $test = (list ) -}}
+{{- range $_, $i := untilStep ((2 | int)|int) (($in.Iterations | int)|int) (1|int) -}}
+{{- $test = (mustAppend $test (printf "%d" $i)) -}}
+{{- end -}}
+{{- $result = (mustAppend $result $test) -}}
+{{- $test = (list ) -}}
 {{- range $_, $i := untilStep ((2 | int)|int) ($iteration|int) ((2 | int)|int) -}}
 {{- $test = (mustAppend $test (printf "%d" $i)) -}}
 {{- end -}}
 {{- $result = (mustAppend $result $test) -}}
 {{- $test = (list ) -}}
+{{- range $_, $i := untilStep ((2 | int)|int) (($in.Iterations | int)|int) ((2 | int)|int) -}}
+{{- $test = (mustAppend $test (printf "%d" $i)) -}}
+{{- end -}}
+{{- $result = (mustAppend $result $test) -}}
+{{- $test = (list ) -}}
 {{- range $_, $i := untilStep ((17 | int)|int) ($iteration|int) ((-2 | int)|int) -}}
+{{- $test = (mustAppend $test (printf "%d" $i)) -}}
+{{- end -}}
+{{- $result = (mustAppend $result $test) -}}
+{{- $test = (list ) -}}
+{{- range $_, $i := untilStep ((17 | int)|int) (($in.Iterations | int)|int) ((-2 | int)|int) -}}
 {{- $test = (mustAppend $test (printf "%d" $i)) -}}
 {{- end -}}
 {{- $result = (mustAppend $result $test) -}}

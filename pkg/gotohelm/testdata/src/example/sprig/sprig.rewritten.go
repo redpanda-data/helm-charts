@@ -1,5 +1,4 @@
 //go:build rewrites
-
 package sprig
 
 import (
