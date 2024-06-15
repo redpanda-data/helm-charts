@@ -392,6 +392,20 @@
                     },
                     "port": {
                       "type": "integer"
+                    },
+                    "tls": {
+                      "properties": {
+                        "cert": {
+                          "type": "string"
+                        },
+                        "enabled": {
+                          "type": "boolean"
+                        },
+                        "requireClientAuth": {
+                          "type": "boolean"
+                        }
+                      },
+                      "type": "object"
                     }
                   },
                   "required": [
@@ -807,6 +821,9 @@
         },
         "usageStats": {
           "properties": {
+            "clusterId": {
+              "type": "string"
+            },
             "enabled": {
               "type": "boolean"
             }

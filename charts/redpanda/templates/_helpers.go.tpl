@@ -360,3 +360,18 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "redpanda.RedpandaSMP" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $values := $dot.Values.AsMap -}}
+{{- $coresInMillies := ((get (fromJson (include "redpanda.RedpandaResources.RedpandaCoresInMillis" (dict "a" (list $values.resources) ))) "r") | int) -}}
+{{- if (lt $coresInMillies (1000 | int)) -}}
+{{- $_ := (set $values.resources.cpu "overprovisioned" true) -}}
+{{- (dict "r" (1 | int)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- (dict "r" ((floor ((divf ($coresInMillies | float64) 1000.0) | float64)) | int)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+

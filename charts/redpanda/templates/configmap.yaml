@@ -14,29 +14,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ include "redpanda.fullname" . }}
-  namespace: {{ .Release.Namespace | quote }}
-  labels:
-{{- with include "full.labels" . }}
-  {{- . | nindent 4 }}
-{{- end }}
-data: {{ include "full-configmap" . | nindent 2 }}
-
-{{- if .Values.external.enabled }}
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ include "redpanda.fullname" . }}-rpk
-  namespace: {{ .Release.Namespace | quote }}
-  labels:
-{{- with include "full.labels" . }}
-  {{- . | nindent 4 }}
-{{- end }}
-data:
-  profile: | {{ include "rpk-config-external" . | nindent 4 }}
-{{- end }}
+{{- $cms := (get ((include "redpanda.ConfigMaps" (dict "a" (list .))) | fromJson) "r") -}}
+{{- range $cm := $cms -}}
+{{ printf "\n---" }}
+{{toYaml $cm}}
+{{- end -}}
