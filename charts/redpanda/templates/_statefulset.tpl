@@ -110,7 +110,7 @@ to the $dependencies list.
 */}}
 {{- define "statefulset-checksum-annotation" -}}
   {{- $dependencies := list -}}
-  {{- $dependencies = append $dependencies (include "configmap-content-no-seed" .) -}}
+  {{- $dependencies = append $dependencies (get ((include "redpanda.ConfigMapsWithoutSeedServer" (dict "a" (list .))) | fromJson) "r") -}}
   {{- if .Values.external.enabled -}}
     {{- $dependencies = append $dependencies (dig "domain" "" .Values.external) -}}
     {{- $dependencies = append $dependencies (dig "addresses" "" .Values.external) -}}
