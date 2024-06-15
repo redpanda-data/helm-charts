@@ -1,4 +1,4 @@
-// +gotohelm:ignore=true
+// +gotohelm:filename=values.go.tpl
 package redpanda
 
 import (
@@ -58,6 +58,7 @@ type Values struct {
 	} `json:"tests"`
 }
 
+// +gotohelm:ignore=true
 func (Values) JSONSchemaExtend(schema *jsonschema.Schema) {
 	deprecate(schema, "license_key", "license_secret_ref")
 }
@@ -88,6 +89,7 @@ type Image struct {
 	PullPolicy string   `json:"pullPolicy" jsonschema:"required,pattern=^(Always|Never|IfNotPresent)$,description=The Kubernetes Pod image pull policy."`
 }
 
+// +gotohelm:ignore=true
 func (Image) JSONSchemaExtend(schema *jsonschema.Schema) {
 	tag, _ := schema.Properties.Get("tag")
 	repo, _ := schema.Properties.Get("repository")
@@ -121,6 +123,7 @@ type AuditLogging struct {
 	ReplicationFactor          *int     `json:"replicationFactor"`
 }
 
+// +gotohelm:ignore=true
 func (AuditLogging) JSONSchemaExtend(schema *jsonschema.Schema) {
 	makeNullable(schema, "replicationFactor", "enabledEventTypes", "excludedPrincipals", "excludedTopics")
 }
@@ -265,6 +268,7 @@ type Storage struct {
 	} `json:"tieredStoragePersistentVolume" jsonschema:"deprecated"`
 }
 
+// +gotohelm:ignore=true
 func (Storage) JSONSchemaExtend(schema *jsonschema.Schema) {
 	deprecate(schema, "tieredConfig", "persistentVolume", "tieredStorageHostPath", "tieredStoragePersistentVolume")
 
@@ -300,6 +304,7 @@ type PostUpgradeJob struct {
 
 type ContainerName string
 
+// +gotohelm:ignore=true
 func (ContainerName) JSONSchemaExtend(s *jsonschema.Schema) {
 	s.Enum = append(s.Enum, RedpandaContainerName)
 }
@@ -424,6 +429,7 @@ type Statefulset struct {
 	} `json:"initContainers"`
 }
 
+// +gotohelm:ignore=true
 func (Statefulset) JSONSchemaExtend(schema *jsonschema.Schema) {
 	deprecate(schema, "podSecurityContext")
 }
@@ -518,6 +524,7 @@ type NameOnlySecretRef struct {
 	Name string `json:"name"`
 }
 
+// +gotohelm:ignore=true
 func (TLSCert) JSONSchemaExtend(schema *jsonschema.Schema) {
 	// An object reference could allow anything but we want to require that the
 	// reference is to either a ClusterIssuer or Issuer.
@@ -531,6 +538,7 @@ func (TLSCert) JSONSchemaExtend(schema *jsonschema.Schema) {
 
 type TLSCertMap map[string]TLSCert
 
+// +gotohelm:ignore=true
 func (TLSCertMap) JSONSchemaExtend(schema *jsonschema.Schema) {
 	schema.PatternProperties = map[string]*jsonschema.Schema{
 		"^[A-Za-z_][A-Za-z0-9_]*$": schema.AdditionalProperties,
@@ -598,6 +606,7 @@ type HTTPListeners struct {
 	Port                 int32                           `json:"port" jsonschema:"required"`
 }
 
+// +gotohelm:ignore=true
 func (HTTPListeners) JSONSchemaExtend(schema *jsonschema.Schema) {
 	makeNullable(schema, "authenticationMethod")
 }
@@ -614,6 +623,7 @@ type HTTPExternal struct {
 	TLS                  *ExternalTLS              `json:"tls" jsonschema:"required"`
 }
 
+// +gotohelm:ignore=true
 func (HTTPExternal) JSONSchemaExtend(schema *jsonschema.Schema) {
 	makeNullable(schema, "authenticationMethod")
 	// TODO document me. Legacy matching needs to be removed in a minor bump.
@@ -629,6 +639,7 @@ type KafkaListeners struct {
 	Port                 int32                            `json:"port" jsonschema:"required"`
 }
 
+// +gotohelm:ignore=true
 func (KafkaListeners) JSONSchemaExtend(schema *jsonschema.Schema) {
 	makeNullable(schema, "authenticationMethod")
 }
@@ -645,6 +656,7 @@ type KafkaExternal struct {
 	TLS                  *ExternalTLS               `json:"tls"`
 }
 
+// +gotohelm:ignore=true
 func (KafkaExternal) JSONSchemaExtend(schema *jsonschema.Schema) {
 	makeNullable(schema, "authenticationMethod")
 }
@@ -660,6 +672,7 @@ type SchemaRegistryListeners struct {
 	TLS                  InternalTLS                               `json:"tls" jsonschema:"required"`
 }
 
+// +gotohelm:ignore=true
 func (SchemaRegistryListeners) JSONSchemaExtend(schema *jsonschema.Schema) {
 	makeNullable(schema, "authenticationMethod")
 }
@@ -675,6 +688,7 @@ type SchemaRegistryExternal struct {
 	TLS                  *ExternalTLS              `json:"tls"`
 }
 
+// +gotohelm:ignore=true
 func (SchemaRegistryExternal) JSONSchemaExtend(schema *jsonschema.Schema) {
 	makeNullable(schema, "authenticationMethod")
 	// TODO this as well
@@ -684,6 +698,7 @@ func (SchemaRegistryExternal) JSONSchemaExtend(schema *jsonschema.Schema) {
 
 type TunableConfig map[string]any
 
+// +gotohelm:ignore=true
 func (TunableConfig) JSONSchemaExtend(schema *jsonschema.Schema) {
 	schema.AdditionalProperties = jsonschema.TrueSchema
 	schema.Properties = orderedmap.New[string, *jsonschema.Schema]()
@@ -721,6 +736,7 @@ func (tsc TieredStorageCredentials) IsSecretKeyReferenceValid() bool {
 	return tsc.SecretKey != nil && tsc.SecretKey.Name != "" && tsc.SecretKey.Key != ""
 }
 
+// +gotohelm:ignore=true
 func (TieredStorageCredentials) JSONSchemaExtend(schema *jsonschema.Schema) {
 	deprecate(schema, "configurationKey", "key", "name")
 }
@@ -734,6 +750,7 @@ func (tsc TieredStorageConfig) IsTieredStorageEnabled() bool {
 	return false
 }
 
+// +gotohelm:ignore=true
 func (TieredStorageConfig) JSONSchema() *jsonschema.Schema {
 	type schema struct {
 		CloudStorageEnabled                     bool   `json:"cloud_storage_enabled" jsonschema:"required"`
