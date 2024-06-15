@@ -328,3 +328,9 @@ func SemverCompare(constraint, version string) (bool, error) {
 	fn := sprig.FuncMap()["semverCompare"].(func(string, string) (bool, error))
 	return fn(constraint, version)
 }
+
+// +gotohelm:builtin=regexReplaceAll
+func RegexReplaceAll(regex, s, repl string) string {
+	r := regexp.MustCompile(regex)
+	return r.ReplaceAllString(s, repl)
+}
