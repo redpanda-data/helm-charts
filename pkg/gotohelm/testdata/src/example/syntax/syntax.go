@@ -56,7 +56,7 @@ func Syntax() map[string]any {
 	return map[string]any{
 		"sliceExpr":       slice,
 		"negativeNumbers": []int{-2, -4},
-		"forExpr":         forExpr(10),
+		"forExpr":         forExpr(10, Complex{Iterations: 5}),
 		"binaryExprs":     binaryExprs(),
 		"instance-method": instanceMethod(),
 	}
@@ -207,11 +207,22 @@ func binaryExprs() []bool {
 	return result
 }
 
-func forExpr(iteration int) [][]string {
+type Complex struct {
+	Iterations int
+}
+
+func forExpr(iteration int, in Complex) [][]string {
 	result := [][]string{}
 
-	// ["0","1","2","3","4","5","6","7","8","9"]
+	// ["0","1","2","3","4"]
 	test := []string{}
+	for i := 0; i < in.Iterations; i++ {
+		test = append(test, fmt.Sprintf("%d", i))
+	}
+	result = append(result, test)
+
+	// ["0","1","2","3","4","5","6","7","8","9"]
+	test = []string{}
 	for i := 0; i < iteration; i++ {
 		test = append(test, fmt.Sprintf("%d", i))
 	}
@@ -224,6 +235,13 @@ func forExpr(iteration int) [][]string {
 	}
 	result = append(result, test)
 
+	// ["2","3","4"]
+	test = []string{}
+	for i := 2; i < in.Iterations; i++ {
+		test = append(test, fmt.Sprintf("%d", i))
+	}
+	result = append(result, test)
+
 	// ["2","4","6","8"]
 	test = []string{}
 	for i := 2; i < iteration; i += 2 {
@@ -231,9 +249,23 @@ func forExpr(iteration int) [][]string {
 	}
 	result = append(result, test)
 
+	// ["2","4"]
+	test = []string{}
+	for i := 2; i < in.Iterations; i += 2 {
+		test = append(test, fmt.Sprintf("%d", i))
+	}
+	result = append(result, test)
+
 	// ["17","15","13","11"]
 	test = []string{}
 	for i := 17; i > iteration; i -= 2 {
+		test = append(test, fmt.Sprintf("%d", i))
+	}
+	result = append(result, test)
+
+	// ["17","15","13","11","9","7"]
+	test = []string{}
+	for i := 17; i > in.Iterations; i -= 2 {
 		test = append(test, fmt.Sprintf("%d", i))
 	}
 	result = append(result, test)

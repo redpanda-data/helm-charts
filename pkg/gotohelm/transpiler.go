@@ -383,26 +383,48 @@ func (t *Transpiler) transpileStatement(stmt ast.Stmt) Node {
 		if b, ok := stmt.Cond.(*ast.BinaryExpr); ok {
 			switch b.Op {
 			case token.LSS, token.LEQ:
-				if declaration, ok := b.X.(*ast.Ident).Obj.Decl.(*ast.AssignStmt); ok {
-					start = t.transpileExpr(declaration.Rhs[0])
-				} else {
+				if _, ok := b.X.(*ast.SelectorExpr); ok {
 					start = t.transpileExpr(b.X)
-				}
-				if declaration, ok := b.Y.(*ast.Ident).Obj.Decl.(*ast.AssignStmt); ok {
-					stop = t.transpileExpr(declaration.Rhs[0])
 				} else {
+					switch declaration := b.X.(*ast.Ident).Obj.Decl.(type) {
+					case *ast.AssignStmt:
+						start = t.transpileExpr(declaration.Rhs[0])
+					case *ast.Field:
+						start = t.transpileExpr(declaration.Names[0])
+					}
+				}
+
+				if _, ok := b.Y.(*ast.SelectorExpr); ok {
 					stop = t.transpileExpr(b.Y)
+				} else {
+					switch declaration := b.Y.(*ast.Ident).Obj.Decl.(type) {
+					case *ast.AssignStmt:
+						stop = t.transpileExpr(declaration.Rhs[0])
+					case *ast.Field:
+						stop = t.transpileExpr(declaration.Names[0])
+					}
 				}
 			case token.GTR, token.GEQ:
-				if declaration, ok := b.X.(*ast.Ident).Obj.Decl.(*ast.AssignStmt); ok {
-					stop = t.transpileExpr(declaration.Rhs[0])
-				} else {
+				if _, ok := b.X.(*ast.SelectorExpr); ok {
 					stop = t.transpileExpr(b.X)
-				}
-				if declaration, ok := b.Y.(*ast.Ident).Obj.Decl.(*ast.AssignStmt); ok {
-					start = t.transpileExpr(declaration.Rhs[0])
 				} else {
+					switch declaration := b.X.(*ast.Ident).Obj.Decl.(type) {
+					case *ast.AssignStmt:
+						stop = t.transpileExpr(declaration.Rhs[0])
+					case *ast.Field:
+						stop = t.transpileExpr(declaration.Names[0])
+					}
+				}
+
+				if _, ok := b.Y.(*ast.SelectorExpr); ok {
 					start = t.transpileExpr(b.Y)
+				} else {
+					switch declaration := b.Y.(*ast.Ident).Obj.Decl.(type) {
+					case *ast.AssignStmt:
+						start = t.transpileExpr(declaration.Rhs[0])
+					case *ast.Field:
+						start = t.transpileExpr(declaration.Names[0])
+					}
 				}
 			default:
 				panic(&Unsupported{
@@ -442,6 +464,13 @@ func (t *Transpiler) transpileStatement(stmt ast.Stmt) Node {
 			})
 		}
 
+		if stop == nil || start == nil || step == nil {
+			panic(&Unsupported{
+				Node: stmt,
+				Fset: t.Fset,
+				Msg:  fmt.Sprintf("start: %v; stop: %v; step: %v", start, stop, step),
+			})
+		}
 		return &Range{
 			Key:   &Ident{Name: "_"},
 			Value: &Literal{Value: fmt.Sprintf("$%s", stmt.Init.(*ast.AssignStmt).Lhs[0].(*ast.Ident).Name)},
