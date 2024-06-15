@@ -163,31 +163,31 @@
 {{- end -}}
 
 {{- define "syntax.forExpr" -}}
-{{- $interation := (index .a 0) -}}
+{{- $iteration := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $result := (list ) -}}
 {{- $test := (list ) -}}
-{{- range $_, $i := untilStep ((0 | int)|int) ($interation|int) (1|int) -}}
+{{- range $_, $i := untilStep ((0 | int)|int) ($iteration|int) (1|int) -}}
 {{- $test = (mustAppend $test (printf "%d" $i)) -}}
 {{- end -}}
 {{- $result = (mustAppend $result $test) -}}
 {{- $test = (list ) -}}
-{{- range $_, $i := untilStep ((2 | int)|int) ($interation|int) (1|int) -}}
+{{- range $_, $i := untilStep ((2 | int)|int) ($iteration|int) (1|int) -}}
 {{- $test = (mustAppend $test (printf "%d" $i)) -}}
 {{- end -}}
 {{- $result = (mustAppend $result $test) -}}
 {{- $test = (list ) -}}
-{{- range $_, $i := untilStep ((2 | int)|int) ($interation|int) ((2 | int)|int) -}}
+{{- range $_, $i := untilStep ((2 | int)|int) ($iteration|int) ((2 | int)|int) -}}
 {{- $test = (mustAppend $test (printf "%d" $i)) -}}
 {{- end -}}
 {{- $result = (mustAppend $result $test) -}}
 {{- $test = (list ) -}}
-{{- range $_, $i := untilStep ((17 | int)|int) ($interation|int) ((-2 | int)|int) -}}
+{{- range $_, $i := untilStep ((17 | int)|int) ($iteration|int) ((-2 | int)|int) -}}
 {{- $test = (mustAppend $test (printf "%d" $i)) -}}
 {{- end -}}
 {{- $result = (mustAppend $result $test) -}}
 {{- $test = (list ) -}}
-{{- range $_, $i := untilStep ($interation|int) ((17 | int)|int) ((-2 | int)|int) -}}
+{{- range $_, $i := untilStep ($iteration|int) ((17 | int)|int) ((-2 | int)|int) -}}
 {{- $test = (mustAppend $test (printf "%d" $i)) -}}
 {{- end -}}
 {{- $result = (mustAppend $result $test) -}}
