@@ -143,7 +143,7 @@ func typeToNode(pkg *packages.Package, typ types.Type) ast.Expr {
 
 	expr, err := parser.ParseExpr(s)
 	if err != nil {
-		panic(err)
+		panic(fmt.Sprintf("pkg errors (%s) with type (%s): %v", pkg.Name, s, err))
 	}
 
 	return expr
