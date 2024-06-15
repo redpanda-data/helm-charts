@@ -18,6 +18,7 @@ package redpanda
 
 import (
 	"fmt"
+	"math"
 	"strings"
 
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
@@ -381,4 +382,17 @@ func redpandaAtLeast(dot *helmette.Dot, constraint string) bool {
 
 func cleanForK8s(in string) string {
 	return strings.TrimSuffix(helmette.Trunc(63, in), "-")
+}
+
+func RedpandaSMP(dot *helmette.Dot) int {
+	values := helmette.Unwrap[Values](dot.Values)
+
+	coresInMillies := int(values.Resources.RedpandaCoresInMillis())
+
+	if coresInMillies < 1000 {
+		values.Resources.CPU.Overprovisioned = ptr.To(true)
+		return 1
+	}
+
+	return int(math.Floor(float64(coresInMillies) / 1000))
 }

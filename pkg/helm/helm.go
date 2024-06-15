@@ -5,10 +5,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"slices"
 	"strings"
 	"time"
@@ -157,6 +160,10 @@ func New(opts Options) (*Client, error) {
 	}, nil
 }
 
+func (c *Client) GetConfigHome() string {
+	return c.configHome
+}
+
 func (c *Client) List(ctx context.Context) ([]Release, error) {
 	stdout, _, err := c.runHelm(ctx, "list", "-A", "--output=json")
 	if err != nil {
@@ -289,7 +296,7 @@ func (c *Client) Template(ctx context.Context, chart string, opts TemplateOption
 	// compat issues.
 	client.KubeVersion = &chartutil.KubeVersion{Version: "v1.21.0", Minor: "21", Major: "1"}
 
-	releaseName, chart, err := client.NameAndChart([]string{chart})
+	releaseName, chart, err := client.NameAndChart([]string{opts.Name, chart})
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
@@ -354,6 +361,28 @@ func (c *Client) Template(ctx context.Context, chart string, opts TemplateOption
 	}
 
 	return manifest.Bytes(), nil
+}
+
+func (c *Client) DownloadFile(ctx context.Context, url, filename string) error {
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	if err != nil {
+		return err
+	}
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	filepath := filepath.Join(c.configHome, filename)
+	out, err := os.Create(filepath)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	_, err = io.Copy(out, resp.Body)
+	return err
 }
 
 type UpgradeOptions struct {

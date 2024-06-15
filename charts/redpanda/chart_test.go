@@ -3,6 +3,7 @@ package redpanda_test
 import (
 	"maps"
 	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/redpanda-data/helm-charts/charts/redpanda"
@@ -16,6 +17,7 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"sigs.k8s.io/yaml"
 )
 
 func TieredStorageStatic(t *testing.T) redpanda.PartialValues {
@@ -138,6 +140,122 @@ func TestChart(t *testing.T) {
 		require.Equal(t, true, config["cloud_storage_enabled"])
 		require.Equal(t, "from-secret-access-key", config["cloud_storage_access_key"])
 	})
+}
+
+// preTranspilerChartVersion is the latest release of the Redpanda helm chart prior to the introduction of
+// ConfigMap go base implementation. It's used to verify that translated code is functionally equivalent.
+const preTranspilerChartVersion = "redpanda-5.8.8.tgz"
+
+func TestConfigMap(t *testing.T) {
+	ctx := testutil.Context(t)
+	client, err := helm.New(helm.Options{ConfigHome: testutil.TempDir(t)})
+	require.NoError(t, err)
+
+	// Downloading Redpanda helm chart release is required as client.Template
+	// function does not pass HELM_CONFIG_HOME, that prevents from downloading specific
+	// Redpanda helm chart version from public helm repository.
+	require.NoError(t, client.DownloadFile(ctx, "https://github.com/redpanda-data/helm-charts/releases/download/redpanda-5.8.8/redpanda-5.8.8.tgz", preTranspilerChartVersion))
+
+	values, err := os.ReadDir("./ci")
+	require.NoError(t, err)
+
+	for _, v := range values {
+		t.Run(v.Name(), func(t *testing.T) {
+			t.Parallel()
+
+			// First generate latest released Redpanda charts manifests. From ConfigMap bootstrap,
+			// redpanda node configuration and RPK profile.
+			manifests, err := client.Template(ctx, filepath.Join(client.GetConfigHome(), preTranspilerChartVersion), helm.TemplateOptions{
+				Name:       "redpanda",
+				ValuesFile: "./ci/" + v.Name(),
+				Set: []string{
+					// Tests utilize some non-deterministic helpers (rng). We don't
+					// really care about the stability of their output, so globally
+					// disable them.
+					"tests.enabled=false",
+					// jwtSecret defaults to a random string. Can't have that
+					// in snapshot testing so set it to a static value.
+					"console.secret.login.jwtSecret=SECRETKEY",
+				},
+			})
+			require.NoError(t, err)
+
+			oldConf, err := extractRedpandaConfigsFromConfigMap(manifests)
+			require.NoError(t, err)
+
+			// Now helm template will generate Redpanda configuration from local definition
+			manifests, err = client.Template(ctx, ".", helm.TemplateOptions{
+				Name:       "redpanda",
+				ValuesFile: "./ci/" + v.Name(),
+				Set: []string{
+					// Tests utilize some non-deterministic helpers (rng). We don't
+					// really care about the stability of their output, so globally
+					// disable them.
+					"tests.enabled=false",
+					// jwtSecret defaults to a random string. Can't have that
+					// in snapshot testing so set it to a static value.
+					"console.secret.login.jwtSecret=SECRETKEY",
+				},
+			})
+			require.NoError(t, err)
+
+			newConf, err := extractRedpandaConfigsFromConfigMap(manifests)
+			require.NoError(t, err)
+
+			require.JSONEq(t, oldConf.redpanda, newConf.redpanda)
+			require.JSONEq(t, oldConf.bootstrap, newConf.bootstrap)
+			require.JSONEq(t, oldConf.rpkProfile, newConf.rpkProfile)
+		})
+	}
+}
+
+type configmapRepresentation struct {
+	redpanda   string
+	bootstrap  string
+	rpkProfile string
+}
+
+// extractRedpandaConfigsFromConfigMap is parsing all manifests (resources)
+// created by helm template execution. Redpanda helm chart creates 3 distinct
+// files in ConfigMap: redpanda.yaml (node, tunable and cluster configuration),
+// bootstrap.yaml (only cluster configuration) and profile (external connectivity rpk profile).
+func extractRedpandaConfigsFromConfigMap(manifests []byte) (*configmapRepresentation, error) {
+	var result configmapRepresentation
+	objs, err := kube.DecodeYAML(manifests, redpanda.Scheme)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, obj := range objs {
+		switch obj := obj.(type) {
+		case *corev1.ConfigMap:
+			switch obj.Name {
+			case "redpanda":
+				r := obj.Data["redpanda.yaml"]
+				jsonR, err := yaml.YAMLToJSON([]byte(r))
+				if err != nil {
+					return nil, err
+				}
+				result.redpanda = string(jsonR)
+
+				b := obj.Data["bootstrap.yaml"]
+				jsonB, err := yaml.YAMLToJSON([]byte(b))
+				if err != nil {
+					return nil, err
+				}
+				result.bootstrap = string(jsonB)
+			case "redpanda-rpk":
+				p := obj.Data["profile"]
+				jsonP, err := yaml.YAMLToJSON([]byte(p))
+				if err != nil {
+					return nil, err
+				}
+				result.rpkProfile = string(jsonP)
+			}
+		}
+	}
+
+	return &result, nil
 }
 
 func TestLabels(t *testing.T) {

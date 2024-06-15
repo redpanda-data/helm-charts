@@ -40,7 +40,7 @@ func NodePortService(dot *helmette.Dot) *corev1.Service {
 	ports := []corev1.ServicePort{}
 
 	for name, listener := range values.Listeners.Admin.External {
-		if listener.Enabled != nil && !*listener.Enabled {
+		if !listener.IsEnabled() {
 			continue
 		}
 
@@ -58,7 +58,7 @@ func NodePortService(dot *helmette.Dot) *corev1.Service {
 	}
 
 	for name, listener := range values.Listeners.Kafka.External {
-		if listener.Enabled != nil && !*listener.Enabled {
+		if !listener.IsEnabled() {
 			continue
 		}
 
@@ -76,7 +76,7 @@ func NodePortService(dot *helmette.Dot) *corev1.Service {
 	}
 
 	for name, listener := range values.Listeners.HTTP.External {
-		if listener.Enabled != nil && !*listener.Enabled {
+		if !listener.IsEnabled() {
 			continue
 		}
 
@@ -94,7 +94,7 @@ func NodePortService(dot *helmette.Dot) *corev1.Service {
 	}
 
 	for name, listener := range values.Listeners.SchemaRegistry.External {
-		if listener.Enabled != nil && !*listener.Enabled {
+		if !listener.IsEnabled() {
 			continue
 		}
 
