@@ -1363,6 +1363,12 @@ type SecretRef struct {
 	Name             string `json:"name"`
 }
 
+// IsValid confirms whether EnvVarSource could be built from
+// SecretRef.
+func (sr *SecretRef) IsValid() bool {
+	return sr != nil && !helmette.Empty(sr.Key) && !helmette.Empty(sr.Name)
+}
+
 type TieredStorageCredentials struct {
 	ConfigurationKey string     `json:"configurationKey" jsonschema:"deprecated"`
 	Key              string     `json:"key" jsonschema:"deprecated"`

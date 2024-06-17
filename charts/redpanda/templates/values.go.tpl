@@ -687,6 +687,14 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "redpanda.SecretRef.IsValid" -}}
+{{- $sr := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- (dict "r" (and (and (ne $sr (coalesce nil)) (not (empty $sr.key))) (not (empty $sr.name)))) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "redpanda.TieredStorageCredentials.IsAccessKeyReferenceValid" -}}
 {{- $tsc := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
