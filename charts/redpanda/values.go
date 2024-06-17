@@ -705,6 +705,39 @@ func (l *Listeners) AdminList(replicas int, fullname, internalDomain string) []s
 	return result
 }
 
+// TrustStoreVolume returns a [corev1.Volume] containing a projected volume
+// that mounts all required truststore files. If no truststores are configured,
+// it returns nil.
+func (l *Listeners) TrustStoreVolume(tls *TLS) *corev1.Volume {
+	var sources []corev1.VolumeProjection
+	for _, ts := range l.TrustStores(tls) {
+		sources = append(sources, ts.VolumeProjection())
+	}
+
+	if len(sources) < 1 {
+		return nil
+	}
+
+	return &corev1.Volume{
+		Name: "truststores",
+		VolumeSource: corev1.VolumeSource{
+			Projected: &corev1.ProjectedVolumeSource{
+				Sources: sources,
+			},
+		},
+	}
+}
+
+// TrustStores returns an aggregate slice of all "active" [TrustStore]s across
+// all listeners.
+func (l *Listeners) TrustStores(tls *TLS) []*TrustStore {
+	tss := l.Kafka.TrustStores(tls)
+	tss = append(tss, l.Admin.TrustStores(tls)...)
+	tss = append(tss, l.HTTP.TrustStores(tls)...)
+	tss = append(tss, l.SchemaRegistry.TrustStores(tls)...)
+	return tss
+}
+
 type Config struct {
 	Cluster              ClusterConfig         `json:"cluster" jsonschema:"required"`
 	Node                 NodeConfig            `json:"node" jsonschema:"required"`
@@ -794,31 +827,10 @@ func (TLSCertMap) JSONSchemaExtend(schema *jsonschema.Schema) {
 	schema.AdditionalProperties = nil
 }
 
-func (m TLSCertMap) getTrustStoreFilePath(certName string) string {
-	// TLSCertMap is not defined inside each listener as TLSCertMap can be shared
-	// between each listener.
-	if m == nil {
-		panic("TLS map is not defined")
-	}
-
-	if certName == "" {
-		return defaultTruststorePath
-	}
-
-	// TLSCert can overwrite ca/truststore path in the configuration
-	if crt, ok := m[certName]; ok && crt.CAEnabled {
-		return fmt.Sprintf("/etc/tls/certs/%s/ca.crt", certName)
-	} else if !ok {
-		panic(fmt.Sprintf("Certificate name reference (%s) defined in listener, but not found in the tls.certs map", certName))
-	}
-
-	return defaultTruststorePath
-}
-
 func (m TLSCertMap) MustGet(name string) *TLSCert {
 	cert, ok := m[name]
 	if !ok {
-		panic("TODO")
+		panic(fmt.Sprintf("Certificate %q referenced, but not found in the tls.certs map", name))
 	}
 	return &cert
 }
@@ -836,15 +848,59 @@ type SASLAuth struct {
 	Users     []SASLUser `json:"users"`
 }
 
+type TrustStore struct {
+	ConfigMapKeyRef *corev1.ConfigMapKeySelector `json:"configMapKeyRef"`
+	SecretKeyRef    *corev1.SecretKeySelector    `json:"secretKeyRef"`
+}
+
+func (t *TrustStore) TrustStoreFilePath() string {
+	return fmt.Sprintf("%s/%s", TrustStoreMountPath, t.RelativePath())
+}
+
+func (t *TrustStore) RelativePath() string {
+	if t.ConfigMapKeyRef != nil {
+		return fmt.Sprintf("configmaps/%s-%s", t.ConfigMapKeyRef.Name, t.ConfigMapKeyRef.Key)
+	}
+	return fmt.Sprintf("secrets/%s-%s", t.SecretKeyRef.Name, t.SecretKeyRef.Key)
+}
+
+func (t *TrustStore) VolumeProjection() corev1.VolumeProjection {
+	if t.ConfigMapKeyRef != nil {
+		return corev1.VolumeProjection{
+			ConfigMap: &corev1.ConfigMapProjection{
+				LocalObjectReference: corev1.LocalObjectReference{
+					Name: t.ConfigMapKeyRef.Name,
+				},
+				Items: []corev1.KeyToPath{{
+					Key:  t.ConfigMapKeyRef.Key,
+					Path: t.RelativePath(),
+				}},
+			},
+		}
+	}
+	return corev1.VolumeProjection{
+		Secret: &corev1.SecretProjection{
+			LocalObjectReference: corev1.LocalObjectReference{
+				Name: t.SecretKeyRef.Name,
+			},
+			Items: []corev1.KeyToPath{{
+				Key:  t.SecretKeyRef.Key,
+				Path: t.RelativePath(),
+			}},
+		},
+	}
+}
+
 // InternalTLS is the TLS configuration for "internal" listeners. Internal
 // listeners all have default values specified within values.yaml which allows
 // us to be more strict about the schema here.
 // TODO Unify this struct with ExternalTLS and/or remove the concept of
 // internal and external listeners all together.
 type InternalTLS struct {
-	Enabled           *bool  `json:"enabled"`
-	Cert              string `json:"cert" jsonschema:"required"`
-	RequireClientAuth bool   `json:"requireClientAuth" jsonschema:"required"`
+	Enabled           *bool       `json:"enabled"`
+	Cert              string      `json:"cert" jsonschema:"required"`
+	RequireClientAuth bool        `json:"requireClientAuth" jsonschema:"required"`
+	TrustStore        *TrustStore `json:"trustStore"`
 }
 
 // IsEnabled reports the value of [InternalTLS.Enabled], falling back to
@@ -852,6 +908,18 @@ type InternalTLS struct {
 func (t *InternalTLS) IsEnabled(tls *TLS) bool {
 	// Default Enabled to the value of the global TLS struct.
 	return ptr.Deref(t.Enabled, tls.Enabled) && t.Cert != ""
+}
+
+func (t *InternalTLS) TrustStoreFilePath(tls *TLS) string {
+	if t.TrustStore != nil {
+		return t.TrustStore.TrustStoreFilePath()
+	}
+
+	if tls.Certs.MustGet(t.Cert).CAEnabled {
+		return fmt.Sprintf("/etc/tls/certs/%s/ca.crt", t.Cert)
+	}
+
+	return defaultTruststorePath
 }
 
 // ExternalTLS is the TLS configuration associated with a given "external"
@@ -862,9 +930,10 @@ type ExternalTLS struct {
 	// Enabled, when `false`, indicates that this struct should treated as if
 	// it was not specified. If `nil`, defaults to [InternalTLS.Enabled].
 	// Prefer to use `IsEnabled` rather than checking this field directly.
-	Enabled           *bool   `json:"enabled"`
-	Cert              *string `json:"cert"`
-	RequireClientAuth *bool   `json:"requireClientAuth"`
+	Enabled           *bool       `json:"enabled"`
+	Cert              *string     `json:"cert"`
+	RequireClientAuth *bool       `json:"requireClientAuth"`
+	TrustStore        *TrustStore `json:"trustStore"`
 }
 
 func (t *ExternalTLS) GetCert(i *InternalTLS, tls *TLS) *TLSCert {
@@ -873,6 +942,18 @@ func (t *ExternalTLS) GetCert(i *InternalTLS, tls *TLS) *TLSCert {
 
 func (t *ExternalTLS) GetCertName(i *InternalTLS) string {
 	return ptr.Deref(t.Cert, i.Cert)
+}
+
+func (t *ExternalTLS) TrustStoreFilePath(i *InternalTLS, tls *TLS) string {
+	if t.TrustStore != nil {
+		return t.TrustStore.TrustStoreFilePath()
+	}
+
+	if t.GetCert(i, tls).CAEnabled {
+		return fmt.Sprintf("/etc/tls/certs/%s/ca.crt", t.GetCertName(i))
+	}
+
+	return defaultTruststorePath
 }
 
 // IsEnabled reports the value of [ExternalTLS.Enabled], falling back to
@@ -931,10 +1012,30 @@ func (l *AdminListeners) ListenersTLS(tls *TLS) []map[string]any {
 			"cert_file":           fmt.Sprintf("/etc/tls/certs/%s/tls.crt", certName),
 			"key_file":            fmt.Sprintf("/etc/tls/certs/%s/tls.key", certName),
 			"require_client_auth": ptr.Deref(lis.TLS.RequireClientAuth, false),
-			"truststore_file":     tls.Certs.getTrustStoreFilePath(certName),
+			"truststore_file":     lis.TLS.TrustStoreFilePath(&l.TLS, tls),
 		})
 	}
 	return admin
+}
+
+// TrustStores returns a slice of all configured and enabled [TrustStore]s on
+// both internal and external listeners.
+func (l *AdminListeners) TrustStores(tls *TLS) []*TrustStore {
+	tss := []*TrustStore{}
+
+	if l.TLS.IsEnabled(tls) && l.TLS.TrustStore != nil {
+		tss = append(tss, l.TLS.TrustStore)
+	}
+
+	for _, lis := range l.External {
+		if !lis.IsEnabled() || !lis.TLS.IsEnabled(&l.TLS, tls) || lis.TLS.TrustStore == nil {
+			continue
+		}
+		tss = append(tss, lis.TLS.TrustStore)
+
+	}
+
+	return tss
 }
 
 type AdminExternal struct {
@@ -1026,10 +1127,30 @@ func (l *HTTPListeners) ListenersTLS(tls *TLS) []map[string]any {
 			"cert_file":           fmt.Sprintf("/etc/tls/certs/%s/tls.crt", certName),
 			"key_file":            fmt.Sprintf("/etc/tls/certs/%s/tls.key", certName),
 			"require_client_auth": ptr.Deref(lis.TLS.RequireClientAuth, false),
-			"truststore_file":     tls.Certs.getTrustStoreFilePath(certName),
+			"truststore_file":     lis.TLS.TrustStoreFilePath(&l.TLS, tls),
 		})
 	}
 	return pp
+}
+
+// TrustStores returns a slice of all configured and enabled [TrustStore]s on
+// both internal and external listeners.
+func (l *HTTPListeners) TrustStores(tls *TLS) []*TrustStore {
+	var tss []*TrustStore
+
+	if l.TLS.IsEnabled(tls) && l.TLS.TrustStore != nil {
+		tss = append(tss, l.TLS.TrustStore)
+	}
+
+	for _, lis := range l.External {
+		if !lis.IsEnabled() || !lis.TLS.IsEnabled(&l.TLS, tls) || lis.TLS.TrustStore == nil {
+			continue
+		}
+		tss = append(tss, lis.TLS.TrustStore)
+
+	}
+
+	return tss
 }
 
 type HTTPExternal struct {
@@ -1134,10 +1255,30 @@ func (l *KafkaListeners) ListenersTLS(tls *TLS) []map[string]any {
 			"cert_file":           fmt.Sprintf("/etc/tls/certs/%s/tls.crt", certName),
 			"key_file":            fmt.Sprintf("/etc/tls/certs/%s/tls.key", certName),
 			"require_client_auth": ptr.Deref(lis.TLS.RequireClientAuth, false),
-			"truststore_file":     tls.Certs.getTrustStoreFilePath(certName),
+			"truststore_file":     lis.TLS.TrustStoreFilePath(&l.TLS, tls),
 		})
 	}
 	return kafka
+}
+
+// TrustStores returns a slice of all configured and enabled [TrustStore]s on
+// both internal and external listeners.
+func (l *KafkaListeners) TrustStores(tls *TLS) []*TrustStore {
+	var tss []*TrustStore
+
+	if l.TLS.IsEnabled(tls) && l.TLS.TrustStore != nil {
+		tss = append(tss, l.TLS.TrustStore)
+	}
+
+	for _, lis := range l.External {
+		if !lis.IsEnabled() || !lis.TLS.IsEnabled(&l.TLS, tls) || lis.TLS.TrustStore == nil {
+			continue
+		}
+		tss = append(tss, lis.TLS.TrustStore)
+
+	}
+
+	return tss
 }
 
 type KafkaExternal struct {
@@ -1239,10 +1380,30 @@ func (l *SchemaRegistryListeners) ListenersTLS(tls *TLS) []map[string]any {
 			"cert_file":           fmt.Sprintf("/etc/tls/certs/%s/tls.crt", certName),
 			"key_file":            fmt.Sprintf("/etc/tls/certs/%s/tls.key", certName),
 			"require_client_auth": ptr.Deref(lis.TLS.RequireClientAuth, false),
-			"truststore_file":     tls.Certs.getTrustStoreFilePath(certName),
+			"truststore_file":     lis.TLS.TrustStoreFilePath(&l.TLS, tls),
 		})
 	}
 	return listeners
+}
+
+// TrustStores returns a slice of all configured and enabled [TrustStore]s on
+// both internal and external listeners.
+func (l *SchemaRegistryListeners) TrustStores(tls *TLS) []*TrustStore {
+	var tss []*TrustStore
+
+	if l.TLS.IsEnabled(tls) && l.TLS.TrustStore != nil {
+		tss = append(tss, l.TLS.TrustStore)
+	}
+
+	for _, lis := range l.External {
+		if !lis.IsEnabled() || !lis.TLS.IsEnabled(&l.TLS, tls) || lis.TLS.TrustStore == nil {
+			continue
+		}
+		tss = append(tss, lis.TLS.TrustStore)
+
+	}
+
+	return tss
 }
 
 type SchemaRegistryExternal struct {

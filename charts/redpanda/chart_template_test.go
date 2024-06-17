@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	certmanagerv1 "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/redpanda-data/helm-charts/charts/redpanda"
 	"github.com/redpanda-data/helm-charts/pkg/helm"
 	"github.com/redpanda-data/helm-charts/pkg/kube"
@@ -41,6 +42,7 @@ func TestTemplate(t *testing.T) {
 	cases := CIGoldenTestCases(t)
 	cases = append(cases, VersionGoldenTestsCases(t)...)
 	cases = append(cases, DisableCertmanagerIntegration(t)...)
+	cases = append(cases, CertTrustStoreCases(t)...)
 
 	for _, tc := range cases {
 		tc := tc
@@ -290,6 +292,174 @@ tls:
         name: some-secret
 `),
 			Assert: assertNoCerts,
+		},
+	}
+}
+
+func CertTrustStoreCases(t *testing.T) []TemplateTestCase {
+	// truststores is a map of listener type to map of listener name to truststore_file. ({"admin": {"internal": "ca.crt"}}).
+	assertTrustStores := func(t *testing.T, manifests []byte, truststores map[string]map[string]string) {
+		cm, _, err := getConfigMaps(manifests)
+		require.NoError(t, err)
+
+		redpandaYAML, err := yaml.YAMLToJSON([]byte(cm.Data["redpanda.yaml"]))
+		require.NoError(t, err)
+
+		tlsConfigs := map[string]jsoniter.Any{
+			"kafka":           jsoniter.Get(redpandaYAML, "redpanda", "kafka_api_tls"),
+			"admin":           jsoniter.Get(redpandaYAML, "redpanda", "admin_api_tls"),
+			"http":            jsoniter.Get(redpandaYAML, "pandaproxy", "pandaproxy_api_tls"),
+			"schema_registry": jsoniter.Get(redpandaYAML, "schema_registry", "schema_registry_api_tls"),
+		}
+
+		actual := map[string]map[string]string{}
+		for name, cfg := range tlsConfigs {
+			m := map[string]string{}
+			for i := 0; i < cfg.Size(); i++ {
+				name := cfg.Get(i, "name").ToString()
+				truststore := cfg.Get(i, "truststore_file").ToString()
+				m[name] = truststore
+			}
+			actual[name] = m
+		}
+
+		require.Equal(t, truststores, actual)
+	}
+
+	return []TemplateTestCase{
+		{
+			Name: "ca-enabled",
+			Values: valuesFromYAML(t, `
+tls:
+  certs:
+    default:
+      caEnabled: true
+    external:
+      caEnabled: true
+`),
+			Assert: func(t *testing.T, manifests []byte, err error) {
+				require.NoError(t, err)
+				assertTrustStores(t, manifests, map[string]map[string]string{
+					"admin": {
+						"default":  "/etc/tls/certs/external/ca.crt",
+						"internal": "/etc/tls/certs/default/ca.crt",
+					},
+					"http": {
+						"default":  "/etc/tls/certs/external/ca.crt",
+						"internal": "/etc/tls/certs/default/ca.crt",
+					},
+					"kafka": {
+						"default":  "/etc/tls/certs/external/ca.crt",
+						"internal": "/etc/tls/certs/default/ca.crt",
+					},
+					"schema_registry": {
+						"default":  "/etc/tls/certs/external/ca.crt",
+						"internal": "/etc/tls/certs/default/ca.crt",
+					},
+				})
+			},
+		},
+		{
+			Name: "internal-truststore",
+			Values: valuesFromYAML(t, `
+listeners:
+  admin:
+    external:
+      my-admin:
+        port: 1234
+        tls:
+          cert: default
+          trustStore:
+            configMapKeyRef:
+              key: my-admin.crt
+              name: admin-cm
+    tls:
+      trustStore:
+        configMapKeyRef:
+          key: other.crt
+          name: admin-cm
+  http:
+    external:
+      my-http:
+        port: 1234
+        tls:
+          cert: default
+          trustStore:
+            configMapKeyRef:
+              key: my-http.crt
+              name: http-cm
+    tls:
+      trustStore:
+        configMapKeyRef:
+          key: ca.crt
+          name: http-cm
+  kafka:
+    external:
+      my-kafka:
+        port: 1234
+        tls:
+          cert: default
+          trustStore:
+            secretKeyRef:
+              key: my-kafka.crt
+              name: kafka-secret
+    tls:
+      trustStore:
+        configMapKeyRef:
+          key: ca.crt
+          name: my-ca-bundle
+  rpc: {}
+  schemaRegistry:
+    external:
+      my-sr:
+        port: 1234
+        tls:
+          cert: default
+          trustStore:
+            secretKeyRef:
+              key: my-sr.crt
+              name: sr-secret
+    tls:
+      trustStore:
+        secretKeyRef:
+          key: ca.crt
+          name: sr-secret
+tls:
+  certs:
+    default:
+      caEnabled: true
+    external:
+      caEnabled: true
+`),
+			Assert: func(t *testing.T, manifests []byte, err error) {
+				// Need to update this to be a map of listener to trust store.
+				// Should also include a mixture of external and internal uses.
+				// Going to skimp on the testing as Rafal's work to add tests
+				// will cover what else needs to be tested nicely.
+				require.NoError(t, err)
+				assertTrustStores(t, manifests, map[string]map[string]string{
+					"admin": {
+						"default":  "/etc/tls/certs/external/ca.crt",
+						"internal": "/etc/truststores/configmaps/admin-cm-other.crt",
+						"my-admin": "/etc/truststores/configmaps/admin-cm-my-admin.crt",
+					},
+					"http": {
+						"default":  "/etc/tls/certs/external/ca.crt",
+						"internal": "/etc/truststores/configmaps/http-cm-ca.crt",
+						"my-http":  "/etc/truststores/configmaps/http-cm-my-http.crt",
+					},
+					"kafka": {
+						"default":  "/etc/tls/certs/external/ca.crt",
+						"internal": "/etc/truststores/configmaps/my-ca-bundle-ca.crt",
+						"my-kafka": "/etc/truststores/secrets/kafka-secret-my-kafka.crt",
+					},
+					"schema_registry": {
+						"default":  "/etc/tls/certs/external/ca.crt",
+						"internal": "/etc/truststores/secrets/sr-secret-ca.crt",
+						"my-sr":    "/etc/truststores/secrets/sr-secret-my-sr.crt",
+					},
+				})
+			},
 		},
 	}
 }

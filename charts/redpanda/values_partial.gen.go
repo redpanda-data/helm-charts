@@ -414,16 +414,23 @@ type PartialSASLAuth struct {
 	Users     []PartialSASLUser `json:"users,omitempty"`
 }
 
+type PartialTrustStore struct {
+	ConfigMapKeyRef *corev1.ConfigMapKeySelector `json:"configMapKeyRef,omitempty"`
+	SecretKeyRef    *corev1.SecretKeySelector    `json:"secretKeyRef,omitempty"`
+}
+
 type PartialInternalTLS struct {
-	Enabled           *bool   `json:"enabled,omitempty"`
-	Cert              *string `json:"cert,omitempty" jsonschema:"required"`
-	RequireClientAuth *bool   `json:"requireClientAuth,omitempty" jsonschema:"required"`
+	Enabled           *bool              `json:"enabled,omitempty"`
+	Cert              *string            `json:"cert,omitempty" jsonschema:"required"`
+	RequireClientAuth *bool              `json:"requireClientAuth,omitempty" jsonschema:"required"`
+	TrustStore        *PartialTrustStore `json:"trustStore,omitempty"`
 }
 
 type PartialExternalTLS struct {
-	Enabled           *bool   `json:"enabled,omitempty"`
-	Cert              *string `json:"cert,omitempty"`
-	RequireClientAuth *bool   `json:"requireClientAuth,omitempty"`
+	Enabled           *bool              `json:"enabled,omitempty"`
+	Cert              *string            `json:"cert,omitempty"`
+	RequireClientAuth *bool              `json:"requireClientAuth,omitempty"`
+	TrustStore        *PartialTrustStore `json:"trustStore,omitempty"`
 }
 
 type PartialAdminListeners struct {

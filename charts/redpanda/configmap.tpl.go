@@ -323,11 +323,11 @@ func brokersTLSConfiguration(dot *helmette.Dot) map[string]any {
 	}
 
 	result := map[string]any{}
-	certName := values.Listeners.Kafka.TLS.Cert
 
-	if cert, ok := values.TLS.Certs[certName]; ok && cert.CAEnabled {
-		result["truststore_file"] = fmt.Sprintf("/etc/tls/certs/%s/ca.crt", values.Listeners.Kafka.TLS.Cert)
+	if truststore := values.Listeners.Kafka.TLS.TrustStoreFilePath(&values.TLS); truststore != defaultTruststorePath {
+		result["truststore_file"] = truststore
 	}
+
 	if values.Listeners.Kafka.TLS.RequireClientAuth {
 		result["cert_file"] = fmt.Sprintf("/etc/tls/certs/%s-client/tls.crt", Fullname(dot))
 		result["key_file"] = fmt.Sprintf("/etc/tls/certs/%s-client/tls.key", Fullname(dot))
@@ -345,10 +345,8 @@ func adminTLSConfiguration(dot *helmette.Dot) map[string]any {
 		return result
 	}
 
-	certName := values.Listeners.Admin.TLS.Cert
-
-	if cert, ok := values.TLS.Certs[certName]; ok && cert.CAEnabled {
-		result["truststore_file"] = fmt.Sprintf("/etc/tls/certs/%s/ca.crt", values.Listeners.Admin.TLS.Cert)
+	if truststore := values.Listeners.Admin.TLS.TrustStoreFilePath(&values.TLS); truststore != defaultTruststorePath {
+		result["truststore_file"] = truststore
 	}
 
 	if values.Listeners.Admin.TLS.RequireClientAuth {
@@ -380,7 +378,7 @@ func kafkaClient(dot *helmette.Dot) map[string]any {
 			"cert_file":           fmt.Sprintf("/etc/tls/certs/%s/tls.crt", kafkaTLS.Cert),
 			"key_file":            fmt.Sprintf("/etc/tls/certs/%s/tls.key", kafkaTLS.Cert),
 			"require_client_auth": kafkaTLS.RequireClientAuth,
-			"truststore_file":     values.TLS.Certs.getTrustStoreFilePath(kafkaTLS.Cert),
+			"truststore_file":     kafkaTLS.TrustStoreFilePath(&values.TLS),
 		}
 	}
 
@@ -468,7 +466,7 @@ func rpcListenersTLS(dot *helmette.Dot) map[string]any {
 		"cert_file":           fmt.Sprintf("/etc/tls/certs/%s/tls.crt", certName),
 		"key_file":            fmt.Sprintf("/etc/tls/certs/%s/tls.key", certName),
 		"require_client_auth": r.TLS.RequireClientAuth,
-		"truststore_file":     values.TLS.Certs.getTrustStoreFilePath(certName),
+		"truststore_file":     r.TLS.TrustStoreFilePath(&values.TLS),
 	}
 }
 
@@ -493,7 +491,7 @@ func createInternalListenerTLSCfg(tls *TLS, internal InternalTLS) map[string]any
 		"cert_file":           fmt.Sprintf("/etc/tls/certs/%s/tls.crt", internal.Cert),
 		"key_file":            fmt.Sprintf("/etc/tls/certs/%s/tls.key", internal.Cert),
 		"require_client_auth": internal.RequireClientAuth,
-		"truststore_file":     tls.Certs.getTrustStoreFilePath(internal.Cert),
+		"truststore_file":     internal.TrustStoreFilePath(tls),
 	}
 }
 
