@@ -48,7 +48,7 @@ type Values struct {
 	PostInstallJob PostInstallJob    `json:"post_install_job"`
 	PostUpgradeJob PostUpgradeJob    `json:"post_upgrade_job"`
 	Statefulset    Statefulset       `json:"statefulset"`
-	ServiceAccount ServiceAccount    `json:"serviceAccount"`
+	ServiceAccount ServiceAccountCfg `json:"serviceAccount"`
 	RBAC           RBAC              `json:"rbac"`
 	Tuning         Tuning            `json:"tuning"`
 	Listeners      Listeners         `json:"listeners"`
@@ -428,7 +428,7 @@ func (Statefulset) JSONSchemaExtend(schema *jsonschema.Schema) {
 	deprecate(schema, "podSecurityContext")
 }
 
-type ServiceAccount struct {
+type ServiceAccountCfg struct {
 	Create      bool              `json:"create" jsonschema:"required"`
 	Name        string            `json:"name" jsonschema:"required"`
 	Annotations map[string]string `json:"annotations" jsonschema:"required"`

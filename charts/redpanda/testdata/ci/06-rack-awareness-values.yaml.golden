@@ -40,17 +40,20 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 ---
 # Source: redpanda/templates/serviceaccount.yaml
+---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: redpanda
-  namespace: "default"
+  annotations: {}
+  creationTimestamp: null
   labels:
     app.kubernetes.io/component: redpanda
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
     helm.sh/chart: redpanda-5.8.8
+  name: redpanda
+  namespace: default
 ---
 # Source: redpanda/templates/secrets.yaml
 apiVersion: v1

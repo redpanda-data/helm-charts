@@ -38,7 +38,7 @@ type PartialValues struct {
 	PostInstallJob *PartialPostInstallJob    `json:"post_install_job,omitempty"`
 	PostUpgradeJob *PartialPostUpgradeJob    `json:"post_upgrade_job,omitempty"`
 	Statefulset    *PartialStatefulset       `json:"statefulset,omitempty"`
-	ServiceAccount *PartialServiceAccount    `json:"serviceAccount,omitempty"`
+	ServiceAccount *PartialServiceAccountCfg `json:"serviceAccount,omitempty"`
 	RBAC           *PartialRBAC              `json:"rbac,omitempty"`
 	Tuning         *PartialTuning            `json:"tuning,omitempty"`
 	Listeners      *PartialListeners         `json:"listeners,omitempty"`
@@ -312,7 +312,7 @@ type PartialStatefulset struct {
 	} `json:"initContainers,omitempty"`
 }
 
-type PartialServiceAccount struct {
+type PartialServiceAccountCfg struct {
 	Create      *bool             `json:"create,omitempty" jsonschema:"required"`
 	Name        *string           `json:"name,omitempty" jsonschema:"required"`
 	Annotations map[string]string `json:"annotations,omitempty" jsonschema:"required"`
