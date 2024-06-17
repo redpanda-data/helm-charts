@@ -79,6 +79,7 @@ tasks:
       - go mod tidy
       # Ensure go deps in the gotohelm test package are up to date
       - cd ./pkg/gotohelm/testdata/src/example && go mod tidy
+      - go work sync
       # Ensure flake.nix has been formatted.
       - nix fmt
 
