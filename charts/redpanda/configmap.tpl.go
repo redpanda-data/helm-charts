@@ -246,7 +246,6 @@ func advertisedHost(dot *helmette.Dot, i int) string {
 
 	address := fmt.Sprintf("%s-%d", Fullname(dot), int(i))
 	if ptr.Deref(values.External.Domain, "") != "" {
-		// TODO: TPL DOES NOT WORK. Maybe tpl call could be removed
 		address = fmt.Sprintf("%s.%s", address, helmette.Tpl(*values.External.Domain, dot))
 	}
 
