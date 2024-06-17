@@ -4,6 +4,7 @@ import (
 	"maps"
 	"os"
 	"path/filepath"
+	"regexp"
 	"testing"
 
 	"github.com/redpanda-data/helm-charts/charts/redpanda"
@@ -201,6 +202,16 @@ func TestConfigMap(t *testing.T) {
 
 			newConf, err := extractRedpandaConfigsFromConfigMap(manifests)
 			require.NoError(t, err)
+
+			// Overprovisioned till Redpanda chart version 5.8.8 should be
+			// set to `true` when Statefulset CPU request value is bellow 1000 mili cores.
+			// Function `redpanda-smp`, that should overwrite `overprovisioned` flag,
+			// was not called before setting `overprovisioned` flag.
+			// redpanda-smp template - https://github.com/redpanda-data/helm-charts/blob/5f287d45a3bda2763896840e505fb3de82b968b6/charts/redpanda/templates/_helpers.tpl#L187
+			// redpanda-smp template invocation - https://github.com/redpanda-data/helm-charts/blob/5f287d45a3bda2763896840e505fb3de82b968b6/charts/redpanda/templates/_configmap.tpl#L610
+			// overprovisioned flag - https://github.com/redpanda-data/helm-charts/blob/5f287d45a3bda2763896840e505fb3de82b968b6/charts/redpanda/templates/_configmap.tpl#L607
+			rex := regexp.MustCompile("\"overprovisioned\":(true|false)")
+			newConf.redpanda = rex.ReplaceAllString(newConf.redpanda, "\"overprovisioned\":false")
 
 			require.JSONEq(t, oldConf.redpanda, newConf.redpanda)
 			require.JSONEq(t, oldConf.bootstrap, newConf.bootstrap)
