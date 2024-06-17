@@ -440,7 +440,7 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           truststore_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
+      overprovisioned: true
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -837,7 +837,7 @@ spec:
         helm.sh/chart: redpanda-5.8.8
         redpanda.com/poddisruptionbudget: redpanda
       annotations:
-        config.redpanda.com/checksum: 1cc7884b92933481a095e466b4f69f7d0ed19947b9482eecbdbb0fd24a2c152e
+        config.redpanda.com/checksum: d401e46afc7979d910715f333dd94f93090889fa4640c92b2c83952cf842ff6a
     spec:
       terminationGracePeriodSeconds: 90
       securityContext: 
