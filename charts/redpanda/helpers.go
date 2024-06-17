@@ -390,7 +390,6 @@ func RedpandaSMP(dot *helmette.Dot) int {
 	coresInMillies := int(values.Resources.RedpandaCoresInMillis())
 
 	if coresInMillies < 1000 {
-		values.Resources.CPU.Overprovisioned = ptr.To(true)
 		return 1
 	}
 

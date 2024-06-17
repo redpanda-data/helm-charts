@@ -94,15 +94,7 @@
 {{- define "redpanda.RedpandaResources.GetOverProvisionValue" -}}
 {{- $rr := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
-{{- if (eq $rr.cpu.overprovisioned (coalesce nil)) -}}
-{{- (dict "r" false) | toJson -}}
-{{- break -}}
-{{- end -}}
-{{- if (lt ((get (fromJson (include "redpanda.RedpandaResources.RedpandaCoresInMillis" (dict "a" (list $rr) ))) "r") | int) (1000 | int)) -}}
-{{- (dict "r" true) | toJson -}}
-{{- break -}}
-{{- end -}}
-{{- (dict "r" $rr.cpu.overprovisioned) | toJson -}}
+{{- (dict "r" (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $rr.cpu.overprovisioned false) ))) "r")) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
