@@ -345,15 +345,19 @@ type RedpandaResources struct {
 }
 
 func (rr *RedpandaResources) GetOverProvisionValue() bool {
-	if rr.CPU.Overprovisioned == nil {
-		return false
-	}
-
-	if int(rr.RedpandaCoresInMillis()) < 1000 {
-		return true
-	}
-
-	return *rr.CPU.Overprovisioned
+	// TODO restore this implementation after release.
+	// The RedpandaSMP function can be executed after this function, so that
+	// overprovisoned flag might not be set
+	//if rr.CPU.Overprovisioned == nil {
+	//	return false
+	//}
+	//
+	//if int(rr.RedpandaCoresInMillis()) < 1000 {
+	//	return true
+	//}
+	//
+	//return *rr.CPU.Overprovisioned
+	return ptr.Deref(rr.CPU.Overprovisioned, false)
 }
 
 func (rr *RedpandaResources) RedpandaCoresInMillis() int {

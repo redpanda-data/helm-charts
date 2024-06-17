@@ -366,7 +366,6 @@
 {{- $values := $dot.Values.AsMap -}}
 {{- $coresInMillies := ((get (fromJson (include "redpanda.RedpandaResources.RedpandaCoresInMillis" (dict "a" (list $values.resources) ))) "r") | int) -}}
 {{- if (lt $coresInMillies (1000 | int)) -}}
-{{- $_ := (set $values.resources.cpu "overprovisioned" true) -}}
 {{- (dict "r" (1 | int)) | toJson -}}
 {{- break -}}
 {{- end -}}
