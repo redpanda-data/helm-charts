@@ -103,11 +103,7 @@ func addCloudStorageAccessKey(tieredStorageConfig TieredStorageConfig, values Va
 				Value: v.(string),
 			},
 		}
-		// TODO change this to the following representation when struct function transpilation would work
-		//} else if values.Storage.Tiered.CredentialsSecretRef.IsAccessKeyReferenceValid() {
-	} else if ak := values.Storage.Tiered.CredentialsSecretRef.AccessKey; ak != nil &&
-		!helmette.Empty(ak.Name) &&
-		!helmette.Empty(ak.Key) {
+	} else if ak := values.Storage.Tiered.CredentialsSecretRef.AccessKey; ak.IsValid() {
 		return []corev1.EnvVar{
 			{
 				Name: "RPK_CLOUD_STORAGE_ACCESS_KEY",
@@ -131,11 +127,7 @@ func addCloudStorageSecretKey(tieredStorageConfig TieredStorageConfig, values Va
 				Value: v.(string),
 			},
 		}
-		// TODO change this to the following representation when struct function transpilation would work
-		//} else if values.Storage.Tiered.CredentialsSecretRef.IsSecretKeyReferenceValid() {
-	} else if sk := values.Storage.Tiered.CredentialsSecretRef.SecretKey; sk != nil &&
-		!helmette.Empty(sk.Name) &&
-		!helmette.Empty(sk.Key) {
+	} else if sk := values.Storage.Tiered.CredentialsSecretRef.SecretKey; sk.IsValid() {
 		return []corev1.EnvVar{
 			{
 				Name: "RPK_CLOUD_STORAGE_SECRET_KEY",
@@ -160,11 +152,7 @@ func addAzureSharedKey(tieredStorageConfig TieredStorageConfig, values Values) [
 				Value: v.(string),
 			},
 		}
-		// TODO change this to the following representation when struct function transpilation would work
-		//} else if values.Storage.Tiered.CredentialsSecretRef.IsSecretKeyReferenceValid() {
-	} else if sk := values.Storage.Tiered.CredentialsSecretRef.SecretKey; sk != nil &&
-		!helmette.Empty(sk.Name) &&
-		!helmette.Empty(sk.Key) {
+	} else if sk := values.Storage.Tiered.CredentialsSecretRef.SecretKey; sk.IsValid() {
 		return []corev1.EnvVar{
 			{
 				Name: "RPK_CLOUD_STORAGE_AZURE_SHARED_KEY",

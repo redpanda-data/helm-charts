@@ -69,7 +69,7 @@
 {{- if (and $ok_8 (ne $v_7 "")) -}}
 {{- (dict "r" (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_ACCESS_KEY" "value" (get (fromJson (include "_shims.typeassertion" (dict "a" (list "string" $v_7) ))) "r") )))) | toJson -}}
 {{- break -}}
-{{- else -}}{{- if (and (and (ne $ak_9 (coalesce nil)) (not (empty $ak_9.name))) (not (empty $ak_9.key))) -}}
+{{- else -}}{{- if (get (fromJson (include "redpanda.SecretRef.IsValid" (dict "a" (list $ak_9) ))) "r") -}}
 {{- (dict "r" (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_ACCESS_KEY" "valueFrom" (mustMergeOverwrite (dict ) (dict "secretKeyRef" (mustMergeOverwrite (dict "key" "" ) (mustMergeOverwrite (dict ) (dict "name" $ak_9.name )) (dict "key" $ak_9.key )) )) )))) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -90,7 +90,7 @@
 {{- if (and $ok_11 (ne $v_10 "")) -}}
 {{- (dict "r" (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_SECRET_KEY" "value" (get (fromJson (include "_shims.typeassertion" (dict "a" (list "string" $v_10) ))) "r") )))) | toJson -}}
 {{- break -}}
-{{- else -}}{{- if (and (and (ne $sk_12 (coalesce nil)) (not (empty $sk_12.name))) (not (empty $sk_12.key))) -}}
+{{- else -}}{{- if (get (fromJson (include "redpanda.SecretRef.IsValid" (dict "a" (list $sk_12) ))) "r") -}}
 {{- (dict "r" (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_SECRET_KEY" "valueFrom" (mustMergeOverwrite (dict ) (dict "secretKeyRef" (mustMergeOverwrite (dict "key" "" ) (mustMergeOverwrite (dict ) (dict "name" $sk_12.name )) (dict "key" $sk_12.key )) )) )))) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -111,7 +111,7 @@
 {{- if (and $ok_14 (ne $v_13 "")) -}}
 {{- (dict "r" (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_AZURE_SHARED_KEY" "value" (get (fromJson (include "_shims.typeassertion" (dict "a" (list "string" $v_13) ))) "r") )))) | toJson -}}
 {{- break -}}
-{{- else -}}{{- if (and (and (ne $sk_15 (coalesce nil)) (not (empty $sk_15.name))) (not (empty $sk_15.key))) -}}
+{{- else -}}{{- if (get (fromJson (include "redpanda.SecretRef.IsValid" (dict "a" (list $sk_15) ))) "r") -}}
 {{- (dict "r" (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_AZURE_SHARED_KEY" "valueFrom" (mustMergeOverwrite (dict ) (dict "secretKeyRef" (mustMergeOverwrite (dict "key" "" ) (mustMergeOverwrite (dict ) (dict "name" $sk_15.name )) (dict "key" $sk_15.key )) )) )))) | toJson -}}
 {{- break -}}
 {{- end -}}
