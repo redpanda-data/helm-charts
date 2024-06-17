@@ -403,6 +403,39 @@
                         },
                         "requireClientAuth": {
                           "type": "boolean"
+                        },
+                        "trustStore": {
+                          "properties": {
+                            "configMapKeyRef": {
+                              "properties": {
+                                "key": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "optional": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "secretKeyRef": {
+                              "properties": {
+                                "key": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "optional": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "type": "object"
+                            }
+                          },
+                          "type": "object"
                         }
                       },
                       "type": "object"
@@ -429,6 +462,39 @@
                 },
                 "requireClientAuth": {
                   "type": "boolean"
+                },
+                "trustStore": {
+                  "properties": {
+                    "configMapKeyRef": {
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "optional": {
+                          "type": "boolean"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "secretKeyRef": {
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "optional": {
+                          "type": "boolean"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
                 }
               },
               "required": [
@@ -511,6 +577,39 @@
                         },
                         "requireClientAuth": {
                           "type": "boolean"
+                        },
+                        "trustStore": {
+                          "properties": {
+                            "configMapKeyRef": {
+                              "properties": {
+                                "key": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "optional": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "secretKeyRef": {
+                              "properties": {
+                                "key": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "optional": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "type": "object"
+                            }
+                          },
+                          "type": "object"
                         }
                       },
                       "type": "object"
@@ -541,6 +640,39 @@
                 },
                 "requireClientAuth": {
                   "type": "boolean"
+                },
+                "trustStore": {
+                  "properties": {
+                    "configMapKeyRef": {
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "optional": {
+                          "type": "boolean"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "secretKeyRef": {
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "optional": {
+                          "type": "boolean"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
                 }
               },
               "required": [
@@ -624,6 +756,39 @@
                         },
                         "requireClientAuth": {
                           "type": "boolean"
+                        },
+                        "trustStore": {
+                          "properties": {
+                            "configMapKeyRef": {
+                              "properties": {
+                                "key": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "optional": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "secretKeyRef": {
+                              "properties": {
+                                "key": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "optional": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "type": "object"
+                            }
+                          },
+                          "type": "object"
                         }
                       },
                       "type": "object"
@@ -650,6 +815,39 @@
                 },
                 "requireClientAuth": {
                   "type": "boolean"
+                },
+                "trustStore": {
+                  "properties": {
+                    "configMapKeyRef": {
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "optional": {
+                          "type": "boolean"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "secretKeyRef": {
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "optional": {
+                          "type": "boolean"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
                 }
               },
               "required": [
@@ -680,6 +878,39 @@
                 },
                 "requireClientAuth": {
                   "type": "boolean"
+                },
+                "trustStore": {
+                  "properties": {
+                    "configMapKeyRef": {
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "optional": {
+                          "type": "boolean"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "secretKeyRef": {
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "optional": {
+                          "type": "boolean"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
                 }
               },
               "required": [
@@ -759,6 +990,39 @@
                         },
                         "requireClientAuth": {
                           "type": "boolean"
+                        },
+                        "trustStore": {
+                          "properties": {
+                            "configMapKeyRef": {
+                              "properties": {
+                                "key": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "optional": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "secretKeyRef": {
+                              "properties": {
+                                "key": {
+                                  "type": "string"
+                                },
+                                "name": {
+                                  "type": "string"
+                                },
+                                "optional": {
+                                  "type": "boolean"
+                                }
+                              },
+                              "type": "object"
+                            }
+                          },
+                          "type": "object"
                         }
                       },
                       "type": "object"
@@ -786,6 +1050,39 @@
                 },
                 "requireClientAuth": {
                   "type": "boolean"
+                },
+                "trustStore": {
+                  "properties": {
+                    "configMapKeyRef": {
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "optional": {
+                          "type": "boolean"
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "secretKeyRef": {
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "optional": {
+                          "type": "boolean"
+                        }
+                      },
+                      "type": "object"
+                    }
+                  },
+                  "type": "object"
                 }
               },
               "required": [

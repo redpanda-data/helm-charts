@@ -32,6 +32,10 @@ const (
 	// technically change, this is the name that is used to locate the
 	// [corev1.Container] that will be smp'd into the redpanda container.
 	RedpandaContainerName = "redpanda"
+	// TrustStoreMountPath is the absolute path at which the
+	// [corev1.VolumeProjection] of truststores will be mounted to the redpanda
+	// container. (Without a trailing slash)
+	TrustStoreMountPath = "/etc/truststores"
 )
 
 // StatefulSetRedpandaEnv returns the environment variables for the Redpanda
@@ -153,9 +157,9 @@ func StatefulSetPodAnnotations(dot *helmette.Dot, configMapChecksum string) map[
 
 // StatefulSetVolumes returns the [corev1.Volume]s for the Redpanda StatefulSet.
 func StatefulSetVolumes(dot *helmette.Dot) []corev1.Volume {
-	volumes := CommonVolumes(dot)
-
 	fullname := Fullname(dot)
+	volumes := CommonVolumes(dot)
+	values := helmette.Unwrap[Values](dot.Values)
 
 	// NOTE extraVolumes, datadir, and tiered-storage-dir are NOT in this
 	// function. TODO: Migrate them into this function.
@@ -212,6 +216,10 @@ func StatefulSetVolumes(dot *helmette.Dot) []corev1.Volume {
 		},
 	}...)
 
+	if vol := values.Listeners.TrustStoreVolume(&values.TLS); vol != nil {
+		volumes = append(volumes, *vol)
+	}
+
 	return volumes
 }
 
@@ -219,6 +227,7 @@ func StatefulSetVolumes(dot *helmette.Dot) []corev1.Volume {
 // Container of the Redpanda StatefulSet.
 func StatefulSetVolumeMounts(dot *helmette.Dot) []corev1.VolumeMount {
 	mounts := CommonMounts(dot)
+	values := helmette.Unwrap[Values](dot.Values)
 
 	// NOTE extraVolumeMounts and tiered-storage-dir are still handled in helm.
 	// TODO: Migrate them into this function.
@@ -228,6 +237,13 @@ func StatefulSetVolumeMounts(dot *helmette.Dot) []corev1.VolumeMount {
 		{Name: "lifecycle-scripts", MountPath: "/var/lifecycle"},
 		{Name: "datadir", MountPath: "/var/lib/redpanda/data"},
 	}...)
+
+	if len(values.Listeners.TrustStores(&values.TLS)) > 0 {
+		mounts = append(
+			mounts,
+			corev1.VolumeMount{Name: "truststores", MountPath: TrustStoreMountPath, ReadOnly: true},
+		)
+	}
 
 	return mounts
 }
