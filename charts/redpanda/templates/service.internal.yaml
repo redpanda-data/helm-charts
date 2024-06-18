@@ -15,33 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */}}
 ---
-# This service is only used to create the DNS enteries for each pod in
-# the stateful set and allow the serviceMonitor to target the pods.
-# This service should not be used by any client application
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ include "redpanda.servicename" . }}
-  namespace: {{ .Release.Namespace | quote }}
-  labels:
-    monitoring.redpanda.com/enabled: {{ .Values.monitoring.enabled | quote }}
-{{- with include "full.labels" . }}
-  {{- . | nindent 4 }}
-{{- end }}
-{{- with dig "service" "internal" "annotations" dict .Values.AsMap }}
-  annotations: {{ toYaml . | nindent 4 }}
-{{- end }}
-spec:
-  type: ClusterIP
-  publishNotReadyAddresses: true
-  clusterIP: None
-  selector: {{ (include "statefulset-pod-labels-selector" .) | nindent 4 }}
-  ports:
-  {{- range $name, $listener := .Values.listeners }}
-    {{- if dig "enabled" true $listener}}
-    - name: {{ lower $name }}
-      protocol: TCP
-      port: {{ $listener.port }}
-      targetPort: {{ $listener.port }}
-    {{- end }}
-  {{- end }}
+{{- $svc := (get ((include "redpanda.ServiceInternal" (dict "a" (list .))) | fromJson) "r") }}
+{{- if ne $svc nil -}}
+{{toYaml $svc}}
+{{- end -}}

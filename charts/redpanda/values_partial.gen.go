@@ -339,7 +339,7 @@ type PartialListeners struct {
 	Kafka          *PartialKafkaListeners          `json:"kafka,omitempty" jsonschema:"required"`
 	SchemaRegistry *PartialSchemaRegistryListeners `json:"schemaRegistry,omitempty" jsonschema:"required"`
 	RPC            struct {
-		Port *int                `json:"port,omitempty" jsonschema:"required"`
+		Port *int32              `json:"port,omitempty" jsonschema:"required"`
 		TLS  *PartialInternalTLS `json:"tls,omitempty" jsonschema:"required"`
 	} `json:"rpc,omitempty" jsonschema:"required"`
 }
