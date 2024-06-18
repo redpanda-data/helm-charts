@@ -35,10 +35,7 @@ func NodePortService(dot *helmette.Dot) *corev1.Service {
 		return nil
 	}
 
-	// NB: As of writing, `mustAppend` appears to not work with nil values.
-	// Hence ports is defined as an empty list rather than a zero list.
-	ports := []corev1.ServicePort{}
-
+	var ports []corev1.ServicePort
 	for name, listener := range values.Listeners.Admin.External {
 		if !listener.IsEnabled() {
 			continue

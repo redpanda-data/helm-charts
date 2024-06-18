@@ -24,13 +24,13 @@ func ClientCerts(dot *helmette.Dot) []certmanagerv1.Certificate {
 	ns := dot.Release.Namespace
 	domain := strings.TrimSuffix(values.ClusterDomain, ".")
 
-	certs := []certmanagerv1.Certificate{}
+	var certs []certmanagerv1.Certificate
 	for name, data := range values.TLS.Certs {
 		if !helmette.Empty(data.SecretRef) || !ptr.Deref(data.Enabled, true) {
 			continue
 		}
 
-		names := []string{}
+		var names []string
 		if data.IssuerRef == nil || ptr.Deref(data.ApplyInternalDNSNames, false) {
 			names = append(names, fmt.Sprintf("%s-cluster.%s.%s.svc.%s", fullname, service, ns, domain))
 			names = append(names, fmt.Sprintf("%s-cluster.%s.%s.svc", fullname, service, ns))
