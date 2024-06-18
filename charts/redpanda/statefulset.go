@@ -43,7 +43,7 @@ func StatefulSetRedpandaEnv(dot *helmette.Dot) []corev1.EnvVar {
 	// we're moving the chart into go in a piecemeal fashion there isn't a "top
 	// level" location to perform the merge so we're instead required to
 	// Implement aspects of the SMP by hand.
-	userEnv := []corev1.EnvVar{}
+	var userEnv []corev1.EnvVar
 	for _, container := range values.Statefulset.PodTemplate.Spec.Containers {
 		if container.Name == RedpandaContainerName {
 			userEnv = container.Env

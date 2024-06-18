@@ -4,7 +4,7 @@
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $cms := (list (get (fromJson (include "redpanda.RedpandaConfigMap" (dict "a" (list $dot true) ))) "r")) -}}
-{{- $cms = (concat $cms (get (fromJson (include "redpanda.RPKProfile" (dict "a" (list $dot) ))) "r")) -}}
+{{- $cms = (concat (default (list ) $cms) (default (list ) (get (fromJson (include "redpanda.RPKProfile" (dict "a" (list $dot) ))) "r"))) -}}
 {{- (dict "r" $cms) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -14,7 +14,7 @@
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $cms := (list (get (fromJson (include "redpanda.RedpandaConfigMap" (dict "a" (list $dot false) ))) "r")) -}}
-{{- $cms = (concat $cms (get (fromJson (include "redpanda.RPKProfile" (dict "a" (list $dot) ))) "r")) -}}
+{{- $cms = (concat (default (list ) $cms) (default (list ) (get (fromJson (include "redpanda.RPKProfile" (dict "a" (list $dot) ))) "r"))) -}}
 {{- (dict "r" $cms) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -89,11 +89,11 @@
 {{- $values := $dot.Values.AsMap -}}
 {{- $brokerList := (list ) -}}
 {{- range $_, $i := untilStep ((0 | int)|int) (($values.statefulset.replicas | int)|int) (1|int) -}}
-{{- $brokerList = (mustAppend $brokerList (printf "%s:%d" (get (fromJson (include "redpanda.advertisedHost" (dict "a" (list $dot $i) ))) "r") (((get (fromJson (include "redpanda.advertisedKafkaPort" (dict "a" (list $dot $i) ))) "r") | int) | int))) -}}
+{{- $brokerList = (concat (default (list ) $brokerList) (list (printf "%s:%d" (get (fromJson (include "redpanda.advertisedHost" (dict "a" (list $dot $i) ))) "r") (((get (fromJson (include "redpanda.advertisedKafkaPort" (dict "a" (list $dot $i) ))) "r") | int) | int)))) -}}
 {{- end -}}
 {{- $adminAdvertisedList := (list ) -}}
 {{- range $_, $i := untilStep ((0 | int)|int) (($values.statefulset.replicas | int)|int) (1|int) -}}
-{{- $adminAdvertisedList = (mustAppend $adminAdvertisedList (printf "%s:%d" (get (fromJson (include "redpanda.advertisedHost" (dict "a" (list $dot $i) ))) "r") (((get (fromJson (include "redpanda.advertisedAdminPort" (dict "a" (list $dot $i) ))) "r") | int) | int))) -}}
+{{- $adminAdvertisedList = (concat (default (list ) $adminAdvertisedList) (list (printf "%s:%d" (get (fromJson (include "redpanda.advertisedHost" (dict "a" (list $dot $i) ))) "r") (((get (fromJson (include "redpanda.advertisedAdminPort" (dict "a" (list $dot $i) ))) "r") | int) | int)))) -}}
 {{- end -}}
 {{- $kafkaTLS := (get (fromJson (include "redpanda.brokersTLSConfiguration" (dict "a" (list $dot) ))) "r") -}}
 {{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $kafkaTLS "truststore_file" (coalesce nil)) ))) "r")) ))) "r") -}}
@@ -213,7 +213,7 @@
 {{- $brokerList := (list ) -}}
 {{- $r := ($values.statefulset.replicas | int) -}}
 {{- range $_, $i := untilStep ((0 | int)|int) (($values.statefulset.replicas | int)|int) (1|int) -}}
-{{- $brokerList = (mustAppend $brokerList (printf "%s-%d.%s:%d" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r") $i (get (fromJson (include "redpanda.InternalDomain" (dict "a" (list $dot) ))) "r") (($values.listeners.kafka.port | int) | int))) -}}
+{{- $brokerList = (concat (default (list ) $brokerList) (list (printf "%s-%d.%s:%d" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r") $i (get (fromJson (include "redpanda.InternalDomain" (dict "a" (list $dot) ))) "r") (($values.listeners.kafka.port | int) | int)))) -}}
 {{- end -}}
 {{- $adminTLS := (coalesce nil) -}}
 {{- $tls_3 := (get (fromJson (include "redpanda.adminTLSConfiguration" (dict "a" (list $dot) ))) "r") -}}
@@ -289,7 +289,7 @@
 {{- $values := $dot.Values.AsMap -}}
 {{- $brokerList := (list ) -}}
 {{- range $_, $i := untilStep ((0 | int)|int) (($values.statefulset.replicas | int)|int) (1|int) -}}
-{{- $brokerList = (mustAppend $brokerList (dict "address" (printf "%s-%d.%s" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r") $i (get (fromJson (include "redpanda.InternalDomain" (dict "a" (list $dot) ))) "r")) "port" ($values.listeners.kafka.port | int) )) -}}
+{{- $brokerList = (concat (default (list ) $brokerList) (list (dict "address" (printf "%s-%d.%s" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r") $i (get (fromJson (include "redpanda.InternalDomain" (dict "a" (list $dot) ))) "r")) "port" ($values.listeners.kafka.port | int) ))) -}}
 {{- end -}}
 {{- $kafkaTLS := $values.listeners.kafka.tls -}}
 {{- $brokerTLS := (coalesce nil) -}}
@@ -430,9 +430,9 @@
 {{- $_ := (sortAlpha $keys) -}}
 {{- $flags := (list ) -}}
 {{- range $_, $key := $keys -}}
-{{- $flags = (mustAppend $flags (printf "--%s=%s" $key (index $chartFlags $key))) -}}
+{{- $flags = (concat (default (list ) $flags) (list (printf "--%s=%s" $key (index $chartFlags $key)))) -}}
 {{- end -}}
-{{- (dict "r" (concat $flags $values.statefulset.additionalRedpandaCmdFlags)) | toJson -}}
+{{- (dict "r" (concat (default (list ) $flags) (default (list ) $values.statefulset.additionalRedpandaCmdFlags))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

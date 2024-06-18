@@ -8,9 +8,9 @@
 {{- $license_1 := (get (fromJson (include "redpanda.GetLicenseLiteral" (dict "a" (list $dot) ))) "r") -}}
 {{- $secretReference_2 := (get (fromJson (include "redpanda.GetLicenseSecretReference" (dict "a" (list $dot) ))) "r") -}}
 {{- if (ne $license_1 "") -}}
-{{- $envars = (mustAppend $envars (mustMergeOverwrite (dict "name" "" ) (dict "name" "REDPANDA_LICENSE" "value" $license_1 ))) -}}
+{{- $envars = (concat (default (list ) $envars) (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "REDPANDA_LICENSE" "value" $license_1 )))) -}}
 {{- else -}}{{- if (ne $secretReference_2 (coalesce nil)) -}}
-{{- $envars = (mustAppend $envars (mustMergeOverwrite (dict "name" "" ) (dict "name" "REDPANDA_LICENSE" "valueFrom" (mustMergeOverwrite (dict ) (dict "secretKeyRef" $secretReference_2 )) ))) -}}
+{{- $envars = (concat (default (list ) $envars) (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "REDPANDA_LICENSE" "valueFrom" (mustMergeOverwrite (dict ) (dict "secretKeyRef" $secretReference_2 )) )))) -}}
 {{- end -}}
 {{- end -}}
 {{- if (not (get (fromJson (include "redpanda.Storage.IsTieredStorageEnabled" (dict "a" (list $values.storage) ))) "r")) -}}
@@ -25,11 +25,11 @@
 {{- $azureStorageAccountExists := $tmp_tuple_2.T2 -}}
 {{- $asa := $tmp_tuple_2.T1 -}}
 {{- if (and (and (and $azureContainerExists (ne $ac (coalesce nil))) $azureStorageAccountExists) (ne $asa (coalesce nil))) -}}
-{{- $envars = (concat $envars (get (fromJson (include "redpanda.addAzureSharedKey" (dict "a" (list $tieredStorageConfig $values) ))) "r")) -}}
+{{- $envars = (concat (default (list ) $envars) (default (list ) (get (fromJson (include "redpanda.addAzureSharedKey" (dict "a" (list $tieredStorageConfig $values) ))) "r"))) -}}
 {{- else -}}
-{{- $envars = (concat $envars (get (fromJson (include "redpanda.addCloudStorageSecretKey" (dict "a" (list $tieredStorageConfig $values) ))) "r")) -}}
+{{- $envars = (concat (default (list ) $envars) (default (list ) (get (fromJson (include "redpanda.addCloudStorageSecretKey" (dict "a" (list $tieredStorageConfig $values) ))) "r"))) -}}
 {{- end -}}
-{{- $envars = (concat $envars (get (fromJson (include "redpanda.addCloudStorageAccessKey" (dict "a" (list $tieredStorageConfig $values) ))) "r")) -}}
+{{- $envars = (concat (default (list ) $envars) (default (list ) (get (fromJson (include "redpanda.addCloudStorageAccessKey" (dict "a" (list $tieredStorageConfig $values) ))) "r"))) -}}
 {{- range $k, $v := $tieredStorageConfig -}}
 {{- if (or (or (eq $k "cloud_storage_access_key") (eq $k "cloud_storage_secret_key")) (eq $k "cloud_storage_azure_shared_key")) -}}
 {{- continue -}}
@@ -41,16 +41,16 @@
 {{- $isStr_4 := $tmp_tuple_3.T2 -}}
 {{- $asStr_3 := $tmp_tuple_3.T1 -}}
 {{- if (and (and (eq $k "cloud_storage_cache_size") $isStr_4) (ne $asStr_3 "")) -}}
-{{- $envars = (mustAppend $envars (mustMergeOverwrite (dict "name" "" ) (dict "name" (printf "RPK_%s" (upper $k)) "value" (toJson ((get (fromJson (include "redpanda.SIToBytes" (dict "a" (list (get (fromJson (include "_shims.typeassertion" (dict "a" (list "string" $v) ))) "r")) ))) "r") | int)) ))) -}}
+{{- $envars = (concat (default (list ) $envars) (list (mustMergeOverwrite (dict "name" "" ) (dict "name" (printf "RPK_%s" (upper $k)) "value" (toJson ((get (fromJson (include "redpanda.SIToBytes" (dict "a" (list (get (fromJson (include "_shims.typeassertion" (dict "a" (list "string" $v) ))) "r")) ))) "r") | int)) )))) -}}
 {{- continue -}}
 {{- end -}}
 {{- $tmp_tuple_4 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "string" $v "") ))) "r")) ))) "r") -}}
 {{- $ok_6 := $tmp_tuple_4.T2 -}}
 {{- $str_5 := $tmp_tuple_4.T1 -}}
 {{- if $ok_6 -}}
-{{- $envars = (mustAppend $envars (mustMergeOverwrite (dict "name" "" ) (dict "name" (printf "RPK_%s" (upper $k)) "value" $str_5 ))) -}}
+{{- $envars = (concat (default (list ) $envars) (list (mustMergeOverwrite (dict "name" "" ) (dict "name" (printf "RPK_%s" (upper $k)) "value" $str_5 )))) -}}
 {{- else -}}
-{{- $envars = (mustAppend $envars (mustMergeOverwrite (dict "name" "" ) (dict "name" (printf "RPK_%s" (upper $k)) "value" (mustToJson $v) ))) -}}
+{{- $envars = (concat (default (list ) $envars) (list (mustMergeOverwrite (dict "name" "" ) (dict "name" (printf "RPK_%s" (upper $k)) "value" (mustToJson $v) )))) -}}
 {{- end -}}
 {{- end -}}
 {{- (dict "r" $envars) | toJson -}}

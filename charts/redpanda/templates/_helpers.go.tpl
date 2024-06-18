@@ -171,7 +171,7 @@
 {{- define "redpanda.DefaultMounts" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
-{{- (dict "r" (concat (list (mustMergeOverwrite (dict "name" "" "mountPath" "" ) (dict "name" "config" "mountPath" "/etc/redpanda" ))) (get (fromJson (include "redpanda.CommonMounts" (dict "a" (list $dot) ))) "r"))) | toJson -}}
+{{- (dict "r" (concat (default (list ) (list (mustMergeOverwrite (dict "name" "" "mountPath" "" ) (dict "name" "config" "mountPath" "/etc/redpanda" )))) (default (list ) (get (fromJson (include "redpanda.CommonMounts" (dict "a" (list $dot) ))) "r")))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -183,16 +183,16 @@
 {{- $mounts := (list ) -}}
 {{- $sasl_5 := $values.auth.sasl -}}
 {{- if (and $sasl_5.enabled (ne $sasl_5.secretRef "")) -}}
-{{- $mounts = (mustAppend $mounts (mustMergeOverwrite (dict "name" "" "mountPath" "" ) (dict "name" "users" "mountPath" "/etc/secrets/users" "readOnly" true ))) -}}
+{{- $mounts = (concat (default (list ) $mounts) (list (mustMergeOverwrite (dict "name" "" "mountPath" "" ) (dict "name" "users" "mountPath" "/etc/secrets/users" "readOnly" true )))) -}}
 {{- end -}}
 {{- if (get (fromJson (include "redpanda.TLSEnabled" (dict "a" (list $dot) ))) "r") -}}
 {{- $certNames := (keys $values.tls.certs) -}}
 {{- $_ := (sortAlpha $certNames) -}}
 {{- range $_, $name := $certNames -}}
-{{- $mounts = (mustAppend $mounts (mustMergeOverwrite (dict "name" "" "mountPath" "" ) (dict "name" (printf "redpanda-%s-cert" $name) "mountPath" (printf "/etc/tls/certs/%s" $name) ))) -}}
+{{- $mounts = (concat (default (list ) $mounts) (list (mustMergeOverwrite (dict "name" "" "mountPath" "" ) (dict "name" (printf "redpanda-%s-cert" $name) "mountPath" (printf "/etc/tls/certs/%s" $name) )))) -}}
 {{- end -}}
 {{- if (get (fromJson (include "redpanda.ClientAuthRequired" (dict "a" (list $dot) ))) "r") -}}
-{{- $mounts = (mustAppend $mounts (mustMergeOverwrite (dict "name" "" "mountPath" "" ) (dict "name" "mtls-client" "mountPath" (printf "/etc/tls/certs/%s-client" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r")) ))) -}}
+{{- $mounts = (concat (default (list ) $mounts) (list (mustMergeOverwrite (dict "name" "" "mountPath" "" ) (dict "name" "mtls-client" "mountPath" (printf "/etc/tls/certs/%s-client" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r")) )))) -}}
 {{- end -}}
 {{- end -}}
 {{- (dict "r" $mounts) | toJson -}}
@@ -203,7 +203,7 @@
 {{- define "redpanda.DefaultVolumes" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
-{{- (dict "r" (concat (list (mustMergeOverwrite (dict "name" "" ) (mustMergeOverwrite (dict ) (dict "configMap" (mustMergeOverwrite (dict ) (mustMergeOverwrite (dict ) (dict "name" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r") )) (dict )) )) (dict "name" "config" ))) (get (fromJson (include "redpanda.CommonVolumes" (dict "a" (list $dot) ))) "r"))) | toJson -}}
+{{- (dict "r" (concat (default (list ) (list (mustMergeOverwrite (dict "name" "" ) (mustMergeOverwrite (dict ) (dict "configMap" (mustMergeOverwrite (dict ) (mustMergeOverwrite (dict ) (dict "name" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r") )) (dict )) )) (dict "name" "config" )))) (default (list ) (get (fromJson (include "redpanda.CommonVolumes" (dict "a" (list $dot) ))) "r")))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -218,15 +218,15 @@
 {{- $_ := (sortAlpha $certNames) -}}
 {{- range $_, $name := $certNames -}}
 {{- $cert := (index $values.tls.certs $name) -}}
-{{- $volumes = (mustAppend $volumes (mustMergeOverwrite (dict "name" "" ) (mustMergeOverwrite (dict ) (dict "secret" (mustMergeOverwrite (dict ) (dict "secretName" (get (fromJson (include "redpanda.CertSecretName" (dict "a" (list $dot $name $cert) ))) "r") "defaultMode" (0o440 | int) )) )) (dict "name" (printf "redpanda-%s-cert" $name) ))) -}}
+{{- $volumes = (concat (default (list ) $volumes) (list (mustMergeOverwrite (dict "name" "" ) (mustMergeOverwrite (dict ) (dict "secret" (mustMergeOverwrite (dict ) (dict "secretName" (get (fromJson (include "redpanda.CertSecretName" (dict "a" (list $dot $name $cert) ))) "r") "defaultMode" (0o440 | int) )) )) (dict "name" (printf "redpanda-%s-cert" $name) )))) -}}
 {{- end -}}
 {{- if (get (fromJson (include "redpanda.ClientAuthRequired" (dict "a" (list $dot) ))) "r") -}}
-{{- $volumes = (mustAppend $volumes (mustMergeOverwrite (dict "name" "" ) (mustMergeOverwrite (dict ) (dict "secret" (mustMergeOverwrite (dict ) (dict "secretName" (printf "%s-client" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r")) "defaultMode" (0o440 | int) )) )) (dict "name" "mtls-client" ))) -}}
+{{- $volumes = (concat (default (list ) $volumes) (list (mustMergeOverwrite (dict "name" "" ) (mustMergeOverwrite (dict ) (dict "secret" (mustMergeOverwrite (dict ) (dict "secretName" (printf "%s-client" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r")) "defaultMode" (0o440 | int) )) )) (dict "name" "mtls-client" )))) -}}
 {{- end -}}
 {{- end -}}
 {{- $sasl_6 := $values.auth.sasl -}}
 {{- if (and $sasl_6.enabled (ne $sasl_6.secretRef "")) -}}
-{{- $volumes = (mustAppend $volumes (mustMergeOverwrite (dict "name" "" ) (mustMergeOverwrite (dict ) (dict "secret" (mustMergeOverwrite (dict ) (dict "secretName" $sasl_6.secretRef )) )) (dict "name" "users" ))) -}}
+{{- $volumes = (concat (default (list ) $volumes) (list (mustMergeOverwrite (dict "name" "" ) (mustMergeOverwrite (dict ) (dict "secret" (mustMergeOverwrite (dict ) (dict "secretName" $sasl_6.secretRef )) )) (dict "name" "users" )))) -}}
 {{- end -}}
 {{- (dict "r" $volumes) | toJson -}}
 {{- break -}}

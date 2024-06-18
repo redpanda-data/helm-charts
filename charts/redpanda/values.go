@@ -693,8 +693,7 @@ type Listeners struct {
 }
 
 func (l *Listeners) CreateSeedServers(replicas int, fullname, internalDomain string) []map[string]any {
-	result := []map[string]any{}
-
+	var result []map[string]any
 	for i := 0; i < replicas; i++ {
 		result = append(result, map[string]any{
 			"host": map[string]any{
@@ -703,17 +702,14 @@ func (l *Listeners) CreateSeedServers(replicas int, fullname, internalDomain str
 			},
 		})
 	}
-
 	return result
 }
 
 func (l *Listeners) AdminList(replicas int, fullname, internalDomain string) []string {
-	result := []string{}
-
+	var result []string
 	for i := 0; i < replicas; i++ {
 		result = append(result, fmt.Sprintf("%s-%d.%s:%d", fullname, i, internalDomain, int(l.Admin.Port)))
 	}
-
 	return result
 }
 

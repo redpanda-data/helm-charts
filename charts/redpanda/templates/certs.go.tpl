@@ -12,33 +12,33 @@
 {{- $service := (get (fromJson (include "redpanda.ServiceName" (dict "a" (list $dot) ))) "r") -}}
 {{- $ns := $dot.Release.Namespace -}}
 {{- $domain := (trimSuffix "." $values.clusterDomain) -}}
-{{- $certs := (list ) -}}
+{{- $certs := (coalesce nil) -}}
 {{- range $name, $data := $values.tls.certs -}}
 {{- if (or (not (empty $data.secretRef)) (not (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $data.enabled true) ))) "r"))) -}}
 {{- continue -}}
 {{- end -}}
-{{- $names := (list ) -}}
+{{- $names := (coalesce nil) -}}
 {{- if (or (eq $data.issuerRef (coalesce nil)) (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $data.applyInternalDNSNames false) ))) "r")) -}}
-{{- $names = (mustAppend $names (printf "%s-cluster.%s.%s.svc.%s" $fullname $service $ns $domain)) -}}
-{{- $names = (mustAppend $names (printf "%s-cluster.%s.%s.svc" $fullname $service $ns)) -}}
-{{- $names = (mustAppend $names (printf "%s-cluster.%s.%s" $fullname $service $ns)) -}}
-{{- $names = (mustAppend $names (printf "*.%s-cluster.%s.%s.svc.%s" $fullname $service $ns $domain)) -}}
-{{- $names = (mustAppend $names (printf "*.%s-cluster.%s.%s.svc" $fullname $service $ns)) -}}
-{{- $names = (mustAppend $names (printf "*.%s-cluster.%s.%s" $fullname $service $ns)) -}}
-{{- $names = (mustAppend $names (printf "%s.%s.svc.%s" $service $ns $domain)) -}}
-{{- $names = (mustAppend $names (printf "%s.%s.svc" $service $ns)) -}}
-{{- $names = (mustAppend $names (printf "%s.%s" $service $ns)) -}}
-{{- $names = (mustAppend $names (printf "*.%s.%s.svc.%s" $service $ns $domain)) -}}
-{{- $names = (mustAppend $names (printf "*.%s.%s.svc" $service $ns)) -}}
-{{- $names = (mustAppend $names (printf "*.%s.%s" $service $ns)) -}}
+{{- $names = (concat (default (list ) $names) (list (printf "%s-cluster.%s.%s.svc.%s" $fullname $service $ns $domain))) -}}
+{{- $names = (concat (default (list ) $names) (list (printf "%s-cluster.%s.%s.svc" $fullname $service $ns))) -}}
+{{- $names = (concat (default (list ) $names) (list (printf "%s-cluster.%s.%s" $fullname $service $ns))) -}}
+{{- $names = (concat (default (list ) $names) (list (printf "*.%s-cluster.%s.%s.svc.%s" $fullname $service $ns $domain))) -}}
+{{- $names = (concat (default (list ) $names) (list (printf "*.%s-cluster.%s.%s.svc" $fullname $service $ns))) -}}
+{{- $names = (concat (default (list ) $names) (list (printf "*.%s-cluster.%s.%s" $fullname $service $ns))) -}}
+{{- $names = (concat (default (list ) $names) (list (printf "%s.%s.svc.%s" $service $ns $domain))) -}}
+{{- $names = (concat (default (list ) $names) (list (printf "%s.%s.svc" $service $ns))) -}}
+{{- $names = (concat (default (list ) $names) (list (printf "%s.%s" $service $ns))) -}}
+{{- $names = (concat (default (list ) $names) (list (printf "*.%s.%s.svc.%s" $service $ns $domain))) -}}
+{{- $names = (concat (default (list ) $names) (list (printf "*.%s.%s.svc" $service $ns))) -}}
+{{- $names = (concat (default (list ) $names) (list (printf "*.%s.%s" $service $ns))) -}}
 {{- end -}}
 {{- if (ne $values.external.domain (coalesce nil)) -}}
-{{- $names = (mustAppend $names (tpl $values.external.domain $dot)) -}}
-{{- $names = (mustAppend $names (tpl (printf "*.%s" $values.external.domain) $dot)) -}}
+{{- $names = (concat (default (list ) $names) (list (tpl $values.external.domain $dot))) -}}
+{{- $names = (concat (default (list ) $names) (list (tpl (printf "*.%s" $values.external.domain) $dot))) -}}
 {{- end -}}
 {{- $duration := (default "43800h" $data.duration) -}}
 {{- $issuerRef := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $data.issuerRef (mustMergeOverwrite (dict "name" "" ) (dict "kind" "Issuer" "group" "cert-manager.io" "name" (printf "%s-%s-root-issuer" $fullname $name) ))) ))) "r") -}}
-{{- $certs = (mustAppend $certs (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) "spec" (dict "secretName" "" "issuerRef" (dict "name" "" ) ) "status" (dict ) ) (mustMergeOverwrite (dict ) (dict "apiVersion" "cert-manager.io/v1" "kind" "Certificate" )) (dict "metadata" (mustMergeOverwrite (dict "creationTimestamp" (coalesce nil) ) (dict "name" (printf "%s-%s-cert" $fullname $name) "labels" (get (fromJson (include "redpanda.FullLabels" (dict "a" (list $dot) ))) "r") "namespace" $dot.Release.Namespace )) "spec" (mustMergeOverwrite (dict "secretName" "" "issuerRef" (dict "name" "" ) ) (dict "dnsNames" $names "duration" $duration "isCA" false "issuerRef" $issuerRef "secretName" (printf "%s-%s-cert" $fullname $name) "privateKey" (mustMergeOverwrite (dict ) (dict "algorithm" "ECDSA" "size" (256 | int) )) )) ))) -}}
+{{- $certs = (concat (default (list ) $certs) (list (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) "spec" (dict "secretName" "" "issuerRef" (dict "name" "" ) ) "status" (dict ) ) (mustMergeOverwrite (dict ) (dict "apiVersion" "cert-manager.io/v1" "kind" "Certificate" )) (dict "metadata" (mustMergeOverwrite (dict "creationTimestamp" (coalesce nil) ) (dict "name" (printf "%s-%s-cert" $fullname $name) "labels" (get (fromJson (include "redpanda.FullLabels" (dict "a" (list $dot) ))) "r") "namespace" $dot.Release.Namespace )) "spec" (mustMergeOverwrite (dict "secretName" "" "issuerRef" (dict "name" "" ) ) (dict "dnsNames" $names "duration" $duration "isCA" false "issuerRef" $issuerRef "secretName" (printf "%s-%s-cert" $fullname $name) "privateKey" (mustMergeOverwrite (dict ) (dict "algorithm" "ECDSA" "size" (256 | int) )) )) )))) -}}
 {{- end -}}
 {{- $name := $values.listeners.kafka.tls.cert -}}
 {{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $values.tls.certs $name (coalesce nil)) ))) "r")) ))) "r") -}}
@@ -57,7 +57,7 @@
 {{- $_ := (set $issuerRef "group" "cert-manager.io") -}}
 {{- end -}}
 {{- $duration := (default "43800h" $data.duration) -}}
-{{- (dict "r" (mustAppend $certs (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) "spec" (dict "secretName" "" "issuerRef" (dict "name" "" ) ) "status" (dict ) ) (mustMergeOverwrite (dict ) (dict "apiVersion" "cert-manager.io/v1" "kind" "Certificate" )) (dict "metadata" (mustMergeOverwrite (dict "creationTimestamp" (coalesce nil) ) (dict "name" (printf "%s-client" $fullname) "labels" (get (fromJson (include "redpanda.FullLabels" (dict "a" (list $dot) ))) "r") )) "spec" (mustMergeOverwrite (dict "secretName" "" "issuerRef" (dict "name" "" ) ) (dict "commonName" (printf "%s-client" $fullname) "duration" $duration "isCA" false "secretName" (printf "%s-client" $fullname) "privateKey" (mustMergeOverwrite (dict ) (dict "algorithm" "ECDSA" "size" (256 | int) )) "issuerRef" $issuerRef )) )))) | toJson -}}
+{{- (dict "r" (concat (default (list ) $certs) (list (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) "spec" (dict "secretName" "" "issuerRef" (dict "name" "" ) ) "status" (dict ) ) (mustMergeOverwrite (dict ) (dict "apiVersion" "cert-manager.io/v1" "kind" "Certificate" )) (dict "metadata" (mustMergeOverwrite (dict "creationTimestamp" (coalesce nil) ) (dict "name" (printf "%s-client" $fullname) "labels" (get (fromJson (include "redpanda.FullLabels" (dict "a" (list $dot) ))) "r") )) "spec" (mustMergeOverwrite (dict "secretName" "" "issuerRef" (dict "name" "" ) ) (dict "commonName" (printf "%s-client" $fullname) "duration" $duration "isCA" false "secretName" (printf "%s-client" $fullname) "privateKey" (mustMergeOverwrite (dict ) (dict "algorithm" "ECDSA" "size" (256 | int) )) "issuerRef" $issuerRef )) ))))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

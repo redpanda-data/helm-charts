@@ -125,7 +125,7 @@
 
 {{- define "sprig.concat" -}}
 {{- range $_ := (list 1) -}}
-{{- (dict "r" (list (concat (list (1 | int) (2 | int)) (list (3 | int) (4 | int))) (concat (list (1 | int) (2 | int)) (list (3 | int) (4 | int)) (list (5 | int) (6 | int))) (concat (list (1 | int) (2 | int)) (list (3 | int) (4 | int))) (concat (list (1 | int) (2 | int)) (list (3 | int) (4 | int))))) | toJson -}}
+{{- (dict "r" (list (concat (list (1 | int) (2 | int)) (list (3 | int) (4 | int))) (concat (list (1 | int) (2 | int)) (list (3 | int) (4 | int)) (list (5 | int) (6 | int))) (concat (default (list ) (list (1 | int) (2 | int))) (default (list ) (list (3 | int) (4 | int)))) (concat (default (list ) (list (1 | int) (2 | int))) (list (3 | int) (4 | int))))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

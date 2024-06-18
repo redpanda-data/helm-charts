@@ -59,6 +59,7 @@ func Syntax() map[string]any {
 		"forExpr":         forExpr(10, Complex{Iterations: 5}),
 		"binaryExprs":     binaryExprs(),
 		"instance-method": instanceMethod(),
+		"append":          appends(),
 	}
 }
 
@@ -278,4 +279,17 @@ func forExpr(iteration int, in Complex) [][]string {
 	result = append(result, test)
 
 	return result
+}
+
+func appends() [][]int {
+	var x []int
+	y := []int{1, 2, 3}
+
+	return [][]int{
+		append(x),
+		append(x, 4),
+		append(x, y...),
+		append(y, x...),
+		append(y, 1, 2, 3, 4),
+	}
 }

@@ -839,16 +839,43 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 	if callee == nil || callee.Pkg() == nil {
 		switch n.Fun.(*ast.Ident).Name {
 		case "append":
-			if len(args) > 2 {
-				return &BuiltInCall{FuncName: "concat", Arguments: []Node{
-					args[0],
-					&BuiltInCall{FuncName: "list", Arguments: args[1:]},
-				}}
+			// Sprig's append is a bit frustrating to work with as it doesn't
+			// handle `nil` slices nor multiple elements.
+			// Instead we turn appends into concat calls.
+
+			// To handle `nil` slices, wrap them in a call to default with an
+			// empty slice.
+			// append(x) -> (append (default (list) x))
+			defaultToEmpty := func(n Node) Node {
+				return &BuiltInCall{
+					FuncName:  "default",
+					Arguments: []Node{&BuiltInCall{FuncName: "list"}, n},
+				}
 			}
+
+			// If a spread is specified, concat the two slices.
+			// NB: A spread with individual elements is NOT valid go syntax
+			// (e.g. append(x, 1, 2, y...)).
+			//
+			// append(x, y...) -> (concat x y)
 			if n.Ellipsis.IsValid() {
-				return &BuiltInCall{FuncName: "concat", Arguments: args}
+				return &BuiltInCall{
+					FuncName: "concat",
+					Arguments: []Node{
+						defaultToEmpty(args[0]),
+						defaultToEmpty(args[len(args)-1]),
+					},
+				}
 			}
-			return &BuiltInCall{FuncName: "mustAppend", Arguments: args}
+
+			// If no spread, just concat the arguments list.
+			return &BuiltInCall{
+				FuncName: "concat",
+				Arguments: []Node{
+					defaultToEmpty(args[0]),
+					&BuiltInCall{FuncName: "list", Arguments: args[1:]},
+				},
+			}
 		case "int", "int32":
 			return &Cast{X: args[0], To: "int"}
 		case "int64":

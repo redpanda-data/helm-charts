@@ -37,7 +37,7 @@
 {{- range $_ := (list 1) -}}
 {{- $keys := (list ) -}}
 {{- range $key, $_ := $globals.Values -}}
-{{- $keys = (mustAppend $keys $key) -}}
+{{- $keys = (concat (default (list ) $keys) (list $key)) -}}
 {{- end -}}
 {{- $keys = (keys $globals.Values) -}}
 {{- $_ := (sortAlpha $keys) -}}

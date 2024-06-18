@@ -49,7 +49,7 @@ func LoadBalancerServices(dot *helmette.Dot) []*corev1.Service {
 
 	selector := StatefulSetPodLabelsSelector(dot)
 
-	services := []*corev1.Service{}
+	var services []*corev1.Service
 	replicas := values.Statefulset.Replicas // TODO fix me once the transpiler is fixed.
 	for i := 0; i < replicas; i++ {
 		podname := fmt.Sprintf("%s-%d", Fullname(dot), i)
@@ -81,8 +81,7 @@ func LoadBalancerServices(dot *helmette.Dot) []*corev1.Service {
 
 		podSelector["statefulset.kubernetes.io/pod-name"] = podname
 
-		ports := []corev1.ServicePort{}
-
+		var ports []corev1.ServicePort
 		for name, listener := range values.Listeners.Admin.External {
 			if !ptr.Deref(listener.Enabled, values.External.Enabled) {
 				continue
