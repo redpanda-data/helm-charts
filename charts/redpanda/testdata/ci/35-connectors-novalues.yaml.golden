@@ -565,50 +565,51 @@ spec:
     app.kubernetes.io/instance: redpanda
 ---
 # Source: redpanda/templates/service.internal.yaml
-# This service is only used to create the DNS enteries for each pod in
-# the stateful set and allow the serviceMonitor to target the pods.
-# This service should not be used by any client application
 apiVersion: v1
 kind: Service
 metadata:
-  name: redpanda
-  namespace: "default"
+  annotations: {}
+  creationTimestamp: null
   labels:
-    monitoring.redpanda.com/enabled: "false"
     app.kubernetes.io/component: redpanda
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
     helm.sh/chart: redpanda-5.8.8
+    monitoring.redpanda.com/enabled: "false"
+  name: redpanda
+  namespace: default
 spec:
-  type: ClusterIP
-  publishNotReadyAddresses: true
   clusterIP: None
-  selector: 
+  ports:
+  - name: admin
+    port: 9644
+    protocol: TCP
+    targetPort: 9644
+  - name: http
+    port: 8082
+    protocol: TCP
+    targetPort: 8082
+  - name: kafka
+    port: 9093
+    protocol: TCP
+    targetPort: 9093
+  - name: rpc
+    port: 33145
+    protocol: TCP
+    targetPort: 33145
+  - name: schemaregistry
+    port: 8081
+    protocol: TCP
+    targetPort: 8081
+  publishNotReadyAddresses: true
+  selector:
     app.kubernetes.io/component: redpanda-statefulset
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/name: redpanda
-  ports:
-    - name: admin
-      protocol: TCP
-      port: 9644
-      targetPort: 9644
-    - name: http
-      protocol: TCP
-      port: 8082
-      targetPort: 8082
-    - name: kafka
-      protocol: TCP
-      port: 9093
-      targetPort: 9093
-    - name: rpc
-      protocol: TCP
-      port: 33145
-      targetPort: 33145
-    - name: schemaregistry
-      protocol: TCP
-      port: 8081
-      targetPort: 8081
+  type: ClusterIP
+status:
+  loadBalancer: {}
 ---
 # Source: redpanda/templates/service.nodeport.yaml
 apiVersion: v1

@@ -674,12 +674,12 @@ func (t *Tuning) Translate() map[string]any {
 }
 
 type Listeners struct {
-	Admin          *AdminListeners          `json:"admin" jsonschema:"required"`
-	HTTP           *HTTPListeners           `json:"http" jsonschema:"required"`
-	Kafka          *KafkaListeners          `json:"kafka" jsonschema:"required"`
-	SchemaRegistry *SchemaRegistryListeners `json:"schemaRegistry" jsonschema:"required"`
+	Admin          AdminListeners          `json:"admin" jsonschema:"required"`
+	HTTP           HTTPListeners           `json:"http" jsonschema:"required"`
+	Kafka          KafkaListeners          `json:"kafka" jsonschema:"required"`
+	SchemaRegistry SchemaRegistryListeners `json:"schemaRegistry" jsonschema:"required"`
 	RPC            struct {
-		Port int         `json:"port" jsonschema:"required"`
+		Port int32       `json:"port" jsonschema:"required"`
 		TLS  InternalTLS `json:"tls" jsonschema:"required"`
 	} `json:"rpc" jsonschema:"required"`
 }

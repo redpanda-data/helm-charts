@@ -20,6 +20,7 @@ spec:
       app.kubernetes.io/instance: redpanda
       app.kubernetes.io/name: redpanda
       redpanda.com/poddisruptionbudget: redpanda
+      test: test
 status:
   currentHealthy: 0
   desiredHealthy: 0
@@ -57,7 +58,7 @@ stringData:
     #!/usr/bin/env bash
 
     # the SERVICE_NAME comes from the metadata.name of the pod, essentially the POD_NAME
-    CURL_URL="https://${SERVICE_NAME}.redpanda.default.svc.cluster.local:9644"
+    CURL_URL="https://${SERVICE_NAME}.change-name.default.svc.cluster.local:9644"
 
     # commands used throughout
     CURL_NODE_ID_CMD="curl --silent --fail --cacert /etc/tls/certs/default/tls.crt ${CURL_URL}/v1/node_config"
@@ -197,7 +198,7 @@ stringData:
     cp /tmp/base-config/redpanda.yaml "${CONFIG}"
     cp /tmp/base-config/bootstrap.yaml /etc/redpanda/.bootstrap.yaml
 
-    LISTENER="{\"address\":\"${SERVICE_NAME}.redpanda.default.svc.cluster.local.\",\"name\":\"internal\",\"port\":9093}"
+    LISTENER="{\"address\":\"${SERVICE_NAME}.change-name.default.svc.cluster.local.\",\"name\":\"internal\",\"port\":9093}"
     rpk redpanda config --config "$CONFIG" set redpanda.advertised_kafka_api[0] "$LISTENER"
 
     ADVERTISED_KAFKA_ADDRESSES=()
@@ -213,7 +214,7 @@ stringData:
 
     rpk redpanda config --config "$CONFIG" set redpanda.advertised_kafka_api[1] "${ADVERTISED_KAFKA_ADDRESSES[$POD_ORDINAL]}"
 
-    LISTENER="{\"address\":\"${SERVICE_NAME}.redpanda.default.svc.cluster.local.\",\"name\":\"internal\",\"port\":8082}"
+    LISTENER="{\"address\":\"${SERVICE_NAME}.change-name.default.svc.cluster.local.\",\"name\":\"internal\",\"port\":8082}"
     rpk redpanda config --config "$CONFIG" set pandaproxy.advertised_pandaproxy_api[0] "$LISTENER"
 
     ADVERTISED_HTTP_ADDRESSES=()
@@ -249,15 +250,6 @@ data:
     storage_min_free_bytes: 1073741824
     topic_partitions_per_shard: 1000
   redpanda.yaml: |-
-    cloud_storage_azure_container: ${TEST_STORAGE_CONTAINER}
-    cloud_storage_azure_shared_key: ${TEST_AZURE_SHARED_KEY}
-    cloud_storage_azure_storage_account: ${TEST_STORAGE_ACCOUNT}
-    cloud_storage_cache_size: "5368709120"
-    cloud_storage_credentials_source: config_file
-    cloud_storage_enable_remote_read: true
-    cloud_storage_enable_remote_write: true
-    cloud_storage_enabled: true
-    cloud_storage_segment_max_upload_interval_sec: 1
     config_file: /etc/redpanda/redpanda.yaml
     pandaproxy:
       pandaproxy_api:
@@ -288,11 +280,11 @@ data:
         require_client_auth: false
         truststore_file: /etc/tls/certs/default/ca.crt
       brokers:
-      - address: redpanda-0.redpanda.default.svc.cluster.local.
+      - address: redpanda-0.change-name.default.svc.cluster.local.
         port: 9093
-      - address: redpanda-1.redpanda.default.svc.cluster.local.
+      - address: redpanda-1.change-name.default.svc.cluster.local.
         port: 9093
-      - address: redpanda-2.redpanda.default.svc.cluster.local.
+      - address: redpanda-2.change-name.default.svc.cluster.local.
         port: 9093
     redpanda:
       admin:
@@ -360,38 +352,38 @@ data:
         truststore_file: /etc/tls/certs/default/ca.crt
       seed_servers:
       - host:
-          address: redpanda-0.redpanda.default.svc.cluster.local.
+          address: redpanda-0.change-name.default.svc.cluster.local.
           port: 33145
       - host:
-          address: redpanda-1.redpanda.default.svc.cluster.local.
+          address: redpanda-1.change-name.default.svc.cluster.local.
           port: 33145
       - host:
-          address: redpanda-2.redpanda.default.svc.cluster.local.
+          address: redpanda-2.change-name.default.svc.cluster.local.
           port: 33145
       storage_min_free_bytes: 1073741824
       topic_partitions_per_shard: 1000
     rpk:
       additional_start_flags:
       - --default-log-level=info
-      - --memory=1024M
-      - --reserve-memory=100M
+      - --memory=2048M
+      - --reserve-memory=205M
       - --smp=1
       admin_api:
         addresses:
-        - redpanda-0.redpanda.default.svc.cluster.local.:9644
-        - redpanda-1.redpanda.default.svc.cluster.local.:9644
-        - redpanda-2.redpanda.default.svc.cluster.local.:9644
+        - redpanda-0.change-name.default.svc.cluster.local.:9644
+        - redpanda-1.change-name.default.svc.cluster.local.:9644
+        - redpanda-2.change-name.default.svc.cluster.local.:9644
         tls:
           truststore_file: /etc/tls/certs/default/ca.crt
       enable_memory_locking: false
       kafka_api:
         brokers:
-        - redpanda-0.redpanda.default.svc.cluster.local.:9093
-        - redpanda-1.redpanda.default.svc.cluster.local.:9093
-        - redpanda-2.redpanda.default.svc.cluster.local.:9093
+        - redpanda-0.change-name.default.svc.cluster.local.:9093
+        - redpanda-1.change-name.default.svc.cluster.local.:9093
+        - redpanda-2.change-name.default.svc.cluster.local.:9093
         tls:
           truststore_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: true
+      overprovisioned: false
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -422,11 +414,11 @@ data:
         require_client_auth: false
         truststore_file: /etc/tls/certs/default/ca.crt
       brokers:
-      - address: redpanda-0.redpanda.default.svc.cluster.local.
+      - address: redpanda-0.change-name.default.svc.cluster.local.
         port: 9093
-      - address: redpanda-1.redpanda.default.svc.cluster.local.
+      - address: redpanda-1.change-name.default.svc.cluster.local.
         port: 9093
-      - address: redpanda-2.redpanda.default.svc.cluster.local.
+      - address: redpanda-2.change-name.default.svc.cluster.local.
         port: 9093
 kind: ConfigMap
 metadata:
@@ -490,9 +482,9 @@ data:
     connect: {}
     kafka:
       brokers:
-      - redpanda-0.redpanda.default.svc.cluster.local.:9093
-      - redpanda-1.redpanda.default.svc.cluster.local.:9093
-      - redpanda-2.redpanda.default.svc.cluster.local.:9093
+      - redpanda-0.change-name.default.svc.cluster.local.:9093
+      - redpanda-1.change-name.default.svc.cluster.local.:9093
+      - redpanda-2.change-name.default.svc.cluster.local.:9093
       sasl:
         enabled: false
       schemaRegistry:
@@ -500,9 +492,9 @@ data:
         tls:
           enabled: true
         urls:
-        - https://redpanda-0.redpanda.default.svc.cluster.local.:8081
-        - https://redpanda-1.redpanda.default.svc.cluster.local.:8081
-        - https://redpanda-2.redpanda.default.svc.cluster.local.:8081
+        - https://redpanda-0.change-name.default.svc.cluster.local.:8081
+        - https://redpanda-1.change-name.default.svc.cluster.local.:8081
+        - https://redpanda-2.change-name.default.svc.cluster.local.:8081
       tls:
         enabled: true
 ---
@@ -533,7 +525,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  annotations: {}
+  annotations:
+    test: test
   creationTimestamp: null
   labels:
     app.kubernetes.io/component: redpanda
@@ -541,8 +534,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
     helm.sh/chart: redpanda-5.8.8
-    monitoring.redpanda.com/enabled: "false"
-  name: redpanda
+    monitoring.redpanda.com/enabled: "true"
+  name: change-name
   namespace: default
 spec:
   clusterIP: None
@@ -572,6 +565,7 @@ spec:
     app.kubernetes.io/component: redpanda-statefulset
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/name: redpanda
+    test: test
   type: ClusterIP
 status:
   loadBalancer: {}
@@ -588,7 +582,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
     helm.sh/chart: redpanda-5.8.8
-  name: redpanda-external
+  name: change-name-external
   namespace: default
 spec:
   externalTrafficPolicy: Local
@@ -618,6 +612,7 @@ spec:
     app.kubernetes.io/component: redpanda-statefulset
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/name: redpanda
+    test: test
   sessionAffinity: None
   type: NodePort
 status:
@@ -645,7 +640,7 @@ spec:
     metadata:
       annotations:
         checksum/config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum-redpanda-chart/config: 64f2cd1f30a71442b56a635c16aab05bd3d59037c9d3ad6b1e6a23b39c65c686
+        checksum-redpanda-chart/config: 2d3a96014e36e10b055d1b220947e8d1139a96506f5a9948b3aa4e19ca6b1148
       labels:
         app.kubernetes.io/name: console
         app.kubernetes.io/instance: redpanda
@@ -686,7 +681,7 @@ spec:
             - "--config.filepath=/etc/console/configs/config.yaml"
           securityContext:
             runAsNonRoot: true
-          image: redpandadata/console-unstable:master-8a51854
+          image: docker.redpanda.com/redpandadata/console:v2.4.6
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -737,7 +732,7 @@ spec:
             - name: REDPANDA_ADMINAPI_ENABLED
               value: "true"
             - name: REDPANDA_ADMINAPI_URLS
-              value: https://redpanda.default.svc.cluster.local.:9644
+              value: https://change-name.default.svc.cluster.local.:9644
       priorityClassName:
 ---
 # Source: redpanda/templates/statefulset.yaml
@@ -758,7 +753,8 @@ spec:
       app.kubernetes.io/component: redpanda-statefulset
       app.kubernetes.io/instance: redpanda
       app.kubernetes.io/name: redpanda
-  serviceName: redpanda
+      test: test
+  serviceName: change-name
   replicas: 3
   updateStrategy:
     type: RollingUpdate
@@ -772,8 +768,9 @@ spec:
         app.kubernetes.io/name: redpanda
         helm.sh/chart: redpanda-5.8.8
         redpanda.com/poddisruptionbudget: redpanda
+        test: test
       annotations:
-        config.redpanda.com/checksum: 90ee0e92d6eb93d675e20940faef0e3b47058da35c89f5a3b9651cb9afb0d859
+        config.redpanda.com/checksum: d853f4656cd980d1f363a4e2bc78bcdfec5e9ed1904aeec4723d6fe6e17d8a43
     spec:
       terminationGracePeriodSeconds: 90
       securityContext: 
@@ -800,18 +797,6 @@ spec:
               name: redpanda-external-cert
             - name: redpanda
               mountPath: /etc/redpanda
-        - name: set-tiered-storage-cache-dir-ownership
-          image: busybox:latest
-          command: ["/bin/sh", "-c", 'mkdir -p /var/lib/redpanda/data/cloud_storage_cache; chown 101:101 -R /var/lib/redpanda/data/cloud_storage_cache']
-          volumeMounts: 
-            - mountPath: /etc/tls/certs/default
-              name: redpanda-default-cert
-            - mountPath: /etc/tls/certs/external
-              name: redpanda-external-cert
-            - name: datadir
-              mountPath: /var/lib/redpanda/data
-            - name: tiered-storage-dir
-              mountPath: /var/lib/redpanda/data/cloud_storage_cache
         - name: redpanda-configurator
           image: docker.redpanda.com/redpandadata/redpanda:v24.1.1
           command:
@@ -893,7 +878,7 @@ spec:
                 - -c
                 - |
                   set -e
-                  RESULT=$(curl --silent --fail -k -m 5 --cacert /etc/tls/certs/default/tls.crt "https://${SERVICE_NAME}.redpanda.default.svc.cluster.local.:9644/v1/status/ready")
+                  RESULT=$(curl --silent --fail -k -m 5 --cacert /etc/tls/certs/default/tls.crt "https://${SERVICE_NAME}.change-name.default.svc.cluster.local.:9644/v1/status/ready")
                   echo $RESULT
                   echo $RESULT | grep ready
             initialDelaySeconds: 1
@@ -905,7 +890,7 @@ spec:
               command:
                 - /bin/sh
                 - -c
-                - curl --silent --fail -k -m 5 --cacert /etc/tls/certs/default/tls.crt "https://${SERVICE_NAME}.redpanda.default.svc.cluster.local.:9644/v1/status/ready"
+                - curl --silent --fail -k -m 5 --cacert /etc/tls/certs/default/tls.crt "https://${SERVICE_NAME}.change-name.default.svc.cluster.local.:9644/v1/status/ready"
             initialDelaySeconds: 10
             failureThreshold: 3
             periodSeconds: 10
@@ -932,7 +917,7 @@ spec:
             - rpk
             - redpanda
             - start
-            - "--advertise-rpc-addr=$(SERVICE_NAME).redpanda.default.svc.cluster.local.:33145"
+            - "--advertise-rpc-addr=$(SERVICE_NAME).change-name.default.svc.cluster.local.:33145"
           ports:
             - name: admin
               containerPort: 9644
@@ -970,12 +955,10 @@ spec:
               name: lifecycle-scripts
             - mountPath: /var/lib/redpanda/data
               name: datadir
-            - name: tiered-storage-dir
-              mountPath: /var/lib/redpanda/data/cloud_storage_cache
           resources:
             limits:
-              cpu: 400m
-              memory: 2.0Gi
+              cpu: 1
+              memory: 2.5Gi
         - name: config-watcher
           image: docker.redpanda.com/redpandadata/redpanda:v24.1.1
           command:
@@ -1034,6 +1017,7 @@ spec:
               app.kubernetes.io/component: redpanda-statefulset
               app.kubernetes.io/instance: redpanda
               app.kubernetes.io/name: redpanda
+              test: test
       nodeSelector:
         {}
       affinity:
@@ -1046,6 +1030,7 @@ spec:
                 app.kubernetes.io/component: redpanda-statefulset
                 app.kubernetes.io/instance: redpanda
                 app.kubernetes.io/name: redpanda
+                test: test
       tolerations:
         []
   volumeClaimTemplates:
@@ -1057,22 +1042,9 @@ spec:
           app.kubernetes.io/component: redpanda
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: "managed-csi"
         resources:
           requests:
             storage: "20Gi"
-    - metadata:
-        name: tiered-storage-dir
-        labels:
-          app.kubernetes.io/name: redpanda
-          app.kubernetes.io/instance: "redpanda"
-          app.kubernetes.io/component: redpanda
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        storageClassName: managed-csi
-        resources:
-          requests:
-            storage: 5.36870912e+09
 ---
 # Source: redpanda/templates/console/configmap-and-deployment.yaml
 # before license changes, this was not printing a secret, so we gather in which case to print
@@ -1146,18 +1118,18 @@ metadata:
   namespace: default
 spec:
   dnsNames:
-  - redpanda-cluster.redpanda.default.svc.cluster.local
-  - redpanda-cluster.redpanda.default.svc
-  - redpanda-cluster.redpanda.default
-  - '*.redpanda-cluster.redpanda.default.svc.cluster.local'
-  - '*.redpanda-cluster.redpanda.default.svc'
-  - '*.redpanda-cluster.redpanda.default'
-  - redpanda.default.svc.cluster.local
-  - redpanda.default.svc
-  - redpanda.default
-  - '*.redpanda.default.svc.cluster.local'
-  - '*.redpanda.default.svc'
-  - '*.redpanda.default'
+  - redpanda-cluster.change-name.default.svc.cluster.local
+  - redpanda-cluster.change-name.default.svc
+  - redpanda-cluster.change-name.default
+  - '*.redpanda-cluster.change-name.default.svc.cluster.local'
+  - '*.redpanda-cluster.change-name.default.svc'
+  - '*.redpanda-cluster.change-name.default'
+  - change-name.default.svc.cluster.local
+  - change-name.default.svc
+  - change-name.default
+  - '*.change-name.default.svc.cluster.local'
+  - '*.change-name.default.svc'
+  - '*.change-name.default'
   duration: 43800h
   isCA: false
   issuerRef:
@@ -1185,18 +1157,18 @@ metadata:
   namespace: default
 spec:
   dnsNames:
-  - redpanda-cluster.redpanda.default.svc.cluster.local
-  - redpanda-cluster.redpanda.default.svc
-  - redpanda-cluster.redpanda.default
-  - '*.redpanda-cluster.redpanda.default.svc.cluster.local'
-  - '*.redpanda-cluster.redpanda.default.svc'
-  - '*.redpanda-cluster.redpanda.default'
-  - redpanda.default.svc.cluster.local
-  - redpanda.default.svc
-  - redpanda.default
-  - '*.redpanda.default.svc.cluster.local'
-  - '*.redpanda.default.svc'
-  - '*.redpanda.default'
+  - redpanda-cluster.change-name.default.svc.cluster.local
+  - redpanda-cluster.change-name.default.svc
+  - redpanda-cluster.change-name.default
+  - '*.redpanda-cluster.change-name.default.svc.cluster.local'
+  - '*.redpanda-cluster.change-name.default.svc'
+  - '*.redpanda-cluster.change-name.default'
+  - change-name.default.svc.cluster.local
+  - change-name.default.svc
+  - change-name.default
+  - '*.change-name.default.svc.cluster.local'
+  - '*.change-name.default.svc'
+  - '*.change-name.default'
   duration: 43800h
   isCA: false
   issuerRef:
@@ -1275,6 +1247,37 @@ spec:
   ca:
     secretName: redpanda-external-root-certificate
 ---
+# Source: redpanda/templates/servicemonitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/component: redpanda
+    app.kubernetes.io/instance: redpanda
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: redpanda
+    helm.sh/chart: redpanda-5.8.8
+  name: redpanda
+  namespace: default
+spec:
+  endpoints:
+  - enableHttp2: null
+    interval: 2m
+    path: /public_metrics
+    port: admin
+    scheme: https
+    tlsConfig:
+      ca: {}
+      cert: {}
+      insecureSkipVerify: true
+  namespaceSelector: {}
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: redpanda
+      app.kubernetes.io/name: redpanda
+      monitoring.redpanda.com/enabled: "true"
+---
 # Source: redpanda/charts/console/templates/tests/test-connection.yaml
 apiVersion: v1
 kind: Pod
@@ -1335,25 +1338,7 @@ spec:
       - name: redpanda-post-install
         image: docker.redpanda.com/redpandadata/redpanda:v24.1.1
         
-        env:
-        - name: RPK_CLOUD_STORAGE_AZURE_SHARED_KEY
-          value: ${TEST_AZURE_SHARED_KEY}
-        - name: RPK_CLOUD_STORAGE_AZURE_CONTAINER
-          value: ${TEST_STORAGE_CONTAINER}
-        - name: RPK_CLOUD_STORAGE_AZURE_STORAGE_ACCOUNT
-          value: ${TEST_STORAGE_ACCOUNT}
-        - name: RPK_CLOUD_STORAGE_CACHE_SIZE
-          value: "5368709120"
-        - name: RPK_CLOUD_STORAGE_CREDENTIALS_SOURCE
-          value: config_file
-        - name: RPK_CLOUD_STORAGE_ENABLE_REMOTE_READ
-          value: "true"
-        - name: RPK_CLOUD_STORAGE_ENABLE_REMOTE_WRITE
-          value: "true"
-        - name: RPK_CLOUD_STORAGE_ENABLED
-          value: "true"
-        - name: RPK_CLOUD_STORAGE_SEGMENT_MAX_UPLOAD_INTERVAL_SEC
-          value: "1"
+        env: []
         command: ["bash","-c"]
         args:
           - |
@@ -1448,7 +1433,7 @@ spec:
                 curl -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors --ssl-reqd \
                 --cacert /etc/tls/certs/default/ca.crt \
                 -X PUT -u ${USER_NAME}:${PASSWORD} \
-                https://redpanda.default.svc.cluster.local.:9644/v1/debug/restart_service?service=schema-registry || true
+                https://change-name.default.svc.cluster.local.:9644/v1/debug/restart_service?service=schema-registry || true
             fi
         securityContext:
           allowPrivilegeEscalation: null
