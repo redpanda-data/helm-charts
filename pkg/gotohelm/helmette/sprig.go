@@ -87,6 +87,29 @@ func Printf(format string, a ...any) string {
 	return fmt.Sprintf(format, a...)
 }
 
+// Quote is the equivalent of sprig's `quote` - it takes an arbitrary list of arguments
+// +gotohelm:builtin=quote
+func Quote(vs ...any) string {
+	result := make([]string, 0, len(vs))
+	for _, v := range vs {
+		// Lean on %q: "a double-quoted string safely escaped with Go syntax"
+		result = append(result, fmt.Sprintf("%q", ToString(v)))
+	}
+	return strings.Join(result, " ")
+}
+
+// SQuote is the equivalent of sprig's `squote`.
+// +gotohelm:builtin=squote
+func SQuote(vs ...any) string {
+	result := make([]string, 0, len(vs))
+	for _, v := range vs {
+		if v != nil {
+			result = append(result, fmt.Sprintf("'%v'", v))
+		}
+	}
+	return strings.Join(result, " ")
+}
+
 // KindOf is the go equivalent of sprig's `kindOf`.
 // +gotohelm:builtin=kindOf
 func KindOf(v any) string {
@@ -279,6 +302,18 @@ func Upper(in string) string {
 // +gotohelm:builtin=unset
 func Unset[K comparable, V any](d map[K]V, key K) {
 	delete(d, key)
+}
+
+// Until is the go equivalent of spring's `until`.
+// There might be better ways to do things with gotohelm, but this
+// represents a high-fidelity way to translate templates.
+// +gotohelm:builtin=until
+func Until(n int) []int {
+	result := make([]int, 0, n)
+	for i := range n {
+		result = append(result, i)
+	}
+	return result
 }
 
 // Concat is the go equivalent of sprig's `concat`.
