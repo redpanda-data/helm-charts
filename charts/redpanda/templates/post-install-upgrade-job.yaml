@@ -39,6 +39,7 @@ metadata:
   {{- toYaml . | nindent 4 }}
 {{- end }}
 spec:
+  ttlSecondsAfterFinished: 10
   template:
     metadata:
       generateName: "{{ .Release.Name }}-post-"
