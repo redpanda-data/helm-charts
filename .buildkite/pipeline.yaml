@@ -1,3 +1,21 @@
+---
+plugins:
+  - seek-oss/aws-sm#v2.3.2: &aws-sm-plugin
+      json-to-env:
+        - json-key: .
+          secret-id: sdlc/prod/buildkite/azure_client_secret
+        - json-key: .
+          secret-id: sdlc/prod/buildkite/gcp_b64encoded_credentials
+        - json-key: .
+          secret-id: sdlc/prod/buildkite/github_api_token
+        - json-key: .
+          secret-id: sdlc/prod/buildkite/helmchart_test_account_aws
+        - json-key: .
+          secret-id: sdlc/prod/buildkite/helmchart_test_project_id
+        - json-key: .
+          secret-id: sdlc/prod/buildkite/redpanda_sample_license
+        - json-key: .
+          secret-id: sdlc/prod/buildkite/slack_vbot_token
 agents:
   queue: "k8s-builders"
 steps:
@@ -8,6 +26,7 @@ steps:
     artifact_paths:
       - ".local/artifacts/**/*"
     plugins:
+      - seek-oss/aws-sm#v2.3.2: *aws-sm-plugin
       - https://$GITHUB_API_TOKEN@github.com/redpanda-data/step-slack-notify-buildkite-plugin.git#main:
           message: ":cloud: test eks cloud storage failed"
           channel_name: "kubernetes-tests"
@@ -21,6 +40,7 @@ steps:
     artifact_paths:
       - ".local/artifacts/**/*"
     plugins:
+      - seek-oss/aws-sm#v2.3.2: *aws-sm-plugin
       - https://$GITHUB_API_TOKEN@github.com/redpanda-data/step-slack-notify-buildkite-plugin.git#main:
           message: ":cloud: test gke cloud storage failed"
           channel_name: "kubernetes-tests"
@@ -34,6 +54,7 @@ steps:
     artifact_paths:
       - ".local/artifacts/**/*"
     plugins:
+      - seek-oss/aws-sm#v2.3.2: *aws-sm-plugin
       - https://$GITHUB_API_TOKEN@github.com/redpanda-data/step-slack-notify-buildkite-plugin.git#main:
           message: ":cloud: test aks cloud storage failed"
           channel_name: "kubernetes-tests"
