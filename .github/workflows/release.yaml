@@ -1,3 +1,4 @@
+---
 # Licensed to the Apache Software Foundation (ASF) under one
 # or more contributor license agreements.  See the NOTICE file
 # distributed with this work for additional information
@@ -16,18 +17,16 @@
 # under the License.
 
 # FOR MORE DETAILS ON CR AND ENVIRONMENT VARS:
-#https://github.com/helm/chart-releaser#environment-variables
+# https://github.com/helm/chart-releaser#environment-variables
 
 name: release
 on:
   push:
     branches:
       - main
-
 defaults:
   run:
     shell: nix develop --impure --command bash {0}
-
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -37,23 +36,20 @@ jobs:
       - uses: cachix/install-nix-action@V27
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
-
       # Cache the nix store.
       - uses: DeterminateSystems/magic-nix-cache-action@v7
-
       # Try to checkout a branch with the same name as provided in the dispatch
-      - uses: actions/checkout@v4 # v3.5.3
+      - uses: actions/checkout@v4
         id: checkout
         with:
           ref: main
           fetch-depth: 0
           token: ${{ secrets.ACTIONS_BOT_TOKEN }}
         continue-on-error: true
-
-      # If we couldn't checkout the provided branch, we will checkout the default branch
-      # instead. We assume that the branch does not yet exist, but we will create it,
-      # when we commit the updated dependencies.
-      - uses: actions/checkout@v4 # v3.5.3
+      # If we couldn't checkout the provided branch, we will checkout the
+      # default branch instead. We assume that the branch does not yet exist,
+      # but we will create it, when we commit the updated dependencies.
+      - uses: actions/checkout@v4
         if: ${{ steps.checkout.outcome != 'success' }}
         with:
           token: ${{ secrets.ACTIONS_BOT_TOKEN }}
@@ -63,44 +59,36 @@ jobs:
           git config --global user.name 'vbotbuildovich'
           git config --global user.email 'vbotbuildovich@users.noreply.github.com'
           git config --global --add --bool push.autoSetupRemote true
-
       - name: Add Repositories for each chart
         run: |
           helm repo add redpanda https://charts.redpanda.com
-
       - name: Run chart-releaser
-        uses: helm/chart-releaser-action@a917fd15b20e8b64b94d9158ad54cd6345335584 # v1.6.0
+        uses: helm/chart-releaser-action@a917fd15b20e8b64b94d9158ad54cd6345335584  # v1.6.0
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           CR_SKIP_EXISTING: true
           CR_GENERATE_RELEASE_NOTES: true
-
       - name: Update testdata
         run: |
           go test ./charts/redpanda -update -short
-
       - name: Commit changes for testdata golden files
         run: |
           git add charts/redpanda/testdata
           git commit -m "[Auto Commit] Update testdata golden files"
           git push
-
       - name: Checkout kustomize
-        uses: actions/checkout@v4 # v3.5.3
+        uses: actions/checkout@v4
         with:
           ref: kustomize
           path: kustomize
-
       - name: Build dependencies for the operator chart
         run: |
           mkdir -p kustomize/operator
           helm repo add prometheus https://prometheus-community.github.io/helm-charts
           helm dependency build charts/operator
-
       - name: Template the operator chart
         run: |
           helm template -n redpanda operator charts/operator --no-hooks > kustomize/operator/resources.yaml
-
       - name: Build kustomization for operator
         run: |
           cd kustomize/operator
