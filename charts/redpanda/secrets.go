@@ -456,10 +456,10 @@ func SecretConfigurator(dot *helmette.Dot) *corev1.Secret {
 		)
 	}
 
-	kafkaSnippet := secretConfiguratorKafkaConfig(dot)
+	kafkaSnippet := secretConfiguratorListenerConfig[KafkaExternal](dot, "kafka", values.Listeners.Kafka)
 	configuratorSh = append(configuratorSh, kafkaSnippet...)
 
-	httpSnippet := secretConfiguratorHTTPConfig(dot)
+	httpSnippet := secretConfiguratorListenerConfig[HTTPExternal](dot, "http", values.Listeners.HTTP)
 	configuratorSh = append(configuratorSh, httpSnippet...)
 
 	if RedpandaAtLeast_22_3_0(dot) && values.RackAwareness.Enabled {
@@ -478,98 +478,60 @@ func SecretConfigurator(dot *helmette.Dot) *corev1.Secret {
 	return secret
 }
 
-func secretConfiguratorKafkaConfig(dot *helmette.Dot) []string {
-	values := helmette.Unwrap[Values](dot.Values)
-
-	internalAdvertiseAddress := fmt.Sprintf("%s.%s", "${SERVICE_NAME}", InternalDomain(dot))
-	externalAdvertiseAddress := "${SERVICE_NAME}"
-	externalDomainTemplate := ptr.Deref(values.External.Domain, "")
-	if externalDomainTemplate != "" {
-		externalAdvertiseAddress = fmt.Sprintf("%s.%s", "${SERVICE_NAME}", helmette.Tpl(externalDomainTemplate, dot))
+type (
+	listenerSupplier[T any] interface {
+		port() int32
+		externalListeners() ExternalListeners[T]
 	}
-
-	var snippet []string
-
-	// Handle kafka listener
-	listenerName := "kafka"
-	listenerAdvertisedName := listenerName
-	redpandaConfigPart := "redpanda"
-	listenerVals := dot.Values.AsMap()["listeners"].(map[string]any)[listenerName].(map[string]any)
-	snippet = append(snippet,
-		``,
-		fmt.Sprintf(`LISTENER=%s`, helmette.Quote(helmette.ToJSON(map[string]any{
-			"name":    "internal",
-			"address": internalAdvertiseAddress,
-			"port":    values.Listeners.Kafka.Port,
-		}))),
-		fmt.Sprintf(`rpk redpanda config --config "$CONFIG" set %s.advertised_%s_api[0] "$LISTENER"`,
-			redpandaConfigPart,
-			listenerAdvertisedName,
-		),
-	)
-	if len(values.Listeners.Kafka.External) > 0 {
-		externalCounter := 0
-		for externalName, externalVals := range values.Listeners.Kafka.External {
-			externalCounter = externalCounter + 1
-			snippet = append(snippet,
-				``,
-				fmt.Sprintf(`ADVERTISED_%s_ADDRESSES=()`, helmette.Upper(listenerName)),
-			)
-			for _, replicaIndex := range helmette.Until(values.Statefulset.Replicas) {
-				// advertised-port for kafka
-				port := externalVals.Port // This is always defined for kafka
-				if len(externalVals.AdvertisedPorts) > 0 {
-					if len(externalVals.AdvertisedPorts) == 1 {
-						port = externalVals.AdvertisedPorts[0]
-					} else {
-						port = externalVals.AdvertisedPorts[replicaIndex]
-					}
-				}
-
-				tmplVals := map[string]any{
-					"listenerVals":             listenerVals,
-					"externalVals":             externalVals,
-					"externalName":             externalName,
-					"externalAdvertiseAddress": externalAdvertiseAddress,
-					"values":                   dot.Values.AsMap(),
-					"replicaIndex":             replicaIndex,
-					"port":                     port,
-				}
-
-				host := advertisedHostJSON(dot, externalName, port, replicaIndex)
-				// Use the advertised-host as a template
-				address := helmette.Tpl(helmette.ToJSON(host), tmplVals)
-				prefixTemplate := ptr.Deref(externalVals.PrefixTemplate, "")
-				if prefixTemplate == "" {
-					// Required because the values might not specify this, it'll ensur we see "" if it's missing.
-					prefixTemplate = helmette.Default("", values.External.PrefixTemplate)
-				}
-				snippet = append(snippet,
-					``,
-					fmt.Sprintf(`PREFIX_TEMPLATE=%s`, helmette.Quote(prefixTemplate)),
-					fmt.Sprintf(`ADVERTISED_%s_ADDRESSES+=(%s)`,
-						helmette.Upper(listenerName),
-						helmette.Quote(address),
-					),
-				)
-			}
-
-			snippet = append(snippet,
-				``,
-				fmt.Sprintf(`rpk redpanda config --config "$CONFIG" set %s.advertised_%s_api[%d] "${ADVERTISED_%s_ADDRESSES[$POD_ORDINAL]}"`,
-					redpandaConfigPart,
-					listenerAdvertisedName,
-					externalCounter,
-					helmette.Upper(listenerName),
-				),
-			)
-		}
+	advertisedPortSupplier interface {
+		port() int32
+		advertisedPorts() []int32
+		prefixTemplate() *string
 	}
+)
 
-	return snippet
+// Adapt KafkaListeners and HTTPListeners to generic accessors
+func (k KafkaListeners) port() int32 {
+	return k.Port
 }
 
-func secretConfiguratorHTTPConfig(dot *helmette.Dot) []string {
+func (k KafkaListeners) externalListeners() ExternalListeners[KafkaExternal] {
+	return k.External
+}
+
+func (k KafkaExternal) port() int32 {
+	return k.Port
+}
+
+func (k KafkaExternal) advertisedPorts() []int32 {
+	return k.AdvertisedPorts
+}
+
+func (k KafkaExternal) prefixTemplate() *string {
+	return k.PrefixTemplate
+}
+
+func (h HTTPListeners) port() int32 {
+	return h.Port
+}
+
+func (h HTTPListeners) externalListeners() ExternalListeners[HTTPExternal] {
+	return h.External
+}
+
+func (h HTTPExternal) port() int32 {
+	return h.Port
+}
+
+func (h HTTPExternal) advertisedPorts() []int32 {
+	return h.AdvertisedPorts
+}
+
+func (h HTTPExternal) prefixTemplate() *string {
+	return h.PrefixTemplate
+}
+
+func secretConfiguratorListenerConfig[T advertisedPortSupplier](dot *helmette.Dot, listenerName string, config listenerSupplier[T]) []string {
 	values := helmette.Unwrap[Values](dot.Values)
 
 	internalAdvertiseAddress := fmt.Sprintf("%s.%s", "${SERVICE_NAME}", InternalDomain(dot))
@@ -582,25 +544,34 @@ func secretConfiguratorHTTPConfig(dot *helmette.Dot) []string {
 	var snippet []string
 
 	// Handle kafka listener
-	listenerName := "http"
-	listenerAdvertisedName := "pandaproxy"
-	redpandaConfigPart := "pandaproxy"
+	var listenerAdvertisedName, redpandaConfigPart string
+	switch listenerName {
+	case "kafka":
+		listenerAdvertisedName = listenerName
+		redpandaConfigPart = "redpanda"
+	case "http":
+		listenerAdvertisedName = "pandaproxy"
+		redpandaConfigPart = "pandaproxy"
+	default:
+		panic(fmt.Sprintf("unrecognised listenerName: %s", listenerName))
+	}
+
 	listenerVals := dot.Values.AsMap()["listeners"].(map[string]any)[listenerName].(map[string]any)
 	snippet = append(snippet,
 		``,
 		fmt.Sprintf(`LISTENER=%s`, helmette.Quote(helmette.ToJSON(map[string]any{
 			"name":    "internal",
 			"address": internalAdvertiseAddress,
-			"port":    values.Listeners.HTTP.Port,
+			"port":    config.port(),
 		}))),
 		fmt.Sprintf(`rpk redpanda config --config "$CONFIG" set %s.advertised_%s_api[0] "$LISTENER"`,
 			redpandaConfigPart,
 			listenerAdvertisedName,
 		),
 	)
-	if len(values.Listeners.HTTP.External) > 0 {
+	if len(config.externalListeners()) > 0 {
 		externalCounter := 0
-		for externalName, externalVals := range values.Listeners.HTTP.External {
+		for externalName, externalVals := range config.externalListeners() {
 			externalCounter = externalCounter + 1
 			snippet = append(snippet,
 				``,
@@ -608,12 +579,12 @@ func secretConfiguratorHTTPConfig(dot *helmette.Dot) []string {
 			)
 			for _, replicaIndex := range helmette.Until(values.Statefulset.Replicas) {
 				// advertised-port for kafka
-				port := externalVals.Port // This is always defined for kafka
-				if len(externalVals.AdvertisedPorts) > 0 {
-					if len(externalVals.AdvertisedPorts) == 1 {
-						port = externalVals.AdvertisedPorts[0]
+				port := externalVals.port() // This is always defined for kafka
+				if len(externalVals.advertisedPorts()) > 0 {
+					if len(externalVals.advertisedPorts()) == 1 {
+						port = externalVals.advertisedPorts()[0]
 					} else {
-						port = externalVals.AdvertisedPorts[replicaIndex]
+						port = externalVals.advertisedPorts()[replicaIndex]
 					}
 				}
 
@@ -630,7 +601,7 @@ func secretConfiguratorHTTPConfig(dot *helmette.Dot) []string {
 				host := advertisedHostJSON(dot, externalName, port, replicaIndex)
 				// Use the advertised-host as a template
 				address := helmette.Tpl(helmette.ToJSON(host), tmplVals)
-				prefixTemplate := ptr.Deref(externalVals.PrefixTemplate, "")
+				prefixTemplate := ptr.Deref(externalVals.prefixTemplate(), "")
 				if prefixTemplate == "" {
 					// Required because the values might not specify this, it'll ensur we see "" if it's missing.
 					prefixTemplate = helmette.Default("", values.External.PrefixTemplate)
