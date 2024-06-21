@@ -117,7 +117,7 @@
 {{- if (gt ((get (fromJson (include "_shims.len" (dict "a" (list $adminTLS) ))) "r") | int) (0 | int)) -}}
 {{- $_ := (set $aa "tls" $adminTLS) -}}
 {{- end -}}
-{{- $result := (dict "name" (get (fromJson (include "redpanda.getFistExternalKafkaListener" (dict "a" (list $dot) ))) "r") "kafka_api" $ka "admin_api" $aa ) -}}
+{{- $result := (dict "name" (get (fromJson (include "redpanda.getFirstExternalKafkaListener" (dict "a" (list $dot) ))) "r") "kafka_api" $ka "admin_api" $aa ) -}}
 {{- (dict "r" $result) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -128,7 +128,7 @@
 {{- $i := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
 {{- $values := $dot.Values.AsMap -}}
-{{- $externalKafkaListenerName := (get (fromJson (include "redpanda.getFistExternalKafkaListener" (dict "a" (list $dot) ))) "r") -}}
+{{- $externalKafkaListenerName := (get (fromJson (include "redpanda.getFirstExternalKafkaListener" (dict "a" (list $dot) ))) "r") -}}
 {{- $listener := (index $values.listeners.kafka.external $externalKafkaListenerName) -}}
 {{- $port := (($values.listeners.kafka.port | int) | int) -}}
 {{- if (gt (($listener.port | int) | int) ((1 | int) | int)) -}}
@@ -195,7 +195,7 @@
 {{- end -}}
 {{- end -}}
 
-{{- define "redpanda.getFistExternalKafkaListener" -}}
+{{- define "redpanda.getFirstExternalKafkaListener" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $values := $dot.Values.AsMap -}}
