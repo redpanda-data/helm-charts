@@ -1,3 +1,4 @@
+---
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
 # this work for additional information regarding copyright ownership.
@@ -15,11 +16,9 @@
 
 # This is to test only the Redpanda Chart Nightly
 name: Nightly - Lint/Test Redpanda-Chart
-
 defaults:
   run:
     shell: nix develop --impure --command bash {0}
-
 on:
   schedule:
     - cron: '0 1 * * 1-5'  # 01:00 AM UTC Monday - Friday
@@ -31,19 +30,15 @@ jobs:
       - uses: cachix/install-nix-action@V27
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - run: |
           git checkout main
           git checkout -
-
       - name: Run chart-testing (lint)
         run: ct lint --config .github/ct-redpanda.yaml
-
   test:
     name: Run ct tests for ci values matching ${{ matrix.testvaluespattern }} for Redpanda version ${{ matrix.version }}
     strategy:
@@ -63,103 +58,96 @@ jobs:
           - '15*'
           - '1[6-7]*'
           - '18*'
-          - '9[7-9]*' # some tests depend on a github secret that isn't available for fork PRs. Only run these tests in branch PRs.
+          - '9[7-9]*'  # some tests depend on a github secret that isn't available for fork PRs. Only run these tests in branch PRs.
       fail-fast: false
     runs-on: ubuntu-22.04
     steps:
       - uses: cachix/install-nix-action@V27
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - run: |
           git checkout main
           git checkout -
-
       - name: Set up for matrix
         run: |
           echo bash -O extglob -c "rm -v charts/redpanda/ci/!(${{ matrix.testvaluespattern }})"
           bash -O extglob -c "rm -v charts/redpanda/ci/!(${{ matrix.testvaluespattern }})"
-
       - name: Create kind cluster
-        uses: helm/kind-action@0025e74a8c7512023d06dc019c617aa3cf561fde # v1.10.0
+        uses: helm/kind-action@0025e74a8c7512023d06dc019c617aa3cf561fde  # v1.10.0
         with:
           config: .github/kind.yaml
-
       - name: Check kind config worked
         run: kubectl get nodes
-
       - name: Annotate nodes for rack awareness
         run: .github/annotate_kind_nodes.sh chart-testing
-
-    #===== Required Test Files === start
-
+        # ===== Required Test Files === start
       - name: Create tls helm templates
         run: |
           .github/create_tls.sh "random-domain"
-
       - name: Create sasl secret templates
         run: |
           .github/create-sasl-secret.sh "some-users"
-
       - name: Move files to redpanda template dir
         run: |
           mv external-tls-secret.yaml charts/redpanda/templates/
           cp .github/external-service.yaml charts/redpanda/templates/
           mv some-users-updated.yaml charts/redpanda/templates
-
       - name: Create redpanda license secret
         env:
           REDPANDA_LICENSE: ${{ secrets.REDPANDA_LICENSE }}
         run: |
           if [ -z "$REDPANDA_LICENSE" ]; then echo "License is empty" ; exit 1; fi
+
           kubectl create secret generic redpanda-license \
-          --from-literal=license-key="$REDPANDA_LICENSE" \
-          --dry-run=client -o yaml > redpanda-license.yaml.tmp
+            --from-literal=license-key="$REDPANDA_LICENSE" \
+            --dry-run=client \
+            -o yaml \
+            > redpanda-license.yaml.tmp
 
           kubectl annotate -f redpanda-license.yaml.tmp \
-          helm.sh/hook-delete-policy="before-hook-creation" \
-          helm.sh/hook="pre-install" \
-          helm.sh/hook-weight="-100" \
-          --local --dry-run=none -o yaml > redpanda-license.yaml
+            helm.sh/hook-delete-policy="before-hook-creation" \
+            helm.sh/hook="pre-install" \
+            helm.sh/hook-weight="-100" \
+            --local \
+            --dry-run=none \
+            -o yaml \
+            > redpanda-license.yaml
 
           rm redpanda-license.yaml.tmp
 
           mv redpanda-license.yaml ./charts/redpanda/templates/
-
-    #===== Required Test Files === end
-
+        # ===== Required Test Files === end
       - name: install cert-manager
         run: |
           helm repo add jetstack https://charts.jetstack.io &&
           helm install cert-manager --namespace cert-manager \
             --create-namespace --version v1.11.0 jetstack/cert-manager \
             --set installCRDs=true --wait --wait-for-jobs
-
       - name: install prometheus-operator
         run: |
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts &&
           helm install prometheus prometheus-community/kube-prometheus-stack \
-            --namespace prometheus --create-namespace \
+            --namespace prometheus \
+            --create-namespace \
             --set prometheus.prometheusSpec.serviceMonitorSelectorNilUsesHelmValues=false \
             --set nodeExporter.enabled=false \
-            --set grafana.enabled=false --set kubeStateMetrics.enabled=false --set alertmanager.enabled=false \
-            --wait --wait-for-jobs
-
+            --set grafana.enabled=false \
+            --set kubeStateMetrics.enabled=false \
+            --set alertmanager.enabled=false \
+            --wait \
+            --wait-for-jobs
       - name: install metallb
         run: |
           helm repo add metallb https://metallb.github.io/metallb &&
           helm install metallb metallb/metallb -n metallb-system \
             --create-namespace --version 0.13.10 --wait --wait-for-jobs
-
       - name: apply metallb resources
         run: |
           kubectl -n metallb-system apply -f .github/metallb-config.yaml
-
       # we're testing console in the Redpanda chart
       - name: Run chart-testing (install and upgrade)
         run: |
