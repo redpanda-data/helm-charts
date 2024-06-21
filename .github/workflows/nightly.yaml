@@ -62,6 +62,18 @@ jobs:
       fail-fast: false
     runs-on: ubuntu-22.04
     steps:
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_SM_READONLY_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SM_READONLY_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+      - name: get secrets from aws sm
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            ,sdlc/prod/github/redpanda_sample_license
+          parse-json-secrets: true
       - uses: cachix/install-nix-action@V27
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
@@ -98,7 +110,7 @@ jobs:
           mv some-users-updated.yaml charts/redpanda/templates
       - name: Create redpanda license secret
         env:
-          REDPANDA_LICENSE: ${{ secrets.REDPANDA_LICENSE }}
+          REDPANDA_LICENSE: ${{ env.REDPANDA_SAMPLE_LICENSE }}
         run: |
           if [ -z "$REDPANDA_LICENSE" ]; then echo "License is empty" ; exit 1; fi
 
