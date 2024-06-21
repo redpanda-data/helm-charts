@@ -1,3 +1,4 @@
+---
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
 # this work for additional information regarding copyright ownership.
@@ -14,22 +15,18 @@
 # limitations under the License.
 
 name: Pull Request Checks
-
 on:
   pull_request:
     branches:
       - "**"
-
 # Cancel old workflows whenever a PR is updated.
 # Thanks to https://stackoverflow.com/questions/66335225/how-to-cancel-previous-runs-in-the-pr-when-you-push-new-commitsupdate-the-curre
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
-
 defaults:
   run:
     shell: nix develop --impure --command bash {0}
-
 jobs:
   changes:
     runs-on: ubuntu-22.04
@@ -41,65 +38,61 @@ jobs:
       charts-redpanda: ${{ steps.chart-changes.outputs.charts-redpanda }}
       go-code: ${{ steps.chart-changes.outputs.go-code }}
     steps:
-    - uses: actions/checkout@v4
-    - uses: dorny/paths-filter@v3
-      id: chart-changes
-      with:
-        # NOTE: changes to "auxiliary" files such as Taskfile.yaml and
-        # flake.nix won't trigger actions besides lint. This is intentional due
-        # to the long run times of chart-testing. It's possible to accidentally
-        # break the other chart workflows right now. Please ensure that you
-        # exercise changes to those files manually.
-        filters: |
-          charts-redpanda:
-            - '.github/workflows/test_redpanda.yaml'
-            - 'charts/redpanda/ci/*'
-            - 'charts/redpanda/files/*'
-            - 'charts/redpanda/templates/**'
-            - 'charts/redpanda/(.helmignore|values.schema.json|Chart.yaml)'
-          charts-console:
-            - 'charts/console/ci/*'
-            - 'charts/console/files/*'
-            - 'charts/console/templates/**'
-            - 'charts/console/(.helmignore|values.schema.json|Chart.yaml)'
-          charts-connectors:
-            - '.github/workflows/test_connectors.yaml'
-            - 'charts/connectors/ci/*'
-            - 'charts/connectors/files/*'
-            - 'charts/connectors/templates/**'
-            - 'charts/connectors/(.helmignore|values.schema.json|Chart.yaml)'
-          charts-kminion:
-            - '.github/workflows/test_kminion.yaml'
-            - 'charts/kminion/ci/*'
-            - 'charts/kminion/files/*'
-            - 'charts/kminion/templates/**'
-            - 'charts/kminion/(.helmignore|values.schema.json|Chart.yaml)'
-          charts-operator:
-            - '.github/workflows/test_operator.yaml'
-            - 'charts/operator/ci/*'
-            - 'charts/operator/files/*'
-            - 'charts/operator/templates/**'
-            - 'charts/operator/(.helmignore|values.schema.json|Chart.yaml)'
-          go-code:
-            - '.github/workflows/pull_requests.yaml'
-            - '**/testdata/**'
-            - '**.go'
-            - 'go.mod'
-            - 'go.sum'
-
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: chart-changes
+        with:
+          # NOTE: changes to "auxiliary" files such as Taskfile.yaml and
+          # flake.nix won't trigger actions besides lint. This is intentional
+          # due to the long run times of chart-testing. It's possible to
+          # accidentally # break the other chart workflows right now. Please
+          # ensure that you exercise changes to those files manually.
+          filters: |
+            charts-redpanda:
+              - '.github/workflows/test_redpanda.yaml'
+              - 'charts/redpanda/ci/*'
+              - 'charts/redpanda/files/*'
+              - 'charts/redpanda/templates/**'
+              - 'charts/redpanda/(.helmignore|values.schema.json|Chart.yaml)'
+            charts-console:
+              - 'charts/console/ci/*'
+              - 'charts/console/files/*'
+              - 'charts/console/templates/**'
+              - 'charts/console/(.helmignore|values.schema.json|Chart.yaml)'
+            charts-connectors:
+              - '.github/workflows/test_connectors.yaml'
+              - 'charts/connectors/ci/*'
+              - 'charts/connectors/files/*'
+              - 'charts/connectors/templates/**'
+              - 'charts/connectors/(.helmignore|values.schema.json|Chart.yaml)'
+            charts-kminion:
+              - '.github/workflows/test_kminion.yaml'
+              - 'charts/kminion/ci/*'
+              - 'charts/kminion/files/*'
+              - 'charts/kminion/templates/**'
+              - 'charts/kminion/(.helmignore|values.schema.json|Chart.yaml)'
+            charts-operator:
+              - '.github/workflows/test_operator.yaml'
+              - 'charts/operator/ci/*'
+              - 'charts/operator/files/*'
+              - 'charts/operator/templates/**'
+              - 'charts/operator/(.helmignore|values.schema.json|Chart.yaml)'
+            go-code:
+              - '.github/workflows/pull_requests.yaml'
+              - '**/testdata/**'
+              - '**.go'
+              - 'go.mod'
+              - 'go.sum'
   lint:
     runs-on: ubuntu-22.04
     steps:
       - uses: cachix/install-nix-action@V27
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
-
       # Cache the nix store.
       - uses: DeterminateSystems/magic-nix-cache-action@v7
-
       - uses: actions/checkout@v4
       - run: task ci:lint
-
   test-go:
     needs: [changes, lint]
     if: ${{ needs.changes.outputs.go-code == 'true' }}
@@ -111,31 +104,26 @@ jobs:
       - uses: DeterminateSystems/magic-nix-cache-action@v7
       - uses: actions/checkout@v4
       - run: go test ./... -short
-
   test-charts-redpanda:
     needs: [changes, lint]
     if: ${{ needs.changes.outputs.charts-redpanda == 'true' }}
     uses: ./.github/workflows/test_redpanda.yaml
     secrets: inherit
-
   test-charts-connectors:
     needs: [changes, lint]
     if: ${{ needs.changes.outputs.charts-connectors == 'true' }}
     uses: ./.github/workflows/test_connectors.yaml
     secrets: inherit
-
   test-charts-kminion:
     needs: [changes, lint]
     if: ${{ needs.changes.outputs.charts-kminion == 'true' }}
     uses: ./.github/workflows/test_kminion.yaml
     secrets: inherit
-
   test-charts-operator:
     needs: [changes, lint]
     if: ${{ needs.changes.outputs.charts-operator == 'true' }}
     uses: ./.github/workflows/test_operator.yaml
     secrets: inherit
-
   summary:
     if: always()
     needs:
