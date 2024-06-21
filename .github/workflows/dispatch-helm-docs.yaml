@@ -1,13 +1,13 @@
-# This workflow triggers the actions in redpanda-data/docs that publishes the Helm specifications to the Redpanda documentation.
+---
+# This workflow triggers the actions in redpanda-data/docs that
+# publishes the Helm specifications to the Redpanda documentation.
 
 name: Trigger Helm spec docs
-
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
       - 'charts/**'
-
 jobs:
   dispatch:
     runs-on: ubuntu-latest
