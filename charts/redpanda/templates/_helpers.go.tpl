@@ -364,12 +364,12 @@
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $values := $dot.Values.AsMap -}}
-{{- $coresInMillies := ((get (fromJson (include "redpanda.RedpandaResources.RedpandaCoresInMillis" (dict "a" (list $values.resources) ))) "r") | int) -}}
-{{- if (lt $coresInMillies (1000 | int)) -}}
-{{- (dict "r" (1 | int)) | toJson -}}
+{{- $coresInMillies := ((get (fromJson (include "_shims.resource_MilliValue" (dict "a" (list $values.resources.cpu.cores) ))) "r") | int64) -}}
+{{- if (lt $coresInMillies (1000 | int64)) -}}
+{{- (dict "r" (1 | int64)) | toJson -}}
 {{- break -}}
 {{- end -}}
-{{- (dict "r" ((floor ((divf ($coresInMillies | float64) 1000.0) | float64)) | int)) | toJson -}}
+{{- (dict "r" ((get (fromJson (include "_shims.resource_Value" (dict "a" (list $values.resources.cpu.cores) ))) "r") | int64)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

@@ -21,6 +21,7 @@ import (
 
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 )
 
 // PostInstallUpgradeEnvironmentVariables returns environment variables assigned to Redpanda
@@ -71,10 +72,10 @@ func PostInstallUpgradeEnvironmentVariables(dot *helmette.Dot) []corev1.EnvVar {
 
 		// cloud_storage_cache_size can be represented as Resource.Quantity that why value can be converted
 		// from value with SI suffix to bytes number.
-		if asStr, isStr := v.(string); k == "cloud_storage_cache_size" && isStr && asStr != "" {
+		if k == "cloud_storage_cache_size" && v != nil {
 			envars = append(envars, corev1.EnvVar{
 				Name:  fmt.Sprintf("RPK_%s", helmette.Upper(k)),
-				Value: helmette.ToJSON(SIToBytes(v.(string))),
+				Value: helmette.ToJSON(helmette.UnmarshalInto[*resource.Quantity](v).Value()),
 			})
 			continue
 		}

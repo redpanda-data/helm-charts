@@ -9,6 +9,7 @@ import (
 	cmmeta "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 )
 
 type PartialValues struct {
@@ -150,23 +151,23 @@ type PartialMonitoring struct {
 
 type PartialRedpandaResources struct {
 	CPU struct {
-		Cores           any   `json:"cores,omitempty" jsonschema:"required,oneof_type=integer;string"`
-		Overprovisioned *bool `json:"overprovisioned,omitempty"`
+		Cores           resource.Quantity `json:"cores,omitempty" jsonschema:"required"`
+		Overprovisioned *bool             `json:"overprovisioned,omitempty"`
 	} `json:"cpu,omitempty" jsonschema:"required"`
 
 	Memory struct {
 		EnableMemoryLocking *bool `json:"enable_memory_locking,omitempty"`
 
 		Container struct {
-			Min *MemoryAmount `json:"min,omitempty"`
+			Min *resource.Quantity `json:"min,omitempty"`
 
-			Max *MemoryAmount `json:"max,omitempty" jsonschema:"required"`
+			Max resource.Quantity `json:"max,omitempty" jsonschema:"required"`
 		} `json:"container,omitempty" jsonschema:"required"`
 
 		Redpanda *struct {
-			Memory *MemoryAmount `json:"memory,omitempty" jsonschema:"oneof_type=integer;string"`
+			Memory *resource.Quantity `json:"memory,omitempty"`
 
-			ReserveMemory *MemoryAmount `json:"reserveMemory,omitempty" jsonschema:"oneof_type=integer;string"`
+			ReserveMemory *resource.Quantity `json:"reserveMemory,omitempty"`
 		} `json:"redpanda,omitempty"`
 	} `json:"memory,omitempty" jsonschema:"required"`
 }
@@ -178,7 +179,7 @@ type PartialStorage struct {
 		Annotations  map[string]string `json:"annotations,omitempty" jsonschema:"required"`
 		Enabled      *bool             `json:"enabled,omitempty" jsonschema:"required"`
 		Labels       map[string]string `json:"labels,omitempty" jsonschema:"required"`
-		Size         *MemoryAmount     `json:"size,omitempty" jsonschema:"required"`
+		Size         resource.Quantity `json:"size,omitempty" jsonschema:"required"`
 		StorageClass *string           `json:"storageClass,omitempty" jsonschema:"required"`
 	} `json:"persistentVolume,omitempty" jsonschema:"required,deprecated"`
 	TieredConfig                  *PartialTieredStorageConfig `json:"tieredConfig,omitempty" jsonschema:"deprecated"`
@@ -192,8 +193,8 @@ type PartialStorage struct {
 }
 
 type PartialPostInstallJob struct {
-	Resources *PartialJobResources `json:"resources,omitempty"`
-	Affinity  map[string]any       `json:"affinity,omitempty"`
+	Resources *corev1.ResourceRequirements `json:"resources,omitempty"`
+	Affinity  map[string]any               `json:"affinity,omitempty"`
 
 	Enabled         *bool                  `json:"enabled,omitempty"`
 	Labels          map[string]string      `json:"labels,omitempty"`
@@ -202,10 +203,10 @@ type PartialPostInstallJob struct {
 }
 
 type PartialPostUpgradeJob struct {
-	Resources    *PartialJobResources `json:"resources,omitempty"`
-	Affinity     map[string]any       `json:"affinity,omitempty"`
-	ExtraEnv     any                  `json:"extraEnv,omitempty" jsonschema:"oneof_type=array;string"`
-	ExtraEnvFrom any                  `json:"extraEnvFrom,omitempty" jsonschema:"oneof_type=array;string"`
+	Resources    *corev1.ResourceRequirements `json:"resources,omitempty"`
+	Affinity     map[string]any               `json:"affinity,omitempty"`
+	ExtraEnv     any                          `json:"extraEnv,omitempty" jsonschema:"oneof_type=array;string"`
+	ExtraEnvFrom any                          `json:"extraEnvFrom,omitempty" jsonschema:"oneof_type=array;string"`
 }
 
 type PartialContainer struct {
@@ -356,17 +357,6 @@ type PartialConfig struct {
 	SchemaRegistryClient *PartialSchemaRegistryClient `json:"schema_registry_client,omitempty"`
 	PandaProxyClient     *PartialPandaProxyClient     `json:"pandaproxy_client,omitempty"`
 	Tunable              *PartialTunableConfig        `json:"tunable,omitempty" jsonschema:"required"`
-}
-
-type PartialJobResources struct {
-	Limits struct {
-		CPU    any           `json:"cpu,omitempty" jsonschema:"oneof_type=integer;string"`
-		Memory *MemoryAmount `json:"memory,omitempty"`
-	} `json:"limits,omitempty"`
-	Requests struct {
-		CPU    any           `json:"cpu,omitempty" jsonschema:"oneof_type=integer;string"`
-		Memory *MemoryAmount `json:"memory,omitempty"`
-	} `json:"requests,omitempty"`
 }
 
 type PartialSchemaRegistryClient struct {

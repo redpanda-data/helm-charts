@@ -37,18 +37,15 @@
 {{- if (or (eq $v (coalesce nil)) (empty $v)) -}}
 {{- continue -}}
 {{- end -}}
-{{- $tmp_tuple_3 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "string" $v "") ))) "r")) ))) "r") -}}
-{{- $isStr_4 := $tmp_tuple_3.T2 -}}
-{{- $asStr_3 := $tmp_tuple_3.T1 -}}
-{{- if (and (and (eq $k "cloud_storage_cache_size") $isStr_4) (ne $asStr_3 "")) -}}
-{{- $envars = (concat (default (list ) $envars) (list (mustMergeOverwrite (dict "name" "" ) (dict "name" (printf "RPK_%s" (upper $k)) "value" (toJson ((get (fromJson (include "redpanda.SIToBytes" (dict "a" (list (get (fromJson (include "_shims.typeassertion" (dict "a" (list "string" $v) ))) "r")) ))) "r") | int)) )))) -}}
+{{- if (and (eq $k "cloud_storage_cache_size") (ne $v (coalesce nil))) -}}
+{{- $envars = (concat (default (list ) $envars) (list (mustMergeOverwrite (dict "name" "" ) (dict "name" (printf "RPK_%s" (upper $k)) "value" (toJson ((get (fromJson (include "_shims.resource_Value" (dict "a" (list $v) ))) "r") | int64)) )))) -}}
 {{- continue -}}
 {{- end -}}
-{{- $tmp_tuple_4 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "string" $v "") ))) "r")) ))) "r") -}}
-{{- $ok_6 := $tmp_tuple_4.T2 -}}
-{{- $str_5 := $tmp_tuple_4.T1 -}}
-{{- if $ok_6 -}}
-{{- $envars = (concat (default (list ) $envars) (list (mustMergeOverwrite (dict "name" "" ) (dict "name" (printf "RPK_%s" (upper $k)) "value" $str_5 )))) -}}
+{{- $tmp_tuple_3 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "string" $v "") ))) "r")) ))) "r") -}}
+{{- $ok_4 := $tmp_tuple_3.T2 -}}
+{{- $str_3 := $tmp_tuple_3.T1 -}}
+{{- if $ok_4 -}}
+{{- $envars = (concat (default (list ) $envars) (list (mustMergeOverwrite (dict "name" "" ) (dict "name" (printf "RPK_%s" (upper $k)) "value" $str_3 )))) -}}
 {{- else -}}
 {{- $envars = (concat (default (list ) $envars) (list (mustMergeOverwrite (dict "name" "" ) (dict "name" (printf "RPK_%s" (upper $k)) "value" (mustToJson $v) )))) -}}
 {{- end -}}
@@ -62,15 +59,15 @@
 {{- $tieredStorageConfig := (index .a 0) -}}
 {{- $values := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
-{{- $tmp_tuple_5 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $tieredStorageConfig "cloud_storage_access_key" (coalesce nil)) ))) "r")) ))) "r") -}}
-{{- $ok_8 := $tmp_tuple_5.T2 -}}
-{{- $v_7 := $tmp_tuple_5.T1 -}}
-{{- $ak_9 := $values.storage.tiered.credentialsSecretRef.accessKey -}}
-{{- if (and $ok_8 (ne $v_7 "")) -}}
-{{- (dict "r" (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_ACCESS_KEY" "value" (get (fromJson (include "_shims.typeassertion" (dict "a" (list "string" $v_7) ))) "r") )))) | toJson -}}
+{{- $tmp_tuple_4 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $tieredStorageConfig "cloud_storage_access_key" (coalesce nil)) ))) "r")) ))) "r") -}}
+{{- $ok_6 := $tmp_tuple_4.T2 -}}
+{{- $v_5 := $tmp_tuple_4.T1 -}}
+{{- $ak_7 := $values.storage.tiered.credentialsSecretRef.accessKey -}}
+{{- if (and $ok_6 (ne $v_5 "")) -}}
+{{- (dict "r" (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_ACCESS_KEY" "value" (get (fromJson (include "_shims.typeassertion" (dict "a" (list "string" $v_5) ))) "r") )))) | toJson -}}
 {{- break -}}
-{{- else -}}{{- if (get (fromJson (include "redpanda.SecretRef.IsValid" (dict "a" (list $ak_9) ))) "r") -}}
-{{- (dict "r" (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_ACCESS_KEY" "valueFrom" (mustMergeOverwrite (dict ) (dict "secretKeyRef" (mustMergeOverwrite (dict "key" "" ) (mustMergeOverwrite (dict ) (dict "name" $ak_9.name )) (dict "key" $ak_9.key )) )) )))) | toJson -}}
+{{- else -}}{{- if (get (fromJson (include "redpanda.SecretRef.IsValid" (dict "a" (list $ak_7) ))) "r") -}}
+{{- (dict "r" (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_ACCESS_KEY" "valueFrom" (mustMergeOverwrite (dict ) (dict "secretKeyRef" (mustMergeOverwrite (dict "key" "" ) (mustMergeOverwrite (dict ) (dict "name" $ak_7.name )) (dict "key" $ak_7.key )) )) )))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -83,15 +80,15 @@
 {{- $tieredStorageConfig := (index .a 0) -}}
 {{- $values := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
-{{- $tmp_tuple_6 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $tieredStorageConfig "cloud_storage_secret_key" (coalesce nil)) ))) "r")) ))) "r") -}}
-{{- $ok_11 := $tmp_tuple_6.T2 -}}
-{{- $v_10 := $tmp_tuple_6.T1 -}}
-{{- $sk_12 := $values.storage.tiered.credentialsSecretRef.secretKey -}}
-{{- if (and $ok_11 (ne $v_10 "")) -}}
-{{- (dict "r" (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_SECRET_KEY" "value" (get (fromJson (include "_shims.typeassertion" (dict "a" (list "string" $v_10) ))) "r") )))) | toJson -}}
+{{- $tmp_tuple_5 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $tieredStorageConfig "cloud_storage_secret_key" (coalesce nil)) ))) "r")) ))) "r") -}}
+{{- $ok_9 := $tmp_tuple_5.T2 -}}
+{{- $v_8 := $tmp_tuple_5.T1 -}}
+{{- $sk_10 := $values.storage.tiered.credentialsSecretRef.secretKey -}}
+{{- if (and $ok_9 (ne $v_8 "")) -}}
+{{- (dict "r" (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_SECRET_KEY" "value" (get (fromJson (include "_shims.typeassertion" (dict "a" (list "string" $v_8) ))) "r") )))) | toJson -}}
 {{- break -}}
-{{- else -}}{{- if (get (fromJson (include "redpanda.SecretRef.IsValid" (dict "a" (list $sk_12) ))) "r") -}}
-{{- (dict "r" (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_SECRET_KEY" "valueFrom" (mustMergeOverwrite (dict ) (dict "secretKeyRef" (mustMergeOverwrite (dict "key" "" ) (mustMergeOverwrite (dict ) (dict "name" $sk_12.name )) (dict "key" $sk_12.key )) )) )))) | toJson -}}
+{{- else -}}{{- if (get (fromJson (include "redpanda.SecretRef.IsValid" (dict "a" (list $sk_10) ))) "r") -}}
+{{- (dict "r" (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_SECRET_KEY" "valueFrom" (mustMergeOverwrite (dict ) (dict "secretKeyRef" (mustMergeOverwrite (dict "key" "" ) (mustMergeOverwrite (dict ) (dict "name" $sk_10.name )) (dict "key" $sk_10.key )) )) )))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -104,15 +101,15 @@
 {{- $tieredStorageConfig := (index .a 0) -}}
 {{- $values := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
-{{- $tmp_tuple_7 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $tieredStorageConfig "cloud_storage_azure_shared_key" (coalesce nil)) ))) "r")) ))) "r") -}}
-{{- $ok_14 := $tmp_tuple_7.T2 -}}
-{{- $v_13 := $tmp_tuple_7.T1 -}}
-{{- $sk_15 := $values.storage.tiered.credentialsSecretRef.secretKey -}}
-{{- if (and $ok_14 (ne $v_13 "")) -}}
-{{- (dict "r" (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_AZURE_SHARED_KEY" "value" (get (fromJson (include "_shims.typeassertion" (dict "a" (list "string" $v_13) ))) "r") )))) | toJson -}}
+{{- $tmp_tuple_6 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $tieredStorageConfig "cloud_storage_azure_shared_key" (coalesce nil)) ))) "r")) ))) "r") -}}
+{{- $ok_12 := $tmp_tuple_6.T2 -}}
+{{- $v_11 := $tmp_tuple_6.T1 -}}
+{{- $sk_13 := $values.storage.tiered.credentialsSecretRef.secretKey -}}
+{{- if (and $ok_12 (ne $v_11 "")) -}}
+{{- (dict "r" (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_AZURE_SHARED_KEY" "value" (get (fromJson (include "_shims.typeassertion" (dict "a" (list "string" $v_11) ))) "r") )))) | toJson -}}
 {{- break -}}
-{{- else -}}{{- if (get (fromJson (include "redpanda.SecretRef.IsValid" (dict "a" (list $sk_15) ))) "r") -}}
-{{- (dict "r" (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_AZURE_SHARED_KEY" "valueFrom" (mustMergeOverwrite (dict ) (dict "secretKeyRef" (mustMergeOverwrite (dict "key" "" ) (mustMergeOverwrite (dict ) (dict "name" $sk_15.name )) (dict "key" $sk_15.key )) )) )))) | toJson -}}
+{{- else -}}{{- if (get (fromJson (include "redpanda.SecretRef.IsValid" (dict "a" (list $sk_13) ))) "r") -}}
+{{- (dict "r" (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_CLOUD_STORAGE_AZURE_SHARED_KEY" "valueFrom" (mustMergeOverwrite (dict ) (dict "secretKeyRef" (mustMergeOverwrite (dict "key" "" ) (mustMergeOverwrite (dict ) (dict "name" $sk_13.name )) (dict "key" $sk_13.key )) )) )))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

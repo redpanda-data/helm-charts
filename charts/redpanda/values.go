@@ -11,6 +11,7 @@ import (
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	orderedmap "github.com/wk8/go-ordered-map/v2"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/utils/ptr"
 )
 
@@ -279,8 +280,8 @@ type Monitoring struct {
 
 type RedpandaResources struct {
 	CPU struct {
-		Cores           any   `json:"cores" jsonschema:"required,oneof_type=integer;string"`
-		Overprovisioned *bool `json:"overprovisioned"`
+		Cores           resource.Quantity `json:"cores" jsonschema:"required"`
+		Overprovisioned *bool             `json:"overprovisioned"`
 	} `json:"cpu" jsonschema:"required"`
 	// Memory resources
 	// For details,
@@ -309,11 +310,11 @@ type RedpandaResources struct {
 			// If omitted, the `min` value is equal to the `max` value (requested resources defaults to limits).
 			// This setting is equivalent to `resources.requests.memory`.
 			// For production, use 10Gi or greater.
-			Min *MemoryAmount `json:"min"`
+			Min *resource.Quantity `json:"min"`
 			// Maximum memory count for each Redpanda broker.
 			// Equivalent to `resources.limits.memory`.
 			// For production, use `10Gi` or greater.
-			Max MemoryAmount `json:"max" jsonschema:"required"`
+			Max resource.Quantity `json:"max" jsonschema:"required"`
 		} `json:"container" jsonschema:"required"`
 		// This optional `redpanda` object allows you to specify the memory size for both the Redpanda
 		// process and the underlying reserved memory used by Seastar.
@@ -334,52 +335,22 @@ type RedpandaResources struct {
 			// resources.memory.container.max).
 			// Equivalent to --memory.
 			// For production, use 8Gi or greater.
-			Memory *MemoryAmount `json:"memory" jsonschema:"oneof_type=integer;string"`
+			Memory *resource.Quantity `json:"memory"`
 			// Memory reserved for the Seastar subsystem.
 			// Any value above 1Gi will provide diminishing performance benefits.
 			// Equivalent to --reserve-memory.
 			// For production, use 1Gi.
-			ReserveMemory *MemoryAmount `json:"reserveMemory" jsonschema:"oneof_type=integer;string"`
+			ReserveMemory *resource.Quantity `json:"reserveMemory"`
 		} `json:"redpanda"`
 	} `json:"memory" jsonschema:"required"`
 }
 
 func (rr *RedpandaResources) GetOverProvisionValue() bool {
-	if int(rr.RedpandaCoresInMillis()) < 1000 {
+	if rr.CPU.Cores.MilliValue() < 1000 {
 		return true
 	}
 
 	return ptr.Deref(rr.CPU.Overprovisioned, false)
-}
-
-func (rr *RedpandaResources) RedpandaCoresInMillis() int {
-	if cores, ok := helmette.AsNumeric(rr.CPU.Cores); ok {
-		return int(cores * 1000)
-	}
-
-	if cores, ok := rr.CPU.Cores.(string); ok {
-		suffix := helmette.RegexReplaceAll("^[0-9.]+(.*)", cores, "${1}")
-		if suffix == "m" {
-			c := helmette.TrimSuffix(suffix, cores)
-			coreMilli, err := helmette.Atoi(c)
-			if err != nil {
-				panic(fmt.Sprintf("cores is not integer with 'm' suffix: %s", cores))
-			}
-
-			return coreMilli
-		} else if suffix == "" {
-			c, err := helmette.Atoi(cores)
-			if err != nil {
-				panic(fmt.Sprintf("cores is not integer with 'm' suffix: %s", cores))
-			}
-
-			return c * 1000
-		} else {
-			panic(fmt.Sprintf("Unrecognized CPU unit '%s'", suffix))
-		}
-	}
-
-	return 1
 }
 
 type Storage struct {
@@ -389,7 +360,7 @@ type Storage struct {
 		Annotations  map[string]string `json:"annotations" jsonschema:"required"`
 		Enabled      bool              `json:"enabled" jsonschema:"required"`
 		Labels       map[string]string `json:"labels" jsonschema:"required"`
-		Size         MemoryAmount      `json:"size" jsonschema:"required"`
+		Size         resource.Quantity `json:"size" jsonschema:"required"`
 		StorageClass string            `json:"storageClass" jsonschema:"required"`
 	} `json:"persistentVolume" jsonschema:"required,deprecated"`
 	TieredConfig                  TieredStorageConfig `json:"tieredConfig" jsonschema:"deprecated"`
@@ -439,19 +410,8 @@ func (s *Storage) Translate() map[string]any {
 			continue
 		}
 
-		// cloud_storage_cache_size can be represented as Resource.Quantity that why value can be converted
-		// from value with SI suffix to bytes number.
-		if asStr, isStr := v.(string); k == "cloud_storage_cache_size" && isStr && asStr != "" {
-			result[k] = helmette.ToJSON(SIToBytes(v.(string)))
-			continue
-		}
-
-		if k == "cloud_storage_cache_size" {
-			if str, isStr := v.(string); isStr && str != "" {
-				result[k] = helmette.ToJSON(SIToBytes(str))
-			} else if f, isFloat := helmette.AsNumeric(v); isFloat {
-				result[k] = helmette.ToJSON(SIToBytes(helmette.ToString(int(f))))
-			}
+		if k == "cloud_storage_cache_size" && v != nil {
+			result[k] = fmt.Sprintf("%d", helmette.UnmarshalInto[*resource.Quantity](v).Value())
 			continue
 		}
 
@@ -475,13 +435,13 @@ func (s *Storage) StorageMinFreeBytes() int64 {
 		return fiveGiB
 	}
 
-	minimumFreeBytes := float64(SIToBytes(string(s.PersistentVolume.Size))) * 0.05
+	minimumFreeBytes := float64(s.PersistentVolume.Size.Value()) * 0.05
 	return helmette.Min(fiveGiB, int64(minimumFreeBytes))
 }
 
 type PostInstallJob struct {
-	Resources JobResources   `json:"resources"`
-	Affinity  map[string]any `json:"affinity"`
+	Resources *corev1.ResourceRequirements `json:"resources"`
+	Affinity  map[string]any               `json:"affinity"`
 
 	// Fields that are in values.yaml but not in values.schema.json.
 	Enabled         bool                   `json:"enabled"`
@@ -491,10 +451,10 @@ type PostInstallJob struct {
 }
 
 type PostUpgradeJob struct {
-	Resources    JobResources   `json:"resources"`
-	Affinity     map[string]any `json:"affinity"`
-	ExtraEnv     any            `json:"extraEnv" jsonschema:"oneof_type=array;string"`
-	ExtraEnvFrom any            `json:"extraEnvFrom" jsonschema:"oneof_type=array;string"`
+	Resources    *corev1.ResourceRequirements `json:"resources"`
+	Affinity     map[string]any               `json:"affinity"`
+	ExtraEnv     any                          `json:"extraEnv" jsonschema:"oneof_type=array;string"`
+	ExtraEnvFrom any                          `json:"extraEnvFrom" jsonschema:"oneof_type=array;string"`
 
 	// Fields that are in values.yaml but not in values.schema.json.
 	// Enabled      bool              `json:"enabled"`
@@ -758,16 +718,6 @@ func (c *Config) CreateRPKConfiguration() map[string]any {
 	return result
 }
 
-type JobResources struct {
-	Limits struct {
-		CPU    any          `json:"cpu" jsonschema:"oneof_type=integer;string"`
-		Memory MemoryAmount `json:"memory"`
-	} `json:"limits"`
-	Requests struct {
-		CPU    any          `json:"cpu" jsonschema:"oneof_type=integer;string"`
-		Memory MemoryAmount `json:"memory"`
-	} `json:"requests"`
-}
 type SchemaRegistryClient struct {
 	Retries                     int `json:"retries"`
 	RetryBaseBackoffMS          int `json:"retry_base_backoff_ms"`
@@ -1545,35 +1495,35 @@ type TieredStorageConfig map[string]any
 // +gotohelm:ignore=true
 func (TieredStorageConfig) JSONSchema() *jsonschema.Schema {
 	type schema struct {
-		CloudStorageEnabled                     bool   `json:"cloud_storage_enabled" jsonschema:"required"`
-		CloudStorageAccessKey                   string `json:"cloud_storage_access_key"`
-		CloudStorageSecretKey                   string `json:"cloud_storage_secret_key"`
-		CloudStorageAPIEndpoint                 string `json:"cloud_storage_api_endpoint"`
-		CloudStorageAPIEndpointPort             int    `json:"cloud_storage_api_endpoint_port"`
-		CloudStorageAzureADLSEndpoint           string `json:"cloud_storage_azure_adls_endpoint"`
-		CloudStorageAzureADLSPort               int    `json:"cloud_storage_azure_adls_port"`
-		CloudStorageBucket                      string `json:"cloud_storage_bucket" jsonschema:"required"`
-		CloudStorageCacheCheckInterval          int    `json:"cloud_storage_cache_check_interval"`
-		CloudStorageCacheDirectory              string `json:"cloud_storage_cache_directory"`
-		CloudStorageCacheSize                   any    `json:"cloud_storage_cache_size" jsonschema:"oneof_type=integer;string"`
-		CloudStorageCredentialsSource           string `json:"cloud_storage_credentials_source" jsonschema:"pattern=^(config_file|aws_instance_metadata|sts|gcp_instance_metadata)$"`
-		CloudStorageDisableTLS                  bool   `json:"cloud_storage_disable_tls"`
-		CloudStorageEnableRemoteRead            bool   `json:"cloud_storage_enable_remote_read"`
-		CloudStorageEnableRemoteWrite           bool   `json:"cloud_storage_enable_remote_write"`
-		CloudStorageInitialBackoffMS            int    `json:"cloud_storage_initial_backoff_ms"`
-		CloudStorageManifestUploadTimeoutMS     int    `json:"cloud_storage_manifest_upload_timeout_ms"`
-		CloudStorageMaxConnectionIdleTimeMS     int    `json:"cloud_storage_max_connection_idle_time_ms"`
-		CloudStorageMaxConnections              int    `json:"cloud_storage_max_connections"`
-		CloudStorageReconciliationIntervalMS    int    `json:"cloud_storage_reconciliation_interval_ms"`
-		CloudStorageRegion                      string `json:"cloud_storage_region" jsonschema:"required"`
-		CloudStorageSegmentMaxUploadIntervalSec int    `json:"cloud_storage_segment_max_upload_interval_sec"`
-		CloudStorageSegmentUploadTimeoutMS      int    `json:"cloud_storage_segment_upload_timeout_ms"`
-		CloudStorageTrustFile                   string `json:"cloud_storage_trust_file"`
-		CloudStorageUploadCtrlDCoeff            int    `json:"cloud_storage_upload_ctrl_d_coeff"`
-		CloudStorageUploadCtrlMaxShares         int    `json:"cloud_storage_upload_ctrl_max_shares"`
-		CloudStorageUploadCtrlMinShares         int    `json:"cloud_storage_upload_ctrl_min_shares"`
-		CloudStorageUploadCtrlPCoeff            int    `json:"cloud_storage_upload_ctrl_p_coeff"`
-		CloudStorageUploadCtrlUpdateIntervalMS  int    `json:"cloud_storage_upload_ctrl_update_interval_ms"`
+		CloudStorageEnabled                     bool              `json:"cloud_storage_enabled" jsonschema:"required"`
+		CloudStorageAccessKey                   string            `json:"cloud_storage_access_key"`
+		CloudStorageSecretKey                   string            `json:"cloud_storage_secret_key"`
+		CloudStorageAPIEndpoint                 string            `json:"cloud_storage_api_endpoint"`
+		CloudStorageAPIEndpointPort             int               `json:"cloud_storage_api_endpoint_port"`
+		CloudStorageAzureADLSEndpoint           string            `json:"cloud_storage_azure_adls_endpoint"`
+		CloudStorageAzureADLSPort               int               `json:"cloud_storage_azure_adls_port"`
+		CloudStorageBucket                      string            `json:"cloud_storage_bucket" jsonschema:"required"`
+		CloudStorageCacheCheckInterval          int               `json:"cloud_storage_cache_check_interval"`
+		CloudStorageCacheDirectory              string            `json:"cloud_storage_cache_directory"`
+		CloudStorageCacheSize                   *ResourceQuantity `json:"cloud_storage_cache_size"`
+		CloudStorageCredentialsSource           string            `json:"cloud_storage_credentials_source" jsonschema:"pattern=^(config_file|aws_instance_metadata|sts|gcp_instance_metadata)$"`
+		CloudStorageDisableTLS                  bool              `json:"cloud_storage_disable_tls"`
+		CloudStorageEnableRemoteRead            bool              `json:"cloud_storage_enable_remote_read"`
+		CloudStorageEnableRemoteWrite           bool              `json:"cloud_storage_enable_remote_write"`
+		CloudStorageInitialBackoffMS            int               `json:"cloud_storage_initial_backoff_ms"`
+		CloudStorageManifestUploadTimeoutMS     int               `json:"cloud_storage_manifest_upload_timeout_ms"`
+		CloudStorageMaxConnectionIdleTimeMS     int               `json:"cloud_storage_max_connection_idle_time_ms"`
+		CloudStorageMaxConnections              int               `json:"cloud_storage_max_connections"`
+		CloudStorageReconciliationIntervalMS    int               `json:"cloud_storage_reconciliation_interval_ms"`
+		CloudStorageRegion                      string            `json:"cloud_storage_region" jsonschema:"required"`
+		CloudStorageSegmentMaxUploadIntervalSec int               `json:"cloud_storage_segment_max_upload_interval_sec"`
+		CloudStorageSegmentUploadTimeoutMS      int               `json:"cloud_storage_segment_upload_timeout_ms"`
+		CloudStorageTrustFile                   string            `json:"cloud_storage_trust_file"`
+		CloudStorageUploadCtrlDCoeff            int               `json:"cloud_storage_upload_ctrl_d_coeff"`
+		CloudStorageUploadCtrlMaxShares         int               `json:"cloud_storage_upload_ctrl_max_shares"`
+		CloudStorageUploadCtrlMinShares         int               `json:"cloud_storage_upload_ctrl_min_shares"`
+		CloudStorageUploadCtrlPCoeff            int               `json:"cloud_storage_upload_ctrl_p_coeff"`
+		CloudStorageUploadCtrlUpdateIntervalMS  int               `json:"cloud_storage_upload_ctrl_update_interval_ms"`
 	}
 
 	r := &jsonschema.Reflector{

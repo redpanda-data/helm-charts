@@ -1298,41 +1298,42 @@
         },
         "resources": {
           "properties": {
-            "limits": {
-              "properties": {
-                "cpu": {
-                  "oneOf": [
-                    {
-                      "type": "integer"
-                    },
-                    {
-                      "type": "string"
-                    }
-                  ]
+            "claims": {
+              "items": {
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
                 },
-                "memory": {
-                  "pattern": "^[0-9]+(\\.[0-9]){0,1}(k|M|G|T|P|Ki|Mi|Gi|Ti|Pi)?$",
-                  "type": "string"
-                }
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "limits": {
+              "additionalProperties": {
+                "oneOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "pattern": "^[0-9]+(\\.[0-9]){0,1}(m|k|M|G|T|P|Ki|Mi|Gi|Ti|Pi)?$",
+                    "type": "string"
+                  }
+                ]
               },
               "type": "object"
             },
             "requests": {
-              "properties": {
-                "cpu": {
-                  "oneOf": [
-                    {
-                      "type": "integer"
-                    },
-                    {
-                      "type": "string"
-                    }
-                  ]
-                },
-                "memory": {
-                  "pattern": "^[0-9]+(\\.[0-9]){0,1}(k|M|G|T|P|Ki|Mi|Gi|Ti|Pi)?$",
-                  "type": "string"
-                }
+              "additionalProperties": {
+                "oneOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "pattern": "^[0-9]+(\\.[0-9]){0,1}(m|k|M|G|T|P|Ki|Mi|Gi|Ti|Pi)?$",
+                    "type": "string"
+                  }
+                ]
               },
               "type": "object"
             }
@@ -1457,41 +1458,42 @@
         },
         "resources": {
           "properties": {
-            "limits": {
-              "properties": {
-                "cpu": {
-                  "oneOf": [
-                    {
-                      "type": "integer"
-                    },
-                    {
-                      "type": "string"
-                    }
-                  ]
+            "claims": {
+              "items": {
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
                 },
-                "memory": {
-                  "pattern": "^[0-9]+(\\.[0-9]){0,1}(k|M|G|T|P|Ki|Mi|Gi|Ti|Pi)?$",
-                  "type": "string"
-                }
+                "type": "object"
+              },
+              "type": "array"
+            },
+            "limits": {
+              "additionalProperties": {
+                "oneOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "pattern": "^[0-9]+(\\.[0-9]){0,1}(m|k|M|G|T|P|Ki|Mi|Gi|Ti|Pi)?$",
+                    "type": "string"
+                  }
+                ]
               },
               "type": "object"
             },
             "requests": {
-              "properties": {
-                "cpu": {
-                  "oneOf": [
-                    {
-                      "type": "integer"
-                    },
-                    {
-                      "type": "string"
-                    }
-                  ]
-                },
-                "memory": {
-                  "pattern": "^[0-9]+(\\.[0-9]){0,1}(k|M|G|T|P|Ki|Mi|Gi|Ti|Pi)?$",
-                  "type": "string"
-                }
+              "additionalProperties": {
+                "oneOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "pattern": "^[0-9]+(\\.[0-9]){0,1}(m|k|M|G|T|P|Ki|Mi|Gi|Ti|Pi)?$",
+                    "type": "string"
+                  }
+                ]
               },
               "type": "object"
             }
@@ -1544,6 +1546,7 @@
                   "type": "integer"
                 },
                 {
+                  "pattern": "^[0-9]+(\\.[0-9]){0,1}(m|k|M|G|T|P|Ki|Mi|Gi|Ti|Pi)?$",
                   "type": "string"
                 }
               ]
@@ -1562,12 +1565,26 @@
             "container": {
               "properties": {
                 "max": {
-                  "pattern": "^[0-9]+(\\.[0-9]){0,1}(k|M|G|T|P|Ki|Mi|Gi|Ti|Pi)?$",
-                  "type": "string"
+                  "oneOf": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "pattern": "^[0-9]+(\\.[0-9]){0,1}(m|k|M|G|T|P|Ki|Mi|Gi|Ti|Pi)?$",
+                      "type": "string"
+                    }
+                  ]
                 },
                 "min": {
-                  "pattern": "^[0-9]+(\\.[0-9]){0,1}(k|M|G|T|P|Ki|Mi|Gi|Ti|Pi)?$",
-                  "type": "string"
+                  "oneOf": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "pattern": "^[0-9]+(\\.[0-9]){0,1}(m|k|M|G|T|P|Ki|Mi|Gi|Ti|Pi)?$",
+                      "type": "string"
+                    }
+                  ]
                 }
               },
               "required": [
@@ -1586,10 +1603,10 @@
                       "type": "integer"
                     },
                     {
+                      "pattern": "^[0-9]+(\\.[0-9]){0,1}(m|k|M|G|T|P|Ki|Mi|Gi|Ti|Pi)?$",
                       "type": "string"
                     }
-                  ],
-                  "pattern": "^[0-9]+(\\.[0-9]){0,1}(k|M|G|T|P|Ki|Mi|Gi|Ti|Pi)?$"
+                  ]
                 },
                 "reserveMemory": {
                   "oneOf": [
@@ -1597,10 +1614,10 @@
                       "type": "integer"
                     },
                     {
+                      "pattern": "^[0-9]+(\\.[0-9]){0,1}(m|k|M|G|T|P|Ki|Mi|Gi|Ti|Pi)?$",
                       "type": "string"
                     }
-                  ],
-                  "pattern": "^[0-9]+(\\.[0-9]){0,1}(k|M|G|T|P|Ki|Mi|Gi|Ti|Pi)?$"
+                  ]
                 }
               },
               "type": "object"
@@ -2354,8 +2371,15 @@
               "type": "object"
             },
             "size": {
-              "pattern": "^[0-9]+(\\.[0-9]){0,1}(k|M|G|T|P|Ki|Mi|Gi|Ti|Pi)?$",
-              "type": "string"
+              "oneOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "pattern": "^[0-9]+(\\.[0-9]){0,1}(m|k|M|G|T|P|Ki|Mi|Gi|Ti|Pi)?$",
+                  "type": "string"
+                }
+              ]
             },
             "storageClass": {
               "type": "string"
@@ -2404,6 +2428,7 @@
                       "type": "integer"
                     },
                     {
+                      "pattern": "^[0-9]+(\\.[0-9]){0,1}(m|k|M|G|T|P|Ki|Mi|Gi|Ti|Pi)?$",
                       "type": "string"
                     }
                   ]
@@ -2602,6 +2627,7 @@
                   "type": "integer"
                 },
                 {
+                  "pattern": "^[0-9]+(\\.[0-9]){0,1}(m|k|M|G|T|P|Ki|Mi|Gi|Ti|Pi)?$",
                   "type": "string"
                 }
               ]
