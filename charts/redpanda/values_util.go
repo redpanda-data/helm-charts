@@ -5,45 +5,26 @@ import (
 	"fmt"
 
 	"github.com/invopop/jsonschema"
+	"k8s.io/apimachinery/pkg/api/resource"
 )
+
+// ResourceQuantity is an extension of [resource.Quantity] that implements
+// JSONSchemaer. It's specifically for typing a key in [TieredStorageConfig].
+type ResourceQuantity resource.Quantity
+
+func (ResourceQuantity) JSONSchema() *jsonschema.Schema {
+	return &jsonschema.Schema{
+		OneOf: []*jsonschema.Schema{
+			{Type: "integer"},
+			{Type: "string", Pattern: "^[0-9]+(\\.[0-9]){0,1}(m|k|M|G|T|P|Ki|Mi|Gi|Ti|Pi)?$"},
+		},
+	}
+}
 
 type ImageTag string
 
 func (ImageTag) JSONSchemaExtend(schema *jsonschema.Schema) {
 	schema.Pattern = `^v(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$|^$`
-}
-
-type MemoryAmount string
-
-func (MemoryAmount) JSONSchemaExtend(schema *jsonschema.Schema) {
-	// Schema for memory amount is a subset of api machinery resource quantity.
-	//
-	// Reference https://github.com/kubernetes/apimachinery/blob/0ee3e6150890f56b226a3fe5a95ba33b1b2bf7c7/pkg/api/resource/quantity.go#L35-L57
-	//
-	// The serialization format is:
-	//
-	// ```
-	// <quantity>        ::= <signedNumber><suffix>
-	//
-	//	(Note that <suffix> may be empty, from the "" case in <decimalSI>.)
-	//
-	// <digit>           ::= 0 | 1 | ... | 9
-	// <digits>          ::= <digit> | <digit><digits>
-	// <number>          ::= <digits> | <digits>.<digits> | <digits>. | .<digits>
-	// <sign>            ::= "+" | "-"
-	// <signedNumber>    ::= <number> | <sign><number>
-	// <suffix>          ::= <binarySI> | <decimalExponent> | <decimalSI>
-	// <binarySI>        ::= Ki | Mi | Gi | Ti | Pi | Ei
-	//
-	//	(International System of units; See: http://physics.nist.gov/cuu/Units/binary.html)
-	//
-	// <decimalSI>       ::= m | "" | k | M | G | T | P | E
-	//
-	//	(Note that 1024 = 1Ki but 1000 = 1k; I didn't choose the capitalization.)
-	//
-	// <decimalExponent> ::= "e" <signedNumber> | "E" <signedNumber>
-	// ```
-	schema.Pattern = "^[0-9]+(\\.[0-9]){0,1}(k|M|G|T|P|Ki|Mi|Gi|Ti|Pi)?$"
 }
 
 type IssuerRefKind string

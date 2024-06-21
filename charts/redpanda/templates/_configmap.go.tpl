@@ -225,7 +225,7 @@
 {{- if (gt ((get (fromJson (include "_shims.len" (dict "a" (list $tls_4) ))) "r") | int) (0 | int)) -}}
 {{- $brokerTLS = $tls_4 -}}
 {{- end -}}
-{{- $result := (dict "overprovisioned" (get (fromJson (include "redpanda.RedpandaResources.GetOverProvisionValue" (dict "a" (list $values.resources) ))) "r") "enable_memory_locking" (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $values.resources.memory.enable_memory_locking false) ))) "r") "additional_start_flags" (get (fromJson (include "redpanda.RedpandaAdditionalStartFlags" (dict "a" (list $dot ((get (fromJson (include "redpanda.RedpandaSMP" (dict "a" (list $dot) ))) "r") | int)) ))) "r") "kafka_api" (dict "brokers" $brokerList "tls" $brokerTLS ) "admin_api" (dict "addresses" (get (fromJson (include "redpanda.Listeners.AdminList" (dict "a" (list $values.listeners ($values.statefulset.replicas | int) (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r") (get (fromJson (include "redpanda.InternalDomain" (dict "a" (list $dot) ))) "r")) ))) "r") "tls" $adminTLS ) ) -}}
+{{- $result := (dict "overprovisioned" (get (fromJson (include "redpanda.RedpandaResources.GetOverProvisionValue" (dict "a" (list $values.resources) ))) "r") "enable_memory_locking" (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $values.resources.memory.enable_memory_locking false) ))) "r") "additional_start_flags" (get (fromJson (include "redpanda.RedpandaAdditionalStartFlags" (dict "a" (list $dot ((get (fromJson (include "redpanda.RedpandaSMP" (dict "a" (list $dot) ))) "r") | int64)) ))) "r") "kafka_api" (dict "brokers" $brokerList "tls" $brokerTLS ) "admin_api" (dict "addresses" (get (fromJson (include "redpanda.Listeners.AdminList" (dict "a" (list $values.listeners ($values.statefulset.replicas | int) (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r") (get (fromJson (include "redpanda.InternalDomain" (dict "a" (list $dot) ))) "r")) ))) "r") "tls" $adminTLS ) ) -}}
 {{- $result = (merge (dict ) $result (get (fromJson (include "redpanda.Tuning.Translate" (dict "a" (list $values.tuning) ))) "r")) -}}
 {{- $result = (merge (dict ) $result (get (fromJson (include "redpanda.Config.CreateRPKConfiguration" (dict "a" (list $values.config) ))) "r")) -}}
 {{- (dict "r" $result) | toJson -}}
@@ -409,7 +409,7 @@
 {{- $smp := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
 {{- $values := $dot.Values.AsMap -}}
-{{- $chartFlags := (dict "smp" (printf "%d" ($smp | int)) "memory" (printf "%dM" (((get (fromJson (include "redpanda.RedpandaMemory" (dict "a" (list $dot) ))) "r") | int) | int)) "reserve-memory" (printf "%dM" (((get (fromJson (include "redpanda.RedpandaReserveMemory" (dict "a" (list $dot) ))) "r") | int) | int)) "default-log-level" $values.logging.logLevel ) -}}
+{{- $chartFlags := (dict "smp" (printf "%d" ($smp | int)) "memory" (printf "%dM" (((get (fromJson (include "redpanda.RedpandaMemory" (dict "a" (list $dot) ))) "r") | int64) | int)) "reserve-memory" (printf "%dM" (((get (fromJson (include "redpanda.RedpandaReserveMemory" (dict "a" (list $dot) ))) "r") | int64) | int)) "default-log-level" $values.logging.logLevel ) -}}
 {{- if (eq (index $values.config.node "developer_mode") true) -}}
 {{- $_ := (unset $chartFlags "reserve-memory") -}}
 {{- end -}}

@@ -127,6 +127,23 @@ func Unwrap[T any](from Values) T {
 	return out
 }
 
+// UnmarshalInto [valuesutil.UnmarshalInto] without an error return for use to
+// the gotohelm world.
+//
+// It may be used to "convert" untyped values into values of type T provided
+// that their JSON representations are the same. For example, an any type
+// holding a known struct value that can't be asserted via a type assertion.
+//
+// DANGER: In helm, no validation or default is done. This function effectively
+// transpiles to `return value`. Use with care.
+func UnmarshalInto[T any](value any) T {
+	t, err := valuesutil.UnmarshalInto[T](value)
+	if err != nil {
+		panic(err)
+	}
+	return t
+}
+
 type Tuple2[T1, T2 any] struct {
 	T1 T1
 	T2 T2

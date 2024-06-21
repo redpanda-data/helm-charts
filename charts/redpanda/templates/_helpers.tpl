@@ -191,16 +191,7 @@ than 1 core.
 {{- end -}}
 
 {{- define "storage-min-free-bytes" -}}
-{{- $fiveGiB := 5368709120 -}}
-{{- if dig "enabled" false .Values.storage.persistentVolume -}}
-  {{- if typeIs "string" .Values.storage.persistentVolume.size -}}
-    {{- min $fiveGiB (mulf (get ((include "redpanda.SIToBytes" (dict "a" (list .Values.storage.persistentVolume.size))) | fromJson) "r" ) 0.05 | int64) -}}
-  {{- else -}}
-    {{- min $fiveGiB (mulf .Values.storage.persistentVolume.size 0.05 | int64) -}}
-  {{- end -}}
-{{- else -}}
-{{- $fiveGiB -}}
-{{- end -}}
+{{- get ((include "redpanda.Storage.StorageMinFreeBytes" (dict "a" (list .Values.storage))) | fromJson) "r" | int64 -}}
 {{- end -}}
 
 {{- define "tunable" -}}

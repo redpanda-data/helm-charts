@@ -84,7 +84,7 @@ func PostInstallUpgradeJob(dot *helmette.Dot) *batchv1.Job {
 							Env:       PostInstallUpgradeEnvironmentVariables(dot),
 							Command:   []string{"bash", "-c"},
 							Args:      []string{},
-							Resources: postInstallJobResources(values.PostInstallJob.Resources),
+							Resources: ptr.Deref(values.PostInstallJob.Resources, corev1.ResourceRequirements{}),
 							// Note: this is a semantic change/fix from the template, which specified the merge in the incorrect order
 							SecurityContext: ptr.To(helmette.MergeTo[corev1.SecurityContext](helmette.Default(corev1.SecurityContext{}, values.PostInstallJob.SecurityContext), ContainerSecurityContext(dot))),
 							VolumeMounts:    DefaultMounts(dot),
@@ -183,10 +183,6 @@ func tolerations(dot *helmette.Dot) []corev1.Toleration {
 		result = append(result, helmette.MergeTo[corev1.Toleration](t))
 	}
 	return result
-}
-
-func postInstallJobResources(resources JobResources) corev1.ResourceRequirements {
-	return helmette.MergeTo[corev1.ResourceRequirements](resources)
 }
 
 func pullSecrets(dot *helmette.Dot) []corev1.LocalObjectReference {

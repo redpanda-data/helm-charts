@@ -506,7 +506,7 @@ func createInternalListenerCfg(port int32) map[string]any {
 // RedpandaAdditionalStartFlags returns a string list of flags suitable for use
 // as `additional_start_flags`. User provided flags will override any of those
 // set by default.
-func RedpandaAdditionalStartFlags(dot *helmette.Dot, smp int) []string {
+func RedpandaAdditionalStartFlags(dot *helmette.Dot, smp int64) []string {
 	values := helmette.Unwrap[Values](dot.Values)
 
 	// All `additional_start_flags` that are set by the chart.

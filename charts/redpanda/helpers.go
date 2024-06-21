@@ -18,7 +18,6 @@ package redpanda
 
 import (
 	"fmt"
-	"math"
 	"strings"
 
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
@@ -384,14 +383,14 @@ func cleanForK8s(in string) string {
 	return strings.TrimSuffix(helmette.Trunc(63, in), "-")
 }
 
-func RedpandaSMP(dot *helmette.Dot) int {
+func RedpandaSMP(dot *helmette.Dot) int64 {
 	values := helmette.Unwrap[Values](dot.Values)
 
-	coresInMillies := int(values.Resources.RedpandaCoresInMillis())
+	coresInMillies := values.Resources.CPU.Cores.MilliValue()
 
 	if coresInMillies < 1000 {
 		return 1
 	}
 
-	return int(math.Floor(float64(coresInMillies) / 1000))
+	return values.Resources.CPU.Cores.Value()
 }
