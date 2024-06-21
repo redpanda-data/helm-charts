@@ -43,15 +43,15 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: redpanda-sts-lifecycle
-  namespace: "default"
+  creationTimestamp: null
   labels:
     app.kubernetes.io/component: redpanda
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
     helm.sh/chart: redpanda-5.8.8
-type: Opaque
+  name: redpanda-sts-lifecycle
+  namespace: default
 stringData:
   common.sh: |-
     #!/usr/bin/env bash
@@ -65,7 +65,6 @@ stringData:
     CURL_MAINTENANCE_DELETE_CMD_PREFIX='curl -X DELETE --silent -o /dev/null -w "%{http_code}"'
     CURL_MAINTENANCE_PUT_CMD_PREFIX='curl -X PUT --silent -o /dev/null -w "%{http_code}"'
     CURL_MAINTENANCE_GET_CMD="curl -X GET --silent  ${CURL_URL}/v1/maintenance"
-
   postStart.sh: |-
     #!/usr/bin/env bash
     # This code should be similar if not exactly the same as that found in the panda-operator, see
@@ -100,7 +99,6 @@ stringData:
 
     postStartHook
     true
-
   preStop.sh: |-
     #!/usr/bin/env bash
     # This code should be similar if not exactly the same as that found in the panda-operator, see
@@ -137,37 +135,38 @@ stringData:
     touch /tmp/preStopHookFinished
     echo "Not enough replicas or in recovery mode, cannot put a broker into maintenance mode."
     true
+type: Opaque
 ---
 # Source: redpanda/templates/secrets.yaml
 apiVersion: v1
 kind: Secret
 metadata:
-  name: "redpanda-users"
-  namespace: "default"
+  creationTimestamp: null
   labels:
     app.kubernetes.io/component: redpanda
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
     helm.sh/chart: redpanda-5.8.8
-type: Opaque
+  name: redpanda-users
+  namespace: default
 stringData:
-  users.txt: |-
-    admin:hunter2:SCRAM-SHA-256
+  users.txt: admin:hunter2:SCRAM-SHA-256
+type: Opaque
 ---
 # Source: redpanda/templates/secrets.yaml
 apiVersion: v1
 kind: Secret
 metadata:
-  name: redpanda-config-watcher
-  namespace: "default"
+  creationTimestamp: null
   labels:
     app.kubernetes.io/component: redpanda
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
     helm.sh/chart: redpanda-5.8.8
-type: Opaque
+  name: redpanda-config-watcher
+  namespace: default
 stringData:
   sasl-user.sh: |-
     #!/usr/bin/env bash
@@ -279,20 +278,21 @@ stringData:
         process_users $USERS_DIR
       done
     done
+type: Opaque
 ---
 # Source: redpanda/templates/secrets.yaml
 apiVersion: v1
 kind: Secret
 metadata:
-  name: redpanda-configurator
-  namespace: "default"
+  creationTimestamp: null
   labels:
     app.kubernetes.io/component: redpanda
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
     helm.sh/chart: redpanda-5.8.8
-type: Opaque
+  name: redpanda-configurator
+  namespace: default
 stringData:
   configurator.sh: |-
     set -xe
@@ -326,6 +326,7 @@ stringData:
     ADVERTISED_HTTP_ADDRESSES+=("{\"address\":\"${SERVICE_NAME}\",\"name\":\"default\",\"port\":30082}")
 
     rpk redpanda config --config "$CONFIG" set pandaproxy.advertised_pandaproxy_api[1] "${ADVERTISED_HTTP_ADDRESSES[$POD_ORDINAL]}"
+type: Opaque
 ---
 # Source: redpanda/templates/configmap.yaml
 apiVersion: v1

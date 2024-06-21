@@ -185,7 +185,7 @@ func rpkProfile(dot *helmette.Dot) map[string]any {
 	}
 
 	result := map[string]any{
-		"name":      getFistExternalKafkaListener(dot),
+		"name":      getFirstExternalKafkaListener(dot),
 		"kafka_api": ka,
 		"admin_api": aa,
 	}
@@ -196,7 +196,7 @@ func rpkProfile(dot *helmette.Dot) map[string]any {
 func advertisedKafkaPort(dot *helmette.Dot, i int) int {
 	values := helmette.Unwrap[Values](dot.Values)
 
-	externalKafkaListenerName := getFistExternalKafkaListener(dot)
+	externalKafkaListenerName := getFirstExternalKafkaListener(dot)
 
 	listener := values.Listeners.Kafka.External[externalKafkaListenerName]
 
@@ -266,7 +266,7 @@ func advertisedHost(dot *helmette.Dot, i int) string {
 	return address
 }
 
-func getFistExternalKafkaListener(dot *helmette.Dot) string {
+func getFirstExternalKafkaListener(dot *helmette.Dot) string {
 	values := helmette.Unwrap[Values](dot.Values)
 
 	keys := helmette.Keys(values.Listeners.Kafka.External)
