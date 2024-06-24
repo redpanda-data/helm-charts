@@ -13,6 +13,7 @@ import (
 
 	"github.com/Masterminds/sprig/v3"
 	"github.com/imdario/mergo"
+	"github.com/redpanda-data/helm-charts/pkg/valuesutil"
 	"golang.org/x/exp/maps"
 	"gopkg.in/yaml.v3"
 )
@@ -158,6 +159,24 @@ func Merge[K comparable, V any](sources ...map[K]V) map[K]V {
 		}
 	}
 	return dst
+}
+
+// MergeTo transpiles to `merge`, but in the golang domain it'll return the
+// type requested
+func MergeTo[T any](sources ...any) T {
+	dst := map[string]any{}
+	for _, src := range sources {
+		// Turn it into something json-like
+		roundTrip := FromJSON(ToJSON(src))
+		if err := mergo.Merge(&dst, roundTrip); err != nil {
+			panic(fmt.Errorf("cannot merge roundtripped element: %w", err))
+		}
+	}
+	result, err := valuesutil.UnmarshalInto[T](dst)
+	if err != nil {
+		panic(fmt.Errorf("cannot recast merged structure: %w", err))
+	}
+	return result
 }
 
 // Dig is a go equivalent of sprig's `dig`.

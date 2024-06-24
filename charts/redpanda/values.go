@@ -40,7 +40,7 @@ type Values struct {
 	Tolerations      []map[string]any  `json:"tolerations"`
 	Image            Image             `json:"image" jsonschema:"required,description=Values used to define the container image to be used for Redpanda"`
 	Service          *Service          `json:"service"`
-	// ImagePullSecrets []string `json:"imagePullSecrets"`
+	ImagePullSecrets []string          `json:"imagePullSecrets"`
 	LicenseKey       string            `json:"license_key" jsonschema:"deprecated,pattern=^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?\\.(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$|^$"`
 	LicenseSecretRef *LicenseSecretRef `json:"license_secret_ref" jsonschema:"deprecated"`
 	AuditLogging     AuditLogging      `json:"auditLogging"`
@@ -484,9 +484,10 @@ type PostInstallJob struct {
 	Affinity  map[string]any `json:"affinity"`
 
 	// Fields that are in values.yaml but not in values.schema.json.
-	// Enabled     bool              `json:"enabled"`
-	// Labels      map[string]string `json:"labels"`
-	// Annotations map[string]string `json:"annotations"`
+	Enabled         bool                   `json:"enabled"`
+	Labels          map[string]string      `json:"labels"`
+	Annotations     map[string]string      `json:"annotations"`
+	SecurityContext corev1.SecurityContext `json:"securityContext"`
 }
 
 type PostUpgradeJob struct {
