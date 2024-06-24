@@ -85,8 +85,8 @@ func PostInstallUpgradeJob(dot *helmette.Dot) *batchv1.Job {
 							Command:   []string{"bash", "-c"},
 							Args:      []string{},
 							Resources: postInstallJobResources(values.PostInstallJob.Resources),
-							// XXX the following merge is probably the wrong way around: it doesn't permit the overriding of defaults
-							SecurityContext: ptr.To(helmette.MergeTo[corev1.SecurityContext](ContainerSecurityContext(dot), helmette.Default(corev1.SecurityContext{}, values.PostInstallJob.SecurityContext))),
+							// Note: this is a semantic change/fix from the template, which specified the merge in the incorrect order
+							SecurityContext: ptr.To(helmette.MergeTo[corev1.SecurityContext](helmette.Default(corev1.SecurityContext{}, values.PostInstallJob.SecurityContext), ContainerSecurityContext(dot))),
 							VolumeMounts:    DefaultMounts(dot),
 						},
 					},

@@ -1347,7 +1347,7 @@ spec:
             cpu: 2
         securityContext:
           runAsGroup: 1000
-          runAsUser: 1000
+          runAsUser: 2000
         volumeMounts:
         - mountPath: /etc/redpanda
           name: config
