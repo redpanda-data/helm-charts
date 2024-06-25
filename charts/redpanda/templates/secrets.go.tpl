@@ -199,7 +199,7 @@ echo "passed"`) -}}
 {{- end -}}
 {{- end -}}
 {{- $host := (get (fromJson (include "redpanda.advertisedHostJSON" (dict "a" (list $dot $externalName $port $replicaIndex) ))) "r") -}}
-{{- $address := (tpl (toJson $host) $dot) -}}
+{{- $address := (toJson $host) -}}
 {{- $prefixTemplate := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $externalVals.prefixTemplate "") ))) "r") -}}
 {{- if (eq $prefixTemplate "") -}}
 {{- $prefixTemplate = (default "" $values.external.prefixTemplate) -}}
@@ -239,7 +239,7 @@ echo "passed"`) -}}
 {{- end -}}
 {{- end -}}
 {{- $host := (get (fromJson (include "redpanda.advertisedHostJSON" (dict "a" (list $dot $externalName $port $replicaIndex) ))) "r") -}}
-{{- $address := (tpl (toJson $host) $dot) -}}
+{{- $address := (toJson $host) -}}
 {{- $prefixTemplate := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $externalVals.prefixTemplate "") ))) "r") -}}
 {{- if (eq $prefixTemplate "") -}}
 {{- $prefixTemplate = (default "" $values.external.prefixTemplate) -}}

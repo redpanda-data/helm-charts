@@ -521,8 +521,10 @@ func secretConfiguratorKafkaConfig(dot *helmette.Dot) []string {
 				}
 
 				host := advertisedHostJSON(dot, externalName, port, replicaIndex)
-				// Use the advertised-host as a template
-				address := helmette.Tpl(helmette.ToJSON(host), dot)
+				// XXX: the original code used the stringified `host` value as a template
+				// for re-expansion; however it was impossible to make this work usefully,
+				/// even with the original yaml template.
+				address := helmette.ToJSON(host)
 				prefixTemplate := ptr.Deref(externalVals.PrefixTemplate, "")
 				if prefixTemplate == "" {
 					// Required because the values might not specify this, it'll ensur we see "" if it's missing.
@@ -596,8 +598,10 @@ func secretConfiguratorHTTPConfig(dot *helmette.Dot) []string {
 				}
 
 				host := advertisedHostJSON(dot, externalName, port, replicaIndex)
-				// Use the advertised-host as a template
-				address := helmette.Tpl(helmette.ToJSON(host), dot)
+				// XXX: the original code used the stringified `host` value as a template
+				// for re-expansion; however it was impossible to make this work usefully,
+				/// even with the original yaml template.
+				address := helmette.ToJSON(host)
 
 				prefixTemplate := ptr.Deref(externalVals.PrefixTemplate, "")
 				if prefixTemplate == "" {
