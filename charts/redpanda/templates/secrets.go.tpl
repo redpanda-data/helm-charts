@@ -29,13 +29,13 @@
 {{- $values := $dot.Values.AsMap -}}
 {{- $secret := (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) ) (mustMergeOverwrite (dict ) (dict "apiVersion" "v1" "kind" "Secret" )) (dict "metadata" (mustMergeOverwrite (dict "creationTimestamp" (coalesce nil) ) (dict "name" (printf "%s-sts-lifecycle" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r")) "namespace" $dot.Release.Namespace "labels" (get (fromJson (include "redpanda.FullLabels" (dict "a" (list $dot) ))) "r") )) "type" "Opaque" "stringData" (dict ) )) -}}
 {{- $adminCurlFlags := (get (fromJson (include "redpanda.adminTLSCurlFlags" (dict "a" (list $dot) ))) "r") -}}
-{{- $_ := (set $secret.stringData "common.sh" (get (fromJson (include "redpanda.unlines" (dict "a" (list (list `#!/usr/bin/env bash` `` `# the SERVICE_NAME comes from the metadata.name of the pod, essentially the POD_NAME` (printf `CURL_URL="%s"` (get (fromJson (include "redpanda.adminInternalURL" (dict "a" (list $dot) ))) "r")) `` `# commands used throughout` (printf `CURL_NODE_ID_CMD="curl --silent --fail %s ${CURL_URL}/v1/node_config"` $adminCurlFlags) `` `CURL_MAINTENANCE_DELETE_CMD_PREFIX='curl -X DELETE --silent -o /dev/null -w "%{http_code}"'` `CURL_MAINTENANCE_PUT_CMD_PREFIX='curl -X PUT --silent -o /dev/null -w "%{http_code}"'` (printf `CURL_MAINTENANCE_GET_CMD="curl -X GET --silent %s ${CURL_URL}/v1/maintenance"` $adminCurlFlags))) ))) "r")) -}}
+{{- $_ := (set $secret.stringData "common.sh" (join "\n" (list `#!/usr/bin/env bash` `` `# the SERVICE_NAME comes from the metadata.name of the pod, essentially the POD_NAME` (printf `CURL_URL="%s"` (get (fromJson (include "redpanda.adminInternalURL" (dict "a" (list $dot) ))) "r")) `` `# commands used throughout` (printf `CURL_NODE_ID_CMD="curl --silent --fail %s ${CURL_URL}/v1/node_config"` $adminCurlFlags) `` `CURL_MAINTENANCE_DELETE_CMD_PREFIX='curl -X DELETE --silent -o /dev/null -w "%{http_code}"'` `CURL_MAINTENANCE_PUT_CMD_PREFIX='curl -X PUT --silent -o /dev/null -w "%{http_code}"'` (printf `CURL_MAINTENANCE_GET_CMD="curl -X GET --silent %s ${CURL_URL}/v1/maintenance"` $adminCurlFlags)))) -}}
 {{- $postStartSh := (list `#!/usr/bin/env bash` `# This code should be similar if not exactly the same as that found in the panda-operator, see` `# https://github.com/redpanda-data/redpanda/blob/e51d5b7f2ef76d5160ca01b8c7a8cf07593d29b6/src/go/k8s/pkg/resources/secret.go` `` `# path below should match the path defined on the statefulset` `source /var/lifecycle/common.sh` `` `postStartHook () {` `  set -x` `` `  touch /tmp/postStartHookStarted` `` `  until NODE_ID=$(${CURL_NODE_ID_CMD} | grep -o '\"node_id\":[^,}]*' | grep -o '[^: ]*$'); do` `      sleep 0.5` `  done` `` `  echo "Clearing maintenance mode on node ${NODE_ID}"` (printf `  CURL_MAINTENANCE_DELETE_CMD="${CURL_MAINTENANCE_DELETE_CMD_PREFIX} %s ${CURL_URL}/v1/brokers/${NODE_ID}/maintenance"` $adminCurlFlags) `  # a 400 here would mean not in maintenance mode` `  until [ "${status:-}" = '"200"' ] || [ "${status:-}" = '"400"' ]; do` `      status=$(${CURL_MAINTENANCE_DELETE_CMD})` `      sleep 0.5` `  done`) -}}
 {{- if (and $values.auth.sasl.enabled (ne $values.auth.sasl.secretRef "")) -}}
 {{- $postStartSh = (concat (default (list ) $postStartSh) (list `  # Setup and export SASL bootstrap-user` `  IFS=":" read -r USER_NAME PASSWORD MECHANISM < <(grep "" $(find /etc/secrets/users/* -print))` (printf `  MECHANISM=${MECHANISM:-%s}` (dig "auth" "sasl" "mechanism" "SCRAM-SHA-512" $dot.Values.AsMap)) `  rpk acl user create ${USER_NAME} --password=${PASSWORD} --mechanism ${MECHANISM} || true`)) -}}
 {{- end -}}
 {{- $postStartSh = (concat (default (list ) $postStartSh) (list `` `  touch /tmp/postStartHookFinished` `}` `` `postStartHook` `true`)) -}}
-{{- $_ := (set $secret.stringData "postStart.sh" (get (fromJson (include "redpanda.unlines" (dict "a" (list $postStartSh) ))) "r")) -}}
+{{- $_ := (set $secret.stringData "postStart.sh" (join "\n" $postStartSh)) -}}
 {{- $preStopSh := (list `#!/usr/bin/env bash` `# This code should be similar if not exactly the same as that found in the panda-operator, see` `# https://github.com/redpanda-data/redpanda/blob/e51d5b7f2ef76d5160ca01b8c7a8cf07593d29b6/src/go/k8s/pkg/resources/secret.go` `` `touch /tmp/preStopHookStarted` `` `# path below should match the path defined on the statefulset` `source /var/lifecycle/common.sh` `` `set -x` `` `preStopHook () {` `  until NODE_ID=$(${CURL_NODE_ID_CMD} | grep -o '\"node_id\":[^,}]*' | grep -o '[^: ]*$'); do` `      sleep 0.5` `  done` `` `  echo "Setting maintenance mode on node ${NODE_ID}"` (printf `  CURL_MAINTENANCE_PUT_CMD="${CURL_MAINTENANCE_PUT_CMD_PREFIX} %s ${CURL_URL}/v1/brokers/${NODE_ID}/maintenance"` $adminCurlFlags) `  until [ "${status:-}" = '"200"' ]; do` `      status=$(${CURL_MAINTENANCE_PUT_CMD})` `      sleep 0.5` `  done` `` `  until [ "${finished:-}" = "true" ] || [ "${draining:-}" = "false" ]; do` `      res=$(${CURL_MAINTENANCE_GET_CMD})` `      finished=$(echo $res | grep -o '\"finished\":[^,}]*' | grep -o '[^: ]*$')` `      draining=$(echo $res | grep -o '\"draining\":[^,}]*' | grep -o '[^: ]*$')` `      sleep 0.5` `  done` `` `  touch /tmp/preStopHookFinished` `}`) -}}
 {{- if (and (gt ($values.statefulset.replicas | int) (2 | int)) (not (get (fromJson (include "_shims.typeassertion" (dict "a" (list "bool" (dig "recovery_mode_enabled" false $values.config.node)) ))) "r"))) -}}
 {{- $preStopSh = (concat (default (list ) $preStopSh) (list `preStopHook`)) -}}
@@ -43,7 +43,7 @@
 {{- $preStopSh = (concat (default (list ) $preStopSh) (list `touch /tmp/preStopHookFinished` `echo "Not enough replicas or in recovery mode, cannot put a broker into maintenance mode."`)) -}}
 {{- end -}}
 {{- $preStopSh = (concat (default (list ) $preStopSh) (list `true`)) -}}
-{{- $_ := (set $secret.stringData "preStop.sh" (get (fromJson (include "redpanda.unlines" (dict "a" (list $preStopSh) ))) "r")) -}}
+{{- $_ := (set $secret.stringData "preStop.sh" (join "\n" $preStopSh)) -}}
 {{- (dict "r" $secret) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -63,7 +63,7 @@
 {{- $usersTxt = (concat (default (list ) $usersTxt) (list (printf "%s:%s" $user.name $user.password))) -}}
 {{- end -}}
 {{- end -}}
-{{- $_ := (set $secret.stringData "users.txt" (get (fromJson (include "redpanda.unlines" (dict "a" (list $usersTxt) ))) "r")) -}}
+{{- $_ := (set $secret.stringData "users.txt" (join "\n" $usersTxt)) -}}
 {{- (dict "r" $secret) | toJson -}}
 {{- break -}}
 {{- else -}}{{- if (and $values.auth.sasl.enabled (eq $values.auth.sasl.secretRef "")) -}}
@@ -93,7 +93,7 @@
 {{- else -}}
 {{- $saslUserSh = (concat (default (list ) $saslUserSh) (list `echo "Nothing to do. Sleeping..."` `sleep infinity`)) -}}
 {{- end -}}
-{{- $_ := (set $secret.stringData "sasl-user.sh" (get (fromJson (include "redpanda.unlines" (dict "a" (list $saslUserSh) ))) "r")) -}}
+{{- $_ := (set $secret.stringData "sasl-user.sh" (join "\n" $saslUserSh)) -}}
 {{- (dict "r" $secret) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -168,7 +168,7 @@ echo "passed"`) -}}
 {{- if (and (get (fromJson (include "redpanda.RedpandaAtLeast_22_3_0" (dict "a" (list $dot) ))) "r") $values.rackAwareness.enabled) -}}
 {{- $configuratorSh = (concat (default (list ) $configuratorSh) (list `` `# Configure Rack Awareness` `set +x` (printf `RACK=$(curl --silent --cacert /run/secrets/kubernetes.io/serviceaccount/ca.crt --fail -H 'Authorization: Bearer '$(cat /run/secrets/kubernetes.io/serviceaccount/token) "https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS}/api/v1/nodes/${KUBERNETES_NODE_NAME}?pretty=true" | grep %s | grep -v '\"key\":' | sed 's/.*": "\([^"]\+\).*/\1/')` (squote (quote $values.rackAwareness.nodeAnnotation))) `set -x` `rpk --config "$CONFIG" redpanda config set redpanda.rack "${RACK}"`)) -}}
 {{- end -}}
-{{- $_ := (set $secret.stringData "configurator.sh" (get (fromJson (include "redpanda.unlines" (dict "a" (list $configuratorSh) ))) "r")) -}}
+{{- $_ := (set $secret.stringData "configurator.sh" (join "\n" $configuratorSh)) -}}
 {{- (dict "r" $secret) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -332,18 +332,6 @@ echo "passed"`) -}}
 {{- range $_ := (list 1) -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- (dict "r" (printf "%s://%s.%s.%s.svc.%s:%d" (get (fromJson (include "redpanda.adminInternalHTTPProtocol" (dict "a" (list $dot) ))) "r") `${SERVICE_NAME}` (get (fromJson (include "redpanda.ServiceName" (dict "a" (list $dot) ))) "r") $dot.Release.Namespace (trimSuffix "." $values.clusterDomain) ($values.listeners.admin.port | int))) | toJson -}}
-{{- break -}}
-{{- end -}}
-{{- end -}}
-
-{{- define "redpanda.unlines" -}}
-{{- $lines := (index .a 0) -}}
-{{- range $_ := (list 1) -}}
-{{- $result := "" -}}
-{{- range $_, $line := $lines -}}
-{{- $result = (printf "%s\n%s" $result $line) -}}
-{{- end -}}
-{{- (dict "r" (substr (1 | int) -1 $result)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
