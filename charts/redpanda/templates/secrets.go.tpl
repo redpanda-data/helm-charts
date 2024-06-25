@@ -179,16 +179,10 @@ echo "passed"`) -}}
 {{- range $_ := (list 1) -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $internalAdvertiseAddress := (printf "%s.%s" "${SERVICE_NAME}" (get (fromJson (include "redpanda.InternalDomain" (dict "a" (list $dot) ))) "r")) -}}
-{{- $externalAdvertiseAddress := "${SERVICE_NAME}" -}}
-{{- $externalDomainTemplate := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $values.external.domain "") ))) "r") -}}
-{{- if (ne $externalDomainTemplate "") -}}
-{{- $externalAdvertiseAddress = (printf "%s.%s" "${SERVICE_NAME}" (tpl $externalDomainTemplate $dot)) -}}
-{{- end -}}
 {{- $snippet := (coalesce nil) -}}
 {{- $listenerName := "kafka" -}}
 {{- $listenerAdvertisedName := $listenerName -}}
 {{- $redpandaConfigPart := "redpanda" -}}
-{{- $listenerVals := (get (fromJson (include "_shims.typeassertion" (dict "a" (list (printf "map[%s]%s" "string" "interface {}") (index (get (fromJson (include "_shims.typeassertion" (dict "a" (list (printf "map[%s]%s" "string" "interface {}") (index $dot.Values.AsMap "listeners")) ))) "r") $listenerName)) ))) "r") -}}
 {{- $snippet = (concat (default (list ) $snippet) (list `` (printf `LISTENER=%s` (quote (toJson (dict "name" "internal" "address" $internalAdvertiseAddress "port" ($values.listeners.kafka.port | int) )))) (printf `rpk redpanda config --config "$CONFIG" set %s.advertised_%s_api[0] "$LISTENER"` $redpandaConfigPart $listenerAdvertisedName))) -}}
 {{- if (gt ((get (fromJson (include "_shims.len" (dict "a" (list $values.listeners.kafka.external) ))) "r") | int) (0 | int)) -}}
 {{- $externalCounter := (0 | int) -}}
@@ -204,9 +198,8 @@ echo "passed"`) -}}
 {{- $port = (index $externalVals.advertisedPorts $replicaIndex) -}}
 {{- end -}}
 {{- end -}}
-{{- $tmplVals := (dict "listenerVals" $listenerVals "externalVals" $externalVals "externalName" $externalName "externalAdvertiseAddress" $externalAdvertiseAddress "values" $dot.Values.AsMap "replicaIndex" $replicaIndex "port" $port ) -}}
 {{- $host := (get (fromJson (include "redpanda.advertisedHostJSON" (dict "a" (list $dot $externalName $port $replicaIndex) ))) "r") -}}
-{{- $address := (tpl (toJson $host) $tmplVals) -}}
+{{- $address := (tpl (toJson $host) $dot) -}}
 {{- $prefixTemplate := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $externalVals.prefixTemplate "") ))) "r") -}}
 {{- if (eq $prefixTemplate "") -}}
 {{- $prefixTemplate = (default "" $values.external.prefixTemplate) -}}
@@ -226,16 +219,10 @@ echo "passed"`) -}}
 {{- range $_ := (list 1) -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $internalAdvertiseAddress := (printf "%s.%s" "${SERVICE_NAME}" (get (fromJson (include "redpanda.InternalDomain" (dict "a" (list $dot) ))) "r")) -}}
-{{- $externalAdvertiseAddress := "${SERVICE_NAME}" -}}
-{{- $externalDomainTemplate := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $values.external.domain "") ))) "r") -}}
-{{- if (ne $externalDomainTemplate "") -}}
-{{- $externalAdvertiseAddress = (printf "%s.%s" "${SERVICE_NAME}" (tpl $externalDomainTemplate $dot)) -}}
-{{- end -}}
 {{- $snippet := (coalesce nil) -}}
 {{- $listenerName := "http" -}}
 {{- $listenerAdvertisedName := "pandaproxy" -}}
 {{- $redpandaConfigPart := "pandaproxy" -}}
-{{- $listenerVals := (get (fromJson (include "_shims.typeassertion" (dict "a" (list (printf "map[%s]%s" "string" "interface {}") (index (get (fromJson (include "_shims.typeassertion" (dict "a" (list (printf "map[%s]%s" "string" "interface {}") (index $dot.Values.AsMap "listeners")) ))) "r") $listenerName)) ))) "r") -}}
 {{- $snippet = (concat (default (list ) $snippet) (list `` (printf `LISTENER=%s` (quote (toJson (dict "name" "internal" "address" $internalAdvertiseAddress "port" ($values.listeners.http.port | int) )))) (printf `rpk redpanda config --config "$CONFIG" set %s.advertised_%s_api[0] "$LISTENER"` $redpandaConfigPart $listenerAdvertisedName))) -}}
 {{- if (gt ((get (fromJson (include "_shims.len" (dict "a" (list $values.listeners.http.external) ))) "r") | int) (0 | int)) -}}
 {{- $externalCounter := (0 | int) -}}
@@ -251,9 +238,8 @@ echo "passed"`) -}}
 {{- $port = (index $externalVals.advertisedPorts $replicaIndex) -}}
 {{- end -}}
 {{- end -}}
-{{- $tmplVals := (dict "listenerVals" $listenerVals "externalVals" $externalVals "externalName" $externalName "externalAdvertiseAddress" $externalAdvertiseAddress "values" $dot.Values.AsMap "replicaIndex" $replicaIndex "port" $port ) -}}
 {{- $host := (get (fromJson (include "redpanda.advertisedHostJSON" (dict "a" (list $dot $externalName $port $replicaIndex) ))) "r") -}}
-{{- $address := (tpl (toJson $host) $tmplVals) -}}
+{{- $address := (tpl (toJson $host) $dot) -}}
 {{- $prefixTemplate := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $externalVals.prefixTemplate "") ))) "r") -}}
 {{- if (eq $prefixTemplate "") -}}
 {{- $prefixTemplate = (default "" $values.external.prefixTemplate) -}}
@@ -286,6 +272,21 @@ echo "passed"`) -}}
 {{- end -}}
 {{- end -}}
 
+{{- define "redpanda.externalAdvertiseAddress" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $values := $dot.Values.AsMap -}}
+{{- $eaa := "${SERVICE_NAME}" -}}
+{{- $externalDomainTemplate := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $values.external.domain "") ))) "r") -}}
+{{- $expanded := (tpl $externalDomainTemplate $dot) -}}
+{{- if (not (empty $expanded)) -}}
+{{- $eaa = (printf "%s.%s" "${SERVICE_NAME}" $expanded) -}}
+{{- end -}}
+{{- (dict "r" $eaa) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "redpanda.advertisedHostJSON" -}}
 {{- $dot := (index .a 0) -}}
 {{- $externalName := (index .a 1) -}}
@@ -293,12 +294,7 @@ echo "passed"`) -}}
 {{- $replicaIndex := (index .a 3) -}}
 {{- range $_ := (list 1) -}}
 {{- $values := $dot.Values.AsMap -}}
-{{- $externalAdvertiseAddress := "${SERVICE_NAME}" -}}
-{{- $externalDomainTemplate := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $values.external.domain "") ))) "r") -}}
-{{- if (ne $externalDomainTemplate "") -}}
-{{- $externalAdvertiseAddress = (printf "%s.%s" "${SERVICE_NAME}" (tpl $externalDomainTemplate $dot)) -}}
-{{- end -}}
-{{- $host := (dict "name" $externalName "address" $externalAdvertiseAddress "port" $port ) -}}
+{{- $host := (dict "name" $externalName "address" (get (fromJson (include "redpanda.externalAdvertiseAddress" (dict "a" (list $dot) ))) "r") "port" $port ) -}}
 {{- if (gt ((get (fromJson (include "_shims.len" (dict "a" (list $values.external.addresses) ))) "r") | int) (0 | int)) -}}
 {{- $address := "" -}}
 {{- if (gt ((get (fromJson (include "_shims.len" (dict "a" (list $values.external.addresses) ))) "r") | int) (1 | int)) -}}
