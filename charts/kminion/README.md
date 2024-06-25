@@ -253,3 +253,8 @@ The port for kminion metrics endpoint
 
 **Default:** `[]`
 
+### [configAutoReload](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=configAutoReload)
+
+Automatically triggers restart of Deployment/DaemonSet when configmap changes by adding CM hash as an annotation
+
+**Default:** `false`
