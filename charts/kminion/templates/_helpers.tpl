@@ -70,6 +70,15 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
+Annotation to trigger Deployment/DaemonSet restart when configmap changes
+*/}}
+{{- define "kminion.restartAnnotation" -}}
+{{- if .Values.configAutoReload }}
+checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum  | trunc 63 }}
+{{- end }}
+{{- end }}
+
+{{/*
 Create the name of the service account to use
 */}}
 {{- define "kminion.serviceAccountName" -}}
