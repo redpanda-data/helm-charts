@@ -1449,7 +1449,11 @@ type jsonTag struct {
 func parseTag(tag string) jsonTag {
 	match := regexp.MustCompile(`json:"([^"]+)"`).FindStringSubmatch(tag)
 	if match == nil {
-		return jsonTag{}
+		// Console configuration is defined using yaml annotations
+		match = regexp.MustCompile(`yaml:"([^"]+)"`).FindStringSubmatch(tag)
+		if match == nil {
+			return jsonTag{}
+		}
 	}
 
 	idx := strings.Index(match[1], ",")

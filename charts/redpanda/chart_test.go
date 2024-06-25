@@ -1,22 +1,199 @@
 package redpanda_test
 
 import (
+	"context"
+	"crypto/rand"
+	"encoding/json"
+	"fmt"
 	"maps"
+	"math/big"
 	"os"
 	"testing"
+	"time"
 
+	"github.com/pkg/errors"
 	"github.com/redpanda-data/helm-charts/charts/redpanda"
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	"github.com/redpanda-data/helm-charts/pkg/helm"
 	"github.com/redpanda-data/helm-charts/pkg/helm/helmtest"
 	"github.com/redpanda-data/helm-charts/pkg/kube"
 	"github.com/redpanda-data/helm-charts/pkg/testutil"
+	"github.com/redpanda-data/helm-charts/pkg/tlsgeneration"
 	"github.com/redpanda-data/helm-charts/pkg/valuesutil"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/zap/zapcore"
+	"go.uber.org/zap/zapio"
+	"go.uber.org/zap/zaptest"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/utils/ptr"
 )
+
+func TestChart(t *testing.T) {
+	if testing.Short() {
+		t.Skipf("Skipping log running test...")
+	}
+
+	log := zaptest.NewLogger(t)
+	w := &zapio.Writer{Log: log, Level: zapcore.InfoLevel}
+	wErr := &zapio.Writer{Log: log, Level: zapcore.ErrorLevel}
+
+	redpandaChart := "."
+
+	h := helmtest.Setup(t)
+
+	t.Run("tiered-storage-secrets", func(t *testing.T) {
+		ctx := testutil.Context(t)
+
+		env := h.Namespaced(t)
+
+		credsSecret, err := kube.Create(ctx, env.Ctl(), TieredStorageSecret(env.Namespace()))
+		require.NoError(t, err)
+
+		rpRelease := env.Install(ctx, redpandaChart, helm.InstallOptions{
+			Values: redpanda.PartialValues{
+				Config: &redpanda.PartialConfig{
+					Node: redpanda.PartialNodeConfig{
+						"developer_mode": true,
+					},
+				},
+				External: &redpanda.PartialExternalConfig{Enabled: ptr.To(false)},
+			},
+		})
+
+		rpk := Client{Ctl: env.Ctl(), Release: &rpRelease}
+
+		config, err := rpk.ClusterConfig(ctx)
+		require.NoError(t, err)
+		require.Equal(t, false, config["cloud_storage_enabled"])
+
+		rpRelease = env.Upgrade(redpandaChart, rpRelease, helm.UpgradeOptions{Values: TieredStorageStatic(t)})
+
+		config, err = rpk.ClusterConfig(ctx)
+		require.NoError(t, err)
+		require.Equal(t, true, config["cloud_storage_enabled"])
+		require.Equal(t, "static-access-key", config["cloud_storage_access_key"])
+
+		rpRelease = env.Upgrade(redpandaChart, rpRelease, helm.UpgradeOptions{Values: TieredStorageSecretRefs(t, credsSecret)})
+
+		config, err = rpk.ClusterConfig(ctx)
+		require.NoError(t, err)
+		require.Equal(t, true, config["cloud_storage_enabled"])
+		require.Equal(t, "from-secret-access-key", config["cloud_storage_access_key"])
+	})
+
+	t.Run("mtls-using-cert-manager", func(t *testing.T) {
+		ctx := testutil.Context(t)
+
+		env := h.Namespaced(t)
+
+		partial := mTLSValuesUsingCertManager()
+
+		rpRelease := env.Install(ctx, redpandaChart, helm.InstallOptions{
+			Values: partial,
+		})
+
+		rpk := Client{Ctl: env.Ctl(), Release: &rpRelease}
+
+		dot := &helmette.Dot{
+			Values:  *helmette.UnmarshalInto[*helmette.Values](partial),
+			Release: helmette.Release{Name: rpRelease.Name, Namespace: rpRelease.Namespace},
+			Chart: helmette.Chart{
+				Name: "redpanda",
+			},
+		}
+
+		cleanup, err := rpk.ExposeRedpandaCluster(ctx, dot, w, wErr)
+		if cleanup != nil {
+			t.Cleanup(cleanup)
+		}
+		require.NoError(t, err)
+
+		assert.NoErrorf(t, kafkaListenerTest(ctx, rpk), "Kafka listener sub test failed")
+		assert.NoErrorf(t, adminListenerTest(ctx, rpk), "Admin listener sub test failed")
+		schemaBytes, retrievedSchema, err := schemaRegistryListenerTest(ctx, rpk)
+		assert.JSONEq(t, string(schemaBytes), retrievedSchema)
+		assert.NoErrorf(t, err, "Schema Registry listener sub test failed")
+		assert.NoErrorf(t, httpProxyListenerTest(ctx, rpk), "HTTP Proxy listener sub test failed")
+	})
+
+	t.Run("mtls-using-self-created-certificates", func(t *testing.T) {
+		ctx := testutil.Context(t)
+
+		env := h.Namespaced(t)
+
+		serverTLSSecretName := "server-tls-secret"
+		clientTLSSecretName := "client-tls-secret"
+
+		partial := mTLSValuesWithProvidedCerts(serverTLSSecretName, clientTLSSecretName)
+
+		r, err := rand.Int(rand.Reader, new(big.Int).SetInt64(1799999999))
+		require.NoError(t, err)
+
+		chartReleaseName := fmt.Sprintf("chart-%d", r.Int64())
+		ca, sPublic, sPrivate, cPublic, cPrivate, err := tlsgeneration.ClientServerCertificate(chartReleaseName, env.Namespace())
+		require.NoError(t, err)
+
+		s := corev1.Secret{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      serverTLSSecretName,
+				Namespace: env.Namespace(),
+			},
+			Data: map[string][]byte{
+				"ca.crt":  ca,
+				"tls.crt": sPublic,
+				"tls.key": sPrivate,
+			},
+		}
+		_, err = kube.Create[corev1.Secret](ctx, env.Ctl(), s)
+		require.NoError(t, err)
+
+		c := corev1.Secret{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      clientTLSSecretName,
+				Namespace: env.Namespace(),
+			},
+			Data: map[string][]byte{
+				"ca.crt":  ca,
+				"tls.crt": cPublic,
+				"tls.key": cPrivate,
+			},
+		}
+		_, err = kube.Create[corev1.Secret](ctx, env.Ctl(), c)
+		require.NoError(t, err)
+
+		rpRelease := env.Install(ctx, redpandaChart, helm.InstallOptions{
+			Values:    partial,
+			Name:      chartReleaseName,
+			Namespace: env.Namespace(),
+		})
+
+		rpk := Client{Ctl: env.Ctl(), Release: &rpRelease}
+
+		dot := &helmette.Dot{
+			Values:  *helmette.UnmarshalInto[*helmette.Values](partial),
+			Release: helmette.Release{Name: rpRelease.Name, Namespace: rpRelease.Namespace},
+			Chart: helmette.Chart{
+				Name: "redpanda",
+			},
+		}
+
+		cleanup, err := rpk.ExposeRedpandaCluster(ctx, dot, w, wErr)
+		if cleanup != nil {
+			t.Cleanup(cleanup)
+		}
+		require.NoError(t, err)
+
+		assert.NoErrorf(t, kafkaListenerTest(ctx, rpk), "Kafka listener sub test failed")
+		assert.NoErrorf(t, adminListenerTest(ctx, rpk), "Admin listener sub test failed")
+		schemaBytes, retrievedSchema, err := schemaRegistryListenerTest(ctx, rpk)
+		assert.JSONEq(t, string(schemaBytes), retrievedSchema)
+		assert.NoErrorf(t, err, "Schema Registry listener sub test failed")
+		assert.NoErrorf(t, httpProxyListenerTest(ctx, rpk), "HTTP Proxy listener sub test failed")
+	})
+}
 
 func TieredStorageStatic(t *testing.T) redpanda.PartialValues {
 	license := os.Getenv("REDPANDA_LICENSE")
@@ -93,51 +270,359 @@ func TieredStorageSecretRefs(t *testing.T, secret *corev1.Secret) redpanda.Parti
 	}
 }
 
-func TestChart(t *testing.T) {
-	if testing.Short() {
-		t.Skipf("Skipping log running test...")
+func kafkaListenerTest(ctx context.Context, rpk Client) error {
+	input := "test-input"
+	topicName := "testTopic"
+	_, err := rpk.CreateTopic(ctx, topicName)
+	if err != nil {
+		return errors.WithStack(err)
 	}
 
-	redpandaChart := "."
+	_, err = rpk.KafkaProduce(ctx, input, topicName)
+	if err != nil {
+		return errors.WithStack(err)
+	}
 
-	env := helmtest.Setup(t).Namespaced(t)
+	consumeOutput, err := rpk.KafkaConsume(ctx, topicName)
+	if err != nil {
+		return errors.WithStack(err)
+	}
 
-	t.Run("tiered-storage-secrets", func(t *testing.T) {
-		ctx := testutil.Context(t)
+	if input != consumeOutput["value"] {
+		return fmt.Errorf("expected value %s, got %s", input, consumeOutput["value"])
+	}
 
-		credsSecret, err := kube.Create(ctx, env.Ctl(), TieredStorageSecret(env.Namespace()))
-		require.NoError(t, err)
+	return nil
+}
 
-		rpRelease := env.Install(redpandaChart, helm.InstallOptions{
-			Values: redpanda.PartialValues{
-				Config: &redpanda.PartialConfig{
-					Node: redpanda.PartialNodeConfig{
-						"developer_mode": true,
-					},
+func adminListenerTest(ctx context.Context, rpk Client) error {
+	deadline := time.After(1 * time.Minute)
+	for {
+		select {
+		case <-time.Tick(5 * time.Second):
+			out, err := rpk.GetClusterHealth(ctx)
+			if err != nil {
+				continue
+			}
+
+			if out["is_healthy"].(bool) {
+				return nil
+			}
+		case <-deadline:
+			return fmt.Errorf("deadline exceeded")
+		case <-ctx.Done():
+			return fmt.Errorf("context deadline exceeded")
+		}
+	}
+}
+
+func schemaRegistryListenerTest(ctx context.Context, rpk Client) ([]byte, string, error) {
+	// Test schema registry
+	// Based on https://docs.redpanda.com/current/manage/schema-reg/schema-reg-api/
+	formats, err := rpk.QuerySupportedFormats(ctx)
+	if err != nil {
+		return nil, "", errors.WithStack(err)
+	}
+	if len(formats) != 2 {
+		return nil, "", fmt.Errorf("expected 2 supported formats, got %d", len(formats))
+	}
+
+	schema := map[string]any{
+		"type": "record",
+		"name": "sensor_sample",
+		"fields": []map[string]any{
+			{
+				"name":        "timestamp",
+				"type":        "long",
+				"logicalType": "timestamp-millis",
+			},
+			{
+				"name":        "identifier",
+				"type":        "string",
+				"logicalType": "uuid",
+			},
+			{
+				"name": "value",
+				"type": "long",
+			},
+		},
+	}
+
+	registeredID, err := rpk.RegisterSchema(ctx, schema)
+	if err != nil {
+		return nil, "", errors.WithStack(err)
+	}
+
+	var id float64
+	if idForSchema, ok := registeredID["id"]; ok {
+		id = idForSchema.(float64)
+	}
+
+	schemaBytes, err := json.Marshal(schema)
+	if err != nil {
+		return nil, "", errors.WithStack(err)
+	}
+
+	retrievedSchema, err := rpk.RetrieveSchema(ctx, int(id))
+	if err != nil {
+		return nil, "", errors.WithStack(err)
+	}
+
+	resp, err := rpk.ListRegistrySubjects(ctx)
+	if err != nil {
+		return nil, "", errors.WithStack(err)
+	}
+	if resp[0] != "sensor-value" {
+		return nil, "", fmt.Errorf("expected sensor-value %s, got %s", resp[0], registeredID["id"])
+	}
+
+	_, err = rpk.SoftDeleteSchema(ctx, resp[0], int(id))
+	if err != nil {
+		return nil, "", errors.WithStack(err)
+	}
+
+	_, err = rpk.HardDeleteSchema(ctx, resp[0], int(id))
+	if err != nil {
+		return nil, "", errors.WithStack(err)
+	}
+
+	return schemaBytes, retrievedSchema, nil
+}
+
+type HTTPResponse []struct {
+	Topic     string  `json:"topic"`
+	Key       *string `json:"key"`
+	Value     string  `json:"value"`
+	Partition int     `json:"partition"`
+	Offset    int     `json:"offset"`
+}
+
+func httpProxyListenerTest(ctx context.Context, rpk Client) error {
+	// Test http proxy
+	// Based on https://docs.redpanda.com/current/develop/http-proxy/
+	_, err := rpk.ListTopics(ctx)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	records := map[string]any{
+		"records": []map[string]any{
+			{
+				"value":     "Redpanda",
+				"partition": 0,
+			},
+			{
+				"value":     "HTTP proxy",
+				"partition": 1,
+			},
+			{
+				"value":     "Test event",
+				"partition": 2,
+			},
+		},
+	}
+
+	httpTestTopic := "httpTestTopic"
+	_, err = rpk.CreateTopic(ctx, httpTestTopic)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	_, err = rpk.SendEventToTopic(ctx, records, httpTestTopic)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	time.Sleep(time.Second * 5)
+
+	record, err := rpk.RetrieveEventFromTopic(ctx, httpTestTopic, 0)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	expectedRecord := HTTPResponse{
+		{
+			Topic:     httpTestTopic,
+			Key:       nil,
+			Value:     "Redpanda",
+			Partition: 0,
+			Offset:    0,
+		},
+	}
+
+	b, err := json.Marshal(&expectedRecord)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	if string(b) != record {
+		return fmt.Errorf("expected record %s, got %s", string(b), record)
+	}
+
+	record, err = rpk.RetrieveEventFromTopic(ctx, httpTestTopic, 1)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	expectedRecord = HTTPResponse{
+		{
+			Topic:     httpTestTopic,
+			Key:       nil,
+			Value:     "HTTP proxy",
+			Partition: 1,
+			Offset:    0,
+		},
+	}
+
+	b, err = json.Marshal(&expectedRecord)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	if string(b) != record {
+		return fmt.Errorf("expected record %s, got %s", string(b), record)
+	}
+
+	record, err = rpk.RetrieveEventFromTopic(ctx, httpTestTopic, 2)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	expectedRecord = HTTPResponse{
+		{
+			Topic:     httpTestTopic,
+			Key:       nil,
+			Value:     "Test event",
+			Partition: 2,
+			Offset:    0,
+		},
+	}
+
+	b, err = json.Marshal(&expectedRecord)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	if string(b) != record {
+		return fmt.Errorf("expected record %s, got %s", string(b), record)
+	}
+
+	return nil
+}
+
+func mTLSValuesUsingCertManager() redpanda.PartialValues {
+	return redpanda.PartialValues{
+		External:      &redpanda.PartialExternalConfig{Enabled: ptr.To(false)},
+		ClusterDomain: ptr.To("cluster.local"),
+		Listeners: &redpanda.PartialListeners{
+			Admin: &redpanda.PartialAdminListeners{
+				//External: redpanda.PartialExternalListeners[redpanda.PartialAdminExternal]{
+				//	"default": redpanda.PartialAdminExternal{Enabled: ptr.To(false), Port: ptr.To(int32(0))},
+				//},
+				TLS: &redpanda.PartialInternalTLS{
+					RequireClientAuth: ptr.To(true),
 				},
 			},
-		})
+			HTTP: &redpanda.PartialHTTPListeners{
+				//External: redpanda.PartialExternalListeners[redpanda.PartialHTTPExternal]{
+				//	"default": redpanda.PartialHTTPExternal{Enabled: ptr.To(false), Port: ptr.To(int32(0))},
+				//},
+				TLS: &redpanda.PartialInternalTLS{
+					RequireClientAuth: ptr.To(true),
+				},
+			},
+			Kafka: &redpanda.PartialKafkaListeners{
+				//External: redpanda.PartialExternalListeners[redpanda.PartialKafkaExternal]{
+				//	"default": redpanda.PartialKafkaExternal{Enabled: ptr.To(false), Port: ptr.To(int32(0))},
+				//},
+				TLS: &redpanda.PartialInternalTLS{
+					RequireClientAuth: ptr.To(true),
+				},
+			},
+			SchemaRegistry: &redpanda.PartialSchemaRegistryListeners{
+				//External: redpanda.PartialExternalListeners[redpanda.PartialSchemaRegistryExternal]{
+				//	"default": redpanda.PartialSchemaRegistryExternal{Enabled: ptr.To(false), Port: ptr.To(int32(0))},
+				//},
+				TLS: &redpanda.PartialInternalTLS{
+					RequireClientAuth: ptr.To(true),
+				},
+			},
+			RPC: &struct {
+				Port *int32                       `json:"port,omitempty" jsonschema:"required"`
+				TLS  *redpanda.PartialInternalTLS `json:"tls,omitempty" jsonschema:"required"`
+			}{
+				TLS: &redpanda.PartialInternalTLS{
+					RequireClientAuth: ptr.To(true),
+				},
+			},
+		},
+	}
+}
 
-		rpk := Client{Ctl: env.Ctl(), Release: &rpRelease}
-
-		config, err := rpk.ClusterConfig(ctx)
-		require.NoError(t, err)
-		require.Equal(t, false, config["cloud_storage_enabled"])
-
-		rpRelease = env.Upgrade(redpandaChart, rpRelease, helm.UpgradeOptions{Values: TieredStorageStatic(t)})
-
-		config, err = rpk.ClusterConfig(ctx)
-		require.NoError(t, err)
-		require.Equal(t, true, config["cloud_storage_enabled"])
-		require.Equal(t, "static-access-key", config["cloud_storage_access_key"])
-
-		rpRelease = env.Upgrade(redpandaChart, rpRelease, helm.UpgradeOptions{Values: TieredStorageSecretRefs(t, credsSecret)})
-
-		config, err = rpk.ClusterConfig(ctx)
-		require.NoError(t, err)
-		require.Equal(t, true, config["cloud_storage_enabled"])
-		require.Equal(t, "from-secret-access-key", config["cloud_storage_access_key"])
-	})
+func mTLSValuesWithProvidedCerts(serverTLSSecretName, clientTLSSecretName string) redpanda.PartialValues {
+	return redpanda.PartialValues{
+		External:      &redpanda.PartialExternalConfig{Enabled: ptr.To(false)},
+		ClusterDomain: ptr.To("cluster.local"),
+		TLS: &redpanda.PartialTLS{
+			Enabled: ptr.To(true),
+			Certs: redpanda.PartialTLSCertMap{
+				"provided": redpanda.PartialTLSCert{
+					Enabled:         ptr.To(true),
+					CAEnabled:       ptr.To(true),
+					SecretRef:       &corev1.LocalObjectReference{Name: serverTLSSecretName},
+					ClientSecretRef: &corev1.LocalObjectReference{Name: clientTLSSecretName},
+				},
+				"default": redpanda.PartialTLSCert{Enabled: ptr.To(false)},
+			},
+		},
+		Listeners: &redpanda.PartialListeners{
+			Admin: &redpanda.PartialAdminListeners{
+				//External: redpanda.PartialExternalListeners[redpanda.PartialAdminExternal]{
+				//	"default": redpanda.PartialAdminExternal{Enabled: ptr.To(false), Port: ptr.To(int32(0))},
+				//},
+				TLS: &redpanda.PartialInternalTLS{
+					RequireClientAuth: ptr.To(true),
+					Cert:              ptr.To("provided"),
+				},
+			},
+			HTTP: &redpanda.PartialHTTPListeners{
+				//External: redpanda.PartialExternalListeners[redpanda.PartialHTTPExternal]{
+				//	"default": redpanda.PartialHTTPExternal{Enabled: ptr.To(false), Port: ptr.To(int32(0))},
+				//},
+				TLS: &redpanda.PartialInternalTLS{
+					RequireClientAuth: ptr.To(true),
+					Cert:              ptr.To("provided"),
+				},
+			},
+			Kafka: &redpanda.PartialKafkaListeners{
+				//External: redpanda.PartialExternalListeners[redpanda.PartialKafkaExternal]{
+				//	"default": redpanda.PartialKafkaExternal{Enabled: ptr.To(false), Port: ptr.To(int32(0))},
+				//},
+				TLS: &redpanda.PartialInternalTLS{
+					RequireClientAuth: ptr.To(true),
+					Cert:              ptr.To("provided"),
+				},
+			},
+			SchemaRegistry: &redpanda.PartialSchemaRegistryListeners{
+				//External: redpanda.PartialExternalListeners[redpanda.PartialSchemaRegistryExternal]{
+				//	"default": redpanda.PartialSchemaRegistryExternal{Enabled: ptr.To(false), Port: ptr.To(int32(0))},
+				//},
+				TLS: &redpanda.PartialInternalTLS{
+					RequireClientAuth: ptr.To(true),
+					Cert:              ptr.To("provided"),
+				},
+			},
+			RPC: &struct {
+				Port *int32                       `json:"port,omitempty" jsonschema:"required"`
+				TLS  *redpanda.PartialInternalTLS `json:"tls,omitempty" jsonschema:"required"`
+			}{
+				TLS: &redpanda.PartialInternalTLS{
+					RequireClientAuth: ptr.To(true),
+					Cert:              ptr.To("provided"),
+				},
+			},
+		},
+	}
 }
 
 // getConfigMaps is parsing all manifests (resources) created by helm template

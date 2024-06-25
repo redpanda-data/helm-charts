@@ -191,7 +191,7 @@
 {{- $_is_returning := false -}}
 {{- $listeners := (list "kafka" "admin" "schemaRegistry" "rpc" "http") -}}
 {{- range $_, $listener := $listeners -}}
-{{- $required := (dig $listener "tls" "requireClientAuth" false $dot.Values.AsMap) -}}
+{{- $required := (dig "listeners" $listener "tls" "requireClientAuth" false $dot.Values.AsMap) -}}
 {{- if (not (empty $required)) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" true) | toJson -}}
@@ -231,6 +231,10 @@
 {{- $certNames := (keys $values.tls.certs) -}}
 {{- $_ := (sortAlpha $certNames) -}}
 {{- range $_, $name := $certNames -}}
+{{- $cert := (index $values.tls.certs $name) -}}
+{{- if (not (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $cert.enabled true) ))) "r")) -}}
+{{- continue -}}
+{{- end -}}
 {{- $mounts = (concat (default (list ) $mounts) (list (mustMergeOverwrite (dict "name" "" "mountPath" "" ) (dict "name" (printf "redpanda-%s-cert" $name) "mountPath" (printf "/etc/tls/certs/%s" $name) )))) -}}
 {{- end -}}
 {{- if $_is_returning -}}
@@ -267,13 +271,22 @@
 {{- $_ := (sortAlpha $certNames) -}}
 {{- range $_, $name := $certNames -}}
 {{- $cert := (index $values.tls.certs $name) -}}
+{{- if (not (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $cert.enabled true) ))) "r")) -}}
+{{- continue -}}
+{{- end -}}
 {{- $volumes = (concat (default (list ) $volumes) (list (mustMergeOverwrite (dict "name" "" ) (mustMergeOverwrite (dict ) (dict "secret" (mustMergeOverwrite (dict ) (dict "secretName" (get (fromJson (include "redpanda.CertSecretName" (dict "a" (list $dot $name $cert) ))) "r") "defaultMode" (0o440 | int) )) )) (dict "name" (printf "redpanda-%s-cert" $name) )))) -}}
 {{- end -}}
 {{- if $_is_returning -}}
 {{- break -}}
 {{- end -}}
-{{- if (get (fromJson (include "redpanda.ClientAuthRequired" (dict "a" (list $dot) ))) "r") -}}
-{{- $volumes = (concat (default (list ) $volumes) (list (mustMergeOverwrite (dict "name" "" ) (mustMergeOverwrite (dict ) (dict "secret" (mustMergeOverwrite (dict ) (dict "secretName" (printf "%s-client" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r")) "defaultMode" (0o440 | int) )) )) (dict "name" "mtls-client" )))) -}}
+{{- $adminTLS := $values.listeners.admin.tls -}}
+{{- $cert := (index $values.tls.certs $adminTLS.cert) -}}
+{{- if $adminTLS.requireClientAuth -}}
+{{- $secretName := (printf "%s-client" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r")) -}}
+{{- if (ne $cert.clientSecretRef (coalesce nil)) -}}
+{{- $secretName = $cert.clientSecretRef.name -}}
+{{- end -}}
+{{- $volumes = (concat (default (list ) $volumes) (list (mustMergeOverwrite (dict "name" "" ) (mustMergeOverwrite (dict ) (dict "secret" (mustMergeOverwrite (dict ) (dict "secretName" $secretName "defaultMode" (0o440 | int) )) )) (dict "name" "mtls-client" )))) -}}
 {{- end -}}
 {{- end -}}
 {{- $sasl_6 := $values.auth.sasl -}}

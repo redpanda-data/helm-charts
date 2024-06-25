@@ -175,7 +175,7 @@ func TLSEnabled(dot *helmette.Dot) bool {
 func ClientAuthRequired(dot *helmette.Dot) bool {
 	listeners := []string{"kafka", "admin", "schemaRegistry", "rpc", "http"}
 	for _, listener := range listeners {
-		required := helmette.Dig(dot.Values.AsMap(), false, listener, "tls", "requireClientAuth")
+		required := helmette.Dig(dot.Values.AsMap(), false, "listeners", listener, "tls", "requireClientAuth")
 		if !helmette.Empty(required) {
 			return true
 		}
@@ -212,6 +212,12 @@ func CommonMounts(dot *helmette.Dot) []corev1.VolumeMount {
 		helmette.SortAlpha(certNames)
 
 		for _, name := range certNames {
+			cert := values.TLS.Certs[name]
+
+			if !ptr.Deref(cert.Enabled, true) {
+				continue
+			}
+
 			mounts = append(mounts, corev1.VolumeMount{
 				Name:      fmt.Sprintf("redpanda-%s-cert", name),
 				MountPath: fmt.Sprintf("/etc/tls/certs/%s", name),
@@ -256,6 +262,10 @@ func CommonVolumes(dot *helmette.Dot) []corev1.Volume {
 		for _, name := range certNames {
 			cert := values.TLS.Certs[name]
 
+			if !ptr.Deref(cert.Enabled, true) {
+				continue
+			}
+
 			volumes = append(volumes, corev1.Volume{
 				Name: fmt.Sprintf("redpanda-%s-cert", name),
 				VolumeSource: corev1.VolumeSource{
@@ -267,12 +277,19 @@ func CommonVolumes(dot *helmette.Dot) []corev1.Volume {
 			})
 		}
 
-		if ClientAuthRequired(dot) {
+		adminTLS := values.Listeners.Admin.TLS
+		cert := values.TLS.Certs[adminTLS.Cert]
+		if adminTLS.RequireClientAuth {
+			secretName := fmt.Sprintf("%s-client", Fullname(dot))
+			if cert.ClientSecretRef != nil {
+				secretName = cert.ClientSecretRef.Name
+			}
+
 			volumes = append(volumes, corev1.Volume{
 				Name: "mtls-client",
 				VolumeSource: corev1.VolumeSource{
 					Secret: &corev1.SecretVolumeSource{
-						SecretName:  fmt.Sprintf("%s-client", Fullname(dot)),
+						SecretName:  secretName,
 						DefaultMode: ptr.To[int32](0o440),
 					},
 				},

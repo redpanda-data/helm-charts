@@ -89,7 +89,7 @@ func ClientCerts(dot *helmette.Dot) []certmanagerv1.Certificate {
 		panic(fmt.Sprintf("Certificate %q referenced but not defined", name))
 	}
 
-	if helmette.Empty(data.SecretRef) || !ClientAuthRequired(dot) {
+	if !helmette.Empty(data.SecretRef) || !ClientAuthRequired(dot) {
 		return certs
 	}
 

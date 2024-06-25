@@ -737,6 +737,38 @@
       ],
       "type": "object"
     },
+    "connectors": {
+      "properties": {
+        "connectors": {
+          "properties": {
+            "fullnameOverwrite": {
+              "type": "string"
+            },
+            "restPort": {
+              "type": "integer"
+            }
+          },
+          "type": "object"
+        },
+        "enabled": {
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "console": {
+      "properties": {
+        "console": {
+          "properties": {
+            "config": {
+              "type": "object"
+            }
+          },
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
     "enterprise": {
       "properties": {
         "license": {
@@ -4526,6 +4558,14 @@
                 },
                 "caEnabled": {
                   "type": "boolean"
+                },
+                "clientSecretRef": {
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
                 },
                 "duration": {
                   "pattern": ".*[smh]$",

@@ -2,7 +2,9 @@ package kube
 
 import (
 	"context"
+	"fmt"
 	"io"
+	"net/http"
 
 	"github.com/cockroachdb/errors"
 	corev1 "k8s.io/api/core/v1"
@@ -11,7 +13,9 @@ import (
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
+	"k8s.io/client-go/tools/portforward"
 	"k8s.io/client-go/tools/remotecommand"
+	"k8s.io/client-go/transport/spdy"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -153,4 +157,81 @@ func (c *Ctl) Exec(ctx context.Context, pod *corev1.Pod, opts ExecOptions) error
 		Stdout: opts.Stdout,
 		Stdin:  opts.Stdin,
 	})
+}
+
+func (c *Ctl) PortForward(ctx context.Context, pod *corev1.Pod, out, errOut io.Writer) ([]portforward.ForwardedPort, func(), error) {
+	// Apparently, nothing in the k8s SDK, except exec'ing, uses RESTClientFor.
+	// RESTClientFor checks for GroupVersion and NegotiatedSerializer which are
+	// never set by the config loading tool chain.
+	// The .APIPath setting was a random shot in the dark that happened to work...
+	// Pulled from https://github.com/kubernetes/kubectl/blob/acf4a09f2daede8fdbf65514ade9426db0367ed3/pkg/cmd/util/kubectl_match_version.go#L115
+	cfg := c.RestConfig()
+	cfg.APIPath = "/api"
+	cfg.GroupVersion = &schema.GroupVersion{Version: "v1"}
+	cfg.NegotiatedSerializer = scheme.Codecs.WithoutConversion()
+	restClient, err := rest.RESTClientFor(cfg)
+	if err != nil {
+		return nil, nil, errors.WithStack(err)
+	}
+
+	// Inspired by https://github.com/kubernetes/kubectl/blob/acf4a09f2daede8fdbf65514ade9426db0367ed3/pkg/cmd/portforward/portforward.go#L410-L416
+	req := restClient.Post().
+		Resource("pods").
+		Namespace(pod.Namespace).
+		Name(pod.Name).
+		SubResource("portforward")
+
+	transport, upgrader, err := spdy.RoundTripperFor(cfg)
+	if err != nil {
+		return nil, nil, errors.WithStack(err)
+	}
+
+	stopChan := make(chan struct{})
+	readyChan := make(chan struct{})
+
+	dialer := spdy.NewDialer(upgrader, &http.Client{Transport: transport}, "POST", req.URL())
+
+	var ports []string
+	for _, container := range pod.Spec.Containers {
+		for _, port := range container.Ports {
+			// port forward and spdy does not handle UDP connection correctly
+			//
+			// Reference
+			// https://github.com/kubernetes/kubernetes/issues/47862
+			// https://github.com/kubernetes/kubectl/blob/acf4a09f2daede8fdbf65514ade9426db0367ed3/pkg/cmd/portforward/portforward.go#L273-L290
+			if port.Protocol != corev1.ProtocolTCP {
+				continue
+			}
+
+			ports = append(ports, fmt.Sprintf(":%d", port.ContainerPort))
+		}
+	}
+
+	fw, err := portforward.New(dialer, ports, stopChan, readyChan, out, errOut)
+	if err != nil {
+		return nil, nil, errors.WithStack(err)
+	}
+
+	go func() {
+		err = fw.ForwardPorts()
+		if err != nil {
+			fmt.Fprintf(errOut, "failed while forwaring ports: %v\n", err)
+		}
+	}()
+
+	select {
+	case <-fw.Ready:
+	case <-ctx.Done():
+	}
+
+	p, err := fw.GetPorts()
+	if err != nil {
+		return nil, nil, errors.WithStack(err)
+	}
+
+	return p, func() {
+		if stopChan != nil {
+			close(stopChan)
+		}
+	}, nil
 }
