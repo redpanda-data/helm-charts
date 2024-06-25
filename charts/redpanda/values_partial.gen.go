@@ -12,16 +12,16 @@ import (
 )
 
 type PartialValues struct {
-	NameOverride     *string           `json:"nameOverride,omitempty"`
-	FullnameOverride *string           `json:"fullnameOverride,omitempty"`
-	ClusterDomain    *string           `json:"clusterDomain,omitempty"`
-	CommonLabels     map[string]string `json:"commonLabels,omitempty"`
-	NodeSelector     map[string]string `json:"nodeSelector,omitempty"`
-	Affinity         *PartialAffinity  `json:"affinity,omitempty" jsonschema:"required"`
-	Tolerations      []map[string]any  `json:"tolerations,omitempty"`
-	Image            *PartialImage     `json:"image,omitempty" jsonschema:"required,description=Values used to define the container image to be used for Redpanda"`
-	Service          *PartialService   `json:"service,omitempty"`
-
+	NameOverride     *string                  `json:"nameOverride,omitempty"`
+	FullnameOverride *string                  `json:"fullnameOverride,omitempty"`
+	ClusterDomain    *string                  `json:"clusterDomain,omitempty"`
+	CommonLabels     map[string]string        `json:"commonLabels,omitempty"`
+	NodeSelector     map[string]string        `json:"nodeSelector,omitempty"`
+	Affinity         *PartialAffinity         `json:"affinity,omitempty" jsonschema:"required"`
+	Tolerations      []map[string]any         `json:"tolerations,omitempty"`
+	Image            *PartialImage            `json:"image,omitempty" jsonschema:"required,description=Values used to define the container image to be used for Redpanda"`
+	Service          *PartialService          `json:"service,omitempty"`
+	ImagePullSecrets []string                 `json:"imagePullSecrets,omitempty"`
 	LicenseKey       *string                  `json:"license_key,omitempty" jsonschema:"deprecated,pattern=^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?\\.(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$|^$"`
 	LicenseSecretRef *PartialLicenseSecretRef `json:"license_secret_ref,omitempty" jsonschema:"deprecated"`
 	AuditLogging     *PartialAuditLogging     `json:"auditLogging,omitempty"`
@@ -194,6 +194,11 @@ type PartialStorage struct {
 type PartialPostInstallJob struct {
 	Resources *PartialJobResources `json:"resources,omitempty"`
 	Affinity  map[string]any       `json:"affinity,omitempty"`
+
+	Enabled         *bool                  `json:"enabled,omitempty"`
+	Labels          map[string]string      `json:"labels,omitempty"`
+	Annotations     map[string]string      `json:"annotations,omitempty"`
+	SecurityContext corev1.SecurityContext `json:"securityContext,omitempty"`
 }
 
 type PartialPostUpgradeJob struct {

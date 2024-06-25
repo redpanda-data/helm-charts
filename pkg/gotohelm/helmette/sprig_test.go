@@ -10,6 +10,7 @@ import (
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"k8s.io/apimachinery/pkg/api/resource"
 )
 
 func TestDig(t *testing.T) {
@@ -179,4 +180,24 @@ func runRawTemplate(tpl string, vars any) (string, error) {
 		return "", err
 	}
 	return b.String(), nil
+}
+
+func TestMergeTo(t *testing.T) {
+	type Target struct {
+		Quantity resource.Quantity `json:"quantity"`
+	}
+
+	v1 := helmette.MergeTo[Target](map[string]any{
+		"quantity": "12m",
+	})
+
+	assert.Equal(t, int64(1), v1.Quantity.Value())
+	assert.Equal(t, int64(12), v1.Quantity.ScaledValue(resource.Milli))
+
+	v2 := helmette.MergeTo[Target](map[string]any{
+		"quantity": 1.5,
+	})
+
+	assert.Equal(t, int64(2), v2.Quantity.Value())
+	assert.Equal(t, int64(1500), v2.Quantity.ScaledValue(resource.Milli))
 }
