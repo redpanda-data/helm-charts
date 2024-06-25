@@ -318,12 +318,12 @@ func PodSecurityContext(dot *helmette.Dot) *corev1.PodSecurityContext {
 // ContainerSecurityContext returns a subset of [corev1.SecurityContext] for
 // the redpanda Statefulset. It is also used as the default
 // ContainerSecurityContext.
-func ContainerSecurityContext(dot *helmette.Dot) *corev1.SecurityContext {
+func ContainerSecurityContext(dot *helmette.Dot) corev1.SecurityContext {
 	values := helmette.Unwrap[Values](dot.Values)
 
 	sc := ptr.Deref(values.Statefulset.PodSecurityContext, values.Statefulset.SecurityContext)
 
-	return &corev1.SecurityContext{
+	return corev1.SecurityContext{
 		RunAsUser:                sc.RunAsUser,
 		RunAsGroup:               helmette.Coalesce(sc.RunAsGroup, sc.FSGroup),
 		AllowPrivilegeEscalation: sc.AllowPriviledgeEscalation,

@@ -25,14 +25,3 @@ Set affinity for post_install_job, defaults to global affinity if not defined in
 {{- end -}}
 {{- toYaml $affinity -}}
 {{- end -}}
-
-{{/*
-Set affinity for post_upgrade_job, defaults to global affinity if not defined in post_upgrade_job
-*/}}
-{{- define "post-upgrade-job-affinity" -}}
-{{- $affinity := .Values.affinity -}}
-{{- if not ( empty .Values.post_upgrade_job.affinity ) -}}
-  {{- $affinity = .Values.post_upgrade_job.affinity -}}
-{{- end -}}
-{{- toYaml $affinity -}}
-{{- end -}}

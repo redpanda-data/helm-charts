@@ -18,8 +18,8 @@ type PartialValues struct {
 	ClusterDomain    *string                       "json:\"clusterDomain,omitempty\""
 	CommonLabels     map[string]string             "json:\"commonLabels,omitempty\""
 	NodeSelector     map[string]string             "json:\"nodeSelector,omitempty\""
-	Affinity         *PartialAffinity              "json:\"affinity,omitempty\" jsonschema:\"required\""
-	Tolerations      []map[string]any              "json:\"tolerations,omitempty\""
+	Affinity         *corev1.Affinity              "json:\"affinity,omitempty\" jsonschema:\"required\""
+	Tolerations      []corev1.Toleration           "json:\"tolerations,omitempty\""
 	Image            *PartialImage                 "json:\"image,omitempty\" jsonschema:\"required,description=Values used to define the container image to be used for Redpanda\""
 	Service          *PartialService               "json:\"service,omitempty\""
 	ImagePullSecrets []corev1.LocalObjectReference "json:\"imagePullSecrets,omitempty\""
@@ -46,12 +46,6 @@ type PartialValues struct {
 	Tests            *struct {
 		Enabled *bool "json:\"enabled,omitempty\""
 	} "json:\"tests,omitempty\""
-}
-
-type PartialAffinity struct {
-	NodeAffinity    map[string]any "json:\"nodeAffinity,omitempty\""
-	PodAffinity     map[string]any "json:\"podAffinity,omitempty\""
-	PodAntiAffinity map[string]any "json:\"podAntiAffinity,omitempty\""
 }
 
 type PartialImage struct {
@@ -92,7 +86,7 @@ type PartialAuth struct {
 
 type PartialTLS struct {
 	Enabled *bool             "json:\"enabled,omitempty\" jsonschema:\"required\""
-	Certs   PartialTLSCertMap "json:\"certs,omitempty\""
+	Certs   PartialTLSCertMap "json:\"certs,omitempty\" jsonschema:\"required\""
 }
 
 type PartialExternalConfig struct {
@@ -163,7 +157,7 @@ type PartialStorage struct {
 
 type PartialPostInstallJob struct {
 	Resources       *corev1.ResourceRequirements "json:\"resources,omitempty\""
-	Affinity        map[string]any               "json:\"affinity,omitempty\""
+	Affinity        *corev1.Affinity             "json:\"affinity,omitempty\""
 	Enabled         *bool                        "json:\"enabled,omitempty\""
 	Labels          map[string]string            "json:\"labels,omitempty\""
 	Annotations     map[string]string            "json:\"annotations,omitempty\""
@@ -171,10 +165,15 @@ type PartialPostInstallJob struct {
 }
 
 type PartialPostUpgradeJob struct {
-	Resources    *corev1.ResourceRequirements "json:\"resources,omitempty\""
-	Affinity     map[string]any               "json:\"affinity,omitempty\""
-	ExtraEnv     any                          "json:\"extraEnv,omitempty\" jsonschema:\"oneof_type=array;string\""
-	ExtraEnvFrom any                          "json:\"extraEnvFrom,omitempty\" jsonschema:\"oneof_type=array;string\""
+	Resources       *corev1.ResourceRequirements "json:\"resources,omitempty\""
+	Affinity        *corev1.Affinity             "json:\"affinity,omitempty\""
+	Enabled         *bool                        "json:\"enabled,omitempty\""
+	Labels          map[string]string            "json:\"labels,omitempty\""
+	Annotations     map[string]string            "json:\"annotations,omitempty\""
+	BackoffLimit    *int32                       "json:\"backoffLimit,omitempty\""
+	ExtraEnv        []corev1.EnvVar              "json:\"extraEnv,omitempty\""
+	ExtraEnvFrom    []corev1.EnvFromSource       "json:\"extraEnvFrom,omitempty\""
+	SecurityContext *corev1.SecurityContext      "json:\"securityContext,omitempty\""
 }
 
 type PartialStatefulset struct {
@@ -220,7 +219,7 @@ type PartialStatefulset struct {
 		TopologyKey       *string "json:\"topologyKey,omitempty\""
 		WhenUnsatisfiable *string "json:\"whenUnsatisfiable,omitempty\" jsonschema:\"pattern=^(ScheduleAnyway|DoNotSchedule)$\""
 	} "json:\"topologySpreadConstraints,omitempty\" jsonschema:\"required,minItems=1\""
-	Tolerations        []any                   "json:\"tolerations,omitempty\" jsonschema:\"required\""
+	Tolerations        []corev1.Toleration     "json:\"tolerations,omitempty\" jsonschema:\"required\""
 	PodSecurityContext *PartialSecurityContext "json:\"podSecurityContext,omitempty\""
 	SecurityContext    *PartialSecurityContext "json:\"securityContext,omitempty\" jsonschema:\"required\""
 	SideCars           *struct {

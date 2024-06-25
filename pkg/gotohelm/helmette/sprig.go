@@ -388,3 +388,15 @@ func RegexReplaceAll(regex, s, repl string) string {
 	r := regexp.MustCompile(regex)
 	return r.ReplaceAllString(s, repl)
 }
+
+// +gotohelm:builtin=join
+func Join[T any](sep string, s []T) string {
+	out := ""
+	for i, el := range s {
+		if i > 0 {
+			out += sep
+		}
+		out += ToString(el)
+	}
+	return out
+}

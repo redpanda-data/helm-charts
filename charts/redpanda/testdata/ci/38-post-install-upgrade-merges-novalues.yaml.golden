@@ -1393,26 +1393,29 @@ status: {}
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: redpanda-post-upgrade
-  namespace: "default"
+  annotations:
+    helm.sh/hook: post-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation
+    helm.sh/hook-weight: "-10"
+  creationTimestamp: null
   labels:
     app.kubernetes.io/component: redpanda
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
     helm.sh/chart: redpanda-5.8.11
-  annotations:
-    "helm.sh/hook": post-upgrade
-    "helm.sh/hook-delete-policy": before-hook-creation
-    "helm.sh/hook-weight": "-10"
+  name: redpanda-post-upgrade
+  namespace: default
 spec:
+  backoffLimit: null
   template:
     metadata:
-      name: "redpanda"
+      creationTimestamp: null
       labels:
-        app.kubernetes.io/name: redpanda
-        app.kubernetes.io/instance: "redpanda"
         app.kubernetes.io/component: redpanda-post-upgrade
+        app.kubernetes.io/instance: redpanda
+        app.kubernetes.io/name: redpanda
+      name: redpanda
     spec:
       affinity:
         nodeAffinity:
@@ -1424,56 +1427,62 @@ spec:
                 values:
                 - antarctica-east1
                 - antarctica-west1
-      tolerations:
-        - effect: NoSchedule
-          key: example-key
-          operator: Exists
-        - effect: NoExecute
-          key: example-key-2
-          operator: Exists
+      containers:
+      - args:
+        - |
+          set -e
+
+          rpk cluster config set default_topic_replications 3
+          rpk cluster config set storage_min_free_bytes 1073741824
+          if [ -d "/etc/secrets/users/" ]; then
+              IFS=":" read -r USER_NAME PASSWORD MECHANISM < <(grep "" $(find /etc/secrets/users/* -print))
+              curl -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors --ssl-reqd \
+              --cacert /etc/tls/certs/default/ca.crt \
+              -X PUT -u ${USER_NAME}:${PASSWORD} \
+              https://redpanda.default.svc.cluster.local.:9644/v1/debug/restart_service?service=schema-registry || true
+          fi
+        command:
+        - /bin/bash
+        - -c
+        env: null
+        envFrom: null
+        image: docker.redpanda.com/redpandadata/redpanda:v24.1.8
+        name: redpanda-post-upgrade
+        resources: null
+        securityContext:
+          runAsGroup: 1000
+          runAsUser: 1000
+        volumeMounts:
+        - mountPath: /etc/redpanda
+          name: config
+        - mountPath: /etc/tls/certs/default
+          name: redpanda-default-cert
+        - mountPath: /etc/tls/certs/external
+          name: redpanda-external-cert
+      imagePullSecrets: null
+      nodeSelector: {}
       restartPolicy: Never
-      securityContext: 
+      securityContext:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      containers:
-      - name: redpanda-post-upgrade
-        image: docker.redpanda.com/redpandadata/redpanda:v24.1.8
-        command: ["/bin/bash", "-c"]
-        args:
-          - |
-            set -e
-    
-            rpk cluster config set default_topic_replications 3
-            rpk cluster config set storage_min_free_bytes 1073741824
-            if [ -d "/etc/secrets/users/" ]; then
-                IFS=":" read -r USER_NAME PASSWORD MECHANISM < <(grep "" $(find /etc/secrets/users/* -print))
-                curl -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors --ssl-reqd \
-                --cacert /etc/tls/certs/default/ca.crt \
-                -X PUT -u ${USER_NAME}:${PASSWORD} \
-                https://redpanda.default.svc.cluster.local.:9644/v1/debug/restart_service?service=schema-registry || true
-            fi
-        securityContext:
-          allowPrivilegeEscalation: null
-          runAsGroup: 1000
-          runAsNonRoot: null
-          runAsUser: 1000
-        volumeMounts:
-          - mountPath: /etc/redpanda
-            name: config
-          - mountPath: /etc/tls/certs/default
-            name: redpanda-default-cert
-          - mountPath: /etc/tls/certs/external
-            name: redpanda-external-cert
-      volumes: 
-        - configMap:
-            name: redpanda
-          name: config
-        - name: redpanda-default-cert
-          secret:
-            defaultMode: 288
-            secretName: redpanda-default-cert
-        - name: redpanda-external-cert
-          secret:
-            defaultMode: 288
-            secretName: redpanda-external-cert
+      tolerations:
+      - effect: NoSchedule
+        key: example-key
+        operator: Exists
+      - effect: NoExecute
+        key: example-key-2
+        operator: Exists
+      volumes:
+      - configMap:
+          name: redpanda
+        name: config
+      - name: redpanda-default-cert
+        secret:
+          defaultMode: 288
+          secretName: redpanda-default-cert
+      - name: redpanda-external-cert
+        secret:
+          defaultMode: 288
+          secretName: redpanda-external-cert
+status: {}

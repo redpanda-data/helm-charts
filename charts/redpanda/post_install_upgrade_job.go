@@ -86,8 +86,11 @@ func PostInstallUpgradeJob(dot *helmette.Dot) *batchv1.Job {
 							Args:      []string{},
 							Resources: ptr.Deref(values.PostInstallJob.Resources, corev1.ResourceRequirements{}),
 							// Note: this is a semantic change/fix from the template, which specified the merge in the incorrect order
-							SecurityContext: ptr.To(helmette.MergeTo[corev1.SecurityContext](helmette.Default(corev1.SecurityContext{}, values.PostInstallJob.SecurityContext), ContainerSecurityContext(dot))),
-							VolumeMounts:    DefaultMounts(dot),
+							SecurityContext: ptr.To(helmette.MergeTo[corev1.SecurityContext](
+								ptr.Deref(values.PostInstallJob.SecurityContext, corev1.SecurityContext{}),
+								ContainerSecurityContext(dot),
+							)),
+							VolumeMounts: DefaultMounts(dot),
 						},
 					},
 					Volumes:            DefaultVolumes(dot),
@@ -153,7 +156,7 @@ func PostInstallUpgradeJob(dot *helmette.Dot) *batchv1.Job {
 		`rpk cluster config import -f /tmp/cfg.yml`,
 		``,
 	)
-	job.Spec.Template.Spec.Containers[0].Args = append(job.Spec.Template.Spec.Containers[0].Args, unlines(script))
+	job.Spec.Template.Spec.Containers[0].Args = append(job.Spec.Template.Spec.Containers[0].Args, helmette.Join("\n", script))
 
 	return job
 }
@@ -163,16 +166,11 @@ func PostInstallUpgradeJob(dot *helmette.Dot) *batchv1.Job {
 func postInstallJobAffinity(dot *helmette.Dot) *corev1.Affinity {
 	values := helmette.Unwrap[Values](dot.Values)
 
-	var affinity corev1.Affinity
 	if !helmette.Empty(values.PostInstallJob.Affinity) {
-		affinity = helmette.MergeTo[corev1.Affinity](values.PostInstallJob.Affinity)
-		return &affinity
+		return &values.PostInstallJob.Affinity
 	}
 
-	affinity.NodeAffinity = ptr.To(helmette.MergeTo[corev1.NodeAffinity](helmette.Default(map[string]any{}, values.Affinity.NodeAffinity)))
-	affinity.PodAffinity = ptr.To(helmette.MergeTo[corev1.PodAffinity](helmette.Default(map[string]any{}, values.Affinity.PodAffinity)))
-	affinity.PodAntiAffinity = ptr.To(helmette.MergeTo[corev1.PodAntiAffinity](helmette.Default(map[string]any{}, values.Affinity.PodAntiAffinity)))
-	return &affinity
+	return helmette.MergeTo[*corev1.Affinity](values.PostInstallJob.Affinity, values.Affinity)
 }
 
 func tolerations(dot *helmette.Dot) []corev1.Toleration {

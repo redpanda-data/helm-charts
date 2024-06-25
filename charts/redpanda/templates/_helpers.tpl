@@ -78,8 +78,7 @@ Use AppVersion if image.tag is not set
 
 {{/* ConfigMap variables */}}
 {{- define "admin-internal-tls-enabled" -}}
-{{- $listener := .Values.listeners.admin -}}
-{{- toJson (dict "bool" (and (dig "tls" "enabled" .Values.tls.enabled $listener) (not (empty (dig "tls" "cert" "" $listener))))) -}}
+{{- toJson (dict "bool" (get ((include "redpanda.InternalTLS.IsEnabled" (dict "a" (list .Values.listeners.admin.tls .Values.tls))) | fromJson) "r")) -}}
 {{- end -}}
 
 {{- define "admin-external-tls-enabled" -}}

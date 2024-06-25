@@ -37,8 +37,8 @@ type Values struct {
 	ClusterDomain    string                        `json:"clusterDomain"`
 	CommonLabels     map[string]string             `json:"commonLabels"`
 	NodeSelector     map[string]string             `json:"nodeSelector"`
-	Affinity         Affinity                      `json:"affinity" jsonschema:"required"`
-	Tolerations      []map[string]any              `json:"tolerations"`
+	Affinity         corev1.Affinity               `json:"affinity" jsonschema:"required"`
+	Tolerations      []corev1.Toleration           `json:"tolerations"`
 	Image            Image                         `json:"image" jsonschema:"required,description=Values used to define the container image to be used for Redpanda"`
 	Service          *Service                      `json:"service"`
 	ImagePullSecrets []corev1.LocalObjectReference `json:"imagePullSecrets"`
@@ -74,12 +74,6 @@ func (Values) JSONSchemaExtend(schema *jsonschema.Schema) {
 	deprecate(schema, "license_key", "license_secret_ref")
 }
 
-type Affinity struct {
-	NodeAffinity    map[string]any `json:"nodeAffinity"`
-	PodAffinity     map[string]any `json:"podAffinity"`
-	PodAntiAffinity map[string]any `json:"podAntiAffinity"`
-}
-
 // SecurityContext is a legacy mishmash of [corev1.PodSecurityContext] and
 // [corev1.SecurityContext]. It's type exists for backwards compat purposes
 // only.
@@ -90,8 +84,6 @@ type SecurityContext struct {
 	RunAsNonRoot              *bool                          `json:"runAsNonRoot"`
 	FSGroup                   *int64                         `json:"fsGroup"`
 	FSGroupChangePolicy       *corev1.PodFSGroupChangePolicy `json:"fsGroupChangePolicy"`
-
-	// FSGroupChangePolicy string `json:"fsGroupChangePolicy" jsonschema:"pattern=^(OnRootMismatch|Always)$"`
 }
 
 type Image struct {
@@ -233,7 +225,7 @@ func (a *Auth) Translate(isSASLEnabled bool) map[string]any {
 
 type TLS struct {
 	Enabled bool       `json:"enabled" jsonschema:"required"`
-	Certs   TLSCertMap `json:"certs"`
+	Certs   TLSCertMap `json:"certs" jsonschema:"required"`
 }
 
 type ExternalConfig struct {
@@ -440,29 +432,24 @@ func (s *Storage) StorageMinFreeBytes() int64 {
 }
 
 type PostInstallJob struct {
-	Resources *corev1.ResourceRequirements `json:"resources"`
-	Affinity  map[string]any               `json:"affinity"`
-
-	// Fields that are in values.yaml but not in values.schema.json.
-	Enabled         bool                   `json:"enabled"`
-	Labels          map[string]string      `json:"labels"`
-	Annotations     map[string]string      `json:"annotations"`
-	SecurityContext corev1.SecurityContext `json:"securityContext"`
+	Resources       *corev1.ResourceRequirements `json:"resources"`
+	Affinity        corev1.Affinity              `json:"affinity"`
+	Enabled         bool                         `json:"enabled"`
+	Labels          map[string]string            `json:"labels"`
+	Annotations     map[string]string            `json:"annotations"`
+	SecurityContext *corev1.SecurityContext      `json:"securityContext"`
 }
 
 type PostUpgradeJob struct {
-	Resources    *corev1.ResourceRequirements `json:"resources"`
-	Affinity     map[string]any               `json:"affinity"`
-	ExtraEnv     any                          `json:"extraEnv" jsonschema:"oneof_type=array;string"`
-	ExtraEnvFrom any                          `json:"extraEnvFrom" jsonschema:"oneof_type=array;string"`
-
-	// Fields that are in values.yaml but not in values.schema.json.
-	// Enabled      bool              `json:"enabled"`
-	// Labels       map[string]string `json:"labels"`
-	// Annotations  map[string]string `json:"annotations"`
-	// BackoffLimit int               `json:"backoffLimit"`
-	// ExtraEnv    []corev1.EnvVar   `json:"extraEnv"`
-	// ExtraEnvFrom []corev1.EnvFromSource `json:"extraEnvFrom"`
+	Resources       corev1.ResourceRequirements `json:"resources"`
+	Affinity        corev1.Affinity             `json:"affinity"`
+	Enabled         bool                        `json:"enabled"`
+	Labels          map[string]string           `json:"labels"`
+	Annotations     map[string]string           `json:"annotations"`
+	BackoffLimit    *int32                      `json:"backoffLimit"`
+	ExtraEnv        []corev1.EnvVar             `json:"extraEnv"`
+	ExtraEnvFrom    []corev1.EnvFromSource      `json:"extraEnvFrom"`
+	SecurityContext *corev1.SecurityContext     `json:"securityContext"`
 }
 
 type ContainerName string
@@ -538,7 +525,7 @@ type Statefulset struct {
 		TopologyKey       string `json:"topologyKey"`
 		WhenUnsatisfiable string `json:"whenUnsatisfiable" jsonschema:"pattern=^(ScheduleAnyway|DoNotSchedule)$"`
 	} `json:"topologySpreadConstraints" jsonschema:"required,minItems=1"`
-	Tolerations []any `json:"tolerations" jsonschema:"required"`
+	Tolerations []corev1.Toleration `json:"tolerations" jsonschema:"required"`
 	// DEPRECATED. Not to be confused with [corev1.PodSecurityContext], this
 	// field is a historical artifact that should be quickly removed.
 	PodSecurityContext *SecurityContext `json:"podSecurityContext"`

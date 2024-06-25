@@ -59,7 +59,7 @@ func SecretSTSLifecycle(dot *helmette.Dot) *corev1.Secret {
 		StringData: map[string]string{},
 	}
 	adminCurlFlags := adminTLSCurlFlags(dot)
-	secret.StringData["common.sh"] = unlines([]string{
+	secret.StringData["common.sh"] = helmette.Join("\n", []string{
 		`#!/usr/bin/env bash`,
 		``,
 		`# the SERVICE_NAME comes from the metadata.name of the pod, essentially the POD_NAME`,
@@ -115,7 +115,7 @@ func SecretSTSLifecycle(dot *helmette.Dot) *corev1.Secret {
 		`postStartHook`,
 		`true`,
 	)
-	secret.StringData["postStart.sh"] = unlines(postStartSh)
+	secret.StringData["postStart.sh"] = helmette.Join("\n", postStartSh)
 
 	preStopSh := []string{
 		`#!/usr/bin/env bash`,
@@ -164,7 +164,7 @@ func SecretSTSLifecycle(dot *helmette.Dot) *corev1.Secret {
 	preStopSh = append(preStopSh,
 		`true`,
 	)
-	secret.StringData["preStop.sh"] = unlines(preStopSh)
+	secret.StringData["preStop.sh"] = helmette.Join("\n", preStopSh)
 	return secret
 }
 
@@ -194,7 +194,7 @@ func SecretSASLUsers(dot *helmette.Dot) *corev1.Secret {
 				usersTxt = append(usersTxt, fmt.Sprintf("%s:%s", user.Name, user.Password))
 			}
 		}
-		secret.StringData["users.txt"] = unlines(usersTxt)
+		secret.StringData["users.txt"] = helmette.Join("\n", usersTxt)
 		return secret
 	} else if values.Auth.SASL.Enabled && values.Auth.SASL.SecretRef == "" {
 		panic("auth.sasl.secretRef cannot be empty when auth.sasl.enabled=true")
@@ -348,7 +348,7 @@ func SecretConfigWatcher(dot *helmette.Dot) *corev1.Secret {
 		)
 	}
 
-	secret.StringData["sasl-user.sh"] = unlines(saslUserSh)
+	secret.StringData["sasl-user.sh"] = helmette.Join("\n", saslUserSh)
 	return secret
 }
 
@@ -474,7 +474,7 @@ func SecretConfigurator(dot *helmette.Dot) *corev1.Secret {
 			`rpk --config "$CONFIG" redpanda config set redpanda.rack "${RACK}"`,
 		)
 	}
-	secret.StringData["configurator.sh"] = unlines(configuratorSh)
+	secret.StringData["configurator.sh"] = helmette.Join("\n", configuratorSh)
 	return secret
 }
 
@@ -717,15 +717,4 @@ func adminInternalURL(dot *helmette.Dot) string {
 		strings.TrimSuffix(values.ClusterDomain, "."),
 		values.Listeners.Admin.Port,
 	)
-}
-
-// unlines is the equivalent of strings.Join(lines, "\n").
-// There isn't a built-in helm equivalent.
-// This is used to make the string template expansion here somewhat more manageable.
-func unlines(lines []string) string {
-	result := ""
-	for _, line := range lines {
-		result = fmt.Sprintf("%s\n%s", result, line)
-	}
-	return result[1:]
 }

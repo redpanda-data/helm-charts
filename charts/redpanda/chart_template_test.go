@@ -236,6 +236,7 @@ func DisableCertmanagerIntegration(t *testing.T) []TemplateTestCase {
 		{
 			Name: "disable-cert-manager-overriding-defaults",
 			Values: valuesFromYAML(t, `
+affinity: {}
 tls:
   certs:
     default:
@@ -250,6 +251,7 @@ tls:
 		{
 			Name: "disable-cert-manager-fully-specified",
 			Values: valuesFromYAML(t, `
+affinity: {}
 listeners:
   http:
     external:
@@ -330,6 +332,7 @@ func CertTrustStoreCases(t *testing.T) []TemplateTestCase {
 		{
 			Name: "ca-enabled",
 			Values: valuesFromYAML(t, `
+affinity: {}
 tls:
   certs:
     default:
@@ -362,6 +365,7 @@ tls:
 		{
 			Name: "internal-truststore",
 			Values: valuesFromYAML(t, `
+affinity: {}
 listeners:
   admin:
     external:
