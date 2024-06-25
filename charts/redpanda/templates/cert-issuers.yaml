@@ -14,68 +14,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- if (include "tls-enabled" . | fromJson).bool }}
-  {{- $release := .Release }}
-  {{- $values := .Values }}
-  {{- range $name, $data := $values.tls.certs }}
-    {{/* If secretRef is defined, do not create any of these certificates. */}}
-    {{- if not (hasKey $data "secretRef") }}
-      {{- $d := $data.duration }}
-
+{{- $is := (get ((include "redpanda.CertIssuers" (dict "a" (list .))) | fromJson) "r") }}
+{{- range $_, $i := $is }}
 ---
-{{/* If issuerRef is defined, use the specified issuer for the certs
-  If it's not defined, create and use our own issuer. */}}
-{{- if not (hasKey $data "issuerRef") }}
-# The self-signed issuer is used to create the self-signed CA
-apiVersion: cert-manager.io/v1
-kind: Issuer
-metadata:
-  name: {{ template "redpanda.fullname" $ }}-{{ $name }}-selfsigned-issuer
-  namespace: {{ $release.Namespace | quote }}
-  labels:
-{{- with include "full.labels" $ }}
-  {{- . | nindent 4 }}
+{{ toYaml $i }}
 {{- end }}
-spec:
-  selfSigned: {}
-{{- end }}
+{{- $cas := (get ((include "redpanda.RootCAs" (dict "a" (list .))) | fromJson) "r") }}
+{{- range $_, $ca := $cas }}
 ---
-# This is the self-signed CA used to issue certs
-apiVersion: cert-manager.io/v1
-kind: Issuer
-metadata:
-  name: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-issuer
-  namespace: {{ $release.Namespace | quote }}
-  labels:
-{{- with include "full.labels" $ }}
-  {{- . | nindent 4 }}
-{{- end }}
-spec:
-  ca:
-    secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-certificate
----
-# This is the root CA certificate
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-certificate
-  namespace: {{ $release.Namespace | quote }}
-  labels:
-{{- with include "full.labels" $ }}
-  {{- . | nindent 4 }}
-{{- end }}
-spec:
-  duration: {{ $d | default "43800h" }}
-  isCA: true
-  commonName: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-certificate
-  secretName: {{ template "redpanda.fullname" $ }}-{{ $name }}-root-certificate
-  privateKey:
-    algorithm: ECDSA
-    size: 256
-  issuerRef:
-    name: {{ template "redpanda.fullname" $ }}-{{ $name }}-selfsigned-issuer
-    kind: Issuer
-    group: cert-manager.io
-      {{- end }}
-  {{- end }}
+{{ toYaml $ca }}
 {{- end }}
