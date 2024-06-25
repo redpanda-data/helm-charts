@@ -975,6 +975,8 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 	// This is intentionally after the builtins check to support our bootstrap
 	// package's builtin bindings.
 	if callee.Pkg().Path() == t.Package.PkgPath {
+		var call Node
+
 		// Method call.
 		if r := callee.Type().(*types.Signature).Recv(); r != nil {
 			typ := r.Type()
@@ -998,7 +1000,7 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 				receiverArg = t.transpileExpr(n.Fun.(*ast.SelectorExpr).X)
 			}
 
-			return &Call{
+			call = &Call{
 				FuncName: fmt.Sprintf("%s.%s", t.namespaceFor(callee.Pkg()), t.funcNameFor(callee.(*types.Func))),
 				// Method calls come in as a "top level" CallExpr where .Fun is the
 				// selector up to that call. e.g. `Foo.Bar.Baz()` will be a `CallExpr`.
@@ -1006,9 +1008,9 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 				// and `.Sel` is `Baz`, the method name.
 				Arguments: append([]Node{receiverArg}, args...),
 			}
+		} else {
+			call = &Call{FuncName: fmt.Sprintf("%s.%s", t.namespaceFor(callee.Pkg()), t.funcNameFor(callee.(*types.Func))), Arguments: args}
 		}
-
-		call := &Call{FuncName: fmt.Sprintf("%s.%s", t.namespaceFor(callee.Pkg()), t.funcNameFor(callee.(*types.Func))), Arguments: args}
 
 		// If there's only a single return value, we'll possibly want to wrap
 		// the value in a cast for safety. If there are multiple return values,
