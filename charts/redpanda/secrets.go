@@ -482,11 +482,6 @@ func secretConfiguratorKafkaConfig(dot *helmette.Dot) []string {
 	values := helmette.Unwrap[Values](dot.Values)
 
 	internalAdvertiseAddress := fmt.Sprintf("%s.%s", "${SERVICE_NAME}", InternalDomain(dot))
-	externalAdvertiseAddress := "${SERVICE_NAME}"
-	externalDomainTemplate := ptr.Deref(values.External.Domain, "")
-	if externalDomainTemplate != "" {
-		externalAdvertiseAddress = fmt.Sprintf("%s.%s", "${SERVICE_NAME}", helmette.Tpl(externalDomainTemplate, dot))
-	}
 
 	var snippet []string
 
@@ -494,7 +489,6 @@ func secretConfiguratorKafkaConfig(dot *helmette.Dot) []string {
 	listenerName := "kafka"
 	listenerAdvertisedName := listenerName
 	redpandaConfigPart := "redpanda"
-	listenerVals := dot.Values.AsMap()["listeners"].(map[string]any)[listenerName].(map[string]any)
 	snippet = append(snippet,
 		``,
 		fmt.Sprintf(`LISTENER=%s`, helmette.Quote(helmette.ToJSON(map[string]any{
@@ -526,19 +520,9 @@ func secretConfiguratorKafkaConfig(dot *helmette.Dot) []string {
 					}
 				}
 
-				tmplVals := map[string]any{
-					"listenerVals":             listenerVals,
-					"externalVals":             externalVals,
-					"externalName":             externalName,
-					"externalAdvertiseAddress": externalAdvertiseAddress,
-					"values":                   dot.Values.AsMap(),
-					"replicaIndex":             replicaIndex,
-					"port":                     port,
-				}
-
 				host := advertisedHostJSON(dot, externalName, port, replicaIndex)
 				// Use the advertised-host as a template
-				address := helmette.Tpl(helmette.ToJSON(host), tmplVals)
+				address := helmette.Tpl(helmette.ToJSON(host), dot)
 				prefixTemplate := ptr.Deref(externalVals.PrefixTemplate, "")
 				if prefixTemplate == "" {
 					// Required because the values might not specify this, it'll ensur we see "" if it's missing.
@@ -573,11 +557,6 @@ func secretConfiguratorHTTPConfig(dot *helmette.Dot) []string {
 	values := helmette.Unwrap[Values](dot.Values)
 
 	internalAdvertiseAddress := fmt.Sprintf("%s.%s", "${SERVICE_NAME}", InternalDomain(dot))
-	externalAdvertiseAddress := "${SERVICE_NAME}"
-	externalDomainTemplate := ptr.Deref(values.External.Domain, "")
-	if externalDomainTemplate != "" {
-		externalAdvertiseAddress = fmt.Sprintf("%s.%s", "${SERVICE_NAME}", helmette.Tpl(externalDomainTemplate, dot))
-	}
 
 	var snippet []string
 
@@ -585,7 +564,6 @@ func secretConfiguratorHTTPConfig(dot *helmette.Dot) []string {
 	listenerName := "http"
 	listenerAdvertisedName := "pandaproxy"
 	redpandaConfigPart := "pandaproxy"
-	listenerVals := dot.Values.AsMap()["listeners"].(map[string]any)[listenerName].(map[string]any)
 	snippet = append(snippet,
 		``,
 		fmt.Sprintf(`LISTENER=%s`, helmette.Quote(helmette.ToJSON(map[string]any{
@@ -617,19 +595,10 @@ func secretConfiguratorHTTPConfig(dot *helmette.Dot) []string {
 					}
 				}
 
-				tmplVals := map[string]any{
-					"listenerVals":             listenerVals,
-					"externalVals":             externalVals,
-					"externalName":             externalName,
-					"externalAdvertiseAddress": externalAdvertiseAddress,
-					"values":                   dot.Values.AsMap(),
-					"replicaIndex":             replicaIndex,
-					"port":                     port,
-				}
-
 				host := advertisedHostJSON(dot, externalName, port, replicaIndex)
 				// Use the advertised-host as a template
-				address := helmette.Tpl(helmette.ToJSON(host), tmplVals)
+				address := helmette.Tpl(helmette.ToJSON(host), dot)
+
 				prefixTemplate := ptr.Deref(externalVals.PrefixTemplate, "")
 				if prefixTemplate == "" {
 					// Required because the values might not specify this, it'll ensur we see "" if it's missing.
@@ -676,19 +645,25 @@ func adminTLSCurlFlags(dot *helmette.Dot) string {
 	return fmt.Sprintf("--cacert %s/ca.crt", path)
 }
 
+func externalAdvertiseAddress(dot *helmette.Dot) string {
+	values := helmette.Unwrap[Values](dot.Values)
+
+	eaa := "${SERVICE_NAME}"
+	externalDomainTemplate := ptr.Deref(values.External.Domain, "")
+	expanded := helmette.Tpl(externalDomainTemplate, dot)
+	if !helmette.Empty(expanded) {
+		eaa = fmt.Sprintf("%s.%s", "${SERVICE_NAME}", expanded)
+	}
+	return eaa
+}
+
 // was advertised-host
 func advertisedHostJSON(dot *helmette.Dot, externalName string, port int32, replicaIndex int) map[string]any {
 	values := helmette.Unwrap[Values](dot.Values)
 
-	externalAdvertiseAddress := "${SERVICE_NAME}"
-	externalDomainTemplate := ptr.Deref(values.External.Domain, "")
-	if externalDomainTemplate != "" {
-		externalAdvertiseAddress = fmt.Sprintf("%s.%s", "${SERVICE_NAME}", helmette.Tpl(externalDomainTemplate, dot))
-	}
-
 	host := map[string]any{
 		"name":    externalName,
-		"address": externalAdvertiseAddress,
+		"address": externalAdvertiseAddress(dot),
 		"port":    port,
 	}
 	if len(values.External.Addresses) > 0 {
