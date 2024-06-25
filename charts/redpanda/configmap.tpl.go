@@ -276,14 +276,20 @@ func getFirstExternalKafkaListener(dot *helmette.Dot) string {
 	return helmette.First(keys).(string)
 }
 
+func BrokerList(dot *helmette.Dot, replicas int, port int32) []string {
+	var bl []string
+
+	for i := 0; i < replicas; i++ {
+		bl = append(bl, fmt.Sprintf("%s-%d.%s:%d", Fullname(dot), i, InternalDomain(dot), port))
+	}
+
+	return bl
+}
+
 func rpkConfiguration(dot *helmette.Dot) map[string]any {
 	values := helmette.Unwrap[Values](dot.Values)
 
-	brokerList := []string{}
-	r := values.Statefulset.Replicas
-	for i := 0; i < r; i++ {
-		brokerList = append(brokerList, fmt.Sprintf("%s-%d.%s:%d", Fullname(dot), i, InternalDomain(dot), int(values.Listeners.Kafka.Port)))
-	}
+	brokerList := BrokerList(dot, values.Statefulset.Replicas, values.Listeners.Kafka.Port)
 
 	var adminTLS map[string]any
 	if tls := adminTLSConfiguration(dot); len(tls) > 0 {

@@ -175,7 +175,7 @@ func TLSEnabled(dot *helmette.Dot) bool {
 func ClientAuthRequired(dot *helmette.Dot) bool {
 	listeners := []string{"kafka", "admin", "schemaRegistry", "rpc", "http"}
 	for _, listener := range listeners {
-		required := helmette.Dig(dot.Values.AsMap(), false, listener, "tls", "requireClientAuth")
+		required := helmette.Dig(dot.Values.AsMap(), false, "listeners", listener, "tls", "requireClientAuth")
 		if !helmette.Empty(required) {
 			return true
 		}

@@ -236,19 +236,31 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "redpanda.BrokerList" -}}
+{{- $dot := (index .a 0) -}}
+{{- $replicas := (index .a 1) -}}
+{{- $port := (index .a 2) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $bl := (coalesce nil) -}}
+{{- range $_, $i := untilStep ((0 | int)|int) ($replicas|int) (1|int) -}}
+{{- $bl = (concat (default (list ) $bl) (list (printf "%s-%d.%s:%d" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r") $i (get (fromJson (include "redpanda.InternalDomain" (dict "a" (list $dot) ))) "r") $port))) -}}
+{{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" $bl) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "redpanda.rpkConfiguration" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
-{{- $brokerList := (list ) -}}
-{{- $r := ($values.statefulset.replicas | int) -}}
-{{- range $_, $i := untilStep ((0 | int)|int) (($values.statefulset.replicas | int)|int) (1|int) -}}
-{{- $brokerList = (concat (default (list ) $brokerList) (list (printf "%s-%d.%s:%d" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r") $i (get (fromJson (include "redpanda.InternalDomain" (dict "a" (list $dot) ))) "r") (($values.listeners.kafka.port | int) | int)))) -}}
-{{- end -}}
-{{- if $_is_returning -}}
-{{- break -}}
-{{- end -}}
+{{- $brokerList := (get (fromJson (include "redpanda.BrokerList" (dict "a" (list $dot ($values.statefulset.replicas | int) ($values.listeners.kafka.port | int)) ))) "r") -}}
 {{- $adminTLS := (coalesce nil) -}}
 {{- $tls_3 := (get (fromJson (include "redpanda.adminTLSConfiguration" (dict "a" (list $dot) ))) "r") -}}
 {{- if (gt ((get (fromJson (include "_shims.len" (dict "a" (list $tls_3) ))) "r") | int) (0 | int)) -}}

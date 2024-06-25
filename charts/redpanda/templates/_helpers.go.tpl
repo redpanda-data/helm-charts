@@ -191,7 +191,7 @@
 {{- $_is_returning := false -}}
 {{- $listeners := (list "kafka" "admin" "schemaRegistry" "rpc" "http") -}}
 {{- range $_, $listener := $listeners -}}
-{{- $required := (dig $listener "tls" "requireClientAuth" false $dot.Values.AsMap) -}}
+{{- $required := (dig "listeners" $listener "tls" "requireClientAuth" false $dot.Values.AsMap) -}}
 {{- if (not (empty $required)) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" true) | toJson -}}

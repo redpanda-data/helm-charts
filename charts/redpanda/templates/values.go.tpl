@@ -489,6 +489,32 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "redpanda.AdminListeners.ConsoleTLS" -}}
+{{- $l := (index .a 0) -}}
+{{- $tls := (index .a 1) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $t := (mustMergeOverwrite (dict "enabled" false "caFilepath" "" "certFilepath" "" "keyFilepath" "" "insecureSkipTlsVerify" false ) (dict "enabled" (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $l.tls $tls) ))) "r") )) -}}
+{{- if (not $t.enabled) -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" $t) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- $adminAPIPrefix := "/mnt/cert/adminapi" -}}
+{{- $_ := (set $t "caFilepath" (printf "%s/%s/ca.crt" $adminAPIPrefix $l.tls.cert)) -}}
+{{- if (not $l.tls.requireClientAuth) -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" $t) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- $_ := (set $t "certFilepath" (printf "%s/%s/tls.crt" $adminAPIPrefix $l.tls.cert)) -}}
+{{- $_ := (set $t "keyFilepath" (printf "%s/%s/tls.key" $adminAPIPrefix $l.tls.cert)) -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" $t) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "redpanda.AdminListeners.Listeners" -}}
 {{- $l := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
@@ -753,6 +779,32 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "redpanda.KafkaListeners.ConsolemTLS" -}}
+{{- $k := (index .a 0) -}}
+{{- $tls := (index .a 1) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $t := (mustMergeOverwrite (dict "enabled" false "caFilepath" "" "certFilepath" "" "keyFilepath" "" "insecureSkipTlsVerify" false ) (dict "enabled" (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $k.tls $tls) ))) "r") )) -}}
+{{- if (not $t.enabled) -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" $t) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- $kafkaPathPrefix := "/mnt/cert/kafka" -}}
+{{- $_ := (set $t "caFilepath" (printf "%s/%s/ca.crt" $kafkaPathPrefix $k.tls.cert)) -}}
+{{- if (not $k.tls.requireClientAuth) -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" $t) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- $_ := (set $t "certFilepath" (printf "%s/%s/tls.crt" $kafkaPathPrefix $k.tls.cert)) -}}
+{{- $_ := (set $t "keyFilepath" (printf "%s/%s/tls.key" $kafkaPathPrefix $k.tls.cert)) -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" $t) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "redpanda.KafkaExternal.IsEnabled" -}}
 {{- $l := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
@@ -846,6 +898,32 @@
 {{- end -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $tss) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.SchemaRegistryListeners.ConsoleTLS" -}}
+{{- $sr := (index .a 0) -}}
+{{- $tls := (index .a 1) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $t := (mustMergeOverwrite (dict "enabled" false "caFilepath" "" "certFilepath" "" "keyFilepath" "" "insecureSkipTlsVerify" false ) (dict "enabled" (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $sr.tls $tls) ))) "r") )) -}}
+{{- if (not $t.enabled) -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" $t) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- $schemaRegistryPrefix := "/mnt/cert/schemaregistry" -}}
+{{- $_ := (set $t "caFilepath" (printf "%s/%s/ca.crt" $schemaRegistryPrefix $sr.tls.cert)) -}}
+{{- if (not $sr.tls.requireClientAuth) -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" $t) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- $_ := (set $t "certFilepath" (printf "%s/%s/tls.crt" $schemaRegistryPrefix $sr.tls.cert)) -}}
+{{- $_ := (set $t "keyFilepath" (printf "%s/%s/tls.key" $schemaRegistryPrefix $sr.tls.cert)) -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" $t) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

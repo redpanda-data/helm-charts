@@ -49,80 +49,7 @@ limitations under the License.
 {{ if and .Values.console.enabled (not .Values.console.configmap.create) }}
 {{ $consoleConfigmap := dict "create" true }}
 
-{{/* kafka section */}}
-
-{{/* brokers */}}
-{{ $kafkaBrokers := list }}
-{{ range (include "seed-server-list" . | mustFromJson) }}
-  {{ $kafkaBrokers = append $kafkaBrokers (printf "%s:%d" . (int $.Values.listeners.kafka.port)) }}
-{{ end }}
-
-{{/* sasl */}}
-{{/* the rest of sasl is configured through the secret */}}
-{{ $kafkaSASL := dict "enabled" (include "sasl-enabled" . | fromJson).bool }}
-
-{{/* tls */}}
-{{/* the rest of tls is configured through the secret */}}
-{{ $kafkaTLS := dict "enabled" (include "kafka-internal-tls-enabled" . | fromJson).bool }}
-
-{{/* schemaRegistry */}}
-{{- $urls := list -}}
-{{ $proto := "http" }}
-{{ if (include "schemaRegistry-internal-tls-enabled" . | fromJson).bool }}
-  {{ $proto = "https" }}
-{{ end }}
-{{ $port := int $.Values.listeners.schemaRegistry.port }}
-{{ range (include "seed-server-list" . | mustFromJson) }}
-  {{ $urls = append $urls (printf "%s://%s:%d" $proto . $port) }}
-{{ end }}
-{{/* tls */}}
-{{/* the rest of tls is configured through the secret */}}
-{{ $schemaRegistryTLS := dict "enabled" (include "schemaRegistry-internal-tls-enabled" . | fromJson).bool }}
-
-{{ $connectConfig := dict }}
-{{ if .Values.connectors.enabled }}
-{{ $connectorsValues := merge (dict) $.Subcharts.connectors .Values.connectors }}
-{{/* Connector */}}
-{{/* Currently Kafka connect helm chart does not support TLS configuraiton. That's why tls enabled is set explicitly to false*/}}
-{{/* Currently Kafka connect helm chart does not support basic auth. That's why username and password is set explicitly to empty string*/}}
-{{ $connectConfig = dict
-  "enabled" $.Values.connectors.enabled
-  "clusters" (list
-    (dict
-      "url" (printf "http://%s.%s.svc.%s:%s" (include "connectors.serviceName" $connectorsValues) .Release.Namespace ($.Values.clusterDomain | trimSuffix ".") ($.Values.connectors.connectors.restPort | toString ))
-      "name" "connectors"
-      "tls" (dict
-        "enabled" "false"
-        "caFilepath" ""
-        "certFilepath" ""
-        "keyFilepath" ""
-        "insecureSkipTlsVerify" "false"
-      )
-      "username" ""
-      "password" ""
-      "token" ""
-    )
-  )
-}}
-{{ end }}
-
-{{ $kafkaSchemaRegistry := dict
-      "enabled" (and .Values.listeners.schemaRegistry.enabled (include "redpanda-22-2-x-without-sasl" . | fromJson).bool)
-      "urls" $urls
-      "tls" $schemaRegistryTLS
-}}
-{{ $consoleConfigKafka := dict
-      "brokers" $kafkaBrokers
-      "sasl" $kafkaSASL
-      "tls" $kafkaTLS
-      "schemaRegistry" $kafkaSchemaRegistry
-}}
-{{ $consoleConfig := dict
-      "kafka" $consoleConfigKafka
-      "connect" $connectConfig
-}}
-
-{{ $consoleConfig := merge $consoleConfig .Values.console.config }}
+{{ $consoleConfig := merge .Values.console.config (get ((include "redpanda.ConsoleConfig" (dict "a" (list .))) | fromJson) "r") }}
 
 {{ $config := dict
     "Values" (dict
@@ -182,7 +109,6 @@ limitations under the License.
         "name" (printf "kafka-%s-cert" $service.tls.cert)
         "secret" (dict
           "defaultMode" 0420
-          "items" (list (dict "key" "ca.crt" "path" "ca.crt") )
           "secretName" ( $secretName )
     ))}}
     {{ $extraVolumeMounts = append $extraVolumeMounts (dict
@@ -210,7 +136,6 @@ limitations under the License.
         "name" (printf "schemaregistry-%s-cert" $service.tls.cert)
         "secret" (dict
           "defaultMode" 0420
-          "items" (list (dict "key" "ca.crt" "path" "ca.crt") )
           "secretName" ( $secretName )
     ))}}
     {{ $extraVolumeMounts = append $extraVolumeMounts (dict
@@ -230,19 +155,10 @@ limitations under the License.
   {{- $secretName = $cert.secretRef.name }}
   {{- end }}
   {{ if $cert.caEnabled }}
-    {{ $adminAPI = append $adminAPI (dict
-      "name" "REDPANDA_ADMINAPI_TLS_ENABLED"
-      "value" "true"
-    ) }}
-    {{ $adminAPI = append $adminAPI (dict
-      "name" "REDPANDA_ADMINAPI_TLS_CAFILEPATH"
-      "value" (printf "/mnt/cert/adminapi/%s/ca.crt" $service.tls.cert)
-    )}}
     {{ $extraVolumes = append $extraVolumes (dict
         "name" (printf "adminapi-%s-cert" $service.tls.cert)
         "secret" (dict
           "defaultMode" 0420
-          "items" (list (dict "key" "ca.crt" "path" "ca.crt") )
           "secretName" ( $secretName )
     ))}}
     {{ $extraVolumeMounts = append $extraVolumeMounts (dict
@@ -252,14 +168,6 @@ limitations under the License.
     )}}
   {{ end }}
 {{ end }}
-{{ $adminAPI := append $adminAPI (dict
-  "name" "REDPANDA_ADMINAPI_ENABLED"
-  "value" "true"
-)}}
-{{ $adminAPI = append $adminAPI (dict
-  "name" "REDPANDA_ADMINAPI_URLS"
-  "value" (print (include "admin-http-protocol" .) "://" (include "admin-api-service-url" .))
-)}}
 
 {{ $enterprise := dict }}
 {{ if ( include "enterprise-secret" .) }}

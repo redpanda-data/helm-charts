@@ -536,7 +536,6 @@ metadata:
 data:
   config.yaml: |
     # from .Values.console.config
-    connect: {}
     kafka:
       brokers:
       - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -547,13 +546,21 @@ data:
       schemaRegistry:
         enabled: true
         tls:
+          caFilepath: /mnt/cert/schemaregistry/default/ca.crt
+          certFilepath: ""
           enabled: true
+          insecureSkipTlsVerify: false
+          keyFilepath: ""
         urls:
         - https://redpanda-0.redpanda.default.svc.cluster.local.:8081
         - https://redpanda-1.redpanda.default.svc.cluster.local.:8081
         - https://redpanda-2.redpanda.default.svc.cluster.local.:8081
       tls:
+        caFilepath: /mnt/cert/kafka/default/ca.crt
+        certFilepath: ""
         enabled: true
+        insecureSkipTlsVerify: false
+        keyFilepath: ""
 ---
 # Source: redpanda/charts/console/templates/service.yaml
 apiVersion: v1
@@ -694,7 +701,7 @@ spec:
     metadata:
       annotations:
         checksum/config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum-redpanda-chart/config: 64f2cd1f30a71442b56a635c16aab05bd3d59037c9d3ad6b1e6a23b39c65c686
+        checksum-redpanda-chart/config: e7a7dfc9faaa49e07ac40cf00818a0988dfa8046cff41b5e9542a3e2a2684a8f
       labels:
         app.kubernetes.io/name: console
         app.kubernetes.io/instance: redpanda
@@ -714,23 +721,14 @@ spec:
         - name: kafka-default-cert
           secret:
             defaultMode: 272
-            items:
-            - key: ca.crt
-              path: ca.crt
             secretName: redpanda-default-cert
         - name: schemaregistry-default-cert
           secret:
             defaultMode: 272
-            items:
-            - key: ca.crt
-              path: ca.crt
             secretName: redpanda-default-cert
         - name: adminapi-default-cert
           secret:
             defaultMode: 272
-            items:
-            - key: ca.crt
-              path: ca.crt
             secretName: redpanda-default-cert
       containers:
         - name: console

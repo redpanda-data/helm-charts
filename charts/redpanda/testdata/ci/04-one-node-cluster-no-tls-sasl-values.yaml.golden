@@ -495,7 +495,6 @@ metadata:
 data:
   config.yaml: |
     # from .Values.console.config
-    connect: {}
     kafka:
       brokers:
       - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -504,11 +503,19 @@ data:
       schemaRegistry:
         enabled: true
         tls:
+          caFilepath: ""
+          certFilepath: ""
           enabled: false
+          insecureSkipTlsVerify: false
+          keyFilepath: ""
         urls:
         - http://redpanda-0.redpanda.default.svc.cluster.local.:8081
       tls:
+        caFilepath: ""
+        certFilepath: ""
         enabled: false
+        insecureSkipTlsVerify: false
+        keyFilepath: ""
 ---
 # Source: redpanda/charts/console/templates/service.yaml
 apiVersion: v1
@@ -649,7 +656,7 @@ spec:
     metadata:
       annotations:
         checksum/config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum-redpanda-chart/config: 4d53802ea43e49d3a6ab82e11cc89ceaaa513760ff6c2c01d15fde89700cb18d
+        checksum-redpanda-chart/config: 45d15ea2ee2dd931c15d76a3009dfe89ed9b8a58ec4b4b3eb7177fd4cac1db10
       labels:
         app.kubernetes.io/name: console
         app.kubernetes.io/instance: redpanda
