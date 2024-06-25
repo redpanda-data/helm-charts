@@ -23,6 +23,7 @@ import (
 	cmmeta "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/utils/ptr"
 )
 
 func CertIssuers(dot *helmette.Dot) []*certmanagerv1.Issuer {
@@ -46,8 +47,9 @@ func certIssuersAndCAs(dot *helmette.Dot) ([]*certmanagerv1.Issuer, []*certmanag
 	}
 
 	for name, data := range values.TLS.Certs {
-		// If secretRef is defined, do not create any of these certificates.
-		if data.SecretRef != nil {
+		// If secretRef is defined, do not create any of these certificates or when
+		// TLS reference is not enabled.
+		if !helmette.Empty(data.SecretRef) || !ptr.Deref(data.Enabled, true) {
 			continue
 		}
 

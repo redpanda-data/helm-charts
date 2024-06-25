@@ -257,6 +257,16 @@ func (c *Client) Install(ctx context.Context, chart string, opts InstallOptions)
 	return c.Get(ctx, opts.Namespace, result["name"].(string))
 }
 
+func (c *Client) Uninstall(ctx context.Context, release Release) error {
+	args := []string{"uninstall", release.Name, fmt.Sprintf("--namespace=%s", release.Namespace), "--wait", "--cascade=foreground"}
+
+	_, _, err := c.runHelm(ctx, args...)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 type TemplateOptions struct {
 	Name         string   `flag:"-"`
 	Namespace    string   `flag:"namespace"`

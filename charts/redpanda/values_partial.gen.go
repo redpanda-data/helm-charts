@@ -28,6 +28,8 @@ type PartialValues struct {
 	AuditLogging     *PartialAuditLogging          "json:\"auditLogging,omitempty\""
 	Enterprise       *PartialEnterprise            "json:\"enterprise,omitempty\""
 	RackAwareness    *PartialRackAwareness         "json:\"rackAwareness,omitempty\""
+	Console          *PartialConsole               "json:\"console,omitempty\""
+	Connectors       *PartialConnectors            "json:\"connectors,omitempty\""
 	Auth             *PartialAuth                  "json:\"auth,omitempty\""
 	TLS              *PartialTLS                   "json:\"tls,omitempty\""
 	External         *PartialExternalConfig        "json:\"external,omitempty\""
@@ -79,6 +81,17 @@ type PartialEnterprise struct {
 type PartialRackAwareness struct {
 	Enabled        *bool   "json:\"enabled,omitempty\" jsonschema:\"required\""
 	NodeAnnotation *string "json:\"nodeAnnotation,omitempty\" jsonschema:\"required\""
+}
+
+type PartialConsole struct {
+	Console *struct {
+		Config map[string]any "json:\"config,omitempty\""
+	} "json:\"console,omitempty\""
+}
+
+type PartialConnectors struct {
+	Enabled    *bool                         "json:\"enabled,omitempty\""
+	Connectors *PartialConnectorsChartValues "json:\"connectors,omitempty\""
 }
 
 type PartialAuth struct {
@@ -333,6 +346,11 @@ type PartialLicenseSecretRef struct {
 	SecretKey  *string "json:\"secret_key,omitempty\""
 }
 
+type PartialConnectorsChartValues struct {
+	RestPort          *int    "json:\"restPort,omitempty\""
+	FullnameOverwrite *string "json:\"fullnameOverwrite,omitempty\""
+}
+
 type PartialTLSCertMap map[string]PartialTLSCert
 
 type PartialEnableable struct {
@@ -455,6 +473,7 @@ type PartialTLSCert struct {
 	Duration              *string                      "json:\"duration,omitempty\" jsonschema:\"pattern=.*[smh]$\""
 	IssuerRef             *cmmeta.ObjectReference      "json:\"issuerRef,omitempty\""
 	SecretRef             *corev1.LocalObjectReference "json:\"secretRef,omitempty\""
+	ClientSecretRef       *corev1.LocalObjectReference "json:\"clientSecretRef,omitempty\""
 }
 
 type PartialPodSpec struct {

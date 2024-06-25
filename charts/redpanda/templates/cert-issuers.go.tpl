@@ -37,7 +37,7 @@
 {{- break -}}
 {{- end -}}
 {{- range $name, $data := $values.tls.certs -}}
-{{- if (ne $data.secretRef (coalesce nil)) -}}
+{{- if (or (not (empty $data.secretRef)) (not (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $data.enabled true) ))) "r"))) -}}
 {{- continue -}}
 {{- end -}}
 {{- if (eq $data.issuerRef (coalesce nil)) -}}

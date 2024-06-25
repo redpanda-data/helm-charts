@@ -575,7 +575,6 @@ metadata:
 data:
   config.yaml: |
     # from .Values.console.config
-    connect: {}
     kafka:
       brokers:
       - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -584,11 +583,30 @@ data:
       schemaRegistry:
         enabled: true
         tls:
+          caFilepath: /mnt/cert/schemaregistry/default/ca.crt
+          certFilepath: ""
           enabled: true
+          insecureSkipTlsVerify: false
+          keyFilepath: ""
         urls:
         - https://redpanda-0.redpanda.default.svc.cluster.local.:8081
       tls:
+        caFilepath: /mnt/cert/kafka/default/ca.crt
+        certFilepath: ""
         enabled: true
+        insecureSkipTlsVerify: false
+        keyFilepath: ""
+    redpanda:
+      adminApi:
+        enabled: true
+        tls:
+          caFilepath: /mnt/cert/adminapi/default/ca.crt
+          certFilepath: ""
+          enabled: true
+          insecureSkipTlsVerify: false
+          keyFilepath: ""
+        urls:
+        - https://redpanda.default.svc.cluster.local.:9644
 ---
 # Source: redpanda/charts/console/templates/service.yaml
 apiVersion: v1
@@ -729,7 +747,7 @@ spec:
     metadata:
       annotations:
         checksum/config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum-redpanda-chart/config: c55d3f3e9ffe058c02970d1dcbc5500b52c4770004cd8ca0fad7b1b089936d9e
+        checksum-redpanda-chart/config: 65797b5997ec54b576414ba058f5d6b0f10fb93860586d442713b7a7379463c1
       labels:
         app.kubernetes.io/name: console
         app.kubernetes.io/instance: redpanda
@@ -749,23 +767,14 @@ spec:
         - name: kafka-default-cert
           secret:
             defaultMode: 272
-            items:
-            - key: ca.crt
-              path: ca.crt
             secretName: redpanda-default-cert
         - name: schemaregistry-default-cert
           secret:
             defaultMode: 272
-            items:
-            - key: ca.crt
-              path: ca.crt
             secretName: redpanda-default-cert
         - name: adminapi-default-cert
           secret:
             defaultMode: 272
-            items:
-            - key: ca.crt
-              path: ca.crt
             secretName: redpanda-default-cert
       containers:
         - name: console
@@ -821,14 +830,6 @@ spec:
               value: /mnt/cert/kafka/default/ca.crt
             - name: KAFKA_SCHEMAREGISTRY_TLS_CAFILEPATH
               value: /mnt/cert/schemaregistry/default/ca.crt
-            - name: REDPANDA_ADMINAPI_TLS_ENABLED
-              value: "true"
-            - name: REDPANDA_ADMINAPI_TLS_CAFILEPATH
-              value: /mnt/cert/adminapi/default/ca.crt
-            - name: REDPANDA_ADMINAPI_ENABLED
-              value: "true"
-            - name: REDPANDA_ADMINAPI_URLS
-              value: https://redpanda.default.svc.cluster.local.:9644
       priorityClassName:
 ---
 # Source: redpanda/templates/statefulset.yaml

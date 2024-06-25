@@ -8,6 +8,7 @@ import (
 	cmmeta "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
 	"github.com/invopop/jsonschema"
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
+	"github.com/redpanda-data/console/backend/pkg/config"
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	orderedmap "github.com/wk8/go-ordered-map/v2"
 	corev1 "k8s.io/api/core/v1"
@@ -47,27 +48,43 @@ type Values struct {
 	AuditLogging     AuditLogging                  `json:"auditLogging"`
 	Enterprise       Enterprise                    `json:"enterprise"`
 	RackAwareness    RackAwareness                 `json:"rackAwareness"`
-	// Console          any      `json:"console"`
-	// Connectors       any      `json:"connectors"`
-	Auth           Auth              `json:"auth"`
-	TLS            TLS               `json:"tls"`
-	External       ExternalConfig    `json:"external"`
-	Logging        Logging           `json:"logging"`
-	Monitoring     Monitoring        `json:"monitoring"`
-	Resources      RedpandaResources `json:"resources"`
-	Storage        Storage           `json:"storage"`
-	PostInstallJob PostInstallJob    `json:"post_install_job"`
-	PostUpgradeJob PostUpgradeJob    `json:"post_upgrade_job"`
-	Statefulset    Statefulset       `json:"statefulset"`
-	ServiceAccount ServiceAccountCfg `json:"serviceAccount"`
-	RBAC           RBAC              `json:"rbac"`
-	Tuning         Tuning            `json:"tuning"`
-	Listeners      Listeners         `json:"listeners"`
-	Config         Config            `json:"config"`
-	Tests          *struct {
+	Console          Console                       `json:"console"`
+	Connectors       Connectors                    `json:"connectors"`
+	Auth             Auth                          `json:"auth"`
+	TLS              TLS                           `json:"tls"`
+	External         ExternalConfig                `json:"external"`
+	Logging          Logging                       `json:"logging"`
+	Monitoring       Monitoring                    `json:"monitoring"`
+	Resources        RedpandaResources             `json:"resources"`
+	Storage          Storage                       `json:"storage"`
+	PostInstallJob   PostInstallJob                `json:"post_install_job"`
+	PostUpgradeJob   PostUpgradeJob                `json:"post_upgrade_job"`
+	Statefulset      Statefulset                   `json:"statefulset"`
+	ServiceAccount   ServiceAccountCfg             `json:"serviceAccount"`
+	RBAC             RBAC                          `json:"rbac"`
+	Tuning           Tuning                        `json:"tuning"`
+	Listeners        Listeners                     `json:"listeners"`
+	Config           Config                        `json:"config"`
+	Tests            *struct {
 		Enabled bool `json:"enabled"`
 	} `json:"tests"`
 	Force bool `json:"force"`
+}
+
+type Console struct {
+	Console struct {
+		Config map[string]any `json:"config"`
+	} `json:"console"`
+}
+
+type Connectors struct {
+	Enabled    bool                  `json:"enabled"`
+	Connectors ConnectorsChartValues `json:"connectors"`
+}
+
+type ConnectorsChartValues struct {
+	RestPort          int    `json:"restPort"`
+	FullnameOverwrite string `json:"fullnameOverwrite"`
 }
 
 // +gotohelm:ignore=true
@@ -833,6 +850,7 @@ type TLSCert struct {
 	Duration              string                       `json:"duration" jsonschema:"pattern=.*[smh]$"`
 	IssuerRef             *cmmeta.ObjectReference      `json:"issuerRef"`
 	SecretRef             *corev1.LocalObjectReference `json:"secretRef"`
+	ClientSecretRef       *corev1.LocalObjectReference `json:"clientSecretRef"`
 }
 
 // +gotohelm:ignore=true
@@ -1002,6 +1020,26 @@ type AdminListeners struct {
 	External ExternalListeners[AdminExternal] `json:"external"`
 	Port     int32                            `json:"port" jsonschema:"required"`
 	TLS      InternalTLS                      `json:"tls" jsonschema:"required"`
+}
+
+func (l *AdminListeners) ConsoleTLS(tls *TLS) config.RedpandaAdminAPITLS {
+	t := config.RedpandaAdminAPITLS{Enabled: l.TLS.IsEnabled(tls)}
+	if !t.Enabled {
+		return t
+	}
+
+	adminAPIPrefix := "/mnt/cert/adminapi"
+
+	t.CaFilepath = fmt.Sprintf("%s/%s/ca.crt", adminAPIPrefix, l.TLS.Cert)
+
+	if !l.TLS.RequireClientAuth {
+		return t
+	}
+
+	t.CertFilepath = fmt.Sprintf("%s/%s/tls.crt", adminAPIPrefix, l.TLS.Cert)
+	t.KeyFilepath = fmt.Sprintf("%s/%s/tls.key", adminAPIPrefix, l.TLS.Cert)
+
+	return t
 }
 
 func (l *AdminListeners) Listeners() []map[string]any {
@@ -1313,6 +1351,26 @@ func (l *KafkaListeners) TrustStores(tls *TLS) []*TrustStore {
 	return tss
 }
 
+func (k *KafkaListeners) ConsolemTLS(tls *TLS) config.KafkaTLS {
+	t := config.KafkaTLS{Enabled: k.TLS.IsEnabled(tls)}
+	if !t.Enabled {
+		return t
+	}
+
+	kafkaPathPrefix := "/mnt/cert/kafka"
+
+	t.CaFilepath = fmt.Sprintf("%s/%s/ca.crt", kafkaPathPrefix, k.TLS.Cert)
+
+	if !k.TLS.RequireClientAuth {
+		return t
+	}
+
+	t.CertFilepath = fmt.Sprintf("%s/%s/tls.crt", kafkaPathPrefix, k.TLS.Cert)
+	t.KeyFilepath = fmt.Sprintf("%s/%s/tls.key", kafkaPathPrefix, k.TLS.Cert)
+
+	return t
+}
+
 type KafkaExternal struct {
 	// Enabled indicates if this listener is enabled. If not specified,
 	// defaults to the value of [ExternalConfig.Enabled].
@@ -1436,6 +1494,26 @@ func (l *SchemaRegistryListeners) TrustStores(tls *TLS) []*TrustStore {
 	}
 
 	return tss
+}
+
+func (sr *SchemaRegistryListeners) ConsoleTLS(tls *TLS) config.SchemaTLS {
+	t := config.SchemaTLS{Enabled: sr.TLS.IsEnabled(tls)}
+	if !t.Enabled {
+		return t
+	}
+
+	schemaRegistryPrefix := "/mnt/cert/schemaregistry"
+
+	t.CaFilepath = fmt.Sprintf("%s/%s/ca.crt", schemaRegistryPrefix, sr.TLS.Cert)
+
+	if !sr.TLS.RequireClientAuth {
+		return t
+	}
+
+	t.CertFilepath = fmt.Sprintf("%s/%s/tls.crt", schemaRegistryPrefix, sr.TLS.Cert)
+	t.KeyFilepath = fmt.Sprintf("%s/%s/tls.key", schemaRegistryPrefix, sr.TLS.Cert)
+
+	return t
 }
 
 type SchemaRegistryExternal struct {

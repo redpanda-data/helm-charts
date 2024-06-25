@@ -384,7 +384,6 @@ metadata:
 data:
   config.yaml: |
     # from .Values.console.config
-    connect: {}
     kafka:
       brokers:
       - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -393,11 +392,30 @@ data:
       schemaRegistry:
         enabled: true
         tls:
+          caFilepath: ""
+          certFilepath: ""
           enabled: false
+          insecureSkipTlsVerify: false
+          keyFilepath: ""
         urls:
         - http://redpanda-0.redpanda.default.svc.cluster.local.:8081
       tls:
+        caFilepath: ""
+        certFilepath: ""
         enabled: false
+        insecureSkipTlsVerify: false
+        keyFilepath: ""
+    redpanda:
+      adminApi:
+        enabled: true
+        tls:
+          caFilepath: ""
+          certFilepath: ""
+          enabled: false
+          insecureSkipTlsVerify: false
+          keyFilepath: ""
+        urls:
+        - http://redpanda.default.svc.cluster.local.:9644
 ---
 # Source: redpanda/charts/console/templates/service.yaml
 apiVersion: v1
@@ -540,7 +558,7 @@ spec:
     metadata:
       annotations:
         checksum/config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum-redpanda-chart/config: 4636a43ba7f19845dafb63c50d046582b8605eb99db7a02f58148c904ada0e54
+        checksum-redpanda-chart/config: 82723d6c4dc9da450c91629c7f4743899e41af379466656066723a9cdc123821
       labels:
         app.kubernetes.io/name: console
         app.kubernetes.io/instance: redpanda
@@ -591,10 +609,6 @@ spec:
           resources:
             {}
           env:
-            - name: REDPANDA_ADMINAPI_ENABLED
-              value: "true"
-            - name: REDPANDA_ADMINAPI_URLS
-              value: http://redpanda.default.svc.cluster.local.:9644
       priorityClassName:
 ---
 # Source: redpanda/templates/statefulset.yaml

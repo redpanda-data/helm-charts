@@ -73,15 +73,14 @@ func (e *NamespacedEnv) Ctl() *kube.Ctl {
 	return e.env.Ctl()
 }
 
-func (e *NamespacedEnv) Install(chart string, opts helm.InstallOptions) helm.Release {
-	require.Zero(e.t, opts.Name, ".Name may not be specified")
-	require.Zero(e.t, opts.Namespace, ".Namespace may not be specified")
+func (e *NamespacedEnv) Install(ctx context.Context, chart string, opts helm.InstallOptions) helm.Release {
 	require.False(e.t, opts.CreateNamespace, ".CreateNamespace may not be specified")
 
 	opts.Namespace = e.namespace.Name
 
-	release, err := e.env.helm.Install(context.Background(), chart, opts)
+	release, err := e.env.helm.Install(ctx, chart, opts)
 	require.NoError(e.t, err)
+
 	return release
 }
 

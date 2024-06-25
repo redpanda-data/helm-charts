@@ -52,7 +52,7 @@
 {{- if (not $ok) -}}
 {{- $_ := (fail (printf "Certificate %q referenced but not defined" $name)) -}}
 {{- end -}}
-{{- if (or (empty $data.secretRef) (not (get (fromJson (include "redpanda.ClientAuthRequired" (dict "a" (list $dot) ))) "r"))) -}}
+{{- if (or (not (empty $data.secretRef)) (not (get (fromJson (include "redpanda.ClientAuthRequired" (dict "a" (list $dot) ))) "r"))) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $certs) | toJson -}}
 {{- break -}}
