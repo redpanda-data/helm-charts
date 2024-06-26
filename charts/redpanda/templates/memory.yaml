@@ -3,12 +3,15 @@
 {{- define "redpanda.RedpandaReserveMemory" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $rpMem_1 := $values.resources.memory.redpanda -}}
 {{- if (and (ne $rpMem_1 (coalesce nil)) (ne $rpMem_1.reserveMemory (coalesce nil))) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" ((div ((get (fromJson (include "_shims.resource_Value" (dict "a" (list $rpMem_1.reserveMemory) ))) "r") | int64) ((mul (1024 | int) (1024 | int)))) | int64)) | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" ((add (((mulf (((get (fromJson (include "redpanda.ContainerMemory" (dict "a" (list $dot) ))) "r") | int64) | float64) 0.002) | float64) | int64) (200 | int64)) | int64)) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -17,6 +20,7 @@
 {{- define "redpanda.RedpandaMemory" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $memory := ((0 | int64) | int64) -}}
 {{- $containerMemory := ((get (fromJson (include "redpanda.ContainerMemory" (dict "a" (list $dot) ))) "r") | int64) -}}
@@ -35,6 +39,7 @@
 {{- if (gt ((add $memory ((get (fromJson (include "redpanda.RedpandaReserveMemory" (dict "a" (list $dot) ))) "r") | int64)) | int64) $containerMemory) -}}
 {{- $_ := (fail (printf "Not enough container memory for Redpanda memory values where Redpanda: %d, reserve: %d, container: %d" $memory ((get (fromJson (include "redpanda.RedpandaReserveMemory" (dict "a" (list $dot) ))) "r") | int64) $containerMemory)) -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $memory) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -43,11 +48,14 @@
 {{- define "redpanda.ContainerMemory" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- if (ne $values.resources.memory.container.min (coalesce nil)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" ((div ((get (fromJson (include "_shims.resource_Value" (dict "a" (list $values.resources.memory.container.min) ))) "r") | int64) ((mul (1024 | int) (1024 | int)))) | int64)) | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" ((div ((get (fromJson (include "_shims.resource_Value" (dict "a" (list $values.resources.memory.container.max) ))) "r") | int64) ((mul (1024 | int) (1024 | int)))) | int64)) | toJson -}}
 {{- break -}}
 {{- end -}}
