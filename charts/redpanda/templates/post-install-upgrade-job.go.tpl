@@ -3,8 +3,10 @@
 {{- define "redpanda.PostInstallUpgradeJob" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- if (not $values.post_install_job.enabled) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (coalesce nil)) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -16,6 +18,7 @@
 {{- end -}}
 {{- $script = (concat (default (list ) $script) (list `` `` `` `` `rpk cluster config export -f /tmp/cfg.yml` `` `` `for KEY in "${!RPK_@}"; do` `  config="${KEY#*RPK_}"` `  rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"` `done` `` `` `rpk cluster config import -f /tmp/cfg.yml` ``)) -}}
 {{- $_ := (set (index $job.spec.template.spec.containers (0 | int)) "args" (concat (default (list ) (index $job.spec.template.spec.containers (0 | int)).args) (list (get (fromJson (include "redpanda.unlines" (dict "a" (list $script) ))) "r")))) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $job) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -24,16 +27,19 @@
 {{- define "redpanda.postInstallJobAffinity" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $affinity := (dict ) -}}
 {{- if (not (empty $values.post_install_job.affinity)) -}}
 {{- $affinity = (merge (dict ) $values.post_install_job.affinity) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $affinity) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- $_ := (set $affinity "nodeAffinity" (merge (dict ) (default (dict ) $values.affinity.nodeAffinity))) -}}
 {{- $_ := (set $affinity "podAffinity" (merge (dict ) (default (dict ) $values.affinity.podAffinity))) -}}
 {{- $_ := (set $affinity "podAntiAffinity" (merge (dict ) (default (dict ) $values.affinity.podAntiAffinity))) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $affinity) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -42,11 +48,16 @@
 {{- define "redpanda.tolerations" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $result := (coalesce nil) -}}
 {{- range $_, $t := $values.tolerations -}}
 {{- $result = (concat (default (list ) $result) (list (merge (dict ) $t))) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $result) | toJson -}}
 {{- break -}}
 {{- end -}}
