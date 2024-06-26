@@ -2,6 +2,7 @@
 
 {{- define "_directives.does-something" -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- end -}}
 {{- end -}}
 

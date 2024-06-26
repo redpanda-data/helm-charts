@@ -3,6 +3,7 @@
 {{- define "changing_inputs.ChangingInputs" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- range $k, $v := $dot.Values -}}
 {{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "string" $v "") ))) "r")) ))) "r") -}}
 {{- $ok_1 := $tmp_tuple_1.T2 -}}
@@ -10,6 +11,10 @@
 {{- $_ := (set $dot.Values $k "change that") -}}
 {{- end -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (coalesce nil)) | toJson -}}
 {{- break -}}
 {{- end -}}

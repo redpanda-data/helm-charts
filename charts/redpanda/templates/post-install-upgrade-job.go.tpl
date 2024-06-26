@@ -3,8 +3,10 @@
 {{- define "redpanda.PostInstallUpgradeJob" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- if (not $values.post_install_job.enabled) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (coalesce nil)) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -16,6 +18,7 @@
 {{- end -}}
 {{- $script = (concat (default (list ) $script) (list `` `` `` `` `rpk cluster config export -f /tmp/cfg.yml` `` `` `for KEY in "${!RPK_@}"; do` `  config="${KEY#*RPK_}"` `  rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"` `done` `` `` `rpk cluster config import -f /tmp/cfg.yml` ``)) -}}
 {{- $_ := (set (index $job.spec.template.spec.containers (0 | int)) "args" (concat (default (list ) (index $job.spec.template.spec.containers (0 | int)).args) (list (join "\n" $script)))) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $job) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -24,11 +27,14 @@
 {{- define "redpanda.postInstallJobAffinity" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- if (not (empty $values.post_install_job.affinity)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $values.post_install_job.affinity) | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (merge (dict ) $values.post_install_job.affinity $values.affinity)) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -37,11 +43,16 @@
 {{- define "redpanda.tolerations" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $result := (coalesce nil) -}}
 {{- range $_, $t := $values.tolerations -}}
 {{- $result = (concat (default (list ) $result) (list (merge (dict ) $t))) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $result) | toJson -}}
 {{- break -}}
 {{- end -}}

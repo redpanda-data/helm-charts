@@ -2,9 +2,11 @@
 
 {{- define "typing.zeros" -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $number := (coalesce nil) -}}
 {{- $str := (coalesce nil) -}}
 {{- $stru := (coalesce nil) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (list (mustMergeOverwrite (dict "Key" "" "with_tag" 0 ) (dict )) (mustMergeOverwrite (dict "Nilable" (coalesce nil) "Key" "" "with_tag" 0 ) (dict )) $number $str $stru)) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -12,7 +14,9 @@
 
 {{- define "typing.nestedFieldAccess" -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $x := (mustMergeOverwrite (dict ) (dict "childs" (list (mustMergeOverwrite (dict ) (dict "childs" (list (mustMergeOverwrite (dict ) (dict "val" "Hello!" ))) ))) )) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (index (index $x.childs (0 | int)).childs (0 | int)).val) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -20,10 +24,12 @@
 
 {{- define "typing.settingFields" -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $out := (dict "Nilable" (coalesce nil) "Key" "" "with_tag" 0 ) -}}
 {{- $_ := (set $out "WithEmbed" (mustMergeOverwrite (dict "Nilable" (coalesce nil) "Key" "" "with_tag" 0 ) (mustMergeOverwrite (dict "Key" "" "with_tag" 0 ) (dict "Key" "foo" )) (dict ))) -}}
 {{- $_ := (set $out "Object" (mustMergeOverwrite (dict "Key" "" "with_tag" 0 ) (dict "Key" "bar" ))) -}}
 {{- $_ := (set $out "Key" "quux") -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (list $out.Key $out.Key $out.Key)) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -31,6 +37,8 @@
 
 {{- define "typing.compileMe" -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (mustMergeOverwrite (dict "Key" "" "with_tag" 0 ) (dict "Key" "foo" ))) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -38,6 +46,8 @@
 
 {{- define "typing.alsoMe" -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (mustMergeOverwrite (dict "Nilable" (coalesce nil) "Key" "" "with_tag" 0 ) (mustMergeOverwrite (dict "Key" "" "with_tag" 0 ) (dict "Key" "Foo" )) (dict ))) | toJson -}}
 {{- break -}}
 {{- end -}}

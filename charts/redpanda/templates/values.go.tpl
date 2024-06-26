@@ -5,14 +5,17 @@
 {{- $dot := (index .a 1) -}}
 {{- $isSASLEnabled := (index .a 2) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $result := (dict ) -}}
 {{- if (not (get (fromJson (include "redpanda.RedpandaAtLeast_23_3_0" (dict "a" (list $dot) ))) "r")) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $result) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- $enabled := (and $a.enabled $isSASLEnabled) -}}
 {{- $_ := (set $result "audit_enabled" $enabled) -}}
 {{- if (not $enabled) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $result) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -40,6 +43,7 @@
 {{- if (gt ((get (fromJson (include "_shims.len" (dict "a" (list $a.excludedPrincipals) ))) "r") | int) (0 | int)) -}}
 {{- $_ := (set $result "audit_excluded_principals" $a.excludedPrincipals) -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $result) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -48,10 +52,13 @@
 {{- define "redpanda.Auth.IsSASLEnabled" -}}
 {{- $a := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- if (eq $a.sasl (coalesce nil)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" false) | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $a.sasl.enabled) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -61,11 +68,14 @@
 {{- $a := (index .a 0) -}}
 {{- $isSASLEnabled := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- if (not $isSASLEnabled) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (coalesce nil)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- if (eq ((get (fromJson (include "_shims.len" (dict "a" (list $a.sasl.users) ))) "r") | int) (0 | int)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (coalesce nil)) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -73,6 +83,10 @@
 {{- range $_, $u := $a.sasl.users -}}
 {{- $users = (concat (default (list ) $users) (list $u.name)) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (dict "superusers" $users )) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -81,11 +95,13 @@
 {{- define "redpanda.Logging.Translate" -}}
 {{- $l := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $result := (dict ) -}}
 {{- $clusterID_1 := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $l.usageStats.clusterId "") ))) "r") -}}
 {{- if (ne $clusterID_1 "") -}}
 {{- $_ := (set $result "cluster_id" $clusterID_1) -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $result) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -94,10 +110,13 @@
 {{- define "redpanda.RedpandaResources.GetOverProvisionValue" -}}
 {{- $rr := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- if (lt ((get (fromJson (include "_shims.resource_MilliValue" (dict "a" (list $rr.cpu.cores) ))) "r") | int64) (1000 | int64)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" true) | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $rr.cpu.overprovisioned false) ))) "r")) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -106,10 +125,12 @@
 {{- define "redpanda.Storage.IsTieredStorageEnabled" -}}
 {{- $s := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $conf := (get (fromJson (include "redpanda.Storage.GetTieredStorageConfig" (dict "a" (list $s) ))) "r") -}}
 {{- $tmp_tuple_3 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $conf "cloud_storage_enabled" (coalesce nil)) ))) "r")) ))) "r") -}}
 {{- $ok := $tmp_tuple_3.T2 -}}
 {{- $b := $tmp_tuple_3.T1 -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (and $ok (get (fromJson (include "_shims.typeassertion" (dict "a" (list "bool" $b) ))) "r"))) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -118,10 +139,13 @@
 {{- define "redpanda.Storage.GetTieredStorageConfig" -}}
 {{- $s := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- if (gt ((get (fromJson (include "_shims.len" (dict "a" (list $s.tieredConfig) ))) "r") | int) (0 | int)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $s.tieredConfig) | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $s.tiered.config) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -130,6 +154,7 @@
 {{- define "redpanda.Storage.GetTieredStorageHostPath" -}}
 {{- $s := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $hp := $s.tieredStorageHostPath -}}
 {{- if (and (empty $hp) (ne $s.tiered (coalesce nil))) -}}
 {{- $hp = $s.tiered.hostPath -}}
@@ -137,6 +162,7 @@
 {{- if (empty $hp) -}}
 {{- $_ := (fail (printf `storage.tiered.mountType is "%s" but storage.tiered.hostPath is empty` $s.tiered.mountType)) -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $hp) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -145,13 +171,16 @@
 {{- define "redpanda.Storage.CloudStorageCacheSize" -}}
 {{- $s := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $tmp_tuple_4 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list (get (fromJson (include "redpanda.Storage.GetTieredStorageConfig" (dict "a" (list $s) ))) "r") `cloud_storage_cache_size` (coalesce nil)) ))) "r")) ))) "r") -}}
 {{- $ok := $tmp_tuple_4.T2 -}}
 {{- $value := $tmp_tuple_4.T1 -}}
 {{- if (not $ok) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (coalesce nil)) | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $value) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -161,12 +190,15 @@
 {{- $s := (index .a 0) -}}
 {{- $dot := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $config := (get (fromJson (include "redpanda.Storage.GetTieredStorageConfig" (dict "a" (list $s) ))) "r") -}}
 {{- $dir := (get (fromJson (include "_shims.typeassertion" (dict "a" (list "string" (dig `cloud_storage_cache_directory` "/var/lib/redpanda/data/cloud_storage_cache" $config)) ))) "r") -}}
 {{- if (eq $dir "") -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" "/var/lib/redpanda/data/cloud_storage_cache") | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $dir) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -175,14 +207,18 @@
 {{- define "redpanda.Storage.TieredMountType" -}}
 {{- $s := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- if (and (ne $s.tieredStoragePersistentVolume (coalesce nil)) $s.tieredStoragePersistentVolume.enabled) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" "persistentVolume") | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- if (not (empty $s.tieredStorageHostPath)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" "hostPath") | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $s.tiered.mountType) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -191,11 +227,14 @@
 {{- define "redpanda.Storage.TieredPersistentVolumeLabels" -}}
 {{- $s := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- if (ne $s.tieredStoragePersistentVolume (coalesce nil)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $s.tieredStoragePersistentVolume.labels) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- if (ne $s.tiered (coalesce nil)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $s.tiered.persistentVolume.labels) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -206,11 +245,14 @@
 {{- define "redpanda.Storage.TieredPersistentVolumeAnnotations" -}}
 {{- $s := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- if (ne $s.tieredStoragePersistentVolume (coalesce nil)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $s.tieredStoragePersistentVolume.annotations) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- if (ne $s.tiered (coalesce nil)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $s.tiered.persistentVolume.annotations) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -221,11 +263,14 @@
 {{- define "redpanda.Storage.TieredPersistentVolumeStorageClass" -}}
 {{- $s := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- if (ne $s.tieredStoragePersistentVolume (coalesce nil)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $s.tieredStoragePersistentVolume.storageClass) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- if (ne $s.tiered (coalesce nil)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $s.tiered.persistentVolume.storageClass) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -236,8 +281,10 @@
 {{- define "redpanda.Storage.Translate" -}}
 {{- $s := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $result := (dict ) -}}
 {{- if (not (get (fromJson (include "redpanda.Storage.IsTieredStorageEnabled" (dict "a" (list $s) ))) "r")) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $result) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -271,6 +318,10 @@
 {{- end -}}
 {{- end -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $result) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -279,11 +330,14 @@
 {{- define "redpanda.Storage.StorageMinFreeBytes" -}}
 {{- $s := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- if (and (ne $s.persistentVolume (coalesce nil)) (not $s.persistentVolume.enabled)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (5368709120 | int)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- $minimumFreeBytes := ((mulf (((get (fromJson (include "_shims.resource_Value" (dict "a" (list $s.persistentVolume.size) ))) "r") | int64) | float64) 0.05) | float64) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (min (5368709120 | int) ($minimumFreeBytes | int64))) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -292,6 +346,7 @@
 {{- define "redpanda.Tuning.Translate" -}}
 {{- $t := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $result := (dict ) -}}
 {{- $s := (toJson $t) -}}
 {{- $tune := (fromJson $s) -}}
@@ -299,12 +354,17 @@
 {{- $ok := $tmp_tuple_9.T2 -}}
 {{- $m := $tmp_tuple_9.T1 -}}
 {{- if (not $ok) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (dict )) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- range $k, $v := $m -}}
 {{- $_ := (set $result $k $v) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $result) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -316,10 +376,15 @@
 {{- $fullname := (index .a 2) -}}
 {{- $internalDomain := (index .a 3) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $result := (coalesce nil) -}}
 {{- range $_, $i := untilStep (((0 | int) | int)|int) ($replicas|int) (1|int) -}}
 {{- $result = (concat (default (list ) $result) (list (dict "host" (dict "address" (printf "%s-%d.%s" $fullname $i $internalDomain) "port" ($l.rpc.port | int) ) ))) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $result) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -331,10 +396,15 @@
 {{- $fullname := (index .a 2) -}}
 {{- $internalDomain := (index .a 3) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $result := (coalesce nil) -}}
 {{- range $_, $i := untilStep (((0 | int) | int)|int) ($replicas|int) (1|int) -}}
 {{- $result = (concat (default (list ) $result) (list (printf "%s-%d.%s:%d" $fullname $i $internalDomain (($l.admin.port | int) | int)))) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $result) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -344,14 +414,20 @@
 {{- $l := (index .a 0) -}}
 {{- $tls := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $sources := (coalesce nil) -}}
 {{- range $_, $ts := (get (fromJson (include "redpanda.Listeners.TrustStores" (dict "a" (list $l $tls) ))) "r") -}}
 {{- $sources = (concat (default (list ) $sources) (list (get (fromJson (include "redpanda.TrustStore.VolumeProjection" (dict "a" (list $ts) ))) "r"))) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
 {{- if (lt ((get (fromJson (include "_shims.len" (dict "a" (list $sources) ))) "r") | int) (1 | int)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (coalesce nil)) | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (mustMergeOverwrite (dict "name" "" ) (mustMergeOverwrite (dict ) (dict "projected" (mustMergeOverwrite (dict "sources" (coalesce nil) ) (dict "sources" $sources )) )) (dict "name" "truststores" ))) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -361,10 +437,12 @@
 {{- $l := (index .a 0) -}}
 {{- $tls := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $tss := (get (fromJson (include "redpanda.KafkaListeners.TrustStores" (dict "a" (list $l.kafka $tls) ))) "r") -}}
 {{- $tss = (concat (default (list ) $tss) (default (list ) (get (fromJson (include "redpanda.AdminListeners.TrustStores" (dict "a" (list $l.admin $tls) ))) "r"))) -}}
 {{- $tss = (concat (default (list ) $tss) (default (list ) (get (fromJson (include "redpanda.HTTPListeners.TrustStores" (dict "a" (list $l.http $tls) ))) "r"))) -}}
 {{- $tss = (concat (default (list ) $tss) (default (list ) (get (fromJson (include "redpanda.SchemaRegistryListeners.TrustStores" (dict "a" (list $l.schemaRegistry $tls) ))) "r"))) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $tss) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -373,10 +451,15 @@
 {{- define "redpanda.Config.CreateRPKConfiguration" -}}
 {{- $c := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $result := (dict ) -}}
 {{- range $k, $v := $c.rpk -}}
 {{- $_ := (set $result $k $v) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $result) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -386,12 +469,14 @@
 {{- $m := (index .a 0) -}}
 {{- $name := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $tmp_tuple_12 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $m $name (coalesce nil)) ))) "r")) ))) "r") -}}
 {{- $ok := $tmp_tuple_12.T2 -}}
 {{- $cert := $tmp_tuple_12.T1 -}}
 {{- if (not $ok) -}}
 {{- $_ := (fail (printf "Certificate %q referenced, but not found in the tls.certs map" $name)) -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $cert) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -400,6 +485,8 @@
 {{- define "redpanda.TrustStore.TrustStoreFilePath" -}}
 {{- $t := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (printf "%s/%s" "/etc/truststores" (get (fromJson (include "redpanda.TrustStore.RelativePath" (dict "a" (list $t) ))) "r"))) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -408,10 +495,13 @@
 {{- define "redpanda.TrustStore.RelativePath" -}}
 {{- $t := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- if (ne $t.configMapKeyRef (coalesce nil)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (printf "configmaps/%s-%s" $t.configMapKeyRef.name $t.configMapKeyRef.key)) | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (printf "secrets/%s-%s" $t.secretKeyRef.name $t.secretKeyRef.key)) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -420,10 +510,13 @@
 {{- define "redpanda.TrustStore.VolumeProjection" -}}
 {{- $t := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- if (ne $t.configMapKeyRef (coalesce nil)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (mustMergeOverwrite (dict ) (dict "configMap" (mustMergeOverwrite (dict ) (mustMergeOverwrite (dict ) (dict "name" $t.configMapKeyRef.name )) (dict "items" (list (mustMergeOverwrite (dict "key" "" "path" "" ) (dict "key" $t.configMapKeyRef.key "path" (get (fromJson (include "redpanda.TrustStore.RelativePath" (dict "a" (list $t) ))) "r") ))) )) ))) | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (mustMergeOverwrite (dict ) (dict "secret" (mustMergeOverwrite (dict ) (mustMergeOverwrite (dict ) (dict "name" $t.secretKeyRef.name )) (dict "items" (list (mustMergeOverwrite (dict "key" "" "path" "" ) (dict "key" $t.secretKeyRef.key "path" (get (fromJson (include "redpanda.TrustStore.RelativePath" (dict "a" (list $t) ))) "r") ))) )) ))) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -433,6 +526,8 @@
 {{- $t := (index .a 0) -}}
 {{- $tls := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (and (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $t.enabled $tls.enabled) ))) "r") (ne $t.cert ""))) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -442,14 +537,18 @@
 {{- $t := (index .a 0) -}}
 {{- $tls := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- if (ne $t.trustStore (coalesce nil)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (get (fromJson (include "redpanda.TrustStore.TrustStoreFilePath" (dict "a" (list $t.trustStore) ))) "r")) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- if (get (fromJson (include "redpanda.TLSCertMap.MustGet" (dict "a" (list (deepCopy $tls.certs) $t.cert) ))) "r").caEnabled -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (printf "/etc/tls/certs/%s/ca.crt" $t.cert)) | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" "/etc/ssl/certs/ca-certificates.crt") | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -460,6 +559,8 @@
 {{- $i := (index .a 1) -}}
 {{- $tls := (index .a 2) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (get (fromJson (include "redpanda.TLSCertMap.MustGet" (dict "a" (list (deepCopy $tls.certs) (get (fromJson (include "redpanda.ExternalTLS.GetCertName" (dict "a" (list $t $i) ))) "r")) ))) "r")) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -469,6 +570,8 @@
 {{- $t := (index .a 0) -}}
 {{- $i := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $t.cert $i.cert) ))) "r")) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -479,14 +582,18 @@
 {{- $i := (index .a 1) -}}
 {{- $tls := (index .a 2) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- if (ne $t.trustStore (coalesce nil)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (get (fromJson (include "redpanda.TrustStore.TrustStoreFilePath" (dict "a" (list $t.trustStore) ))) "r")) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- if (get (fromJson (include "redpanda.ExternalTLS.GetCert" (dict "a" (list $t $i $tls) ))) "r").caEnabled -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (printf "/etc/tls/certs/%s/ca.crt" (get (fromJson (include "redpanda.ExternalTLS.GetCertName" (dict "a" (list $t $i) ))) "r"))) | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" "/etc/ssl/certs/ca-certificates.crt") | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -497,10 +604,13 @@
 {{- $i := (index .a 1) -}}
 {{- $tls := (index .a 2) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- if (eq $t (coalesce nil)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" false) | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (and (ne (get (fromJson (include "redpanda.ExternalTLS.GetCertName" (dict "a" (list $t $i) ))) "r") "") (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $t.enabled (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $i $tls) ))) "r")) ))) "r"))) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -509,6 +619,7 @@
 {{- define "redpanda.AdminListeners.Listeners" -}}
 {{- $l := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $admin := (list (get (fromJson (include "redpanda.createInternalListenerCfg" (dict "a" (list ($l.port | int)) ))) "r")) -}}
 {{- range $k, $lis := $l.external -}}
 {{- if (not (get (fromJson (include "redpanda.AdminExternal.IsEnabled" (dict "a" (list $lis) ))) "r")) -}}
@@ -516,6 +627,10 @@
 {{- end -}}
 {{- $admin = (concat (default (list ) $admin) (list (dict "name" $k "port" ($lis.port | int) "address" "0.0.0.0" ))) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $admin) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -525,6 +640,7 @@
 {{- $l := (index .a 0) -}}
 {{- $tls := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $admin := (list ) -}}
 {{- $internal := (get (fromJson (include "redpanda.createInternalListenerTLSCfg" (dict "a" (list $tls $l.tls) ))) "r") -}}
 {{- if (gt ((get (fromJson (include "_shims.len" (dict "a" (list $internal) ))) "r") | int) (0 | int)) -}}
@@ -537,6 +653,10 @@
 {{- $certName := (get (fromJson (include "redpanda.ExternalTLS.GetCertName" (dict "a" (list $lis.tls $l.tls) ))) "r") -}}
 {{- $admin = (concat (default (list ) $admin) (list (dict "name" $k "enabled" true "cert_file" (printf "/etc/tls/certs/%s/tls.crt" $certName) "key_file" (printf "/etc/tls/certs/%s/tls.key" $certName) "require_client_auth" (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $lis.tls.requireClientAuth false) ))) "r") "truststore_file" (get (fromJson (include "redpanda.ExternalTLS.TrustStoreFilePath" (dict "a" (list $lis.tls $l.tls $tls) ))) "r") ))) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $admin) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -546,6 +666,7 @@
 {{- $l := (index .a 0) -}}
 {{- $tls := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $tss := (list ) -}}
 {{- if (and (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $l.tls $tls) ))) "r") (ne $l.tls.trustStore (coalesce nil))) -}}
 {{- $tss = (concat (default (list ) $tss) (list $l.tls.trustStore)) -}}
@@ -556,6 +677,10 @@
 {{- end -}}
 {{- $tss = (concat (default (list ) $tss) (list $lis.tls.trustStore)) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $tss) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -564,6 +689,8 @@
 {{- define "redpanda.AdminExternal.IsEnabled" -}}
 {{- $l := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (and (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $l.enabled true) ))) "r") (gt ($l.port | int) (0 | int)))) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -573,6 +700,7 @@
 {{- $l := (index .a 0) -}}
 {{- $saslEnabled := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $internal := (get (fromJson (include "redpanda.createInternalListenerCfg" (dict "a" (list ($l.port | int)) ))) "r") -}}
 {{- if $saslEnabled -}}
 {{- $_ := (set $internal "authentication_method" "http_basic") -}}
@@ -596,6 +724,10 @@
 {{- end -}}
 {{- $result = (concat (default (list ) $result) (list $listener)) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $result) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -605,6 +737,7 @@
 {{- $l := (index .a 0) -}}
 {{- $tls := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $pp := (list ) -}}
 {{- $internal := (get (fromJson (include "redpanda.createInternalListenerTLSCfg" (dict "a" (list $tls $l.tls) ))) "r") -}}
 {{- if (gt ((get (fromJson (include "_shims.len" (dict "a" (list $internal) ))) "r") | int) (0 | int)) -}}
@@ -617,6 +750,10 @@
 {{- $certName := (get (fromJson (include "redpanda.ExternalTLS.GetCertName" (dict "a" (list $lis.tls $l.tls) ))) "r") -}}
 {{- $pp = (concat (default (list ) $pp) (list (dict "name" $k "enabled" true "cert_file" (printf "/etc/tls/certs/%s/tls.crt" $certName) "key_file" (printf "/etc/tls/certs/%s/tls.key" $certName) "require_client_auth" (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $lis.tls.requireClientAuth false) ))) "r") "truststore_file" (get (fromJson (include "redpanda.ExternalTLS.TrustStoreFilePath" (dict "a" (list $lis.tls $l.tls $tls) ))) "r") ))) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $pp) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -626,6 +763,7 @@
 {{- $l := (index .a 0) -}}
 {{- $tls := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $tss := (coalesce nil) -}}
 {{- if (and (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $l.tls $tls) ))) "r") (ne $l.tls.trustStore (coalesce nil))) -}}
 {{- $tss = (concat (default (list ) $tss) (list $l.tls.trustStore)) -}}
@@ -636,6 +774,10 @@
 {{- end -}}
 {{- $tss = (concat (default (list ) $tss) (list $lis.tls.trustStore)) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $tss) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -644,6 +786,8 @@
 {{- define "redpanda.HTTPExternal.IsEnabled" -}}
 {{- $l := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (and (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $l.enabled true) ))) "r") (gt ($l.port | int) (0 | int)))) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -653,6 +797,7 @@
 {{- $l := (index .a 0) -}}
 {{- $auth := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $internal := (get (fromJson (include "redpanda.createInternalListenerCfg" (dict "a" (list ($l.port | int)) ))) "r") -}}
 {{- if (get (fromJson (include "redpanda.Auth.IsSASLEnabled" (dict "a" (list $auth) ))) "r") -}}
 {{- $_ := (set $internal "authentication_method" "sasl") -}}
@@ -676,6 +821,10 @@
 {{- end -}}
 {{- $kafka = (concat (default (list ) $kafka) (list $listener)) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $kafka) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -685,6 +834,7 @@
 {{- $l := (index .a 0) -}}
 {{- $tls := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $kafka := (list ) -}}
 {{- $internal := (get (fromJson (include "redpanda.createInternalListenerTLSCfg" (dict "a" (list $tls $l.tls) ))) "r") -}}
 {{- if (gt ((get (fromJson (include "_shims.len" (dict "a" (list $internal) ))) "r") | int) (0 | int)) -}}
@@ -697,6 +847,10 @@
 {{- $certName := (get (fromJson (include "redpanda.ExternalTLS.GetCertName" (dict "a" (list $lis.tls $l.tls) ))) "r") -}}
 {{- $kafka = (concat (default (list ) $kafka) (list (dict "name" $k "enabled" true "cert_file" (printf "/etc/tls/certs/%s/tls.crt" $certName) "key_file" (printf "/etc/tls/certs/%s/tls.key" $certName) "require_client_auth" (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $lis.tls.requireClientAuth false) ))) "r") "truststore_file" (get (fromJson (include "redpanda.ExternalTLS.TrustStoreFilePath" (dict "a" (list $lis.tls $l.tls $tls) ))) "r") ))) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $kafka) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -706,6 +860,7 @@
 {{- $l := (index .a 0) -}}
 {{- $tls := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $tss := (coalesce nil) -}}
 {{- if (and (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $l.tls $tls) ))) "r") (ne $l.tls.trustStore (coalesce nil))) -}}
 {{- $tss = (concat (default (list ) $tss) (list $l.tls.trustStore)) -}}
@@ -716,6 +871,10 @@
 {{- end -}}
 {{- $tss = (concat (default (list ) $tss) (list $lis.tls.trustStore)) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $tss) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -724,6 +883,8 @@
 {{- define "redpanda.KafkaExternal.IsEnabled" -}}
 {{- $l := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (and (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $l.enabled true) ))) "r") (gt ($l.port | int) (0 | int)))) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -733,6 +894,7 @@
 {{- $sr := (index .a 0) -}}
 {{- $saslEnabled := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $internal := (get (fromJson (include "redpanda.createInternalListenerCfg" (dict "a" (list ($sr.port | int)) ))) "r") -}}
 {{- if $saslEnabled -}}
 {{- $_ := (set $internal "authentication_method" "http_basic") -}}
@@ -756,6 +918,10 @@
 {{- end -}}
 {{- $result = (concat (default (list ) $result) (list $listener)) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $result) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -765,6 +931,7 @@
 {{- $l := (index .a 0) -}}
 {{- $tls := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $listeners := (list ) -}}
 {{- $internal := (get (fromJson (include "redpanda.createInternalListenerTLSCfg" (dict "a" (list $tls $l.tls) ))) "r") -}}
 {{- if (gt ((get (fromJson (include "_shims.len" (dict "a" (list $internal) ))) "r") | int) (0 | int)) -}}
@@ -777,6 +944,10 @@
 {{- $certName := (get (fromJson (include "redpanda.ExternalTLS.GetCertName" (dict "a" (list $lis.tls $l.tls) ))) "r") -}}
 {{- $listeners = (concat (default (list ) $listeners) (list (dict "name" $k "enabled" true "cert_file" (printf "/etc/tls/certs/%s/tls.crt" $certName) "key_file" (printf "/etc/tls/certs/%s/tls.key" $certName) "require_client_auth" (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $lis.tls.requireClientAuth false) ))) "r") "truststore_file" (get (fromJson (include "redpanda.ExternalTLS.TrustStoreFilePath" (dict "a" (list $lis.tls $l.tls $tls) ))) "r") ))) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $listeners) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -786,6 +957,7 @@
 {{- $l := (index .a 0) -}}
 {{- $tls := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $tss := (coalesce nil) -}}
 {{- if (and (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $l.tls $tls) ))) "r") (ne $l.tls.trustStore (coalesce nil))) -}}
 {{- $tss = (concat (default (list ) $tss) (list $l.tls.trustStore)) -}}
@@ -796,6 +968,10 @@
 {{- end -}}
 {{- $tss = (concat (default (list ) $tss) (list $lis.tls.trustStore)) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $tss) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -804,6 +980,8 @@
 {{- define "redpanda.SchemaRegistryExternal.IsEnabled" -}}
 {{- $l := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (and (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $l.enabled true) ))) "r") (gt ($l.port | int) (0 | int)))) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -812,7 +990,9 @@
 {{- define "redpanda.TunableConfig.Translate" -}}
 {{- $c := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- if (eq $c (coalesce nil)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (coalesce nil)) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -822,6 +1002,10 @@
 {{- $_ := (set $result $k $v) -}}
 {{- end -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $result) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -830,6 +1014,7 @@
 {{- define "redpanda.NodeConfig.Translate" -}}
 {{- $c := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $result := (dict ) -}}
 {{- range $k, $v := $c -}}
 {{- if (not (empty $v)) -}}
@@ -842,6 +1027,10 @@
 {{- end -}}
 {{- end -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $result) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -852,6 +1041,7 @@
 {{- $replicas := (index .a 1) -}}
 {{- $skipDefaultTopic := (index .a 2) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $result := (dict ) -}}
 {{- range $k, $v := $c -}}
 {{- if (and (eq $k "default_topic_replications") (not $skipDefaultTopic)) -}}
@@ -883,6 +1073,10 @@
 {{- $_ := (set $result $k $v) -}}
 {{- end -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $result) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -891,6 +1085,8 @@
 {{- define "redpanda.SecretRef.IsValid" -}}
 {{- $sr := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (and (and (ne $sr (coalesce nil)) (not (empty $sr.key))) (not (empty $sr.name)))) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -899,6 +1095,8 @@
 {{- define "redpanda.TieredStorageCredentials.IsAccessKeyReferenceValid" -}}
 {{- $tsc := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (and (and (ne $tsc.accessKey (coalesce nil)) (ne $tsc.accessKey.name "")) (ne $tsc.accessKey.key ""))) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -907,6 +1105,8 @@
 {{- define "redpanda.TieredStorageCredentials.IsSecretKeyReferenceValid" -}}
 {{- $tsc := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (and (and (ne $tsc.secretKey (coalesce nil)) (ne $tsc.secretKey.name "")) (ne $tsc.secretKey.key ""))) | toJson -}}
 {{- break -}}
 {{- end -}}

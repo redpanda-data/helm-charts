@@ -3,12 +3,14 @@
 {{- define "labels.FullLabels" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $commonLabels := (dict ) -}}
 {{- if (ne $values.commonLabels (coalesce nil)) -}}
 {{- $commonLabels = $values.commonLabels -}}
 {{- end -}}
 {{- $defaults := (dict "helm.sh/chart" "chart" "app.kubernetes.io/name" "name" "app.kubernetes.io/instance" $dot.Release.Name "app.kubernetes.io/managed-by" $dot.Release.Service "app.kubernetes.io/component" "component" ) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (merge (dict ) $commonLabels $defaults)) | toJson -}}
 {{- break -}}
 {{- end -}}

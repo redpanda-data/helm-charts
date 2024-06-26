@@ -54,13 +54,28 @@ func Syntax() map[string]any {
 	_, _ = x.(map[string]any)
 
 	return map[string]any{
-		"sliceExpr":       slice,
-		"negativeNumbers": []int{-2, -4},
-		"forExpr":         forExpr(10, Complex{Iterations: 5}),
-		"binaryExprs":     binaryExprs(),
-		"instance-method": instanceMethod(),
-		"append":          appends(),
+		"sliceExpr":             slice,
+		"negativeNumbers":       []int{-2, -4},
+		"forExpr":               forExpr(10, Complex{Iterations: 5}),
+		"binaryExprs":           binaryExprs(),
+		"instance-method":       instanceMethod(),
+		"append":                appends(),
+		"nested-for-and-return": nestedFor(),
 	}
+}
+
+func nestedFor() string {
+	x := []int{1, 2, 3}
+	for _, _ = range x {
+		for _, _ = range x {
+			for _, _ = range x {
+				return "Hello"
+			}
+			panic("unreachable 1")
+		}
+		panic("unreachable 2")
+	}
+	panic("unreachable 3")
 }
 
 type TestStruct struct {
