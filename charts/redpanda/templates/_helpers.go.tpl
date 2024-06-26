@@ -335,11 +335,6 @@
 {{- $dot := (index .a 0) -}}
 {{- $constraint := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
-{{- $values := $dot.Values.AsMap -}}
-{{- if (ne $values.image.repository "docker.redpanda.com/redpandadata/redpanda") -}}
-{{- (dict "r" true) | toJson -}}
-{{- break -}}
-{{- end -}}
 {{- $version := (trimPrefix "v" (get (fromJson (include "redpanda.Tag" (dict "a" (list $dot) ))) "r")) -}}
 {{- $tmp_tuple_3 := (get (fromJson (include "_shims.compact" (dict "a" (list (list (semverCompare $constraint $version) nil)) ))) "r") -}}
 {{- $err := $tmp_tuple_3.T2 -}}
