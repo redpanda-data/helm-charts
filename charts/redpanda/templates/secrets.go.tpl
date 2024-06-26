@@ -3,6 +3,7 @@
 {{- define "redpanda.Secrets" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $secrets := (coalesce nil) -}}
 {{- $secrets = (concat (default (list ) $secrets) (list (get (fromJson (include "redpanda.SecretSTSLifecycle" (dict "a" (list $dot) ))) "r"))) -}}
 {{- $saslUsers_1 := (get (fromJson (include "redpanda.SecretSASLUsers" (dict "a" (list $dot) ))) "r") -}}
@@ -18,6 +19,7 @@
 {{- if (ne $fsValidator_3 (coalesce nil)) -}}
 {{- $secrets = (concat (default (list ) $secrets) (list $fsValidator_3)) -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $secrets) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -26,6 +28,7 @@
 {{- define "redpanda.SecretSTSLifecycle" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $secret := (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) ) (mustMergeOverwrite (dict ) (dict "apiVersion" "v1" "kind" "Secret" )) (dict "metadata" (mustMergeOverwrite (dict "creationTimestamp" (coalesce nil) ) (dict "name" (printf "%s-sts-lifecycle" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r")) "namespace" $dot.Release.Namespace "labels" (get (fromJson (include "redpanda.FullLabels" (dict "a" (list $dot) ))) "r") )) "type" "Opaque" "stringData" (dict ) )) -}}
 {{- $adminCurlFlags := (get (fromJson (include "redpanda.adminTLSCurlFlags" (dict "a" (list $dot) ))) "r") -}}
@@ -44,6 +47,7 @@
 {{- end -}}
 {{- $preStopSh = (concat (default (list ) $preStopSh) (list `true`)) -}}
 {{- $_ := (set $secret.stringData "preStop.sh" (join "\n" $preStopSh)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $secret) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -52,6 +56,7 @@
 {{- define "redpanda.SecretSASLUsers" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- if (and (and (ne $values.auth.sasl.secretRef "") $values.auth.sasl.enabled) (gt ((get (fromJson (include "_shims.len" (dict "a" (list $values.auth.sasl.users) ))) "r") | int) (0 | int))) -}}
 {{- $secret := (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) ) (mustMergeOverwrite (dict ) (dict "apiVersion" "v1" "kind" "Secret" )) (dict "metadata" (mustMergeOverwrite (dict "creationTimestamp" (coalesce nil) ) (dict "name" $values.auth.sasl.secretRef "namespace" $dot.Release.Namespace "labels" (get (fromJson (include "redpanda.FullLabels" (dict "a" (list $dot) ))) "r") )) "type" "Opaque" "stringData" (dict ) )) -}}
@@ -63,12 +68,17 @@
 {{- $usersTxt = (concat (default (list ) $usersTxt) (list (printf "%s:%s" $user.name $user.password))) -}}
 {{- end -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
 {{- $_ := (set $secret.stringData "users.txt" (join "\n" $usersTxt)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $secret) | toJson -}}
 {{- break -}}
 {{- else -}}{{- if (and $values.auth.sasl.enabled (eq $values.auth.sasl.secretRef "")) -}}
 {{- $_ := (fail "auth.sasl.secretRef cannot be empty when auth.sasl.enabled=true") -}}
 {{- else -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (coalesce nil)) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -79,8 +89,10 @@
 {{- define "redpanda.SecretConfigWatcher" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- if (not $values.statefulset.sideCars.configWatcher.enabled) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (coalesce nil)) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -94,6 +106,7 @@
 {{- $saslUserSh = (concat (default (list ) $saslUserSh) (list `echo "Nothing to do. Sleeping..."` `sleep infinity`)) -}}
 {{- end -}}
 {{- $_ := (set $secret.stringData "sasl-user.sh" (join "\n" $saslUserSh)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $secret) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -102,8 +115,10 @@
 {{- define "redpanda.SecretFSValidator" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- if (not $values.statefulset.initContainers.fsValidator.enabled) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (coalesce nil)) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -146,6 +161,7 @@ if [ "${result}" != "0" ]; then
 fi
 
 echo "passed"`) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $secret) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -154,6 +170,7 @@ echo "passed"`) -}}
 {{- define "redpanda.SecretConfigurator" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $secret := (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) ) (mustMergeOverwrite (dict ) (dict "apiVersion" "v1" "kind" "Secret" )) (dict "metadata" (mustMergeOverwrite (dict "creationTimestamp" (coalesce nil) ) (dict "name" (printf "%s-configurator" (substr 0 (51 | int) (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r"))) "namespace" $dot.Release.Namespace "labels" (get (fromJson (include "redpanda.FullLabels" (dict "a" (list $dot) ))) "r") )) "type" "Opaque" "stringData" (dict ) )) -}}
 {{- $configuratorSh := (list ) -}}
@@ -169,6 +186,7 @@ echo "passed"`) -}}
 {{- $configuratorSh = (concat (default (list ) $configuratorSh) (list `` `# Configure Rack Awareness` `set +x` (printf `RACK=$(curl --silent --cacert /run/secrets/kubernetes.io/serviceaccount/ca.crt --fail -H 'Authorization: Bearer '$(cat /run/secrets/kubernetes.io/serviceaccount/token) "https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS}/api/v1/nodes/${KUBERNETES_NODE_NAME}?pretty=true" | grep %s | grep -v '\"key\":' | sed 's/.*": "\([^"]\+\).*/\1/')` (squote (quote $values.rackAwareness.nodeAnnotation))) `set -x` `rpk --config "$CONFIG" redpanda config set redpanda.rack "${RACK}"`)) -}}
 {{- end -}}
 {{- $_ := (set $secret.stringData "configurator.sh" (join "\n" $configuratorSh)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $secret) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -177,6 +195,7 @@ echo "passed"`) -}}
 {{- define "redpanda.secretConfiguratorKafkaConfig" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $internalAdvertiseAddress := (printf "%s.%s" "${SERVICE_NAME}" (get (fromJson (include "redpanda.InternalDomain" (dict "a" (list $dot) ))) "r")) -}}
 {{- $snippet := (coalesce nil) -}}
@@ -206,9 +225,16 @@ echo "passed"`) -}}
 {{- end -}}
 {{- $snippet = (concat (default (list ) $snippet) (list `` (printf `PREFIX_TEMPLATE=%s` (quote $prefixTemplate)) (printf `ADVERTISED_%s_ADDRESSES+=(%s)` (upper $listenerName) (quote $address)))) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
 {{- $snippet = (concat (default (list ) $snippet) (list `` (printf `rpk redpanda config --config "$CONFIG" set %s.advertised_%s_api[%d] "${ADVERTISED_%s_ADDRESSES[$POD_ORDINAL]}"` $redpandaConfigPart $listenerAdvertisedName $externalCounter (upper $listenerName)))) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
 {{- end -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $snippet) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -217,6 +243,7 @@ echo "passed"`) -}}
 {{- define "redpanda.secretConfiguratorHTTPConfig" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $internalAdvertiseAddress := (printf "%s.%s" "${SERVICE_NAME}" (get (fromJson (include "redpanda.InternalDomain" (dict "a" (list $dot) ))) "r")) -}}
 {{- $snippet := (coalesce nil) -}}
@@ -246,9 +273,16 @@ echo "passed"`) -}}
 {{- end -}}
 {{- $snippet = (concat (default (list ) $snippet) (list `` (printf `PREFIX_TEMPLATE=%s` (quote $prefixTemplate)) (printf `ADVERTISED_%s_ADDRESSES+=(%s)` (upper $listenerName) (quote $address)))) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
 {{- $snippet = (concat (default (list ) $snippet) (list `` (printf `rpk redpanda config --config "$CONFIG" set %s.advertised_%s_api[%d] "${ADVERTISED_%s_ADDRESSES[$POD_ORDINAL]}"` $redpandaConfigPart $listenerAdvertisedName $externalCounter (upper $listenerName)))) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
 {{- end -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $snippet) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -257,16 +291,20 @@ echo "passed"`) -}}
 {{- define "redpanda.adminTLSCurlFlags" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- if (not (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $values.listeners.admin.tls $values.tls) ))) "r")) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" "") | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- $path := (printf "/etc/tls/certs/%s" $values.listeners.admin.tls.cert) -}}
 {{- if $values.listeners.admin.tls.requireClientAuth -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (printf "--cacert %s/ca.crt --cert %s/tls.crt --key %s/tls.key" $path $path $path)) | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (printf "--cacert %s/ca.crt" $path)) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -275,6 +313,7 @@ echo "passed"`) -}}
 {{- define "redpanda.externalAdvertiseAddress" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $eaa := "${SERVICE_NAME}" -}}
 {{- $externalDomainTemplate := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $values.external.domain "") ))) "r") -}}
@@ -282,6 +321,7 @@ echo "passed"`) -}}
 {{- if (not (empty $expanded)) -}}
 {{- $eaa = (printf "%s.%s" "${SERVICE_NAME}" $expanded) -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $eaa) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -293,6 +333,7 @@ echo "passed"`) -}}
 {{- $port := (index .a 2) -}}
 {{- $replicaIndex := (index .a 3) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $host := (dict "name" $externalName "address" (get (fromJson (include "redpanda.externalAdvertiseAddress" (dict "a" (list $dot) ))) "r") "port" $port ) -}}
 {{- if (gt ((get (fromJson (include "_shims.len" (dict "a" (list $values.external.addresses) ))) "r") | int) (0 | int)) -}}
@@ -309,6 +350,7 @@ echo "passed"`) -}}
 {{- $host = (dict "name" $externalName "address" $address "port" $port ) -}}
 {{- end -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $host) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -317,11 +359,14 @@ echo "passed"`) -}}
 {{- define "redpanda.adminInternalHTTPProtocol" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- if (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $values.listeners.admin.tls $values.tls) ))) "r") -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" "https") | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" "http") | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -330,7 +375,9 @@ echo "passed"`) -}}
 {{- define "redpanda.adminInternalURL" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (printf "%s://%s.%s.%s.svc.%s:%d" (get (fromJson (include "redpanda.adminInternalHTTPProtocol" (dict "a" (list $dot) ))) "r") `${SERVICE_NAME}` (get (fromJson (include "redpanda.ServiceName" (dict "a" (list $dot) ))) "r") $dot.Release.Namespace (trimSuffix "." $values.clusterDomain) ($values.listeners.admin.port | int))) | toJson -}}
 {{- break -}}
 {{- end -}}

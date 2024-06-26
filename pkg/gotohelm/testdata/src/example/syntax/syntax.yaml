@@ -2,6 +2,7 @@
 
 {{- define "syntax.Syntax" -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $_ = (0 | int) -}}
 {{- $_ = "" -}}
 {{- $_ = (dict ) -}}
@@ -23,8 +24,37 @@
 {{- $_ = (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list (printf "[]%s" "interface {}") $x (coalesce nil)) ))) "r")) ))) "r") -}}
 {{- $_ = (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list (printf "[]%s" "string") $x (coalesce nil)) ))) "r")) ))) "r") -}}
 {{- $_ = (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list (printf "map[%s]%s" "string" "interface {}") $x (coalesce nil)) ))) "r")) ))) "r") -}}
-{{- (dict "r" (dict "sliceExpr" $slice "negativeNumbers" (list -2 -4) "forExpr" (get (fromJson (include "syntax.forExpr" (dict "a" (list (10 | int) (mustMergeOverwrite (dict "Iterations" 0 ) (dict "Iterations" (5 | int) ))) ))) "r") "binaryExprs" (get (fromJson (include "syntax.binaryExprs" (dict "a" (list ) ))) "r") "instance-method" (get (fromJson (include "syntax.instanceMethod" (dict "a" (list ) ))) "r") "append" (get (fromJson (include "syntax.appends" (dict "a" (list ) ))) "r") )) | toJson -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (dict "sliceExpr" $slice "negativeNumbers" (list -2 -4) "forExpr" (get (fromJson (include "syntax.forExpr" (dict "a" (list (10 | int) (mustMergeOverwrite (dict "Iterations" 0 ) (dict "Iterations" (5 | int) ))) ))) "r") "binaryExprs" (get (fromJson (include "syntax.binaryExprs" (dict "a" (list ) ))) "r") "instance-method" (get (fromJson (include "syntax.instanceMethod" (dict "a" (list ) ))) "r") "append" (get (fromJson (include "syntax.appends" (dict "a" (list ) ))) "r") "nested-for-and-return" (get (fromJson (include "syntax.nestedFor" (dict "a" (list ) ))) "r") )) | toJson -}}
 {{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "syntax.nestedFor" -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $x := (list (1 | int) (2 | int) (3 | int)) -}}
+{{- range $_, $_ := $x -}}
+{{- range $_, $_ := $x -}}
+{{- range $_, $_ := $x -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" "Hello") | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_ := (fail "unreachable 1") -}}
+{{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_ := (fail "unreachable 2") -}}
+{{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_ := (fail "unreachable 3") -}}
 {{- end -}}
 {{- end -}}
 
@@ -32,6 +62,7 @@
 {{- $ts := (index .a 0) -}}
 {{- $input := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $_ := (set $ts "SomeString" $input) -}}
 {{- end -}}
 {{- end -}}
@@ -40,6 +71,7 @@
 {{- $ts := (index .a 0) -}}
 {{- $input := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $_ := (set $ts "SomeString" $input) -}}
 {{- end -}}
 {{- end -}}
@@ -48,6 +80,8 @@
 {{- $ts := (index .a 0) -}}
 {{- $input := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" ((mul $input (2 | int)) | int)) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -57,6 +91,8 @@
 {{- $ts := (index .a 0) -}}
 {{- $input := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" ((mul $input ($ts.Mult | int)) | int)) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -65,6 +101,8 @@
 {{- define "syntax.TestStruct.InstanceMethod" -}}
 {{- $ts := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $ts.TestBoolean) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -75,6 +113,8 @@
 {{- $arg1 := (index .a 1) -}}
 {{- $arg2 := (index .a 2) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (printf $ts.SomeString $arg1 $arg2)) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -82,10 +122,12 @@
 
 {{- define "syntax.instanceMethod" -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $t := (mustMergeOverwrite (dict "TestBoolean" false "Mult" 0 "SomeString" "" ) (dict "TestBoolean" true "Mult" (4 | int) "SomeString" "%s and %s" )) -}}
 {{- $f := (mustMergeOverwrite (dict "TestBoolean" false "Mult" 0 "SomeString" "" ) (dict "TestBoolean" false "Mult" (5 | int) )) -}}
 {{- $_ := (get (fromJson (include "syntax.TestStruct.MutateString" (dict "a" (list $f "Change string") ))) "r") -}}
 {{- $_ := (get (fromJson (include "syntax.TestStruct.DoNotMutateString" (dict "a" (list (deepCopy $f) "do not change") ))) "r") -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (list (get (fromJson (include "syntax.TestStruct.InstanceMethod" (dict "a" (list $t) ))) "r") (get (fromJson (include "syntax.TestStruct.InstanceMethod" (dict "a" (list $f) ))) "r") ((get (fromJson (include "syntax.TestStruct.Double" (dict "a" (list $t (2 | int)) ))) "r") | int) ((get (fromJson (include "syntax.TestStruct.Double" (dict "a" (list $t (4 | int)) ))) "r") | int) ((get (fromJson (include "syntax.TestStruct.Multiplayer" (dict "a" (list $t (6 | int)) ))) "r") | int) ((get (fromJson (include "syntax.TestStruct.Multiplayer" (dict "a" (list $f (6 | int)) ))) "r") | int) (get (fromJson (include "syntax.TestStruct.String" (dict "a" (list (deepCopy $t) "one" "two") ))) "r") (eq $f.SomeString "Change string"))) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -93,6 +135,7 @@
 
 {{- define "syntax.sliceExpr" -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $_ = (mustSlice (list (1 | int) (2 | int) (3 | int)) 0) -}}
 {{- $_ = (mustSlice (list (1 | int) (2 | int) (3 | int)) (1 | int)) -}}
 {{- $_ = (mustSlice (list (1 | int) (2 | int) (3 | int)) 0 (2 | int)) -}}
@@ -104,6 +147,7 @@
 {{- $_ = (substr (1 | int) (2 | int) "1234") -}}
 {{- $s := "abcd" -}}
 {{- $_ = (substr 0 ((sub ((get (fromJson (include "_shims.len" (dict "a" (list $s) ))) "r") | int) (1 | int)) | int) $s) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (get (fromJson (include "syntax.workingWithString" (dict "a" (list ) ))) "r")) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -111,6 +155,7 @@
 
 {{- define "syntax.workingWithString" -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $amount := "2.5Gi" -}}
 {{- $unit := (printf "%c" (index $amount ((sub ((get (fromJson (include "_shims.len" (dict "a" (list $amount) ))) "r") | int) (1 | int)) | int))) -}}
 {{- $savedUnit := $unit -}}
@@ -119,6 +164,7 @@
 {{- $unit = (printf "%s%s" (substr ((sub ((get (fromJson (include "_shims.len" (dict "a" (list $amount) ))) "r") | int) (1 | int)) | int) -1 $amount) $unit) -}}
 {{- $amount = (substr 0 ((sub ((get (fromJson (include "_shims.len" (dict "a" (list $amount) ))) "r") | int) (1 | int)) | int) $amount) -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (dict "unit" $unit "amount" $amount "unitIsEqual" (eq $unit "Gi") "lastCharacter" (eq $savedUnit "i") )) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -126,6 +172,7 @@
 
 {{- define "syntax.binaryExprs" -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $_ = (mul (1 | int) (1 | int)) -}}
 {{- $_ = (add (1 | int) (1 | int)) -}}
 {{- $_ = (sub (1 | int) (1 | int)) -}}
@@ -157,6 +204,7 @@
 {{- $_ = (eq (dict ) (coalesce nil)) -}}
 {{- $_ = (ne (dict ) (coalesce nil)) -}}
 {{- $result := (list (gt (1 | int) (2 | int)) (lt (1 | int) (2 | int)) (ge (1 | int) (2 | int)) (le (1 | int) (2 | int)) (ge (2 | int) (2 | int)) (le (2 | int) (2 | int))) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $result) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -166,52 +214,81 @@
 {{- $iteration := (index .a 0) -}}
 {{- $in := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $result := (list ) -}}
 {{- $test := (list ) -}}
 {{- range $_, $i := untilStep ((0 | int)|int) (($in.Iterations | int)|int) (1|int) -}}
 {{- $test = (concat (default (list ) $test) (list (printf "%d" $i))) -}}
+{{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
 {{- end -}}
 {{- $result = (concat (default (list ) $result) (list $test)) -}}
 {{- $test = (list ) -}}
 {{- range $_, $i := untilStep ((0 | int)|int) ($iteration|int) (1|int) -}}
 {{- $test = (concat (default (list ) $test) (list (printf "%d" $i))) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
 {{- $result = (concat (default (list ) $result) (list $test)) -}}
 {{- $test = (list ) -}}
 {{- range $_, $i := untilStep ((2 | int)|int) ($iteration|int) (1|int) -}}
 {{- $test = (concat (default (list ) $test) (list (printf "%d" $i))) -}}
+{{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
 {{- end -}}
 {{- $result = (concat (default (list ) $result) (list $test)) -}}
 {{- $test = (list ) -}}
 {{- range $_, $i := untilStep ((2 | int)|int) (($in.Iterations | int)|int) (1|int) -}}
 {{- $test = (concat (default (list ) $test) (list (printf "%d" $i))) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
 {{- $result = (concat (default (list ) $result) (list $test)) -}}
 {{- $test = (list ) -}}
 {{- range $_, $i := untilStep ((2 | int)|int) ($iteration|int) ((2 | int)|int) -}}
 {{- $test = (concat (default (list ) $test) (list (printf "%d" $i))) -}}
+{{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
 {{- end -}}
 {{- $result = (concat (default (list ) $result) (list $test)) -}}
 {{- $test = (list ) -}}
 {{- range $_, $i := untilStep ((2 | int)|int) (($in.Iterations | int)|int) ((2 | int)|int) -}}
 {{- $test = (concat (default (list ) $test) (list (printf "%d" $i))) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
 {{- $result = (concat (default (list ) $result) (list $test)) -}}
 {{- $test = (list ) -}}
 {{- range $_, $i := untilStep ((17 | int)|int) ($iteration|int) ((-2 | int)|int) -}}
 {{- $test = (concat (default (list ) $test) (list (printf "%d" $i))) -}}
+{{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
 {{- end -}}
 {{- $result = (concat (default (list ) $result) (list $test)) -}}
 {{- $test = (list ) -}}
 {{- range $_, $i := untilStep ((17 | int)|int) (($in.Iterations | int)|int) ((-2 | int)|int) -}}
 {{- $test = (concat (default (list ) $test) (list (printf "%d" $i))) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
 {{- $result = (concat (default (list ) $result) (list $test)) -}}
 {{- $test = (list ) -}}
 {{- range $_, $i := untilStep ($iteration|int) ((17 | int)|int) ((-2 | int)|int) -}}
 {{- $test = (concat (default (list ) $test) (list (printf "%d" $i))) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
 {{- $result = (concat (default (list ) $result) (list $test)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $result) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -219,8 +296,10 @@
 
 {{- define "syntax.appends" -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $x := (coalesce nil) -}}
 {{- $y := (list (1 | int) (2 | int) (3 | int)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (list (concat (default (list ) $x) (list )) (concat (default (list ) $x) (list (4 | int))) (concat (default (list ) $x) (default (list ) $y)) (concat (default (list ) $y) (default (list ) $x)) (concat (default (list ) $y) (list (1 | int) (2 | int) (3 | int) (4 | int))))) | toJson -}}
 {{- break -}}
 {{- end -}}

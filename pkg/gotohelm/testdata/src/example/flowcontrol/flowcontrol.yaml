@@ -3,6 +3,8 @@
 {{- define "flowcontrol.FlowControl" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (dict "earlyReturn" (get (fromJson (include "flowcontrol.earlyReturn" (dict "a" (list $dot) ))) "r") "ifElse" (get (fromJson (include "flowcontrol.ifElse" (dict "a" (list $dot) ))) "r") "sliceRanges" (get (fromJson (include "flowcontrol.sliceRanges" (dict "a" (list $dot) ))) "r") "mapRanges" (get (fromJson (include "flowcontrol.mapRanges" (dict "a" (list $dot) ))) "r") "intBinaryExprs" (get (fromJson (include "flowcontrol.intBinaryExprs" (dict "a" (list ) ))) "r") )) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -11,13 +13,16 @@
 {{- define "flowcontrol.earlyReturn" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $dot.Values "boolean" (coalesce nil)) ))) "r")) ))) "r") -}}
 {{- $ok_2 := $tmp_tuple_1.T2 -}}
 {{- $b_1 := $tmp_tuple_1.T1 -}}
 {{- if (and $ok_2 (get (fromJson (include "_shims.typeassertion" (dict "a" (list "bool" $b_1) ))) "r")) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" "Early Returns work!") | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" "Should have returned early") | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -26,28 +31,35 @@
 {{- define "flowcontrol.ifElse" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $tmp_tuple_2 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asintegral" (dict "a" (list (index $dot.Values "oneToFour")) ))) "r")) ))) "r") -}}
 {{- $ok := $tmp_tuple_2.T2 -}}
 {{- $oneToFour := ($tmp_tuple_2.T1 | int) -}}
 {{- if (not $ok) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" "oneToFour not specified!") | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- if (eq $oneToFour (1 | int)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" "It's 1") | toJson -}}
 {{- break -}}
 {{- else -}}{{- if (eq $oneToFour (2 | int)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" "It's 2") | toJson -}}
 {{- break -}}
 {{- else -}}{{- if (eq $oneToFour (3 | int)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" "It's 3") | toJson -}}
 {{- break -}}
 {{- else -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" "It's 4") | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" "unreachable") | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -56,6 +68,7 @@
 {{- define "flowcontrol.sliceRanges" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $tmp_tuple_3 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $dot.Values "ints" (coalesce nil)) ))) "r")) ))) "r") -}}
 {{- $ok := $tmp_tuple_3.T2 -}}
 {{- $intsAny := $tmp_tuple_3.T1 -}}
@@ -67,16 +80,26 @@
 {{- range $i, $_ := $ints -}}
 {{- $sumOfIndexes = ((add $sumOfIndexes $i) | int) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
 {{- $continuesWork := true -}}
 {{- range $_, $_ := $ints -}}
 {{- continue -}}
 {{- $continuesWork = false -}}
+{{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
 {{- end -}}
 {{- $breaksWork := true -}}
 {{- range $_, $_ := $ints -}}
 {{- break -}}
 {{- $breaksWork = false -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (list $sumOfIndexes $continuesWork $breaksWork)) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -85,14 +108,22 @@
 {{- define "flowcontrol.mapRanges" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $m := (dict "1" (1 | int) "2" (2 | int) "3" (3 | int) ) -}}
 {{- range $k, $_ := $m -}}
 {{- $_ = $k -}}
+{{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
 {{- end -}}
 {{- $sum := (0 | int) -}}
 {{- range $_, $v := $m -}}
 {{- $sum = ((add $sum $v) | int) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (list $sum)) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -100,9 +131,11 @@
 
 {{- define "flowcontrol.intBinaryExprs" -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $x := (1 | int) -}}
 {{- $y := (2 | int) -}}
 {{- $z := (3 | int) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (list $z ((sub $x $y) | int) ((add $x $y) | int) ((div $x $y) | int) ((mul $x $y) | int))) | toJson -}}
 {{- break -}}
 {{- end -}}

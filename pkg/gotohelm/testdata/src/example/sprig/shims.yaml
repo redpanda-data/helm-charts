@@ -3,6 +3,8 @@
 {{- define "sprig.numericTestInputs" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (list "" ((0 | int) | int) (1.0 | float64) (list ) (dict ) (index $dot.Values "numeric"))) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -11,6 +13,7 @@
 {{- define "sprig.asNumeric" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $inputs := (get (fromJson (include "sprig.numericTestInputs" (dict "a" (list $dot) ))) "r") -}}
 {{- $inputs = (concat (default (list ) $inputs) (list ((10 | int) | int) 1.5 (index $dot.Values "numeric"))) -}}
 {{- $outputs := (list ) -}}
@@ -20,6 +23,10 @@
 {{- $value := ($tmp_tuple_1.T1 | float64) -}}
 {{- $outputs = (concat (default (list ) $outputs) (list (list $in $value $isNumeric))) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $outputs) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -28,6 +35,7 @@
 {{- define "sprig.asIntegral" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $inputs := (get (fromJson (include "sprig.numericTestInputs" (dict "a" (list $dot) ))) "r") -}}
 {{- $inputs = (concat (default (list ) $inputs) (list ((10 | int) | int) 1.5 (index $dot.Values "numeric"))) -}}
 {{- $outputs := (list ) -}}
@@ -37,6 +45,10 @@
 {{- $value := ($tmp_tuple_2.T1 | int) -}}
 {{- $outputs = (concat (default (list ) $outputs) (list (list $in $value $isIntegral))) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $outputs) | toJson -}}
 {{- break -}}
 {{- end -}}

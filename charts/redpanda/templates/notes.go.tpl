@@ -3,11 +3,13 @@
 {{- define "redpanda.Warnings" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $warnings := (coalesce nil) -}}
 {{- $w_1 := (get (fromJson (include "redpanda.cpuWarning" (dict "a" (list $dot) ))) "r") -}}
 {{- if (ne $w_1 "") -}}
 {{- $warnings = (concat (default (list ) $warnings) (list (printf `**Warning**: %s` $w_1))) -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $warnings) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -16,12 +18,15 @@
 {{- define "redpanda.cpuWarning" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $coresInMillis := ((get (fromJson (include "_shims.resource_MilliValue" (dict "a" (list $values.resources.cpu.cores) ))) "r") | int64) -}}
 {{- if (lt $coresInMillis (1000 | int64)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (printf "%dm is below the minimum recommended CPU value for Redpanda" $coresInMillis)) | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" "") | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -30,6 +35,7 @@
 {{- define "redpanda.Notes" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $anySASL := (get (fromJson (include "redpanda.Auth.IsSASLEnabled" (dict "a" (list $values.auth) ))) "r") -}}
 {{- $notes := (coalesce nil) -}}
@@ -63,6 +69,7 @@
 {{- $notes = (concat (default (list ) $notes) (list `Create a user:` `` (printf `  %s` (get (fromJson (include "redpanda.RpkACLUserCreate" (dict "a" (list $dot) ))) "r")) `` `Give the user permissions:` `` (printf `  %s` (get (fromJson (include "redpanda.RpkACLCreate" (dict "a" (list $dot) ))) "r")))) -}}
 {{- end -}}
 {{- $notes = (concat (default (list ) $notes) (list `` `Get the api status:` `` (printf `  %s` (get (fromJson (include "redpanda.RpkClusterInfo" (dict "a" (list $dot) ))) "r")) `` `Create a topic` `` (printf `  %s` (get (fromJson (include "redpanda.RpkTopicCreate" (dict "a" (list $dot) ))) "r")) `` `Describe the topic:` `` (printf `  %s` (get (fromJson (include "redpanda.RpkTopicDescribe" (dict "a" (list $dot) ))) "r")) `` `Delete the topic:` `` (printf `  %s` (get (fromJson (include "redpanda.RpkTopicDelete" (dict "a" (list $dot) ))) "r")))) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $notes) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -71,6 +78,8 @@
 {{- define "redpanda.RpkACLUserCreate" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (printf `rpk acl user create myuser --new-password changeme --mechanism %s` (get (fromJson (include "redpanda.SASLMechanism" (dict "a" (list $dot) ))) "r"))) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -79,11 +88,14 @@
 {{- define "redpanda.SASLMechanism" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- if (ne $values.auth.sasl (coalesce nil)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $values.auth.sasl.mechanism) | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" "SCRAM-SHA-512") | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -91,6 +103,8 @@
 
 {{- define "redpanda.RpkACLCreate" -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" `rpk acl create --allow-principal 'myuser' --allow-host '*' --operation all --topic 'test-topic'`) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -98,6 +112,8 @@
 
 {{- define "redpanda.RpkClusterInfo" -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" `rpk cluster info`) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -106,7 +122,9 @@
 {{- define "redpanda.RpkTopicCreate" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (printf `rpk topic create test-topic -p 3 -r %d` (min (3 | int64) (($values.statefulset.replicas | int) | int64)))) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -114,6 +132,8 @@
 
 {{- define "redpanda.RpkTopicDescribe" -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" `rpk topic describe test-topic`) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -122,6 +142,8 @@
 {{- define "redpanda.RpkTopicDelete" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" `rpk topic delete test-topic`) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -130,10 +152,13 @@
 {{- define "redpanda.RpkSASLEnvironmentVariables" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- if (get (fromJson (include "redpanda.RedpandaAtLeast_23_2_1" (dict "a" (list $dot) ))) "r") -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" `RPK_USER RPK_PASS RPK_SASL_MECHANISM`) | toJson -}}
 {{- break -}}
 {{- else -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" `REDPANDA_SASL_USERNAME REDPANDA_SASL_PASSWORD REDPANDA_SASL_MECHANISM`) | toJson -}}
 {{- break -}}
 {{- end -}}

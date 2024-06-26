@@ -5,10 +5,13 @@
 {{- $value := (index .a 1) -}}
 {{- $zero := (index .a 2) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- if (typeIs $typ $value) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (list $value true)) | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (list $zero false)) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -18,9 +21,11 @@
 {{- $typ := (index .a 0) -}}
 {{- $value := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- if (not (typeIs $typ $value)) -}}
 {{- $_ := (fail (printf "expected type of %q got: %T" $typ $value)) -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $value) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -31,10 +36,13 @@
 {{- $key := (index .a 1) -}}
 {{- $zero := (index .a 2) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- if (hasKey $m $key) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (list (index $m $key) true)) | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (list $zero false)) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -43,10 +51,15 @@
 {{- define "_shims.compact" -}}
 {{- $args := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $out := (dict ) -}}
 {{- range $i, $e := $args -}}
 {{- $_ := (set $out (printf "T%d" ((add (1 | int) $i) | int)) $e) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $out) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -55,9 +68,11 @@
 {{- define "_shims.deref" -}}
 {{- $ptr := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- if (eq $ptr (coalesce nil)) -}}
 {{- $_ := (fail "nil dereference") -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $ptr) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -66,10 +81,13 @@
 {{- define "_shims.len" -}}
 {{- $m := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- if (eq $m (coalesce nil)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (0 | int)) | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (len $m)) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -79,10 +97,13 @@
 {{- $ptr := (index .a 0) -}}
 {{- $def := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- if (ne $ptr (coalesce nil)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $ptr) | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $def) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -92,10 +113,13 @@
 {{- $a := (index .a 0) -}}
 {{- $b := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- if (and (eq $a (coalesce nil)) (eq $b (coalesce nil))) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" true) | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (eq $a $b)) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -107,11 +131,14 @@
 {{- $namespace := (index .a 2) -}}
 {{- $name := (index .a 3) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $result := (lookup $apiVersion $kind $namespace $name) -}}
 {{- if (empty $result) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (list (coalesce nil) false)) | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (list $result true)) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -120,18 +147,23 @@
 {{- define "_shims.asnumeric" -}}
 {{- $value := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- if (typeIs "float64" $value) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (list $value true)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- if (typeIs "int64" $value) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (list $value true)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- if (typeIs "int" $value) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (list $value true)) | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (list (0 | int) false)) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -140,14 +172,18 @@
 {{- define "_shims.asintegral" -}}
 {{- $value := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- if (or (typeIs "int64" $value) (typeIs "int" $value)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (list $value true)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- if (and (typeIs "float64" $value) (eq (floor $value) $value)) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (list $value true)) | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (list (0 | int) false)) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -156,7 +192,9 @@
 {{- define "_shims.parseResource" -}}
 {{- $repr := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- if (typeIs "float64" $repr) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (list (float64 $repr) 1.0)) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -175,6 +213,7 @@
 {{- if (not $ok) -}}
 {{- $_ := (fail (printf "unknown unit: %q" $unit)) -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (list $numeric $scale)) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -183,6 +222,7 @@
 {{- define "_shims.resource_MustParse" -}}
 {{- $repr := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $tmp_tuple_2 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.parseResource" (dict "a" (list $repr) ))) "r")) ))) "r") -}}
 {{- $scale := ($tmp_tuple_2.T2 | float64) -}}
 {{- $numeric := ($tmp_tuple_2.T1 | float64) -}}
@@ -195,9 +235,13 @@
 {{- break -}}
 {{- end -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
 {{- if (eq $idx -1) -}}
 {{- $_ := (fail (printf "unknown scale: %v" $scale)) -}}
 {{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (printf "%s%s" (toString $numeric) (index $strs $idx))) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -206,9 +250,11 @@
 {{- define "_shims.resource_Value" -}}
 {{- $repr := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $tmp_tuple_3 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.parseResource" (dict "a" (list $repr) ))) "r")) ))) "r") -}}
 {{- $scale := ($tmp_tuple_3.T2 | float64) -}}
 {{- $numeric := ($tmp_tuple_3.T1 | float64) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (int64 (ceil ((mulf $numeric $scale) | float64)))) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -217,9 +263,11 @@
 {{- define "_shims.resource_MilliValue" -}}
 {{- $repr := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $tmp_tuple_4 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.parseResource" (dict "a" (list $repr) ))) "r")) ))) "r") -}}
 {{- $scale := ($tmp_tuple_4.T2 | float64) -}}
 {{- $numeric := ($tmp_tuple_4.T1 | float64) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (int64 (ceil ((mulf ((mulf $numeric 1000.0) | float64) $scale) | float64)))) | toJson -}}
 {{- break -}}
 {{- end -}}

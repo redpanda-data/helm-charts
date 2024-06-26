@@ -3,6 +3,8 @@
 {{- define "k8s.K8s" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (dict "Objects" (list (get (fromJson (include "k8s.pod" (dict "a" (list ) ))) "r") (get (fromJson (include "k8s.pdb" (dict "a" (list ) ))) "r") (get (fromJson (include "k8s.service" (dict "a" (list ) ))) "r")) "intstr" (list (10 | int) (11 | int) "12") "ptr.Deref" (list ((get (fromJson (include "_shims.ptr_Deref" (dict "a" (list (3 | int) (4 | int)) ))) "r") | int) ((get (fromJson (include "_shims.ptr_Deref" (dict "a" (list (coalesce nil) (3 | int)) ))) "r") | int) (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list "" "oh?") ))) "r")) "ptr.To" (list "hello" (0 | int) (dict )) "ptr.Equal" (list (get (fromJson (include "_shims.ptr_Equal" (dict "a" (list (coalesce nil) (coalesce nil)) ))) "r") (get (fromJson (include "_shims.ptr_Equal" (dict "a" (list (coalesce nil) (3 | int)) ))) "r") (get (fromJson (include "_shims.ptr_Equal" (dict "a" (list (3 | int) (3 | int)) ))) "r")) "lookup" (get (fromJson (include "k8s.lookup" (dict "a" (list $dot) ))) "r") "quantity" (get (fromJson (include "k8s.quantity" (dict "a" (list $dot) ))) "r") )) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -10,6 +12,8 @@
 
 {{- define "k8s.pod" -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) "spec" (dict "containers" (coalesce nil) ) "status" (dict ) ) (mustMergeOverwrite (dict ) (dict "apiVersion" "v1" "kind" "Pod" )) (dict "metadata" (mustMergeOverwrite (dict "creationTimestamp" (coalesce nil) ) (dict "namespace" "spacename" "name" "eman" )) ))) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -17,7 +21,9 @@
 
 {{- define "k8s.pdb" -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $minAvail := (3 | int) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) "spec" (dict ) "status" (dict "disruptionsAllowed" 0 "currentHealthy" 0 "desiredHealthy" 0 "expectedPods" 0 ) ) (mustMergeOverwrite (dict ) (dict "apiVersion" "policyv1" "kind" "PodDisruptionBudget" )) (dict "spec" (mustMergeOverwrite (dict ) (dict "minAvailable" $minAvail )) ))) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -25,6 +31,8 @@
 
 {{- define "k8s.service" -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) "spec" (dict ) "status" (dict "loadBalancer" (dict ) ) ) (mustMergeOverwrite (dict ) (dict "apiVersion" "v1" "kind" "Service" )) (dict "spec" (mustMergeOverwrite (dict ) (dict "ports" (list (mustMergeOverwrite (dict "port" 0 "targetPort" 0 ) (dict ))) )) ))) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -33,6 +41,7 @@
 {{- define "k8s.lookup" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.lookup" (dict "a" (list "v1" "Service" "namespace" "name") ))) "r")) ))) "r") -}}
 {{- $ok1 := $tmp_tuple_1.T2 -}}
 {{- $svc := $tmp_tuple_1.T1 -}}
@@ -42,6 +51,7 @@
 {{- $tmp_tuple_2 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.lookup" (dict "a" (list "apps/v1" "StatefulSet" "spacename" "eman") ))) "r")) ))) "r") -}}
 {{- $ok2 := $tmp_tuple_2.T2 -}}
 {{- $sts := $tmp_tuple_2.T1 -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (list $svc $ok1 $sts $ok2)) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -50,11 +60,15 @@
 {{- define "k8s.quantity" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $inputs := (list "10" "100m" "10G" "8Gi" "55Mi" "140k") -}}
 {{- $quantities := (coalesce nil) -}}
 {{- range $_, $in := $inputs -}}
 {{- $quantities = (concat (default (list ) $quantities) (list (get (fromJson (include "_shims.resource_MustParse" (dict "a" (list $in) ))) "r"))) -}}
+{{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
 {{- end -}}
 {{- if (ne $values.Quantity (coalesce nil)) -}}
 {{- $quantities = (concat (default (list ) $quantities) (list (get (fromJson (include "_shims.resource_MustParse" (dict "a" (list $values.Quantity) ))) "r"))) -}}
@@ -67,6 +81,10 @@
 {{- $strs = (concat (default (list ) $strs) (list (get (fromJson (include "_shims.resource_MustParse" (dict "a" (list $q) ))) "r"))) -}}
 {{- $value = (concat (default (list ) $value) (list ((get (fromJson (include "_shims.resource_Value" (dict "a" (list $q) ))) "r") | int64))) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (dict "MustParse" $quantities "Value" $value "String" $strs )) | toJson -}}
 {{- break -}}
 {{- end -}}

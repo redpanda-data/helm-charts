@@ -237,6 +237,7 @@ func (f *Func) Write(w io.Writer) {
 		fmt.Fprintf(w, " := (index .a %d) -}}\n", i)
 	}
 	fmt.Fprintf(w, "{{- range $_ := (list 1) -}}\n")
+	fmt.Fprintf(w, "{{- $_is_returning := false -}}\n")
 	for _, s := range f.Statements {
 		s.Write(w)
 	}
@@ -249,6 +250,7 @@ type Return struct {
 }
 
 func (r *Return) Write(w io.Writer) {
+	fmt.Fprintf(w, "{{- $_is_returning = true -}}\n")
 	fmt.Fprintf(w, "{{- (dict %q ", "r")
 	r.Expr.Write(w)
 	fmt.Fprintf(w, ") | toJson -}}\n")
@@ -301,6 +303,9 @@ func (r *Range) Write(w io.Writer) {
 	r.Over.Write(w)
 	fmt.Fprintf(w, " -}}\n")
 	r.Body.Write(w)
+	fmt.Fprintf(w, "{{- end -}}\n")
+	fmt.Fprintf(w, "{{- if $_is_returning -}}\n")
+	fmt.Fprintf(w, "{{- break -}}\n")
 	fmt.Fprintf(w, "{{- end -}}\n")
 }
 

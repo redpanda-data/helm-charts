@@ -2,6 +2,8 @@
 
 {{- define "astrewrites.ASTRewrites" -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (list )) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -9,6 +11,7 @@
 
 {{- define "astrewrites.mvrs" -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $m := (dict ) -}}
 {{- $a := $m -}}
 {{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $m "1" (coalesce nil)) ))) "r")) ))) "r") -}}
@@ -46,6 +49,7 @@
 
 {{- define "astrewrites.dictTest" -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $m := (dict ) -}}
 {{- $tmp_tuple_8 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $m "" (coalesce nil)) ))) "r")) ))) "r") -}}
 {{- $ok := $tmp_tuple_8.T2 -}}
@@ -55,6 +59,7 @@
 
 {{- define "astrewrites.typeTest" -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $m := (dict ) -}}
 {{- $tmp_tuple_9 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list (printf "map[%s]%s" "string" "string") $m (coalesce nil)) ))) "r")) ))) "r") -}}
 {{- $ok := $tmp_tuple_9.T2 -}}
@@ -65,6 +70,7 @@
 
 {{- define "astrewrites.ifHoisting" -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $m := (dict "1" (1 | int) ) -}}
 {{- $tmp_tuple_11 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $m "2" (coalesce nil)) ))) "r")) ))) "r") -}}
 {{- $ok_1 := $tmp_tuple_11.T2 -}}
@@ -88,6 +94,8 @@
 
 {{- define "astrewrites.mvr3" -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (list 0 true (3 | int))) | toJson -}}
 {{- break -}}
 {{- end -}}

@@ -3,6 +3,8 @@
 {{- define "inputs.Inputs" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (dict "unwrap" (get (fromJson (include "inputs.unwrap" (dict "a" (list $dot) ))) "r") "echo" (get (fromJson (include "inputs.echo" (dict "a" (list $dot) ))) "r") "digCompat" (get (fromJson (include "inputs.digCompat" (dict "a" (list $dot) ))) "r") "keys" (get (fromJson (include "inputs.keys" (dict "a" (list $dot) ))) "r") )) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -11,6 +13,8 @@
 {{- define "inputs.unwrap" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $dot.Values.AsMap.nested) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -19,6 +23,8 @@
 {{- define "inputs.echo" -}}
 {{- $globals := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $globals.Values) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -27,6 +33,8 @@
 {{- define "inputs.digCompat" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (get (fromJson (include "_shims.typeassertion" (dict "a" (list "string" (dig "doesn't" "exist" "hello" $dot.Values.AsMap)) ))) "r")) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -35,12 +43,17 @@
 {{- define "inputs.keys" -}}
 {{- $globals := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $keys := (list ) -}}
 {{- range $key, $_ := $globals.Values -}}
 {{- $keys = (concat (default (list ) $keys) (list $key)) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
 {{- $keys = (keys $globals.Values) -}}
 {{- $_ := (sortAlpha $keys) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $keys) | toJson -}}
 {{- break -}}
 {{- end -}}
