@@ -155,6 +155,9 @@ func VersionGoldenTestsCases(t *testing.T) []TemplateTestCase {
 		{
 			Image: redpanda.PartialImage{Repository: ptr.To("somecustomrepo"), Tag: ptr.To(redpanda.ImageTag("v24.1.0"))},
 		},
+		{
+			Image: redpanda.PartialImage{Repository: ptr.To("somecustomrepo"), Tag: ptr.To(redpanda.ImageTag("v23.2.8"))},
+		},
 	}
 
 	// A collection of features that are protected by the various above version

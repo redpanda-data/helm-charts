@@ -364,12 +364,6 @@ func RedpandaAtLeast_23_3_0(dot *helmette.Dot) bool {
 }
 
 func redpandaAtLeast(dot *helmette.Dot, constraint string) bool {
-	values := helmette.Unwrap[Values](dot.Values)
-
-	if values.Image.Repository != "docker.redpanda.com/redpandadata/redpanda" {
-		return true
-	}
-
 	version := strings.TrimPrefix(Tag(dot), "v")
 
 	result, err := helmette.SemverCompare(constraint, version)
