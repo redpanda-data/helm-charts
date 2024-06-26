@@ -81,21 +81,9 @@ Use AppVersion if image.tag is not set
 {{- toJson (dict "bool" (get ((include "redpanda.InternalTLS.IsEnabled" (dict "a" (list .Values.listeners.admin.tls .Values.tls))) | fromJson) "r")) -}}
 {{- end -}}
 
-{{- define "admin-external-tls-enabled" -}}
-{{- toJson (dict "bool" (and (dig "tls" "enabled" (include "admin-internal-tls-enabled" . | fromJson).bool .listener) (not (empty (include "admin-external-tls-cert" .))))) -}}
-{{- end -}}
-
-{{- define "admin-external-tls-cert" -}}
-{{- dig "tls" "cert" .Values.listeners.admin.tls.cert .listener -}}
-{{- end -}}
-
 {{- define "kafka-internal-tls-enabled" -}}
 {{- $listener := .Values.listeners.kafka -}}
 {{- toJson (dict "bool" (and (dig "tls" "enabled" .Values.tls.enabled $listener) (not (empty (dig "tls" "cert" "" $listener))))) -}}
-{{- end -}}
-
-{{- define "kafka-external-tls-enabled" -}}
-{{- toJson (dict "bool" (and (dig "tls" "enabled" (include "kafka-internal-tls-enabled" . | fromJson).bool .listener) (not (empty (include "kafka-external-tls-cert" .))))) -}}
 {{- end -}}
 
 {{- define "kafka-external-tls-cert" -}}
@@ -107,32 +95,9 @@ Use AppVersion if image.tag is not set
 {{- toJson (dict "bool" (and (dig "tls" "enabled" .Values.tls.enabled $listener) (not (empty (dig "tls" "cert" "" $listener))))) -}}
 {{- end -}}
 
-{{- define "http-external-tls-enabled" -}}
-{{- $tlsEnabled := dig "tls" "enabled" (include "http-internal-tls-enabled" . | fromJson).bool .listener -}}
-{{- toJson (dict "bool" (and $tlsEnabled (not (empty (include "http-external-tls-cert" .))))) -}}
-{{- end -}}
-
-{{- define "http-external-tls-cert" -}}
-{{- dig "tls" "cert" .Values.listeners.http.tls.cert .listener -}}
-{{- end -}}
-
-{{- define "rpc-tls-enabled" -}}
-{{- $listener := .Values.listeners.rpc -}}
-{{- toJson (dict "bool" (and (dig "tls" "enabled" .Values.tls.enabled $listener) (not (empty (dig "tls" "cert" "" $listener))))) -}}
-{{- end -}}
-
 {{- define "schemaRegistry-internal-tls-enabled" -}}
 {{- $listener := .Values.listeners.schemaRegistry -}}
 {{- toJson (dict "bool" (and (dig "tls" "enabled" .Values.tls.enabled $listener) (not (empty (dig "tls" "cert" "" $listener))))) -}}
-{{- end -}}
-
-{{- define "schemaRegistry-external-tls-enabled" -}}
-{{- $tlsEnabled := dig "tls" "enabled" (include "schemaRegistry-internal-tls-enabled" . | fromJson).bool .listener -}}
-{{- toJson (dict "bool" (and $tlsEnabled (not (empty (include "schemaRegistry-external-tls-cert" .))))) -}}
-{{- end -}}
-
-{{- define "schemaRegistry-external-tls-cert" -}}
-{{- dig "tls" "cert" .Values.listeners.schemaRegistry.tls.cert .listener -}}
 {{- end -}}
 
 {{- define "tls-enabled" -}}
@@ -142,39 +107,6 @@ Use AppVersion if image.tag is not set
 
 {{- define "sasl-enabled" -}}
 {{- toJson (dict "bool" (dig "enabled" false .Values.auth.sasl)) -}}
-{{- end -}}
-
-{{/*
-Returns the value of "resources.cpu.cores" in millicores. And ensures CPU units
-are using known suffix (really only "m") or no suffix at all.
-*/}}
-{{- define "redpanda-cores-in-millis" -}}
-  {{- $cores := .Values.resources.cpu.cores | toString -}}
-  {{- $coresSuffix := regexReplaceAll "^[0-9.]+(.*)" $cores "${1}" -}}
-  {{- if eq $coresSuffix "m" -}}
-    {{- trimSuffix $coresSuffix .Values.resources.cpu.cores -}}
-  {{- else -}}
-    {{- if eq $coresSuffix "" -}}
-      {{- mulf 1000.0 ($cores | float64) -}}
-    {{- else -}}
-      {{- printf "Unrecognized CPU unit '%s'" $coresSuffix | fail -}}
-    {{- end -}}
-  {{- end -}}
-{{- end -}}
-
-{{/*
-Returns the SMP CPU count in whole cores, with minimum of 1, and sets
-"resources.cpu.overprovisioned: true" when the "resources.cpu.cores" is less
-than 1 core.
-*/}}
-{{- define "redpanda-smp" -}}
-  {{- $coresInMillies := include "redpanda-cores-in-millis" . | int -}}
-  {{- if lt $coresInMillies 1000 -}}
-    {{- $_ := set $.Values.resources.cpu "overprovisioned" true -}}
-    {{- 1 -}}
-  {{- else -}}
-    {{- floor (divf $coresInMillies 1000) -}}
-  {{- end -}}
 {{- end -}}
 
 {{- define "admin-api-urls" -}}
@@ -187,30 +119,6 @@ than 1 core.
 
 {{- define "sasl-mechanism" -}}
 {{- dig "sasl" "mechanism" "SCRAM-SHA-512" .Values.auth -}}
-{{- end -}}
-
-{{- define "storage-min-free-bytes" -}}
-{{- get ((include "redpanda.Storage.StorageMinFreeBytes" (dict "a" (list .Values.storage))) | fromJson) "r" | int64 -}}
-{{- end -}}
-
-{{- define "tunable" -}}
-  {{- $tunable := dig "tunable" dict .Values.config -}}
-  {{- if (include "redpanda-atleast-22-3-0" . | fromJson).bool -}}
-  {{- range $key, $element := $tunable }}
-    {{- if or (eq (typeOf $element) "bool") $element }}
-{{ $key }}: {{ $element | toYaml }}
-    {{- end }}
-  {{- end }}
-  {{- else if (include "redpanda-atleast-22-2-0" . | fromJson).bool -}}
-  {{- $tunable = unset $tunable "log_segment_size_min" -}}
-  {{- $tunable = unset $tunable "log_segment_size_max" -}}
-  {{- $tunable = unset $tunable "kafka_batch_max_bytes" -}}
-  {{- range $key, $element := $tunable }}
-    {{- if or (eq (typeOf $element) "bool") $element }}
-{{ $key }}: {{ $element | toYaml }}
-    {{- end }}
-  {{- end }}
-  {{- end -}}
 {{- end -}}
 
 {{- define "fail-on-insecure-sasl-logging" -}}
@@ -338,32 +246,6 @@ advertised-host returns a json string with the data needed for configuring the a
 {{- toJson (dict "bool" (or (not (empty (include "enterprise-license" . ))) (not (empty (include "enterprise-secret" . ))))) -}}
 {{- end -}}
 
-{{/*
-"warnings" is an aggregate that returns a list of warnings to be shown in NOTES.txt
-*/}}
-{{- define "warnings" -}}
-  {{- $result := list -}}
-  {{- $warnings := list "redpanda-cpu-warning" -}}
-  {{- range $t := $warnings -}}
-    {{- $warning := include $t $ -}}
-      {{- if $warning -}}
-        {{- $result = append $result (printf "**Warning**: %s" $warning) -}}
-      {{- end -}}
-  {{- end -}}
-  {{/* fromJson cannot decode list */}}
-  {{- toJson (dict "result" $result) -}}
-{{- end -}}
-
-{{/*
-return a warning if the chart is configured with insufficient CPU
-*/}}
-{{- define "redpanda-cpu-warning" -}}
-  {{- $coresInMillies := include "redpanda-cores-in-millis" . | int -}}
-  {{- if lt $coresInMillies 1000 -}}
-    {{- printf "%dm is below the minimum recommended CPU value for Redpanda" $coresInMillies -}}
-  {{- end -}}
-{{- end -}}
-
 {{- define "seed-server-list" -}}
   {{- $brokers := list -}}
   {{- range $ordinal := until (.Values.statefulset.replicas | int) -}}
@@ -374,97 +256,6 @@ return a warning if the chart is configured with insufficient CPU
     -}}
   {{- end -}}
   {{- toJson $brokers -}}
-{{- end -}}
-
-{{- define "kafka-brokers-sasl-enabled" -}}
-  {{- $root := . -}}
-  {{- $kafkaService := .Values.listeners.kafka }}
-  {{- $auditLogging := .Values.auditLogging }}
-  {{- $brokers := list -}}
-  {{- $broker_tls := dict -}}
-  {{- $result := dict -}}
-  {{- $tlsEnabled := .Values.tls.enabled -}}
-  {{- $tlsCerts := .Values.tls.certs -}}
-  {{- $trustStoreFile := "" -}}
-  {{- $requireClientAuth := dig "tls" "requireClientAuth" false $kafkaService -}}
-  {{- if and ( eq "internal" $auditLogging.listener ) ( eq (default "sasl" $kafkaService.authenticationMethod) "sasl" ) -}}
-    {{- range $id, $item := $root.tempConfigMapServerList }}
-      {{- $brokerItem := ( dict
-        "address" $item.host.address
-        "port" $kafkaService.port
-        )
-      -}}
-    {{- $brokers = append $brokers $brokerItem -}}
-    {{- end }}
-    {{- if $brokers -}}
-      {{- $result = set $result "brokers" $brokers -}}
-    {{- end -}}
-    {{- if dig "tls" "enabled" $tlsEnabled $kafkaService -}}
-      {{- $cert := get $tlsCerts $kafkaService.tls.cert -}}
-      {{- if empty $cert -}}
-        {{- fail (printf "Certificate used but not defined") -}}
-      {{- end -}}
-      {{- if $cert.caEnabled -}}
-        {{- $trustStoreFile =  ( printf "/etc/tls/certs/%s/ca.crt" $kafkaService.tls.cert ) -}}
-      {{- else -}}
-        {{- $trustStoreFile = "/etc/ssl/certs/ca-certificates.crt" -}}
-      {{- end -}}
-      {{- $broker_tls = ( dict
-        "enabled" true
-        "cert_file" ( printf "/etc/tls/certs/%s/tls.crt" $kafkaService.tls.cert )
-        "key_file" ( printf "/etc/tls/certs/%s/tls.key" $kafkaService.tls.cert )
-        "require_client_auth" $requireClientAuth
-        )
-      -}}
-      {{- if $trustStoreFile -}}
-        {{- $broker_tls = set $broker_tls "truststore_file" $trustStoreFile -}}
-      {{- end -}}
-      {{- if $broker_tls -}}
-        {{- $result = set $result "broker_tls" $broker_tls -}}
-      {{- end -}}
-    {{- end -}}
-  {{- else -}}
-    {{- range $name, $listener := $kafkaService.external -}}
-      {{- if and $listener.port $name (dig "enabled" true $listener) ( eq (default "sasl" $listener.authenticationMethod) "sasl" ) ( eq $name $auditLogging.listener ) -}}
-        {{- range $id, $item := $root.tempConfigMapServerList }}
-          {{- $brokerItem := ( dict
-            "address" $item.host.address
-            "port" $listener.port
-            )
-          -}}
-        {{- $brokers = append $brokers $brokerItem -}}
-        {{- end }}
-        {{- if $brokers -}}
-          {{- $result = set $result "brokers" $brokers -}}
-        {{- end -}}
-        {{- if dig "tls" "enabled" $tlsEnabled $listener -}}
-          {{- $cert := get $tlsCerts $listener.tls.cert -}}
-          {{- if empty $cert -}}
-            {{- fail (printf "Certificate used but not defined") -}}
-          {{- end -}}
-          {{- if $cert.caEnabled -}}
-            {{- $trustStoreFile =  ( printf "/etc/tls/certs/%s/ca.crt" $listener.tls.cert ) -}}
-          {{- else -}}
-            {{- $trustStoreFile = "/etc/ssl/certs/ca-certificates.crt" -}}
-          {{- end -}}
-          {{- $broker_tls = ( dict
-            "enabled" true
-            "cert_file" ( printf "/etc/tls/certs/%s/tls.crt" $listener.tls.cert )
-            "key_file" ( printf "/etc/tls/certs/%s/tls.key" $listener.tls.cert )
-            "require_client_auth" $requireClientAuth
-            )
-          -}}
-          {{- if $trustStoreFile -}}
-            {{- $broker_tls = set $broker_tls "truststore_file" $trustStoreFile -}}
-          {{- end -}}
-          {{- if $broker_tls -}}
-            {{- $result = set $result "broker_tls" $broker_tls -}}
-          {{- end -}}
-        {{- end -}}
-      {{- end -}}
-    {{- end -}}
-  {{- end -}}
-{{- toYaml $result  -}}
 {{- end -}}
 
 {{/*
