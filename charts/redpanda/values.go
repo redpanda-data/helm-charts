@@ -32,21 +32,21 @@ const (
 // the Values struct as well to ensure that nothing can ever get out of sync.
 
 type Values struct {
-	NameOverride     string            `json:"nameOverride"`
-	FullnameOverride string            `json:"fullnameOverride"`
-	ClusterDomain    string            `json:"clusterDomain"`
-	CommonLabels     map[string]string `json:"commonLabels"`
-	NodeSelector     map[string]string `json:"nodeSelector"`
-	Affinity         Affinity          `json:"affinity" jsonschema:"required"`
-	Tolerations      []map[string]any  `json:"tolerations"`
-	Image            Image             `json:"image" jsonschema:"required,description=Values used to define the container image to be used for Redpanda"`
-	Service          *Service          `json:"service"`
-	ImagePullSecrets []string          `json:"imagePullSecrets"`
-	LicenseKey       string            `json:"license_key" jsonschema:"deprecated,pattern=^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?\\.(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$|^$"`
-	LicenseSecretRef *LicenseSecretRef `json:"license_secret_ref" jsonschema:"deprecated"`
-	AuditLogging     AuditLogging      `json:"auditLogging"`
-	Enterprise       Enterprise        `json:"enterprise"`
-	RackAwareness    RackAwareness     `json:"rackAwareness"`
+	NameOverride     string                        `json:"nameOverride"`
+	FullnameOverride string                        `json:"fullnameOverride"`
+	ClusterDomain    string                        `json:"clusterDomain"`
+	CommonLabels     map[string]string             `json:"commonLabels"`
+	NodeSelector     map[string]string             `json:"nodeSelector"`
+	Affinity         Affinity                      `json:"affinity" jsonschema:"required"`
+	Tolerations      []map[string]any              `json:"tolerations"`
+	Image            Image                         `json:"image" jsonschema:"required,description=Values used to define the container image to be used for Redpanda"`
+	Service          *Service                      `json:"service"`
+	ImagePullSecrets []corev1.LocalObjectReference `json:"imagePullSecrets"`
+	LicenseKey       string                        `json:"license_key" jsonschema:"deprecated,pattern=^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?\\.(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$|^$"`
+	LicenseSecretRef *LicenseSecretRef             `json:"license_secret_ref" jsonschema:"deprecated"`
+	AuditLogging     AuditLogging                  `json:"auditLogging"`
+	Enterprise       Enterprise                    `json:"enterprise"`
+	RackAwareness    RackAwareness                 `json:"rackAwareness"`
 	// Console          any      `json:"console"`
 	// Connectors       any      `json:"connectors"`
 	Auth           Auth              `json:"auth"`

@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.10
+    helm.sh/chart: redpanda-5.8.11
     testlabel: exercise_common_labels_template
   name: redpanda
   namespace: default
@@ -50,7 +50,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.10
+    helm.sh/chart: redpanda-5.8.11
     testlabel: exercise_common_labels_template
   name: redpanda-sts-lifecycle
   namespace: default
@@ -145,7 +145,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.10
+    helm.sh/chart: redpanda-5.8.11
     testlabel: exercise_common_labels_template
   name: redpanda-config-watcher
   namespace: default
@@ -184,7 +184,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.10
+    helm.sh/chart: redpanda-5.8.11
     testlabel: exercise_common_labels_template
   name: redpanda-configurator
   namespace: default
@@ -337,7 +337,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.10
+    helm.sh/chart: redpanda-5.8.11
     testlabel: exercise_common_labels_template
   name: redpanda
   namespace: default
@@ -363,7 +363,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.10
+    helm.sh/chart: redpanda-5.8.11
     testlabel: exercise_common_labels_template
   name: redpanda-rpk
   namespace: default
@@ -433,7 +433,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.10
+    helm.sh/chart: redpanda-5.8.11
     monitoring.redpanda.com/enabled: "false"
     testlabel: exercise_common_labels_template
   name: redpanda
@@ -481,7 +481,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.10
+    helm.sh/chart: redpanda-5.8.11
     testlabel: exercise_common_labels_template
   name: redpanda-external
   namespace: default
@@ -608,7 +608,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.10
+    helm.sh/chart: redpanda-5.8.11
     testlabel: exercise_common_labels_template
 spec:
   selector:
@@ -628,11 +628,11 @@ spec:
         app.kubernetes.io/instance: redpanda
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: redpanda
-        helm.sh/chart: redpanda-5.8.10
+        helm.sh/chart: redpanda-5.8.11
         redpanda.com/poddisruptionbudget: redpanda
         testlabel: exercise_common_labels_template
       annotations:
-        config.redpanda.com/checksum: 2db215ee97c159ef80ce432d93d5e5ea02397e5bf42ac61dd0e7623dc102525f
+        config.redpanda.com/checksum: 2c1f05e58ff4b6d758334c8000ff07808c52ae0863ef7298b076172b4a56ce50
     spec:
       terminationGracePeriodSeconds: 90
       securityContext: 
@@ -928,7 +928,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.10
+    helm.sh/chart: redpanda-5.8.11
     testlabel: exercise_common_labels_template
   name: redpanda-configuration
   namespace: default
@@ -1006,7 +1006,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.10
+    helm.sh/chart: redpanda-5.8.11
     testlabel: exercise_common_labels_template
   annotations:
     "helm.sh/hook": post-upgrade

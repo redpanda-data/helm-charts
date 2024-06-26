@@ -76,7 +76,7 @@ func PostInstallUpgradeJob(dot *helmette.Dot) *batchv1.Job {
 					Tolerations:      tolerations(dot),
 					RestartPolicy:    corev1.RestartPolicyNever,
 					SecurityContext:  PodSecurityContext(dot),
-					ImagePullSecrets: pullSecrets(dot),
+					ImagePullSecrets: helmette.Default(nil, values.ImagePullSecrets),
 					Containers: []corev1.Container{
 						{
 							Name:      fmt.Sprintf("%s-post-install", Name(dot)),
@@ -181,16 +181,6 @@ func tolerations(dot *helmette.Dot) []corev1.Toleration {
 	var result []corev1.Toleration
 	for _, t := range values.Tolerations {
 		result = append(result, helmette.MergeTo[corev1.Toleration](t))
-	}
-	return result
-}
-
-func pullSecrets(dot *helmette.Dot) []corev1.LocalObjectReference {
-	values := helmette.Unwrap[Values](dot.Values)
-
-	var result []corev1.LocalObjectReference
-	for _, r := range values.ImagePullSecrets {
-		result = append(result, corev1.LocalObjectReference{Name: r})
 	}
 	return result
 }
