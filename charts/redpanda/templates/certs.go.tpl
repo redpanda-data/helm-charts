@@ -3,7 +3,9 @@
 {{- define "redpanda.ClientCerts" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- if (not (get (fromJson (include "redpanda.TLSEnabled" (dict "a" (list $dot) ))) "r")) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (list )) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -40,6 +42,9 @@
 {{- $issuerRef := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $data.issuerRef (mustMergeOverwrite (dict "name" "" ) (dict "kind" "Issuer" "group" "cert-manager.io" "name" (printf "%s-%s-root-issuer" $fullname $name) ))) ))) "r") -}}
 {{- $certs = (concat (default (list ) $certs) (list (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) "spec" (dict "secretName" "" "issuerRef" (dict "name" "" ) ) "status" (dict ) ) (mustMergeOverwrite (dict ) (dict "apiVersion" "cert-manager.io/v1" "kind" "Certificate" )) (dict "metadata" (mustMergeOverwrite (dict "creationTimestamp" (coalesce nil) ) (dict "name" (printf "%s-%s-cert" $fullname $name) "labels" (get (fromJson (include "redpanda.FullLabels" (dict "a" (list $dot) ))) "r") "namespace" $dot.Release.Namespace )) "spec" (mustMergeOverwrite (dict "secretName" "" "issuerRef" (dict "name" "" ) ) (dict "dnsNames" $names "duration" $duration "isCA" false "issuerRef" $issuerRef "secretName" (printf "%s-%s-cert" $fullname $name) "privateKey" (mustMergeOverwrite (dict ) (dict "algorithm" "ECDSA" "size" (256 | int) )) )) )))) -}}
 {{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
 {{- $name := $values.listeners.kafka.tls.cert -}}
 {{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $values.tls.certs $name (coalesce nil)) ))) "r")) ))) "r") -}}
 {{- $ok := $tmp_tuple_1.T2 -}}
@@ -48,6 +53,7 @@
 {{- $_ := (fail (printf "Certificate %q referenced but not defined" $name)) -}}
 {{- end -}}
 {{- if (or (empty $data.secretRef) (not (get (fromJson (include "redpanda.ClientAuthRequired" (dict "a" (list $dot) ))) "r"))) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" $certs) | toJson -}}
 {{- break -}}
 {{- end -}}
@@ -57,6 +63,7 @@
 {{- $_ := (set $issuerRef "group" "cert-manager.io") -}}
 {{- end -}}
 {{- $duration := (default "43800h" $data.duration) -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (concat (default (list ) $certs) (list (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) "spec" (dict "secretName" "" "issuerRef" (dict "name" "" ) ) "status" (dict ) ) (mustMergeOverwrite (dict ) (dict "apiVersion" "cert-manager.io/v1" "kind" "Certificate" )) (dict "metadata" (mustMergeOverwrite (dict "creationTimestamp" (coalesce nil) ) (dict "name" (printf "%s-client" $fullname) "labels" (get (fromJson (include "redpanda.FullLabels" (dict "a" (list $dot) ))) "r") )) "spec" (mustMergeOverwrite (dict "secretName" "" "issuerRef" (dict "name" "" ) ) (dict "commonName" (printf "%s-client" $fullname) "duration" $duration "isCA" false "secretName" (printf "%s-client" $fullname) "privateKey" (mustMergeOverwrite (dict ) (dict "algorithm" "ECDSA" "size" (256 | int) )) "issuerRef" $issuerRef )) ))))) | toJson -}}
 {{- break -}}
 {{- end -}}
