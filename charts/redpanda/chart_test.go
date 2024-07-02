@@ -1,6 +1,8 @@
 package redpanda_test
 
 import (
+	"encoding/json"
+	"fmt"
 	"maps"
 	"os"
 	"path/filepath"
@@ -18,6 +20,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/utils/ptr"
 	"sigs.k8s.io/yaml"
 )
 
@@ -103,10 +106,12 @@ func TestChart(t *testing.T) {
 
 	redpandaChart := "."
 
-	env := helmtest.Setup(t).Namespaced(t)
+	h := helmtest.Setup(t)
 
 	t.Run("tiered-storage-secrets", func(t *testing.T) {
 		ctx := testutil.Context(t)
+
+		env := h.Namespaced(t)
 
 		credsSecret, err := kube.Create(ctx, env.Ctl(), TieredStorageSecret(env.Namespace()))
 		require.NoError(t, err)
@@ -141,6 +146,196 @@ func TestChart(t *testing.T) {
 		require.Equal(t, true, config["cloud_storage_enabled"])
 		require.Equal(t, "from-secret-access-key", config["cloud_storage_access_key"])
 	})
+
+	t.Run("mtls-using-cert-manager", func(t *testing.T) {
+		ctx := testutil.Context(t)
+
+		env := h.Namespaced(t)
+
+		partial := redpanda.PartialValues{
+			ClusterDomain: ptr.To("cluster.local"),
+			Listeners: &redpanda.PartialListeners{
+				Admin: &redpanda.PartialAdminListeners{
+					TLS: &redpanda.PartialInternalTLS{
+						RequireClientAuth: ptr.To(true),
+					},
+				},
+				HTTP: &redpanda.PartialHTTPListeners{
+					TLS: &redpanda.PartialInternalTLS{
+						RequireClientAuth: ptr.To(true),
+					},
+				},
+				Kafka: &redpanda.PartialKafkaListeners{
+					TLS: &redpanda.PartialInternalTLS{
+						RequireClientAuth: ptr.To(true),
+					},
+				},
+				SchemaRegistry: &redpanda.PartialSchemaRegistryListeners{
+					TLS: &redpanda.PartialInternalTLS{
+						RequireClientAuth: ptr.To(true),
+					},
+				},
+				RPC: &struct {
+					Port *int32                       `json:"port,omitempty" jsonschema:"required"`
+					TLS  *redpanda.PartialInternalTLS `json:"tls,omitempty" jsonschema:"required"`
+				}{
+					TLS: &redpanda.PartialInternalTLS{
+						RequireClientAuth: ptr.To(true),
+					},
+				},
+			},
+		}
+
+		rpRelease := env.Install(redpandaChart, helm.InstallOptions{
+			Values: partial,
+		})
+
+		var val map[string]any
+		valByte, err := os.ReadFile("values.yaml")
+		require.NoError(t, err)
+
+		require.NoError(t, yaml.Unmarshal(valByte, &val))
+
+		partialB, err := yaml.Marshal(partial)
+		require.NoError(t, err)
+
+		var partialVal map[string]any
+		require.NoError(t, yaml.Unmarshal(partialB, &partialVal))
+
+		dot := helmette.Dot{Values: helmette.Merge(partialVal, val)}
+
+		dot.Release.Name = rpRelease.Name
+		dot.Release.Namespace = rpRelease.Namespace
+
+		rpk := Client{Ctl: env.Ctl(), Release: &rpRelease}
+		_, err = rpk.ClusterConfig(ctx)
+		require.NoError(t, err)
+
+		t.Run("kafka-listener", func(t *testing.T) {
+			// Test kafka
+			input := "test-input"
+			require.NoError(t, rpk.CreateTopic(ctx, "testTopic"))
+
+			_, err = rpk.KafkaProduce(ctx, input, "testTopic")
+			require.NoError(t, err)
+
+			consumeOutput, err := rpk.KafkaConsume(ctx, "testTopic")
+			require.NoError(t, err)
+			require.Equal(t, input, consumeOutput["value"])
+		})
+
+		t.Run("admin-listener", func(t *testing.T) {
+			// Test admin
+			out, err := rpk.GetClusterHealth(ctx, &dot)
+			require.NoError(t, err)
+			require.Equal(t, true, out["is_healthy"])
+		})
+
+		t.Run("schema-registry-listener", func(t *testing.T) {
+			// Test schema registry
+			// Based on https://docs.redpanda.com/current/manage/schema-reg/schema-reg-api/
+			formats, err := rpk.QuerySupportedFormats(ctx, &dot)
+			require.NoError(t, err)
+			require.Len(t, formats, 2)
+
+			schema := map[string]any{
+				"type": "record",
+				"name": "sensor_sample",
+				"fields": []map[string]any{
+					{
+						"name":        "timestamp",
+						"type":        "long",
+						"logicalType": "timestamp-millis",
+					},
+					{
+						"name":        "identifier",
+						"type":        "string",
+						"logicalType": "uuid",
+					},
+					{
+						"name": "value",
+						"type": "long",
+					},
+				},
+			}
+
+			registeredID, err := rpk.RegisterSchema(ctx, &dot, schema)
+			require.NoError(t, err)
+
+			var id float64
+			if idForSchema, ok := registeredID["id"]; ok {
+				id = idForSchema.(float64)
+			}
+
+			schemaBytes, err := json.Marshal(schema)
+			require.NoError(t, err)
+
+			retrievedSchema, err := rpk.RetrieveSchema(ctx, &dot, int(id))
+			require.NoError(t, err)
+			require.JSONEq(t, string(schemaBytes), retrievedSchema)
+
+			resp, err := rpk.ListRegistrySubjects(ctx, &dot)
+			require.NoError(t, err)
+			require.Equal(t, "sensor-value", resp[0])
+
+			_, err = rpk.SoftDeleteSchema(ctx, &dot, resp[0], int(id))
+			require.NoError(t, err)
+
+			_, err = rpk.HardDeleteSchema(ctx, &dot, resp[0], int(id))
+			require.NoError(t, err)
+		})
+
+		t.Run("http-proxy-listener", func(t *testing.T) {
+			// Test http proxy
+			// Based on https://docs.redpanda.com/current/develop/http-proxy/
+			topics, err := rpk.ListTopics(ctx, &dot)
+			require.NoError(t, err)
+			require.Len(t, topics, 2)
+
+			records := map[string]any{
+				"records": []map[string]any{
+					{
+						"value":     "Redpanda",
+						"partition": 0,
+					},
+					{
+						"value":     "HTTP proxy",
+						"partition": 1,
+					},
+					{
+						"value":     "Test event",
+						"partition": 2,
+					},
+				},
+			}
+
+			httpTestTopic := "httpTestTopic"
+			require.NoError(t, rpk.CreateTopic(ctx, httpTestTopic))
+
+			_, err = rpk.SendEventToTopic(ctx, &dot, records, httpTestTopic)
+			require.NoError(t, err)
+			// require.JSONEq(t, "{\"offsets\":[{\"partition\":0,\"offset\":0},{\"partition\":1,\"offset\":0},{\"partition\":2,\"offset\":0}]}", offsets)
+
+			record, err := rpk.RetrieveEventFromTopic(ctx, &dot, httpTestTopic, 0)
+			require.NoError(t, err)
+			require.Equal(t, fmt.Sprintf("[{\"topic\":\"%s\",\"key\":null,\"value\":\"Redpanda\",\"partition\":0,\"offset\":0}]", httpTestTopic), record)
+
+			record, err = rpk.RetrieveEventFromTopic(ctx, &dot, httpTestTopic, 1)
+			require.NoError(t, err)
+			require.Equal(t, fmt.Sprintf("[{\"topic\":\"%s\",\"key\":null,\"value\":\"HTTP proxy\",\"partition\":1,\"offset\":0}]", httpTestTopic), record)
+
+			record, err = rpk.RetrieveEventFromTopic(ctx, &dot, httpTestTopic, 2)
+			require.NoError(t, err)
+			require.Equal(t, fmt.Sprintf("[{\"topic\":\"%s\",\"key\":null,\"value\":\"Test event\",\"partition\":2,\"offset\":0}]", httpTestTopic), record)
+		})
+	})
+
+	//t.Run("mtls-using-self-created-certificates", func(t *testing.T) {
+	//	ctx := testutil.Context(t)
+	//
+	//	env := h.Namespaced(t)
+	//
+	//})
 }
 
 // preTranspilerChartVersion is the latest release of the Redpanda helm chart prior to the introduction of

@@ -486,13 +486,16 @@ data:
         tls:
           caFilepath: ""
           certFilepath: ""
-          enabled: "false"
-          insecureSkipTlsVerify: "false"
+          enabled: false
+          insecureSkipTlsVerify: false
           keyFilepath: ""
         token: ""
         url: http://redpanda-connectors.default.svc.cluster.local:8083
         username: ""
+      connectTimeout: 0
       enabled: true
+      readTimeout: 0
+      requestTimeout: 0
     kafka:
       brokers:
       - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -503,13 +506,21 @@ data:
       schemaRegistry:
         enabled: true
         tls:
+          caFilepath: /mnt/cert/schemaregistry/default/ca.crt
+          certFilepath: ""
           enabled: true
+          insecureSkipTlsVerify: false
+          keyFilepath: ""
         urls:
         - https://redpanda-0.redpanda.default.svc.cluster.local.:8081
         - https://redpanda-1.redpanda.default.svc.cluster.local.:8081
         - https://redpanda-2.redpanda.default.svc.cluster.local.:8081
       tls:
+        caFilepath: /mnt/cert/kafka/default/ca.crt
+        certFilepath: ""
         enabled: true
+        insecureSkipTlsVerify: false
+        keyFilepath: ""
 ---
 # Source: redpanda/charts/connectors/templates/service.yaml
 apiVersion: v1
@@ -826,7 +837,7 @@ spec:
     metadata:
       annotations:
         checksum/config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum-redpanda-chart/config: 433eea4d1108413c393849452b990abe94ceb6694b5f38e365b155c2471070b9
+        checksum-redpanda-chart/config: 06eacc06469f89f68da695baf818f17ac05437f1c56c6a5ba444c0ad8baa166f
       labels:
         app.kubernetes.io/name: console
         app.kubernetes.io/instance: redpanda
@@ -843,23 +854,14 @@ spec:
         - name: kafka-default-cert
           secret:
             defaultMode: 272
-            items:
-            - key: ca.crt
-              path: ca.crt
             secretName: redpanda-default-cert
         - name: schemaregistry-default-cert
           secret:
             defaultMode: 272
-            items:
-            - key: ca.crt
-              path: ca.crt
             secretName: redpanda-default-cert
         - name: adminapi-default-cert
           secret:
             defaultMode: 272
-            items:
-            - key: ca.crt
-              path: ca.crt
             secretName: redpanda-default-cert
       containers:
         - name: console
