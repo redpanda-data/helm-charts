@@ -107,3 +107,29 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "redpanda.StatefulSetInitContainers" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $containers := (coalesce nil) -}}
+{{- $c_6 := (get (fromJson (include "redpanda.statefulSetInitContainerTuning" (dict "a" (list $dot) ))) "r") -}}
+{{- if (ne $c_6 (coalesce nil)) -}}
+{{- $containers = (concat (default (list ) $containers) (list $c_6)) -}}
+{{- end -}}
+{{- (dict "r" $containers) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.statefulSetInitContainerTuning" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $values := $dot.Values.AsMap -}}
+{{- if (not $values.tuning.tune_aio_events) -}}
+{{- (dict "r" (coalesce nil)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- (dict "r" (mustMergeOverwrite (dict "name" "" "resources" (dict ) ) (dict "name" "tuning" "image" (printf "%s:%s" $values.image.repository (get (fromJson (include "redpanda.Tag" (dict "a" (list $dot) ))) "r")) "command" (list `/bin/bash` `-c` `rpk redpanda tune all`) "securityContext" (mustMergeOverwrite (dict ) (dict "capabilities" (mustMergeOverwrite (dict ) (dict "add" (list `SYS_RESOURCE`) )) "privileged" true "runAsUser" ((0 | int64) | int64) "runAsGroup" ((0 | int64) | int64) )) "volumeMounts" (concat (default (list ) (concat (default (list ) (get (fromJson (include "redpanda.CommonMounts" (dict "a" (list $dot) ))) "r")) (default (list ) $values.statefulset.initContainers.tuning.extraVolumeMounts))) (list (mustMergeOverwrite (dict "name" "" "mountPath" "" ) (dict "name" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r") "mountPath" "/etc/redpanda" )))) "resources" $values.statefulset.initContainers.tuning.resources ))) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+

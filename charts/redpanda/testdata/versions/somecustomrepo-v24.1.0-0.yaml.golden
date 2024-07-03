@@ -773,25 +773,27 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
       initContainers:
-        - name: tuning
+        - command:
+          - /bin/bash
+          - -c
+          - rpk redpanda tune all
           image: somecustomrepo:v24.1.0
-          command:
-            - /bin/bash
-            - -c
-            - rpk redpanda tune all
+          name: tuning
+          resources: {}
           securityContext:
             capabilities:
-              add: ["SYS_RESOURCE"]
+              add:
+              - SYS_RESOURCE
             privileged: true
-            runAsUser: 0
             runAsGroup: 0
-          volumeMounts: 
-            - mountPath: /etc/tls/certs/default
-              name: redpanda-default-cert
-            - mountPath: /etc/tls/certs/external
-              name: redpanda-external-cert
-            - name: redpanda
-              mountPath: /etc/redpanda
+            runAsUser: 0
+          volumeMounts:
+          - mountPath: /etc/tls/certs/default
+            name: redpanda-default-cert
+          - mountPath: /etc/tls/certs/external
+            name: redpanda-external-cert
+          - mountPath: /etc/redpanda
+            name: redpanda
         - name: redpanda-configurator
           image: somecustomrepo:v24.1.0
           command:

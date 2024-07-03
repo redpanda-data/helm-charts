@@ -247,3 +247,46 @@ func StatefulSetVolumeMounts(dot *helmette.Dot) []corev1.VolumeMount {
 
 	return mounts
 }
+
+func StatefulSetInitContainers(dot *helmette.Dot) []corev1.Container {
+	// As init-containers are converted, return them here
+	var containers []corev1.Container
+	if c := statefulSetInitContainerTuning(dot); c != nil {
+		containers = append(containers, *c)
+	}
+	return containers
+}
+
+func statefulSetInitContainerTuning(dot *helmette.Dot) *corev1.Container {
+	values := helmette.Unwrap[Values](dot.Values)
+
+	if !values.Tuning.TuneAIOEvents {
+		return nil
+	}
+
+	return &corev1.Container{
+		Name:  "tuning",
+		Image: fmt.Sprintf("%s:%s", values.Image.Repository, Tag(dot)),
+		Command: []string{
+			`/bin/bash`,
+			`-c`,
+			`rpk redpanda tune all`,
+		},
+		SecurityContext: &corev1.SecurityContext{
+			Capabilities: &corev1.Capabilities{
+				Add: []corev1.Capability{`SYS_RESOURCE`},
+			},
+			Privileged: ptr.To(true),
+			RunAsUser:  ptr.To(int64(0)),
+			RunAsGroup: ptr.To(int64(0)),
+		},
+		VolumeMounts: append(append(CommonMounts(dot),
+			values.Statefulset.InitContainers.Tuning.ExtraVolumeMounts...),
+			corev1.VolumeMount{
+				Name:      Fullname(dot),
+				MountPath: "/etc/redpanda",
+			},
+		),
+		Resources: helmette.UnmarshalInto[corev1.ResourceRequirements](values.Statefulset.InitContainers.Tuning.Resources),
+	}
+}

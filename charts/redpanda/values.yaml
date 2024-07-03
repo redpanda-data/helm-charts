@@ -797,7 +797,7 @@ statefulset:
       # * Every container in the Pod must have a CPU limit and a CPU request.
       # * For every container in the Pod, the CPU limit must equal the CPU request.
       resources: {}
-      extraVolumeMounts: |-
+      extraVolumeMounts: []
     setDataDirOwnership:
       # -- In environments where root is not allowed, you cannot change the ownership of files and directories.
       # Enable `setDataDirOwnership` when using default minikube cluster configuration.

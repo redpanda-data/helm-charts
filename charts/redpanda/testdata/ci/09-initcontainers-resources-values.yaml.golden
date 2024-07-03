@@ -828,27 +828,29 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
       initContainers:
-        - name: tuning
+        - command:
+          - /bin/bash
+          - -c
+          - rpk redpanda tune all
           image: docker.redpanda.com/redpandadata/redpanda:v24.1.8
-          command:
-            - /bin/bash
-            - -c
-            - rpk redpanda tune all
+          name: tuning
+          resources: {}
           securityContext:
             capabilities:
-              add: ["SYS_RESOURCE"]
+              add:
+              - SYS_RESOURCE
             privileged: true
-            runAsUser: 0
             runAsGroup: 0
-          volumeMounts: 
-            - mountPath: /etc/tls/certs/default
-              name: redpanda-default-cert
-            - mountPath: /etc/tls/certs/external
-              name: redpanda-external-cert
-            - name: test-extra-volume
-              mountPath: /fake/lifecycle
-            - name: redpanda
-              mountPath: /etc/redpanda
+            runAsUser: 0
+          volumeMounts:
+          - mountPath: /etc/tls/certs/default
+            name: redpanda-default-cert
+          - mountPath: /etc/tls/certs/external
+            name: redpanda-external-cert
+          - mountPath: /fake/lifecycle
+            name: test-extra-volume
+          - mountPath: /etc/redpanda
+            name: redpanda
         - name: set-datadir-ownership
           image: busybox:latest
           command: ["/bin/sh", "-c", "chown 101:101 -R /var/lib/redpanda/data"]

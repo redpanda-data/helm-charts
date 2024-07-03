@@ -777,7 +777,7 @@ To create `Guaranteed` Pods for Redpanda brokers, provide both requests and limi
 
 ### [statefulset.initContainers.tuning.extraVolumeMounts](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.tuning.extraVolumeMounts)
 
-**Default:** `""`
+**Default:** `[]`
 
 ### [statefulset.initContainers.tuning.resources](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.tuning.resources)
 

@@ -31,6 +31,8 @@ limitations under the License.
     -}}
   {{- end -}}
 {{- end -}}
+
+{{- $initContainers := (get ((include "redpanda.StatefulSetInitContainers" (dict "a" (list .))) | fromJson) "r") -}}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -61,28 +63,8 @@ spec:
       imagePullSecrets: {{- toYaml . | nindent 8 }}
     {{- end }}
       initContainers:
-{{- if and (hasKey $values.tuning "tune_aio_events") $values.tuning.tune_aio_events }}
-        - name: tuning
-          image: {{ .Values.image.repository }}:{{ template "redpanda.tag" . }}
-          command:
-            - /bin/bash
-            - -c
-            - rpk redpanda tune all
-          securityContext:
-            capabilities:
-              add: ["SYS_RESOURCE"]
-            privileged: true
-            runAsUser: 0
-            runAsGroup: 0
-          volumeMounts: {{ include "common-mounts" . | nindent 12 }}
-  {{- if dig "initContainers" "tuning" "extraVolumeMounts" false .Values.statefulset -}}
-    {{ tpl .Values.statefulset.initContainers.tuning.extraVolumeMounts . | nindent 12 }}
-  {{- end }}
-            - name: {{ template "redpanda.fullname" . }}
-              mountPath: /etc/redpanda
-  {{- if get .Values.statefulset.initContainers.tuning "resources" }}
-          resources: {{- toYaml .Values.statefulset.initContainers.tuning.resources | nindent 12 }}
-  {{- end }}
+{{- if not (empty $initContainers) }}
+{{- toYaml $initContainers | nindent 8 }}
 {{- end }}
 {{- if .Values.statefulset.initContainers.setDataDirOwnership.enabled }}
         - name: set-datadir-ownership

@@ -573,8 +573,8 @@ type Statefulset struct {
 		} `json:"setTieredStorageCacheDirOwnership"`
 		Tuning struct {
 			// Enabled           bool           `json:"enabled"`
-			Resources         map[string]any `json:"resources"`
-			ExtraVolumeMounts string         `json:"extraVolumeMounts"`
+			Resources         map[string]any       `json:"resources"`
+			ExtraVolumeMounts []corev1.VolumeMount `json:"extraVolumeMounts"`
 		} `json:"tuning"`
 		ExtraInitContainers string `json:"extraInitContainers"`
 	} `json:"initContainers"`

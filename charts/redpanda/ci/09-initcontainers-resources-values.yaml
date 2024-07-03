@@ -42,7 +42,7 @@ statefulset:
         - name: test-extra-volume
           mountPath: /fake/lifecycle
     tuning:
-      extraVolumeMounts: |-
+      extraVolumeMounts:
         - name: test-extra-volume
           mountPath: /fake/lifecycle
     setDataDirOwnership:
