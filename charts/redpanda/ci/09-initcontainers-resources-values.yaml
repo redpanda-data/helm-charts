@@ -30,6 +30,9 @@ statefulset:
         limits:
           memory: "60Mi"
           cpu: "200m"
+      extraVolumeMounts: |-
+        - name: test-extra-volume
+          mountPath: /fake/lifecycle
     configurator:
       resources:
         requests:
@@ -82,6 +85,8 @@ statefulset:
       secret:
         secretName: {{ (include "redpanda.fullname" . | trunc 50 ) }}-sts-lifecycle
         defaultMode: 0774
+  # Previously, this test used a template function including `{{ include "redpanda.fullname . }}`
+    # We no longer support this kind of templated expansion in values overrides.
   extraVolumeMounts: |-
     - name: test-extra-volume
       mountPath: /fake/lifecycle

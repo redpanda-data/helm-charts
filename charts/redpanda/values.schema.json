@@ -3424,6 +3424,17 @@
         "extraVolumes": {
           "type": "string"
         },
+        "initContainerImage": {
+          "properties": {
+            "repository": {
+              "type": "string"
+            },
+            "tag": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
         "initContainers": {
           "properties": {
             "configurator": {
@@ -3719,6 +3730,12 @@
             },
             "periodSeconds": {
               "type": "integer"
+            },
+            "successThreshold": {
+              "type": "integer"
+            },
+            "timeoutSeconds": {
+              "type": "integer"
             }
           },
           "required": [
@@ -3870,6 +3887,9 @@
                 "enabled": {
                   "type": "boolean"
                 },
+                "healthProbeAddress": {
+                  "type": "string"
+                },
                 "image": {
                   "properties": {
                     "repository": {
@@ -3888,7 +3908,16 @@
                   ],
                   "type": "object"
                 },
+                "metricsAddress": {
+                  "type": "string"
+                },
                 "resources": true,
+                "run": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
                 "securityContext": {
                   "properties": {
                     "allowPrivilegeEscalation": {
@@ -4102,6 +4131,9 @@
                 "type": "string"
               },
               "type": "object"
+            },
+            "nameOverwrite": {
+              "type": "string"
             },
             "size": {
               "oneOf": [
