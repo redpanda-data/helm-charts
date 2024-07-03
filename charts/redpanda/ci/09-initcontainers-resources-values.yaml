@@ -16,7 +16,7 @@
 statefulset:
   sideCars:
     configWatcher:
-      extraVolumeMounts: |-
+      extraVolumeMounts:
         - name: test-extra-volume
           mountPath: /fake/lifecycle
   initContainers:
@@ -30,6 +30,9 @@ statefulset:
         limits:
           memory: "60Mi"
           cpu: "200m"
+      extraVolumeMounts:
+        - name: test-extra-volume
+          mountPath: /fake/lifecycle
     configurator:
       resources:
         requests:
@@ -38,11 +41,11 @@ statefulset:
         limits:
           memory: "60Mi"
           cpu: "200m"
-      extraVolumeMounts: |-
+      extraVolumeMounts:
         - name: test-extra-volume
           mountPath: /fake/lifecycle
     tuning:
-      extraVolumeMounts: |-
+      extraVolumeMounts:
         - name: test-extra-volume
           mountPath: /fake/lifecycle
     setDataDirOwnership:
@@ -54,7 +57,7 @@ statefulset:
         limits:
           memory: "60Mi"
           cpu: "200m"
-      extraVolumeMounts: |-
+      extraVolumeMounts:
         - name: test-extra-volume
           mountPath: /fake/lifecycle
     setTieredStorageCacheDirOwnership:
@@ -66,10 +69,10 @@ statefulset:
         limits:
           memory: "60Mi"
           cpu: "200m"
-      extraVolumeMounts: |-
+      extraVolumeMounts:
         - name: test-extra-volume
           mountPath: /fake/lifecycle
-    extraInitContainers: |-
+    extraInitContainers:
       - name: "test-init-container"
         image: "mintel/docker-alpine-bash-curl-jq:latest"
         command: [ "/bin/bash", "-c" ]
@@ -77,11 +80,12 @@ statefulset:
           - |
             set -xe
             echo "Hello World!"
-  extraVolumes: |-
+  extraVolumes:
+    # Previously, this test used a template function including `{{ include "redpanda.fullname . }}`
+    # We no longer support this kind of templated expansion in values overrides.
     - name: test-extra-volume
-      secret:
-        secretName: {{ (include "redpanda.fullname" . | trunc 50 ) }}-sts-lifecycle
-        defaultMode: 0774
-  extraVolumeMounts: |-
+      emptyDir:
+        sizeLimit: 10Mi
+  extraVolumeMounts:
     - name: test-extra-volume
       mountPath: /fake/lifecycle

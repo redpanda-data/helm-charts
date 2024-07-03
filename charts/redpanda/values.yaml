@@ -746,7 +746,7 @@ statefulset:
       # https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/#static-policy
       resources: {}
       securityContext: {}
-      extraVolumeMounts: |-
+      extraVolumeMounts: []
     # Configure extra controllers to run as sidecars inside the Pods running Redpanda brokers.
     # Available controllers:
     # - Decommission Controller: The Decommission Controller ensures smooth scaling down operations.
@@ -790,14 +790,14 @@ statefulset:
       # * Every container in the Pod must have a CPU limit and a CPU request.
       # * For every container in the Pod, the CPU limit must equal the CPU request.
       resources: {}
-      extraVolumeMounts: |-
+      extraVolumeMounts: []
     tuning:
       # -- To create `Guaranteed` Pods for Redpanda brokers, provide both requests and limits for CPU and memory. For details, see
       # https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-guaranteed
       # * Every container in the Pod must have a CPU limit and a CPU request.
       # * For every container in the Pod, the CPU limit must equal the CPU request.
       resources: {}
-      extraVolumeMounts: |-
+      extraVolumeMounts: []
     setDataDirOwnership:
       # -- In environments where root is not allowed, you cannot change the ownership of files and directories.
       # Enable `setDataDirOwnership` when using default minikube cluster configuration.
@@ -807,30 +807,30 @@ statefulset:
       # * Every container in the Pod must have a CPU limit and a CPU request.
       # * For every container in the Pod, the CPU limit must equal the CPU request.
       resources: {}
-      extraVolumeMounts: |-
+      extraVolumeMounts: []
     setTieredStorageCacheDirOwnership:
       # -- To create `Guaranteed` Pods for Redpanda brokers, provide both requests and limits for CPU and memory. For details, see
       # https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-guaranteed
       # * Every container in the Pod must have a CPU limit and a CPU request.
       # * For every container in the Pod, the CPU limit must equal the CPU request.
       resources: {}
-      extraVolumeMounts: |-
+      extraVolumeMounts: []
     configurator:
       # -- To create `Guaranteed` Pods for Redpanda brokers, provide both requests and limits for CPU and memory. For details, see
       # https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-guaranteed
       # * Every container in the Pod must have a CPU limit and a CPU request.
       # * For every container in the Pod, the CPU limit must equal the CPU request.
       resources: {}
-      extraVolumeMounts: |-
+      extraVolumeMounts: []
     ## Additional init containers
-    extraInitContainers: |-
-#      - name: "test-init-container"
-#        image: "mintel/docker-alpine-bash-curl-jq:latest"
-#        command: [ "/bin/bash", "-c" ]
-#        args:
-#          - |
-#            set -xe
-#            echo "Hello World!"
+    extraInitContainers: []
+      #  - name: "test-init-container"
+      #    image: "mintel/docker-alpine-bash-curl-jq:latest"
+      #    command: [ "/bin/bash", "-c" ]
+      #    args:
+      #      - |
+      #        set -xe
+      #        echo "Hello World!"
   initContainerImage:
     repository: busybox
     tag: latest
@@ -852,9 +852,9 @@ statefulset:
   # https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination
   terminationGracePeriodSeconds: 90
   ## Additional Volumes that you mount
-  extraVolumes: |-
+  extraVolumes: []
   ## Additional Volume mounts for redpanda container
-  extraVolumeMounts: |-
+  extraVolumeMounts: []
 
 # -- Service account management.
 serviceAccount:

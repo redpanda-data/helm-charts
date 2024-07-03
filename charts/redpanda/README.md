@@ -3,7 +3,7 @@
 description: Find the default values and descriptions of settings in the Redpanda Helm chart.
 ---
 
-![Version: 5.8.11](https://img.shields.io/badge/Version-5.8.11-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v24.1.8](https://img.shields.io/badge/AppVersion-v24.1.8-informational?style=flat-square)
+![Version: 6.0.0](https://img.shields.io/badge/Version-6.0.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v24.1.8](https://img.shields.io/badge/AppVersion-v24.1.8-informational?style=flat-square)
 
 This page describes the official Redpanda Helm Chart. In particular, this page describes the contents of the chart’s [`values.yaml` file](https://github.com/redpanda-data/helm-charts/blob/main/charts/redpanda/values.yaml). Each of the settings is listed and described on this page, along with any default values.
 
@@ -703,11 +703,11 @@ DEPRECATED Please use statefulset.podTemplate.annotations. Annotations are used 
 
 ### [statefulset.extraVolumeMounts](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.extraVolumeMounts)
 
-**Default:** `""`
+**Default:** `[]`
 
 ### [statefulset.extraVolumes](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.extraVolumes)
 
-**Default:** `""`
+**Default:** `[]`
 
 ### [statefulset.initContainerImage.repository](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainerImage.repository)
 
@@ -719,7 +719,7 @@ DEPRECATED Please use statefulset.podTemplate.annotations. Annotations are used 
 
 ### [statefulset.initContainers.configurator.extraVolumeMounts](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.configurator.extraVolumeMounts)
 
-**Default:** `""`
+**Default:** `[]`
 
 ### [statefulset.initContainers.configurator.resources](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.configurator.resources)
 
@@ -729,7 +729,7 @@ To create `Guaranteed` Pods for Redpanda brokers, provide both requests and limi
 
 ### [statefulset.initContainers.extraInitContainers](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.extraInitContainers)
 
-**Default:** `""`
+**Default:** `[]`
 
 ### [statefulset.initContainers.fsValidator.enabled](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.fsValidator.enabled)
 
@@ -741,7 +741,7 @@ To create `Guaranteed` Pods for Redpanda brokers, provide both requests and limi
 
 ### [statefulset.initContainers.fsValidator.extraVolumeMounts](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.fsValidator.extraVolumeMounts)
 
-**Default:** `""`
+**Default:** `[]`
 
 ### [statefulset.initContainers.fsValidator.resources](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.fsValidator.resources)
 
@@ -757,7 +757,7 @@ In environments where root is not allowed, you cannot change the ownership of fi
 
 ### [statefulset.initContainers.setDataDirOwnership.extraVolumeMounts](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.setDataDirOwnership.extraVolumeMounts)
 
-**Default:** `""`
+**Default:** `[]`
 
 ### [statefulset.initContainers.setDataDirOwnership.resources](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.setDataDirOwnership.resources)
 
@@ -767,7 +767,7 @@ To create `Guaranteed` Pods for Redpanda brokers, provide both requests and limi
 
 ### [statefulset.initContainers.setTieredStorageCacheDirOwnership.extraVolumeMounts](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.setTieredStorageCacheDirOwnership.extraVolumeMounts)
 
-**Default:** `""`
+**Default:** `[]`
 
 ### [statefulset.initContainers.setTieredStorageCacheDirOwnership.resources](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.setTieredStorageCacheDirOwnership.resources)
 
@@ -777,7 +777,7 @@ To create `Guaranteed` Pods for Redpanda brokers, provide both requests and limi
 
 ### [statefulset.initContainers.tuning.extraVolumeMounts](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.tuning.extraVolumeMounts)
 
-**Default:** `""`
+**Default:** `[]`
 
 ### [statefulset.initContainers.tuning.resources](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.tuning.resources)
 
@@ -907,7 +907,7 @@ Number of Redpanda brokers (Redpanda Data recommends setting this to the number 
 
 ### [statefulset.sideCars.configWatcher.extraVolumeMounts](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.sideCars.configWatcher.extraVolumeMounts)
 
-**Default:** `""`
+**Default:** `[]`
 
 ### [statefulset.sideCars.configWatcher.resources](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.sideCars.configWatcher.resources)
 

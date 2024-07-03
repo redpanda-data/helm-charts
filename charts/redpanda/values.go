@@ -349,11 +349,12 @@ type Storage struct {
 	HostPath         string  `json:"hostPath" jsonschema:"required"`
 	Tiered           *Tiered `json:"tiered" jsonschema:"required"`
 	PersistentVolume *struct {
-		Annotations  map[string]string `json:"annotations" jsonschema:"required"`
-		Enabled      bool              `json:"enabled" jsonschema:"required"`
-		Labels       map[string]string `json:"labels" jsonschema:"required"`
-		Size         resource.Quantity `json:"size" jsonschema:"required"`
-		StorageClass string            `json:"storageClass" jsonschema:"required"`
+		Annotations   map[string]string `json:"annotations" jsonschema:"required"`
+		Enabled       bool              `json:"enabled" jsonschema:"required"`
+		Labels        map[string]string `json:"labels" jsonschema:"required"`
+		Size          resource.Quantity `json:"size" jsonschema:"required"`
+		StorageClass  string            `json:"storageClass" jsonschema:"required"`
+		NameOverwrite string            `json:"nameOverwrite"`
 	} `json:"persistentVolume" jsonschema:"required,deprecated"`
 	TieredConfig                  TieredStorageConfig `json:"tieredConfig" jsonschema:"deprecated"`
 	TieredStorageHostPath         string              `json:"tieredStorageHostPath" jsonschema:"deprecated"`
@@ -495,20 +496,21 @@ type Statefulset struct {
 		MaxUnavailable int `json:"maxUnavailable" jsonschema:"required"`
 	} `json:"budget" jsonschema:"required"`
 	StartupProbe struct {
-		InitialDelaySeconds int `json:"initialDelaySeconds" jsonschema:"required"`
-		FailureThreshold    int `json:"failureThreshold" jsonschema:"required"`
-		PeriodSeconds       int `json:"periodSeconds" jsonschema:"required"`
+		InitialDelaySeconds int32 `json:"initialDelaySeconds" jsonschema:"required"`
+		FailureThreshold    int32 `json:"failureThreshold" jsonschema:"required"`
+		PeriodSeconds       int32 `json:"periodSeconds" jsonschema:"required"`
 	} `json:"startupProbe" jsonschema:"required"`
 	LivenessProbe struct {
-		InitialDelaySeconds int `json:"initialDelaySeconds" jsonschema:"required"`
-		FailureThreshold    int `json:"failureThreshold" jsonschema:"required"`
-		PeriodSeconds       int `json:"periodSeconds" jsonschema:"required"`
+		InitialDelaySeconds int32 `json:"initialDelaySeconds" jsonschema:"required"`
+		FailureThreshold    int32 `json:"failureThreshold" jsonschema:"required"`
+		PeriodSeconds       int32 `json:"periodSeconds" jsonschema:"required"`
 	} `json:"livenessProbe" jsonschema:"required"`
 	ReadinessProbe struct {
-		InitialDelaySeconds int `json:"initialDelaySeconds" jsonschema:"required"`
-		FailureThreshold    int `json:"failureThreshold" jsonschema:"required"`
-		PeriodSeconds       int `json:"periodSeconds" jsonschema:"required"`
-		// SuccessThreshold    int `json:"successThreshold"`
+		InitialDelaySeconds int32 `json:"initialDelaySeconds" jsonschema:"required"`
+		FailureThreshold    int32 `json:"failureThreshold" jsonschema:"required"`
+		PeriodSeconds       int32 `json:"periodSeconds" jsonschema:"required"`
+		SuccessThreshold    int32 `json:"successThreshold"`
+		TimeoutSeconds      int32 `json:"timeoutSeconds"`
 	} `json:"readinessProbe" jsonschema:"required"`
 	PodAffinity     map[string]any `json:"podAffinity" jsonschema:"required"`
 	PodAntiAffinity struct {
@@ -533,7 +535,7 @@ type Statefulset struct {
 	SideCars           struct {
 		ConfigWatcher struct {
 			Enabled           bool                    `json:"enabled"`
-			ExtraVolumeMounts string                  `json:"extraVolumeMounts"`
+			ExtraVolumeMounts []corev1.VolumeMount    `json:"extraVolumeMounts"`
 			Resources         map[string]any          `json:"resources"`
 			SecurityContext   *corev1.SecurityContext `json:"securityContext"`
 		} `json:"configWatcher"`
@@ -542,42 +544,49 @@ type Statefulset struct {
 				Tag        ImageTag `json:"tag" jsonschema:"required,default=Chart.appVersion"`
 				Repository string   `json:"repository" jsonschema:"required,default=docker.redpanda.com/redpandadata/redpanda-operator"`
 			} `json:"image"`
-			Enabled         bool                    `json:"enabled"`
-			CreateRBAC      bool                    `json:"createRBAC"`
-			Resources       any                     `json:"resources"`
-			SecurityContext *corev1.SecurityContext `json:"securityContext"`
+			Enabled            bool                    `json:"enabled"`
+			CreateRBAC         bool                    `json:"createRBAC"`
+			Resources          any                     `json:"resources"`
+			SecurityContext    *corev1.SecurityContext `json:"securityContext"`
+			HealthProbeAddress string                  `json:"healthProbeAddress"`
+			MetricsAddress     string                  `json:"metricsAddress"`
+			Run                []string                `json:"run"`
 		} `json:"controllers"`
 	} `json:"sideCars" jsonschema:"required"`
-	ExtraVolumes      string `json:"extraVolumes"`
-	ExtraVolumeMounts string `json:"extraVolumeMounts"`
+	ExtraVolumes      []corev1.Volume      `json:"extraVolumes"`
+	ExtraVolumeMounts []corev1.VolumeMount `json:"extraVolumeMounts"`
 	InitContainers    struct {
 		Configurator struct {
-			ExtraVolumeMounts string         `json:"extraVolumeMounts"`
-			Resources         map[string]any `json:"resources"`
+			ExtraVolumeMounts []corev1.VolumeMount `json:"extraVolumeMounts"`
+			Resources         map[string]any       `json:"resources"`
 		} `json:"configurator"`
 		FSValidator struct {
-			Enabled           bool           `json:"enabled"`
-			Resources         map[string]any `json:"resources"`
-			ExtraVolumeMounts string         `json:"extraVolumeMounts"`
-			ExpectedFS        string         `json:"expectedFS"`
+			Enabled           bool                 `json:"enabled"`
+			Resources         map[string]any       `json:"resources"`
+			ExtraVolumeMounts []corev1.VolumeMount `json:"extraVolumeMounts"`
+			ExpectedFS        string               `json:"expectedFS"`
 		} `json:"fsValidator"`
 		SetDataDirOwnership struct {
-			Enabled           bool           `json:"enabled"`
-			Resources         map[string]any `json:"resources"`
-			ExtraVolumeMounts string         `json:"extraVolumeMounts"`
+			Enabled           bool                 `json:"enabled"`
+			Resources         map[string]any       `json:"resources"`
+			ExtraVolumeMounts []corev1.VolumeMount `json:"extraVolumeMounts"`
 		} `json:"setDataDirOwnership"`
 		SetTieredStorageCacheDirOwnership struct {
 			// Enabled           bool           `json:"enabled"`
-			Resources         map[string]any `json:"resources"`
-			ExtraVolumeMounts string         `json:"extraVolumeMounts"`
+			Resources         map[string]any       `json:"resources"`
+			ExtraVolumeMounts []corev1.VolumeMount `json:"extraVolumeMounts"`
 		} `json:"setTieredStorageCacheDirOwnership"`
 		Tuning struct {
 			// Enabled           bool           `json:"enabled"`
-			Resources         map[string]any `json:"resources"`
-			ExtraVolumeMounts string         `json:"extraVolumeMounts"`
+			Resources         map[string]any       `json:"resources"`
+			ExtraVolumeMounts []corev1.VolumeMount `json:"extraVolumeMounts"`
 		} `json:"tuning"`
-		ExtraInitContainers string `json:"extraInitContainers"`
+		ExtraInitContainers []corev1.Container `json:"extraInitContainers"`
 	} `json:"initContainers"`
+	InitContainerImage struct {
+		Repository string `json:"repository"`
+		Tag        string `json:"tag"`
+	} `json:"initContainerImage"`
 }
 
 // +gotohelm:ignore=true
