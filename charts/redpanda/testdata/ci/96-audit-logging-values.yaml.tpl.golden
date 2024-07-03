@@ -485,7 +485,7 @@ data:
       audit_enabled: true
       cluster_id: cluster-id-test
       compacted_log_segment_size: 67108864
-      crash_loop_limit: "5"
+      crash_loop_limit: 5
       default_topic_replications: 3
       empty_seed_starts_cluster: false
       enable_sasl: true
@@ -970,7 +970,7 @@ spec:
         helm.sh/chart: redpanda-5.8.11
         redpanda.com/poddisruptionbudget: redpanda
       annotations:
-        config.redpanda.com/checksum: e3c65c5da8461f2a4cfd209a64fd8c4295ce60e7271509595816623b8b181082
+        config.redpanda.com/checksum: df95fa3e0329459ed2c89496c112bbe9525cc985f32ec555d38dbd990ac371e6
     spec:
       terminationGracePeriodSeconds: 90
       securityContext: 

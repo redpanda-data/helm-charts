@@ -310,7 +310,7 @@ data:
         truststore_file: /etc/tls/certs/external/ca.crt
       audit_enabled: false
       compacted_log_segment_size: 67108864
-      crash_loop_limit: "5"
+      crash_loop_limit: 5
       default_topic_replications: 3
       empty_seed_starts_cluster: false
       enable_sasl: false
@@ -771,7 +771,7 @@ spec:
         redpanda.com/poddisruptionbudget: redpanda
         test: test
       annotations:
-        config.redpanda.com/checksum: bfe43b6a634164f858149ed33cc03d63badb649ca1701301719f424e01184913
+        config.redpanda.com/checksum: f9fdf89647e3376343181f0522cd2a4d25a9f4aa3e23c4322a292c76e31d0715
     spec:
       terminationGracePeriodSeconds: 90
       securityContext: 

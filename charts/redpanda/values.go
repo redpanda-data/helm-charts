@@ -1404,7 +1404,11 @@ func (c *NodeConfig) Translate() map[string]any {
 
 	for k, v := range *c {
 		if !helmette.Empty(v) {
-			result[k] = helmette.ToYaml(v)
+			if _, ok := helmette.AsNumeric(v); ok {
+				result[k] = v
+			} else {
+				result[k] = helmette.ToYaml(v)
+			}
 		}
 	}
 

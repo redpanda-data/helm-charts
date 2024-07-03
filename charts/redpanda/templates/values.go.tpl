@@ -727,7 +727,13 @@
 {{- $result := (dict ) -}}
 {{- range $k, $v := $c -}}
 {{- if (not (empty $v)) -}}
+{{- $tmp_tuple_14 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asnumeric" (dict "a" (list $v) ))) "r")) ))) "r") -}}
+{{- $ok_14 := $tmp_tuple_14.T2 -}}
+{{- if $ok_14 -}}
+{{- $_ := (set $result $k $v) -}}
+{{- else -}}
 {{- $_ := (set $result $k (toYaml $v)) -}}
+{{- end -}}
 {{- end -}}
 {{- end -}}
 {{- (dict "r" $result) | toJson -}}
@@ -745,26 +751,26 @@
 {{- if (and (eq $k "default_topic_replications") (not $skipDefaultTopic)) -}}
 {{- $r := ($replicas | int) -}}
 {{- $input := ($r | int) -}}
-{{- $tmp_tuple_14 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asintegral" (dict "a" (list $v) ))) "r")) ))) "r") -}}
-{{- $ok_15 := $tmp_tuple_14.T2 -}}
-{{- $num_14 := ($tmp_tuple_14.T1 | int) -}}
-{{- if $ok_15 -}}
-{{- $input = $num_14 -}}
+{{- $tmp_tuple_15 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asintegral" (dict "a" (list $v) ))) "r")) ))) "r") -}}
+{{- $ok_16 := $tmp_tuple_15.T2 -}}
+{{- $num_15 := ($tmp_tuple_15.T1 | int) -}}
+{{- if $ok_16 -}}
+{{- $input = $num_15 -}}
 {{- end -}}
-{{- $tmp_tuple_15 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asnumeric" (dict "a" (list $v) ))) "r")) ))) "r") -}}
-{{- $ok_17 := $tmp_tuple_15.T2 -}}
-{{- $f_16 := ($tmp_tuple_15.T1 | float64) -}}
-{{- if $ok_17 -}}
-{{- $input = ($f_16 | int) -}}
+{{- $tmp_tuple_16 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asnumeric" (dict "a" (list $v) ))) "r")) ))) "r") -}}
+{{- $ok_18 := $tmp_tuple_16.T2 -}}
+{{- $f_17 := ($tmp_tuple_16.T1 | float64) -}}
+{{- if $ok_18 -}}
+{{- $input = ($f_17 | int) -}}
 {{- end -}}
 {{- $_ := (set $result $k (min ($input | int64) (((sub ((add $r (((mod $r (2 | int)) | int))) | int) (1 | int)) | int) | int64))) -}}
 {{- continue -}}
 {{- end -}}
-{{- $tmp_tuple_16 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "bool" $v false) ))) "r")) ))) "r") -}}
-{{- $ok_19 := $tmp_tuple_16.T2 -}}
-{{- $b_18 := $tmp_tuple_16.T1 -}}
-{{- if $ok_19 -}}
-{{- $_ := (set $result $k $b_18) -}}
+{{- $tmp_tuple_17 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "bool" $v false) ))) "r")) ))) "r") -}}
+{{- $ok_20 := $tmp_tuple_17.T2 -}}
+{{- $b_19 := $tmp_tuple_17.T1 -}}
+{{- if $ok_20 -}}
+{{- $_ := (set $result $k $b_19) -}}
 {{- continue -}}
 {{- end -}}
 {{- if (not (empty $v)) -}}
