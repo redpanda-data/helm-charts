@@ -269,7 +269,7 @@ data:
       admin_api_tls: null
       audit_enabled: false
       compacted_log_segment_size: 67108864
-      crash_loop_limit: "5"
+      crash_loop_limit: 5
       default_topic_replications: 3
       empty_seed_starts_cluster: false
       enable_sasl: false
@@ -632,7 +632,7 @@ spec:
         redpanda.com/poddisruptionbudget: redpanda
         testlabel: exercise_common_labels_template
       annotations:
-        config.redpanda.com/checksum: 2c1f05e58ff4b6d758334c8000ff07808c52ae0863ef7298b076172b4a56ce50
+        config.redpanda.com/checksum: 7598204e5801e40e8d771ff696609bd3779b4770539a245d37f6580532f5b219
     spec:
       terminationGracePeriodSeconds: 90
       securityContext: 
