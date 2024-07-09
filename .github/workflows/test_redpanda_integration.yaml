@@ -1,0 +1,84 @@
+---
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Integration Test of Redpanda Chart
+
+on:
+  workflow_call:
+    inputs: {}
+
+defaults:
+  run:
+    shell: nix develop --impure --command bash {0}
+
+jobs:
+  integration-redpanda-tests:
+    name: "Run integration tests"
+    runs-on: ubuntu-22.04
+    steps:
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_SM_READONLY_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SM_READONLY_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+      - name: get secrets from aws sm
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            ,sdlc/prod/github/redpanda_sample_license
+          parse-json-secrets: true
+      - uses: cachix/install-nix-action@V27
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Cache the nix store.
+      - uses: DeterminateSystems/magic-nix-cache-action@v7
+
+      # Cache helm repositories.
+      - uses: actions/cache@v4
+        with:
+          key: helm-repositories
+          path: |
+            ~/.cache/helm
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create kind cluster
+        uses: helm/kind-action@0025e74a8c7512023d06dc019c617aa3cf561fde # v1.10.0
+        with:
+          config: .github/kind.yaml
+
+      - name: Check kind config worked
+        run: kubectl get nodes
+
+      - name: Run integration tests
+        env:
+          REDPANDA_LICENSE: ${{ env.REDPANDA_SAMPLE_LICENSE }}
+        run: |
+          go test ./charts/redpanda/... -v
+      - name: Get kind cluster debug information
+        if: failure()
+        run: |
+          mkdir failure && kind export logs failure -n chart-testing
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: integration-test-failure
+          path: failure/
