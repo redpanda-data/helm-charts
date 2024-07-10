@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.11
+    helm.sh/chart: redpanda-5.8.12
     testlabel: exercise_common_labels_template
   name: redpanda
   namespace: default
@@ -50,7 +50,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.11
+    helm.sh/chart: redpanda-5.8.12
     testlabel: exercise_common_labels_template
   name: redpanda-sts-lifecycle
   namespace: default
@@ -145,7 +145,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.11
+    helm.sh/chart: redpanda-5.8.12
     testlabel: exercise_common_labels_template
   name: redpanda-config-watcher
   namespace: default
@@ -184,7 +184,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.11
+    helm.sh/chart: redpanda-5.8.12
     testlabel: exercise_common_labels_template
   name: redpanda-configurator
   namespace: default
@@ -337,7 +337,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.11
+    helm.sh/chart: redpanda-5.8.12
     testlabel: exercise_common_labels_template
   name: redpanda
   namespace: default
@@ -363,7 +363,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.11
+    helm.sh/chart: redpanda-5.8.12
     testlabel: exercise_common_labels_template
   name: redpanda-rpk
   namespace: default
@@ -433,7 +433,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.11
+    helm.sh/chart: redpanda-5.8.12
     monitoring.redpanda.com/enabled: "false"
     testlabel: exercise_common_labels_template
   name: redpanda
@@ -481,7 +481,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.11
+    helm.sh/chart: redpanda-5.8.12
     testlabel: exercise_common_labels_template
   name: redpanda-external
   namespace: default
@@ -608,7 +608,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.11
+    helm.sh/chart: redpanda-5.8.12
     testlabel: exercise_common_labels_template
 spec:
   selector:
@@ -628,11 +628,11 @@ spec:
         app.kubernetes.io/instance: redpanda
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: redpanda
-        helm.sh/chart: redpanda-5.8.11
+        helm.sh/chart: redpanda-5.8.12
         redpanda.com/poddisruptionbudget: redpanda
         testlabel: exercise_common_labels_template
       annotations:
-        config.redpanda.com/checksum: 7598204e5801e40e8d771ff696609bd3779b4770539a245d37f6580532f5b219
+        config.redpanda.com/checksum: 42c4bda70c2a4121c5c80986b90bc9943a2452031fc76a3c6550a0f93854e8be
     spec:
       terminationGracePeriodSeconds: 90
       securityContext: 
@@ -927,7 +927,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.11
+    helm.sh/chart: redpanda-5.8.12
     testlabel: exercise_common_labels_template
   name: redpanda-configuration
   namespace: default
@@ -1005,7 +1005,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.11
+    helm.sh/chart: redpanda-5.8.12
     testlabel: exercise_common_labels_template
   name: redpanda-post-upgrade
   namespace: default
