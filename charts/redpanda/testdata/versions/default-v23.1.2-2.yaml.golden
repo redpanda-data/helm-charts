@@ -777,204 +777,205 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
       initContainers:
-        - name: tuning
+        - command:
+          - /bin/bash
+          - -c
+          - rpk redpanda tune all
           image: docker.redpanda.com/redpandadata/redpanda:v23.1.2
-          command:
-            - /bin/bash
-            - -c
-            - rpk redpanda tune all
+          name: tuning
+          resources: {}
           securityContext:
             capabilities:
-              add: ["SYS_RESOURCE"]
+              add:
+              - SYS_RESOURCE
             privileged: true
-            runAsUser: 0
             runAsGroup: 0
-          volumeMounts: 
-            - mountPath: /etc/tls/certs/default
-              name: redpanda-default-cert
-            - mountPath: /etc/tls/certs/external
-              name: redpanda-external-cert
-            - name: redpanda
-              mountPath: /etc/redpanda
-        - name: redpanda-configurator
-          image: docker.redpanda.com/redpandadata/redpanda:v23.1.2
-          command:
-            - /bin/bash
-            - -c
-            - 'trap "exit 0" TERM; exec $CONFIGURATOR_SCRIPT "${SERVICE_NAME}" "${KUBERNETES_NODE_NAME}" & wait $!'
+            runAsUser: 0
+          volumeMounts:
+          - mountPath: /etc/tls/certs/default
+            name: redpanda-default-cert
+          - mountPath: /etc/tls/certs/external
+            name: redpanda-external-cert
+          - mountPath: /etc/redpanda
+            name: redpanda
+        - command:
+          - /bin/bash
+          - -c
+          - trap "exit 0" TERM; exec $CONFIGURATOR_SCRIPT "${SERVICE_NAME}" "${KUBERNETES_NODE_NAME}"
+            & wait $!
           env:
-            - name: CONFIGURATOR_SCRIPT
-              value: /etc/secrets/configurator/scripts/configurator.sh
-            - name: SERVICE_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: KUBERNETES_NODE_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: spec.nodeName
-            - name: HOST_IP_ADDRESS
-              valueFrom:
-                fieldRef:
-                  apiVersion: v1
-                  fieldPath: status.hostIP
-          securityContext: 
+          - name: CONFIGURATOR_SCRIPT
+            value: /etc/secrets/configurator/scripts/configurator.sh
+          - name: SERVICE_NAME
+            valueFrom:
+              configMapKeyRef: null
+              fieldRef:
+                fieldPath: metadata.name
+              resourceFieldRef: null
+              secretKeyRef: null
+          - name: KUBERNETES_NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name: HOST_IP_ADDRESS
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: status.hostIP
+          image: docker.redpanda.com/redpandadata/redpanda:v23.1.2
+          name: redpanda-configurator
+          resources: {}
+          securityContext:
             allowPrivilegeEscalation: null
             runAsGroup: 101
             runAsNonRoot: null
             runAsUser: 101
-          volumeMounts: 
-            - mountPath: /etc/tls/certs/default
-              name: redpanda-default-cert
-            - mountPath: /etc/tls/certs/external
-              name: redpanda-external-cert
-            - name: config
-              mountPath: /etc/redpanda
-            - name: redpanda
-              mountPath: /tmp/base-config
-            - name: redpanda-configurator
-              mountPath: /etc/secrets/configurator/scripts/
+          volumeMounts:
+          - mountPath: /etc/tls/certs/default
+            name: redpanda-default-cert
+          - mountPath: /etc/tls/certs/external
+            name: redpanda-external-cert
+          - mountPath: /etc/redpanda
+            name: config
+          - mountPath: /tmp/base-config
+            name: redpanda
+          - mountPath: /etc/secrets/configurator/scripts/
+            name: redpanda-configurator
       containers:
-        - name: redpanda
+        - command:
+          - rpk
+          - redpanda
+          - start
+          - --advertise-rpc-addr=$(SERVICE_NAME).redpanda.default.svc.cluster.local.:33145
+          env:
+          - name: SERVICE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: HOST_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.hostIP
           image: docker.redpanda.com/redpandadata/redpanda:v23.1.2
-          env: 
-            - name: SERVICE_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: POD_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.podIP
-            - name: HOST_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.hostIP
-          # finish the lifecycle scripts with "true" to prevent them from terminating the pod prematurely
           lifecycle:
             postStart:
               exec:
                 command:
-                  - /bin/bash
-                  - -c
-                  - |
-                    timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                    true
+                - /bin/bash
+                - -c
+                - |
+                  timeout -v 45 bash -x /var/lifecycle/postStart.sh
+                  true
             preStop:
               exec:
                 command:
-                  - /bin/bash
-                  - -c
-                  - |
-                    timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                    true # do not fail and cause the pod to terminate
-          # the startupProbe checks to see that the admin api is listening and that the broker has a node_id assigned. This
-          # check is only used to delay the start of the liveness and readiness probes until it passes.
-          startupProbe:
-            exec:
-              command:
-                - /bin/sh
+                - /bin/bash
                 - -c
                 - |
-                  set -e
-                  RESULT=$(curl --silent --fail -k -m 5 --cacert /etc/tls/certs/default/tls.crt "https://${SERVICE_NAME}.redpanda.default.svc.cluster.local.:9644/v1/status/ready")
-                  echo $RESULT
-                  echo $RESULT | grep ready
-            initialDelaySeconds: 1
-            failureThreshold: 120
-            periodSeconds: 10
-          # the livenessProbe just checks to see that the admin api is listening and returning 200s.
+                  timeout -v 45 bash -x /var/lifecycle/preStop.sh
+                  true # do not fail and cause the pod to terminate
           livenessProbe:
             exec:
               command:
-                - /bin/sh
-                - -c
-                - curl --silent --fail -k -m 5 --cacert /etc/tls/certs/default/tls.crt "https://${SERVICE_NAME}.redpanda.default.svc.cluster.local.:9644/v1/status/ready"
-            initialDelaySeconds: 10
+              - /bin/sh
+              - -c
+              - curl --silent --fail -k -m 5 --cacert /etc/tls/certs/default/ca.crt "https://${SERVICE_NAME}.redpanda.default.svc.cluster.local.:9644/v1/status/ready"
             failureThreshold: 3
+            initialDelaySeconds: 10
             periodSeconds: 10
-          # the readiness probe just checks that the cluster is healthy according to rpk cluster health.
-          # It's ok that this cluster-wide check affects all the pods as it's only used for the
-          # PodDisruptionBudget and we don't want to roll any pods if the Redpanda cluster isn't healthy.
-          # https://kubernetes.io/docs/concepts/workloads/pods/disruptions/#pod-disruption-budgets
-          # All services set `publishNotReadyAddresses:true` to prevent this from affecting cluster access
+          name: redpanda
+          ports:
+          - containerPort: 9644
+            name: admin
+          - containerPort: 9645
+            name: admin-default
+          - containerPort: 8082
+            name: http
+          - containerPort: 8083
+            name: http-default
+          - containerPort: 9093
+            name: kafka
+          - containerPort: 9094
+            name: kafka-default
+          - containerPort: 33145
+            name: rpc
+          - containerPort: 8081
+            name: schemaregistry
+          - containerPort: 8084
+            name: schema-default
           readinessProbe:
             exec:
               command:
-                - /bin/sh
-                - -c
-                - |
-                  set -x
-                  RESULT=$(rpk cluster health)
-                  echo $RESULT
-                  echo $RESULT | grep 'Healthy:.*true'
-            initialDelaySeconds: 1
+              - /bin/sh
+              - -c
+              - |
+                set -x
+                RESULT=$(rpk cluster health)
+                echo $RESULT
+                echo $RESULT | grep 'Healthy:.*true'
             failureThreshold: 3
+            initialDelaySeconds: 1
             periodSeconds: 10
             successThreshold: 1
-            timeoutSeconds: 
-          command:
-            - rpk
-            - redpanda
-            - start
-            - "--advertise-rpc-addr=$(SERVICE_NAME).redpanda.default.svc.cluster.local.:33145"
-          ports:
-            - name: admin
-              containerPort: 9644
-            - name: admin-default
-              containerPort: 9645
-            - name: http
-              containerPort: 8082
-            - name: http-default
-              containerPort: 8083
-            - name: kafka
-              containerPort: 9093
-            - name: kafka-default
-              containerPort: 9094
-            - name: rpc
-              containerPort: 33145
-            - name: schemaregistry
-              containerPort: 8081
-            - name: schema-default
-              containerPort: 8084
-          securityContext: 
-            allowPrivilegeEscalation: null
-            runAsGroup: 101
-            runAsNonRoot: null
-            runAsUser: 101
-          volumeMounts: 
-            - mountPath: /etc/tls/certs/default
-              name: redpanda-default-cert
-            - mountPath: /etc/tls/certs/external
-              name: redpanda-external-cert
-            - mountPath: /etc/redpanda
-              name: config
-            - mountPath: /tmp/base-config
-              name: redpanda
-            - mountPath: /var/lifecycle
-              name: lifecycle-scripts
-            - mountPath: /var/lib/redpanda/data
-              name: datadir
+            timeoutSeconds: 0
           resources:
             limits:
               cpu: 1
               memory: 2.5Gi
-        - name: config-watcher
-          image: docker.redpanda.com/redpandadata/redpanda:v23.1.2
+          securityContext:
+            allowPrivilegeEscalation: null
+            runAsGroup: 101
+            runAsNonRoot: null
+            runAsUser: 101
+          startupProbe:
+            exec:
+              command:
+              - /bin/sh
+              - -c
+              - |
+                set -e
+                RESULT=$(curl --silent --fail -k -m 5 --cacert /etc/tls/certs/default/ca.crt "https://${SERVICE_NAME}.redpanda.default.svc.cluster.local.:9644/v1/status/ready")
+                echo $RESULT
+                echo $RESULT | grep ready
+            failureThreshold: 120
+            initialDelaySeconds: 1
+            periodSeconds: 10
+          volumeMounts:
+          - mountPath: /etc/tls/certs/default
+            name: redpanda-default-cert
+          - mountPath: /etc/tls/certs/external
+            name: redpanda-external-cert
+          - mountPath: /etc/redpanda
+            name: config
+          - mountPath: /tmp/base-config
+            name: redpanda
+          - mountPath: /var/lifecycle
+            name: lifecycle-scripts
+          - mountPath: /var/lib/redpanda/data
+            name: datadir
+        - args:
+          - -c
+          - trap "exit 0" TERM; exec /etc/secrets/config-watcher/scripts/sasl-user.sh & wait
+            $!
           command:
-            - /bin/sh
-          args:
-            - -c
-            - 'trap "exit 0" TERM; exec /etc/secrets/config-watcher/scripts/sasl-user.sh & wait $!'
-          volumeMounts: 
-            - mountPath: /etc/tls/certs/default
-              name: redpanda-default-cert
-            - mountPath: /etc/tls/certs/external
-              name: redpanda-external-cert
-            - name: config
-              mountPath: /etc/redpanda
-            - name: redpanda-config-watcher
-              mountPath: /etc/secrets/config-watcher/scripts
+          - /bin/sh
+          image: docker.redpanda.com/redpandadata/redpanda:v23.1.2
+          name: config-watcher
+          resources: {}
+          securityContext: {}
+          volumeMounts:
+          - mountPath: /etc/tls/certs/default
+            name: redpanda-default-cert
+          - mountPath: /etc/tls/certs/external
+            name: redpanda-external-cert
+          - mountPath: /etc/redpanda
+            name: config
+          - mountPath: /etc/secrets/config-watcher/scripts
+            name: redpanda-config-watcher
       volumes: 
         - name: redpanda-default-cert
           secret:

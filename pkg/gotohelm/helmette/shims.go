@@ -1,6 +1,8 @@
 package helmette
 
 import (
+	"bytes"
+	"fmt"
 	"math"
 	"reflect"
 	"time"
@@ -8,6 +10,7 @@ import (
 	"github.com/cockroachdb/errors"
 	"github.com/mitchellh/mapstructure"
 	"github.com/redpanda-data/helm-charts/pkg/valuesutil"
+	"gopkg.in/yaml.v3"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -142,6 +145,17 @@ func UnmarshalInto[T any](value any) T {
 		panic(err)
 	}
 	return t
+}
+
+// UnmarshalYaml fills in the type requested
+// +gotohelm:builtin=fromYamlArray
+func UnmarshalYamlArray[T any](repr string) []T {
+	buf := bytes.NewBufferString(repr)
+	var output []T
+	if err := yaml.NewDecoder(buf).Decode(&output); err != nil {
+		panic(fmt.Errorf("cannot unmarshal yaml: %w", err))
+	}
+	return output
 }
 
 type Tuple2[T1, T2 any] struct {
