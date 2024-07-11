@@ -198,7 +198,7 @@ Settings for liveness and readiness probes. For details, see the [Kubernetes doc
 **Default:**
 
 ```
-{"failureThreshold":3,"initialDelaySeconds":0,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":1}
+{"failureThreshold":3,"periodSeconds":10,"successThreshold":1,"timeoutSeconds":1}
 ```
 
 ### [nameOverride](https://artifacthub.io/packages/helm/redpanda-data/console?modal=values&path=nameOverride)
@@ -345,5 +345,5 @@ The name of the service account to use. If not set and `serviceAccount.create` i
 
 ### [topologySpreadConstraints](https://artifacthub.io/packages/helm/redpanda-data/console?modal=values&path=topologySpreadConstraints)
 
-**Default:** `{}`
+**Default:** `[]`
 

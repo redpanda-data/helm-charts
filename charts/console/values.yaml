@@ -129,7 +129,7 @@ tolerations: []
 
 affinity: {}
 
-topologySpreadConstraints: {}
+topologySpreadConstraints: []
 
 # -- PriorityClassName given to Pods.
 # For details,
@@ -254,7 +254,7 @@ enterprise:
 # For details,
 # see the [Kubernetes documentation](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes).
 livenessProbe:
-  initialDelaySeconds: 0
+  # initialDelaySeconds: 0
   periodSeconds: 10
   timeoutSeconds: 1
   successThreshold: 1
