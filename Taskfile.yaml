@@ -74,6 +74,7 @@ tasks:
     cmds:
       # Generate chart README.md's
       - nix develop -c helm-docs -c ./charts/
+      - task: chart:generate:console
       - task: chart:generate:redpanda
       # Ensure go deps are up to date
       - go mod tidy
@@ -82,6 +83,12 @@ tasks:
       - go work sync
       # Ensure flake.nix has been formatted.
       - nix fmt
+
+  chart:generate:console:
+    desc: "Generate files for the console Helm chart"
+    cmds:
+      # Generate a "partial" version of the Values struct.
+      - go run ./cmd/genpartial -out charts/console/values_partial.gen.go -struct Values ./charts/console
 
   chart:generate:redpanda:
     desc: "Generate files for the redpanda Helm chart"
