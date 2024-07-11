@@ -67,6 +67,7 @@ type Values struct {
 	Tests          *struct {
 		Enabled bool `json:"enabled"`
 	} `json:"tests"`
+	Force bool `json:"force"`
 }
 
 // +gotohelm:ignore=true
@@ -381,6 +382,89 @@ func (s *Storage) GetTieredStorageConfig() TieredStorageConfig {
 	return s.Tiered.Config
 }
 
+// was: storage-tiered-hostpath
+func (s *Storage) GetTieredStorageHostPath() string {
+	hp := s.TieredStorageHostPath
+	if helmette.Empty(hp) && s.Tiered != nil {
+		hp = s.Tiered.HostPath
+	}
+	if helmette.Empty(hp) {
+		panic(fmt.Sprintf(`storage.tiered.mountType is "%s" but storage.tiered.hostPath is empty`,
+			s.Tiered.MountType,
+		))
+	}
+	return hp
+}
+
+func (s *Storage) CloudStorageCacheSize() *resource.Quantity {
+	value, ok := s.GetTieredStorageConfig()[`cloud_storage_cache_size`]
+	if !ok {
+		return nil
+	}
+	return ptr.To(helmette.UnmarshalInto[resource.Quantity](value))
+}
+
+// TieredCacheDirectory was: tieredStorage.cacheDirectory
+func (s *Storage) TieredCacheDirectory(dot *helmette.Dot) string {
+	config := s.GetTieredStorageConfig()
+
+	dir := helmette.Dig(config, "/var/lib/redpanda/data/cloud_storage_cache", `cloud_storage_cache_directory`).(string)
+	if dir == "" {
+		return "/var/lib/redpanda/data/cloud_storage_cache"
+	}
+	return dir
+}
+
+// TieredMountType was: storage-tiered-mountType
+func (s *Storage) TieredMountType() string {
+	if s.TieredStoragePersistentVolume != nil && s.TieredStoragePersistentVolume.Enabled {
+		return "persistentVolume"
+	}
+	if !helmette.Empty(s.TieredStorageHostPath) {
+		// XXX type is declared as string, but it's being used as a bool
+		// This needs some care since transpilation fails with a `!= ""` check,
+		// missing null values.
+		return "hostPath"
+	}
+	return s.Tiered.MountType
+}
+
+// Storage.TieredPersistentVolumeLabels was storage-tiered-persistentVolume.labels
+// support legacy storage.tieredStoragePersistentVolume
+func (s *Storage) TieredPersistentVolumeLabels() map[string]string {
+	if s.TieredStoragePersistentVolume != nil {
+		return s.TieredStoragePersistentVolume.Labels
+	}
+	if s.Tiered != nil {
+		return s.Tiered.PersistentVolume.Labels
+	}
+	panic(`storage.tiered.mountType is "persistentVolume" but storage.tiered.persistentVolume is not configured`)
+}
+
+// Storage.TieredPersistentVolumeAnnotations was storage-tiered-persistentVolume.annotations
+// support legacy storage.tieredStoragePersistentVolume
+func (s *Storage) TieredPersistentVolumeAnnotations() map[string]string {
+	if s.TieredStoragePersistentVolume != nil {
+		return s.TieredStoragePersistentVolume.Annotations
+	}
+	if s.Tiered != nil {
+		return s.Tiered.PersistentVolume.Annotations
+	}
+	panic(`storage.tiered.mountType is "persistentVolume" but storage.tiered.persistentVolume is not configured`)
+}
+
+// storage.TieredPersistentVolumeStorageClass was storage-tiered-persistentVolume.storageClass
+// support legacy storage.tieredStoragePersistentVolume
+func (s *Storage) TieredPersistentVolumeStorageClass() string {
+	if s.TieredStoragePersistentVolume != nil {
+		return s.TieredStoragePersistentVolume.StorageClass
+	}
+	if s.Tiered != nil {
+		return s.Tiered.PersistentVolume.StorageClass
+	}
+	panic(`storage.tiered.mountType is "persistentVolume" but storage.tiered.persistentVolume is not configured`)
+}
+
 // +gotohelm:ignore=true
 func (Storage) JSONSchemaExtend(schema *jsonschema.Schema) {
 	deprecate(schema, "tieredConfig", "persistentVolume", "tieredStorageHostPath", "tieredStoragePersistentVolume")
@@ -483,7 +567,7 @@ type PodTemplate struct {
 type Statefulset struct {
 	AdditionalSelectorLabels map[string]string `json:"additionalSelectorLabels" jsonschema:"required"`
 	NodeAffinity             map[string]any    `json:"nodeAffinity"`
-	Replicas                 int               `json:"replicas" jsonschema:"required"`
+	Replicas                 int32             `json:"replicas" jsonschema:"required"`
 	UpdateStrategy           struct {
 		Type string `json:"type" jsonschema:"required,pattern=^(RollingUpdate|OnDelete)$"`
 	} `json:"updateStrategy" jsonschema:"required"`
@@ -493,7 +577,7 @@ type Statefulset struct {
 	Annotations map[string]string `json:"annotations" jsonschema:"deprecated"`
 	PodTemplate PodTemplate       `json:"podTemplate" jsonschema:"required"`
 	Budget      struct {
-		MaxUnavailable int `json:"maxUnavailable" jsonschema:"required"`
+		MaxUnavailable int32 `json:"maxUnavailable" jsonschema:"required"`
 	} `json:"budget" jsonschema:"required"`
 	StartupProbe struct {
 		InitialDelaySeconds int32 `json:"initialDelaySeconds" jsonschema:"required"`
@@ -516,16 +600,16 @@ type Statefulset struct {
 	PodAntiAffinity struct {
 		TopologyKey string         `json:"topologyKey" jsonschema:"required"`
 		Type        string         `json:"type" jsonschema:"required,pattern=^(hard|soft|custom)$"`
-		Weight      int            `json:"weight" jsonschema:"required"`
+		Weight      int32          `json:"weight" jsonschema:"required"`
 		Custom      map[string]any `json:"custom"`
 	} `json:"podAntiAffinity" jsonschema:"required"`
 	NodeSelector                  map[string]string `json:"nodeSelector" jsonschema:"required"`
 	PriorityClassName             string            `json:"priorityClassName" jsonschema:"required"`
-	TerminationGracePeriodSeconds int               `json:"terminationGracePeriodSeconds"`
+	TerminationGracePeriodSeconds int64             `json:"terminationGracePeriodSeconds"`
 	TopologySpreadConstraints     []struct {
-		MaxSkew           int    `json:"maxSkew"`
-		TopologyKey       string `json:"topologyKey"`
-		WhenUnsatisfiable string `json:"whenUnsatisfiable" jsonschema:"pattern=^(ScheduleAnyway|DoNotSchedule)$"`
+		MaxSkew           int32                                `json:"maxSkew"`
+		TopologyKey       string                               `json:"topologyKey"`
+		WhenUnsatisfiable corev1.UnsatisfiableConstraintAction `json:"whenUnsatisfiable" jsonschema:"pattern=^(ScheduleAnyway|DoNotSchedule)$"`
 	} `json:"topologySpreadConstraints" jsonschema:"required,minItems=1"`
 	Tolerations []corev1.Toleration `json:"tolerations" jsonschema:"required"`
 	// DEPRECATED. Not to be confused with [corev1.PodSecurityContext], this
@@ -642,9 +726,9 @@ type Listeners struct {
 	} `json:"rpc" jsonschema:"required"`
 }
 
-func (l *Listeners) CreateSeedServers(replicas int, fullname, internalDomain string) []map[string]any {
+func (l *Listeners) CreateSeedServers(replicas int32, fullname, internalDomain string) []map[string]any {
 	var result []map[string]any
-	for i := 0; i < replicas; i++ {
+	for i := int32(0); i < replicas; i++ {
 		result = append(result, map[string]any{
 			"host": map[string]any{
 				"address": fmt.Sprintf("%s-%d.%s", fullname, i, internalDomain),
@@ -655,9 +739,9 @@ func (l *Listeners) CreateSeedServers(replicas int, fullname, internalDomain str
 	return result
 }
 
-func (l *Listeners) AdminList(replicas int, fullname, internalDomain string) []string {
+func (l *Listeners) AdminList(replicas int32, fullname, internalDomain string) []string {
 	var result []string
-	for i := 0; i < replicas; i++ {
+	for i := int32(0); i < replicas; i++ {
 		result = append(result, fmt.Sprintf("%s-%d.%s:%d", fullname, i, internalDomain, int(l.Admin.Port)))
 	}
 	return result
@@ -1426,7 +1510,7 @@ func (c *NodeConfig) Translate() map[string]any {
 
 type ClusterConfig map[string]any
 
-func (c *ClusterConfig) Translate(replicas int, skipDefaultTopic bool) map[string]any {
+func (c *ClusterConfig) Translate(replicas int32, skipDefaultTopic bool) map[string]any {
 	result := map[string]any{}
 
 	for k, v := range *c {

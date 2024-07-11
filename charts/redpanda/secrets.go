@@ -509,7 +509,7 @@ func secretConfiguratorKafkaConfig(dot *helmette.Dot) []string {
 				``,
 				fmt.Sprintf(`ADVERTISED_%s_ADDRESSES=()`, helmette.Upper(listenerName)),
 			)
-			for _, replicaIndex := range helmette.Until(values.Statefulset.Replicas) {
+			for _, replicaIndex := range helmette.Until(int(values.Statefulset.Replicas)) {
 				// advertised-port for kafka
 				port := externalVals.Port // This is always defined for kafka
 				if len(externalVals.AdvertisedPorts) > 0 {
@@ -586,7 +586,7 @@ func secretConfiguratorHTTPConfig(dot *helmette.Dot) []string {
 				``,
 				fmt.Sprintf(`ADVERTISED_%s_ADDRESSES=()`, helmette.Upper(listenerName)),
 			)
-			for _, replicaIndex := range helmette.Until(values.Statefulset.Replicas) {
+			for _, replicaIndex := range helmette.Until(int(values.Statefulset.Replicas)) {
 				// advertised-port for kafka
 				port := externalVals.Port // This is always defined for kafka
 				if len(externalVals.AdvertisedPorts) > 0 {

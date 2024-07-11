@@ -18,7 +18,7 @@
 {{- $selector := (get (fromJson (include "redpanda.StatefulSetPodLabelsSelector" (dict "a" (list $dot) ))) "r") -}}
 {{- $services := (coalesce nil) -}}
 {{- $replicas := ($values.statefulset.replicas | int) -}}
-{{- range $_, $i := untilStep ((0 | int)|int) (($values.statefulset.replicas | int)|int) (1|int) -}}
+{{- range $_, $i := untilStep (((0 | int) | int)|int) (($values.statefulset.replicas | int)|int) (1|int) -}}
 {{- $podname := (printf "%s-%d" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r") $i) -}}
 {{- $annotations := (dict ) -}}
 {{- range $k, $v := $values.external.annotations -}}
@@ -26,7 +26,7 @@
 {{- end -}}
 {{- if $externalDNS.enabled -}}
 {{- $prefix := $podname -}}
-{{- if (gt ((get (fromJson (include "_shims.len" (dict "a" (list $values.external.addresses) ))) "r") | int) $i) -}}
+{{- if (gt ((get (fromJson (include "_shims.len" (dict "a" (list $values.external.addresses) ))) "r") | int) ($i | int)) -}}
 {{- $prefix = (index $values.external.addresses $i) -}}
 {{- end -}}
 {{- $address := (printf "%s.%s" $prefix (tpl $values.external.domain $dot)) -}}

@@ -127,6 +127,112 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "redpanda.Storage.GetTieredStorageHostPath" -}}
+{{- $s := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $hp := $s.tieredStorageHostPath -}}
+{{- if (and (empty $hp) (ne $s.tiered (coalesce nil))) -}}
+{{- $hp = $s.tiered.hostPath -}}
+{{- end -}}
+{{- if (empty $hp) -}}
+{{- $_ := (fail (printf `storage.tiered.mountType is "%s" but storage.tiered.hostPath is empty` $s.tiered.mountType)) -}}
+{{- end -}}
+{{- (dict "r" $hp) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.Storage.CloudStorageCacheSize" -}}
+{{- $s := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $tmp_tuple_4 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list (get (fromJson (include "redpanda.Storage.GetTieredStorageConfig" (dict "a" (list $s) ))) "r") `cloud_storage_cache_size` (coalesce nil)) ))) "r")) ))) "r") -}}
+{{- $ok := $tmp_tuple_4.T2 -}}
+{{- $value := $tmp_tuple_4.T1 -}}
+{{- if (not $ok) -}}
+{{- (dict "r" (coalesce nil)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- (dict "r" $value) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.Storage.TieredCacheDirectory" -}}
+{{- $s := (index .a 0) -}}
+{{- $dot := (index .a 1) -}}
+{{- range $_ := (list 1) -}}
+{{- $config := (get (fromJson (include "redpanda.Storage.GetTieredStorageConfig" (dict "a" (list $s) ))) "r") -}}
+{{- $dir := (get (fromJson (include "_shims.typeassertion" (dict "a" (list "string" (dig `cloud_storage_cache_directory` "/var/lib/redpanda/data/cloud_storage_cache" $config)) ))) "r") -}}
+{{- if (eq $dir "") -}}
+{{- (dict "r" "/var/lib/redpanda/data/cloud_storage_cache") | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- (dict "r" $dir) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.Storage.TieredMountType" -}}
+{{- $s := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- if (and (ne $s.tieredStoragePersistentVolume (coalesce nil)) $s.tieredStoragePersistentVolume.enabled) -}}
+{{- (dict "r" "persistentVolume") | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- if (not (empty $s.tieredStorageHostPath)) -}}
+{{- (dict "r" "hostPath") | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- (dict "r" $s.tiered.mountType) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.Storage.TieredPersistentVolumeLabels" -}}
+{{- $s := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- if (ne $s.tieredStoragePersistentVolume (coalesce nil)) -}}
+{{- (dict "r" $s.tieredStoragePersistentVolume.labels) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- if (ne $s.tiered (coalesce nil)) -}}
+{{- (dict "r" $s.tiered.persistentVolume.labels) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- $_ := (fail `storage.tiered.mountType is "persistentVolume" but storage.tiered.persistentVolume is not configured`) -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.Storage.TieredPersistentVolumeAnnotations" -}}
+{{- $s := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- if (ne $s.tieredStoragePersistentVolume (coalesce nil)) -}}
+{{- (dict "r" $s.tieredStoragePersistentVolume.annotations) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- if (ne $s.tiered (coalesce nil)) -}}
+{{- (dict "r" $s.tiered.persistentVolume.annotations) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- $_ := (fail `storage.tiered.mountType is "persistentVolume" but storage.tiered.persistentVolume is not configured`) -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.Storage.TieredPersistentVolumeStorageClass" -}}
+{{- $s := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- if (ne $s.tieredStoragePersistentVolume (coalesce nil)) -}}
+{{- (dict "r" $s.tieredStoragePersistentVolume.storageClass) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- if (ne $s.tiered (coalesce nil)) -}}
+{{- (dict "r" $s.tiered.persistentVolume.storageClass) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- $_ := (fail `storage.tiered.mountType is "persistentVolume" but storage.tiered.persistentVolume is not configured`) -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "redpanda.Storage.Translate" -}}
 {{- $s := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
@@ -144,15 +250,15 @@
 {{- $_ := (set $result $k (printf "%d" ((get (fromJson (include "_shims.resource_Value" (dict "a" (list $v) ))) "r") | int64))) -}}
 {{- continue -}}
 {{- end -}}
-{{- $tmp_tuple_5 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "string" $v "") ))) "r")) ))) "r") -}}
-{{- $ok_3 := $tmp_tuple_5.T2 -}}
-{{- $str_2 := $tmp_tuple_5.T1 -}}
-{{- $tmp_tuple_6 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "bool" $v false) ))) "r")) ))) "r") -}}
-{{- $ok_5 := $tmp_tuple_6.T2 -}}
-{{- $b_4 := $tmp_tuple_6.T1 -}}
-{{- $tmp_tuple_7 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asnumeric" (dict "a" (list $v) ))) "r")) ))) "r") -}}
-{{- $isFloat_7 := $tmp_tuple_7.T2 -}}
-{{- $f_6 := ($tmp_tuple_7.T1 | float64) -}}
+{{- $tmp_tuple_6 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "string" $v "") ))) "r")) ))) "r") -}}
+{{- $ok_3 := $tmp_tuple_6.T2 -}}
+{{- $str_2 := $tmp_tuple_6.T1 -}}
+{{- $tmp_tuple_7 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "bool" $v false) ))) "r")) ))) "r") -}}
+{{- $ok_5 := $tmp_tuple_7.T2 -}}
+{{- $b_4 := $tmp_tuple_7.T1 -}}
+{{- $tmp_tuple_8 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asnumeric" (dict "a" (list $v) ))) "r")) ))) "r") -}}
+{{- $isFloat_7 := $tmp_tuple_8.T2 -}}
+{{- $f_6 := ($tmp_tuple_8.T1 | float64) -}}
 {{- if $ok_3 -}}
 {{- $_ := (set $result $k $str_2) -}}
 {{- else -}}{{- if $ok_5 -}}
@@ -189,9 +295,9 @@
 {{- $result := (dict ) -}}
 {{- $s := (toJson $t) -}}
 {{- $tune := (fromJson $s) -}}
-{{- $tmp_tuple_8 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list (printf "map[%s]%s" "string" "interface {}") $tune (coalesce nil)) ))) "r")) ))) "r") -}}
-{{- $ok := $tmp_tuple_8.T2 -}}
-{{- $m := $tmp_tuple_8.T1 -}}
+{{- $tmp_tuple_9 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list (printf "map[%s]%s" "string" "interface {}") $tune (coalesce nil)) ))) "r")) ))) "r") -}}
+{{- $ok := $tmp_tuple_9.T2 -}}
+{{- $m := $tmp_tuple_9.T1 -}}
 {{- if (not $ok) -}}
 {{- (dict "r" (dict )) | toJson -}}
 {{- break -}}
@@ -211,7 +317,7 @@
 {{- $internalDomain := (index .a 3) -}}
 {{- range $_ := (list 1) -}}
 {{- $result := (coalesce nil) -}}
-{{- range $_, $i := untilStep ((0 | int)|int) ($replicas|int) (1|int) -}}
+{{- range $_, $i := untilStep (((0 | int) | int)|int) ($replicas|int) (1|int) -}}
 {{- $result = (concat (default (list ) $result) (list (dict "host" (dict "address" (printf "%s-%d.%s" $fullname $i $internalDomain) "port" ($l.rpc.port | int) ) ))) -}}
 {{- end -}}
 {{- (dict "r" $result) | toJson -}}
@@ -226,7 +332,7 @@
 {{- $internalDomain := (index .a 3) -}}
 {{- range $_ := (list 1) -}}
 {{- $result := (coalesce nil) -}}
-{{- range $_, $i := untilStep ((0 | int)|int) ($replicas|int) (1|int) -}}
+{{- range $_, $i := untilStep (((0 | int) | int)|int) ($replicas|int) (1|int) -}}
 {{- $result = (concat (default (list ) $result) (list (printf "%s-%d.%s:%d" $fullname $i $internalDomain (($l.admin.port | int) | int)))) -}}
 {{- end -}}
 {{- (dict "r" $result) | toJson -}}
@@ -280,9 +386,9 @@
 {{- $m := (index .a 0) -}}
 {{- $name := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
-{{- $tmp_tuple_11 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $m $name (coalesce nil)) ))) "r")) ))) "r") -}}
-{{- $ok := $tmp_tuple_11.T2 -}}
-{{- $cert := $tmp_tuple_11.T1 -}}
+{{- $tmp_tuple_12 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $m $name (coalesce nil)) ))) "r")) ))) "r") -}}
+{{- $ok := $tmp_tuple_12.T2 -}}
+{{- $cert := $tmp_tuple_12.T1 -}}
 {{- if (not $ok) -}}
 {{- $_ := (fail (printf "Certificate %q referenced, but not found in the tls.certs map" $name)) -}}
 {{- end -}}
@@ -727,8 +833,8 @@
 {{- $result := (dict ) -}}
 {{- range $k, $v := $c -}}
 {{- if (not (empty $v)) -}}
-{{- $tmp_tuple_14 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asnumeric" (dict "a" (list $v) ))) "r")) ))) "r") -}}
-{{- $ok_14 := $tmp_tuple_14.T2 -}}
+{{- $tmp_tuple_15 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asnumeric" (dict "a" (list $v) ))) "r")) ))) "r") -}}
+{{- $ok_14 := $tmp_tuple_15.T2 -}}
 {{- if $ok_14 -}}
 {{- $_ := (set $result $k $v) -}}
 {{- else -}}
@@ -751,24 +857,24 @@
 {{- if (and (eq $k "default_topic_replications") (not $skipDefaultTopic)) -}}
 {{- $r := ($replicas | int) -}}
 {{- $input := ($r | int) -}}
-{{- $tmp_tuple_15 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asintegral" (dict "a" (list $v) ))) "r")) ))) "r") -}}
-{{- $ok_16 := $tmp_tuple_15.T2 -}}
-{{- $num_15 := ($tmp_tuple_15.T1 | int) -}}
+{{- $tmp_tuple_16 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asintegral" (dict "a" (list $v) ))) "r")) ))) "r") -}}
+{{- $ok_16 := $tmp_tuple_16.T2 -}}
+{{- $num_15 := ($tmp_tuple_16.T1 | int) -}}
 {{- if $ok_16 -}}
 {{- $input = $num_15 -}}
 {{- end -}}
-{{- $tmp_tuple_16 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asnumeric" (dict "a" (list $v) ))) "r")) ))) "r") -}}
-{{- $ok_18 := $tmp_tuple_16.T2 -}}
-{{- $f_17 := ($tmp_tuple_16.T1 | float64) -}}
+{{- $tmp_tuple_17 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asnumeric" (dict "a" (list $v) ))) "r")) ))) "r") -}}
+{{- $ok_18 := $tmp_tuple_17.T2 -}}
+{{- $f_17 := ($tmp_tuple_17.T1 | float64) -}}
 {{- if $ok_18 -}}
 {{- $input = ($f_17 | int) -}}
 {{- end -}}
 {{- $_ := (set $result $k (min ($input | int64) (((sub ((add $r (((mod $r (2 | int)) | int))) | int) (1 | int)) | int) | int64))) -}}
 {{- continue -}}
 {{- end -}}
-{{- $tmp_tuple_17 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "bool" $v false) ))) "r")) ))) "r") -}}
-{{- $ok_20 := $tmp_tuple_17.T2 -}}
-{{- $b_19 := $tmp_tuple_17.T1 -}}
+{{- $tmp_tuple_18 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "bool" $v false) ))) "r")) ))) "r") -}}
+{{- $ok_20 := $tmp_tuple_18.T2 -}}
+{{- $b_19 := $tmp_tuple_18.T1 -}}
 {{- if $ok_20 -}}
 {{- $_ := (set $result $k $b_19) -}}
 {{- continue -}}

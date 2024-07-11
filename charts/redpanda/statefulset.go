@@ -20,6 +20,8 @@ import (
 	"fmt"
 	"strings"
 
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -161,7 +163,7 @@ func StatefulSetVolumes(dot *helmette.Dot) []corev1.Volume {
 	volumes := CommonVolumes(dot)
 	values := helmette.Unwrap[Values](dot.Values)
 
-	// NOTE extraVolumes, datadir, and tiered-storage-dir are NOT in this
+	// NOTE and tiered-storage-dir are NOT in this
 	// function. TODO: Migrate them into this function.
 	volumes = append(volumes, []corev1.Volume{
 		{
@@ -222,7 +224,71 @@ func StatefulSetVolumes(dot *helmette.Dot) []corev1.Volume {
 
 	volumes = append(volumes, templateToVolumes(dot, values.Statefulset.ExtraVolumes)...)
 
+	volumes = append(volumes, statefulSetVolumeDataDir(dot))
+
+	if v := statefulSetVolumeTieredStorageDir(dot); v != nil {
+		volumes = append(volumes, *v)
+	}
+
 	return volumes
+}
+
+func statefulSetVolumeDataDir(dot *helmette.Dot) corev1.Volume {
+	values := helmette.Unwrap[Values](dot.Values)
+
+	datadirSource := corev1.VolumeSource{
+		EmptyDir: &corev1.EmptyDirVolumeSource{},
+	}
+	if values.Storage.PersistentVolume.Enabled {
+		datadirSource = corev1.VolumeSource{
+			PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+				ClaimName: "datadir",
+			},
+		}
+	} else if values.Storage.HostPath != "" {
+		datadirSource = corev1.VolumeSource{
+			HostPath: &corev1.HostPathVolumeSource{
+				Path: values.Storage.HostPath,
+			},
+		}
+	}
+	return corev1.Volume{
+		Name:         "datadir",
+		VolumeSource: datadirSource,
+	}
+}
+
+func statefulSetVolumeTieredStorageDir(dot *helmette.Dot) *corev1.Volume {
+	values := helmette.Unwrap[Values](dot.Values)
+
+	if !values.Storage.IsTieredStorageEnabled() {
+		return nil
+	}
+
+	tieredType := values.Storage.TieredMountType()
+	if tieredType == "none" || tieredType == "persistentVolume" {
+		return nil
+	}
+
+	if tieredType == "hostPath" {
+		return &corev1.Volume{
+			Name: "tiered-storage-dir",
+			VolumeSource: corev1.VolumeSource{
+				HostPath: &corev1.HostPathVolumeSource{
+					Path: values.Storage.GetTieredStorageHostPath(),
+				},
+			},
+		}
+	}
+
+	return &corev1.Volume{
+		Name: "tiered-storage-dir",
+		VolumeSource: corev1.VolumeSource{
+			EmptyDir: &corev1.EmptyDirVolumeSource{
+				SizeLimit: values.Storage.CloudStorageCacheSize(),
+			},
+		},
+	}
 }
 
 // StatefulSetRedpandaMounts returns the VolumeMounts for the Redpanda
@@ -394,13 +460,13 @@ func statefulSetInitContainerSetTieredStorageCacheDirOwnership(dot *helmette.Dot
 	}
 
 	uid, gid := securityContextUidGid(dot, "set-tiered-storage-cache-dir-ownership")
-	cacheDir := storageTieredCacheDirectory(dot)
+	cacheDir := values.Storage.TieredCacheDirectory(dot)
 	mounts := CommonMounts(dot)
 	mounts = append(mounts, corev1.VolumeMount{
 		Name:      "datadir",
 		MountPath: "/var/lib/redpanda/data",
 	})
-	if storageTieredMountType(dot) != "none" {
+	if values.Storage.TieredMountType() != "none" {
 		name := "tiered-storage-dir"
 		if values.Storage.PersistentVolume != nil && values.Storage.PersistentVolume.NameOverwrite != "" {
 			name = values.Storage.PersistentVolume.NameOverwrite
@@ -427,32 +493,6 @@ func statefulSetInitContainerSetTieredStorageCacheDirOwnership(dot *helmette.Dot
 		VolumeMounts: mounts,
 		Resources:    helmette.UnmarshalInto[corev1.ResourceRequirements](values.Statefulset.InitContainers.SetTieredStorageCacheDirOwnership.Resources),
 	}
-}
-
-// storageTieredCacheDirectory was: tieredStorage.cacheDirectory
-func storageTieredCacheDirectory(dot *helmette.Dot) string {
-	values := helmette.Unwrap[Values](dot.Values)
-
-	config := values.Storage.GetTieredStorageConfig()
-
-	dir := helmette.Dig(config, "/var/lib/redpanda/data/cloud_storage_cache", `cloud_storage_cache_directory`).(string)
-	if dir == "" {
-		return "/var/lib/redpanda/data/cloud_storage_cache"
-	}
-	return dir
-}
-
-// storageTieredMountType was: storage-tiered-mountType
-func storageTieredMountType(dot *helmette.Dot) string {
-	values := helmette.Unwrap[Values](dot.Values)
-	if values.Storage.TieredStoragePersistentVolume != nil && values.Storage.TieredStoragePersistentVolume.Enabled {
-		return "persistentVolume"
-	}
-	if values.Storage.TieredStorageHostPath != "" {
-		// XXX type is declared as string, but it's being used as a bool
-		return "hostPath"
-	}
-	return values.Storage.Tiered.MountType
 }
 
 func statefulSetInitContainerConfigurator(dot *helmette.Dot) *corev1.Container {
@@ -724,7 +764,7 @@ func statefulSetContainerRedpanda(dot *helmette.Dot) *corev1.Container {
 		}
 	}
 
-	if values.Storage.IsTieredStorageEnabled() && storageTieredMountType(dot) != "none" {
+	if values.Storage.IsTieredStorageEnabled() && values.Storage.TieredMountType() != "none" {
 		name := "tiered-storage-dir"
 		if values.Storage.PersistentVolume != nil && values.Storage.PersistentVolume.NameOverwrite != "" {
 			name = values.Storage.PersistentVolume.NameOverwrite
@@ -732,7 +772,7 @@ func statefulSetContainerRedpanda(dot *helmette.Dot) *corev1.Container {
 		container.VolumeMounts = append(container.VolumeMounts,
 			corev1.VolumeMount{
 				Name:      name,
-				MountPath: storageTieredCacheDirectory(dot),
+				MountPath: values.Storage.TieredCacheDirectory(dot),
 			},
 		)
 	}
@@ -846,4 +886,264 @@ func templateToVolumes(dot *helmette.Dot, template string) []corev1.Volume {
 func templateToContainers(dot *helmette.Dot, template string) []corev1.Container {
 	result := helmette.Tpl(template, dot)
 	return helmette.UnmarshalYamlArray[corev1.Container](result)
+}
+
+func StatefulSet(dot *helmette.Dot) *appsv1.StatefulSet {
+	values := helmette.Unwrap[Values](dot.Values)
+
+	if !RedpandaAtLeast_22_2_0(dot) && !values.Force {
+		sv := semver(dot)
+		panic(fmt.Sprintf("Error: The Redpanda version (%s) is no longer supported \nTo accept this risk, run the upgrade again adding `--force=true`\n", sv))
+	}
+	ss := &appsv1.StatefulSet{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "apps/v1",
+			Kind:       "StatefulSet",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      Fullname(dot),
+			Namespace: dot.Release.Namespace,
+			Labels:    FullLabels(dot),
+		},
+		Spec: appsv1.StatefulSetSpec{
+			Selector: &metav1.LabelSelector{
+				MatchLabels: StatefulSetPodLabelsSelector(dot),
+			},
+			ServiceName:         ServiceName(dot),
+			Replicas:            ptr.To(values.Statefulset.Replicas),
+			UpdateStrategy:      helmette.UnmarshalInto[appsv1.StatefulSetUpdateStrategy](values.Statefulset.UpdateStrategy),
+			PodManagementPolicy: "Parallel",
+			Template: corev1.PodTemplateSpec{
+				ObjectMeta: metav1.ObjectMeta{
+					Labels:      StatefulSetPodLabels(dot),
+					Annotations: StatefulSetPodAnnotations(dot, statefulSetChecksumAnnotation(dot)),
+				},
+				Spec: corev1.PodSpec{
+					TerminationGracePeriodSeconds: ptr.To(values.Statefulset.TerminationGracePeriodSeconds),
+					SecurityContext:               PodSecurityContext(dot),
+					ServiceAccountName:            ServiceAccountName(dot),
+					ImagePullSecrets:              helmette.Default(nil, values.ImagePullSecrets),
+					InitContainers:                StatefulSetInitContainers(dot),
+					Containers:                    StatefulSetContainers(dot),
+					Volumes:                       StatefulSetVolumes(dot),
+					TopologySpreadConstraints:     statefulSetTopologySpreadConstraints(dot),
+					NodeSelector:                  statefulSetNodeSelectors(dot),
+					Affinity:                      statefulSetAffinity(dot),
+					PriorityClassName:             values.Statefulset.PriorityClassName,
+					Tolerations:                   statefulSetTolerations(dot),
+				},
+			},
+			VolumeClaimTemplates: nil, // Set below
+		},
+	}
+
+	// VolumeClaimTemplates
+	if values.Storage.PersistentVolume.Enabled || (values.Storage.IsTieredStorageEnabled() && values.Storage.TieredMountType() == "persistentVolume") {
+		if t := volumeClaimTemplateDatadir(dot); t != nil {
+			ss.Spec.VolumeClaimTemplates = append(ss.Spec.VolumeClaimTemplates, *t)
+		}
+		if t := volumeClaimTemplateTieredStorageDir(dot); t != nil {
+			ss.Spec.VolumeClaimTemplates = append(ss.Spec.VolumeClaimTemplates, *t)
+		}
+	}
+
+	return ss
+}
+
+func semver(dot *helmette.Dot) string {
+	return strings.TrimPrefix(Tag(dot), "v")
+}
+
+// statefulSetChecksumAnnotation was statefulset-checksum-annotation
+// statefulset-checksum-annotation calculates a checksum that is used
+// as the value for the annotation, "checksum/config". When this value
+// changes, kube-controller-manager will roll the pods.
+//
+// Append any additional dependencies that require the pods to restart
+// to the $dependencies list.
+func statefulSetChecksumAnnotation(dot *helmette.Dot) string {
+	values := helmette.Unwrap[Values](dot.Values)
+	var dependencies []any
+	dependencies = append(dependencies, ConfigMapsWithoutSeedServer(dot))
+	if values.External.Enabled {
+		dependencies = append(dependencies, ptr.Deref(values.External.Domain, ""))
+		if helmette.Empty(values.External.Addresses) {
+			dependencies = append(dependencies, "")
+		} else {
+			dependencies = append(dependencies, values.External.Addresses)
+		}
+	}
+	return helmette.Sha256Sum(helmette.ToJSON(dependencies))
+}
+
+// statefulSetTolerations was statefulset-tolerations
+func statefulSetTolerations(dot *helmette.Dot) []corev1.Toleration {
+	values := helmette.Unwrap[Values](dot.Values)
+	return helmette.Default(values.Tolerations, values.Statefulset.Tolerations)
+}
+
+// statefulSetNodeSelectors was statefulset-nodeselectors
+func statefulSetNodeSelectors(dot *helmette.Dot) map[string]string {
+	values := helmette.Unwrap[Values](dot.Values)
+
+	return helmette.Default(values.Statefulset.NodeSelector, values.NodeSelector)
+}
+
+// statefulSetAffinity was statefulset-affinity
+// Set affinity for statefulset, defaults to global affinity if not defined in statefulset
+func statefulSetAffinity(dot *helmette.Dot) *corev1.Affinity {
+	values := helmette.Unwrap[Values](dot.Values)
+
+	affinity := &corev1.Affinity{}
+
+	if !helmette.Empty(values.Statefulset.NodeAffinity) {
+		affinity.NodeAffinity = ptr.To(helmette.UnmarshalInto[corev1.NodeAffinity](values.Statefulset.NodeAffinity))
+	} else if !helmette.Empty(values.Affinity.NodeAffinity) {
+		affinity.NodeAffinity = ptr.To(helmette.UnmarshalInto[corev1.NodeAffinity](values.Affinity.NodeAffinity))
+	}
+
+	if !helmette.Empty(values.Statefulset.PodAffinity) {
+		affinity.PodAffinity = ptr.To(helmette.UnmarshalInto[corev1.PodAffinity](values.Statefulset.PodAffinity))
+	} else if !helmette.Empty(values.Affinity.PodAffinity) {
+		affinity.PodAffinity = ptr.To(helmette.UnmarshalInto[corev1.PodAffinity](values.Affinity.PodAffinity))
+	}
+
+	if !helmette.Empty(values.Statefulset.PodAntiAffinity) {
+		affinity.PodAntiAffinity = &corev1.PodAntiAffinity{}
+		if values.Statefulset.PodAntiAffinity.Type == "hard" {
+			affinity.PodAntiAffinity.RequiredDuringSchedulingIgnoredDuringExecution = []corev1.PodAffinityTerm{
+				{
+					TopologyKey: values.Statefulset.PodAntiAffinity.TopologyKey,
+					LabelSelector: &metav1.LabelSelector{
+						MatchLabels: StatefulSetPodLabelsSelector(dot),
+					},
+				},
+			}
+		} else if values.Statefulset.PodAntiAffinity.Type == "soft" {
+			affinity.PodAntiAffinity.PreferredDuringSchedulingIgnoredDuringExecution = []corev1.WeightedPodAffinityTerm{
+				{
+					Weight: values.Statefulset.PodAntiAffinity.Weight,
+					PodAffinityTerm: corev1.PodAffinityTerm{
+						TopologyKey: values.Statefulset.PodAntiAffinity.TopologyKey,
+						LabelSelector: &metav1.LabelSelector{
+							MatchLabels: StatefulSetPodLabelsSelector(dot),
+						},
+					},
+				},
+			}
+		} else if values.Statefulset.PodAntiAffinity.Type == "custom" {
+			affinity.PodAntiAffinity = ptr.To(helmette.UnmarshalInto[corev1.PodAntiAffinity](values.Statefulset.PodAntiAffinity.Custom))
+		}
+	} else if !helmette.Empty(values.Affinity.PodAntiAffinity) {
+		affinity.PodAntiAffinity = ptr.To(helmette.UnmarshalInto[corev1.PodAntiAffinity](values.Affinity.PodAntiAffinity))
+	}
+
+	return affinity
+}
+
+func volumeClaimTemplateDatadir(dot *helmette.Dot) *corev1.PersistentVolumeClaim {
+	values := helmette.Unwrap[Values](dot.Values)
+	if !values.Storage.PersistentVolume.Enabled {
+		return nil
+	}
+
+	pvc := &corev1.PersistentVolumeClaim{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "datadir",
+			Labels: helmette.Merge(map[string]string{
+				`app.kubernetes.io/name`:      Name(dot),
+				`app.kubernetes.io/instance`:  dot.Release.Name,
+				`app.kubernetes.io/component`: Name(dot),
+			},
+				values.Storage.PersistentVolume.Labels,
+				values.CommonLabels,
+			),
+			Annotations: helmette.Default(nil, values.Storage.PersistentVolume.Annotations),
+		},
+		Spec: corev1.PersistentVolumeClaimSpec{
+			AccessModes: []corev1.PersistentVolumeAccessMode{
+				"ReadWriteOnce",
+			},
+			Resources: corev1.VolumeResourceRequirements{
+				Requests: helmette.UnmarshalInto[corev1.ResourceList](map[string]any{
+					"storage": values.Storage.PersistentVolume.Size,
+				}),
+			},
+		},
+	}
+
+	if !helmette.Empty(values.Storage.PersistentVolume.StorageClass) {
+		if values.Storage.PersistentVolume.StorageClass == "-" {
+			pvc.Spec.StorageClassName = ptr.To("")
+		} else {
+			pvc.Spec.StorageClassName = ptr.To(values.Storage.PersistentVolume.StorageClass)
+		}
+	}
+
+	return pvc
+}
+
+func volumeClaimTemplateTieredStorageDir(dot *helmette.Dot) *corev1.PersistentVolumeClaim {
+	values := helmette.Unwrap[Values](dot.Values)
+
+	if !values.Storage.IsTieredStorageEnabled() || values.Storage.TieredMountType() != "persistentVolume" {
+		return nil
+	}
+
+	pvc := &corev1.PersistentVolumeClaim{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: helmette.Default("tiered-storage-dir", values.Storage.PersistentVolume.NameOverwrite),
+			Labels: helmette.Merge(map[string]string{
+				`app.kubernetes.io/name`:      Name(dot),
+				`app.kubernetes.io/instance`:  dot.Release.Name,
+				`app.kubernetes.io/component`: Name(dot),
+			},
+				values.Storage.TieredPersistentVolumeLabels(),
+				values.CommonLabels,
+			),
+			Annotations: helmette.Default(nil, values.Storage.TieredPersistentVolumeAnnotations()),
+		},
+		Spec: corev1.PersistentVolumeClaimSpec{
+			AccessModes: []corev1.PersistentVolumeAccessMode{
+				"ReadWriteOnce",
+			},
+			Resources: corev1.VolumeResourceRequirements{
+				Requests: helmette.UnmarshalInto[corev1.ResourceList](map[string]any{
+					"storage": values.Storage.GetTieredStorageConfig()[`cloud_storage_cache_size`],
+				}),
+			},
+		},
+	}
+
+	if sc := values.Storage.TieredPersistentVolumeStorageClass(); sc == "-" {
+		pvc.Spec.StorageClassName = ptr.To("")
+	} else if !helmette.Empty(sc) {
+		pvc.Spec.StorageClassName = ptr.To(sc)
+	}
+
+	return pvc
+}
+
+func statefulSetTopologySpreadConstraints(dot *helmette.Dot) []corev1.TopologySpreadConstraint {
+	values := helmette.Unwrap[Values](dot.Values)
+
+	// XXX: Was protected with this: semverCompare ">=1.16-0" .Capabilities.KubeVersion.GitVersion
+	// but that version is beyond EOL; and the chart as a whole wants >= 1.21
+
+	var result []corev1.TopologySpreadConstraint
+	labelSelector := &metav1.LabelSelector{
+		MatchLabels: StatefulSetPodLabelsSelector(dot),
+	}
+	for _, v := range values.Statefulset.TopologySpreadConstraints {
+		result = append(result,
+			corev1.TopologySpreadConstraint{
+				MaxSkew:           v.MaxSkew,
+				TopologyKey:       v.TopologyKey,
+				WhenUnsatisfiable: v.WhenUnsatisfiable,
+				LabelSelector:     labelSelector,
+			},
+		)
+	}
+
+	return result
 }
