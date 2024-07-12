@@ -1147,3 +1147,10 @@ func statefulSetTopologySpreadConstraints(dot *helmette.Dot) []corev1.TopologySp
 
 	return result
 }
+
+// StorageTieredConfig was: storage-tiered-config
+// Wrap this up since there are helm tests that require it
+func StorageTieredConfig(dot *helmette.Dot) map[string]any {
+	values := helmette.Unwrap[Values](dot.Values)
+	return values.Storage.GetTieredStorageConfig()
+}
