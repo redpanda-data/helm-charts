@@ -38,7 +38,7 @@ type PartialExampleStruct struct {
 	E5 []map[string]PartialNestedStruct                       "json:\",omitempty\""
 	E6 []map[string]PartialGenericStruct[PartialNestedStruct] "json:\",omitempty\""
 	F1 []*int                                                 "json:\"L,omitempty\""
-	F2 *string                                                "yaml:\"Mjson:\",omitempty\"`"
+	F2 *string                                                "yaml:\"M\" json:\",omitempty\""
 	F3 *IntAlias                                              "json:\",omitempty\""
 	G1 *alias2.Buffer                                         "json:\",omitempty\""
 	G2 *alias1.File                                           "json:\",omitempty\""
