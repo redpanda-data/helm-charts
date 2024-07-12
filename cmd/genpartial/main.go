@@ -24,6 +24,7 @@ import (
 	"os"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"github.com/cockroachdb/errors"
 	"golang.org/x/tools/go/packages"
@@ -406,18 +407,21 @@ func FindAllNames(pkg *types.Package, root types.Type) []*types.Named {
 	return names
 }
 
-var jsonTagRE = regexp.MustCompile(`json:"([^,"]+)"`)
+var jsonTagRE = regexp.MustCompile(`json:"([^"]+)"`)
 
 // EnsureOmitEmpty injects ,omitempty into existing json tags or adds one if
 // not already present.
 func EnsureOmitEmpty(tag string) string {
-	if tag == "" {
-		return `json:",omitempty"`
+	if !strings.Contains(tag, `json:"`) {
+		return strings.TrimLeft(tag+` json:",omitempty"`, " ")
 	}
-	if !jsonTagRE.MatchString(tag) {
-		return tag[:len(tag)-1] + `json:",omitempty"` + "`"
-	}
-	return jsonTagRE.ReplaceAllString(tag, `json:"$1,omitempty"`)
+
+	return jsonTagRE.ReplaceAllStringFunc(tag, func(s string) string {
+		if strings.Contains(s, ",omitempty") {
+			return s
+		}
+		return s[:len(s)-1] + `,omitempty"`
+	})
 }
 
 func Must[T any](value T, err error) T {

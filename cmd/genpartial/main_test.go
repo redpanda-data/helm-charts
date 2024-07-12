@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/redpanda-data/helm-charts/pkg/testutil"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/tools/go/packages"
 )
@@ -98,4 +99,25 @@ func TestGenerateParital(t *testing.T) {
 	var buf bytes.Buffer
 	require.NoError(t, GeneratePartial(pkg, "ExampleStruct", &buf))
 	testutil.AssertGolden(t, testutil.Text, "./testdata/partial.go", buf.Bytes())
+}
+
+func TestEnsureOmitEmpty(t *testing.T) {
+	cases := []struct {
+		In  string
+		Out string
+	}{
+		{In: ``, Out: `json:",omitempty"`},
+		{In: `yaml:"foo"`, Out: `yaml:"foo" json:",omitempty"`},
+		{In: `json:"bar"`, Out: `json:"bar,omitempty"`},
+		{In: `json:"baz,omitempty"`, Out: `json:"baz,omitempty"`},
+		{In: `yaml:"foo" json:"baz,omitempty"`, Out: `yaml:"foo" json:"baz,omitempty"`},
+		{In: `json:"baz" yaml:"bar"`, Out: `json:"baz,omitempty" yaml:"bar"`},
+		{In: `json:"-"`, Out: `json:"-,omitempty"`},
+		{In: `json:"-,string"`, Out: `json:"-,string,omitempty"`},
+		{In: `json:"-,omitempty,string"`, Out: `json:"-,omitempty,string"`},
+	}
+
+	for _, tc := range cases {
+		assert.Equal(t, EnsureOmitEmpty(tc.In), tc.Out)
+	}
 }
