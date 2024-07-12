@@ -51,13 +51,6 @@ Create chart name and version as used by the chart label.
 {{- end }}
 
 {{/*
-Get the version of redpanda being used as an image
-*/}}
-{{- define "redpanda.semver" -}}
-{{ include "redpanda.tag" . | trimPrefix "v" }}
-{{- end }}
-
-{{/*
 Create the name of the service account to use
 */}}
 {{- define "redpanda.serviceAccountName" -}}

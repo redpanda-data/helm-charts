@@ -46,6 +46,7 @@ type PartialValues struct {
 	Tests            *struct {
 		Enabled *bool "json:\"enabled,omitempty\""
 	} "json:\"tests,omitempty\""
+	Force *bool "json:\"force,omitempty\""
 }
 
 type PartialImage struct {
@@ -180,7 +181,7 @@ type PartialPostUpgradeJob struct {
 type PartialStatefulset struct {
 	AdditionalSelectorLabels map[string]string "json:\"additionalSelectorLabels,omitempty\" jsonschema:\"required\""
 	NodeAffinity             map[string]any    "json:\"nodeAffinity,omitempty\""
-	Replicas                 *int              "json:\"replicas,omitempty\" jsonschema:\"required\""
+	Replicas                 *int32            "json:\"replicas,omitempty\" jsonschema:\"required\""
 	UpdateStrategy           *struct {
 		Type *string "json:\"type,omitempty\" jsonschema:\"required,pattern=^(RollingUpdate|OnDelete)$\""
 	} "json:\"updateStrategy,omitempty\" jsonschema:\"required\""
@@ -188,7 +189,7 @@ type PartialStatefulset struct {
 	Annotations                map[string]string   "json:\"annotations,omitempty\" jsonschema:\"deprecated\""
 	PodTemplate                *PartialPodTemplate "json:\"podTemplate,omitempty\" jsonschema:\"required\""
 	Budget                     *struct {
-		MaxUnavailable *int "json:\"maxUnavailable,omitempty\" jsonschema:\"required\""
+		MaxUnavailable *int32 "json:\"maxUnavailable,omitempty\" jsonschema:\"required\""
 	} "json:\"budget,omitempty\" jsonschema:\"required\""
 	StartupProbe *struct {
 		InitialDelaySeconds *int32 "json:\"initialDelaySeconds,omitempty\" jsonschema:\"required\""
@@ -211,16 +212,16 @@ type PartialStatefulset struct {
 	PodAntiAffinity *struct {
 		TopologyKey *string        "json:\"topologyKey,omitempty\" jsonschema:\"required\""
 		Type        *string        "json:\"type,omitempty\" jsonschema:\"required,pattern=^(hard|soft|custom)$\""
-		Weight      *int           "json:\"weight,omitempty\" jsonschema:\"required\""
+		Weight      *int32         "json:\"weight,omitempty\" jsonschema:\"required\""
 		Custom      map[string]any "json:\"custom,omitempty\""
 	} "json:\"podAntiAffinity,omitempty\" jsonschema:\"required\""
 	NodeSelector                  map[string]string "json:\"nodeSelector,omitempty\" jsonschema:\"required\""
 	PriorityClassName             *string           "json:\"priorityClassName,omitempty\" jsonschema:\"required\""
-	TerminationGracePeriodSeconds *int              "json:\"terminationGracePeriodSeconds,omitempty\""
+	TerminationGracePeriodSeconds *int64            "json:\"terminationGracePeriodSeconds,omitempty\""
 	TopologySpreadConstraints     []struct {
-		MaxSkew           *int    "json:\"maxSkew,omitempty\""
-		TopologyKey       *string "json:\"topologyKey,omitempty\""
-		WhenUnsatisfiable *string "json:\"whenUnsatisfiable,omitempty\" jsonschema:\"pattern=^(ScheduleAnyway|DoNotSchedule)$\""
+		MaxSkew           *int32                                "json:\"maxSkew,omitempty\""
+		TopologyKey       *string                               "json:\"topologyKey,omitempty\""
+		WhenUnsatisfiable *corev1.UnsatisfiableConstraintAction "json:\"whenUnsatisfiable,omitempty\" jsonschema:\"pattern=^(ScheduleAnyway|DoNotSchedule)$\""
 	} "json:\"topologySpreadConstraints,omitempty\" jsonschema:\"required,minItems=1\""
 	Tolerations        []corev1.Toleration     "json:\"tolerations,omitempty\" jsonschema:\"required\""
 	PodSecurityContext *PartialSecurityContext "json:\"podSecurityContext,omitempty\""

@@ -145,12 +145,12 @@ func rpkProfile(dot *helmette.Dot) map[string]any {
 	values := helmette.Unwrap[Values](dot.Values)
 
 	brokerList := []string{}
-	for i := 0; i < values.Statefulset.Replicas; i++ {
+	for i := int32(0); i < values.Statefulset.Replicas; i++ {
 		brokerList = append(brokerList, fmt.Sprintf("%s:%d", advertisedHost(dot, i), int(advertisedKafkaPort(dot, i))))
 	}
 
 	adminAdvertisedList := []string{}
-	for i := 0; i < values.Statefulset.Replicas; i++ {
+	for i := int32(0); i < values.Statefulset.Replicas; i++ {
 		adminAdvertisedList = append(adminAdvertisedList, fmt.Sprintf("%s:%d", advertisedHost(dot, i), int(advertisedAdminPort(dot, i))))
 	}
 
@@ -193,7 +193,7 @@ func rpkProfile(dot *helmette.Dot) map[string]any {
 	return result
 }
 
-func advertisedKafkaPort(dot *helmette.Dot, i int) int {
+func advertisedKafkaPort(dot *helmette.Dot, i int32) int {
 	values := helmette.Unwrap[Values](dot.Values)
 
 	externalKafkaListenerName := getFirstExternalKafkaListener(dot)
@@ -215,7 +215,7 @@ func advertisedKafkaPort(dot *helmette.Dot, i int) int {
 	return port
 }
 
-func advertisedAdminPort(dot *helmette.Dot, i int) int {
+func advertisedAdminPort(dot *helmette.Dot, i int32) int {
 	values := helmette.Unwrap[Values](dot.Values)
 
 	keys := helmette.Keys(values.Listeners.Admin.External)
@@ -241,7 +241,7 @@ func advertisedAdminPort(dot *helmette.Dot, i int) int {
 	return port
 }
 
-func advertisedHost(dot *helmette.Dot, i int) string {
+func advertisedHost(dot *helmette.Dot, i int32) string {
 	values := helmette.Unwrap[Values](dot.Values)
 
 	address := fmt.Sprintf("%s-%d", Fullname(dot), int(i))
@@ -281,7 +281,7 @@ func rpkConfiguration(dot *helmette.Dot) map[string]any {
 
 	brokerList := []string{}
 	r := values.Statefulset.Replicas
-	for i := 0; i < r; i++ {
+	for i := int32(0); i < r; i++ {
 		brokerList = append(brokerList, fmt.Sprintf("%s-%d.%s:%d", Fullname(dot), i, InternalDomain(dot), int(values.Listeners.Kafka.Port)))
 	}
 
@@ -362,7 +362,7 @@ func kafkaClient(dot *helmette.Dot) map[string]any {
 	values := helmette.Unwrap[Values](dot.Values)
 
 	brokerList := []map[string]any{}
-	for i := 0; i < values.Statefulset.Replicas; i++ {
+	for i := int32(0); i < values.Statefulset.Replicas; i++ {
 		brokerList = append(brokerList, map[string]any{
 			"address": fmt.Sprintf("%s-%d.%s", Fullname(dot), i, InternalDomain(dot)),
 			"port":    values.Listeners.Kafka.Port,

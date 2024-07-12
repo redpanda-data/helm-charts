@@ -189,7 +189,7 @@ echo "passed"`) -}}
 {{- range $externalName, $externalVals := $values.listeners.kafka.external -}}
 {{- $externalCounter = ((add $externalCounter (1 | int)) | int) -}}
 {{- $snippet = (concat (default (list ) $snippet) (list `` (printf `ADVERTISED_%s_ADDRESSES=()` (upper $listenerName)))) -}}
-{{- range $_, $replicaIndex := (until ($values.statefulset.replicas | int)) -}}
+{{- range $_, $replicaIndex := (until (($values.statefulset.replicas | int) | int)) -}}
 {{- $port := ($externalVals.port | int) -}}
 {{- if (gt ((get (fromJson (include "_shims.len" (dict "a" (list $externalVals.advertisedPorts) ))) "r") | int) (0 | int)) -}}
 {{- if (eq ((get (fromJson (include "_shims.len" (dict "a" (list $externalVals.advertisedPorts) ))) "r") | int) (1 | int)) -}}
@@ -229,7 +229,7 @@ echo "passed"`) -}}
 {{- range $externalName, $externalVals := $values.listeners.http.external -}}
 {{- $externalCounter = ((add $externalCounter (1 | int)) | int) -}}
 {{- $snippet = (concat (default (list ) $snippet) (list `` (printf `ADVERTISED_%s_ADDRESSES=()` (upper $listenerName)))) -}}
-{{- range $_, $replicaIndex := (until ($values.statefulset.replicas | int)) -}}
+{{- range $_, $replicaIndex := (until (($values.statefulset.replicas | int) | int)) -}}
 {{- $port := ($externalVals.port | int) -}}
 {{- if (gt ((get (fromJson (include "_shims.len" (dict "a" (list $externalVals.advertisedPorts) ))) "r") | int) (0 | int)) -}}
 {{- if (eq ((get (fromJson (include "_shims.len" (dict "a" (list $externalVals.advertisedPorts) ))) "r") | int) (1 | int)) -}}

@@ -1,6 +1,8 @@
 package helmette
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"math"
@@ -399,4 +401,10 @@ func Join[T any](sep string, s []T) string {
 		out += ToString(el)
 	}
 	return out
+}
+
+// +gotohelm:builtin=sha256sum
+func Sha256Sum(input string) string {
+	hash := sha256.Sum256([]byte(input))
+	return hex.EncodeToString(hash[:])
 }

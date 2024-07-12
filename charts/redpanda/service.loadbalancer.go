@@ -51,7 +51,7 @@ func LoadBalancerServices(dot *helmette.Dot) []*corev1.Service {
 
 	var services []*corev1.Service
 	replicas := values.Statefulset.Replicas // TODO fix me once the transpiler is fixed.
-	for i := 0; i < replicas; i++ {
+	for i := int32(0); i < replicas; i++ {
 		podname := fmt.Sprintf("%s-%d", Fullname(dot), i)
 
 		// NB: A range loop is used here as its the most terse way to handle
@@ -63,7 +63,7 @@ func LoadBalancerServices(dot *helmette.Dot) []*corev1.Service {
 
 		if externalDNS.Enabled {
 			prefix := podname
-			if len(values.External.Addresses) > i {
+			if len(values.External.Addresses) > int(i) {
 				prefix = values.External.Addresses[i]
 			}
 
