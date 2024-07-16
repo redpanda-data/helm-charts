@@ -50,11 +50,7 @@ Selector labels
 Create the name of the service account to use
 */}}
 {{- define "console.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "console.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
-{{- end }}
+{{- get ((include "console.ServiceAccountName" (dict "a" (list .))) | fromJson) "r" }}
 {{- end }}
 
 {{/*
