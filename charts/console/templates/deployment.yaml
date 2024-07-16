@@ -95,7 +95,7 @@ spec:
           securityContext: {{- . | toYaml | nindent 12 }}
           {{- end }}
           image: {{ include "console.container.image" . }}
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
           ports:
             - name: http
               containerPort: {{ include "console.containerPort" . }}
