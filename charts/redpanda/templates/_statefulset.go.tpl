@@ -675,7 +675,9 @@
 {{- define "redpanda.StorageTieredConfig" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (get (fromJson (include "redpanda.Storage.GetTieredStorageConfig" (dict "a" (list $values.storage) ))) "r")) | toJson -}}
 {{- break -}}
 {{- end -}}
