@@ -68,3 +68,17 @@ autoscaling:
   enabled: true
   targetCPUUtilizationPercentage: 14
   targetMemoryUtilizationPercentage: null
+
+-- service-nodeport --
+# Service type NodePort
+service:
+  type: "NodePort"
+  targetPort: 2000
+
+-- service-with-nodeport --
+# Service w/ NodePort
+service:
+  type: "NodePort"
+  nodePort: 1000
+  annotations:
+    hello: world

@@ -276,7 +276,15 @@ func (t *Transpiler) transpileStatement(stmt ast.Stmt) Node {
 		// TODO could simplify this by performing a type switch on the
 		// transpiled result of lhs.
 		if _, ok := stmt.Lhs[0].(*ast.SelectorExpr); ok {
-			selector := t.transpileExpr(stmt.Lhs[0]).(*Selector)
+			var selector *Selector
+			switch expr := t.transpileExpr(stmt.Lhs[0]).(type) {
+			case *Selector:
+				selector = expr
+			case *Cast:
+				selector = expr.X.(*Selector)
+			default:
+				panic(fmt.Sprintf("unhandled case %T: %v", expr, expr))
+			}
 
 			return &Statement{
 				Expr: &BuiltInCall{
