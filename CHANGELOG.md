@@ -94,6 +94,7 @@
 #### Changed
 #### Fixed
 #### Removed
+* Support for Kubernetes versions < 1.21 have been dropped.
 
 ## Kminion Chart
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/console-FILLMEIN) - YYYY-MM-DD

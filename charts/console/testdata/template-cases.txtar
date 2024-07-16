@@ -82,3 +82,18 @@ service:
   nodePort: 1000
   annotations:
     hello: world
+
+-- ingress-templating --
+ingress:
+ enabled: true
+ annotations:
+   ingress: test
+ hosts:
+ - host: '{{ "a-host" | quote }}'
+   paths:
+   - path: /
+     pathType: Exact
+ tls:
+ - secretName: my-secret
+   hosts:
+   - '{{ "blah" | quote }}'

@@ -32,7 +32,7 @@ type Values struct {
 	PodSecurityContext           corev1.PodSecurityContext         `json:"podSecurityContext"`
 	SecurityContext              corev1.SecurityContext            `json:"securityContext"`
 	Service                      ServiceConfig                     `json:"service"`
-	Ingress                      Ingress                           `json:"ingress"`
+	Ingress                      IngressConfig                     `json:"ingress"`
 	Resources                    corev1.ResourceRequirements       `json:"resources"`
 	Autoscaling                  AutoScaling                       `json:"autoscaling"`
 	NodeSelector                 map[string]string                 `json:"nodeSelector"`
@@ -77,9 +77,9 @@ type ServiceConfig struct {
 	Annotations map[string]string  `json:"annotations"`
 }
 
-type Ingress struct {
+type IngressConfig struct {
 	Enabled     bool                      `json:"enabled"`
-	ClassName   string                    `json:"className"`
+	ClassName   *string                   `json:"className"`
 	Annotations map[string]string         `json:"annotations"`
 	Hosts       []IngressHost             `json:"hosts"`
 	TLS         []networkingv1.IngressTLS `json:"tls"`
@@ -91,8 +91,8 @@ type IngressHost struct {
 }
 
 type IngressPath struct {
-	Path     string `json:"path"`
-	PathType string `json:"pathType"`
+	Path     string                 `json:"path"`
+	PathType *networkingv1.PathType `json:"pathType"`
 }
 
 type AutoScaling struct {
