@@ -61,6 +61,13 @@
 #### Added
 #### Changed
 #### Fixed
+#### Removed
+
+### [0.4.25](https://github.com/redpanda-data/helm-charts/releases/tag/operator-0.4.25) - 2024-07-17
+#### Added
+#### Changed
+* Updated `appVersion` to `v2.1.26-24.1.9`
+#### Fixed
 * Added missing permissions for the NodeWatcher controller (`rbac.createAdditionalControllerCRs`)
 #### Removed
 
