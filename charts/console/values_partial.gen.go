@@ -25,7 +25,7 @@ type PartialValues struct {
 	PodLabels                    map[string]string                 "json:\"podLabels,omitempty\""
 	PodSecurityContext           *corev1.PodSecurityContext        "json:\"podSecurityContext,omitempty\""
 	SecurityContext              *corev1.SecurityContext           "json:\"securityContext,omitempty\""
-	Service                      *PartialService                   "json:\"service,omitempty\""
+	Service                      *PartialServiceConfig             "json:\"service,omitempty\""
 	Ingress                      *PartialIngress                   "json:\"ingress,omitempty\""
 	Resources                    *corev1.ResourceRequirements      "json:\"resources,omitempty\""
 	Autoscaling                  *PartialAutoScaling               "json:\"autoscaling,omitempty\""
@@ -66,12 +66,12 @@ type PartialServiceAccount struct {
 	Name                         *string           "json:\"name,omitempty\""
 }
 
-type PartialService struct {
-	Type        *string           "json:\"type,omitempty\""
-	Port        *int              "json:\"port,omitempty\""
-	NodePort    *int              "json:\"nodePort,omitempty\""
-	TargetPort  *int              "json:\"targetPort,omitempty\""
-	Annotations map[string]string "json:\"annotations,omitempty\""
+type PartialServiceConfig struct {
+	Type        *corev1.ServiceType "json:\"type,omitempty\""
+	Port        *int32              "json:\"port,omitempty\""
+	NodePort    *int32              "json:\"nodePort,omitempty\""
+	TargetPort  *int32              "json:\"targetPort,omitempty\""
+	Annotations map[string]string   "json:\"annotations,omitempty\""
 }
 
 type PartialIngress struct {

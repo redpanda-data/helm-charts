@@ -14,24 +14,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
+{{ $svc := (get ((include "console.Service" (dict "a" (list .))) | fromJson) "r") }}
+{{- if ne $svc nil -}}
 ---
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ include "console.fullname" . }}
-  namespace: {{ .Release.Namespace | quote }}
-  labels: {{- include "console.labels" . | nindent 4 }}
-  {{- with .Values.service.annotations }}
-  annotations: {{- toYaml . | nindent 4 }}
-  {{- end }}
-spec:
-  type: {{ .Values.service.type }}
-  ports:
-    - port: {{ .Values.service.port }}
-      targetPort: {{ .Values.service.targetPort }}
-      protocol: TCP
-      name: http
-      {{- if and (contains "NodePort" .Values.service.type) .Values.service.nodePort }}
-      nodePort: {{ .Values.service.nodePort }}
-      {{- end }}
-  selector: {{- include "console.selectorLabels" . | nindent 4 }}
+{{ toYaml $svc }}
+{{- end }}

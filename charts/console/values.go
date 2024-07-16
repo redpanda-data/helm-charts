@@ -31,7 +31,7 @@ type Values struct {
 	PodLabels                    map[string]string                 `json:"podLabels"`
 	PodSecurityContext           corev1.PodSecurityContext         `json:"podSecurityContext"`
 	SecurityContext              corev1.SecurityContext            `json:"securityContext"`
-	Service                      Service                           `json:"service"`
+	Service                      ServiceConfig                     `json:"service"`
 	Ingress                      Ingress                           `json:"ingress"`
 	Resources                    corev1.ResourceRequirements       `json:"resources"`
 	Autoscaling                  AutoScaling                       `json:"autoscaling"`
@@ -69,12 +69,12 @@ type ServiceAccount struct {
 	Name                         string            `json:"name"`
 }
 
-type Service struct {
-	Type        string            `json:"type"`
-	Port        int               `json:"port"`
-	NodePort    *int              `json:"nodePort,omitempty"`
-	TargetPort  *int              `json:"targetPort"`
-	Annotations map[string]string `json:"annotations"`
+type ServiceConfig struct {
+	Type        corev1.ServiceType `json:"type"`
+	Port        int32              `json:"port"`
+	NodePort    *int32             `json:"nodePort,omitempty"`
+	TargetPort  *int32             `json:"targetPort"`
+	Annotations map[string]string  `json:"annotations"`
 }
 
 type Ingress struct {
