@@ -26,7 +26,7 @@ type PartialValues struct {
 	PodSecurityContext           *corev1.PodSecurityContext        "json:\"podSecurityContext,omitempty\""
 	SecurityContext              *corev1.SecurityContext           "json:\"securityContext,omitempty\""
 	Service                      *PartialServiceConfig             "json:\"service,omitempty\""
-	Ingress                      *PartialIngress                   "json:\"ingress,omitempty\""
+	Ingress                      *PartialIngressConfig             "json:\"ingress,omitempty\""
 	Resources                    *corev1.ResourceRequirements      "json:\"resources,omitempty\""
 	Autoscaling                  *PartialAutoScaling               "json:\"autoscaling,omitempty\""
 	NodeSelector                 map[string]string                 "json:\"nodeSelector,omitempty\""
@@ -74,7 +74,7 @@ type PartialServiceConfig struct {
 	Annotations map[string]string   "json:\"annotations,omitempty\""
 }
 
-type PartialIngress struct {
+type PartialIngressConfig struct {
 	Enabled     *bool                     "json:\"enabled,omitempty\""
 	ClassName   *string                   "json:\"className,omitempty\""
 	Annotations map[string]string         "json:\"annotations,omitempty\""
@@ -194,6 +194,6 @@ type PartialRedpandaAdminAPISecrets struct {
 }
 
 type PartialIngressPath struct {
-	Path     *string "json:\"path,omitempty\""
-	PathType *string "json:\"pathType,omitempty\""
+	Path     *string                "json:\"path,omitempty\""
+	PathType *networkingv1.PathType "json:\"pathType,omitempty\""
 }
