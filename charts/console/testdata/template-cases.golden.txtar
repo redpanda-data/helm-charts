@@ -20,47 +20,39 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: console
+  creationTimestamp: null
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: ""
+  name: console
+stringData:
+  enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
   kafka-sasl-aws-msk-iam-secret-key: ""
-  kafka-tls-ca: ""
-  kafka-tls-cert: ""
-  kafka-tls-key: ""
+  kafka-sasl-password: ""
   kafka-schema-registry-password: ""
   kafka-schemaregistry-tls-ca: ""
   kafka-schemaregistry-tls-cert: ""
   kafka-schemaregistry-tls-key: ""
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: ""
-  login-google-groups-service-account.json: ""
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
   login-github-oauth-client-secret: ""
   login-github-personal-access-token: ""
+  login-google-groups-service-account.json: ""
+  login-google-oauth-client-secret: ""
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: ""
   login-okta-client-secret: ""
   login-okta-directory-api-token: ""
-  login-oidc-client-secret: ""
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
   redpanda-admin-api-password: ""
   redpanda-admin-api-tls-ca: ""
   redpanda-admin-api-tls-cert: ""
   redpanda-admin-api-tls-key: ""
+type: Opaque
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
@@ -270,47 +262,39 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: console
+  creationTimestamp: null
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: ""
+  name: console
+stringData:
+  enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
   kafka-sasl-aws-msk-iam-secret-key: ""
-  kafka-tls-ca: ""
-  kafka-tls-cert: ""
-  kafka-tls-key: ""
+  kafka-sasl-password: ""
   kafka-schema-registry-password: ""
   kafka-schemaregistry-tls-ca: ""
   kafka-schemaregistry-tls-cert: ""
   kafka-schemaregistry-tls-key: ""
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: ""
-  login-google-groups-service-account.json: ""
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
   login-github-oauth-client-secret: ""
   login-github-personal-access-token: ""
+  login-google-groups-service-account.json: ""
+  login-google-oauth-client-secret: ""
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: ""
   login-okta-client-secret: ""
   login-okta-directory-api-token: ""
-  login-oidc-client-secret: ""
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
   redpanda-admin-api-password: ""
   redpanda-admin-api-tls-ca: ""
   redpanda-admin-api-tls-cert: ""
   redpanda-admin-api-tls-key: ""
+type: Opaque
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
@@ -514,47 +498,39 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: console
+  creationTimestamp: null
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: ""
+  name: console
+stringData:
+  enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
   kafka-sasl-aws-msk-iam-secret-key: ""
-  kafka-tls-ca: ""
-  kafka-tls-cert: ""
-  kafka-tls-key: ""
+  kafka-sasl-password: ""
   kafka-schema-registry-password: ""
   kafka-schemaregistry-tls-ca: ""
   kafka-schemaregistry-tls-cert: ""
   kafka-schemaregistry-tls-key: ""
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: ""
-  login-google-groups-service-account.json: ""
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
   login-github-oauth-client-secret: ""
   login-github-personal-access-token: ""
+  login-google-groups-service-account.json: ""
+  login-google-oauth-client-secret: ""
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: ""
   login-okta-client-secret: ""
   login-okta-directory-api-token: ""
-  login-oidc-client-secret: ""
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
   redpanda-admin-api-password: ""
   redpanda-admin-api-tls-ca: ""
   redpanda-admin-api-tls-cert: ""
   redpanda-admin-api-tls-key: ""
+type: Opaque
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
@@ -759,7 +735,7 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: hvGoJL
+  creationTimestamp: null
   labels:
     "": 31q1Pbz
     app.kubernetes.io/instance: console
@@ -767,40 +743,32 @@ metadata:
     app.kubernetes.io/name: "n"
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: ""
+  name: hvGoJL
+stringData:
+  enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
   kafka-sasl-aws-msk-iam-secret-key: ""
-  kafka-tls-ca: ""
-  kafka-tls-cert: ""
-  kafka-tls-key: ""
+  kafka-sasl-password: ""
   kafka-schema-registry-password: ""
   kafka-schemaregistry-tls-ca: ""
   kafka-schemaregistry-tls-cert: ""
   kafka-schemaregistry-tls-key: ""
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: ""
-  login-google-groups-service-account.json: ""
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
   login-github-oauth-client-secret: ""
   login-github-personal-access-token: ""
+  login-google-groups-service-account.json: ""
+  login-google-oauth-client-secret: ""
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: ""
   login-okta-client-secret: ""
   login-okta-directory-api-token: ""
-  login-oidc-client-secret: ""
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
   redpanda-admin-api-password: ""
   redpanda-admin-api-tls-ca: ""
   redpanda-admin-api-tls-cert: ""
   redpanda-admin-api-tls-key: ""
+type: Opaque
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
@@ -992,47 +960,39 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: T50cZi
+  creationTimestamp: null
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Sh
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: ""
+  name: T50cZi
+stringData:
+  enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
   kafka-sasl-aws-msk-iam-secret-key: ""
-  kafka-tls-ca: ""
-  kafka-tls-cert: ""
-  kafka-tls-key: ""
+  kafka-sasl-password: ""
   kafka-schema-registry-password: ""
   kafka-schemaregistry-tls-ca: ""
   kafka-schemaregistry-tls-cert: ""
   kafka-schemaregistry-tls-key: ""
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: ""
-  login-google-groups-service-account.json: ""
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
   login-github-oauth-client-secret: ""
   login-github-personal-access-token: ""
+  login-google-groups-service-account.json: ""
+  login-google-oauth-client-secret: ""
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: ""
   login-okta-client-secret: ""
   login-okta-directory-api-token: ""
-  login-oidc-client-secret: ""
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
   redpanda-admin-api-password: ""
   redpanda-admin-api-tls-ca: ""
   redpanda-admin-api-tls-cert: ""
   redpanda-admin-api-tls-key: ""
+type: Opaque
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
@@ -1259,47 +1219,39 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: xZty
+  creationTimestamp: null
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: vN4yH7I
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: ""
+  name: xZty
+stringData:
+  enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
   kafka-sasl-aws-msk-iam-secret-key: ""
-  kafka-tls-ca: ""
-  kafka-tls-cert: ""
-  kafka-tls-key: ""
+  kafka-sasl-password: ""
   kafka-schema-registry-password: ""
   kafka-schemaregistry-tls-ca: ""
   kafka-schemaregistry-tls-cert: ""
   kafka-schemaregistry-tls-key: ""
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: ""
-  login-google-groups-service-account.json: ""
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
   login-github-oauth-client-secret: ""
   login-github-personal-access-token: ""
+  login-google-groups-service-account.json: ""
+  login-google-oauth-client-secret: ""
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: ""
   login-okta-client-secret: ""
   login-okta-directory-api-token: ""
-  login-oidc-client-secret: ""
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
   redpanda-admin-api-password: ""
   redpanda-admin-api-tls-ca: ""
   redpanda-admin-api-tls-cert: ""
   redpanda-admin-api-tls-key: ""
+type: Opaque
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
@@ -1510,47 +1462,39 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: 8nE
+  creationTimestamp: null
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: w6
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: "eENjM1RlVlk="
-  kafka-protobuf-git-basicauth-password: "RmI="
-  kafka-sasl-aws-msk-iam-secret-key: "U3JZWTg0dA=="
-  kafka-tls-ca: "SEZwc25QZHc="
-  kafka-tls-cert: "aHNlSXQ="
+  name: 8nE
+stringData:
+  enterprise-license: ""
+  kafka-protobuf-git-basicauth-password: Fb
+  kafka-sasl-aws-msk-iam-secret-key: SrYY84t
+  kafka-sasl-password: xCc3TeVY
+  kafka-schema-registry-password: ovCqxwz9Bf
+  kafka-schemaregistry-tls-ca: JL
+  kafka-schemaregistry-tls-cert: cS
+  kafka-schemaregistry-tls-key: UMwYx4F
+  kafka-tls-ca: HFpsnPdw
+  kafka-tls-cert: hseIt
   kafka-tls-key: ""
-  kafka-schema-registry-password: "b3ZDcXh3ejlCZg=="
-  kafka-schemaregistry-tls-ca: "Skw="
-  kafka-schemaregistry-tls-cert: "Y1M="
-  kafka-schemaregistry-tls-key: "VU13WXg0Rg=="
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: ""
-  login-google-groups-service-account.json: ""
   login-github-oauth-client-secret: ""
   login-github-personal-access-token: ""
+  login-google-groups-service-account.json: ""
+  login-google-oauth-client-secret: ""
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: ""
   login-okta-client-secret: ""
   login-okta-directory-api-token: ""
-  login-oidc-client-secret: ""
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
   redpanda-admin-api-password: ""
   redpanda-admin-api-tls-ca: ""
   redpanda-admin-api-tls-cert: ""
   redpanda-admin-api-tls-key: ""
+type: Opaque
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -1661,7 +1605,7 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: console-YMl
+  creationTimestamp: null
   labels:
     "": PtQ7JxIAdPjt
     app.kubernetes.io/instance: console
@@ -1669,40 +1613,32 @@ metadata:
     app.kubernetes.io/name: YMl
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: ""
+  name: console-YMl
+stringData:
+  enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
   kafka-sasl-aws-msk-iam-secret-key: ""
-  kafka-tls-ca: ""
-  kafka-tls-cert: ""
-  kafka-tls-key: ""
+  kafka-sasl-password: ""
   kafka-schema-registry-password: ""
   kafka-schemaregistry-tls-ca: ""
   kafka-schemaregistry-tls-cert: ""
   kafka-schemaregistry-tls-key: ""
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: ""
-  login-google-groups-service-account.json: ""
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
   login-github-oauth-client-secret: ""
   login-github-personal-access-token: ""
+  login-google-groups-service-account.json: ""
+  login-google-oauth-client-secret: ""
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: ""
   login-okta-client-secret: ""
   login-okta-directory-api-token: ""
-  login-oidc-client-secret: ""
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
   redpanda-admin-api-password: ""
   redpanda-admin-api-tls-ca: ""
   redpanda-admin-api-tls-cert: ""
   redpanda-admin-api-tls-key: ""
+type: Opaque
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
@@ -1900,47 +1836,39 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: pN
+  creationTimestamp: null
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: MW
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: ""
+  name: pN
+stringData:
+  enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
   kafka-sasl-aws-msk-iam-secret-key: ""
-  kafka-tls-ca: ""
-  kafka-tls-cert: ""
-  kafka-tls-key: ""
+  kafka-sasl-password: ""
   kafka-schema-registry-password: ""
   kafka-schemaregistry-tls-ca: ""
   kafka-schemaregistry-tls-cert: ""
   kafka-schemaregistry-tls-key: ""
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: ""
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
+  login-github-oauth-client-secret: R4Zj
+  login-github-personal-access-token: N85av
   login-google-groups-service-account.json: ""
-  login-github-oauth-client-secret: "UjRaag=="
-  login-github-personal-access-token: "Tjg1YXY="
+  login-google-oauth-client-secret: ""
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: enei1WIcV
   login-okta-client-secret: ""
   login-okta-directory-api-token: ""
-  login-oidc-client-secret: "ZW5laTFXSWNW"
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
   redpanda-admin-api-password: ""
   redpanda-admin-api-tls-ca: ""
   redpanda-admin-api-tls-cert: ""
   redpanda-admin-api-tls-key: ""
+type: Opaque
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -2129,47 +2057,39 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: rzd
+  creationTimestamp: null
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: gCH15URsJZr
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: "SzhrUGdJcDY="
-  kafka-protobuf-git-basicauth-password: "Rw=="
-  kafka-sasl-aws-msk-iam-secret-key: "MXRx"
-  kafka-tls-ca: "Q1E="
-  kafka-tls-cert: "NnhaOA=="
-  kafka-tls-key: ""
+  name: rzd
+stringData:
+  enterprise-license: ""
+  kafka-protobuf-git-basicauth-password: G
+  kafka-sasl-aws-msk-iam-secret-key: 1tq
+  kafka-sasl-password: K8kPgIp6
   kafka-schema-registry-password: ""
-  kafka-schemaregistry-tls-ca: "WnI="
-  kafka-schemaregistry-tls-cert: "S04="
-  kafka-schemaregistry-tls-key: "dA=="
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: ""
-  login-google-groups-service-account.json: ""
+  kafka-schemaregistry-tls-ca: Zr
+  kafka-schemaregistry-tls-cert: KN
+  kafka-schemaregistry-tls-key: t
+  kafka-tls-ca: CQ
+  kafka-tls-cert: 6xZ8
+  kafka-tls-key: ""
   login-github-oauth-client-secret: ""
   login-github-personal-access-token: ""
+  login-google-groups-service-account.json: ""
+  login-google-oauth-client-secret: ""
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: ""
   login-okta-client-secret: ""
   login-okta-directory-api-token: ""
-  login-oidc-client-secret: ""
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
   redpanda-admin-api-password: ""
   redpanda-admin-api-tls-ca: ""
   redpanda-admin-api-tls-cert: ""
   redpanda-admin-api-tls-key: ""
+type: Opaque
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
@@ -2370,7 +2290,7 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: y
+  creationTimestamp: null
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -2379,40 +2299,32 @@ metadata:
     cV05TKdtF: 55lItpeJD
     h: 1Y7dqm4wZL
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: ""
+  name: "y"
+stringData:
+  enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
   kafka-sasl-aws-msk-iam-secret-key: ""
-  kafka-tls-ca: ""
-  kafka-tls-cert: ""
-  kafka-tls-key: ""
+  kafka-sasl-password: ""
   kafka-schema-registry-password: ""
   kafka-schemaregistry-tls-ca: ""
   kafka-schemaregistry-tls-cert: ""
   kafka-schemaregistry-tls-key: ""
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: "TG4w"
-  login-google-groups-service-account.json: "Z3A="
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
   login-github-oauth-client-secret: ""
   login-github-personal-access-token: ""
-  login-okta-client-secret: "M0E1OTNCakN1dQ=="
-  login-okta-directory-api-token: "bVNTejhNWg=="
+  login-google-groups-service-account.json: gp
+  login-google-oauth-client-secret: Ln0
+  login-jwt-secret: SECRETKEY
   login-oidc-client-secret: ""
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
-  redpanda-admin-api-password: "dA=="
-  redpanda-admin-api-tls-ca: "UUQxeDcxZg=="
-  redpanda-admin-api-tls-cert: "NzQ0WXN2aQ=="
-  redpanda-admin-api-tls-key: "NTZWYUho"
+  login-okta-client-secret: 3A593BjCuu
+  login-okta-directory-api-token: mSSz8MZ
+  redpanda-admin-api-password: t
+  redpanda-admin-api-tls-ca: QD1x71f
+  redpanda-admin-api-tls-cert: 744Ysvi
+  redpanda-admin-api-tls-key: 56VaHh
+type: Opaque
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
@@ -2855,47 +2767,39 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: l1Bnpx
+  creationTimestamp: null
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: BKV
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: ""
+  name: l1Bnpx
+stringData:
+  enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
   kafka-sasl-aws-msk-iam-secret-key: ""
-  kafka-tls-ca: ""
-  kafka-tls-cert: ""
-  kafka-tls-key: ""
+  kafka-sasl-password: ""
   kafka-schema-registry-password: ""
   kafka-schemaregistry-tls-ca: ""
   kafka-schemaregistry-tls-cert: ""
   kafka-schemaregistry-tls-key: ""
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: ""
-  login-google-groups-service-account.json: ""
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
   login-github-oauth-client-secret: ""
   login-github-personal-access-token: ""
+  login-google-groups-service-account.json: ""
+  login-google-oauth-client-secret: ""
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: ""
   login-okta-client-secret: ""
   login-okta-directory-api-token: ""
-  login-oidc-client-secret: ""
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
   redpanda-admin-api-password: ""
   redpanda-admin-api-tls-ca: ""
   redpanda-admin-api-tls-cert: ""
   redpanda-admin-api-tls-key: ""
+type: Opaque
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -3394,7 +3298,7 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: hbe
+  creationTimestamp: null
   labels:
     JwK5MKTa: WW
     app.kubernetes.io/instance: console
@@ -3403,40 +3307,32 @@ metadata:
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
     v7E: 1g6JB
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: ""
+  name: hbe
+stringData:
+  enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
   kafka-sasl-aws-msk-iam-secret-key: ""
-  kafka-tls-ca: ""
-  kafka-tls-cert: ""
-  kafka-tls-key: ""
+  kafka-sasl-password: ""
   kafka-schema-registry-password: ""
   kafka-schemaregistry-tls-ca: ""
   kafka-schemaregistry-tls-cert: ""
   kafka-schemaregistry-tls-key: ""
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: ""
-  login-google-groups-service-account.json: ""
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
   login-github-oauth-client-secret: ""
   login-github-personal-access-token: ""
+  login-google-groups-service-account.json: ""
+  login-google-oauth-client-secret: ""
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: ""
   login-okta-client-secret: ""
   login-okta-directory-api-token: ""
-  login-oidc-client-secret: ""
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
   redpanda-admin-api-password: ""
   redpanda-admin-api-tls-ca: ""
   redpanda-admin-api-tls-cert: ""
   redpanda-admin-api-tls-key: ""
+type: Opaque
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
@@ -3746,47 +3642,39 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: tmn2Kt
+  creationTimestamp: null
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Qr03ts
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: ""
+  name: tmn2Kt
+stringData:
+  enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
   kafka-sasl-aws-msk-iam-secret-key: ""
-  kafka-tls-ca: ""
-  kafka-tls-cert: ""
-  kafka-tls-key: ""
+  kafka-sasl-password: ""
   kafka-schema-registry-password: ""
   kafka-schemaregistry-tls-ca: ""
   kafka-schemaregistry-tls-cert: ""
   kafka-schemaregistry-tls-key: ""
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: ""
-  login-google-groups-service-account.json: ""
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
   login-github-oauth-client-secret: ""
   login-github-personal-access-token: ""
+  login-google-groups-service-account.json: ""
+  login-google-oauth-client-secret: ""
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: ""
   login-okta-client-secret: ""
   login-okta-directory-api-token: ""
-  login-oidc-client-secret: ""
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
   redpanda-admin-api-password: ""
   redpanda-admin-api-tls-ca: ""
   redpanda-admin-api-tls-cert: ""
   redpanda-admin-api-tls-key: ""
+type: Opaque
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
@@ -4117,47 +4005,39 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: RttlJN
+  creationTimestamp: null
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: dDkIKgMwXv
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: ""
+  name: RttlJN
+stringData:
+  enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
   kafka-sasl-aws-msk-iam-secret-key: ""
-  kafka-tls-ca: ""
-  kafka-tls-cert: ""
-  kafka-tls-key: ""
+  kafka-sasl-password: ""
   kafka-schema-registry-password: ""
   kafka-schemaregistry-tls-ca: ""
   kafka-schemaregistry-tls-cert: ""
   kafka-schemaregistry-tls-key: ""
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: ""
-  login-google-groups-service-account.json: ""
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
   login-github-oauth-client-secret: ""
   login-github-personal-access-token: ""
+  login-google-groups-service-account.json: ""
+  login-google-oauth-client-secret: ""
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: ""
   login-okta-client-secret: ""
   login-okta-directory-api-token: ""
-  login-oidc-client-secret: ""
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
   redpanda-admin-api-password: ""
   redpanda-admin-api-tls-ca: ""
   redpanda-admin-api-tls-cert: ""
   redpanda-admin-api-tls-key: ""
+type: Opaque
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
@@ -4421,47 +4301,39 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: htymHJ
+  creationTimestamp: null
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Vi2vH
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: ""
+  name: htymHJ
+stringData:
+  enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
   kafka-sasl-aws-msk-iam-secret-key: ""
-  kafka-tls-ca: ""
-  kafka-tls-cert: ""
-  kafka-tls-key: ""
+  kafka-sasl-password: ""
   kafka-schema-registry-password: ""
   kafka-schemaregistry-tls-ca: ""
   kafka-schemaregistry-tls-cert: ""
   kafka-schemaregistry-tls-key: ""
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: ""
-  login-google-groups-service-account.json: ""
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
   login-github-oauth-client-secret: ""
   login-github-personal-access-token: ""
+  login-google-groups-service-account.json: ""
+  login-google-oauth-client-secret: ""
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: ""
   login-okta-client-secret: ""
   login-okta-directory-api-token: ""
-  login-oidc-client-secret: ""
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
   redpanda-admin-api-password: ""
   redpanda-admin-api-tls-ca: ""
   redpanda-admin-api-tls-cert: ""
   redpanda-admin-api-tls-key: ""
+type: Opaque
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
@@ -4560,7 +4432,7 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: 9RweMGWqBs
+  creationTimestamp: null
   labels:
     B0Pmybnj: gh8
     MdyMnFBP0Cd1: UUVRKbjhv
@@ -4570,40 +4442,32 @@ metadata:
     app.kubernetes.io/name: KD8DmV
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: ""
+  name: 9RweMGWqBs
+stringData:
+  enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
   kafka-sasl-aws-msk-iam-secret-key: ""
-  kafka-tls-ca: ""
-  kafka-tls-cert: ""
-  kafka-tls-key: ""
+  kafka-sasl-password: ""
   kafka-schema-registry-password: ""
   kafka-schemaregistry-tls-ca: ""
   kafka-schemaregistry-tls-cert: ""
   kafka-schemaregistry-tls-key: ""
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: ""
-  login-google-groups-service-account.json: ""
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
   login-github-oauth-client-secret: ""
   login-github-personal-access-token: ""
+  login-google-groups-service-account.json: ""
+  login-google-oauth-client-secret: ""
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: ""
   login-okta-client-secret: ""
   login-okta-directory-api-token: ""
-  login-oidc-client-secret: ""
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
   redpanda-admin-api-password: ""
   redpanda-admin-api-tls-ca: ""
   redpanda-admin-api-tls-cert: ""
   redpanda-admin-api-tls-key: ""
+type: Opaque
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
@@ -4984,47 +4848,39 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: 6maz
+  creationTimestamp: null
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: SC
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: ""
+  name: 6maz
+stringData:
+  enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
   kafka-sasl-aws-msk-iam-secret-key: ""
-  kafka-tls-ca: ""
-  kafka-tls-cert: ""
-  kafka-tls-key: ""
+  kafka-sasl-password: ""
   kafka-schema-registry-password: ""
   kafka-schemaregistry-tls-ca: ""
   kafka-schemaregistry-tls-cert: ""
   kafka-schemaregistry-tls-key: ""
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: ""
-  login-google-groups-service-account.json: ""
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
   login-github-oauth-client-secret: ""
   login-github-personal-access-token: ""
+  login-google-groups-service-account.json: ""
+  login-google-oauth-client-secret: ""
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: ""
   login-okta-client-secret: ""
   login-okta-directory-api-token: ""
-  login-oidc-client-secret: ""
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
   redpanda-admin-api-password: ""
   redpanda-admin-api-tls-ca: ""
   redpanda-admin-api-tls-cert: ""
   redpanda-admin-api-tls-key: ""
+type: Opaque
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
@@ -5394,47 +5250,39 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: 9XG3SZW
+  creationTimestamp: null
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: tPiY
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: ""
+  name: 9XG3SZW
+stringData:
+  enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
   kafka-sasl-aws-msk-iam-secret-key: ""
-  kafka-tls-ca: ""
-  kafka-tls-cert: ""
-  kafka-tls-key: ""
+  kafka-sasl-password: ""
   kafka-schema-registry-password: ""
   kafka-schemaregistry-tls-ca: ""
   kafka-schemaregistry-tls-cert: ""
   kafka-schemaregistry-tls-key: ""
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: ""
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
+  login-github-oauth-client-secret: jw6tY22
+  login-github-personal-access-token: JvG1jx
   login-google-groups-service-account.json: ""
-  login-github-oauth-client-secret: "anc2dFkyMg=="
-  login-github-personal-access-token: "SnZHMWp4"
-  login-okta-client-secret: "bURJTGdQTWpPUzk="
-  login-okta-directory-api-token: "TTJ5d0FpUA=="
-  login-oidc-client-secret: "TWFsUjI="
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
+  login-google-oauth-client-secret: ""
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: MalR2
+  login-okta-client-secret: mDILgPMjOS9
+  login-okta-directory-api-token: M2ywAiP
   redpanda-admin-api-password: ""
   redpanda-admin-api-tls-ca: ""
   redpanda-admin-api-tls-cert: ""
   redpanda-admin-api-tls-key: ""
+type: Opaque
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
@@ -5942,47 +5790,39 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: ExFU3
+  creationTimestamp: null
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 1qyLP36T
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: "VmI="
-  kafka-protobuf-git-basicauth-password: "SXN2UTk="
-  kafka-sasl-aws-msk-iam-secret-key: "OEdsVWM="
-  kafka-tls-ca: "bjhrOQ=="
-  kafka-tls-cert: "YUs="
-  kafka-tls-key: ""
-  kafka-schema-registry-password: "VUo3Wmw="
-  kafka-schemaregistry-tls-ca: "VDFR"
-  kafka-schemaregistry-tls-cert: "MTdy"
-  kafka-schemaregistry-tls-key: "TzQ0"
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: "aA=="
-  login-google-groups-service-account.json: "ZnB1Q0VGTEw="
-  login-github-oauth-client-secret: "dDZ6MG4="
-  login-github-personal-access-token: ""
-  login-okta-client-secret: "M0NjS2w="
-  login-okta-directory-api-token: "QVp0OEg3Nw=="
-  login-oidc-client-secret: "dA=="
-
-  # Enterprise
+  name: ExFU3
+stringData:
   enterprise-license: ""
-
-  # Redpanda
-  redpanda-admin-api-password: "TlVrYjN6SXB3QVI="
-  redpanda-admin-api-tls-ca: "dA=="
-  redpanda-admin-api-tls-cert: "enR0VEF2ag=="
+  kafka-protobuf-git-basicauth-password: IsvQ9
+  kafka-sasl-aws-msk-iam-secret-key: 8GlUc
+  kafka-sasl-password: Vb
+  kafka-schema-registry-password: UJ7Zl
+  kafka-schemaregistry-tls-ca: T1Q
+  kafka-schemaregistry-tls-cert: 17r
+  kafka-schemaregistry-tls-key: O44
+  kafka-tls-ca: n8k9
+  kafka-tls-cert: aK
+  kafka-tls-key: ""
+  login-github-oauth-client-secret: t6z0n
+  login-github-personal-access-token: ""
+  login-google-groups-service-account.json: fpuCEFLL
+  login-google-oauth-client-secret: h
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: t
+  login-okta-client-secret: 3CcKl
+  login-okta-directory-api-token: AZt8H77
+  redpanda-admin-api-password: NUkb3zIpwAR
+  redpanda-admin-api-tls-ca: t
+  redpanda-admin-api-tls-cert: zttTAvj
   redpanda-admin-api-tls-key: ""
+type: Opaque
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -6378,47 +6218,39 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: NZ7h9
+  creationTimestamp: null
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 8MIg
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: ""
+  name: NZ7h9
+stringData:
+  enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
   kafka-sasl-aws-msk-iam-secret-key: ""
-  kafka-tls-ca: ""
-  kafka-tls-cert: ""
-  kafka-tls-key: ""
+  kafka-sasl-password: ""
   kafka-schema-registry-password: ""
   kafka-schemaregistry-tls-ca: ""
   kafka-schemaregistry-tls-cert: ""
   kafka-schemaregistry-tls-key: ""
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: ""
-  login-google-groups-service-account.json: ""
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
   login-github-oauth-client-secret: ""
   login-github-personal-access-token: ""
+  login-google-groups-service-account.json: ""
+  login-google-oauth-client-secret: ""
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: ""
   login-okta-client-secret: ""
   login-okta-directory-api-token: ""
-  login-oidc-client-secret: ""
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
   redpanda-admin-api-password: ""
   redpanda-admin-api-tls-ca: ""
   redpanda-admin-api-tls-cert: ""
   redpanda-admin-api-tls-key: ""
+type: Opaque
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
@@ -6647,47 +6479,39 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: Om7
+  creationTimestamp: null
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: zzmAR9
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: ""
+  name: Om7
+stringData:
+  enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
   kafka-sasl-aws-msk-iam-secret-key: ""
-  kafka-tls-ca: ""
-  kafka-tls-cert: ""
-  kafka-tls-key: ""
+  kafka-sasl-password: ""
   kafka-schema-registry-password: ""
   kafka-schemaregistry-tls-ca: ""
   kafka-schemaregistry-tls-cert: ""
   kafka-schemaregistry-tls-key: ""
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: ""
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
+  login-github-oauth-client-secret: XhRg8T
+  login-github-personal-access-token: oB8xbs
   login-google-groups-service-account.json: ""
-  login-github-oauth-client-secret: "WGhSZzhU"
-  login-github-personal-access-token: "b0I4eGJz"
-  login-okta-client-secret: "c2FFaQ=="
-  login-okta-directory-api-token: "dHE4TA=="
+  login-google-oauth-client-secret: ""
+  login-jwt-secret: SECRETKEY
   login-oidc-client-secret: ""
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
+  login-okta-client-secret: saEi
+  login-okta-directory-api-token: tq8L
   redpanda-admin-api-password: ""
   redpanda-admin-api-tls-ca: ""
   redpanda-admin-api-tls-cert: ""
   redpanda-admin-api-tls-key: ""
+type: Opaque
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
@@ -7172,7 +6996,7 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: PhRk
+  creationTimestamp: null
   labels:
     0pITqVWuPVXcDF: jm5Ve54
     8iyjfh0: Igz
@@ -7181,40 +7005,32 @@ metadata:
     app.kubernetes.io/name: Rys
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: ""
+  name: PhRk
+stringData:
+  enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
   kafka-sasl-aws-msk-iam-secret-key: ""
-  kafka-tls-ca: ""
-  kafka-tls-cert: ""
-  kafka-tls-key: ""
+  kafka-sasl-password: ""
   kafka-schema-registry-password: ""
   kafka-schemaregistry-tls-ca: ""
   kafka-schemaregistry-tls-cert: ""
   kafka-schemaregistry-tls-key: ""
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: ""
-  login-google-groups-service-account.json: ""
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
   login-github-oauth-client-secret: ""
   login-github-personal-access-token: ""
+  login-google-groups-service-account.json: ""
+  login-google-oauth-client-secret: ""
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: ""
   login-okta-client-secret: ""
   login-okta-directory-api-token: ""
-  login-oidc-client-secret: ""
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
   redpanda-admin-api-password: ""
   redpanda-admin-api-tls-ca: ""
   redpanda-admin-api-tls-cert: ""
   redpanda-admin-api-tls-key: ""
+type: Opaque
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
@@ -7351,47 +7167,39 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: GVjeLRc
+  creationTimestamp: null
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: xNnu
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: "dGhtV3gwOFZQVA=="
-  kafka-protobuf-git-basicauth-password: "WkVkdnlBWDA="
-  kafka-sasl-aws-msk-iam-secret-key: "RTJ1YjVhV0o="
-  kafka-tls-ca: "OA=="
-  kafka-tls-cert: "dUQ5"
+  name: GVjeLRc
+stringData:
+  enterprise-license: ""
+  kafka-protobuf-git-basicauth-password: ZEdvyAX0
+  kafka-sasl-aws-msk-iam-secret-key: E2ub5aWJ
+  kafka-sasl-password: thmWx08VPT
+  kafka-schema-registry-password: s
+  kafka-schemaregistry-tls-ca: B5
+  kafka-schemaregistry-tls-cert: O8i22Z0
+  kafka-schemaregistry-tls-key: QmO97F4SbZ
+  kafka-tls-ca: "8"
+  kafka-tls-cert: uD9
   kafka-tls-key: ""
-  kafka-schema-registry-password: "cw=="
-  kafka-schemaregistry-tls-ca: "QjU="
-  kafka-schemaregistry-tls-cert: "TzhpMjJaMA=="
-  kafka-schemaregistry-tls-key: "UW1POTdGNFNiWg=="
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: "MnlRc0FlYk1KSQ=="
-  login-google-groups-service-account.json: "eHBqNWdkU1Q="
-  login-github-oauth-client-secret: "dg=="
-  login-github-personal-access-token: "Ym1s"
+  login-github-oauth-client-secret: v
+  login-github-personal-access-token: bml
+  login-google-groups-service-account.json: xpj5gdST
+  login-google-oauth-client-secret: 2yQsAebMJI
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: ZxFQUk
   login-okta-client-secret: ""
   login-okta-directory-api-token: ""
-  login-oidc-client-secret: "WnhGUVVr"
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
-  redpanda-admin-api-password: "a2FO"
-  redpanda-admin-api-tls-ca: "N3VVZ1pJ"
-  redpanda-admin-api-tls-cert: "Nw=="
-  redpanda-admin-api-tls-key: "cjhENmw="
+  redpanda-admin-api-password: kaN
+  redpanda-admin-api-tls-ca: 7uUgZI
+  redpanda-admin-api-tls-cert: "7"
+  redpanda-admin-api-tls-key: r8D6l
+type: Opaque
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
@@ -8027,47 +7835,39 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: fXCb
+  creationTimestamp: null
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: s3YOF
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: ""
+  name: fXCb
+stringData:
+  enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
   kafka-sasl-aws-msk-iam-secret-key: ""
-  kafka-tls-ca: ""
-  kafka-tls-cert: ""
-  kafka-tls-key: ""
+  kafka-sasl-password: ""
   kafka-schema-registry-password: ""
   kafka-schemaregistry-tls-ca: ""
   kafka-schemaregistry-tls-cert: ""
   kafka-schemaregistry-tls-key: ""
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: ""
-  login-google-groups-service-account.json: ""
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
   login-github-oauth-client-secret: ""
   login-github-personal-access-token: ""
+  login-google-groups-service-account.json: ""
+  login-google-oauth-client-secret: ""
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: ""
   login-okta-client-secret: ""
   login-okta-directory-api-token: ""
-  login-oidc-client-secret: ""
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
   redpanda-admin-api-password: ""
   redpanda-admin-api-tls-ca: ""
   redpanda-admin-api-tls-cert: ""
   redpanda-admin-api-tls-key: ""
+type: Opaque
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -9531,7 +9331,7 @@ spec:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: odFI2M4
+  creationTimestamp: null
   labels:
     BKrxjHNg8: qlqPhj
     app.kubernetes.io/instance: console
@@ -9539,40 +9339,32 @@ metadata:
     app.kubernetes.io/name: 5XQu4RW
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: "T1Q5bTQ="
-  kafka-protobuf-git-basicauth-password: "YU0="
-  kafka-sasl-aws-msk-iam-secret-key: "cGNOSjRsUGg="
-  kafka-tls-ca: "MGgwQWM2Q1M="
-  kafka-tls-cert: "cE5tNHVIVk1u"
-  kafka-tls-key: ""
-  kafka-schema-registry-password: "NFZ5YkloaUlV"
-  kafka-schemaregistry-tls-ca: "RlZXdmFMNUhTM0RF"
-  kafka-schemaregistry-tls-cert: "VXFabA=="
-  kafka-schemaregistry-tls-key: "Y2g="
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: "bEV2cmd4YQ=="
-  login-google-groups-service-account.json: "dzM="
-  login-github-oauth-client-secret: "NVhiR21sRG1scw=="
-  login-github-personal-access-token: "eTBQRjEz"
-  login-okta-client-secret: "MUdt"
-  login-okta-directory-api-token: "aGdtWTdBeWd1Ug=="
-  login-oidc-client-secret: "VmZSckwz"
-
-  # Enterprise
+  name: odFI2M4
+stringData:
   enterprise-license: ""
-
-  # Redpanda
-  redpanda-admin-api-password: "V3Z6UDFENTM="
-  redpanda-admin-api-tls-ca: "ZHh0bkc="
-  redpanda-admin-api-tls-cert: "UnMzckhBOFFkYg=="
-  redpanda-admin-api-tls-key: "N2hzRA=="
+  kafka-protobuf-git-basicauth-password: aM
+  kafka-sasl-aws-msk-iam-secret-key: pcNJ4lPh
+  kafka-sasl-password: OT9m4
+  kafka-schema-registry-password: 4VybIhiIU
+  kafka-schemaregistry-tls-ca: FVWvaL5HS3DE
+  kafka-schemaregistry-tls-cert: UqZl
+  kafka-schemaregistry-tls-key: ch
+  kafka-tls-ca: 0h0Ac6CS
+  kafka-tls-cert: pNm4uHVMn
+  kafka-tls-key: ""
+  login-github-oauth-client-secret: 5XbGmlDmls
+  login-github-personal-access-token: y0PF13
+  login-google-groups-service-account.json: w3
+  login-google-oauth-client-secret: lEvrgxa
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: VfRrL3
+  login-okta-client-secret: 1Gm
+  login-okta-directory-api-token: hgmY7AyguR
+  redpanda-admin-api-password: WvzP1D53
+  redpanda-admin-api-tls-ca: dxtnG
+  redpanda-admin-api-tls-cert: Rs3rHA8Qdb
+  redpanda-admin-api-tls-key: 7hsD
+type: Opaque
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
@@ -9953,7 +9745,7 @@ spec:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: HK
+  creationTimestamp: null
   labels:
     HzuQ: mCfbHBQ
     app.kubernetes.io/instance: console
@@ -9962,40 +9754,32 @@ metadata:
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
     xi7L: ibI45
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: ""
+  name: HK
+stringData:
+  enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
   kafka-sasl-aws-msk-iam-secret-key: ""
-  kafka-tls-ca: ""
-  kafka-tls-cert: ""
-  kafka-tls-key: ""
+  kafka-sasl-password: ""
   kafka-schema-registry-password: ""
   kafka-schemaregistry-tls-ca: ""
   kafka-schemaregistry-tls-cert: ""
   kafka-schemaregistry-tls-key: ""
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: ""
-  login-google-groups-service-account.json: ""
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
   login-github-oauth-client-secret: ""
   login-github-personal-access-token: ""
+  login-google-groups-service-account.json: ""
+  login-google-oauth-client-secret: ""
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: ""
   login-okta-client-secret: ""
   login-okta-directory-api-token: ""
-  login-oidc-client-secret: ""
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
   redpanda-admin-api-password: ""
   redpanda-admin-api-tls-ca: ""
   redpanda-admin-api-tls-cert: ""
   redpanda-admin-api-tls-key: ""
+type: Opaque
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
@@ -10586,7 +10370,7 @@ spec:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: G9
+  creationTimestamp: null
   labels:
     T: f0
     app.kubernetes.io/instance: console
@@ -10596,40 +10380,32 @@ metadata:
     helm.sh/chart: console-0.7.26
     jwrBMvwfg: K6I5HsI5
     nk8eJc: nS
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: "OEY="
-  kafka-protobuf-git-basicauth-password: "RHRJeQ=="
-  kafka-sasl-aws-msk-iam-secret-key: "OXhDZjc="
-  kafka-tls-ca: "RGFU"
-  kafka-tls-cert: "TGFVMGp3T3BHdg=="
-  kafka-tls-key: ""
-  kafka-schema-registry-password: "a3JOazI="
-  kafka-schemaregistry-tls-ca: "NUk3M0M="
-  kafka-schemaregistry-tls-cert: ""
-  kafka-schemaregistry-tls-key: "MzQ="
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: "b2VMNnA3ZmNM"
-  login-google-groups-service-account.json: "TnVsd2xK"
-  login-github-oauth-client-secret: "Qm9Pam5p"
-  login-github-personal-access-token: "dVV4Wg=="
-  login-okta-client-secret: "eEtMQko5WkFS"
-  login-okta-directory-api-token: "SFRaV2ZIdA=="
-  login-oidc-client-secret: "eVJTaDI="
-
-  # Enterprise
+  name: G9
+stringData:
   enterprise-license: ""
-
-  # Redpanda
-  redpanda-admin-api-password: "NURRVHFLRA=="
-  redpanda-admin-api-tls-ca: "bTVwZw=="
-  redpanda-admin-api-tls-cert: "eWZQ"
-  redpanda-admin-api-tls-key: "Z3pH"
+  kafka-protobuf-git-basicauth-password: DtIy
+  kafka-sasl-aws-msk-iam-secret-key: 9xCf7
+  kafka-sasl-password: 8F
+  kafka-schema-registry-password: krNk2
+  kafka-schemaregistry-tls-ca: 5I73C
+  kafka-schemaregistry-tls-cert: ""
+  kafka-schemaregistry-tls-key: "34"
+  kafka-tls-ca: DaT
+  kafka-tls-cert: LaU0jwOpGv
+  kafka-tls-key: ""
+  login-github-oauth-client-secret: BoOjni
+  login-github-personal-access-token: uUxZ
+  login-google-groups-service-account.json: NulwlJ
+  login-google-oauth-client-secret: oeL6p7fcL
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: yRSh2
+  login-okta-client-secret: xKLBJ9ZAR
+  login-okta-directory-api-token: HTZWfHt
+  redpanda-admin-api-password: 5DQTqKD
+  redpanda-admin-api-tls-ca: m5pg
+  redpanda-admin-api-tls-cert: yfP
+  redpanda-admin-api-tls-key: gzG
+type: Opaque
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -13992,7 +13768,7 @@ spec:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: AumW
+  creationTimestamp: null
   labels:
     Nv: YHcp9u
     RMi5: o4
@@ -14002,40 +13778,32 @@ metadata:
     app.kubernetes.io/name: 9mG8n4Wu4
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: "dw=="
-  kafka-protobuf-git-basicauth-password: "RWZRYnlC"
-  kafka-sasl-aws-msk-iam-secret-key: "Qg=="
-  kafka-tls-ca: "VXlza0xtRFo="
+  name: AumW
+stringData:
+  enterprise-license: ""
+  kafka-protobuf-git-basicauth-password: EfQbyB
+  kafka-sasl-aws-msk-iam-secret-key: B
+  kafka-sasl-password: w
+  kafka-schema-registry-password: qiltVq
+  kafka-schemaregistry-tls-ca: kyT4j
+  kafka-schemaregistry-tls-cert: Tu4varJ
+  kafka-schemaregistry-tls-key: bmT
+  kafka-tls-ca: UyskLmDZ
   kafka-tls-cert: ""
   kafka-tls-key: ""
-  kafka-schema-registry-password: "cWlsdFZx"
-  kafka-schemaregistry-tls-ca: "a3lUNGo="
-  kafka-schemaregistry-tls-cert: "VHU0dmFySg=="
-  kafka-schemaregistry-tls-key: "Ym1U"
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
+  login-github-oauth-client-secret: hPt
+  login-github-personal-access-token: vRbRqD0
+  login-google-groups-service-account.json: lcc9
   login-google-oauth-client-secret: ""
-  login-google-groups-service-account.json: "bGNjOQ=="
-  login-github-oauth-client-secret: "aFB0"
-  login-github-personal-access-token: "dlJiUnFEMA=="
-  login-okta-client-secret: "SGt0emxlTEFn"
-  login-okta-directory-api-token: "cVg="
-  login-oidc-client-secret: "QTlSRGJPNkd6VHRIWUc="
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
-  redpanda-admin-api-password: "NWltWDh6dGRxalU="
-  redpanda-admin-api-tls-ca: "b3BRUQ=="
-  redpanda-admin-api-tls-cert: "UEdjZkpDM3pI"
-  redpanda-admin-api-tls-key: "SWhxeVR2UW40VA=="
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: A9RDbO6GzTtHYG
+  login-okta-client-secret: HktzleLAg
+  login-okta-directory-api-token: qX
+  redpanda-admin-api-password: 5imX8ztdqjU
+  redpanda-admin-api-tls-ca: opQQ
+  redpanda-admin-api-tls-cert: PGcfJC3zH
+  redpanda-admin-api-tls-key: IhqyTvQn4T
+type: Opaque
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -16501,7 +16269,7 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: Wq
+  creationTimestamp: null
   labels:
     T1: pMf7C
     app.kubernetes.io/instance: console
@@ -16510,40 +16278,32 @@ metadata:
     app.kubernetes.io/version: v2.4.6
     cxAL7zvwvb: tmEjSXwTK6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: "TkFNbw=="
-  kafka-protobuf-git-basicauth-password: "NHVUS2J2Uk5TaA=="
-  kafka-sasl-aws-msk-iam-secret-key: "dGZj"
-  kafka-tls-ca: "RnlkeXA4"
-  kafka-tls-cert: "UjR5"
-  kafka-tls-key: ""
-  kafka-schema-registry-password: "NUxVVWV5"
+  name: Wq
+stringData:
+  enterprise-license: ""
+  kafka-protobuf-git-basicauth-password: 4uTKbvRNSh
+  kafka-sasl-aws-msk-iam-secret-key: tfc
+  kafka-sasl-password: NAMo
+  kafka-schema-registry-password: 5LUUey
   kafka-schemaregistry-tls-ca: ""
   kafka-schemaregistry-tls-cert: ""
-  kafka-schemaregistry-tls-key: "aQ=="
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: "Q3NWVmM2"
-  login-google-groups-service-account.json: "ekZKYllK"
-  login-github-oauth-client-secret: "WTA="
-  login-github-personal-access-token: "eHlu"
-  login-okta-client-secret: "d3I5ZUlB"
-  login-okta-directory-api-token: "RHk="
-  login-oidc-client-secret: "ZHN4"
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
-  redpanda-admin-api-password: "TzdrUHE="
-  redpanda-admin-api-tls-ca: "N09Seg=="
-  redpanda-admin-api-tls-cert: "SVQ="
-  redpanda-admin-api-tls-key: "S1IyNWNU"
+  kafka-schemaregistry-tls-key: i
+  kafka-tls-ca: Fydyp8
+  kafka-tls-cert: R4y
+  kafka-tls-key: ""
+  login-github-oauth-client-secret: Y0
+  login-github-personal-access-token: xyn
+  login-google-groups-service-account.json: zFJbYJ
+  login-google-oauth-client-secret: CsVVc6
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: dsx
+  login-okta-client-secret: wr9eIA
+  login-okta-directory-api-token: Dy
+  redpanda-admin-api-password: O7kPq
+  redpanda-admin-api-tls-ca: 7ORz
+  redpanda-admin-api-tls-cert: IT
+  redpanda-admin-api-tls-key: KR25cT
+type: Opaque
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
@@ -19177,7 +18937,7 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: 9gCm5xz
+  creationTimestamp: null
   labels:
     M1diW: PVb
     app.kubernetes.io/instance: console
@@ -19185,40 +18945,32 @@ metadata:
     app.kubernetes.io/name: tOoxEiwdVpT
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: "bktFenI="
-  kafka-protobuf-git-basicauth-password: "bmFGcE1Cdw=="
-  kafka-sasl-aws-msk-iam-secret-key: ""
-  kafka-tls-ca: "YmhoYnd5cFE="
-  kafka-tls-cert: "RHcxNDc3"
-  kafka-tls-key: ""
-  kafka-schema-registry-password: "eFU="
-  kafka-schemaregistry-tls-ca: "cGM="
-  kafka-schemaregistry-tls-cert: "ZkYxejlGRQ=="
-  kafka-schemaregistry-tls-key: "dHg="
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: "bQ=="
-  login-google-groups-service-account.json: ""
-  login-github-oauth-client-secret: "MVVENE4="
-  login-github-personal-access-token: "TG1Ga1A2QmdtTFE="
-  login-okta-client-secret: "ZUY5MFJvaEY="
-  login-okta-directory-api-token: "MXpYTFNKRVE="
-  login-oidc-client-secret: "Y1hkakc="
-
-  # Enterprise
+  name: 9gCm5xz
+stringData:
   enterprise-license: ""
-
-  # Redpanda
-  redpanda-admin-api-password: "cnI0YzQ="
-  redpanda-admin-api-tls-ca: "RW9ubnBx"
-  redpanda-admin-api-tls-cert: "YVBDTmdZSQ=="
-  redpanda-admin-api-tls-key: "dmxyTFE5STk="
+  kafka-protobuf-git-basicauth-password: naFpMBw
+  kafka-sasl-aws-msk-iam-secret-key: ""
+  kafka-sasl-password: nKEzr
+  kafka-schema-registry-password: xU
+  kafka-schemaregistry-tls-ca: pc
+  kafka-schemaregistry-tls-cert: fF1z9FE
+  kafka-schemaregistry-tls-key: tx
+  kafka-tls-ca: bhhbwypQ
+  kafka-tls-cert: Dw1477
+  kafka-tls-key: ""
+  login-github-oauth-client-secret: 1UD4N
+  login-github-personal-access-token: LmFkP6BgmLQ
+  login-google-groups-service-account.json: ""
+  login-google-oauth-client-secret: m
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: cXdjG
+  login-okta-client-secret: eF90RohF
+  login-okta-directory-api-token: 1zXLSJEQ
+  redpanda-admin-api-password: rr4c4
+  redpanda-admin-api-tls-ca: Eonnpq
+  redpanda-admin-api-tls-cert: aPCNgYI
+  redpanda-admin-api-tls-key: vlrLQ9I9
+type: Opaque
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -19362,7 +19114,7 @@ spec:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: fB6TF
+  creationTimestamp: null
   labels:
     "": WcYTY
     app.kubernetes.io/instance: console
@@ -19371,40 +19123,32 @@ metadata:
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
     rHtDM6k: ZY6Kw
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: "eFczRURLQQ=="
-  kafka-protobuf-git-basicauth-password: "QktiZHI="
-  kafka-sasl-aws-msk-iam-secret-key: "WHM4VXZKUHlM"
-  kafka-tls-ca: "ZVA="
-  kafka-tls-cert: "SDk="
-  kafka-tls-key: ""
-  kafka-schema-registry-password: "VmV3eA=="
-  kafka-schemaregistry-tls-ca: "dGU="
-  kafka-schemaregistry-tls-cert: "SnhI"
-  kafka-schemaregistry-tls-key: "amh4aW9QaFE="
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: "dmo2"
-  login-google-groups-service-account.json: "cEo4TlE="
-  login-github-oauth-client-secret: "UQ=="
-  login-github-personal-access-token: "YWtFY3E="
-  login-okta-client-secret: "WWQ="
-  login-okta-directory-api-token: "cTFyU2E="
-  login-oidc-client-secret: "OFNDeWk="
-
-  # Enterprise
+  name: fB6TF
+stringData:
   enterprise-license: ""
-
-  # Redpanda
-  redpanda-admin-api-password: "bU9O"
-  redpanda-admin-api-tls-ca: "ck56c3A="
-  redpanda-admin-api-tls-cert: "VVN0QQ=="
-  redpanda-admin-api-tls-key: "M0U="
+  kafka-protobuf-git-basicauth-password: BKbdr
+  kafka-sasl-aws-msk-iam-secret-key: Xs8UvJPyL
+  kafka-sasl-password: xW3EDKA
+  kafka-schema-registry-password: Vewx
+  kafka-schemaregistry-tls-ca: te
+  kafka-schemaregistry-tls-cert: JxH
+  kafka-schemaregistry-tls-key: jhxioPhQ
+  kafka-tls-ca: eP
+  kafka-tls-cert: H9
+  kafka-tls-key: ""
+  login-github-oauth-client-secret: Q
+  login-github-personal-access-token: akEcq
+  login-google-groups-service-account.json: pJ8NQ
+  login-google-oauth-client-secret: vj6
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: 8SCyi
+  login-okta-client-secret: Yd
+  login-okta-directory-api-token: q1rSa
+  redpanda-admin-api-password: mON
+  redpanda-admin-api-tls-ca: rNzsp
+  redpanda-admin-api-tls-cert: UStA
+  redpanda-admin-api-tls-key: 3E
+type: Opaque
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -21155,7 +20899,7 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: 0BIfuN
+  creationTimestamp: null
   labels:
     0HYkOrz: JCwpSW
     0TgDztQSY: P
@@ -21165,40 +20909,32 @@ metadata:
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
     ztm: qegfb80
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: "NzhF"
-  kafka-protobuf-git-basicauth-password: "U0JKbA=="
-  kafka-sasl-aws-msk-iam-secret-key: "SU5xRDU="
-  kafka-tls-ca: "MFBG"
-  kafka-tls-cert: "d0FyRA=="
-  kafka-tls-key: ""
-  kafka-schema-registry-password: "WU11RkNHN3FS"
-  kafka-schemaregistry-tls-ca: "MXk1eVJiNk8yYg=="
-  kafka-schemaregistry-tls-cert: "TnVoa2hwTVY3Yg=="
-  kafka-schemaregistry-tls-key: "OXpjckZq"
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: "bTZGZUk="
-  login-google-groups-service-account.json: "eGkxajI3TGlwajg="
-  login-github-oauth-client-secret: "amRQR0Y3"
-  login-github-personal-access-token: "eTZ4cXY="
-  login-okta-client-secret: "ckhTZlQ="
-  login-okta-directory-api-token: "ck9YYU4="
-  login-oidc-client-secret: "emJzVG9vdEM="
-
-  # Enterprise
+  name: 0BIfuN
+stringData:
   enterprise-license: ""
-
-  # Redpanda
-  redpanda-admin-api-password: "OGM="
-  redpanda-admin-api-tls-ca: "Q0piSElN"
-  redpanda-admin-api-tls-cert: "dU8="
-  redpanda-admin-api-tls-key: "dWhCMEw="
+  kafka-protobuf-git-basicauth-password: SBJl
+  kafka-sasl-aws-msk-iam-secret-key: INqD5
+  kafka-sasl-password: 78E
+  kafka-schema-registry-password: YMuFCG7qR
+  kafka-schemaregistry-tls-ca: 1y5yRb6O2b
+  kafka-schemaregistry-tls-cert: NuhkhpMV7b
+  kafka-schemaregistry-tls-key: 9zcrFj
+  kafka-tls-ca: 0PF
+  kafka-tls-cert: wArD
+  kafka-tls-key: ""
+  login-github-oauth-client-secret: jdPGF7
+  login-github-personal-access-token: y6xqv
+  login-google-groups-service-account.json: xi1j27Lipj8
+  login-google-oauth-client-secret: m6FeI
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: zbsTootC
+  login-okta-client-secret: rHSfT
+  login-okta-directory-api-token: rOXaN
+  redpanda-admin-api-password: 8c
+  redpanda-admin-api-tls-ca: CJbHIM
+  redpanda-admin-api-tls-cert: uO
+  redpanda-admin-api-tls-key: uhB0L
+type: Opaque
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -22123,47 +21859,39 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: console
+  creationTimestamp: null
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: ""
+  name: console
+stringData:
+  enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
   kafka-sasl-aws-msk-iam-secret-key: ""
-  kafka-tls-ca: ""
-  kafka-tls-cert: ""
-  kafka-tls-key: ""
+  kafka-sasl-password: ""
   kafka-schema-registry-password: ""
   kafka-schemaregistry-tls-ca: ""
   kafka-schemaregistry-tls-cert: ""
   kafka-schemaregistry-tls-key: ""
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: ""
-  login-google-groups-service-account.json: ""
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
   login-github-oauth-client-secret: ""
   login-github-personal-access-token: ""
+  login-google-groups-service-account.json: ""
+  login-google-oauth-client-secret: ""
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: ""
   login-okta-client-secret: ""
   login-okta-directory-api-token: ""
-  login-oidc-client-secret: ""
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
   redpanda-admin-api-password: ""
   redpanda-admin-api-tls-ca: ""
   redpanda-admin-api-tls-cert: ""
   redpanda-admin-api-tls-key: ""
+type: Opaque
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
@@ -22347,47 +22075,39 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: console
+  creationTimestamp: null
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: ""
+  name: console
+stringData:
+  enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
   kafka-sasl-aws-msk-iam-secret-key: ""
-  kafka-tls-ca: ""
-  kafka-tls-cert: ""
-  kafka-tls-key: ""
+  kafka-sasl-password: ""
   kafka-schema-registry-password: ""
   kafka-schemaregistry-tls-ca: ""
   kafka-schemaregistry-tls-cert: ""
   kafka-schemaregistry-tls-key: ""
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: ""
-  login-google-groups-service-account.json: ""
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
   login-github-oauth-client-secret: ""
   login-github-personal-access-token: ""
+  login-google-groups-service-account.json: ""
+  login-google-oauth-client-secret: ""
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: ""
   login-okta-client-secret: ""
   login-okta-directory-api-token: ""
-  login-oidc-client-secret: ""
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
   redpanda-admin-api-password: ""
   redpanda-admin-api-tls-ca: ""
   redpanda-admin-api-tls-cert: ""
   redpanda-admin-api-tls-key: ""
+type: Opaque
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
@@ -22582,47 +22302,39 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: console
+  creationTimestamp: null
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: ""
+  name: console
+stringData:
+  enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
   kafka-sasl-aws-msk-iam-secret-key: ""
-  kafka-tls-ca: ""
-  kafka-tls-cert: ""
-  kafka-tls-key: ""
+  kafka-sasl-password: ""
   kafka-schema-registry-password: ""
   kafka-schemaregistry-tls-ca: ""
   kafka-schemaregistry-tls-cert: ""
   kafka-schemaregistry-tls-key: ""
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: ""
-  login-google-groups-service-account.json: ""
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
   login-github-oauth-client-secret: ""
   login-github-personal-access-token: ""
+  login-google-groups-service-account.json: ""
+  login-google-oauth-client-secret: ""
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: ""
   login-okta-client-secret: ""
   login-okta-directory-api-token: ""
-  login-oidc-client-secret: ""
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
   redpanda-admin-api-password: ""
   redpanda-admin-api-tls-ca: ""
   redpanda-admin-api-tls-cert: ""
   redpanda-admin-api-tls-key: ""
+type: Opaque
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
@@ -22808,47 +22520,39 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: console
+  creationTimestamp: null
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: ""
+  name: console
+stringData:
+  enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
   kafka-sasl-aws-msk-iam-secret-key: ""
-  kafka-tls-ca: ""
-  kafka-tls-cert: ""
-  kafka-tls-key: ""
+  kafka-sasl-password: ""
   kafka-schema-registry-password: ""
   kafka-schemaregistry-tls-ca: ""
   kafka-schemaregistry-tls-cert: ""
   kafka-schemaregistry-tls-key: ""
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: ""
-  login-google-groups-service-account.json: ""
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
   login-github-oauth-client-secret: ""
   login-github-personal-access-token: ""
+  login-google-groups-service-account.json: ""
+  login-google-oauth-client-secret: ""
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: ""
   login-okta-client-secret: ""
   login-okta-directory-api-token: ""
-  login-oidc-client-secret: ""
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
   redpanda-admin-api-password: ""
   redpanda-admin-api-tls-ca: ""
   redpanda-admin-api-tls-cert: ""
   redpanda-admin-api-tls-key: ""
+type: Opaque
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
@@ -23023,47 +22727,39 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: console
+  creationTimestamp: null
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: ""
+  name: console
+stringData:
+  enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
   kafka-sasl-aws-msk-iam-secret-key: ""
-  kafka-tls-ca: ""
-  kafka-tls-cert: ""
-  kafka-tls-key: ""
+  kafka-sasl-password: ""
   kafka-schema-registry-password: ""
   kafka-schemaregistry-tls-ca: ""
   kafka-schemaregistry-tls-cert: ""
   kafka-schemaregistry-tls-key: ""
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: ""
-  login-google-groups-service-account.json: ""
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
   login-github-oauth-client-secret: ""
   login-github-personal-access-token: ""
+  login-google-groups-service-account.json: ""
+  login-google-oauth-client-secret: ""
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: ""
   login-okta-client-secret: ""
   login-okta-directory-api-token: ""
-  login-oidc-client-secret: ""
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
   redpanda-admin-api-password: ""
   redpanda-admin-api-tls-ca: ""
   redpanda-admin-api-tls-cert: ""
   redpanda-admin-api-tls-key: ""
+type: Opaque
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
@@ -23238,47 +22934,39 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: console
+  creationTimestamp: null
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.4.6
     helm.sh/chart: console-0.7.26
-type: Opaque
-data:
-  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
-  # For this reason we can't use `with` to change the scope.
-  # Kafka
-  kafka-sasl-password: ""
+  name: console
+stringData:
+  enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
   kafka-sasl-aws-msk-iam-secret-key: ""
-  kafka-tls-ca: ""
-  kafka-tls-cert: ""
-  kafka-tls-key: ""
+  kafka-sasl-password: ""
   kafka-schema-registry-password: ""
   kafka-schemaregistry-tls-ca: ""
   kafka-schemaregistry-tls-cert: ""
   kafka-schemaregistry-tls-key: ""
-
-  # Login
-  login-jwt-secret: "U0VDUkVUS0VZ"
-  login-google-oauth-client-secret: ""
-  login-google-groups-service-account.json: ""
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
   login-github-oauth-client-secret: ""
   login-github-personal-access-token: ""
+  login-google-groups-service-account.json: ""
+  login-google-oauth-client-secret: ""
+  login-jwt-secret: SECRETKEY
+  login-oidc-client-secret: ""
   login-okta-client-secret: ""
   login-okta-directory-api-token: ""
-  login-oidc-client-secret: ""
-
-  # Enterprise
-  enterprise-license: ""
-
-  # Redpanda
   redpanda-admin-api-password: ""
   redpanda-admin-api-tls-ca: ""
   redpanda-admin-api-tls-cert: ""
   redpanda-admin-api-tls-key: ""
+type: Opaque
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
