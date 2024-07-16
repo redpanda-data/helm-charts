@@ -1,3 +1,49 @@
 Manually crafted test cases for TestTemplate
 -- default-values --
 # Intentionally left blank. (test of default values)
+
+-- console-with-roles --
+# console.roles specified
+console:
+  roles:
+  - name: my-role
+    permissions:
+    - resource: 1234
+      includes:
+      - "*"
+      excludes:
+      - "*"
+      allowedActions: ["*"]
+
+-- console-with-role-bindings --
+# console.roleBindings specified
+console:
+  roleBindings:
+  - roleName: admin
+    metadata:
+      name: Redpanda POC
+    subjects:
+      - kind: user
+        provider: Plain
+        name: "e2euser"
+
+-- console-with-roles-and-bindings --
+# console.roles and console.roleBindings both specified
+console:
+  roles:
+  - name: my-role
+    permissions:
+    - resource: 1234
+      includes:
+      - "*"
+      excludes:
+      - "*"
+      allowedActions: ["*"]
+  roleBindings:
+  - roleName: admin
+    metadata:
+      name: Redpanda POC
+    subjects:
+      - kind: user
+        provider: Plain
+        name: "e2euser"

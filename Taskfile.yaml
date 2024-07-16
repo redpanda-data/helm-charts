@@ -90,6 +90,8 @@ tasks:
     cmds:
       # Generate a "partial" version of the Values struct.
       - go run ./cmd/genpartial -out charts/console/values_partial.gen.go -struct Values ./charts/console
+      # Generate helm templates from Go definitions
+      - go run ./cmd/gotohelm -write ./charts/console/templates ./charts/console
 
   chart:generate:redpanda:
     desc: "Generate files for the redpanda Helm chart"

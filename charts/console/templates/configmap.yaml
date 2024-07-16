@@ -1,4 +1,3 @@
-{{- if .Values.configmap.create -}}
 {{/*
 Licensed to the Apache Software Foundation (ASF) under one or more
 contributor license agreements.  See the NOTICE file distributed with
@@ -15,26 +14,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
+{{ $cm := (get ((include "console.ConfigMap" (dict "a" (list .))) | fromJson) "r") }}
+{{- if ne $cm nil -}}
 ---
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ include "console.fullname" . }}
-  labels:
-    {{- include "console.labels" . | nindent 4 }}
-data:
-  config.yaml: |
-    # from .Values.console.config
-    {{- tpl (toYaml .Values.console.config) $ | nindent 4 }}
-  {{- if .Values.console.roles }}
-  roles.yaml: |
-    roles:
-      {{- tpl (toYaml .Values.console.roles) $ | nindent 6 }}
-  {{- end }}
-
-  {{- if .Values.console.roleBindings }}
-  role-bindings.yaml: |
-    roleBindings:
-      {{- tpl (toYaml .Values.console.roleBindings) $ | nindent 6 }}
-  {{- end }}
+{{ toYaml $cm }}
 {{- end }}

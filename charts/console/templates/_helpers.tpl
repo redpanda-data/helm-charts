@@ -2,7 +2,7 @@
 Expand the name of the chart.
 */}}
 {{- define "console.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- get ((include "console.Name" (dict "a" (list .))) | fromJson) "r" }}
 {{- end }}
 
 {{/*
@@ -11,23 +11,14 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 If release name contains chart name it will be used as a full name.
 */}}
 {{- define "console.fullname" -}}
-{{- if .Values.fullnameOverride }}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- $name := default .Chart.Name .Values.nameOverride }}
-{{- if contains $name .Release.Name }}
-{{- .Release.Name | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
-{{- end }}
-{{- end }}
+{{- get ((include "console.Fullname" (dict "a" (list .))) | fromJson) "r" }}
 {{- end }}
 
 {{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "console.chart" -}}
-{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
+{{- get ((include "console.Chart" (dict "a" (list .))) | fromJson) "r" }}
 {{- end }}
 
 {{/*
@@ -45,23 +36,14 @@ Console Image
 Common labels
 */}}
 {{- define "console.labels" -}}
-helm.sh/chart: {{ include "console.chart" . }}
-{{ include "console.selectorLabels" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{ with .Values.commonLabels }}
-{{- toYaml . -}}
-{{- end }}
+{{- (get ((include "console.Labels" (dict "a" (list .))) | fromJson) "r") | toYaml -}}
 {{- end }}
 
 {{/*
 Selector labels
 */}}
 {{- define "console.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "console.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
+{{- (get ((include "console.SelectorLabels" (dict "a" (list .))) | fromJson) "r") | toYaml -}}
 {{- end }}
 
 {{/*
