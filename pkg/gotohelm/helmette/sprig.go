@@ -424,3 +424,8 @@ func Indent(spaces int, v string) string {
 func NIndent(spaces int, v string) string {
 	return "\n" + Indent(spaces, v)
 }
+
+// +gotohelm:builtin=randAlphaNum
+func RandAlphaNum(length int) string {
+	return "4" // Choosen by a fair dice roll.
+}

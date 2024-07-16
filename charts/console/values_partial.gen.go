@@ -42,7 +42,7 @@ type PartialValues struct {
 	ExtraContainers              []corev1.Container                "json:\"extraContainers,omitempty\""
 	InitContainers               *PartialInitContainers            "json:\"initContainers,omitempty\""
 	SecretMounts                 []PartialSecretMount              "json:\"secretMounts,omitempty\""
-	Secret                       *PartialSecret                    "json:\"secret,omitempty\""
+	Secret                       *PartialSecretConfig              "json:\"secret,omitempty\""
 	Enterprise                   *PartialEnterprise                "json:\"enterprise,omitempty\""
 	LivenessProbe                *corev1.Probe                     "json:\"livenessProbe,omitempty\""
 	ReadinessProbe               *corev1.Probe                     "json:\"readinessProbe,omitempty\""
@@ -100,7 +100,7 @@ type PartialInitContainers struct {
 	ExtraInitContainers *string "json:\"extraInitContainers,omitempty\""
 }
 
-type PartialSecret struct {
+type PartialSecretConfig struct {
 	Create     *bool                     "json:\"create,omitempty\""
 	Kafka      *PartialKafkaSecrets      "json:\"kafka,omitempty\""
 	Login      *PartialLoginSecrets      "json:\"login,omitempty\""
@@ -128,10 +128,11 @@ type PartialSecretMount struct {
 }
 
 type PartialKafkaSecrets struct {
-	SASLPssword                  *string "json:\"saslPassword,omitempty\""
+	SASLPassword                 *string "json:\"saslPassword,omitempty\""
 	AWSMSKIAMSecretKey           *string "json:\"awsMskIamSecretKey,omitempty\""
 	TLSCA                        *string "json:\"tlsCa,omitempty\""
 	TLSCert                      *string "json:\"tlsCert,omitempty\""
+	TLSKey                       *string "json:\"tlsKey,omitempty\""
 	TLSPassphrase                *string "json:\"tlsPassphrase,omitempty\""
 	SchemaRegistryPassword       *string "json:\"schemaRegistryPassword,omitempty\""
 	SchemaRegistryTLSCA          *string "json:\"schemaRegistryTlsCa,omitempty\""
@@ -149,7 +150,7 @@ type PartialLoginSecrets struct {
 }
 
 type PartialEnterpriseSecrets struct {
-	LicenseSecretRef *PartialSecretKeyRef "json:\"licenseSecretRef,omitempty\""
+	License *string "json:\"License,omitempty\""
 }
 
 type PartialRedpandaSecrets struct {

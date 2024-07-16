@@ -48,7 +48,7 @@ type Values struct {
 	ExtraContainers              []corev1.Container                `json:"extraContainers"`
 	InitContainers               InitContainers                    `json:"initContainers"`
 	SecretMounts                 []SecretMount                     `json:"secretMounts"`
-	Secret                       Secret                            `json:"secret"`
+	Secret                       SecretConfig                      `json:"secret"`
 	Enterprise                   Enterprise                        `json:"enterprise"`
 	LivenessProbe                corev1.Probe                      `json:"livenessProbe"`
 	ReadinessProbe               corev1.Probe                      `json:"readinessProbe"`
@@ -116,7 +116,7 @@ type InitContainers struct {
 	ExtraInitContainers *string `json:"extraInitContainers"` // XXX Templated YAML
 }
 
-type Secret struct {
+type SecretConfig struct {
 	Create     bool              `json:"create"`
 	Kafka      KafkaSecrets      `json:"kafka"`
 	Login      LoginSecrets      `json:"login"`
@@ -132,16 +132,17 @@ type SecretMount struct {
 }
 
 type KafkaSecrets struct {
-	SASLPssword                  string `json:"saslPassword,omitempty"`
-	AWSMSKIAMSecretKey           string `json:"awsMskIamSecretKey,omitempty"`
-	TLSCA                        string `json:"tlsCa,omitempty"`
-	TLSCert                      string `json:"tlsCert,omitempty"`
-	TLSPassphrase                string `json:"tlsPassphrase,omitempty"`
-	SchemaRegistryPassword       string `json:"schemaRegistryPassword,omitempty"`
-	SchemaRegistryTLSCA          string `json:"schemaRegistryTlsCa,omitempty"`
-	SchemaRegistryTLSCert        string `json:"schemaRegistryTlsCert,omitempty"`
-	SchemaRegistryTLSKey         string `json:"schemaRegistryTlsKey,omitempty"`
-	ProtobufGitBasicAuthPassword string `json:"protobufGitBasicAuthPassword,omitempty"`
+	SASLPassword                 *string `json:"saslPassword,omitempty"`
+	AWSMSKIAMSecretKey           *string `json:"awsMskIamSecretKey,omitempty"`
+	TLSCA                        *string `json:"tlsCa,omitempty"`
+	TLSCert                      *string `json:"tlsCert,omitempty"`
+	TLSKey                       *string `json:"tlsKey,omitempty"`
+	TLSPassphrase                *string `json:"tlsPassphrase,omitempty"`
+	SchemaRegistryPassword       *string `json:"schemaRegistryPassword,omitempty"`
+	SchemaRegistryTLSCA          *string `json:"schemaRegistryTlsCa,omitempty"`
+	SchemaRegistryTLSCert        *string `json:"schemaRegistryTlsCert,omitempty"`
+	SchemaRegistryTLSKey         *string `json:"schemaRegistryTlsKey,omitempty"`
+	ProtobufGitBasicAuthPassword *string `json:"protobufGitBasicAuthPassword,omitempty"`
 }
 
 type LoginSecrets struct {
@@ -172,7 +173,7 @@ type OIDCLoginSecrets struct {
 }
 
 type EnterpriseSecrets struct {
-	LicenseSecretRef *SecretKeyRef `json:"licenseSecretRef,omitempty"`
+	License *string `json:"License,omitempty"`
 }
 
 type RedpandaSecrets struct {
