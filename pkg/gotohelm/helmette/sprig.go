@@ -408,3 +408,19 @@ func Sha256Sum(input string) string {
 	hash := sha256.Sum256([]byte(input))
 	return hex.EncodeToString(hash[:])
 }
+
+// +gotohelm:builtin=contains
+func Contains(substr, s string) bool {
+	return strings.Contains(s, substr)
+}
+
+// +gotohelm:builtin=indent
+func Indent(spaces int, v string) string {
+	pad := strings.Repeat(" ", spaces)
+	return pad + strings.Replace(v, "\n", "\n"+pad, -1)
+}
+
+// +gotohelm:builtin=nindent
+func NIndent(spaces int, v string) string {
+	return "\n" + Indent(spaces, v)
+}

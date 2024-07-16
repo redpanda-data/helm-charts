@@ -8,12 +8,12 @@ metadata:
   name: HRoLg
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: n
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     "": 31q1Pbz
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: "n"
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 ---
 # Source: console/templates/secret.yaml
 apiVersion: v1
@@ -21,12 +21,12 @@ kind: Secret
 metadata:
   name: hvGoJL
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: n
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     "": 31q1Pbz
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: "n"
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 type: Opaque
 data:
   # Set empty defaults, so that we can always mount them as env variable even if they are not used.
@@ -64,20 +64,21 @@ data:
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: hvGoJL
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: n
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    "": 31q1Pbz
 data:
   config.yaml: |
     # from .Values.console.config
     {}
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    "": 31q1Pbz
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: "n"
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  name: hvGoJL
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -86,12 +87,12 @@ metadata:
   name: hvGoJL
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: n
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     "": 31q1Pbz
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: "n"
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   type: ClusterIP
   ports:
@@ -100,8 +101,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: n
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: "n"
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -110,32 +111,32 @@ metadata:
   name: hvGoJL
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: n
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     "": 31q1Pbz
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: "n"
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     Q9AVJD4: G9TEnp
 spec:
   replicas: 387
   selector:
     matchLabels:
-      app.kubernetes.io/name: n
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: "n"
   strategy:
     type: Ò泆A
   template:
     metadata:
       annotations:
-        checksum/config: 24789366186c848e394c2dfae543ffa70f7c09fb17c59f100d7e706c0fb096f6
+        checksum/config: 0c0f03059fd2a145feaf8b059a6212c9f8f22fa64812b2c0da6339fc42a2719a
         lyW: mn
         pjq6fDr: YA2w301
         uXvFB: VQ5gP9
       labels:
-        app.kubernetes.io/name: n
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: "n"
     spec:
       serviceAccountName: HRoLg
       automountServiceAccountToken: true
@@ -209,12 +210,12 @@ metadata:
   name: "hvGoJL-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: n
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     "": 31q1Pbz
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: "n"
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -235,11 +236,11 @@ metadata:
   name: T50cZi
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Sh
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: Sh
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 ---
 # Source: console/templates/secret.yaml
 apiVersion: v1
@@ -247,12 +248,11 @@ kind: Secret
 metadata:
   name: T50cZi
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Sh
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: Sh
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 type: Opaque
 data:
   # Set empty defaults, so that we can always mount them as env variable even if they are not used.
@@ -290,20 +290,20 @@ data:
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: T50cZi
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Sh
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    
 data:
   config.yaml: |
     # from .Values.console.config
     {}
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: Sh
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  name: T50cZi
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -312,12 +312,11 @@ metadata:
   name: T50cZi
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Sh
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: Sh
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   type: ClusterIP
   ports:
@@ -326,8 +325,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: Sh
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: Sh
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -336,25 +335,24 @@ metadata:
   name: T50cZi
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Sh
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: Sh
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   replicas: 414
   selector:
     matchLabels:
-      app.kubernetes.io/name: Sh
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: Sh
   template:
     metadata:
       annotations:
-        checksum/config: 498d7700a8b8a3ba8ee27b35c7db55e602dc772ae69f5da3743abb3cc33d7696
+        checksum/config: 4622239f580a46da3a0cc2a53860664c26b6b80ce4dad4b3ed62d96767c83118
       labels:
-        app.kubernetes.io/name: Sh
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: Sh
     spec:
       serviceAccountName: T50cZi
       automountServiceAccountToken: true
@@ -474,12 +472,11 @@ metadata:
   name: "T50cZi-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Sh
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: Sh
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -500,11 +497,11 @@ metadata:
   name: R1Yar8
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: vN4yH7I
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: vN4yH7I
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 ---
 # Source: console/templates/secret.yaml
 apiVersion: v1
@@ -512,12 +509,11 @@ kind: Secret
 metadata:
   name: xZty
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: vN4yH7I
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: vN4yH7I
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 type: Opaque
 data:
   # Set empty defaults, so that we can always mount them as env variable even if they are not used.
@@ -555,20 +551,20 @@ data:
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: xZty
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: vN4yH7I
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    
 data:
   config.yaml: |
     # from .Values.console.config
     {}
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: vN4yH7I
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  name: xZty
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -577,12 +573,11 @@ metadata:
   name: xZty
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: vN4yH7I
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: vN4yH7I
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   type: ILpSX2Cy
   ports:
@@ -591,8 +586,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: vN4yH7I
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: vN4yH7I
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -601,28 +596,27 @@ metadata:
   name: xZty
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: vN4yH7I
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: vN4yH7I
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   replicas: 417
   selector:
     matchLabels:
-      app.kubernetes.io/name: vN4yH7I
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: vN4yH7I
   template:
     metadata:
       annotations:
-        checksum/config: e9187ff4e52df0907149a07f1f9c9fee82decf3c72914f682657ddbcedb1cb0c
+        checksum/config: 03fcec42048b245776b4e09ba7f915af56f3e735357a9e8c8466d57fb882a111
         8vRMfVroYC2: QXbUbLea
         VV4w: s4sL
         upwTMuIqflmD: 9J0H45zXX
       labels:
-        app.kubernetes.io/name: vN4yH7I
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: vN4yH7I
     spec:
       imagePullSecrets:
         - {}
@@ -720,12 +714,11 @@ metadata:
   name: "xZty-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: vN4yH7I
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: vN4yH7I
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -749,11 +742,11 @@ metadata:
   name: 8nE
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: w6
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: w6
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 ---
 # Source: console/templates/secret.yaml
 apiVersion: v1
@@ -761,12 +754,11 @@ kind: Secret
 metadata:
   name: 8nE
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: w6
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: w6
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 type: Opaque
 data:
   # Set empty defaults, so that we can always mount them as env variable even if they are not used.
@@ -809,12 +801,11 @@ metadata:
   name: 8nE
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: w6
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: w6
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   type: ClusterIP
   ports:
@@ -823,8 +814,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: w6
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: w6
 ---
 # Source: console/templates/ingress.yaml
 apiVersion: networking.k8s.io/v1
@@ -832,12 +823,11 @@ kind: Ingress
 metadata:
   name: 8nE
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: w6
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: w6
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   ingressClassName: EqUYi
   tls:
@@ -871,12 +861,11 @@ metadata:
   name: "8nE-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: w6
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: w6
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -897,12 +886,12 @@ metadata:
   name: console-YMl
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: YMl
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     "": PtQ7JxIAdPjt
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: YMl
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 ---
 # Source: console/templates/secret.yaml
 apiVersion: v1
@@ -910,12 +899,12 @@ kind: Secret
 metadata:
   name: console-YMl
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: YMl
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     "": PtQ7JxIAdPjt
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: YMl
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 type: Opaque
 data:
   # Set empty defaults, so that we can always mount them as env variable even if they are not used.
@@ -953,20 +942,21 @@ data:
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: console-YMl
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: YMl
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    "": PtQ7JxIAdPjt
 data:
   config.yaml: |
     # from .Values.console.config
     {}
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    "": PtQ7JxIAdPjt
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: YMl
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  name: console-YMl
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -975,12 +965,12 @@ metadata:
   name: console-YMl
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: YMl
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     "": PtQ7JxIAdPjt
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: YMl
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   type: dO7eovC
   ports:
@@ -989,8 +979,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: YMl
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: YMl
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -999,30 +989,30 @@ metadata:
   name: console-YMl
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: YMl
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     "": PtQ7JxIAdPjt
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: YMl
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   replicas: 261
   selector:
     matchLabels:
-      app.kubernetes.io/name: YMl
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: YMl
   strategy:
     type: ɡv?ĨJ姯ɚƟć匪cb
   template:
     metadata:
       annotations:
-        checksum/config: d2a0b162174ac3a7e078436d591938e830e3d332e93064fadc0b9ae26e71f2cc
+        checksum/config: 115478adafcb8336c45aa97719a16ef460699c48d7b3b054254a8481d5e270ea
         1iK8Ic: Qo3FCg9qi
         63SsVxDT: v
         A1Q4J4: U9jygY2t1F
       labels:
-        app.kubernetes.io/name: YMl
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: YMl
     spec:
       serviceAccountName: console-YMl
       automountServiceAccountToken: true
@@ -1104,12 +1094,12 @@ metadata:
   name: "console-YMl-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: YMl
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     "": PtQ7JxIAdPjt
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: YMl
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -1130,11 +1120,11 @@ metadata:
   name: pN
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: MW
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: MW
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 ---
 # Source: console/templates/secret.yaml
 apiVersion: v1
@@ -1142,12 +1132,11 @@ kind: Secret
 metadata:
   name: pN
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: MW
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: MW
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 type: Opaque
 data:
   # Set empty defaults, so that we can always mount them as env variable even if they are not used.
@@ -1190,12 +1179,11 @@ metadata:
   name: pN
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: MW
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: MW
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   type: ClusterIP
   ports:
@@ -1204,8 +1192,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: MW
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: MW
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -1214,25 +1202,24 @@ metadata:
   name: pN
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: MW
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: MW
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   replicas: 396
   selector:
     matchLabels:
-      app.kubernetes.io/name: MW
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: MW
   template:
     metadata:
       annotations:
-        checksum/config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+        checksum/config: 75a11da44c802486bc6f65640aa48a730f0f684c5c07a42ba3cd1735eb3fb070
       labels:
-        app.kubernetes.io/name: MW
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: MW
     spec:
       imagePullSecrets:
         - name: ATcT6Hd
@@ -1328,12 +1315,11 @@ metadata:
   name: "pN-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: MW
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: MW
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -1357,11 +1343,11 @@ metadata:
   name: nd7TSb2mNTS
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: gCH15URsJZr
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: gCH15URsJZr
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 ---
 # Source: console/templates/secret.yaml
 apiVersion: v1
@@ -1369,12 +1355,11 @@ kind: Secret
 metadata:
   name: rzd
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: gCH15URsJZr
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: gCH15URsJZr
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 type: Opaque
 data:
   # Set empty defaults, so that we can always mount them as env variable even if they are not used.
@@ -1412,20 +1397,20 @@ data:
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: rzd
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: gCH15URsJZr
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    
 data:
   config.yaml: |
     # from .Values.console.config
     {}
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: gCH15URsJZr
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  name: rzd
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -1434,12 +1419,11 @@ metadata:
   name: rzd
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: gCH15URsJZr
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: gCH15URsJZr
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   type: ClusterIP
   ports:
@@ -1448,8 +1432,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: gCH15URsJZr
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: gCH15URsJZr
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -1458,26 +1442,25 @@ metadata:
   name: rzd
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: gCH15URsJZr
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: gCH15URsJZr
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   replicas: 176
   selector:
     matchLabels:
-      app.kubernetes.io/name: gCH15URsJZr
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: gCH15URsJZr
   template:
     metadata:
       annotations:
-        checksum/config: 31beba1bba6a5f83ea4e2d66d8231bcf320c2d9b4de9e946048050d4f6a432db
+        checksum/config: 8ca5974bea42a532f834b6ba28f35a30289e1047d19ec4772c623c6af9b42049
         s2D: DMU7
       labels:
-        app.kubernetes.io/name: gCH15URsJZr
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: gCH15URsJZr
         CoBI: 20aOZaZvs
         e0xqmoOD: Nb5V
         ylGQE: p
@@ -1593,13 +1576,13 @@ metadata:
   name: RFjc7
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: HWL
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: HWL
+    app.kubernetes.io/version: v2.4.6
     cV05TKdtF: 55lItpeJD
     h: 1Y7dqm4wZL
+    helm.sh/chart: console-0.7.26
 ---
 # Source: console/templates/secret.yaml
 apiVersion: v1
@@ -1607,13 +1590,13 @@ kind: Secret
 metadata:
   name: y
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: HWL
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: HWL
+    app.kubernetes.io/version: v2.4.6
     cV05TKdtF: 55lItpeJD
     h: 1Y7dqm4wZL
+    helm.sh/chart: console-0.7.26
 type: Opaque
 data:
   # Set empty defaults, so that we can always mount them as env variable even if they are not used.
@@ -1651,25 +1634,26 @@ data:
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: y
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: HWL
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    cV05TKdtF: 55lItpeJD
-    h: 1Y7dqm4wZL
 data:
   config.yaml: |
     # from .Values.console.config
     {}
-  role-bindings.yaml: |
+  role-bindings.yaml: |-
     roleBindings:
-      - "": null
-        5w1YcAu: null
+    - "": null
+      5w1YcAu: null
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: HWL
+    app.kubernetes.io/version: v2.4.6
+    cV05TKdtF: 55lItpeJD
+    h: 1Y7dqm4wZL
+    helm.sh/chart: console-0.7.26
+  name: "y"
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -1678,13 +1662,13 @@ metadata:
   name: y
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: HWL
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: HWL
+    app.kubernetes.io/version: v2.4.6
     cV05TKdtF: 55lItpeJD
     h: 1Y7dqm4wZL
+    helm.sh/chart: console-0.7.26
 spec:
   type: Vvrvx
   ports:
@@ -1693,8 +1677,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: HWL
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: HWL
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -1703,26 +1687,26 @@ metadata:
   name: y
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: HWL
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: HWL
+    app.kubernetes.io/version: v2.4.6
     cV05TKdtF: 55lItpeJD
     h: 1Y7dqm4wZL
+    helm.sh/chart: console-0.7.26
 spec:
   replicas: 103
   selector:
     matchLabels:
-      app.kubernetes.io/name: HWL
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: HWL
   template:
     metadata:
       annotations:
-        checksum/config: 90bddae51110cd649475dcb093b58ffb9e32864f05ecd945a62daba30496f418
+        checksum/config: 1bb8fc6da0e74b998efaaa4d05fe471028845c626ab7ed5cff6d1ce0b62815e4
       labels:
-        app.kubernetes.io/name: HWL
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: HWL
     spec:
       serviceAccountName: RFjc7
       automountServiceAccountToken: true
@@ -1847,13 +1831,13 @@ metadata:
   name: "y-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: HWL
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: HWL
+    app.kubernetes.io/version: v2.4.6
     cV05TKdtF: 55lItpeJD
     h: 1Y7dqm4wZL
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -1874,28 +1858,28 @@ metadata:
   name: YcV5zP8
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: RW
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: RW
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: GbgHqD
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: RW
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    
 data:
   config.yaml: |
     # from .Values.console.config
     {}
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: RW
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  name: GbgHqD
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -1904,12 +1888,11 @@ metadata:
   name: GbgHqD
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: RW
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: RW
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   type: ClusterIP
   ports:
@@ -1918,8 +1901,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: RW
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: RW
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -1928,32 +1911,31 @@ metadata:
   name: GbgHqD
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: RW
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: RW
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     hfXF: v4uLEC6f8m
 spec:
   replicas: 475
   selector:
     matchLabels:
-      app.kubernetes.io/name: RW
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: RW
   strategy:
     rollingUpdate: {}
     type: 堯飉J侚桤 合w犌ŝ|#è:(蹝Ƀy輐
   template:
     metadata:
       annotations:
-        checksum/config: 53f4aea19335324223d87ee6e7e3c187d7ea0ec3ccf74468c74893e90b33e436
+        checksum/config: cbc4cae0304225f4867b3c66400cdf0fe3b8939022a02379c3e60471d8f5726a
         BTlN: z8t
         a: Pqjhw
       labels:
-        app.kubernetes.io/name: RW
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: RW
     spec:
       serviceAccountName: YcV5zP8
       automountServiceAccountToken: false
@@ -2044,12 +2026,11 @@ metadata:
   name: "GbgHqD-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: RW
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: RW
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -2070,11 +2051,11 @@ metadata:
   name: l1Bnpx
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: BKV
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: BKV
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 ---
 # Source: console/templates/secret.yaml
 apiVersion: v1
@@ -2082,12 +2063,11 @@ kind: Secret
 metadata:
   name: l1Bnpx
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: BKV
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: BKV
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 type: Opaque
 data:
   # Set empty defaults, so that we can always mount them as env variable even if they are not used.
@@ -2130,12 +2110,11 @@ metadata:
   name: l1Bnpx
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: BKV
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: BKV
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     efgehQaV5UI0y: GymqDudh
 spec:
@@ -2146,8 +2125,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: BKV
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: BKV
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -2156,25 +2135,24 @@ metadata:
   name: l1Bnpx
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: BKV
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: BKV
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   replicas: 315
   selector:
     matchLabels:
-      app.kubernetes.io/name: BKV
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: BKV
   template:
     metadata:
       annotations:
-        checksum/config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+        checksum/config: 75a11da44c802486bc6f65640aa48a730f0f684c5c07a42ba3cd1735eb3fb070
       labels:
-        app.kubernetes.io/name: BKV
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: BKV
     spec:
       imagePullSecrets:
         - name: x42RbB4KLm
@@ -2281,12 +2259,11 @@ metadata:
   name: "l1Bnpx-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: BKV
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: BKV
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -2309,12 +2286,11 @@ metadata:
   name: kIzbDF
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: JFcK
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: JFcK
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     TTsn5: s3xEhO
     tZiUN: CtjX
@@ -2326,12 +2302,11 @@ metadata:
   name: ivK
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: JFcK
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: JFcK
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   type: ClusterIP
   ports:
@@ -2340,8 +2315,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: JFcK
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: JFcK
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -2350,25 +2325,24 @@ metadata:
   name: ivK
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: JFcK
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: JFcK
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   replicas: 250
   selector:
     matchLabels:
-      app.kubernetes.io/name: JFcK
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: JFcK
   template:
     metadata:
       annotations:
-        checksum/config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+        checksum/config: 75a11da44c802486bc6f65640aa48a730f0f684c5c07a42ba3cd1735eb3fb070
       labels:
-        app.kubernetes.io/name: JFcK
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: JFcK
     spec:
       serviceAccountName: kIzbDF
       automountServiceAccountToken: true
@@ -2579,12 +2553,11 @@ metadata:
   name: "ivK-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: JFcK
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: JFcK
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -2605,12 +2578,12 @@ metadata:
   name: hbe
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Cy9eHCiP
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     JwK5MKTa: WW
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: Cy9eHCiP
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     v7E: 1g6JB
 ---
 # Source: console/templates/secret.yaml
@@ -2619,12 +2592,12 @@ kind: Secret
 metadata:
   name: hbe
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Cy9eHCiP
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     JwK5MKTa: WW
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: Cy9eHCiP
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     v7E: 1g6JB
 type: Opaque
 data:
@@ -2663,21 +2636,22 @@ data:
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: hbe
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Cy9eHCiP
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    JwK5MKTa: WW
-    v7E: 1g6JB
 data:
   config.yaml: |
     # from .Values.console.config
     {}
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    JwK5MKTa: WW
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: Cy9eHCiP
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+    v7E: 1g6JB
+  name: hbe
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -2686,12 +2660,12 @@ metadata:
   name: hbe
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Cy9eHCiP
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     JwK5MKTa: WW
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: Cy9eHCiP
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     v7E: 1g6JB
   annotations:
     "": NbuyvXjW
@@ -2705,8 +2679,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: Cy9eHCiP
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: Cy9eHCiP
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -2715,12 +2689,12 @@ metadata:
   name: hbe
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Cy9eHCiP
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     JwK5MKTa: WW
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: Cy9eHCiP
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     v7E: 1g6JB
   annotations:
     pJ: f0brcnhV
@@ -2728,15 +2702,15 @@ spec:
   replicas: 65
   selector:
     matchLabels:
-      app.kubernetes.io/name: Cy9eHCiP
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: Cy9eHCiP
   template:
     metadata:
       annotations:
-        checksum/config: 44d21fbd3eea8a9d5f394f0a6c4d7c32f7b2368b5ec5f32b9a119107da3673a2
+        checksum/config: 4ee7cf7336b884eeff5b41a96352897cbd7b8183fdee09809bfc351a1c69b4a9
       labels:
-        app.kubernetes.io/name: Cy9eHCiP
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: Cy9eHCiP
         "2": RgUAFm
         D2V: V80aQ
     spec:
@@ -2926,12 +2900,12 @@ metadata:
   name: "hbe-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Cy9eHCiP
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     JwK5MKTa: WW
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: Cy9eHCiP
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     v7E: 1g6JB
   annotations:
     "helm.sh/hook": test
@@ -2953,11 +2927,11 @@ metadata:
   name: tmn2Kt
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Qr03ts
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: Qr03ts
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 ---
 # Source: console/templates/secret.yaml
 apiVersion: v1
@@ -2965,12 +2939,11 @@ kind: Secret
 metadata:
   name: tmn2Kt
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Qr03ts
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: Qr03ts
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 type: Opaque
 data:
   # Set empty defaults, so that we can always mount them as env variable even if they are not used.
@@ -3008,20 +2981,20 @@ data:
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: tmn2Kt
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Qr03ts
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    
 data:
   config.yaml: |
     # from .Values.console.config
     {}
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: Qr03ts
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  name: tmn2Kt
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -3030,12 +3003,11 @@ metadata:
   name: tmn2Kt
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Qr03ts
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: Qr03ts
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   type: ClusterIP
   ports:
@@ -3044,8 +3016,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: Qr03ts
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: Qr03ts
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -3054,30 +3026,29 @@ metadata:
   name: tmn2Kt
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Qr03ts
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: Qr03ts
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     v: D
 spec:
   replicas: 407
   selector:
     matchLabels:
-      app.kubernetes.io/name: Qr03ts
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: Qr03ts
   strategy:
     rollingUpdate: {}
     type: 9Cɠ+餌µ骽O惠LƬɇɦ鉍挶
   template:
     metadata:
       annotations:
-        checksum/config: 92b3d914e3a1b3f846e595fb68e767972dd83782f4a91eff3f632e4052d9f9cb
+        checksum/config: 42a12bc305ec502542461ea664bd4e690d09b3bf4711005940619e657200d619
       labels:
-        app.kubernetes.io/name: Qr03ts
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: Qr03ts
         "": S7BNyT
         r1F: Fsc
         yeY4LjT: MRlwtd
@@ -3296,12 +3267,11 @@ metadata:
   name: "tmn2Kt-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Qr03ts
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: Qr03ts
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -3322,11 +3292,11 @@ metadata:
   name: RttlJN
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: dDkIKgMwXv
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: dDkIKgMwXv
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 ---
 # Source: console/templates/secret.yaml
 apiVersion: v1
@@ -3334,12 +3304,11 @@ kind: Secret
 metadata:
   name: RttlJN
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: dDkIKgMwXv
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: dDkIKgMwXv
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 type: Opaque
 data:
   # Set empty defaults, so that we can always mount them as env variable even if they are not used.
@@ -3377,20 +3346,20 @@ data:
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: RttlJN
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: dDkIKgMwXv
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    
 data:
   config.yaml: |
     # from .Values.console.config
     {}
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: dDkIKgMwXv
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  name: RttlJN
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -3399,12 +3368,11 @@ metadata:
   name: RttlJN
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: dDkIKgMwXv
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: dDkIKgMwXv
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   type: ClusterIP
   ports:
@@ -3413,8 +3381,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: dDkIKgMwXv
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: dDkIKgMwXv
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -3423,25 +3391,24 @@ metadata:
   name: RttlJN
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: dDkIKgMwXv
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: dDkIKgMwXv
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   replicas: 412
   selector:
     matchLabels:
-      app.kubernetes.io/name: dDkIKgMwXv
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: dDkIKgMwXv
   template:
     metadata:
       annotations:
-        checksum/config: 2e7380f197d775ab5a2e7319d81e0a5f9261e530884991f193679ac87419e49a
+        checksum/config: 98fc6f16f62a1450689eac10ee69c51338e497314184c9ac17e33c0845b68710
       labels:
-        app.kubernetes.io/name: dDkIKgMwXv
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: dDkIKgMwXv
     spec:
       serviceAccountName: RttlJN
       automountServiceAccountToken: true
@@ -3598,12 +3565,11 @@ metadata:
   name: "RttlJN-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: dDkIKgMwXv
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: dDkIKgMwXv
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -3624,11 +3590,11 @@ metadata:
   name: h6eHrUr
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Vi2vH
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: Vi2vH
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 ---
 # Source: console/templates/secret.yaml
 apiVersion: v1
@@ -3636,12 +3602,11 @@ kind: Secret
 metadata:
   name: htymHJ
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Vi2vH
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: Vi2vH
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 type: Opaque
 data:
   # Set empty defaults, so that we can always mount them as env variable even if they are not used.
@@ -3679,23 +3644,23 @@ data:
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: htymHJ
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Vi2vH
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    
 data:
   config.yaml: |
     # from .Values.console.config
     {}
-  role-bindings.yaml: |
+  role-bindings.yaml: |-
     roleBindings:
-      - null
+    - null
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: Vi2vH
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  name: htymHJ
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -3704,12 +3669,11 @@ metadata:
   name: htymHJ
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Vi2vH
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: Vi2vH
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   type: Oiwzbmtjpb
   ports:
@@ -3718,8 +3682,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: Vi2vH
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: Vi2vH
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -3728,12 +3692,11 @@ metadata:
   name: "htymHJ-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Vi2vH
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: Vi2vH
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -3754,14 +3717,14 @@ metadata:
   name: zmr
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: KD8DmV
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     B0Pmybnj: gh8
     MdyMnFBP0Cd1: UUVRKbjhv
     ShHkukRGF9k: KlIyX6upO
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: KD8DmV
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     IH: 3W
     K5hNNf: ""
@@ -3773,14 +3736,14 @@ kind: Secret
 metadata:
   name: 9RweMGWqBs
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: KD8DmV
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     B0Pmybnj: gh8
     MdyMnFBP0Cd1: UUVRKbjhv
     ShHkukRGF9k: KlIyX6upO
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: KD8DmV
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 type: Opaque
 data:
   # Set empty defaults, so that we can always mount them as env variable even if they are not used.
@@ -3818,22 +3781,23 @@ data:
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: 9RweMGWqBs
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: KD8DmV
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    B0Pmybnj: gh8
-    MdyMnFBP0Cd1: UUVRKbjhv
-    ShHkukRGF9k: KlIyX6upO
 data:
   config.yaml: |
     # from .Values.console.config
     {}
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    B0Pmybnj: gh8
+    MdyMnFBP0Cd1: UUVRKbjhv
+    ShHkukRGF9k: KlIyX6upO
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: KD8DmV
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  name: 9RweMGWqBs
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -3842,14 +3806,14 @@ metadata:
   name: 9RweMGWqBs
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: KD8DmV
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     B0Pmybnj: gh8
     MdyMnFBP0Cd1: UUVRKbjhv
     ShHkukRGF9k: KlIyX6upO
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: KD8DmV
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   type: ClusterIP
   ports:
@@ -3858,8 +3822,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: KD8DmV
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: KD8DmV
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -3868,14 +3832,14 @@ metadata:
   name: 9RweMGWqBs
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: KD8DmV
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     B0Pmybnj: gh8
     MdyMnFBP0Cd1: UUVRKbjhv
     ShHkukRGF9k: KlIyX6upO
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: KD8DmV
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     2V: 50l
     jFB7K: 5ZqGXdsD94
@@ -3883,15 +3847,15 @@ spec:
   replicas: 128
   selector:
     matchLabels:
-      app.kubernetes.io/name: KD8DmV
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: KD8DmV
   template:
     metadata:
       annotations:
-        checksum/config: 378c42e9b615de8d57a9437e226163dd9264ce056ce6425771d6ce33e5b2aa4d
+        checksum/config: cf39c0d205192161b261f24fb6ec50225dc24e9b0f78883e3a84d475e412add6
       labels:
-        app.kubernetes.io/name: KD8DmV
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: KD8DmV
         FlwBgvWNMrbg5: YKgnz8q
         TGDbR: 4egH
         Xr8XMOk: 1DAii
@@ -4109,14 +4073,14 @@ kind: Ingress
 metadata:
   name: 9RweMGWqBs
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: KD8DmV
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     B0Pmybnj: gh8
     MdyMnFBP0Cd1: UUVRKbjhv
     ShHkukRGF9k: KlIyX6upO
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: KD8DmV
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "": ZKQ6I
     ES: uo
@@ -4150,14 +4114,14 @@ metadata:
   name: "9RweMGWqBs-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: KD8DmV
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     B0Pmybnj: gh8
     MdyMnFBP0Cd1: UUVRKbjhv
     ShHkukRGF9k: KlIyX6upO
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: KD8DmV
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -4178,11 +4142,11 @@ metadata:
   name: DdF7ALq
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: SC
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: SC
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 ---
 # Source: console/templates/secret.yaml
 apiVersion: v1
@@ -4190,12 +4154,11 @@ kind: Secret
 metadata:
   name: 6maz
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: SC
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: SC
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 type: Opaque
 data:
   # Set empty defaults, so that we can always mount them as env variable even if they are not used.
@@ -4233,24 +4196,24 @@ data:
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: 6maz
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: SC
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    
 data:
   config.yaml: |
     # from .Values.console.config
     {}
-  role-bindings.yaml: |
+  role-bindings.yaml: |-
     roleBindings:
-      - Q0kslM: null
-      - null
+    - Q0kslM: null
+    - null
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: SC
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  name: 6maz
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -4259,12 +4222,11 @@ metadata:
   name: 6maz
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: SC
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: SC
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   type: ClusterIP
   ports:
@@ -4273,8 +4235,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: SC
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: SC
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -4283,29 +4245,28 @@ metadata:
   name: 6maz
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: SC
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: SC
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   replicas: 331
   selector:
     matchLabels:
-      app.kubernetes.io/name: SC
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: SC
   strategy:
     rollingUpdate: {}
     type: ŀ剭º(;ƍ4兖ȇ
   template:
     metadata:
       annotations:
-        checksum/config: 6cb4e08773a7b8538074b26f14f825b8ba28d82e4cf5de5ace43194b515c7af6
+        checksum/config: 040bbe9b90c327bf9affd4b4828123728d88408ed88495ab20ef33be9cb2e1c9
         JYLUc483y: gTnWiG
       labels:
-        app.kubernetes.io/name: SC
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: SC
     spec:
       serviceAccountName: DdF7ALq
       automountServiceAccountToken: false
@@ -4560,12 +4521,11 @@ metadata:
   name: "6maz-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: SC
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: SC
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -4586,11 +4546,11 @@ metadata:
   name: 9XG3SZW
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: tPiY
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: tPiY
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 ---
 # Source: console/templates/secret.yaml
 apiVersion: v1
@@ -4598,12 +4558,11 @@ kind: Secret
 metadata:
   name: 9XG3SZW
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: tPiY
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: tPiY
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 type: Opaque
 data:
   # Set empty defaults, so that we can always mount them as env variable even if they are not used.
@@ -4641,27 +4600,27 @@ data:
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: 9XG3SZW
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: tPiY
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    
 data:
   config.yaml: |
     # from .Values.console.config
     {}
-  roles.yaml: |
+  roles.yaml: |-
     roles:
-      - JlwOk: null
-        QUzHpm: null
-        ch3WnNF: null
-      - {}
-      - null
+    - JlwOk: null
+      QUzHpm: null
+      ch3WnNF: null
+    - {}
+    - null
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: tPiY
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  name: 9XG3SZW
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -4670,12 +4629,11 @@ metadata:
   name: 9XG3SZW
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: tPiY
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: tPiY
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   type: ClusterIP
   ports:
@@ -4684,8 +4642,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: tPiY
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: tPiY
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -4694,12 +4652,11 @@ metadata:
   name: 9XG3SZW
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: tPiY
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: tPiY
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     J5Z: aLYd149
     LCqYvOjK: Qsk
@@ -4708,15 +4665,15 @@ spec:
   replicas: 173
   selector:
     matchLabels:
-      app.kubernetes.io/name: tPiY
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: tPiY
   template:
     metadata:
       annotations:
-        checksum/config: ae7118f5fd12ba094dea8fb75794e0165c79b7db001e791411269d8d2e136a84
+        checksum/config: 705b7414f0c92a98f3f6dcea7b24dcb951a3c41f697628fb1092985dd5895601
       labels:
-        app.kubernetes.io/name: tPiY
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: tPiY
         LBQpbD: AHB4hNVL
         ey1GpAHh: fA
     spec:
@@ -5129,12 +5086,11 @@ metadata:
   name: uAvlOXf
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 1qyLP36T
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: 1qyLP36T
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     X7E: CRSzr
     lPi: bGP
@@ -5145,12 +5101,11 @@ kind: Secret
 metadata:
   name: ExFU3
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 1qyLP36T
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: 1qyLP36T
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 type: Opaque
 data:
   # Set empty defaults, so that we can always mount them as env variable even if they are not used.
@@ -5193,12 +5148,11 @@ metadata:
   name: ExFU3
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 1qyLP36T
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: 1qyLP36T
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   type: 2cM
   ports:
@@ -5207,8 +5161,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: 1qyLP36T
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: 1qyLP36T
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -5217,30 +5171,29 @@ metadata:
   name: ExFU3
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 1qyLP36T
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: 1qyLP36T
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "": 3E5rtKA
 spec:
   replicas: 297
   selector:
     matchLabels:
-      app.kubernetes.io/name: 1qyLP36T
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: 1qyLP36T
   strategy:
     rollingUpdate: {}
     type: ɬ搢.Ƒ躂ɻɅȄ莨qc婔Åå
   template:
     metadata:
       annotations:
-        checksum/config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+        checksum/config: 75a11da44c802486bc6f65640aa48a730f0f684c5c07a42ba3cd1735eb3fb070
       labels:
-        app.kubernetes.io/name: 1qyLP36T
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: 1qyLP36T
     spec:
       imagePullSecrets:
         - name: vlnGQbo3y
@@ -5539,12 +5492,11 @@ metadata:
   name: "ExFU3-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 1qyLP36T
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: 1qyLP36T
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -5567,11 +5519,11 @@ metadata:
   name: NZ7h9
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 8MIg
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: 8MIg
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 ---
 # Source: console/templates/secret.yaml
 apiVersion: v1
@@ -5579,12 +5531,11 @@ kind: Secret
 metadata:
   name: NZ7h9
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 8MIg
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: 8MIg
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 type: Opaque
 data:
   # Set empty defaults, so that we can always mount them as env variable even if they are not used.
@@ -5622,20 +5573,20 @@ data:
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: NZ7h9
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 8MIg
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    
 data:
   config.yaml: |
     # from .Values.console.config
     {}
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: 8MIg
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  name: NZ7h9
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -5644,12 +5595,11 @@ metadata:
   name: NZ7h9
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 8MIg
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: 8MIg
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   type: ClusterIP
   ports:
@@ -5658,8 +5608,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: 8MIg
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: 8MIg
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -5668,12 +5618,11 @@ metadata:
   name: NZ7h9
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 8MIg
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: 8MIg
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     lgiIA: u
     wK8: JrSfKH
@@ -5681,17 +5630,17 @@ spec:
   replicas: 79
   selector:
     matchLabels:
-      app.kubernetes.io/name: 8MIg
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: 8MIg
   strategy:
     type: 鎦v財ɕŪ
   template:
     metadata:
       annotations:
-        checksum/config: a591a28d3ead1719a7612eec127cd43c4cf5624a2ec43aa7d62474abf949895d
+        checksum/config: 288f415038f7ceed7ec5b4aa3d5e97d99e407af5096d018aa7824df9598e5a4c
       labels:
-        app.kubernetes.io/name: 8MIg
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: 8MIg
     spec:
       serviceAccountName: NZ7h9
       automountServiceAccountToken: true
@@ -5805,12 +5754,11 @@ metadata:
   name: "NZ7h9-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 8MIg
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: 8MIg
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -5831,12 +5779,11 @@ metadata:
   name: HMpc
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: zzmAR9
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: zzmAR9
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     Cs0Tv: PNgn
     tawhZGj4: yuBQ1
@@ -5848,12 +5795,11 @@ kind: Secret
 metadata:
   name: Om7
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: zzmAR9
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: zzmAR9
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 type: Opaque
 data:
   # Set empty defaults, so that we can always mount them as env variable even if they are not used.
@@ -5891,20 +5837,20 @@ data:
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: Om7
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: zzmAR9
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    
 data:
   config.yaml: |
     # from .Values.console.config
     {}
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: zzmAR9
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  name: Om7
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -5913,12 +5859,11 @@ metadata:
   name: Om7
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: zzmAR9
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: zzmAR9
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   type: 
   ports:
@@ -5927,8 +5872,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: zzmAR9
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: zzmAR9
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -5937,12 +5882,11 @@ metadata:
   name: Om7
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: zzmAR9
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: zzmAR9
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     0lA: PZvwfKrip
     AUm: KY
@@ -5951,18 +5895,18 @@ spec:
   replicas: 344
   selector:
     matchLabels:
-      app.kubernetes.io/name: zzmAR9
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: zzmAR9
   strategy:
     rollingUpdate: {}
     type: x&N涮ĶJ­ɕ
   template:
     metadata:
       annotations:
-        checksum/config: 1001af72f5f7d50432f9a27e8072ab81b4373f6616d68c27b951868b29b792ed
+        checksum/config: 7fe57968390d4b6ceb59616b2513acebb62a8fb463af69bf7d3cdc43665f132b
       labels:
-        app.kubernetes.io/name: zzmAR9
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: zzmAR9
     spec:
       imagePullSecrets:
         - name: Z
@@ -6327,12 +6271,11 @@ metadata:
   name: "Om7-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: zzmAR9
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: zzmAR9
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -6357,13 +6300,13 @@ metadata:
   name: tW
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Rys
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     0pITqVWuPVXcDF: jm5Ve54
     8iyjfh0: Igz
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: Rys
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 ---
 # Source: console/templates/secret.yaml
 apiVersion: v1
@@ -6371,13 +6314,13 @@ kind: Secret
 metadata:
   name: PhRk
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Rys
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     0pITqVWuPVXcDF: jm5Ve54
     8iyjfh0: Igz
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: Rys
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 type: Opaque
 data:
   # Set empty defaults, so that we can always mount them as env variable even if they are not used.
@@ -6415,21 +6358,22 @@ data:
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: PhRk
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Rys
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    0pITqVWuPVXcDF: jm5Ve54
-    8iyjfh0: Igz
 data:
   config.yaml: |
     # from .Values.console.config
     {}
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    0pITqVWuPVXcDF: jm5Ve54
+    8iyjfh0: Igz
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: Rys
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  name: PhRk
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -6438,13 +6382,13 @@ metadata:
   name: PhRk
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Rys
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     0pITqVWuPVXcDF: jm5Ve54
     8iyjfh0: Igz
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: Rys
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     MSOs1: lWjU5y8FrM1
     cbC69BvSda36u5J: Xk9Lhf
@@ -6457,8 +6401,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: Rys
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: Rys
 ---
 # Source: console/templates/hpa.yaml
 apiVersion: autoscaling/v2
@@ -6466,13 +6410,13 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: PhRk
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Rys
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     0pITqVWuPVXcDF: jm5Ve54
     8iyjfh0: Igz
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: Rys
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -6501,13 +6445,13 @@ metadata:
   name: "PhRk-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Rys
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     0pITqVWuPVXcDF: jm5Ve54
     8iyjfh0: Igz
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: Rys
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -6528,11 +6472,11 @@ metadata:
   name: GVjeLRc
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: xNnu
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: xNnu
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 ---
 # Source: console/templates/secret.yaml
 apiVersion: v1
@@ -6540,12 +6484,11 @@ kind: Secret
 metadata:
   name: GVjeLRc
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: xNnu
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: xNnu
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 type: Opaque
 data:
   # Set empty defaults, so that we can always mount them as env variable even if they are not used.
@@ -6583,20 +6526,20 @@ data:
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: GVjeLRc
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: xNnu
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    
 data:
   config.yaml: |
     # from .Values.console.config
     {}
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: xNnu
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  name: GVjeLRc
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -6605,12 +6548,11 @@ metadata:
   name: GVjeLRc
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: xNnu
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: xNnu
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   type: ClusterIP
   ports:
@@ -6619,8 +6561,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: xNnu
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: xNnu
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -6629,27 +6571,26 @@ metadata:
   name: GVjeLRc
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: xNnu
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: xNnu
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     DJ: w
 spec:
   replicas: 42
   selector:
     matchLabels:
-      app.kubernetes.io/name: xNnu
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: xNnu
   template:
     metadata:
       annotations:
-        checksum/config: dfad984e4dca00fdfe83af9202031a17f739dce2c28d611edd74ce456552d938
+        checksum/config: a97e34d602796f7313700f4d78da95a0b9e0f041941bb50f77f74d01d714c24b
       labels:
-        app.kubernetes.io/name: xNnu
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: xNnu
         "": thv6Fja
     spec:
       imagePullSecrets:
@@ -7172,12 +7113,11 @@ metadata:
   name: "GVjeLRc-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: xNnu
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: xNnu
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -7202,11 +7142,11 @@ metadata:
   name: Pga
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: s3YOF
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: s3YOF
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 ---
 # Source: console/templates/secret.yaml
 apiVersion: v1
@@ -7214,12 +7154,11 @@ kind: Secret
 metadata:
   name: fXCb
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: s3YOF
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: s3YOF
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 type: Opaque
 data:
   # Set empty defaults, so that we can always mount them as env variable even if they are not used.
@@ -7262,12 +7201,11 @@ metadata:
   name: fXCb
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: s3YOF
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: s3YOF
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     TK4LTMJ: G8y
     VTdx: Q
@@ -7280,8 +7218,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: s3YOF
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: s3YOF
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -7290,27 +7228,26 @@ metadata:
   name: fXCb
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: s3YOF
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: s3YOF
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   replicas: 236
   selector:
     matchLabels:
-      app.kubernetes.io/name: s3YOF
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: s3YOF
   strategy:
     type: 鎼Ɉ迆x螊仯
   template:
     metadata:
       annotations:
-        checksum/config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+        checksum/config: 75a11da44c802486bc6f65640aa48a730f0f684c5c07a42ba3cd1735eb3fb070
       labels:
-        app.kubernetes.io/name: s3YOF
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: s3YOF
         D78: ZGvC
         J0ZGVwo: wg5WM
     spec:
@@ -7559,12 +7496,11 @@ kind: Ingress
 metadata:
   name: fXCb
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: s3YOF
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: s3YOF
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     rr8c: WC9T
 spec:
@@ -7589,12 +7525,11 @@ metadata:
   name: "fXCb-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: s3YOF
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: s3YOF
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -7615,36 +7550,36 @@ metadata:
   name: Wpq
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: aD
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: aD
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: Wpq
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: aD
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    
 data:
   config.yaml: |
     # from .Values.console.config
     {}
-  role-bindings.yaml: |
+  role-bindings.yaml: |-
     roleBindings:
-      - E: null
-        MW6yTq: null
-        cVEzroaFp: null
-      - IN19Kdnr: null
-        Se: null
-      - null
+    - E: null
+      MW6yTq: null
+      cVEzroaFp: null
+    - IN19Kdnr: null
+      Se: null
+    - null
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: aD
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  name: Wpq
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -7653,12 +7588,11 @@ metadata:
   name: Wpq
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: aD
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: aD
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   type: uvupqC6hE4
   ports:
@@ -7667,8 +7601,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: aD
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: aD
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -7677,12 +7611,11 @@ metadata:
   name: "Wpq-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: aD
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: aD
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -7705,11 +7638,11 @@ metadata:
   name: H5TDAALUdD
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Mh
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: Mh
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -7718,12 +7651,11 @@ metadata:
   name: Uo
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Mh
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: Mh
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   type: ClusterIP
   ports:
@@ -7732,8 +7664,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: Mh
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: Mh
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -7742,12 +7674,11 @@ metadata:
   name: Uo
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Mh
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: Mh
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     7YN: WjRdnTY
     J0Eg: alDk
@@ -7755,16 +7686,16 @@ spec:
   replicas: 345
   selector:
     matchLabels:
-      app.kubernetes.io/name: Mh
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: Mh
   template:
     metadata:
       annotations:
-        checksum/config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+        checksum/config: 75a11da44c802486bc6f65640aa48a730f0f684c5c07a42ba3cd1735eb3fb070
         bHXzf: nOiRsvEXH
       labels:
-        app.kubernetes.io/name: Mh
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: Mh
     spec:
       imagePullSecrets:
         - name: iA1C
@@ -8257,12 +8188,11 @@ metadata:
   name: "Uo-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: Mh
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: Mh
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -8287,12 +8217,12 @@ metadata:
   name: Utu8ZHG2
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: vLjrafvp
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     "": h0uSAPIi
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: vLjrafvp
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     kuKPk7: ""
   annotations:
     "": tWl
@@ -8306,12 +8236,12 @@ metadata:
   name: qhaD
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: vLjrafvp
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     "": h0uSAPIi
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: vLjrafvp
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     kuKPk7: ""
 spec:
   type: ClusterIP
@@ -8321,8 +8251,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: vLjrafvp
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: vLjrafvp
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -8331,32 +8261,32 @@ metadata:
   name: qhaD
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: vLjrafvp
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     "": h0uSAPIi
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: vLjrafvp
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     kuKPk7: ""
 spec:
   replicas: 78
   selector:
     matchLabels:
-      app.kubernetes.io/name: vLjrafvp
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: vLjrafvp
   strategy:
     rollingUpdate: {}
     type: I6终j2炅ȲbȻ
   template:
     metadata:
       annotations:
-        checksum/config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+        checksum/config: 75a11da44c802486bc6f65640aa48a730f0f684c5c07a42ba3cd1735eb3fb070
         LtAjph: 8Q
         MiPvJub: 0x
         j: xR98FRh
       labels:
-        app.kubernetes.io/name: vLjrafvp
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: vLjrafvp
     spec:
       serviceAccountName: Utu8ZHG2
       automountServiceAccountToken: true
@@ -8528,12 +8458,12 @@ kind: Ingress
 metadata:
   name: qhaD
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: vLjrafvp
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     "": h0uSAPIi
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: vLjrafvp
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     kuKPk7: ""
   annotations:
     Lftu: PjroKEh
@@ -8594,13 +8524,13 @@ metadata:
   name: 55C9f3
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: h9P
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     Q0: ""
     T4ZmAFi: nfIb0b
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: h9P
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "": ta51q
     RW5sX: LXvP
@@ -8612,13 +8542,13 @@ metadata:
   name: 61hunk
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: h9P
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     Q0: ""
     T4ZmAFi: nfIb0b
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: h9P
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     Gi0OSuP5jF: ARBECJB
     qId: Bo
@@ -8631,8 +8561,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: h9P
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: h9P
 ---
 # Source: console/templates/ingress.yaml
 apiVersion: networking.k8s.io/v1
@@ -8640,13 +8570,13 @@ kind: Ingress
 metadata:
   name: 61hunk
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: h9P
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     Q0: ""
     T4ZmAFi: nfIb0b
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: h9P
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "": ZtbWlWc
     y1ML9Hmg: d6h9
@@ -8677,13 +8607,13 @@ metadata:
   name: "61hunk-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: h9P
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     Q0: ""
     T4ZmAFi: nfIb0b
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: h9P
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -8704,12 +8634,12 @@ kind: Secret
 metadata:
   name: odFI2M4
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 5XQu4RW
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     BKrxjHNg8: qlqPhj
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: 5XQu4RW
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 type: Opaque
 data:
   # Set empty defaults, so that we can always mount them as env variable even if they are not used.
@@ -8747,20 +8677,21 @@ data:
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: odFI2M4
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 5XQu4RW
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    BKrxjHNg8: qlqPhj
 data:
   config.yaml: |
     # from .Values.console.config
     {}
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    BKrxjHNg8: qlqPhj
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: 5XQu4RW
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  name: odFI2M4
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -8769,12 +8700,12 @@ metadata:
   name: odFI2M4
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 5XQu4RW
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     BKrxjHNg8: qlqPhj
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: 5XQu4RW
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   type: ClusterIP
   ports:
@@ -8783,8 +8714,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: 5XQu4RW
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: 5XQu4RW
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -8793,31 +8724,31 @@ metadata:
   name: odFI2M4
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 5XQu4RW
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     BKrxjHNg8: qlqPhj
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: 5XQu4RW
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     VLzukyGLL5H: ""
 spec:
   replicas: 278
   selector:
     matchLabels:
-      app.kubernetes.io/name: 5XQu4RW
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: 5XQu4RW
   strategy:
     rollingUpdate: {}
     type: 砓涶rƀł庫x烮ȯ~茤įêŎZ姮Ⱦ
   template:
     metadata:
       annotations:
-        checksum/config: 09a5e50b583ceea06ab70113ba7a4d0b483fe7a9d4c4aa8fa098c0bc2b0b20ad
+        checksum/config: 89d7eb519a815f9cf0cf2aed3d0f92f2baa44abd5ae4435e8b8d8cac332414eb
         YefFO9J: uVUZra
       labels:
-        app.kubernetes.io/name: 5XQu4RW
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: 5XQu4RW
         n8PG: NEb
         sINjD1zSK: exkAcWK3
         yG: T
@@ -9094,12 +9025,12 @@ metadata:
   name: "odFI2M4-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 5XQu4RW
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     BKrxjHNg8: qlqPhj
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: 5XQu4RW
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -9121,12 +9052,12 @@ kind: Secret
 metadata:
   name: HK
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 3Wh
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     HzuQ: mCfbHBQ
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: 3Wh
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     xi7L: ibI45
 type: Opaque
 data:
@@ -9165,25 +9096,26 @@ data:
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: HK
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 3Wh
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    HzuQ: mCfbHBQ
-    xi7L: ibI45
 data:
   config.yaml: |
     # from .Values.console.config
     {}
-  roles.yaml: |
+  roles.yaml: |-
     roles:
-      - null
-      - null
+    - null
+    - null
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    HzuQ: mCfbHBQ
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: 3Wh
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+    xi7L: ibI45
+  name: HK
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -9192,12 +9124,12 @@ metadata:
   name: HK
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 3Wh
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     HzuQ: mCfbHBQ
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: 3Wh
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     xi7L: ibI45
   annotations:
     33Yi: tesf5
@@ -9209,8 +9141,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: 3Wh
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: 3Wh
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -9219,12 +9151,12 @@ metadata:
   name: HK
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 3Wh
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     HzuQ: mCfbHBQ
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: 3Wh
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     xi7L: ibI45
   annotations:
     WVwaqt: gTMC
@@ -9234,18 +9166,18 @@ spec:
   replicas: 385
   selector:
     matchLabels:
-      app.kubernetes.io/name: 3Wh
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: 3Wh
   strategy:
     rollingUpdate: {}
   template:
     metadata:
       annotations:
-        checksum/config: 0455f117af7ac7c5548393516d8e18f72d90dc9b4d08c45bc05810b9b366b52a
+        checksum/config: 910caa99c35f3154e2d79739d54af690754df1725fb2507f070d12adac6ed798
         IVy: ho3qpcI
       labels:
-        app.kubernetes.io/name: 3Wh
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: 3Wh
     spec:
       serviceAccountName: 43zobnL
       automountServiceAccountToken: true
@@ -9725,12 +9657,12 @@ metadata:
   name: "HK-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 3Wh
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     HzuQ: mCfbHBQ
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: 3Wh
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     xi7L: ibI45
   annotations:
     "helm.sh/hook": test
@@ -9750,12 +9682,12 @@ kind: Secret
 metadata:
   name: G9
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: J
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     T: f0
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: J
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     jwrBMvwfg: K6I5HsI5
     nk8eJc: nS
 type: Opaque
@@ -9800,12 +9732,12 @@ metadata:
   name: G9
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: J
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     T: f0
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: J
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     jwrBMvwfg: K6I5HsI5
     nk8eJc: nS
 spec:
@@ -9816,8 +9748,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: J
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: J
 ---
 # Source: console/templates/hpa.yaml
 apiVersion: autoscaling/v2
@@ -9825,12 +9757,12 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: G9
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: J
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     T: f0
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: J
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     jwrBMvwfg: K6I5HsI5
     nk8eJc: nS
 spec:
@@ -9861,12 +9793,12 @@ metadata:
   name: "G9-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: J
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     T: f0
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: J
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     jwrBMvwfg: K6I5HsI5
     nk8eJc: nS
   annotations:
@@ -9885,28 +9817,29 @@ spec:
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: 59cQ0qKLI
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: xknw
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    q4ZdG9q: IJWaYu9mhun
-    sFTTcyl: qVyaa0ULC
 data:
   config.yaml: |
     # from .Values.console.config
     {}
-  roles.yaml: |
-    roles:
-      - {}
-  role-bindings.yaml: |
+  role-bindings.yaml: |-
     roleBindings:
-      - {}
-      - {}
+    - {}
+    - {}
+  roles.yaml: |-
+    roles:
+    - {}
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: xknw
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+    q4ZdG9q: IJWaYu9mhun
+    sFTTcyl: qVyaa0ULC
+  name: 59cQ0qKLI
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -9915,11 +9848,11 @@ metadata:
   name: 59cQ0qKLI
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: xknw
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: xknw
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     q4ZdG9q: IJWaYu9mhun
     sFTTcyl: qVyaa0ULC
 spec:
@@ -9930,8 +9863,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: xknw
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: xknw
 ---
 # Source: console/templates/hpa.yaml
 apiVersion: autoscaling/v2
@@ -9939,11 +9872,11 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: 59cQ0qKLI
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: xknw
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: xknw
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     q4ZdG9q: IJWaYu9mhun
     sFTTcyl: qVyaa0ULC
 spec:
@@ -9973,11 +9906,11 @@ kind: Ingress
 metadata:
   name: 59cQ0qKLI
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: xknw
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: xknw
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     q4ZdG9q: IJWaYu9mhun
     sFTTcyl: qVyaa0ULC
   annotations:
@@ -10033,11 +9966,11 @@ metadata:
   name: "59cQ0qKLI-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: xknw
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: xknw
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     q4ZdG9q: IJWaYu9mhun
     sFTTcyl: qVyaa0ULC
   annotations:
@@ -10058,37 +9991,38 @@ spec:
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: llK4G
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: wB
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    B19ue: 8W
-    Kxm5R1: R
-    e3Cx: MIAO
 data:
   config.yaml: |
     # from .Values.console.config
     {}
-  roles.yaml: |
-    roles:
-      - YQBucbbDX2R: null
-      - 2UuDKjR: null
-        IV0Yus9: null
-        ci20SljQkhw: null
-  role-bindings.yaml: |
+  role-bindings.yaml: |-
     roleBindings:
-      - K8wnWSD: null
-        bwYE7: null
-        y4j: null
-      - GvFfKdgL: null
-        enU8G4: null
-        wvnJcOn: null
-      - td7: null
+    - K8wnWSD: null
+      bwYE7: null
+      y4j: null
+    - GvFfKdgL: null
+      enU8G4: null
+      wvnJcOn: null
+    - td7: null
+  roles.yaml: |-
+    roles:
+    - YQBucbbDX2R: null
+    - 2UuDKjR: null
+      IV0Yus9: null
+      ci20SljQkhw: null
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    B19ue: 8W
+    Kxm5R1: R
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: wB
+    app.kubernetes.io/version: v2.4.6
+    e3Cx: MIAO
+    helm.sh/chart: console-0.7.26
+  name: llK4G
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -10097,14 +10031,14 @@ metadata:
   name: llK4G
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: wB
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     B19ue: 8W
     Kxm5R1: R
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: wB
+    app.kubernetes.io/version: v2.4.6
     e3Cx: MIAO
+    helm.sh/chart: console-0.7.26
 spec:
   type: aaIqePq
   ports:
@@ -10113,8 +10047,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: wB
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: wB
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -10123,31 +10057,31 @@ metadata:
   name: llK4G
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: wB
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     B19ue: 8W
     Kxm5R1: R
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: wB
+    app.kubernetes.io/version: v2.4.6
     e3Cx: MIAO
+    helm.sh/chart: console-0.7.26
   annotations:
     xpNWT: MpOZ
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: wB
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: wB
   strategy:
     rollingUpdate: {}
     type: ȁ进辫fu
   template:
     metadata:
       annotations:
-        checksum/config: 75ba013c29f2aed3626dcf4047261e707d68deb65d5341449c2166f2bb5a099b
+        checksum/config: c3fc12a81aa208c24175c20d12d16f0482622d62b6abeee604b29710e13100f2
       labels:
-        app.kubernetes.io/name: wB
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: wB
         So: waKMMvnY
         VXPE0: 8ExVsj
         ip1RGEzt4t6: "1"
@@ -10759,14 +10693,14 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: llK4G
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: wB
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     B19ue: 8W
     Kxm5R1: R
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: wB
+    app.kubernetes.io/version: v2.4.6
     e3Cx: MIAO
+    helm.sh/chart: console-0.7.26
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -10794,14 +10728,14 @@ kind: Ingress
 metadata:
   name: llK4G
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: wB
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     B19ue: 8W
     Kxm5R1: R
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: wB
+    app.kubernetes.io/version: v2.4.6
     e3Cx: MIAO
+    helm.sh/chart: console-0.7.26
   annotations:
     Lhm: f24CRNEJvs
     pk6fq: "2"
@@ -10838,14 +10772,14 @@ metadata:
   name: "llK4G-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: wB
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     B19ue: 8W
     Kxm5R1: R
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: wB
+    app.kubernetes.io/version: v2.4.6
     e3Cx: MIAO
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -10860,31 +10794,32 @@ spec:
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: foGC
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: bCPeYVWao
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    gZ85uw3T: e
-    qO: F4dqLo67vKYZ
 data:
   config.yaml: |
     # from .Values.console.config
     {}
-  roles.yaml: |
-    roles:
-      - {}
-      - 6Vndf: null
-        f: null
-  role-bindings.yaml: |
+  role-bindings.yaml: |-
     roleBindings:
-      - 7x: null
-        Ia1K2tdRuYi: null
-        j6c9: null
+    - 7x: null
+      Ia1K2tdRuYi: null
+      j6c9: null
+  roles.yaml: |-
+    roles:
+    - {}
+    - 6Vndf: null
+      f: null
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: bCPeYVWao
+    app.kubernetes.io/version: v2.4.6
+    gZ85uw3T: e
+    helm.sh/chart: console-0.7.26
+    qO: F4dqLo67vKYZ
+  name: foGC
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -10893,12 +10828,12 @@ metadata:
   name: foGC
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: bCPeYVWao
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: bCPeYVWao
+    app.kubernetes.io/version: v2.4.6
     gZ85uw3T: e
+    helm.sh/chart: console-0.7.26
     qO: F4dqLo67vKYZ
   annotations:
     lrtdFF: 60R7
@@ -10910,8 +10845,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: bCPeYVWao
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: bCPeYVWao
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -10920,29 +10855,29 @@ metadata:
   name: foGC
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: bCPeYVWao
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: bCPeYVWao
+    app.kubernetes.io/version: v2.4.6
     gZ85uw3T: e
+    helm.sh/chart: console-0.7.26
     qO: F4dqLo67vKYZ
 spec:
   replicas: 390
   selector:
     matchLabels:
-      app.kubernetes.io/name: bCPeYVWao
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: bCPeYVWao
   strategy:
     rollingUpdate: {}
     type: 呇弰$腕煴贔棳軀+œʃǀŖ*
   template:
     metadata:
       annotations:
-        checksum/config: 658b2097c4651f58d451ef8495064c4f506a103ae50a1ef3a7ab62e94055e572
+        checksum/config: 0295135b4cd8480e5d0406a72f798bd9be327740599222d317bee57de5c21f58
       labels:
-        app.kubernetes.io/name: bCPeYVWao
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: bCPeYVWao
         1bb6: ""
         3U: mfPv
         T: Q
@@ -11915,45 +11850,46 @@ metadata:
   name: QxrM
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: zE
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     0fz: qRhpB
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: zE
+    app.kubernetes.io/version: v2.4.6
     blGSa: Hnim0SflkfpF
+    helm.sh/chart: console-0.7.26
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: l
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: zE
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    0fz: qRhpB
-    blGSa: Hnim0SflkfpF
 data:
   config.yaml: |
     # from .Values.console.config
     {}
-  roles.yaml: |
-    roles:
-      - 3vFSt6CV6h: null
-      - zwoEunAfS: null
-      - "": null
-        Kz: null
-  role-bindings.yaml: |
+  role-bindings.yaml: |-
     roleBindings:
-      - zktoFv: null
-      - BnTf: null
-        N30: null
-        O: null
-      - "5": null
-        up6oELWDxO: null
+    - zktoFv: null
+    - BnTf: null
+      N30: null
+      O: null
+    - "5": null
+      up6oELWDxO: null
+  roles.yaml: |-
+    roles:
+    - 3vFSt6CV6h: null
+    - zwoEunAfS: null
+    - "": null
+      Kz: null
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    0fz: qRhpB
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: zE
+    app.kubernetes.io/version: v2.4.6
+    blGSa: Hnim0SflkfpF
+    helm.sh/chart: console-0.7.26
+  name: l
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -11962,13 +11898,13 @@ metadata:
   name: l
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: zE
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     0fz: qRhpB
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: zE
+    app.kubernetes.io/version: v2.4.6
     blGSa: Hnim0SflkfpF
+    helm.sh/chart: console-0.7.26
   annotations:
     W8Ix4: 4kOonr2
     g93: wNXcKSBg
@@ -11980,8 +11916,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: zE
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: zE
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -11990,13 +11926,13 @@ metadata:
   name: "l-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: zE
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     0fz: qRhpB
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: zE
+    app.kubernetes.io/version: v2.4.6
     blGSa: Hnim0SflkfpF
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -12019,14 +11955,14 @@ metadata:
   name: HMyYp
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: console
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     5NU: UG7t
     6NmZI: QxuTdplvdDdc
     BYcISWrd5: YZbXA
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     7lpi: QQ
     RK: ""
@@ -12034,27 +11970,28 @@ metadata:
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: Bv0I
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: console
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    5NU: UG7t
-    6NmZI: QxuTdplvdDdc
-    BYcISWrd5: YZbXA
 data:
   config.yaml: |
     # from .Values.console.config
     {}
-  roles.yaml: |
+  roles.yaml: |-
     roles:
-      - CSJ: null
-      - 0hM2tbS5: null
-        ZhG3M: null
+    - CSJ: null
+    - 0hM2tbS5: null
+      ZhG3M: null
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    5NU: UG7t
+    6NmZI: QxuTdplvdDdc
+    BYcISWrd5: YZbXA
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  name: Bv0I
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -12063,14 +12000,14 @@ metadata:
   name: Bv0I
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: console
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     5NU: UG7t
     6NmZI: QxuTdplvdDdc
     BYcISWrd5: YZbXA
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     C3p: uCspVMX
 spec:
@@ -12081,8 +12018,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: console
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: console
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -12091,30 +12028,30 @@ metadata:
   name: Bv0I
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: console
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     5NU: UG7t
     6NmZI: QxuTdplvdDdc
     BYcISWrd5: YZbXA
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   replicas: 464
   selector:
     matchLabels:
-      app.kubernetes.io/name: console
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: console
   strategy:
     rollingUpdate: {}
     type: Ʉ>朄崍ʡƥɼ戋\ĲĹ
   template:
     metadata:
       annotations:
-        checksum/config: 14c80027122cfb7f51d4222442a2cc447db5c7123cf6a026989fbe22ad08f95a
+        checksum/config: 6698cb36db94a785156f99596709a8d8bee42b75a3e719840a41d1ad1405d731
       labels:
-        app.kubernetes.io/name: console
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: console
         Klzm: we
         e: C2swj
         s: vw1lrq
@@ -13010,14 +12947,14 @@ kind: Ingress
 metadata:
   name: Bv0I
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: console
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     5NU: UG7t
     6NmZI: QxuTdplvdDdc
     BYcISWrd5: YZbXA
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   ingressClassName: vg
   tls:
@@ -13086,14 +13023,14 @@ metadata:
   name: "Bv0I-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: console
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     5NU: UG7t
     6NmZI: QxuTdplvdDdc
     BYcISWrd5: YZbXA
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -13115,14 +13052,14 @@ kind: Secret
 metadata:
   name: AumW
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 9mG8n4Wu4
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     Nv: YHcp9u
     RMi5: o4
     ViLr0: zrEw3
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: 9mG8n4Wu4
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 type: Opaque
 data:
   # Set empty defaults, so that we can always mount them as env variable even if they are not used.
@@ -13165,14 +13102,14 @@ metadata:
   name: AumW
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 9mG8n4Wu4
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     Nv: YHcp9u
     RMi5: o4
     ViLr0: zrEw3
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: 9mG8n4Wu4
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   type: XHYb2qmrk
   ports:
@@ -13181,8 +13118,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: 9mG8n4Wu4
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: 9mG8n4Wu4
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -13191,14 +13128,14 @@ metadata:
   name: AumW
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 9mG8n4Wu4
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     Nv: YHcp9u
     RMi5: o4
     ViLr0: zrEw3
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: 9mG8n4Wu4
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     GvX4jkWw: xAyNk
     MdtXxfH: ""
@@ -13207,19 +13144,19 @@ spec:
   replicas: 24
   selector:
     matchLabels:
-      app.kubernetes.io/name: 9mG8n4Wu4
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: 9mG8n4Wu4
   strategy:
     rollingUpdate: {}
     type: ǇėwǮ甧
   template:
     metadata:
       annotations:
-        checksum/config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+        checksum/config: 75a11da44c802486bc6f65640aa48a730f0f684c5c07a42ba3cd1735eb3fb070
         jLE31lUP: LWc
       labels:
-        app.kubernetes.io/name: 9mG8n4Wu4
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: 9mG8n4Wu4
         6W: FQvOa
         YwkBSNWK: 0qqd
         jP3: iNkD
@@ -14109,45 +14046,46 @@ metadata:
   name: ItYso
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: u2r6
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     BJ: Gq0Rw
     FPcPYvmbB7dAZe: Cy7WaeI
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: u2r6
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     uEVMkDkYRvnn: zvptNai
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: ADIhC
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: u2r6
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    BJ: Gq0Rw
-    FPcPYvmbB7dAZe: Cy7WaeI
-    uEVMkDkYRvnn: zvptNai
 data:
   config.yaml: |
     # from .Values.console.config
     {}
-  roles.yaml: |
-    roles:
-      - Dd: null
-        H0QLXtA: null
-  role-bindings.yaml: |
+  role-bindings.yaml: |-
     roleBindings:
-      - 2m: null
-        VNrY1fwY: null
-        eaGm2c: null
-      - Ng0sM: null
-        Txhv6: null
-        e2uo: null
+    - 2m: null
+      VNrY1fwY: null
+      eaGm2c: null
+    - Ng0sM: null
+      Txhv6: null
+      e2uo: null
+  roles.yaml: |-
+    roles:
+    - Dd: null
+      H0QLXtA: null
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    BJ: Gq0Rw
+    FPcPYvmbB7dAZe: Cy7WaeI
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: u2r6
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+    uEVMkDkYRvnn: zvptNai
+  name: ADIhC
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -14156,13 +14094,13 @@ metadata:
   name: ADIhC
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: u2r6
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     BJ: Gq0Rw
     FPcPYvmbB7dAZe: Cy7WaeI
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: u2r6
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     uEVMkDkYRvnn: zvptNai
 spec:
   type: At
@@ -14172,8 +14110,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: u2r6
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: u2r6
 ---
 # Source: console/templates/ingress.yaml
 apiVersion: networking.k8s.io/v1
@@ -14181,13 +14119,13 @@ kind: Ingress
 metadata:
   name: ADIhC
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: u2r6
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     BJ: Gq0Rw
     FPcPYvmbB7dAZe: Cy7WaeI
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: u2r6
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     uEVMkDkYRvnn: zvptNai
   annotations:
     "8": SeJ
@@ -14248,13 +14186,13 @@ metadata:
   name: "ADIhC-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: u2r6
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     BJ: Gq0Rw
     FPcPYvmbB7dAZe: Cy7WaeI
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: u2r6
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     uEVMkDkYRvnn: zvptNai
   annotations:
     "helm.sh/hook": test
@@ -14280,36 +14218,36 @@ metadata:
   name: fP77cJ3T
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: ld
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: ld
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: j1dUk8TGy8Np
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: ld
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    
 data:
   config.yaml: |
     # from .Values.console.config
     {}
-  roles.yaml: |
-    roles:
-      - {}
-  role-bindings.yaml: |
+  role-bindings.yaml: |-
     roleBindings:
-      - zn: null
-      - WCQKaiaj: null
-        py: null
+    - zn: null
+    - WCQKaiaj: null
+      py: null
+  roles.yaml: |-
+    roles:
+    - {}
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: ld
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  name: j1dUk8TGy8Np
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -14318,12 +14256,11 @@ metadata:
   name: j1dUk8TGy8Np
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: ld
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: ld
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   type: uqFB
   ports:
@@ -14332,8 +14269,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: ld
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: ld
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -14342,12 +14279,11 @@ metadata:
   name: "j1dUk8TGy8Np-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: ld
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: ld
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -14372,36 +14308,35 @@ metadata:
   name: 8s2qVhKEW
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: o2F37Lr
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: o2F37Lr
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     PPZDrdmxKV: UBjiSx
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: bbshm
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: o2F37Lr
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    
 data:
   config.yaml: |
     # from .Values.console.config
     {}
-  role-bindings.yaml: |
+  role-bindings.yaml: |-
     roleBindings:
-      - 6O4d: null
-        EY: null
-        oPTMvYGp: null
+    - 6O4d: null
+      EY: null
+      oPTMvYGp: null
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: o2F37Lr
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  name: bbshm
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -14410,12 +14345,11 @@ metadata:
   name: bbshm
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: o2F37Lr
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: o2F37Lr
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     4yhZo: zLVEslN
     Amz4VM: QAvK
@@ -14428,8 +14362,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: o2F37Lr
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: o2F37Lr
 ---
 # Source: console/templates/ingress.yaml
 apiVersion: networking.k8s.io/v1
@@ -14437,12 +14371,11 @@ kind: Ingress
 metadata:
   name: bbshm
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: o2F37Lr
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: o2F37Lr
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   ingressClassName: qyKUEOUT4u
   tls:
@@ -14466,21 +14399,22 @@ spec:
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: KchYZFsbB3
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 6sW
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    X: zjmrl
-    "Y": yG0
 data:
   config.yaml: |
     # from .Values.console.config
     {}
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    X: zjmrl
+    "Y": yG0
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: 6sW
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  name: KchYZFsbB3
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -14489,13 +14423,13 @@ metadata:
   name: KchYZFsbB3
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 6sW
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     X: zjmrl
     "Y": yG0
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: 6sW
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   type: oZi
   ports:
@@ -14504,8 +14438,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: 6sW
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: 6sW
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -14514,29 +14448,29 @@ metadata:
   name: KchYZFsbB3
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 6sW
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     X: zjmrl
     "Y": yG0
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: 6sW
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   replicas: 291
   selector:
     matchLabels:
-      app.kubernetes.io/name: 6sW
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: 6sW
   strategy:
     rollingUpdate: {}
     type: G阏发6s
   template:
     metadata:
       annotations:
-        checksum/config: 0ed9a4ae8e890e2c016911b3338075bc094c5585dcb577a40647196a8a1a0635
+        checksum/config: dff0fab931e7bb7494fa6014e25f7176a5fb85ebdff459c8190aff85fc59b267
       labels:
-        app.kubernetes.io/name: 6sW
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: 6sW
     spec:
       imagePullSecrets:
         - name: V1
@@ -15553,13 +15487,13 @@ metadata:
   name: "KchYZFsbB3-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 6sW
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     X: zjmrl
     "Y": yG0
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: 6sW
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -15584,13 +15518,13 @@ metadata:
   name: 0Z71mJNQUx
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: x
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     T1: pMf7C
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: x
+    app.kubernetes.io/version: v2.4.6
     cxAL7zvwvb: tmEjSXwTK6
+    helm.sh/chart: console-0.7.26
   annotations:
     5DCBJ96u: 12Himnm
     ZQrRxpb: Aa
@@ -15602,13 +15536,13 @@ kind: Secret
 metadata:
   name: Wq
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: x
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     T1: pMf7C
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: x
+    app.kubernetes.io/version: v2.4.6
     cxAL7zvwvb: tmEjSXwTK6
+    helm.sh/chart: console-0.7.26
 type: Opaque
 data:
   # Set empty defaults, so that we can always mount them as env variable even if they are not used.
@@ -15646,28 +15580,29 @@ data:
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: Wq
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: x
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    T1: pMf7C
-    cxAL7zvwvb: tmEjSXwTK6
 data:
   config.yaml: |
     # from .Values.console.config
     {}
-  roles.yaml: |
-    roles:
-      - {}
-  role-bindings.yaml: |
+  role-bindings.yaml: |-
     roleBindings:
-      - EQY9390E: null
-        WXyS: null
+    - EQY9390E: null
+      WXyS: null
+  roles.yaml: |-
+    roles:
+    - {}
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    T1: pMf7C
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: x
+    app.kubernetes.io/version: v2.4.6
+    cxAL7zvwvb: tmEjSXwTK6
+    helm.sh/chart: console-0.7.26
+  name: Wq
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -15676,13 +15611,13 @@ metadata:
   name: Wq
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: x
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     T1: pMf7C
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: x
+    app.kubernetes.io/version: v2.4.6
     cxAL7zvwvb: tmEjSXwTK6
+    helm.sh/chart: console-0.7.26
   annotations:
     Sxsz0HWh: z9cj
 spec:
@@ -15693,8 +15628,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: x
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: x
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -15703,30 +15638,30 @@ metadata:
   name: Wq
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: x
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     T1: pMf7C
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: x
+    app.kubernetes.io/version: v2.4.6
     cxAL7zvwvb: tmEjSXwTK6
+    helm.sh/chart: console-0.7.26
   annotations:
     I4K: K1yz
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: x
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: x
   strategy:
     rollingUpdate: {}
     type: 稫启玩ɡʂ56 龪o
   template:
     metadata:
       annotations:
-        checksum/config: beca9b6feff3b5defe6a9eada653af38ae24a90e75004538b19ea32bca0272b4
+        checksum/config: 0d82e2fde1f22e0c86b6b33ec5b4c43abdfb3cf7bc142ad2606472184c9eb11f
       labels:
-        app.kubernetes.io/name: x
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: x
     spec:
       imagePullSecrets:
         - name: pYNs
@@ -16281,13 +16216,13 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: Wq
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: x
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     T1: pMf7C
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: x
+    app.kubernetes.io/version: v2.4.6
     cxAL7zvwvb: tmEjSXwTK6
+    helm.sh/chart: console-0.7.26
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -16315,13 +16250,13 @@ kind: Ingress
 metadata:
   name: Wq
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: x
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     T1: pMf7C
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: x
+    app.kubernetes.io/version: v2.4.6
     cxAL7zvwvb: tmEjSXwTK6
+    helm.sh/chart: console-0.7.26
   annotations:
     1N9: nqag0f
     CqG: yYPc
@@ -16343,35 +16278,36 @@ spec:
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: eHZ
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 84QIe
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    "": vWjW
-    G: qF
 data:
   config.yaml: |
     # from .Values.console.config
     {}
-  roles.yaml: |
-    roles:
-      - {}
-      - {}
-  role-bindings.yaml: |
+  role-bindings.yaml: |-
     roleBindings:
-      - 9t: null
-        r6: null
-      - 4sTYMmg: null
-        EcUWAEWYG: null
-        MqbJlJCx2: null
-      - "": null
-        Fv: null
-        aaQShLuVz7p: null
+    - 9t: null
+      r6: null
+    - 4sTYMmg: null
+      EcUWAEWYG: null
+      MqbJlJCx2: null
+    - "": null
+      Fv: null
+      aaQShLuVz7p: null
+  roles.yaml: |-
+    roles:
+    - {}
+    - {}
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    "": vWjW
+    G: qF
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: 84QIe
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  name: eHZ
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -16380,13 +16316,13 @@ metadata:
   name: eHZ
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 84QIe
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     "": vWjW
     G: qF
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: 84QIe
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   type: uTyclgj9tVV
   ports:
@@ -16395,8 +16331,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: 84QIe
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: 84QIe
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -16405,13 +16341,13 @@ metadata:
   name: eHZ
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 84QIe
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     "": vWjW
     G: qF
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: 84QIe
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     QzE: rboFjNqRAR
     Sb: iU7Dmm0z
@@ -16419,21 +16355,21 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: 84QIe
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: 84QIe
   strategy:
     rollingUpdate: {}
     type: ĸ鍽3ɨ勍Ȱ¦T搟
   template:
     metadata:
       annotations:
-        checksum/config: fd4936b87d0ae26e6cd87c9759a4a7b3e83974e508d6ff06262481a21c76cc7f
+        checksum/config: 3d6b9359c2bd779f4e94999e65bcd28a7ae5b76e4cc04e42fdd0be1d11c4f178
         JkW1: feghYA7
         okSVM8H: 7Pau
         yYrmYn: uT
       labels:
-        app.kubernetes.io/name: 84QIe
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: 84QIe
         b4I: j707zvg
         eyn1: gqdp7
         sWR: MV07t
@@ -17333,13 +17269,13 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: eHZ
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 84QIe
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     "": vWjW
     G: qF
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: 84QIe
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -17368,13 +17304,13 @@ metadata:
   name: "eHZ-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 84QIe
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     "": vWjW
     G: qF
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: 84QIe
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -17395,11 +17331,11 @@ metadata:
   name: Gma
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: console
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -17408,12 +17344,11 @@ metadata:
   name: y0pa6pm83
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: console
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   type: 9TsjJQkJZ
   ports:
@@ -17422,8 +17357,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: console
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: console
 ---
 # Source: console/templates/ingress.yaml
 apiVersion: networking.k8s.io/v1
@@ -17431,12 +17366,11 @@ kind: Ingress
 metadata:
   name: y0pa6pm83
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: console
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     GOF: Fk7wcu
     J2: ViiBwn6
@@ -17478,45 +17412,46 @@ metadata:
   name: W9k
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: tvDI
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     BvJq2xZ: jY6O0
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: tvDI
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: resP
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: tvDI
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    BvJq2xZ: jY6O0
 data:
   config.yaml: |
     # from .Values.console.config
     {}
-  roles.yaml: |
-    roles:
-      - 0NpG04j: null
-        UxtPt: null
-        l5dMdK: null
-      - J9: null
-        MzWfEl: null
-        yNu: null
-      - "": null
-        Pv: null
-        tGJIDyXG: null
-  role-bindings.yaml: |
+  role-bindings.yaml: |-
     roleBindings:
-      - UiHg9: null
-      - "": null
-        mAYLjAybA: null
+    - UiHg9: null
+    - "": null
+      mAYLjAybA: null
+  roles.yaml: |-
+    roles:
+    - 0NpG04j: null
+      UxtPt: null
+      l5dMdK: null
+    - J9: null
+      MzWfEl: null
+      yNu: null
+    - "": null
+      Pv: null
+      tGJIDyXG: null
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    BvJq2xZ: jY6O0
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: tvDI
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  name: resP
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -17525,12 +17460,12 @@ metadata:
   name: resP
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: tvDI
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     BvJq2xZ: jY6O0
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: tvDI
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     CRHNsVY: Nl04
 spec:
@@ -17541,8 +17476,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: tvDI
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: tvDI
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -17551,12 +17486,12 @@ metadata:
   name: resP
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: tvDI
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     BvJq2xZ: jY6O0
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: tvDI
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     4i: zwiMMKf
     ZTKUDg2t: qHc7
@@ -17565,19 +17500,19 @@ spec:
   replicas: 410
   selector:
     matchLabels:
-      app.kubernetes.io/name: tvDI
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: tvDI
   strategy:
     rollingUpdate: {}
     type: ɬdW5f
   template:
     metadata:
       annotations:
-        checksum/config: de2646d3e9cbd719b4620164d9a192d1287a52534d971c7f190014f72e9c3045
+        checksum/config: 8f7676e0df832184e0916b2ba205f45e5a8ebaa801a4f4605b368e42de22af8a
         N0F: vSjZxkjW
       labels:
-        app.kubernetes.io/name: tvDI
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: tvDI
         K1uahi: UMygEU2O2
         ecdKkB: "1"
     spec:
@@ -18208,12 +18143,12 @@ metadata:
   name: "resP-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: tvDI
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     BvJq2xZ: jY6O0
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: tvDI
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -18234,12 +18169,12 @@ metadata:
   name: nX5G
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: tOoxEiwdVpT
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     M1diW: PVb
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: tOoxEiwdVpT
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "": zL
     EANkzh: rmy
@@ -18250,12 +18185,12 @@ kind: Secret
 metadata:
   name: 9gCm5xz
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: tOoxEiwdVpT
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     M1diW: PVb
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: tOoxEiwdVpT
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 type: Opaque
 data:
   # Set empty defaults, so that we can always mount them as env variable even if they are not used.
@@ -18298,12 +18233,12 @@ metadata:
   name: 9gCm5xz
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: tOoxEiwdVpT
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     M1diW: PVb
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: tOoxEiwdVpT
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   type: C
   ports:
@@ -18312,8 +18247,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: tOoxEiwdVpT
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: tOoxEiwdVpT
 ---
 # Source: console/templates/hpa.yaml
 apiVersion: autoscaling/v2
@@ -18321,12 +18256,12 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: 9gCm5xz
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: tOoxEiwdVpT
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     M1diW: PVb
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: tOoxEiwdVpT
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -18354,12 +18289,12 @@ kind: Ingress
 metadata:
   name: 9gCm5xz
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: tOoxEiwdVpT
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     M1diW: PVb
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: tOoxEiwdVpT
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   ingressClassName: y6u9o
   tls:
@@ -18400,12 +18335,12 @@ metadata:
   name: "9gCm5xz-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: tOoxEiwdVpT
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     M1diW: PVb
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: tOoxEiwdVpT
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
@@ -18427,12 +18362,12 @@ kind: Secret
 metadata:
   name: fB6TF
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: console
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     "": WcYTY
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     rHtDM6k: ZY6Kw
 type: Opaque
 data:
@@ -18476,12 +18411,12 @@ metadata:
   name: fB6TF
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: console
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     "": WcYTY
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     rHtDM6k: ZY6Kw
   annotations:
     aDeGG7F9S: 5d
@@ -18493,8 +18428,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: console
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: console
 ---
 # Source: console/templates/ingress.yaml
 apiVersion: networking.k8s.io/v1
@@ -18502,12 +18437,12 @@ kind: Ingress
 metadata:
   name: fB6TF
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: console
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     "": WcYTY
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     rHtDM6k: ZY6Kw
   annotations:
     A4M6T: IUmZ9
@@ -18546,12 +18481,11 @@ metadata:
   name: DSw7
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: nEojiMtRc
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: nEojiMtRc
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     DQxrtk8: buiWLPbYq
     HHbP: sAY
@@ -18564,12 +18498,11 @@ metadata:
   name: YUi5JpG
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: nEojiMtRc
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: nEojiMtRc
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     8v2: JbH
     95cxbjjD7C: JBMaJ
@@ -18582,8 +18515,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: nEojiMtRc
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: nEojiMtRc
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -18592,31 +18525,30 @@ metadata:
   name: YUi5JpG
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: nEojiMtRc
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: nEojiMtRc
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     Bx5i3M: s
     svlaTGpSHD: 7P9k
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: nEojiMtRc
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: nEojiMtRc
   strategy:
     rollingUpdate: {}
     type: żʧȟ
   template:
     metadata:
       annotations:
-        checksum/config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+        checksum/config: 75a11da44c802486bc6f65640aa48a730f0f684c5c07a42ba3cd1735eb3fb070
         Mfsd: hmi
       labels:
-        app.kubernetes.io/name: nEojiMtRc
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: nEojiMtRc
         6dZAs: xJPaLHKS1Y2
     spec:
       serviceAccountName: DSw7
@@ -19219,12 +19151,11 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: YUi5JpG
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: nEojiMtRc
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: nEojiMtRc
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -19255,40 +19186,41 @@ metadata:
   name: sKa
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: W7q3X
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     4kU: mkn8
     Ro: NFx1P
     Z1p: WE
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: W7q3X
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: 3um
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: W7q3X
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    4kU: mkn8
-    Ro: NFx1P
-    Z1p: WE
 data:
   config.yaml: |
     # from .Values.console.config
     {}
-  role-bindings.yaml: |
+  role-bindings.yaml: |-
     roleBindings:
-      - FZ5NQS6: null
-      - 0ToI: null
-        RTwav: null
-        mWwdgyM: null
-      - {}
+    - FZ5NQS6: null
+    - 0ToI: null
+      RTwav: null
+      mWwdgyM: null
+    - {}
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    4kU: mkn8
+    Ro: NFx1P
+    Z1p: WE
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: W7q3X
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  name: 3um
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -19297,14 +19229,14 @@ metadata:
   name: 3um
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: W7q3X
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     4kU: mkn8
     Ro: NFx1P
     Z1p: WE
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: W7q3X
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     c: DNy
     kDPtPpnL: kFmmx
@@ -19316,8 +19248,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: W7q3X
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: W7q3X
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -19326,34 +19258,34 @@ metadata:
   name: 3um
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: W7q3X
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     4kU: mkn8
     Ro: NFx1P
     Z1p: WE
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: W7q3X
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     Dgw3Wl: 7aofTp
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: W7q3X
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: W7q3X
   strategy:
     rollingUpdate: {}
     type: 顓ǝSm
   template:
     metadata:
       annotations:
-        checksum/config: 00d51646905823a3386370877764399cc28dbd3918d73b9a9777fb871108bde9
+        checksum/config: 08790559d3cd34911fc6404ae81724c86f5bee30d04ffcf6f29ad15094c15432
         eG: vxInc0
         g: BI6yk
         xCtSP: rQ
       labels:
-        app.kubernetes.io/name: W7q3X
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: W7q3X
         ZEXh: zufy
     spec:
       serviceAccountName: sKa
@@ -20145,14 +20077,14 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: 3um
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: W7q3X
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     4kU: mkn8
     Ro: NFx1P
     Z1p: WE
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: W7q3X
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -20183,13 +20115,13 @@ metadata:
   name: z12W
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 8dJzE
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     0HYkOrz: JCwpSW
     0TgDztQSY: P
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: 8dJzE
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     ztm: qegfb80
   annotations:
     5bpPp: ponDVyZ
@@ -20202,13 +20134,13 @@ kind: Secret
 metadata:
   name: 0BIfuN
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 8dJzE
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     0HYkOrz: JCwpSW
     0TgDztQSY: P
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: 8dJzE
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     ztm: qegfb80
 type: Opaque
 data:
@@ -20252,13 +20184,13 @@ metadata:
   name: 0BIfuN
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 8dJzE
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     0HYkOrz: JCwpSW
     0TgDztQSY: P
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: 8dJzE
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     ztm: qegfb80
   annotations:
     L: CP
@@ -20272,8 +20204,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: 8dJzE
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: 8dJzE
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -20282,33 +20214,33 @@ metadata:
   name: 0BIfuN
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 8dJzE
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     0HYkOrz: JCwpSW
     0TgDztQSY: P
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: 8dJzE
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     ztm: qegfb80
   annotations:
     BceQMZiOm: E1uakdHPkLNL
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: 8dJzE
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: 8dJzE
   strategy:
     rollingUpdate: {}
     type: 擺m鷾ǅPĨ
   template:
     metadata:
       annotations:
-        checksum/config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+        checksum/config: 75a11da44c802486bc6f65640aa48a730f0f684c5c07a42ba3cd1735eb3fb070
         "": cuRn
         qBdeU: EQv
       labels:
-        app.kubernetes.io/name: 8dJzE
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: 8dJzE
         O2n4u: kpFpu
         g1c: XEOMg
     spec:
@@ -21083,13 +21015,13 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: 0BIfuN
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 8dJzE
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     0HYkOrz: JCwpSW
     0TgDztQSY: P
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: 8dJzE
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     ztm: qegfb80
 spec:
   scaleTargetRef:
@@ -21119,13 +21051,13 @@ metadata:
   name: "0BIfuN-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: 8dJzE
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
     0HYkOrz: JCwpSW
     0TgDztQSY: P
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: 8dJzE
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
     ztm: qegfb80
   annotations:
     "helm.sh/hook": test
@@ -21139,7 +21071,7 @@ spec:
       args: ['0BIfuN:269']
   restartPolicy: Never
   priorityClassName: JhGfjGXQ
--- testdata/default-values.yaml.golden --
+-- testdata/console-with-role-bindings.yaml.golden --
 ---
 # Source: console/templates/serviceaccount.yaml
 apiVersion: v1
@@ -21149,11 +21081,11 @@ metadata:
   name: console
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: console
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 ---
 # Source: console/templates/secret.yaml
 apiVersion: v1
@@ -21161,12 +21093,11 @@ kind: Secret
 metadata:
   name: console
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: console
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 type: Opaque
 data:
   # Set empty defaults, so that we can always mount them as env variable even if they are not used.
@@ -21204,20 +21135,29 @@ data:
 ---
 # Source: console/templates/configmap.yaml
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: console
-  labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: console
-    app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
-    app.kubernetes.io/managed-by: Helm
-    
 data:
   config.yaml: |
     # from .Values.console.config
     {}
+  role-bindings.yaml: |-
+    roleBindings:
+    - metadata:
+        name: Redpanda POC
+      roleName: admin
+      subjects:
+      - kind: user
+        name: e2euser
+        provider: Plain
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  name: console
 ---
 # Source: console/templates/service.yaml
 apiVersion: v1
@@ -21226,12 +21166,11 @@ metadata:
   name: console
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: console
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   type: ClusterIP
   ports:
@@ -21240,8 +21179,8 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: console
     app.kubernetes.io/instance: console
+    app.kubernetes.io/name: console
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -21250,25 +21189,24 @@ metadata:
   name: console
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: console
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: console
       app.kubernetes.io/instance: console
+      app.kubernetes.io/name: console
   template:
     metadata:
       annotations:
-        checksum/config: 754065fbba04183a6c598dcf2375209987651a2fe1c2b02631139eb2f531116d
+        checksum/config: 2df39d507eb0651da387d67f1ecabba89a370280ac84c0b20301cd2e4387f3c1
       labels:
-        app.kubernetes.io/name: console
         app.kubernetes.io/instance: console
+        app.kubernetes.io/name: console
     spec:
       serviceAccountName: console
       automountServiceAccountToken: true
@@ -21336,12 +21274,669 @@ metadata:
   name: "console-test-connection"
   namespace: "default"
   labels:
-    helm.sh/chart: console-0.7.26
-    app.kubernetes.io/name: console
     app.kubernetes.io/instance: console
-    app.kubernetes.io/version: "v2.4.6"
     app.kubernetes.io/managed-by: Helm
-    
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['console:8080']
+  restartPolicy: Never
+  priorityClassName:
+-- testdata/console-with-roles-and-bindings.yaml.golden --
+---
+# Source: console/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+automountServiceAccountToken: true
+metadata:
+  name: console
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+---
+# Source: console/templates/secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: console
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+type: Opaque
+data:
+  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
+  # For this reason we can't use `with` to change the scope.
+  # Kafka
+  kafka-sasl-password: ""
+  kafka-protobuf-git-basicauth-password: ""
+  kafka-sasl-aws-msk-iam-secret-key: ""
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
+  kafka-schema-registry-password: ""
+  kafka-schemaregistry-tls-ca: ""
+  kafka-schemaregistry-tls-cert: ""
+  kafka-schemaregistry-tls-key: ""
+
+  # Login
+  login-jwt-secret: "U0VDUkVUS0VZ"
+  login-google-oauth-client-secret: ""
+  login-google-groups-service-account.json: ""
+  login-github-oauth-client-secret: ""
+  login-github-personal-access-token: ""
+  login-okta-client-secret: ""
+  login-okta-directory-api-token: ""
+  login-oidc-client-secret: ""
+
+  # Enterprise
+  enterprise-license: ""
+
+  # Redpanda
+  redpanda-admin-api-password: ""
+  redpanda-admin-api-tls-ca: ""
+  redpanda-admin-api-tls-cert: ""
+  redpanda-admin-api-tls-key: ""
+---
+# Source: console/templates/configmap.yaml
+apiVersion: v1
+data:
+  config.yaml: |
+    # from .Values.console.config
+    {}
+  role-bindings.yaml: |-
+    roleBindings:
+    - metadata:
+        name: Redpanda POC
+      roleName: admin
+      subjects:
+      - kind: user
+        name: e2euser
+        provider: Plain
+  roles.yaml: |-
+    roles:
+    - name: my-role
+      permissions:
+      - allowedActions:
+        - '*'
+        excludes:
+        - '*'
+        includes:
+        - '*'
+        resource: 1234
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  name: console
+---
+# Source: console/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: console
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/name: console
+---
+# Source: console/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: console
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: console
+      app.kubernetes.io/name: console
+  template:
+    metadata:
+      annotations:
+        checksum/config: ff1b43cd261e195cd121483c66ba10399fbc297256bed69087dd5ec8f019c3a4
+      labels:
+        app.kubernetes.io/instance: console
+        app.kubernetes.io/name: console
+    spec:
+      serviceAccountName: console
+      automountServiceAccountToken: true
+      securityContext:
+        fsGroup: 99
+        runAsUser: 99
+      volumes:
+        - name: configs
+          configMap:
+            name: console
+        - name: secrets
+          secret:
+            secretName: console
+      containers:
+        - name: console
+          args:
+            - "--config.filepath=/etc/console/configs/config.yaml"
+          securityContext:
+            runAsNonRoot: true
+          image: docker.redpanda.com/redpandadata/console:v2.4.6
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          volumeMounts:
+            - name: configs
+              mountPath: /etc/console/configs
+              readOnly: true
+            - name: secrets
+              mountPath: /etc/console/secrets
+              readOnly: true
+          livenessProbe:
+            initialDelaySeconds: 0
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+            httpGet:
+              path: /admin/health
+              port: http
+          readinessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+            httpGet:
+              path: /admin/health
+              port: http
+          resources:
+            {}
+          env:
+            - name: LOGIN_JWTSECRET
+              valueFrom:
+                secretKeyRef:
+                  name: console
+                  key: login-jwt-secret
+      priorityClassName:
+---
+# Source: console/templates/tests/test-connection.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "console-test-connection"
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['console:8080']
+  restartPolicy: Never
+  priorityClassName:
+-- testdata/console-with-roles.yaml.golden --
+---
+# Source: console/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+automountServiceAccountToken: true
+metadata:
+  name: console
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+---
+# Source: console/templates/secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: console
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+type: Opaque
+data:
+  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
+  # For this reason we can't use `with` to change the scope.
+  # Kafka
+  kafka-sasl-password: ""
+  kafka-protobuf-git-basicauth-password: ""
+  kafka-sasl-aws-msk-iam-secret-key: ""
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
+  kafka-schema-registry-password: ""
+  kafka-schemaregistry-tls-ca: ""
+  kafka-schemaregistry-tls-cert: ""
+  kafka-schemaregistry-tls-key: ""
+
+  # Login
+  login-jwt-secret: "U0VDUkVUS0VZ"
+  login-google-oauth-client-secret: ""
+  login-google-groups-service-account.json: ""
+  login-github-oauth-client-secret: ""
+  login-github-personal-access-token: ""
+  login-okta-client-secret: ""
+  login-okta-directory-api-token: ""
+  login-oidc-client-secret: ""
+
+  # Enterprise
+  enterprise-license: ""
+
+  # Redpanda
+  redpanda-admin-api-password: ""
+  redpanda-admin-api-tls-ca: ""
+  redpanda-admin-api-tls-cert: ""
+  redpanda-admin-api-tls-key: ""
+---
+# Source: console/templates/configmap.yaml
+apiVersion: v1
+data:
+  config.yaml: |
+    # from .Values.console.config
+    {}
+  roles.yaml: |-
+    roles:
+    - name: my-role
+      permissions:
+      - allowedActions:
+        - '*'
+        excludes:
+        - '*'
+        includes:
+        - '*'
+        resource: 1234
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  name: console
+---
+# Source: console/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: console
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/name: console
+---
+# Source: console/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: console
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: console
+      app.kubernetes.io/name: console
+  template:
+    metadata:
+      annotations:
+        checksum/config: cdaa764b46555faa150a0d51a412ecc2bc58a3cdc03f1171e768b555ef3833ad
+      labels:
+        app.kubernetes.io/instance: console
+        app.kubernetes.io/name: console
+    spec:
+      serviceAccountName: console
+      automountServiceAccountToken: true
+      securityContext:
+        fsGroup: 99
+        runAsUser: 99
+      volumes:
+        - name: configs
+          configMap:
+            name: console
+        - name: secrets
+          secret:
+            secretName: console
+      containers:
+        - name: console
+          args:
+            - "--config.filepath=/etc/console/configs/config.yaml"
+          securityContext:
+            runAsNonRoot: true
+          image: docker.redpanda.com/redpandadata/console:v2.4.6
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          volumeMounts:
+            - name: configs
+              mountPath: /etc/console/configs
+              readOnly: true
+            - name: secrets
+              mountPath: /etc/console/secrets
+              readOnly: true
+          livenessProbe:
+            initialDelaySeconds: 0
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+            httpGet:
+              path: /admin/health
+              port: http
+          readinessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+            httpGet:
+              path: /admin/health
+              port: http
+          resources:
+            {}
+          env:
+            - name: LOGIN_JWTSECRET
+              valueFrom:
+                secretKeyRef:
+                  name: console
+                  key: login-jwt-secret
+      priorityClassName:
+---
+# Source: console/templates/tests/test-connection.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "console-test-connection"
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['console:8080']
+  restartPolicy: Never
+  priorityClassName:
+-- testdata/default-values.yaml.golden --
+---
+# Source: console/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+automountServiceAccountToken: true
+metadata:
+  name: console
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+---
+# Source: console/templates/secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: console
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+type: Opaque
+data:
+  # Set empty defaults, so that we can always mount them as env variable even if they are not used.
+  # For this reason we can't use `with` to change the scope.
+  # Kafka
+  kafka-sasl-password: ""
+  kafka-protobuf-git-basicauth-password: ""
+  kafka-sasl-aws-msk-iam-secret-key: ""
+  kafka-tls-ca: ""
+  kafka-tls-cert: ""
+  kafka-tls-key: ""
+  kafka-schema-registry-password: ""
+  kafka-schemaregistry-tls-ca: ""
+  kafka-schemaregistry-tls-cert: ""
+  kafka-schemaregistry-tls-key: ""
+
+  # Login
+  login-jwt-secret: "U0VDUkVUS0VZ"
+  login-google-oauth-client-secret: ""
+  login-google-groups-service-account.json: ""
+  login-github-oauth-client-secret: ""
+  login-github-personal-access-token: ""
+  login-okta-client-secret: ""
+  login-okta-directory-api-token: ""
+  login-oidc-client-secret: ""
+
+  # Enterprise
+  enterprise-license: ""
+
+  # Redpanda
+  redpanda-admin-api-password: ""
+  redpanda-admin-api-tls-ca: ""
+  redpanda-admin-api-tls-cert: ""
+  redpanda-admin-api-tls-key: ""
+---
+# Source: console/templates/configmap.yaml
+apiVersion: v1
+data:
+  config.yaml: |
+    # from .Values.console.config
+    {}
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+  name: console
+---
+# Source: console/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: console
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/name: console
+---
+# Source: console/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: console
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: console
+      app.kubernetes.io/name: console
+  template:
+    metadata:
+      annotations:
+        checksum/config: 50beddb00d4430eeafe26ede2549f0db2164f7529eaee06633bac7d98bd60eab
+      labels:
+        app.kubernetes.io/instance: console
+        app.kubernetes.io/name: console
+    spec:
+      serviceAccountName: console
+      automountServiceAccountToken: true
+      securityContext:
+        fsGroup: 99
+        runAsUser: 99
+      volumes:
+        - name: configs
+          configMap:
+            name: console
+        - name: secrets
+          secret:
+            secretName: console
+      containers:
+        - name: console
+          args:
+            - "--config.filepath=/etc/console/configs/config.yaml"
+          securityContext:
+            runAsNonRoot: true
+          image: docker.redpanda.com/redpandadata/console:v2.4.6
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          volumeMounts:
+            - name: configs
+              mountPath: /etc/console/configs
+              readOnly: true
+            - name: secrets
+              mountPath: /etc/console/secrets
+              readOnly: true
+          livenessProbe:
+            initialDelaySeconds: 0
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+            httpGet:
+              path: /admin/health
+              port: http
+          readinessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 3
+            httpGet:
+              path: /admin/health
+              port: http
+          resources:
+            {}
+          env:
+            - name: LOGIN_JWTSECRET
+              valueFrom:
+                secretKeyRef:
+                  name: console
+                  key: login-jwt-secret
+      priorityClassName:
+---
+# Source: console/templates/tests/test-connection.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "console-test-connection"
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: console
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.4.6
+    helm.sh/chart: console-0.7.26
   annotations:
     "helm.sh/hook": test
 spec:
