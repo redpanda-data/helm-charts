@@ -96,11 +96,11 @@ type IngressPath struct {
 }
 
 type AutoScaling struct {
-	Enabled                           bool `json:"enabled"`
-	MinReplicas                       int  `json:"minReplicas"`
-	MaxReplicas                       int  `json:"maxReplicas"`
-	TargetCPUUtilizationPercentage    int  `json:"targetCPUUtilizationPercentage"`
-	TargetMemoryUtilizationPercentage *int `json:"targetMemoryUtilizationPercentage,omitempty"`
+	Enabled                           bool   `json:"enabled"`
+	MinReplicas                       int32  `json:"minReplicas"`
+	MaxReplicas                       int32  `json:"maxReplicas"`
+	TargetCPUUtilizationPercentage    *int32 `json:"targetCPUUtilizationPercentage"`
+	TargetMemoryUtilizationPercentage *int32 `json:"targetMemoryUtilizationPercentage,omitempty"`
 }
 
 // TODO the typing of these values are unclear. All of them get marshalled to
