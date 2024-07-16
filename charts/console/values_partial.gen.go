@@ -83,11 +83,11 @@ type PartialIngress struct {
 }
 
 type PartialAutoScaling struct {
-	Enabled                           *bool "json:\"enabled,omitempty\""
-	MinReplicas                       *int  "json:\"minReplicas,omitempty\""
-	MaxReplicas                       *int  "json:\"maxReplicas,omitempty\""
-	TargetCPUUtilizationPercentage    *int  "json:\"targetCPUUtilizationPercentage,omitempty\""
-	TargetMemoryUtilizationPercentage *int  "json:\"targetMemoryUtilizationPercentage,omitempty\""
+	Enabled                           *bool  "json:\"enabled,omitempty\""
+	MinReplicas                       *int32 "json:\"minReplicas,omitempty\""
+	MaxReplicas                       *int32 "json:\"maxReplicas,omitempty\""
+	TargetCPUUtilizationPercentage    *int32 "json:\"targetCPUUtilizationPercentage,omitempty\""
+	TargetMemoryUtilizationPercentage *int32 "json:\"targetMemoryUtilizationPercentage,omitempty\""
 }
 
 type PartialConsole struct {

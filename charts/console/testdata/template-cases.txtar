@@ -47,3 +47,24 @@ console:
       - kind: user
         provider: Plain
         name: "e2euser"
+
+-- autoscaling-nulls --
+# Autoscaling w/ explicit nulls
+autoscaling:
+  enabled: true
+  targetCPUUtilizationPercentage: null
+  targetMemoryUtilizationPercentage: null
+
+-- autoscaling-cpu --
+# Autoscaling w/ memory no cpu
+autoscaling:
+  enabled: true
+  targetCPUUtilizationPercentage: null
+  targetMemoryUtilizationPercentage: 10
+
+-- autoscaling-memory --
+# Autoscaling w/ cpu no memory
+autoscaling:
+  enabled: true
+  targetCPUUtilizationPercentage: 14
+  targetMemoryUtilizationPercentage: null
