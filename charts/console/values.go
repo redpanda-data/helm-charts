@@ -9,8 +9,13 @@ import (
 	networkingv1 "k8s.io/api/networking/v1"
 )
 
-//go:embed values.yaml
-var DefaultValuesYAML []byte
+var (
+	//go:embed values.yaml
+	DefaultValuesYAML []byte
+
+	//go:embed values.schema.json
+	ValuesSchemaJSON []byte
+)
 
 type Values struct {
 	ReplicaCount                 int                               `json:"replicaCount"`
