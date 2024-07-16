@@ -24,7 +24,7 @@ type Values struct {
 	NameOverride                 string                            `json:"nameOverride"`
 	FullnameOverride             string                            `json:"fullnameOverride"`
 	AutomountServiceAccountToken bool                              `json:"automountServiceAccountToken"`
-	ServiceAccount               ServiceAccount                    `json:"serviceAccount"`
+	ServiceAccount               ServiceAccountConfig              `json:"serviceAccount"`
 	CommonLabels                 map[string]string                 `json:"commonLabels"`
 	Annotations                  map[string]string                 `json:"annotations"`
 	PodAnnotations               map[string]string                 `json:"podAnnotations"`
@@ -62,7 +62,7 @@ type Enterprise struct {
 	LicenseSecretRef SecretKeyRef `json:"licenseSecretRef"`
 }
 
-type ServiceAccount struct {
+type ServiceAccountConfig struct {
 	Create                       bool              `json:"create"`
 	AutomountServiceAccountToken bool              `json:"automountServiceAccountToken"`
 	Annotations                  map[string]string `json:"annotations"`

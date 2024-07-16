@@ -18,7 +18,7 @@ type PartialValues struct {
 	NameOverride                 *string                           "json:\"nameOverride,omitempty\""
 	FullnameOverride             *string                           "json:\"fullnameOverride,omitempty\""
 	AutomountServiceAccountToken *bool                             "json:\"automountServiceAccountToken,omitempty\""
-	ServiceAccount               *PartialServiceAccount            "json:\"serviceAccount,omitempty\""
+	ServiceAccount               *PartialServiceAccountConfig      "json:\"serviceAccount,omitempty\""
 	CommonLabels                 map[string]string                 "json:\"commonLabels,omitempty\""
 	Annotations                  map[string]string                 "json:\"annotations,omitempty\""
 	PodAnnotations               map[string]string                 "json:\"podAnnotations,omitempty\""
@@ -59,7 +59,7 @@ type PartialImage struct {
 	Tag        *string            "json:\"tag,omitempty\""
 }
 
-type PartialServiceAccount struct {
+type PartialServiceAccountConfig struct {
 	Create                       *bool             "json:\"create,omitempty\""
 	AutomountServiceAccountToken *bool             "json:\"automountServiceAccountToken,omitempty\""
 	Annotations                  map[string]string "json:\"annotations,omitempty\""
