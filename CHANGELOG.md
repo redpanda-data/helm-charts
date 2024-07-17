@@ -61,6 +61,7 @@
 #### Added
 #### Changed
 #### Fixed
+* Added missing permissions for the NodeWatcher controller (`rbac.createAdditionalControllerCRs`)
 #### Removed
 
 ## Connectors Chart
