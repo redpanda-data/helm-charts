@@ -16,7 +16,7 @@ spec:
         external: {}
         port: 9644
         tls:
-          # TODO(chrisseto): Uncomment this once the redpanda chart is fixed.
+          # TODO(chrisseto): Uncomment once #1428 is released
           # cert: ""
           enabled: false
           requireClientAuth: false
@@ -27,7 +27,7 @@ spec:
         kafkaEndpoint: kafka-default
         port: 8082
         tls:
-          # TODO(chrisseto): Uncomment this once the redpanda chart is fixed.
+          # TODO(chrisseto): Uncomment once #1428 is released
           # cert: ""
           enabled: false
           requireClientAuth: false

@@ -1184,7 +1184,7 @@ spec:
           if [ -d "/etc/secrets/users/" ]; then
               IFS=":" read -r USER_NAME PASSWORD MECHANISM < <(grep "" $(find /etc/secrets/users/* -print))
               curl -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors --ssl-reqd \
-              --cacert /etc/tls/certs/default/ca.crt \
+               \
               -X PUT -u ${USER_NAME}:${PASSWORD} \
               http://redpanda.default.svc.cluster.local.:9644/v1/debug/restart_service?service=schema-registry || true
           fi
