@@ -363,4 +363,23 @@ rules:
     - update
     - watch
     - delete
+# Read-Only access to Secrets and Configmaps is required for the NodeWatcher
+# controller to work appropriately due to the usage of helm to retrieve values.
+- apiGroups:
+    - ""
+  resources:
+    - secrets
+    - configmaps
+  verbs:
+    - get
+    - list
+    - watch
+- apiGroups:
+    - ""
+  resources:
+    - persistentvolumes
+  verbs:
+    - get
+    - list
+    - watch
 {{- end }}
