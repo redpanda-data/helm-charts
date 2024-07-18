@@ -97,3 +97,40 @@ ingress:
  - secretName: my-secret
    hosts:
    - '{{ "blah" | quote }}'
+
+-- no-registry --
+image:
+  registry: ""
+
+-- custom-tag-no-registry --
+image:
+  registry: ""
+  tag: my-custom-tag
+
+-- console-config-listen-port --
+console:
+  config:
+    server:
+      listenPort: 3333
+
+-- console-config-listen-and-target-port --
+service:
+  targetPort: 4444
+console:
+  config:
+    server:
+      listenPort: 3333
+
+-- extra-init-containers --
+# NB: Many of the generated tests have an invalid value for extraInitContainers
+# as it's just a string and render an error message. This case showcases what
+# valid YAML looks like.
+initContainers:
+  extraInitContainers: |-
+   - name: {{ "test-init-container" | quote }}
+     image: "mintel/docker-alpine-bash-curl-jq:latest"
+     command: [ "/bin/bash", "-c" ]
+     args:
+       - |
+         set -xe
+         echo "Hello {{ add 1 2 }}!"

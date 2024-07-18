@@ -92,6 +92,10 @@
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/console-FILLMEIN) - YYYY-MM-DD
 #### Added
 #### Changed
+* `initContainers.extraInitContainers` is now pre-processed as YAML by the
+  chart. Invalid YAML will instead be rendered as an error messages instead of
+  invalid YAML.
+
 #### Fixed
 #### Removed
 * Support for Kubernetes versions < 1.21 have been dropped.
