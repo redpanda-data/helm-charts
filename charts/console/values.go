@@ -18,7 +18,7 @@ var (
 )
 
 type Values struct {
-	ReplicaCount                 int                               `json:"replicaCount"`
+	ReplicaCount                 int32                             `json:"replicaCount"`
 	Image                        Image                             `json:"image"`
 	ImagePullSecrets             []corev1.LocalObjectReference     `json:"imagePullSecrets"`
 	NameOverride                 string                            `json:"nameOverride"`
@@ -53,9 +53,15 @@ type Values struct {
 	LivenessProbe                corev1.Probe                      `json:"livenessProbe"`
 	ReadinessProbe               corev1.Probe                      `json:"readinessProbe"`
 	ConfigMap                    Creatable                         `json:"configmap"`
-	Deployment                   Creatable                         `json:"deployment"`
+	Deployment                   DeploymentConfig                  `json:"deployment"`
 	Strategy                     appsv1.DeploymentStrategy         `json:"strategy"`
 	Tests                        Enableable                        `json:"tests"`
+}
+
+type DeploymentConfig struct {
+	Create    bool     `json:"create"`
+	Command   []string `json:"command,omitempty"`
+	ExtraArgs []string `json:"extraArgs,omitempty"`
 }
 
 type Enterprise struct {
@@ -107,7 +113,7 @@ type AutoScaling struct {
 // YAML and then run through tpl which gives no indication of what they are
 // aside from YAML marshal-able.
 type Console struct {
-	Config       any              `json:"config"`
+	Config       map[string]any   `json:"config"`
 	Roles        []map[string]any `json:"roles,omitempty"`
 	RoleBindings []map[string]any `json:"roleBindings,omitempty"`
 }
@@ -125,10 +131,11 @@ type SecretConfig struct {
 }
 
 type SecretMount struct {
-	Name        string `json:"name"`
-	SecretName  string `json:"secretName"`
-	Path        string `json:"path"`
-	DefaultMode int    `json:"defaultMode"`
+	Name        string  `json:"name"`
+	SecretName  string  `json:"secretName"`
+	Path        string  `json:"path"`
+	SubPath     *string `json:"subPath,omitempty"`
+	DefaultMode *int32  `json:"defaultMode"`
 }
 
 type KafkaSecrets struct {
@@ -204,5 +211,5 @@ type Image struct {
 	Registry   string            `json:"registry"`
 	Repository string            `json:"repository"`
 	PullPolicy corev1.PullPolicy `json:"pullPolicy"`
-	Tag        string            `json:"tag"`
+	Tag        *string           `json:"tag"`
 }

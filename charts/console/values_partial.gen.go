@@ -12,7 +12,7 @@ import (
 )
 
 type PartialValues struct {
-	ReplicaCount                 *int                              "json:\"replicaCount,omitempty\""
+	ReplicaCount                 *int32                            "json:\"replicaCount,omitempty\""
 	Image                        *PartialImage                     "json:\"image,omitempty\""
 	ImagePullSecrets             []corev1.LocalObjectReference     "json:\"imagePullSecrets,omitempty\""
 	NameOverride                 *string                           "json:\"nameOverride,omitempty\""
@@ -47,7 +47,7 @@ type PartialValues struct {
 	LivenessProbe                *corev1.Probe                     "json:\"livenessProbe,omitempty\""
 	ReadinessProbe               *corev1.Probe                     "json:\"readinessProbe,omitempty\""
 	ConfigMap                    *PartialCreatable                 "json:\"configmap,omitempty\""
-	Deployment                   *PartialCreatable                 "json:\"deployment,omitempty\""
+	Deployment                   *PartialDeploymentConfig          "json:\"deployment,omitempty\""
 	Strategy                     *appsv1.DeploymentStrategy        "json:\"strategy,omitempty\""
 	Tests                        *PartialEnableable                "json:\"tests,omitempty\""
 }
@@ -91,7 +91,7 @@ type PartialAutoScaling struct {
 }
 
 type PartialConsole struct {
-	Config       any              "json:\"config,omitempty\""
+	Config       map[string]any   "json:\"config,omitempty\""
 	Roles        []map[string]any "json:\"roles,omitempty\""
 	RoleBindings []map[string]any "json:\"roleBindings,omitempty\""
 }
@@ -116,6 +116,12 @@ type PartialCreatable struct {
 	Create *bool "json:\"create,omitempty\""
 }
 
+type PartialDeploymentConfig struct {
+	Create    *bool    "json:\"create,omitempty\""
+	Command   []string "json:\"command,omitempty\""
+	ExtraArgs []string "json:\"extraArgs,omitempty\""
+}
+
 type PartialEnableable struct {
 	Enabled *bool "json:\"enabled,omitempty\""
 }
@@ -124,7 +130,8 @@ type PartialSecretMount struct {
 	Name        *string "json:\"name,omitempty\""
 	SecretName  *string "json:\"secretName,omitempty\""
 	Path        *string "json:\"path,omitempty\""
-	DefaultMode *int    "json:\"defaultMode,omitempty\""
+	SubPath     *string "json:\"subPath,omitempty\""
+	DefaultMode *int32  "json:\"defaultMode,omitempty\""
 }
 
 type PartialKafkaSecrets struct {
