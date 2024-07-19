@@ -225,7 +225,7 @@ Pod resource management.
 **Default:**
 
 ```
-{"javaMaxHeapSize":"2G","limits":{"cpu":1,"memory":"2350Mi"},"request":{"cpu":1,"memory":"2350Mi"}}
+{"javaMaxHeapSize":"2G","limits":{"cpu":"1","memory":"2350Mi"},"request":{"cpu":"1","memory":"2350Mi"}}
 ```
 
 ### [container.resources.javaMaxHeapSize](https://artifacthub.io/packages/helm/redpanda-data/connectors?modal=values&path=container.resources.javaMaxHeapSize)
