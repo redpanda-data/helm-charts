@@ -193,7 +193,7 @@ type ServiceAccount struct {
 
 type Service struct {
 	Annotations map[string]string `json:"annotations"`
-	Name        *string           `json:"name"`
+	Name        string            `json:"name"`
 	Ports       []struct {
 		Name string `json:"name"`
 		Port int32  `json:"port"`
