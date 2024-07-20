@@ -14,35 +14,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ include "connectors.serviceName" . }}
-  labels:
-{{- with include "full.labels" . }}
-  {{- . | nindent 4 }}
+{{ $svc := (get ((include "connectors.Service" (dict "a" (list .))) | fromJson) "r") }}
+{{- if ne $svc nil -}}
+---
+{{ toYaml $svc }}
 {{- end }}
-{{- with $.Values.service.annotations }}
-  {{- toYaml . | nindent 4 }}
-{{- end }}
-spec:
-  ipFamilies:
-    - IPv4
-  ipFamilyPolicy: SingleStack
-  ports:
-    - name: rest-api
-      port: {{ .Values.connectors.restPort }}
-      targetPort: {{ .Values.connectors.restPort }}
-      protocol: TCP
-  {{- range $port := .Values.service.ports }}
-    - name: {{ $port.name }}
-      port: {{ $port.port }}
-      targetPort: {{ $port.port }}
-      protocol: TCP
-  {{- end }}
-  selector:
-  {{- with include "connectors-pod-labels" . }}
-    {{- . | nindent 6 }}
-  {{- end }}
-  sessionAffinity: None
-  type: ClusterIP

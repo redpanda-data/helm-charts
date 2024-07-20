@@ -28,7 +28,7 @@ type PartialValues struct {
 	Deployment       *PartialDeployment            "json:\"deployment,omitempty\""
 	Storage          *PartialStorage               "json:\"storage,omitempty\""
 	ServiceAccount   *PartialServiceAccountConfig  "json:\"serviceAccount,omitempty\""
-	Service          *PartialService               "json:\"service,omitempty\""
+	Service          *PartialServiceConfig         "json:\"service,omitempty\""
 }
 
 type PartialImage struct {
@@ -144,7 +144,7 @@ type PartialServiceAccountConfig struct {
 	Name        *string           "json:\"name,omitempty\""
 }
 
-type PartialService struct {
+type PartialServiceConfig struct {
 	Annotations map[string]string "json:\"annotations,omitempty\""
 	Name        *string           "json:\"name,omitempty\""
 	Ports       []struct {

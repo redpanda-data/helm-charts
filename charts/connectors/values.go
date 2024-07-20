@@ -29,7 +29,7 @@ type Values struct {
 	Deployment       Deployment                    `json:"deployment"`
 	Storage          Storage                       `json:"storage"`
 	ServiceAccount   ServiceAccountConfig          `json:"serviceAccount"`
-	Service          Service                       `json:"service"`
+	Service          ServiceConfig                 `json:"service"`
 }
 
 type Image struct {
@@ -189,7 +189,7 @@ type ServiceAccountConfig struct {
 	Name        string            `json:"name"`
 }
 
-type Service struct {
+type ServiceConfig struct {
 	Annotations map[string]string `json:"annotations"`
 	Name        string            `json:"name"`
 	Ports       []struct {
