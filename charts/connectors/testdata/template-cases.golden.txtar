@@ -183,6 +183,31 @@ spec:
             medium: Memory
             sizeLimit: 5Mi
           name: rp-connect-tmp
+---
+# Source: connectors/templates/pod-monitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  annotations: {}
+  creationTimestamp: null
+  labels:
+    5Fm2d5: 8GfL
+    HhgyOa: "1"
+    L9qHqt6R: LhlwQrUay
+  name: rpVz
+spec:
+  namespaceSelector:
+    any: true
+  podMetricsEndpoints:
+  - bearerTokenSecret:
+      key: ""
+    path: /
+    port: prometheus
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: pO5m
+      app.kubernetes.io/instance: console
+      app.kubernetes.io/name: pO5m
 -- testdata/case-001.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -1976,6 +2001,32 @@ spec:
             medium: Memory
             sizeLimit: 5Mi
           name: rp-connect-tmp
+---
+# Source: connectors/templates/pod-monitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  annotations: {}
+  creationTimestamp: null
+  labels:
+    wsUYAN3C: BzMz48
+  name: LsGZn
+spec:
+  namespaceSelector:
+    any: true
+  podMetricsEndpoints:
+  - bearerTokenSecret:
+      key: ""
+    path: /
+    port: prometheus
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: 9fz
+      app.kubernetes.io/instance: console
+      app.kubernetes.io/name: 9fz
+      cUt: YvDFEsYlU
+      g3hOh91HKI: CHwTjLYe2XS
+      h4yNA: fJL
 -- testdata/case-011.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -2293,6 +2344,28 @@ spec:
   type: ClusterIP
 status:
   loadBalancer: {}
+---
+# Source: connectors/templates/pod-monitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  annotations: {}
+  creationTimestamp: null
+  labels: {}
+  name: bAtOao
+spec:
+  namespaceSelector:
+    any: true
+  podMetricsEndpoints:
+  - bearerTokenSecret:
+      key: ""
+    path: /
+    port: prometheus
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: w8tCi3K
+      app.kubernetes.io/instance: console
+      app.kubernetes.io/name: w8tCi3K
 -- testdata/case-014.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -2476,6 +2549,33 @@ spec:
             medium: Memory
             sizeLimit: 5Mi
           name: rp-connect-tmp
+---
+# Source: connectors/templates/pod-monitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  annotations: {}
+  creationTimestamp: null
+  labels:
+    aVoQ7: vECqlu0Pe
+  name: u7DU
+spec:
+  namespaceSelector:
+    any: true
+    matchNames:
+    - alQT6bxHho
+    - jKf
+    - p
+  podMetricsEndpoints:
+  - bearerTokenSecret:
+      key: ""
+    path: /
+    port: prometheus
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: dA1zsc
+      app.kubernetes.io/instance: console
+      app.kubernetes.io/name: dA1zsc
 -- testdata/case-015.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -4055,6 +4155,32 @@ spec:
             medium: Memory
             sizeLimit: 5Mi
           name: rp-connect-tmp
+---
+# Source: connectors/templates/pod-monitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  annotations: {}
+  creationTimestamp: null
+  labels:
+    Eedv: 65ZfBI
+  name: cZ4G4
+spec:
+  namespaceSelector:
+    any: true
+  podMetricsEndpoints:
+  - bearerTokenSecret:
+      key: ""
+    path: /
+    port: prometheus
+  selector:
+    matchLabels:
+      3T: w2SpAA6br
+      I758z7Cf: 6V
+      JvnbWUk: pPMb
+      app.kubernetes.io/component: 6MJPA
+      app.kubernetes.io/instance: console
+      app.kubernetes.io/name: 6MJPA
 -- testdata/case-023.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -4799,6 +4925,39 @@ spec:
             medium: Memory
             sizeLimit: 5Mi
           name: rp-connect-tmp
+---
+# Source: connectors/templates/pod-monitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  annotations:
+    hvh: ""
+    mDK0: OWEQ0y
+    zpG: XWCs
+  creationTimestamp: null
+  labels:
+    Ie5J5: fYnrHO
+    YkM4u7v: iTjIow
+    iP2Di: ptlD2Xuar
+  name: uv4tHoO
+spec:
+  namespaceSelector:
+    any: true
+    matchNames:
+    - 9LShi
+    - klNT12U
+    - 9e
+  podMetricsEndpoints:
+  - bearerTokenSecret:
+      key: ""
+    path: /
+    port: prometheus
+  selector:
+    matchLabels:
+      VGEccN: 1S6Om
+      app.kubernetes.io/component: z3C
+      app.kubernetes.io/instance: console
+      app.kubernetes.io/name: z3C
 -- testdata/case-026.yaml.golden --
 ---
 # Source: connectors/templates/serviceaccount.yaml
@@ -5311,6 +5470,28 @@ spec:
             medium: Memory
             sizeLimit: 5Mi
           name: rp-connect-tmp
+---
+# Source: connectors/templates/pod-monitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  annotations: {}
+  creationTimestamp: null
+  labels: {}
+  name: ZvvoA
+spec:
+  namespaceSelector:
+    any: true
+  podMetricsEndpoints:
+  - bearerTokenSecret:
+      key: ""
+    path: /
+    port: prometheus
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: "3"
+      app.kubernetes.io/instance: console
+      app.kubernetes.io/name: "3"
 -- testdata/case-029.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -6102,6 +6283,34 @@ spec:
   type: ClusterIP
 status:
   loadBalancer: {}
+---
+# Source: connectors/templates/pod-monitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  annotations:
+    "4": kTkxkO
+  creationTimestamp: null
+  labels: {}
+  name: 6fr
+spec:
+  namespaceSelector:
+    any: true
+    matchNames:
+    - FKCzSYm7gaXuLQ
+  podMetricsEndpoints:
+  - bearerTokenSecret:
+      key: ""
+    path: /
+    port: prometheus
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: PeueQ
+      app.kubernetes.io/instance: console
+      app.kubernetes.io/name: PeueQ
+      co: MffSo
+      fdioW3StBvzyh: z
+      wle: mprjb
 -- testdata/case-036.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -8339,6 +8548,32 @@ spec:
             defaultMode: 0o444
             secretName: M4pqhD32D
         - name: kXFFnM
+---
+# Source: connectors/templates/pod-monitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  annotations:
+    eZHJsIIV4Rky: Pk
+  creationTimestamp: null
+  labels:
+    n5El: sDg0twGSFjIgP
+  name: NCw6T6UcQY
+spec:
+  namespaceSelector:
+    any: true
+  podMetricsEndpoints:
+  - bearerTokenSecret:
+      key: ""
+    path: /
+    port: prometheus
+  selector:
+    matchLabels:
+      4bQpba: iVh
+      app.kubernetes.io/component: 4iNcef5
+      app.kubernetes.io/instance: console
+      app.kubernetes.io/name: 4iNcef5
+      "n": ""
 -- testdata/case-041.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -8953,6 +9188,33 @@ spec:
   type: ClusterIP
 status:
   loadBalancer: {}
+---
+# Source: connectors/templates/pod-monitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  annotations:
+    k8EzKZ: oXYkaOnH
+  creationTimestamp: null
+  labels:
+    07sPUbsx7a: "4"
+  name: DPRe
+spec:
+  namespaceSelector:
+    any: true
+  podMetricsEndpoints:
+  - bearerTokenSecret:
+      key: ""
+    path: /
+    port: prometheus
+  selector:
+    matchLabels:
+      Mv: hvvf9ur
+      aWpK: fy05
+      app.kubernetes.io/component: WdYlcGB
+      app.kubernetes.io/instance: console
+      app.kubernetes.io/name: WdYlcGB
+      xYCcuP: zC
 -- testdata/case-044.yaml.golden --
 ---
 # Source: connectors/templates/serviceaccount.yaml
@@ -9484,6 +9746,31 @@ spec:
             secretName: mhOAME
         - name: RXJ
         - name: JJ
+---
+# Source: connectors/templates/pod-monitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  annotations:
+    SF8: t7jzDFP
+  creationTimestamp: null
+  labels:
+    "3": P
+    GGM8HrAa: AroHM7WrsoM
+  name: ZNfeDYT
+spec:
+  namespaceSelector:
+    any: true
+  podMetricsEndpoints:
+  - bearerTokenSecret:
+      key: ""
+    path: /
+    port: prometheus
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: R64C
+      app.kubernetes.io/instance: console
+      app.kubernetes.io/name: R64C
 -- testdata/case-045.yaml.golden --
 ---
 # Source: connectors/templates/serviceaccount.yaml
@@ -9545,6 +9832,35 @@ spec:
   type: ClusterIP
 status:
   loadBalancer: {}
+---
+# Source: connectors/templates/pod-monitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  annotations:
+    ADPu3ozSd: q
+    IirIQ: nU4N
+    z1: CMu8InAI
+  creationTimestamp: null
+  labels: {}
+  name: uLr8eH
+spec:
+  namespaceSelector:
+    any: true
+    matchNames:
+    - UCZpu
+  podMetricsEndpoints:
+  - bearerTokenSecret:
+      key: ""
+    path: /
+    port: prometheus
+  selector:
+    matchLabels:
+      MbBpaa: UzKZX
+      app.kubernetes.io/component: 8UJFy
+      app.kubernetes.io/instance: console
+      app.kubernetes.io/name: 8UJFy
+      h52qwPFCCL1xE: q
 -- testdata/case-046.yaml.golden --
 ---
 # Source: connectors/templates/serviceaccount.yaml
@@ -9596,6 +9912,33 @@ spec:
   type: ClusterIP
 status:
   loadBalancer: {}
+---
+# Source: connectors/templates/pod-monitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  annotations:
+    "N": ""
+    b: p
+  creationTimestamp: null
+  labels:
+    O: CY3sdu
+    UddrJ: zlyJcM
+    klftu: OSDi
+  name: tYC5CG
+spec:
+  namespaceSelector:
+    any: true
+  podMetricsEndpoints:
+  - bearerTokenSecret:
+      key: ""
+    path: /
+    port: prometheus
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: fa1XvkvO
+      app.kubernetes.io/instance: console
+      app.kubernetes.io/name: fa1XvkvO
 -- testdata/case-047.yaml.golden --
 ---
 # Source: connectors/templates/serviceaccount.yaml
@@ -10207,6 +10550,37 @@ spec:
         - name: Cm
         - name: eHp5
         - name: r1T
+---
+# Source: connectors/templates/pod-monitor.yaml
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  annotations:
+    "": O
+    AFH4V: ga95qmjNhc
+  creationTimestamp: null
+  labels:
+    9HWO7MGwhk: vGHnz6
+    NNg3k: hbR
+    RXL: VxSIXgS
+  name: Bl0rL2
+spec:
+  namespaceSelector:
+    any: true
+    matchNames:
+    - WZxK8iNK2gdU
+  podMetricsEndpoints:
+  - bearerTokenSecret:
+      key: ""
+    path: /
+    port: prometheus
+  selector:
+    matchLabels:
+      YQJWn90y: CaduGS6
+      app.kubernetes.io/component: wN
+      app.kubernetes.io/instance: console
+      app.kubernetes.io/name: wN
+      ytV2tl: icxW
 -- testdata/case-048.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml

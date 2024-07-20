@@ -1,4 +1,3 @@
-{{- if and (.Capabilities.APIVersions.Has "monitoring.coreos.com/v1") .Values.monitoring.enabled }}
 {{/*
 Licensed to the Apache Software Foundation (ASF) under one or more
 contributor license agreements.  See the NOTICE file distributed with
@@ -15,26 +14,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
+{{ $pm := (get ((include "connectors.PodMonitor" (dict "a" (list .))) | fromJson) "r") }}
+{{- if ne $pm nil -}}
+---
+{{ toYaml $pm }}
+{{- end }}
 
-apiVersion: monitoring.coreos.com/v1
-kind: PodMonitor
-metadata:
-  name: {{ template "connectors.fullname" . }}
-  labels:
-{{- with .Values.monitoring.labels }}
-  {{- toYaml . | nindent 4 }}
-{{- end }}
-  annotations:
-{{- with .Values.monitoring.annotations }}
-  {{- toYaml . | nindent 4 }}
-{{- end }}
-spec:
-{{- with .Values.monitoring.namespaceSelector }}
-  namespaceSelector: {{- toYaml . | nindent 4}}
-{{- end }}
-  podMetricsEndpoints:
-    - path: /
-      port: prometheus
-  selector:
-    matchLabels: {{ (include "connectors-pod-labels" .) | nindent 6 }}
-{{- end }}
