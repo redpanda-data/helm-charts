@@ -23,7 +23,7 @@ type PartialValues struct {
 	Connectors       *PartialConnectors            "json:\"connectors,omitempty\""
 	Auth             *PartialAuth                  "json:\"auth,omitempty\""
 	Logging          *PartialLogging               "json:\"logging,omitempty\""
-	Monitoring       *PartialMonitoring            "json:\"monitoring,omitempty\""
+	Monitoring       *PartialMonitoringConfig      "json:\"monitoring,omitempty\""
 	Container        *PartialContainer             "json:\"container,omitempty\""
 	Deployment       *PartialDeployment            "json:\"deployment,omitempty\""
 	Storage          *PartialStorage               "json:\"storage,omitempty\""
@@ -67,7 +67,7 @@ type PartialLogging struct {
 	Level *string "json:\"level,omitempty\""
 }
 
-type PartialMonitoring struct {
+type PartialMonitoringConfig struct {
 	Enabled           *bool                           "json:\"enabled,omitempty\""
 	ScrapeInterval    *metav1.Duration                "json:\"scrapeInterval,omitempty\""
 	Labels            map[string]string               "json:\"labels,omitempty\""

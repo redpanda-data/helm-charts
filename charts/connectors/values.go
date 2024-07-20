@@ -24,7 +24,7 @@ type Values struct {
 	Connectors       Connectors                    `json:"connectors"`
 	Auth             Auth                          `json:"auth"`
 	Logging          Logging                       `json:"logging"`
-	Monitoring       Monitoring                    `json:"monitoring"`
+	Monitoring       MonitoringConfig              `json:"monitoring"`
 	Container        Container                     `json:"container"`
 	Deployment       Deployment                    `json:"deployment"`
 	Storage          Storage                       `json:"storage"`
@@ -112,7 +112,7 @@ type Logging struct {
 	Level string `json:"level"`
 }
 
-type Monitoring struct {
+type MonitoringConfig struct {
 	Enabled           bool                           `json:"enabled"`
 	ScrapeInterval    metav1.Duration                `json:"scrapeInterval"`
 	Labels            map[string]string              `json:"labels"`
