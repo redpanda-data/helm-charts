@@ -20,18 +20,16 @@ type Values struct {
 	Tolerations      []corev1.Toleration           `json:"tolerations"`
 	Image            Image                         `json:"image"`
 	ImagePullSecrets []corev1.LocalObjectReference `json:"imagePullSecrets"`
-
-	Test Creatable `json:"test"`
-
-	Connectors     Connectors     `json:"connectors"`
-	Auth           Auth           `json:"auth"`
-	Logging        Logging        `json:"logging"`
-	Monitoring     Monitoring     `json:"monitoring"`
-	Container      Container      `json:"container"`
-	Deployment     Deployment     `json:"deployment"`
-	Storage        Storage        `json:"storage"`
-	ServiceAccount ServiceAccount `json:"serviceAccount"`
-	Service        Service        `json:"service"`
+	Test             Creatable                     `json:"test"`
+	Connectors       Connectors                    `json:"connectors"`
+	Auth             Auth                          `json:"auth"`
+	Logging          Logging                       `json:"logging"`
+	Monitoring       Monitoring                    `json:"monitoring"`
+	Container        Container                     `json:"container"`
+	Deployment       Deployment                    `json:"deployment"`
+	Storage          Storage                       `json:"storage"`
+	ServiceAccount   ServiceAccountConfig          `json:"serviceAccount"`
+	Service          Service                       `json:"service"`
 }
 
 type Image struct {
@@ -185,7 +183,7 @@ type Storage struct {
 	VolumeMounts []corev1.VolumeMount `json:"volumeMounts"`
 }
 
-type ServiceAccount struct {
+type ServiceAccountConfig struct {
 	Create      bool              `json:"create"`
 	Annotations map[string]string `json:"annotations"`
 	Name        string            `json:"name"`

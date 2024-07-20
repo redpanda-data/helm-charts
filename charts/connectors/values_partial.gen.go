@@ -27,7 +27,7 @@ type PartialValues struct {
 	Container        *PartialContainer             "json:\"container,omitempty\""
 	Deployment       *PartialDeployment            "json:\"deployment,omitempty\""
 	Storage          *PartialStorage               "json:\"storage,omitempty\""
-	ServiceAccount   *PartialServiceAccount        "json:\"serviceAccount,omitempty\""
+	ServiceAccount   *PartialServiceAccountConfig  "json:\"serviceAccount,omitempty\""
 	Service          *PartialService               "json:\"service,omitempty\""
 }
 
@@ -138,7 +138,7 @@ type PartialStorage struct {
 	VolumeMounts []corev1.VolumeMount "json:\"volumeMounts,omitempty\""
 }
 
-type PartialServiceAccount struct {
+type PartialServiceAccountConfig struct {
 	Create      *bool             "json:\"create,omitempty\""
 	Annotations map[string]string "json:\"annotations,omitempty\""
 	Name        *string           "json:\"name,omitempty\""
