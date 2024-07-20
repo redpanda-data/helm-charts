@@ -18,7 +18,7 @@ limitations under the License.
 Expand the name of the chart.
 */}}
 {{- define "connectors.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- get ((include "connectors.Name" (dict "a" (list .))) | fromJson) "r" }}
 {{- end -}}
 
 {{/*
@@ -26,88 +26,54 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 */}}
 {{- define "connectors.fullname" }}
-{{- if .Values.fullnameOverride }}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- $name := default .Chart.Name .Values.nameOverride }}
-{{- if contains $name .Release.Name }}
-{{- .Release.Name | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
-{{- end }}
-{{- end }}
+{{- get ((include "connectors.Fullname" (dict "a" (list .))) | fromJson) "r" }}
 {{- end }}
 
 {{/*
 full helm labels + common labels
 */}}
 {{- define "full.labels" -}}
-{{ $required := dict
-"helm.sh/chart" ( include "connectors.chart" . )
-"app.kubernetes.io/managed-by" ( .Release.Service ) }}
-{{- toYaml ( merge $required (fromYaml (include "connectors-pod-labels" .))) }}
+{{- (get ((include "connectors.FullLabels" (dict "a" (list .))) | fromJson) "r") | toYaml }}
 {{- end -}}
 
 {{/*
 pod labels merged with common labels
 */}}
 {{- define "connectors-pod-labels" -}}
-{{ $required := dict
-"app.kubernetes.io/name" ( include "connectors.name" . )
-"app.kubernetes.io/instance" ( .Release.Name )
-"app.kubernetes.io/component" ( include "connectors.name" . ) }}
-{{- toYaml ( merge $required .Values.commonLabels ) }}
+{{- (get ((include "connectors.PodLabels" (dict "a" (list .))) | fromJson) "r") | toYaml }}
 {{- end -}}
 
 {{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "connectors.chart" -}}
-{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
+{{- get ((include "connectors.Chart" (dict "a" (list .))) | fromJson) "r" }}
 {{- end }}
 
 {{/*
 Get the version of redpanda being used as an image
 */}}
 {{- define "connectors.semver" -}}
-{{ include "connectors.tag" . | trimPrefix "v" }}
+{{- get ((include "connectors.Tag" (dict "a" (list .))) | fromJson) "r" }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
 {{- define "connectors.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "connectors.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
-{{- end }}
+{{- get ((include "connectors.ServiceAccountName" (dict "a" (list .))) | fromJson) "r" }}
 {{- end }}
 
 {{/*
 Create the name of the service to use
 */}}
 {{- define "connectors.serviceName" -}}
-{{- default (include "connectors.fullname" .) .Values.service.name }}
+{{- get ((include "connectors.ServiceName" (dict "a" (list .))) | fromJson) "r" }}
 {{- end }}
 
 {{/*
 Use AppVersion if image.tag is not set
 */}}
 {{- define "connectors.tag" -}}
-{{- $tag := default .Chart.AppVersion .Values.image.tag -}}
-{{- $matchString := "^v(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$" -}}
-{{- $match := mustRegexMatch $matchString $tag -}}
-{{- if not $match -}}
-  {{/*
-  This error message is for end users. This can also occur if
-  AppVersion doesn't start with a 'v' in Chart.yaml.
-  */}}
-  {{ fail "image.tag must start with a 'v' and be valid semver" }}
-{{- end -}}
-{{- $tag -}}
-{{- end -}}
-
-{{- define "curl-options" -}}
-{{- print " -svm3 --fail --retry \"120\" --retry-max-time \"120\" --retry-all-errors -o - -w \"\\nstatus=%{http_code} %{redirect_url} size=%{size_download} time=%{time_total} content-type=\\\"%{content_type}\\\"\\n\" "}}
+{{- get ((include "connectors.Tag" (dict "a" (list .))) | fromJson) "r" }}
 {{- end -}}

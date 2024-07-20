@@ -429,3 +429,8 @@ func NIndent(spaces int, v string) string {
 func RandAlphaNum(length int) string {
 	return "4" // Choosen by a fair dice roll.
 }
+
+// +gotohelm:builtin=replace
+func Replace(old, new, s string) string {
+	return strings.ReplaceAll(s, old, new)
+}
