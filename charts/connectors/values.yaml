@@ -162,10 +162,11 @@ container:
   # -- Pod resource management.
   resources:
     request:
-      cpu: 1
+      # Numeric values here are also acceptable.
+      cpu: "1"
       memory: 2350Mi
     limits:
-      cpu: 1
+      cpu: "1"
       memory: 2350Mi
     # -- Java maximum heap size must not be greater than `container.resources.limits.memory`.
     javaMaxHeapSize: 2G

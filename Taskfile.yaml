@@ -76,6 +76,7 @@ tasks:
       - nix develop -c helm-docs -c ./charts/
       - task: chart:generate:console
       - task: chart:generate:redpanda
+      - task: chart:generate:connectors
       # Ensure go deps are up to date
       - go mod tidy
       # Ensure go deps in the gotohelm test package are up to date
@@ -99,6 +100,14 @@ tasks:
       - go run ./cmd/genschema > charts/redpanda/values.schema.json
       # Generate helm templates from Go definitions
       - go run ./cmd/gotohelm -write ./charts/redpanda/templates ./charts/redpanda 
+
+  chart:generate:connectors:
+    desc: "Generate files for the connectors Helm chart"
+    cmds:
+      # Generate a "partial" version of the Values struct.
+      - go run ./cmd/genpartial -out charts/connectors/values_partial.gen.go -struct Values ./charts/connectors
+      # Generate helm templates from Go definitions
+      - go run ./cmd/gotohelm -write ./charts/connectors/templates ./charts/connectors
 
   create-test-rack-awareness:
     cmds:
