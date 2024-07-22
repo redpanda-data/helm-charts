@@ -214,10 +214,8 @@ spec:
           {{- end }}
           {{- toYaml .Values.storage.volumeMounts | nindent 12 }}
       dnsPolicy: ClusterFirst
-      restartPolicy: {{ .Values.deployment.restartPolicy }}
-    {{- with .Values.deployment.schedulerName }}
-      schedulerName: {{- toYaml . | nindent 8 }}
-    {{- end }}
+      restartPolicy: {{ .Values.deployment.restartPolicy | quote }}
+      schedulerName: {{ .Values.deployment.schedulerName | quote }}
     {{- with .Values.deployment.nodeSelector }}
       nodeSelector: {{- toYaml . | nindent 8 }}
     {{- end }}
