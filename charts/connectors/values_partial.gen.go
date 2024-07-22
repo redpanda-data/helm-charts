@@ -7,6 +7,7 @@ package connectors
 
 import (
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
+	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -25,7 +26,7 @@ type PartialValues struct {
 	Logging          *PartialLogging               "json:\"logging,omitempty\""
 	Monitoring       *PartialMonitoringConfig      "json:\"monitoring,omitempty\""
 	Container        *PartialContainer             "json:\"container,omitempty\""
-	Deployment       *PartialDeployment            "json:\"deployment,omitempty\""
+	Deployment       *PartialDeploymentConfig      "json:\"deployment,omitempty\""
 	Storage          *PartialStorage               "json:\"storage,omitempty\""
 	ServiceAccount   *PartialServiceAccountConfig  "json:\"serviceAccount,omitempty\""
 	Service          *PartialServiceConfig         "json:\"service,omitempty\""
@@ -76,33 +77,22 @@ type PartialMonitoringConfig struct {
 }
 
 type PartialContainer struct {
-	SecurityContext *struct {
-		AllowPrivilegeEscalation *bool "json:\"allowPrivilegeEscalation,omitempty\""
-	} "json:\"securityContext,omitempty\""
-	Resources *struct {
-		Request *struct {
-			CPU    *resource.Quantity "json:\"cpu,omitempty\""
-			Memory *resource.Quantity "json:\"memory,omitempty\""
-		} "json:\"request,omitempty\""
-		Limits *struct {
-			CPU    *resource.Quantity "json:\"cpu,omitempty\""
-			Memory *resource.Quantity "json:\"memory,omitempty\""
-		} "json:\"limits,omitempty\""
-		JavaMaxHeapSize *resource.Quantity "json:\"javaMaxHeapSize,omitempty\""
+	SecurityContext *corev1.SecurityContext "json:\"securityContext,omitempty\""
+	Resources       *struct {
+		Request         corev1.ResourceList "json:\"request,omitempty\""
+		Limits          corev1.ResourceList "json:\"limits,omitempty\""
+		JavaMaxHeapSize *resource.Quantity  "json:\"javaMaxHeapSize,omitempty\""
 	} "json:\"resources,omitempty\""
 	JavaGCLogEnabled *string "json:\"javaGCLogEnabled,omitempty\""
 }
 
-type PartialDeployment struct {
-	Create   *bool "json:\"create,omitempty\""
-	Strategy *struct {
-		Type *string "json:\"type,omitempty\""
-	} "json:\"strategy,omitempty\""
-	SchedulerName  *string "json:\"schedulerName,omitempty\""
-	UpdateStrategy *struct {
-		Type *string "json:\"type,omitempty\""
-	} "json:\"updateStrategy,omitempty\""
-	Budget *struct {
+type PartialDeploymentConfig struct {
+	Replicas      *int32                     "json:\"replicas,omitempty\""
+	Create        *bool                      "json:\"create,omitempty\""
+	Command       []string                   "json:\"command,omitempty\""
+	Strategy      *appsv1.DeploymentStrategy "json:\"strategy,omitempty\""
+	SchedulerName *string                    "json:\"schedulerName,omitempty\""
+	Budget        *struct {
 		MaxUnavailable *int32 "json:\"maxUnavailable,omitempty\""
 	} "json:\"budget,omitempty\""
 	Annotations             map[string]string      "json:\"annotations,omitempty\""
@@ -112,7 +102,7 @@ type PartialDeployment struct {
 	ExtraEnvFrom            []corev1.EnvFromSource "json:\"extraEnvFrom,omitempty\""
 	ProgressDeadlineSeconds *int32                 "json:\"progressDeadlineSeconds,omitempty\""
 	RevisionHistoryLimit    *int32                 "json:\"revisionHistoryLimit,omitempty\""
-	PodAffinity             *corev1.Affinity       "json:\"podAffinity,omitempty\""
+	PodAffinity             *corev1.PodAffinity    "json:\"podAffinity,omitempty\""
 	NodeAffinity            *corev1.NodeAffinity   "json:\"nodeAffinity,omitempty\""
 	PodAntiAffinity         *struct {
 		TopologyKey *string                 "json:\"topologyKey,omitempty\""
@@ -120,17 +110,13 @@ type PartialDeployment struct {
 		Weight      *int32                  "json:\"weight,omitempty\""
 		Custom      *corev1.PodAntiAffinity "json:\"custom,omitempty\""
 	} "json:\"podAntiAffinity,omitempty\""
-	NodeSelector              map[string]string   "json:\"nodeSelector,omitempty\""
-	PriorityClassName         *string             "json:\"priorityClassName,omitempty\""
-	Tolerations               []corev1.Toleration "json:\"tolerations,omitempty\""
-	TopologySpreadConstraints []struct {
-		MaxSkew           *int32  "json:\"maxSkew,omitempty\""
-		TopologyKey       *string "json:\"topologyKey,omitempty\""
-		WhenUnsatisfiable *string "json:\"whenUnsatisfiable,omitempty\""
-	} "json:\"topologySpreadConstraints,omitempty\""
-	SecurityContext               *corev1.PodSecurityContext "json:\"securityContext,omitempty\""
-	TerminationGracePeriodSeconds *int32                     "json:\"terminationGracePeriodSeconds,omitempty\""
-	RestartPolicy                 *corev1.RestartPolicy      "json:\"restartPolicy,omitempty\""
+	NodeSelector                  map[string]string                 "json:\"nodeSelector,omitempty\""
+	PriorityClassName             *string                           "json:\"priorityClassName,omitempty\""
+	Tolerations                   []corev1.Toleration               "json:\"tolerations,omitempty\""
+	TopologySpreadConstraints     []corev1.TopologySpreadConstraint "json:\"topologySpreadConstraints,omitempty\""
+	SecurityContext               *corev1.PodSecurityContext        "json:\"securityContext,omitempty\""
+	TerminationGracePeriodSeconds *int64                            "json:\"terminationGracePeriodSeconds,omitempty\""
+	RestartPolicy                 *corev1.RestartPolicy             "json:\"restartPolicy,omitempty\""
 }
 
 type PartialStorage struct {

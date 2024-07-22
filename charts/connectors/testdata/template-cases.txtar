@@ -1,2 +1,31 @@
 -- defaults --
 # Intentionally left blank (Default values)
+-- hard-anti-affinity --
+deployment:
+  podAntiAffinity:
+    topologyKey: kubernetes.io/hostname
+    type: hard
+    weight: 100
+
+-- soft-anti-affinity --
+deployment:
+  podAntiAffinity:
+    topologyKey: kubernetes.io/hostname
+    type: soft
+    weight: 100
+
+-- custom-anti-affinity --
+deployment:
+  podAntiAffinity:
+    type: custom
+    custom:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchLabels:
+            foo: bar
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 40
+        podAffinityTerm:
+          labelSelector:
+            matchLabels:
+              foo: bar

@@ -420,10 +420,6 @@ Taints to be tolerated by Pods of this Deployment. These tolerations override th
 
 **Default:** `"ScheduleAnyway"`
 
-### [deployment.updateStrategy.type](https://artifacthub.io/packages/helm/redpanda-data/connectors?modal=values&path=deployment.updateStrategy.type)
-
-**Default:** `"RollingUpdate"`
-
 ### [fullnameOverride](https://artifacthub.io/packages/helm/redpanda-data/connectors?modal=values&path=fullnameOverride)
 
 Override `connectors.fullname` template.
