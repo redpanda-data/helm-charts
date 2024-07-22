@@ -4,7 +4,6 @@ package redpanda
 import (
 	"fmt"
 
-	certmanagerv1 "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
 	cmmeta "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
 	"github.com/invopop/jsonschema"
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
@@ -851,18 +850,6 @@ type TLSCert struct {
 	IssuerRef             *cmmeta.ObjectReference      `json:"issuerRef"`
 	SecretRef             *corev1.LocalObjectReference `json:"secretRef"`
 	ClientSecretRef       *corev1.LocalObjectReference `json:"clientSecretRef"`
-}
-
-// +gotohelm:ignore=true
-func (TLSCert) JSONSchemaExtend(schema *jsonschema.Schema) {
-	// An object reference could allow anything but we want to require that the
-	// reference is to either a ClusterIssuer or Issuer.
-	ref, _ := schema.Properties.Get("issuerRef")
-	refKind, _ := ref.Properties.Get("kind")
-	refKind.Enum = []any{
-		certmanagerv1.ClusterIssuerKind,
-		certmanagerv1.IssuerKind,
-	}
 }
 
 type TLSCertMap map[string]TLSCert
