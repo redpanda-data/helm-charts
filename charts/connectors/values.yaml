@@ -182,8 +182,6 @@ deployment:
   strategy:
     type: RollingUpdate
   schedulerName: ""
-  updateStrategy:
-    type: RollingUpdate
   budget:
     maxUnavailable: 1
   # -- Additional annotations to apply to the Pods of this Deployment.

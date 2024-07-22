@@ -1,10 +1,27 @@
-// +gotohelm:ignore=true
+// Licensed to the Apache Software Foundation (ASF) under one or more
+// contributor license agreements.  See the NOTICE file distributed with
+// this work for additional information regarding copyright ownership.
+// The ASF licenses this file to You under the Apache License, Version 2.0
+// (the "License"); you may not use this file except in compliance with
+// the License.  You may obtain a copy of the License at
+//
+//	http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// +gotohelm:filename=_values.go.tpl
 package connectors
 
 import (
 	_ "embed"
 
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
+	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
+	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -26,7 +43,7 @@ type Values struct {
 	Logging          Logging                       `json:"logging"`
 	Monitoring       MonitoringConfig              `json:"monitoring"`
 	Container        Container                     `json:"container"`
-	Deployment       Deployment                    `json:"deployment"`
+	Deployment       DeploymentConfig              `json:"deployment"`
 	Storage          Storage                       `json:"storage"`
 	ServiceAccount   ServiceAccountConfig          `json:"serviceAccount"`
 	Service          ServiceConfig                 `json:"service"`
@@ -108,6 +125,13 @@ type Auth struct {
 	} `json:"sasl"`
 }
 
+func (c *Auth) SASLEnabled() bool {
+	saslEnabled := !helmette.Empty(c.SASL.UserName)
+	saslEnabled = saslEnabled && !helmette.Empty(c.SASL.Mechanism)
+	saslEnabled = saslEnabled && !helmette.Empty(c.SASL.SecretRef)
+	return saslEnabled
+}
+
 type Logging struct {
 	Level string `json:"level"`
 }
@@ -121,33 +145,22 @@ type MonitoringConfig struct {
 }
 
 type Container struct {
-	SecurityContext struct {
-		AllowPrivilegeEscalation bool `json:"allowPrivilegeEscalation"`
-	} `json:"securityContext"`
-	Resources struct {
-		Request struct {
-			CPU    *resource.Quantity `json:"cpu"`
-			Memory *resource.Quantity `json:"memory"`
-		} `json:"request"`
-		Limits struct {
-			CPU    *resource.Quantity `json:"cpu"`
-			Memory *resource.Quantity `json:"memory"`
-		} `json:"limits"`
-		JavaMaxHeapSize *resource.Quantity `json:"javaMaxHeapSize"`
+	SecurityContext corev1.SecurityContext `json:"securityContext"`
+	Resources       struct {
+		Request         corev1.ResourceList `json:"request"`
+		Limits          corev1.ResourceList `json:"limits"`
+		JavaMaxHeapSize *resource.Quantity  `json:"javaMaxHeapSize"`
 	} `json:"resources"`
 	JavaGCLogEnabled string `json:"javaGCLogEnabled"` // XXX ugh - it ends up as an env var
 }
 
-type Deployment struct {
-	Create   bool `json:"create"`
-	Strategy struct {
-		Type string `json:"type"`
-	} `json:"strategy"`
-	SchedulerName  string `json:"schedulerName"`
-	UpdateStrategy struct {
-		Type string `json:"type"`
-	} `json:"updateStrategy"`
-	Budget struct {
+type DeploymentConfig struct {
+	Replicas      *int32                    `json:"replicas,omitempty"`
+	Create        bool                      `json:"create"`
+	Command       []string                  `json:"command,omitempty"`
+	Strategy      appsv1.DeploymentStrategy `json:"strategy,omitempty"`
+	SchedulerName string                    `json:"schedulerName"`
+	Budget        struct {
 		MaxUnavailable int32 `json:"maxUnavailable"`
 	} `json:"budget"`
 	Annotations             map[string]string      `json:"annotations"`
@@ -157,7 +170,7 @@ type Deployment struct {
 	ExtraEnvFrom            []corev1.EnvFromSource `json:"extraEnvFrom"`
 	ProgressDeadlineSeconds int32                  `json:"progressDeadlineSeconds"`
 	RevisionHistoryLimit    *int32                 `json:"revisionHistoryLimit,omitempty"`
-	PodAffinity             *corev1.Affinity       `json:"podAffinity,omitempty"`
+	PodAffinity             *corev1.PodAffinity    `json:"podAffinity,omitempty"`
 	NodeAffinity            *corev1.NodeAffinity   `json:"nodeAffinity,omitempty"`
 	PodAntiAffinity         *struct {
 		TopologyKey string                  `json:"topologyKey"`
@@ -165,17 +178,13 @@ type Deployment struct {
 		Weight      *int32                  `json:"weight,omitempty"`
 		Custom      *corev1.PodAntiAffinity `json:"custom,omitempty"`
 	} `json:"podAntiAffinity,omitempty"`
-	NodeSelector              map[string]string   `json:"nodeSelector"`
-	PriorityClassName         *string             `json:"priorityClassName,omitempty"` // XXX uused  in original template
-	Tolerations               []corev1.Toleration `json:"tolerations"`
-	TopologySpreadConstraints []struct {
-		MaxSkew           int32  `json:"maxSkew"`
-		TopologyKey       string `json:"topologyKey"`
-		WhenUnsatisfiable string `json:"whenUnsatisfiable"`
-	} `json:"topologySpreadConstraints,omitempty"`
-	SecurityContext               *corev1.PodSecurityContext `json:"securityContext,omitempty"`
-	TerminationGracePeriodSeconds *int32                     `json:"terminationGracePeriodSeconds,omitempty"`
-	RestartPolicy                 corev1.RestartPolicy       `json:"restartPolicy"`
+	NodeSelector                  map[string]string                 `json:"nodeSelector"`
+	PriorityClassName             *string                           `json:"priorityClassName,omitempty"` // XXX uused  in original template
+	Tolerations                   []corev1.Toleration               `json:"tolerations"`
+	TopologySpreadConstraints     []corev1.TopologySpreadConstraint `json:"topologySpreadConstraints,omitempty"`
+	SecurityContext               *corev1.PodSecurityContext        `json:"securityContext,omitempty"`
+	TerminationGracePeriodSeconds *int64                            `json:"terminationGracePeriodSeconds,omitempty"`
+	RestartPolicy                 corev1.RestartPolicy              `json:"restartPolicy"`
 }
 
 type Storage struct {
