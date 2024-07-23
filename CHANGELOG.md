@@ -9,6 +9,9 @@
 * Fixed a regression where `post_upgrade_job` would fail if TLS on the admin
   listener was disabled but had `cert` set to an invalid cert (e.g. `""`)
 * Fixed mTLS configurations between Redpanda and Console [#1402](https://github.com/redpanda-data/helm-charts/pull/1402)
+* Fixed a typo in `statefulset.securityContext.allowPriviledgeEscalation`. Both the correct
+  and typoed name will be respected with the correct spelling taking
+  precedence. [#1413](https://github.com/redpanda-data/helm-charts/issues/1413)
 #### Removed
 
 ### [5.8.12](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.8.12) - 2024-07-10

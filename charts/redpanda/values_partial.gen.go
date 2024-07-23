@@ -368,6 +368,7 @@ type PartialPodTemplate struct {
 type PartialSecurityContext struct {
 	RunAsUser                 *int64                         "json:\"runAsUser,omitempty\""
 	RunAsGroup                *int64                         "json:\"runAsGroup,omitempty\""
+	AllowPrivilegeEscalation  *bool                          "json:\"allowPrivilegeEscalation,omitempty\""
 	AllowPriviledgeEscalation *bool                          "json:\"allowPriviledgeEscalation,omitempty\""
 	RunAsNonRoot              *bool                          "json:\"runAsNonRoot,omitempty\""
 	FSGroup                   *int64                         "json:\"fsGroup,omitempty\""
