@@ -95,8 +95,13 @@ func (Values) JSONSchemaExtend(schema *jsonschema.Schema) {
 // [corev1.SecurityContext]. It's type exists for backwards compat purposes
 // only.
 type SecurityContext struct {
-	RunAsUser                 *int64                         `json:"runAsUser"`
-	RunAsGroup                *int64                         `json:"runAsGroup"`
+	RunAsUser                *int64 `json:"runAsUser"`
+	RunAsGroup               *int64 `json:"runAsGroup"`
+	AllowPrivilegeEscalation *bool  `json:"allowPrivilegeEscalation"`
+	// AllowPriviledgeEscalation is typoed version of
+	// [SecurityContext.AllowPrivilegeEscalation]. It's respected for backwards
+	// compatibility.
+	// Deprecated: Prefer AllowPrivilegeEscalation.
 	AllowPriviledgeEscalation *bool                          `json:"allowPriviledgeEscalation"`
 	RunAsNonRoot              *bool                          `json:"runAsNonRoot"`
 	FSGroup                   *int64                         `json:"fsGroup"`

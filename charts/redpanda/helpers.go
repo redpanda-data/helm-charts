@@ -343,7 +343,7 @@ func ContainerSecurityContext(dot *helmette.Dot) corev1.SecurityContext {
 	return corev1.SecurityContext{
 		RunAsUser:                sc.RunAsUser,
 		RunAsGroup:               helmette.Coalesce(sc.RunAsGroup, sc.FSGroup),
-		AllowPrivilegeEscalation: sc.AllowPriviledgeEscalation,
+		AllowPrivilegeEscalation: helmette.Coalesce(sc.AllowPrivilegeEscalation, sc.AllowPriviledgeEscalation),
 		RunAsNonRoot:             sc.RunAsNonRoot,
 	}
 }

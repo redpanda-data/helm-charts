@@ -335,7 +335,7 @@
 {{- $values := $dot.Values.AsMap -}}
 {{- $sc := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $values.statefulset.podSecurityContext $values.statefulset.securityContext) ))) "r") -}}
 {{- $_is_returning = true -}}
-{{- (dict "r" (mustMergeOverwrite (dict ) (dict "runAsUser" $sc.runAsUser "runAsGroup" (coalesce $sc.runAsGroup $sc.fsGroup) "allowPrivilegeEscalation" $sc.allowPriviledgeEscalation "runAsNonRoot" $sc.runAsNonRoot ))) | toJson -}}
+{{- (dict "r" (mustMergeOverwrite (dict ) (dict "runAsUser" $sc.runAsUser "runAsGroup" (coalesce $sc.runAsGroup $sc.fsGroup) "allowPrivilegeEscalation" (coalesce $sc.allowPrivilegeEscalation $sc.allowPriviledgeEscalation) "runAsNonRoot" $sc.runAsNonRoot ))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
