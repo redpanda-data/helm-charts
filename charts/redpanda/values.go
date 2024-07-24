@@ -71,6 +71,7 @@ type Values struct {
 }
 
 type Console struct {
+	Enabled bool `json:"enabled"`
 	Console struct {
 		Config map[string]any `json:"config"`
 	} `json:"console"`
@@ -711,12 +712,12 @@ type RBAC struct {
 }
 
 type Tuning struct {
-	TuneAIOEvents   bool   `json:"tune_aio_events"`
-	TuneClocksource bool   `json:"tune_clocksource"`
-	TuneBallastFile bool   `json:"tune_ballast_file"`
-	BallastFilePath string `json:"ballast_file_path"`
-	BallastFileSize string `json:"ballast_file_size"`
-	WellKnownIO     string `json:"well_known_io"`
+	TuneAIOEvents   bool   `json:"tune_aio_events,omitempty"`
+	TuneClocksource bool   `json:"tune_clocksource,omitempty"`
+	TuneBallastFile bool   `json:"tune_ballast_file,omitempty"`
+	BallastFilePath string `json:"ballast_file_path,omitempty"`
+	BallastFileSize string `json:"ballast_file_size,omitempty"`
+	WellKnownIO     string `json:"well_known_io,omitempty"`
 }
 
 func (t *Tuning) Translate() map[string]any {

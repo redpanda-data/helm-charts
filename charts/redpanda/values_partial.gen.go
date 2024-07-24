@@ -84,6 +84,7 @@ type PartialRackAwareness struct {
 }
 
 type PartialConsole struct {
+	Enabled *bool "json:\"enabled,omitempty\""
 	Console *struct {
 		Config map[string]any "json:\"config,omitempty\""
 	} "json:\"console,omitempty\""

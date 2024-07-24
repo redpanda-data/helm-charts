@@ -423,7 +423,7 @@ func SecretConfigurator(dot *helmette.Dot) *corev1.Secret {
 			Kind:       "Secret",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      fmt.Sprintf("%s-configurator", Fullname(dot)[:51]),
+			Name:      fmt.Sprintf("%.51s-configurator", Fullname(dot)),
 			Namespace: dot.Release.Namespace,
 			Labels:    FullLabels(dot),
 		},

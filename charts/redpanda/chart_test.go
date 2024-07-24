@@ -8,6 +8,8 @@ import (
 	"maps"
 	"math/big"
 	"os"
+	"slices"
+	"strings"
 	"testing"
 	"time"
 
@@ -711,5 +713,74 @@ func TestLabels(t *testing.T) {
 				require.Subset(t, obj.Spec.Template.GetLabels(), expectedLabels, "%T/%s's %T", obj, obj.Name, obj.Spec.Template)
 			}
 		}
+	}
+}
+
+func TestGoHelmEquivalence(t *testing.T) {
+	client, err := helm.New(helm.Options{ConfigHome: testutil.TempDir(t)})
+	require.NoError(t, err)
+
+	// TODO: Add additional cases for better coverage. Generating random inputs
+	// generally results in invalid inputs.
+	var values redpanda.PartialValues
+
+	// We're not interested in tests, console, or connectors so always disable
+	// those.
+	values.Tests = &struct {
+		Enabled *bool "json:\"enabled,omitempty\""
+	}{
+		Enabled: ptr.To(false),
+	}
+
+	values.Console = &redpanda.PartialConsole{Enabled: ptr.To(false)}
+	values.Connectors = &redpanda.PartialConnectors{Enabled: ptr.To(false)}
+
+	goObjs, err := redpanda.Template(helmette.Release{
+		Name:      "gotohelm",
+		Namespace: "mynamespace",
+		Service:   "Helm",
+	}, values)
+	require.NoError(t, err)
+
+	rendered, err := client.Template(context.Background(), ".", helm.TemplateOptions{
+		Name:      "gotohelm",
+		Namespace: "mynamespace",
+		Values:    values,
+	})
+	require.NoError(t, err)
+
+	helmObjs, err := kube.DecodeYAML(rendered, redpanda.Scheme)
+	require.NoError(t, err)
+
+	slices.SortStableFunc(helmObjs, func(a, b kube.Object) int {
+		aStr := fmt.Sprintf("%s/%s/%s", a.GetObjectKind().GroupVersionKind().String(), a.GetNamespace(), a.GetName())
+		bStr := fmt.Sprintf("%s/%s/%s", b.GetObjectKind().GroupVersionKind().String(), b.GetNamespace(), b.GetName())
+		return strings.Compare(aStr, bStr)
+	})
+
+	slices.SortStableFunc(goObjs, func(a, b kube.Object) int {
+		aStr := fmt.Sprintf("%s/%s/%s", a.GetObjectKind().GroupVersionKind().String(), a.GetNamespace(), a.GetName())
+		bStr := fmt.Sprintf("%s/%s/%s", b.GetObjectKind().GroupVersionKind().String(), b.GetNamespace(), b.GetName())
+		return strings.Compare(aStr, bStr)
+	})
+
+	const stsIdx = 7
+
+	// resource.Quantity is a special object. To Ensure they compare correctly,
+	// we'll round trip it through JSON so the internal representions will
+	// match (assuming the values are actually equal).
+	goObjs[stsIdx].(*appsv1.StatefulSet).Spec.Template.Spec.Containers[0].Resources, err = valuesutil.UnmarshalInto[corev1.ResourceRequirements](goObjs[stsIdx].(*appsv1.StatefulSet).Spec.Template.Spec.Containers[0].Resources)
+	require.NoError(t, err)
+
+	helmObjs[stsIdx].(*appsv1.StatefulSet).Spec.Template.Spec.Containers[0].Resources, err = valuesutil.UnmarshalInto[corev1.ResourceRequirements](helmObjs[stsIdx].(*appsv1.StatefulSet).Spec.Template.Spec.Containers[0].Resources)
+	require.NoError(t, err)
+
+	assert.Equal(t, len(helmObjs), len(goObjs))
+
+	// Iterate and compare instead of a single comparison for better error
+	// messages. Some divergences will fail an Equal check on slices but not
+	// report which element(s) aren't equal.
+	for i := range helmObjs {
+		assert.Equal(t, helmObjs[i], goObjs[i])
 	}
 }

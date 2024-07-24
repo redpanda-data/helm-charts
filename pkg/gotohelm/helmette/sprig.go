@@ -17,7 +17,7 @@ import (
 	"github.com/imdario/mergo"
 	"github.com/redpanda-data/helm-charts/pkg/valuesutil"
 	"golang.org/x/exp/maps"
-	"gopkg.in/yaml.v3"
+	"sigs.k8s.io/yaml"
 )
 
 // ToYAML is the go equivalent of helm's `toYaml`.
@@ -31,7 +31,7 @@ func ToYaml(value any) string {
 	if err != nil {
 		return ""
 	}
-	return string(marshalled)
+	return strings.TrimSuffix(string(marshalled), "\n")
 }
 
 // Min is the go equivalent of sprig's `min`
@@ -250,6 +250,21 @@ func Empty(value any) bool {
 	if !truthy || !ok {
 		return true
 	}
+
+	// IsTrue always returns true for structs. So we've got to do some extra
+	// work as our structs aren't always structs...
+	v := reflect.ValueOf(value)
+
+	switch v.Kind() {
+	case reflect.Struct:
+		return v.IsZero()
+
+	case reflect.Pointer:
+		if !v.IsNil() && v.Elem().Kind() == reflect.Struct {
+			return v.Elem().IsZero()
+		}
+	}
+
 	return false
 }
 
@@ -270,10 +285,23 @@ func Fail(msg string) {
 // ToJSON is the go equivalent of sprig's `toJson`.
 // +gotohelm:builtin=toJson
 func ToJSON(value any) string {
+	// Go's JSON serialization is deterministic. Structs utilize their type
+	// information but maps have their keys sorted meaning that a struct's JSON
+	// serialization may not match the ordering of it's equivalent map. Most
+	// times this doesn't matter but we have some cases where ToJSON is passed
+	// to a hashing function.
+	// To ensure that values are always equivalent, we first round trip them
+	// and then return the re-marshalled JSON.
+	value, err := valuesutil.RoundTripThrough[any](value)
+	if err != nil {
+		return ""
+	}
+
 	marshalled, err := json.Marshal(value)
 	if err != nil {
 		return ""
 	}
+
 	return string(marshalled)
 }
 

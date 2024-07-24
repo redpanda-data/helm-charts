@@ -12,9 +12,9 @@ import (
 	"k8s.io/utils/ptr"
 )
 
-func ClientCerts(dot *helmette.Dot) []certmanagerv1.Certificate {
+func ClientCerts(dot *helmette.Dot) []*certmanagerv1.Certificate {
 	if !TLSEnabled(dot) {
-		return []certmanagerv1.Certificate{}
+		return []*certmanagerv1.Certificate{}
 	}
 
 	values := helmette.Unwrap[Values](dot.Values)
@@ -24,7 +24,7 @@ func ClientCerts(dot *helmette.Dot) []certmanagerv1.Certificate {
 	ns := dot.Release.Namespace
 	domain := strings.TrimSuffix(values.ClusterDomain, ".")
 
-	var certs []certmanagerv1.Certificate
+	var certs []*certmanagerv1.Certificate
 	for name, data := range values.TLS.Certs {
 		if !helmette.Empty(data.SecretRef) || !ptr.Deref(data.Enabled, true) {
 			continue
@@ -58,7 +58,7 @@ func ClientCerts(dot *helmette.Dot) []certmanagerv1.Certificate {
 			Name:  fmt.Sprintf("%s-%s-root-issuer", fullname, name),
 		})
 
-		certs = append(certs, certmanagerv1.Certificate{
+		certs = append(certs, &certmanagerv1.Certificate{
 			TypeMeta: metav1.TypeMeta{
 				APIVersion: "cert-manager.io/v1",
 				Kind:       "Certificate",
@@ -106,7 +106,7 @@ func ClientCerts(dot *helmette.Dot) []certmanagerv1.Certificate {
 
 	duration := helmette.Default("43800h", data.Duration)
 
-	return append(certs, certmanagerv1.Certificate{
+	return append(certs, &certmanagerv1.Certificate{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "cert-manager.io/v1",
 			Kind:       "Certificate",

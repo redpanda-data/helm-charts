@@ -14,7 +14,6 @@ import (
 	"github.com/santhosh-tekuri/jsonschema/v5"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/tools/txtar"
-	"helm.sh/helm/v3/pkg/cli/values"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/yaml"
@@ -134,8 +133,11 @@ func TestGenerateCases(t *testing.T) {
 		out, err := yaml.Marshal(values)
 		require.NoError(t, err)
 
+		merged, err := helm.MergeYAMLValues(t.TempDir(), DefaultValuesYAML, out)
+		require.NoError(t, err)
+
 		// Ensure that our generated values comply with the schema set by the chart.
-		if err := schema.Validate(MergeYAMLValues(t, DefaultValuesYAML, out)); err != nil {
+		if err := schema.Validate(merged); err != nil {
 			t.Logf("Generated invalid values; trying again...\n%v", err)
 			i--
 			continue
@@ -153,27 +155,4 @@ func TestGenerateCases(t *testing.T) {
 	})
 
 	require.NoError(t, os.WriteFile("testdata/template-cases-generated.txtar", archive, 0o644))
-}
-
-// MergeYAMLValues uses helm's values package to merge a collection of YAML
-// values in accordance with helm's merging logic.
-// Sadly, their merging logic is not exported nor can it accept raw JSON/YAML
-// so we dump files on disk.
-func MergeYAMLValues(t *testing.T, vs ...[]byte) map[string]any {
-	var opts values.Options
-	for i, v := range vs {
-		file, err := os.CreateTemp(t.TempDir(), fmt.Sprintf("values-%d.yaml", i))
-		require.NoError(t, err)
-
-		_, err = file.Write(v)
-		require.NoError(t, err)
-
-		require.NoError(t, file.Close())
-
-		opts.ValueFiles = append(opts.ValueFiles, file.Name())
-	}
-
-	merged, err := opts.MergeValues(nil)
-	require.NoError(t, err)
-	return merged
 }
