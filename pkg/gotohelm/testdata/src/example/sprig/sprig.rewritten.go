@@ -8,7 +8,7 @@ import (
 )
 
 type AStruct struct {
-	Value int
+	Value int `json:",omitempty"`
 }
 
 // Sprig runs a variety of values through various sprig functions. Assertions
@@ -260,7 +260,10 @@ func empty() []bool {
 		helmette.Empty(""),
 		helmette.Empty("hello"),
 		helmette.Empty(AStruct{}),
-		helmette.Empty(AStruct{Value: 0}),
+		// Go can't differentiate between a zero value that's been explicitly
+		// set and one that's the default. Helm, on the other hand, will see this
+		// as (dict "Value" 0) or (dict).
+		// helmette.Empty(AStruct{Value: 0}),
 		helmette.Empty(AStruct{Value: 1}),
 	}
 }

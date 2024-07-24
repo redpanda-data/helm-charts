@@ -25,20 +25,20 @@ import (
 	"k8s.io/utils/ptr"
 )
 
-func ConfigMaps(dot *helmette.Dot) []corev1.ConfigMap {
-	cms := []corev1.ConfigMap{RedpandaConfigMap(dot, true)}
+func ConfigMaps(dot *helmette.Dot) []*corev1.ConfigMap {
+	cms := []*corev1.ConfigMap{RedpandaConfigMap(dot, true)}
 	cms = append(cms, RPKProfile(dot)...)
 	return cms
 }
 
-func ConfigMapsWithoutSeedServer(dot *helmette.Dot) []corev1.ConfigMap {
-	cms := []corev1.ConfigMap{RedpandaConfigMap(dot, false)}
+func ConfigMapsWithoutSeedServer(dot *helmette.Dot) []*corev1.ConfigMap {
+	cms := []*corev1.ConfigMap{RedpandaConfigMap(dot, false)}
 	cms = append(cms, RPKProfile(dot)...)
 	return cms
 }
 
-func RedpandaConfigMap(dot *helmette.Dot, includeSeedServer bool) corev1.ConfigMap {
-	return corev1.ConfigMap{
+func RedpandaConfigMap(dot *helmette.Dot, includeSeedServer bool) *corev1.ConfigMap {
+	return &corev1.ConfigMap{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "ConfigMap",
 			APIVersion: "v1",
@@ -116,14 +116,14 @@ func RedpandaConfigFile(dot *helmette.Dot, includeSeedServer bool) string {
 	return helmette.ToYaml(redpandaYaml)
 }
 
-func RPKProfile(dot *helmette.Dot) []corev1.ConfigMap {
+func RPKProfile(dot *helmette.Dot) []*corev1.ConfigMap {
 	values := helmette.Unwrap[Values](dot.Values)
 
 	if !values.External.Enabled {
 		return nil
 	}
 
-	return []corev1.ConfigMap{
+	return []*corev1.ConfigMap{
 		{
 			TypeMeta: metav1.TypeMeta{
 				Kind:       "ConfigMap",
