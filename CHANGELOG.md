@@ -2,9 +2,16 @@
 
 ## Redpanda Chart
 
-### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.8.13) - YYYY-MM-DD
+### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-FILLMEIN) - YYYY-MM-DD
 #### Added
 #### Changed
+#### Fixed
+#### Removed
+
+### [5.8.13](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.8.13) - 2024-07-25
+#### Added
+#### Changed
+* Updated `appVersion` to `v24.1.11`
 #### Fixed
 * Fixed a regression where `post_upgrade_job` would fail if TLS on the admin
   listener was disabled but had `cert` set to an invalid cert (e.g. `""`)
@@ -13,6 +20,8 @@
   and typoed name will be respected with the correct spelling taking
   precedence. [#1413](https://github.com/redpanda-data/helm-charts/issues/1413)
 #### Removed
+* Validation of `issuerRef` has been removed to permit external Issuers.
+  [#1432](https://github.com/redpanda-data/helm-charts/issues/1432)
 
 ### [5.8.12](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.8.12) - 2024-07-10
 
