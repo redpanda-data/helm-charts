@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.12
+    helm.sh/chart: redpanda-5.8.13
   name: redpanda
   namespace: default
 spec:
@@ -49,7 +49,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.12
+    helm.sh/chart: redpanda-5.8.13
   name: redpanda-sts-lifecycle
   namespace: default
 stringData:
@@ -142,7 +142,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.12
+    helm.sh/chart: redpanda-5.8.13
   name: redpanda-config-watcher
   namespace: default
 stringData:
@@ -180,7 +180,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.12
+    helm.sh/chart: redpanda-5.8.13
   name: redpanda-configurator
   namespace: default
 stringData:
@@ -428,7 +428,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.12
+    helm.sh/chart: redpanda-5.8.13
   name: redpanda
   namespace: default
 ---
@@ -459,7 +459,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.12
+    helm.sh/chart: redpanda-5.8.13
   name: redpanda-rpk
   namespace: default
 ---
@@ -550,7 +550,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.12
+    helm.sh/chart: redpanda-5.8.13
     monitoring.redpanda.com/enabled: "false"
   name: redpanda
   namespace: default
@@ -597,7 +597,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.12
+    helm.sh/chart: redpanda-5.8.13
   name: redpanda-external
   namespace: default
 spec:
@@ -743,7 +743,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.12
+    helm.sh/chart: redpanda-5.8.13
   name: redpanda
   namespace: default
 spec:
@@ -758,14 +758,14 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 04a1b9170dbfa1a5d92ef9d28394d433b64a8e4e463e8a654f9906a23d5de1e4
+        config.redpanda.com/checksum: a40cf9251cb5e3fbbbe0073c95718a7a4daaed9902a6b98d79b99c100f6bea19
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
         app.kubernetes.io/instance: redpanda
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: redpanda
-        helm.sh/chart: redpanda-5.8.12
+        helm.sh/chart: redpanda-5.8.13
         redpanda.com/poddisruptionbudget: redpanda
     spec:
       affinity:
@@ -1066,7 +1066,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.12
+    helm.sh/chart: redpanda-5.8.13
   name: redpanda-default-root-certificate
   namespace: default
 spec:
@@ -1093,7 +1093,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.12
+    helm.sh/chart: redpanda-5.8.13
   name: redpanda-external-root-certificate
   namespace: default
 spec:
@@ -1120,7 +1120,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.12
+    helm.sh/chart: redpanda-5.8.13
   name: redpanda-default-cert
   namespace: default
 spec:
@@ -1159,7 +1159,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.12
+    helm.sh/chart: redpanda-5.8.13
   name: redpanda-external-cert
   namespace: default
 spec:
@@ -1198,7 +1198,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.12
+    helm.sh/chart: redpanda-5.8.13
   name: redpanda-default-selfsigned-issuer
   namespace: default
 spec:
@@ -1215,7 +1215,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.12
+    helm.sh/chart: redpanda-5.8.13
   name: redpanda-default-root-issuer
   namespace: default
 spec:
@@ -1233,7 +1233,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.12
+    helm.sh/chart: redpanda-5.8.13
   name: redpanda-external-selfsigned-issuer
   namespace: default
 spec:
@@ -1250,7 +1250,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.12
+    helm.sh/chart: redpanda-5.8.13
   name: redpanda-external-root-issuer
   namespace: default
 spec:
@@ -1295,7 +1295,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.12
+    helm.sh/chart: redpanda-5.8.13
   name: redpanda-configuration
   namespace: default
 spec:
@@ -1383,7 +1383,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: redpanda
-    helm.sh/chart: redpanda-5.8.12
+    helm.sh/chart: redpanda-5.8.13
   name: redpanda-post-upgrade
   namespace: default
 spec:
