@@ -14,7 +14,7 @@
 # limitations under the License.
 
 # This is to test only the Redpanda Chart Nightly
-name: Nightly - Lint/Test Redpanda-Chart With Nightly Redpanda
+name: Nightly - Lint/Test Redpanda-Chart With Latest Unstable (RC) Redpanda
 
 on:
   schedule:
@@ -67,9 +67,9 @@ jobs:
       - name: Get latest nightly tag
         id: latestTag
         run: |
-          echo "TAG=$(
-            docker-tag-list -c '~0.0.0-0' --latest -r redpandadata/redpanda-nightly | sed 's/-a..64$//'
-          )" >> "$GITHUB_OUTPUT"
+          TAG=$(curl "https://hub.docker.com/v2/namespaces/redpandadata/repositories/redpanda-unstable/tags?page_size=25" | jq -r '.results | map(select(.images | length >= 2))[0].name')
+          echo "Latest RC: $TAG"
+          echo $TAG >> "GITHUB_OUTPUT"
 
       - name: Create kind cluster
         uses: helm/kind-action@0025e74a8c7512023d06dc019c617aa3cf561fde # v1.10.0
