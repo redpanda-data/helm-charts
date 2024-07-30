@@ -67,9 +67,9 @@ jobs:
       - name: Get latest nightly tag
         id: latestTag
         run: |
-          TAG=$(curl "https://hub.docker.com/v2/namespaces/redpandadata/repositories/redpanda-unstable/tags?page_size=25" | jq -r '.results | map(select(.images | length >= 2))[0].name')
+          export TAG=$(curl "https://hub.docker.com/v2/namespaces/redpandadata/repositories/redpanda-unstable/tags?page_size=25" | jq -r '.results | map(select(.images | length >= 2))[0].name')
           echo "Latest RC: $TAG"
-          echo $TAG >> "GITHUB_OUTPUT"
+          echo "TAG=$TAG" >> "$GITHUB_OUTPUT"
 
       - name: Create kind cluster
         uses: helm/kind-action@0025e74a8c7512023d06dc019c617aa3cf561fde # v1.10.0
