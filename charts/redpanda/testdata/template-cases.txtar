@@ -1,0 +1,148 @@
+-- trust-stores-ca-enabled --
+# ASSERT-NO-ERROR
+# ASSERT-GOLDEN
+# ASSERT-TRUST-STORES ["admin",           {"default": "/etc/tls/certs/external/ca.crt", "internal": "/etc/tls/certs/default/ca.crt"}]
+# ASSERT-TRUST-STORES ["http",            {"default": "/etc/tls/certs/external/ca.crt", "internal": "/etc/tls/certs/default/ca.crt"}]
+# ASSERT-TRUST-STORES ["kafka",           {"default": "/etc/tls/certs/external/ca.crt", "internal": "/etc/tls/certs/default/ca.crt"}]
+# ASSERT-TRUST-STORES ["schema_registry", {"default": "/etc/tls/certs/external/ca.crt", "internal": "/etc/tls/certs/default/ca.crt"}]
+# Base case for TrustStores.
+tls:
+  certs:
+    default:
+      caEnabled: true
+    external:
+      caEnabled: true
+
+-- internal-trust-stores --
+# ASSERT-NO-ERROR
+# ASSERT-GOLDEN
+# ASSERT-TRUST-STORES ["admin",           {"default": "/etc/tls/certs/external/ca.crt", "internal": "/etc/truststores/configmaps/admin-cm-other.crt", "my-admin": "/etc/truststores/configmaps/admin-cm-my-admin.crt"}]
+# ASSERT-TRUST-STORES ["http",            {"default": "/etc/tls/certs/external/ca.crt", "internal": "/etc/truststores/configmaps/http-cm-ca.crt", "my-http": "/etc/truststores/configmaps/http-cm-my-http.crt"}]
+# ASSERT-TRUST-STORES ["kafka",           {"default": "/etc/tls/certs/external/ca.crt", "internal": "/etc/truststores/configmaps/my-ca-bundle-ca.crt", "my-kafka": "/etc/truststores/secrets/kafka-secret-my-kafka.crt"}]
+# ASSERT-TRUST-STORES ["schema_registry", {"default": "/etc/tls/certs/external/ca.crt", "internal": "/etc/truststores/secrets/sr-secret-ca.crt", "my-sr": "/etc/truststores/secrets/sr-secret-my-sr.crt"}]
+listeners:
+  admin:
+    external:
+      my-admin:
+        port: 1234
+        tls:
+          cert: default
+          trustStore:
+            configMapKeyRef:
+              key: my-admin.crt
+              name: admin-cm
+    tls:
+      trustStore:
+        configMapKeyRef:
+          key: other.crt
+          name: admin-cm
+  http:
+    external:
+      my-http:
+        port: 1234
+        tls:
+          cert: default
+          trustStore:
+            configMapKeyRef:
+              key: my-http.crt
+              name: http-cm
+    tls:
+      trustStore:
+        configMapKeyRef:
+          key: ca.crt
+          name: http-cm
+  kafka:
+    external:
+      my-kafka:
+        port: 1234
+        tls:
+          cert: default
+          trustStore:
+            secretKeyRef:
+              key: my-kafka.crt
+              name: kafka-secret
+    tls:
+      trustStore:
+        configMapKeyRef:
+          key: ca.crt
+          name: my-ca-bundle
+  rpc: {}
+  schemaRegistry:
+    external:
+      my-sr:
+        port: 1234
+        tls:
+          cert: default
+          trustStore:
+            secretKeyRef:
+              key: my-sr.crt
+              name: sr-secret
+    tls:
+      trustStore:
+        secretKeyRef:
+          key: ca.crt
+          name: sr-secret
+tls:
+  certs:
+    default:
+      caEnabled: true
+    external:
+      caEnabled: true
+
+-- disable-cert-manager-overriding-defaults --
+# ASSERT-NO-ERROR
+# ASSERT-GOLDEN
+# ASSERT-NO-CERTIFICATES
+tls:
+  certs:
+    default:
+      secretRef:
+        name: some-secret
+    external:
+      secretRef:
+        name: some-other-secret
+
+-- disable-cert-manger-fully-specified --
+# ASSERT-NO-ERROR
+# ASSERT-GOLDEN
+# ASSERT-NO-CERTIFICATES
+listeners:
+  http:
+    external:
+      default:
+        tls:
+          cert: for-external
+          requireClientAuth: false
+    tls:
+      cert: for-internal
+  kafka:
+    external:
+      default:
+        tls:
+          cert: for-external
+          requireClientAuth: false
+    tls:
+      cert: for-internal
+  rpc:
+    tls:
+      cert: for-internal
+  schemaRegistry:
+    external:
+      default:
+        tls:
+          cert: for-external
+          requireClientAuth: false
+    tls:
+      cert: for-internal
+tls:
+  certs:
+    default:
+      enabled: false
+    external:
+      enabled: false
+    for-external:
+      secretRef:
+        name: some-other-secret
+    for-internal:
+      secretRef:
+        name: some-secret

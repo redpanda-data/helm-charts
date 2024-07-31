@@ -1,11 +1,10 @@
 package redpanda_test
 
 import (
-	"bytes"
+	"encoding/json"
 	"fmt"
 	"os"
-	"os/exec"
-	"path"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -16,17 +15,12 @@ import (
 	"github.com/redpanda-data/helm-charts/pkg/kube"
 	"github.com/redpanda-data/helm-charts/pkg/testutil"
 	"github.com/redpanda-data/helm-charts/pkg/valuesutil"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"golang.org/x/tools/txtar"
 	"k8s.io/utils/ptr"
 	"sigs.k8s.io/yaml"
 )
-
-type TemplateTestCase struct {
-	Name       string
-	Values     any
-	ValuesFile string
-	Assert     func(*testing.T, []byte, error)
-}
 
 func TestTemplate(t *testing.T) {
 	ctx := testutil.Context(t)
@@ -39,20 +33,32 @@ func TestTemplate(t *testing.T) {
 	require.NoError(t, client.RepoAdd(ctx, "redpanda", "https://charts.redpanda.com"))
 	require.NoError(t, client.DependencyBuild(ctx, "."), "failed to refresh helm dependencies")
 
-	cases := CIGoldenTestCases(t)
+	archive, err := txtar.ParseFile("testdata/template-cases.txtar")
+	require.NoError(t, err)
+
+	goldens := testutil.NewTxTar(t, "testdata/template-cases.golden.txtar")
+
+	cases := archive.Files
 	cases = append(cases, VersionGoldenTestsCases(t)...)
-	cases = append(cases, DisableCertmanagerIntegration(t)...)
-	cases = append(cases, CertTrustStoreCases(t)...)
+	cases = append(cases, CIGoldenTestCases(t)...)
 
 	for _, tc := range cases {
 		tc := tc
 		t.Run(tc.Name, func(t *testing.T) {
-			t.Parallel()
+			// To make it easy to add tests and assertions on various sets of
+			// data, we add markers in YAML comments in the form of:
+			// # ASSERT-<NAME> ["OPTIONAL", "PARAMS", "AS", "JSON"]
+			// Assertions are run in the order they are specified. A good default
+			// if you've got no other options is ASSERT-NO-ERROR.
+			assertions := regexp.MustCompile(`(?m)^# (ASSERT-\S+) *(.+)?$`).FindAllSubmatch(tc.Data, -1)
+			require.NotEmpty(t, assertions, "no ASSERT- markers found. All cases must have at least 1 marker.")
+
+			var values map[string]any
+			require.NoError(t, yaml.Unmarshal(tc.Data, &values))
 
 			out, err := client.Template(ctx, ".", helm.TemplateOptions{
-				Name:       "redpanda",
-				Values:     tc.Values,
-				ValuesFile: tc.ValuesFile,
+				Name:   "redpanda",
+				Values: values,
 				Set: []string{
 					// Tests utilize some non-deterministic helpers (rng). We don't
 					// really care about the stability of their output, so globally
@@ -64,50 +70,67 @@ func TestTemplate(t *testing.T) {
 				},
 			})
 
-			tc.Assert(t, out, err)
+			for _, assertion := range assertions {
+				name := string(assertion[1])
 
-			// kube-lint template file
-			var stdout bytes.Buffer
-			var stderr bytes.Buffer
-			inputYaml := bytes.NewBuffer(out)
+				var params []json.RawMessage
+				if len(assertion[2]) > 0 {
+					require.NoError(t, json.Unmarshal(assertion[2], &params))
+				}
 
-			cmd := exec.CommandContext(ctx, "kube-linter", "lint", "-", "--format", "json")
-			cmd.Stdin = inputYaml
-			cmd.Stdout = &stdout
-			cmd.Stderr = &stderr
+				switch name {
+				case `ASSERT-NO-ERROR`:
+					require.NoError(t, err)
 
-			errKubeLinter := cmd.Run()
-			if errKubeLinter != nil && len(stderr.String()) > 0 {
-				t.Logf("kube-linter error(s) found for %q: \n%s\nstderr:\n%s", tc.Name, stdout.String(), stderr.String())
-			} else if errKubeLinter != nil {
-				t.Logf("kube-linter error(s) found for %q: \n%s", tc.Name, errKubeLinter)
+				case `ASSERT-ERROR-CONTAINS`:
+					var errFragment string
+					require.NoError(t, json.Unmarshal(params[0], &errFragment))
+					require.ErrorContains(t, err, errFragment)
+
+				case `ASSERT-GOLDEN`:
+					if err == nil {
+						goldens.AssertGolden(t, testutil.YAML, fmt.Sprintf("testdata/%s.yaml.golden", t.Name()), out)
+					} else {
+						// Trailing new lines are added by the txtar format if
+						// they're not already present. Add one here otherwise
+						// we'll see failures.
+						goldens.AssertGolden(t, testutil.Text, fmt.Sprintf("testdata/%s.yaml.golden", t.Name()), []byte(err.Error()+"\n"))
+					}
+
+				case `ASSERT-TRUST-STORES`:
+					require.NoError(t, err)
+					AssertTrustStores(t, out, params)
+
+				case `ASSERT-NO-CERTIFICATES`:
+					require.NoError(t, err)
+					AssertNoCertficates(t, out)
+
+				default:
+					t.Fatalf("unknown assertion marker: %q\nFull Line: %s", name, assertion[0])
+				}
 			}
-			// TODO: remove comment below and the logging above once we agree to linter
-			// require.NoError(t, errKubeLinter)
 		})
 	}
 }
 
-func CIGoldenTestCases(t *testing.T) []TemplateTestCase {
+func CIGoldenTestCases(t *testing.T) []txtar.File {
 	values, err := os.ReadDir("./ci")
 	require.NoError(t, err)
 
-	cases := make([]TemplateTestCase, len(values))
+	cases := make([]txtar.File, len(values))
 	for i, f := range values {
-		name := f.Name()
-		cases[i] = TemplateTestCase{
-			Name:       name,
-			ValuesFile: "./ci/" + name,
-			Assert: func(t *testing.T, b []byte, err error) {
-				require.NoError(t, err)
-				testutil.AssertGolden(t, testutil.YAML, path.Join("testdata", "ci", name+".golden"), b)
-			},
+		data, err := os.ReadFile("./ci/" + f.Name())
+		require.NoError(t, err)
+
+		cases[i] = txtar.File{
+			Name: f.Name(),
+			Data: append([]byte("# ASSERT-NO-ERROR\n# ASSERT-GOLDEN\n"), data...),
 		}
 	}
 	return cases
 }
 
-func VersionGoldenTestsCases(t *testing.T) []TemplateTestCase {
+func VersionGoldenTestsCases(t *testing.T) []txtar.File {
 	// A collection of versions that should trigger all the gates guarded by
 	// "redpanda-atleast-*" helpers.
 	versions := []struct {
@@ -183,7 +206,7 @@ func VersionGoldenTestsCases(t *testing.T) []TemplateTestCase {
 		},
 	}
 
-	var cases []TemplateTestCase
+	var cases []txtar.File
 	for _, version := range versions {
 		version := version
 		for i, perm := range permutations {
@@ -194,298 +217,73 @@ func VersionGoldenTestsCases(t *testing.T) []TemplateTestCase {
 
 			name := fmt.Sprintf("%s-%s-%d", ptr.Deref(version.Image.Repository, "default"), *version.Image.Tag, i)
 
-			cases = append(cases, TemplateTestCase{
-				Name:   name,
-				Values: values,
-				Assert: func(t *testing.T, b []byte, err error) {
-					if version.ErrMsg != nil {
-						require.Error(t, err, "expected an error containing %q", *version.ErrMsg)
-						require.Contains(t, err.Error(), *version.ErrMsg, "expected an error containing %q", *version.ErrMsg)
-						return
-					}
-					require.NoError(t, err)
-					testutil.AssertGolden(t, testutil.YAML, path.Join("testdata", "versions", name+".yaml.golden"), b)
-				},
+			header := []byte("# ASSERT-NO-ERROR\n# ASSERT-GOLDEN\n")
+			if version.ErrMsg != nil {
+				header = []byte(fmt.Sprintf("# ASSERT-ERROR-CONTAINS [%q]\n# ASSERT-GOLDEN\n", *version.ErrMsg))
+			}
+
+			data, err := yaml.Marshal(values)
+			require.NoError(t, err)
+
+			cases = append(cases, txtar.File{
+				Name: name,
+				Data: append(header, data...),
 			})
 		}
 	}
 	return cases
 }
 
-func DisableCertmanagerIntegration(t *testing.T) []TemplateTestCase {
-	assertNoCerts := func(t *testing.T, b []byte, err error) {
-		require.NoError(t, err)
+func AssertTrustStores(t *testing.T, manifests []byte, params []json.RawMessage) {
+	var listener string
+	var expected map[string]string
 
-		// Assert that no Certificate objects are in the resultant
-		// objects when SecretRef is specified AND RequireClientAuth is
-		// false.
-		objs, err := kube.DecodeYAML(b, redpanda.Scheme)
-		require.NoError(t, err)
+	require.NoError(t, json.Unmarshal(params[0], &listener))
+	require.NoError(t, json.Unmarshal(params[1], &expected))
 
-		for _, obj := range objs {
-			_, ok := obj.(*certmanagerv1.Certificate)
-			// The -root-certificate is always created right now, ignore that
-			// one.
-			if ok && strings.HasSuffix(obj.GetName(), "-root-certificate") {
-				continue
-			}
-			require.Falsef(t, ok, "Found unexpected Certificate %q", obj.GetName())
-		}
-
-		require.NotContains(t, b, []byte(certmanagerv1.CertificateKind))
-	}
-
-	return []TemplateTestCase{
-		{
-			Name: "disable-cert-manager-overriding-defaults",
-			Values: valuesFromYAML(t, `
-affinity: {}
-tls:
-  certs:
-    default:
-      secretRef:
-        name: some-secret
-    external:
-      secretRef:
-        name: some-other-secret
-`),
-			Assert: assertNoCerts,
-		},
-		{
-			Name: "disable-cert-manager-fully-specified",
-			Values: valuesFromYAML(t, `
-affinity: {}
-listeners:
-  http:
-    external:
-      default:
-        tls:
-          cert: for-external
-          requireClientAuth: false
-    tls:
-      cert: for-internal
-  kafka:
-    external:
-      default:
-        tls:
-          cert: for-external
-          requireClientAuth: false
-    tls:
-      cert: for-internal
-  rpc:
-    tls:
-      cert: for-internal
-  schemaRegistry:
-    external:
-      default:
-        tls:
-          cert: for-external
-          requireClientAuth: false
-    tls:
-      cert: for-internal
-tls:
-  certs:
-    default:
-      enabled: false
-    external:
-      enabled: false
-    for-external:
-      secretRef:
-        name: some-other-secret
-    for-internal:
-      secretRef:
-        name: some-secret
-`),
-			Assert: assertNoCerts,
-		},
-	}
-}
-
-func CertTrustStoreCases(t *testing.T) []TemplateTestCase {
-	// truststores is a map of listener type to map of listener name to truststore_file. ({"admin": {"internal": "ca.crt"}}).
-	assertTrustStores := func(t *testing.T, manifests []byte, truststores map[string]map[string]string) {
-		cm, _, err := getConfigMaps(manifests)
-		require.NoError(t, err)
-
-		redpandaYAML, err := yaml.YAMLToJSON([]byte(cm.Data["redpanda.yaml"]))
-		require.NoError(t, err)
-
-		tlsConfigs := map[string]jsoniter.Any{
-			"kafka":           jsoniter.Get(redpandaYAML, "redpanda", "kafka_api_tls"),
-			"admin":           jsoniter.Get(redpandaYAML, "redpanda", "admin_api_tls"),
-			"http":            jsoniter.Get(redpandaYAML, "pandaproxy", "pandaproxy_api_tls"),
-			"schema_registry": jsoniter.Get(redpandaYAML, "schema_registry", "schema_registry_api_tls"),
-		}
-
-		actual := map[string]map[string]string{}
-		for name, cfg := range tlsConfigs {
-			m := map[string]string{}
-			for i := 0; i < cfg.Size(); i++ {
-				name := cfg.Get(i, "name").ToString()
-				truststore := cfg.Get(i, "truststore_file").ToString()
-				m[name] = truststore
-			}
-			actual[name] = m
-		}
-
-		require.Equal(t, truststores, actual)
-	}
-
-	return []TemplateTestCase{
-		{
-			Name: "ca-enabled",
-			Values: valuesFromYAML(t, `
-affinity: {}
-tls:
-  certs:
-    default:
-      caEnabled: true
-    external:
-      caEnabled: true
-`),
-			Assert: func(t *testing.T, manifests []byte, err error) {
-				require.NoError(t, err)
-				assertTrustStores(t, manifests, map[string]map[string]string{
-					"admin": {
-						"default":  "/etc/tls/certs/external/ca.crt",
-						"internal": "/etc/tls/certs/default/ca.crt",
-					},
-					"http": {
-						"default":  "/etc/tls/certs/external/ca.crt",
-						"internal": "/etc/tls/certs/default/ca.crt",
-					},
-					"kafka": {
-						"default":  "/etc/tls/certs/external/ca.crt",
-						"internal": "/etc/tls/certs/default/ca.crt",
-					},
-					"schema_registry": {
-						"default":  "/etc/tls/certs/external/ca.crt",
-						"internal": "/etc/tls/certs/default/ca.crt",
-					},
-				})
-			},
-		},
-		{
-			Name: "internal-truststore",
-			Values: valuesFromYAML(t, `
-affinity: {}
-listeners:
-  admin:
-    external:
-      my-admin:
-        port: 1234
-        tls:
-          cert: default
-          trustStore:
-            configMapKeyRef:
-              key: my-admin.crt
-              name: admin-cm
-    tls:
-      trustStore:
-        configMapKeyRef:
-          key: other.crt
-          name: admin-cm
-  http:
-    external:
-      my-http:
-        port: 1234
-        tls:
-          cert: default
-          trustStore:
-            configMapKeyRef:
-              key: my-http.crt
-              name: http-cm
-    tls:
-      trustStore:
-        configMapKeyRef:
-          key: ca.crt
-          name: http-cm
-  kafka:
-    external:
-      my-kafka:
-        port: 1234
-        tls:
-          cert: default
-          trustStore:
-            secretKeyRef:
-              key: my-kafka.crt
-              name: kafka-secret
-    tls:
-      trustStore:
-        configMapKeyRef:
-          key: ca.crt
-          name: my-ca-bundle
-  rpc: {}
-  schemaRegistry:
-    external:
-      my-sr:
-        port: 1234
-        tls:
-          cert: default
-          trustStore:
-            secretKeyRef:
-              key: my-sr.crt
-              name: sr-secret
-    tls:
-      trustStore:
-        secretKeyRef:
-          key: ca.crt
-          name: sr-secret
-tls:
-  certs:
-    default:
-      caEnabled: true
-    external:
-      caEnabled: true
-`),
-			Assert: func(t *testing.T, manifests []byte, err error) {
-				// Need to update this to be a map of listener to trust store.
-				// Should also include a mixture of external and internal uses.
-				// Going to skimp on the testing as Rafal's work to add tests
-				// will cover what else needs to be tested nicely.
-				require.NoError(t, err)
-				assertTrustStores(t, manifests, map[string]map[string]string{
-					"admin": {
-						"default":  "/etc/tls/certs/external/ca.crt",
-						"internal": "/etc/truststores/configmaps/admin-cm-other.crt",
-						"my-admin": "/etc/truststores/configmaps/admin-cm-my-admin.crt",
-					},
-					"http": {
-						"default":  "/etc/tls/certs/external/ca.crt",
-						"internal": "/etc/truststores/configmaps/http-cm-ca.crt",
-						"my-http":  "/etc/truststores/configmaps/http-cm-my-http.crt",
-					},
-					"kafka": {
-						"default":  "/etc/tls/certs/external/ca.crt",
-						"internal": "/etc/truststores/configmaps/my-ca-bundle-ca.crt",
-						"my-kafka": "/etc/truststores/secrets/kafka-secret-my-kafka.crt",
-					},
-					"schema_registry": {
-						"default":  "/etc/tls/certs/external/ca.crt",
-						"internal": "/etc/truststores/secrets/sr-secret-ca.crt",
-						"my-sr":    "/etc/truststores/secrets/sr-secret-my-sr.crt",
-					},
-				})
-			},
-		},
-	}
-}
-
-func valuesFromYAML(t *testing.T, values string) redpanda.PartialValues {
-	// Trim newlines to help with later comparison and avoid any weirdness with
-	// loading as it's likely to be written with `` strings.
-	values = strings.Trim(values, "\n")
-
-	var partialValues redpanda.PartialValues
-	require.NoError(t, yaml.Unmarshal([]byte(values), &partialValues))
-
-	out, err := yaml.Marshal(partialValues)
+	cm, _, err := getConfigMaps(manifests)
 	require.NoError(t, err)
 
-	// To preserve the sanity of debuggers, require that the value round trips
-	// back to the same string. This should catch any typos or miss-indentations
-	// that are valid YAML but invalid values.
-	require.Equal(t, string(out), values+"\n", "Provided values do NOT round trip. Check for typos and ensure your keys are alphabetized. Re-marshaled values:\n%s\n", out)
+	redpandaYAML, err := yaml.YAMLToJSON([]byte(cm.Data["redpanda.yaml"]))
+	require.NoError(t, err)
 
-	return partialValues
+	tlsConfigs := map[string]jsoniter.Any{
+		"kafka":           jsoniter.Get(redpandaYAML, "redpanda", "kafka_api_tls"),
+		"admin":           jsoniter.Get(redpandaYAML, "redpanda", "admin_api_tls"),
+		"http":            jsoniter.Get(redpandaYAML, "pandaproxy", "pandaproxy_api_tls"),
+		"schema_registry": jsoniter.Get(redpandaYAML, "schema_registry", "schema_registry_api_tls"),
+	}
+
+	actual := map[string]map[string]string{}
+	for name, cfg := range tlsConfigs {
+		m := map[string]string{}
+		for i := 0; i < cfg.Size(); i++ {
+			name := cfg.Get(i, "name").ToString()
+			truststore := cfg.Get(i, "truststore_file").ToString()
+			m[name] = truststore
+		}
+		actual[name] = m
+	}
+
+	assert.Equal(t, expected, actual[listener])
+}
+
+func AssertNoCertficates(t *testing.T, manifests []byte) {
+	// Assert that no Certificate objects are in the resultant
+	// objects when SecretRef is specified AND RequireClientAuth is
+	// false.
+	objs, err := kube.DecodeYAML(manifests, redpanda.Scheme)
+	require.NoError(t, err)
+
+	for _, obj := range objs {
+		_, ok := obj.(*certmanagerv1.Certificate)
+		// The -root-certificate is always created right now, ignore that
+		// one.
+		if ok && strings.HasSuffix(obj.GetName(), "-root-certificate") {
+			continue
+		}
+		require.Falsef(t, ok, "Found unexpected Certificate %q", obj.GetName())
+	}
+
+	require.NotContains(t, manifests, []byte(certmanagerv1.CertificateKind))
 }
