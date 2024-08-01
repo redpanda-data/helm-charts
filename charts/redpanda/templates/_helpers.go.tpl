@@ -335,7 +335,7 @@
 {{- $values := $dot.Values.AsMap -}}
 {{- $sc := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $values.statefulset.podSecurityContext $values.statefulset.securityContext) ))) "r") -}}
 {{- $_is_returning = true -}}
-{{- (dict "r" (mustMergeOverwrite (dict ) (dict "runAsUser" $sc.runAsUser "runAsGroup" (coalesce $sc.runAsGroup $sc.fsGroup) "allowPrivilegeEscalation" (coalesce $sc.allowPrivilegeEscalation $sc.allowPriviledgeEscalation) "runAsNonRoot" $sc.runAsNonRoot ))) | toJson -}}
+{{- (dict "r" (mustMergeOverwrite (dict ) (dict "runAsUser" $sc.runAsUser "runAsGroup" (get (fromJson (include "redpanda.coalesce" (dict "a" (list (list $sc.runAsGroup $sc.fsGroup)) ))) "r") "allowPrivilegeEscalation" (get (fromJson (include "redpanda.coalesce" (dict "a" (list (list $sc.allowPrivilegeEscalation $sc.allowPriviledgeEscalation)) ))) "r") "runAsNonRoot" $sc.runAsNonRoot ))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -461,6 +461,26 @@
 {{- end -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" ((get (fromJson (include "_shims.resource_Value" (dict "a" (list $values.resources.cpu.cores) ))) "r") | int64)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.coalesce" -}}
+{{- $values := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- range $_, $v := $values -}}
+{{- if (ne $v (coalesce nil)) -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" $v) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (coalesce nil)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
