@@ -146,3 +146,24 @@ tls:
     for-internal:
       secretRef:
         name: some-secret
+
+-- allowprivilegeescalation-regression --
+# Regression test for https://github.com/redpanda-data/helm-charts/issues/1413
+# ASSERT-NO-ERROR
+# ASSERT-GOLDEN
+# ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.containers[*].securityContext.allowPrivilegeEscalation}", false]
+statefulset:
+  replicas: 3
+  securityContext:
+    allowPrivilegeEscalation: false
+
+-- allowpriviledgeescalation-regression --
+# Regression test for https://github.com/redpanda-data/helm-charts/issues/1413
+# This test's name is intentionally misspelled.
+# ASSERT-NO-ERROR
+# ASSERT-GOLDEN
+# ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.containers[*].securityContext.allowPrivilegeEscalation}", false]
+statefulset:
+  replicas: 3
+  securityContext:
+    allowPriviledgeEscalation: false

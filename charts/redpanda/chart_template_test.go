@@ -18,6 +18,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/tools/txtar"
+	"k8s.io/client-go/util/jsonpath"
 	"k8s.io/utils/ptr"
 	"sigs.k8s.io/yaml"
 )
@@ -104,6 +105,10 @@ func TestTemplate(t *testing.T) {
 				case `ASSERT-NO-CERTIFICATES`:
 					require.NoError(t, err)
 					AssertNoCertficates(t, out)
+
+				case `ASSERT-FIELD-EQUALS`:
+					require.NoError(t, err)
+					AssertFieldEquals(t, params, out)
 
 				default:
 					t.Fatalf("unknown assertion marker: %q\nFull Line: %s", name, assertion[0])
@@ -286,4 +291,49 @@ func AssertNoCertficates(t *testing.T, manifests []byte) {
 	}
 
 	require.NotContains(t, manifests, []byte(certmanagerv1.CertificateKind))
+}
+
+func AssertFieldEquals(t *testing.T, params []json.RawMessage, manifests []byte) {
+	var gvk string
+	var key string
+	var fieldPath string
+	fieldValue := params[3] // No need to unmarshal this one.
+
+	require.NoError(t, json.Unmarshal(params[0], &gvk))
+	require.NoError(t, json.Unmarshal(params[1], &key))
+	require.NoError(t, json.Unmarshal(params[2], &fieldPath))
+
+	objs, err := kube.DecodeYAML(manifests, redpanda.Scheme)
+	require.NoError(t, err)
+
+	for _, obj := range objs {
+		kind := obj.GetObjectKind().GroupVersionKind().Kind
+		groupVersion := obj.GetObjectKind().GroupVersionKind().GroupVersion().String()
+
+		if groupVersion+"/"+kind != gvk {
+			continue
+		}
+
+		if obj.GetNamespace()+"/"+obj.GetName() != key {
+			continue
+		}
+
+		// See https://kubernetes.io/docs/reference/kubectl/jsonpath/
+		path := jsonpath.New("").AllowMissingKeys(true)
+		require.NoError(t, path.Parse(fieldPath))
+
+		results, err := path.FindResults(obj)
+		require.NoError(t, err)
+
+		for _, result := range results {
+			actual, err := json.Marshal(result[0].Interface())
+			require.NoError(t, err)
+
+			require.JSONEq(t, string(fieldValue), string(actual))
+		}
+
+		return
+	}
+
+	t.Fatalf("object %q of kind %q not found", gvk, key)
 }

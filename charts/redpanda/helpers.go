@@ -342,8 +342,8 @@ func ContainerSecurityContext(dot *helmette.Dot) corev1.SecurityContext {
 
 	return corev1.SecurityContext{
 		RunAsUser:                sc.RunAsUser,
-		RunAsGroup:               helmette.Coalesce(sc.RunAsGroup, sc.FSGroup),
-		AllowPrivilegeEscalation: helmette.Coalesce(sc.AllowPrivilegeEscalation, sc.AllowPriviledgeEscalation),
+		RunAsGroup:               coalesce([]*int64{sc.RunAsGroup, sc.FSGroup}),
+		AllowPrivilegeEscalation: coalesce([]*bool{sc.AllowPrivilegeEscalation, sc.AllowPriviledgeEscalation}),
 		RunAsNonRoot:             sc.RunAsNonRoot,
 	}
 }
@@ -404,4 +404,17 @@ func RedpandaSMP(dot *helmette.Dot) int64 {
 	}
 
 	return values.Resources.CPU.Cores.Value()
+}
+
+// coalesce returns the first non-nil pointer. This is distinct from helmette's
+// Coalesce which returns the first non-EMPTY pointer.
+// It accepts a slice as variadic methods are not currently supported in
+// gotohelm.
+func coalesce[T any](values []*T) *T {
+	for _, v := range values {
+		if v != nil {
+			return v
+		}
+	}
+	return nil
 }
