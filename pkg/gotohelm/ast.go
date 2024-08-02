@@ -209,6 +209,7 @@ type File struct {
 	Name   string
 	Header string
 	Funcs  []*Func
+	Footer string
 }
 
 func (f *File) Write(w io.Writer) {
@@ -220,6 +221,7 @@ func (f *File) Write(w io.Writer) {
 		s.Write(w)
 		w.Write([]byte{'\n'})
 	}
+	w.Write([]byte(f.Footer))
 }
 
 type Func struct {

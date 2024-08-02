@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// +gotohelm:filename=secrets.go.tpl
+// +gotohelm:filename=_secrets.go.tpl
 package redpanda
 
 import (

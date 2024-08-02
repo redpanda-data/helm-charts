@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// +gotohelm:filename=service.loadbalancer.go.tpl
+// +gotohelm:filename=_service.loadbalancer.go.tpl
 package redpanda
 
 import (

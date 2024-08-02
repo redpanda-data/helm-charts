@@ -18,8 +18,4 @@ limitations under the License.
 {{- include "fail-on-unsupported-helm-version" . -}}
 {{- include "fail-on-insecure-sasl-logging" . -}}
 
-{{- $ss := (get ((include "redpanda.StatefulSet" (dict "a" (list .))) | fromJson) "r") -}}
-{{- if ne $ss nil -}}
----
-{{toYaml $ss}}
-{{- end -}}
+{{- include "_shims.render-manifest" (list "redpanda.StatefulSet" .) -}}

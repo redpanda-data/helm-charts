@@ -14,27 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-
-{{- $crs := (get ((include "redpanda.ClusterRoles" (dict "a" (list .))) | fromJson) "r") }}
-{{- range $_, $cr := $crs }}
----
-{{ toYaml $cr }}
-{{- end }}
-
-{{- $crbs := (get ((include "redpanda.ClusterRoleBindings" (dict "a" (list .))) | fromJson) "r") }}
-{{- range $_, $crb := $crbs }}
----
-{{ toYaml $crb }}
-{{- end }}
-
-{{- $scr := (get ((include "redpanda.SidecarControllersRole" (dict "a" (list .))) | fromJson) "r") }}
-{{- if ne $scr nil }}
----
-{{ toYaml $scr}}
-{{- end }}
-
-{{- $scrb := (get ((include "redpanda.SidecarControllersRoleBinding" (dict "a" (list .))) | fromJson) "r") }}
-{{- if ne $scrb nil }}
----
-{{ toYaml $scrb}}
-{{- end }}
+{{- include "_shims.render-manifest" (list "redpanda.ClusterRoles" .) -}}
+{{- include "_shims.render-manifest" (list "redpanda.ClusterRoleBindings" .) -}}
+{{- include "_shims.render-manifest" (list "redpanda.SidecarControllersRole" .) -}}
+{{- include "_shims.render-manifest" (list "redpanda.SidecarControllersRoleBinding" .) -}}

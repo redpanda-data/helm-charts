@@ -95,8 +95,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: console
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -193,7 +191,6 @@ spec:
       - name: secrets
         secret:
           secretName: console
-status: {}
 ---
 # Source: console/templates/hpa.yaml
 apiVersion: autoscaling/v2
@@ -227,9 +224,6 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: console
-status:
-  currentMetrics: null
-  desiredReplicas: 0
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -350,8 +344,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: console
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -448,7 +440,6 @@ spec:
       - name: secrets
         secret:
           secretName: console
-status: {}
 ---
 # Source: console/templates/hpa.yaml
 apiVersion: autoscaling/v2
@@ -476,9 +467,6 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: console
-status:
-  currentMetrics: null
-  desiredReplicas: 0
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -599,8 +587,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: console
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -697,7 +683,6 @@ spec:
       - name: secrets
         secret:
           secretName: console
-status: {}
 ---
 # Source: console/templates/hpa.yaml
 apiVersion: autoscaling/v2
@@ -725,9 +710,6 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: console
-status:
-  currentMetrics: null
-  desiredReplicas: 0
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -852,8 +834,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: "n"
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -963,7 +943,6 @@ spec:
       - name: 7iCCax
       - name: meEH
       - name: xYVSV
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -1085,8 +1064,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: Sh
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -1234,7 +1211,6 @@ spec:
       - name: secrets
         secret:
           secretName: T50cZi
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -1355,8 +1331,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: vN4yH7I
   type: ILpSX2Cy
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -1484,7 +1458,6 @@ spec:
       - name: secrets
         secret:
           secretName: xZty
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -1591,8 +1564,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: w6
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/ingress.yaml
 apiVersion: networking.k8s.io/v1
@@ -1629,8 +1600,6 @@ spec:
     - 4HLzq
     - 2i4g
     secretName: lSgQIKwj5
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -1755,8 +1724,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: YMl
   type: dO7eovC
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -1872,7 +1839,6 @@ spec:
         secret:
           defaultMode: 197
           secretName: 7gi
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -1977,8 +1943,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: MW
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -2102,7 +2066,6 @@ spec:
       - name: secrets
         secret:
           secretName: pN
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -2226,8 +2189,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: gCH15URsJZr
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -2371,7 +2332,6 @@ spec:
       - name: secrets
         secret:
           secretName: rzd
-status: {}
 -- testdata/case-007.yaml.golden --
 ---
 # Source: console/templates/serviceaccount.yaml
@@ -2481,8 +2441,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: HWL
   type: Vvrvx
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -2637,7 +2595,6 @@ spec:
         secret:
           secretName: "y"
       - name: dCz
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -2722,8 +2679,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: RW
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -2847,7 +2802,6 @@ spec:
       - configMap:
           name: GbgHqD
         name: configs
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -2952,8 +2906,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: BKV
   type: yZy
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -3088,7 +3040,6 @@ spec:
         secret:
           defaultMode: 410
           secretName: 1JLIOjZI8
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -3158,8 +3109,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: JFcK
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -3398,7 +3347,6 @@ spec:
       - configMap:
           name: ivK
         name: configs
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -3530,8 +3478,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: Cy9eHCiP
   type: sl
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -3752,7 +3698,6 @@ spec:
         secret:
           defaultMode: 12
           secretName: auIr
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -3875,8 +3820,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: Qr03ts
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -4126,7 +4069,6 @@ spec:
       - name: secrets
         secret:
           secretName: tmn2Kt
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -4247,8 +4189,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: dDkIKgMwXv
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -4434,7 +4374,6 @@ spec:
       - name: secrets
         secret:
           secretName: RttlJN
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -4558,8 +4497,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: Vi2vH
   type: Oiwzbmtjpb
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -4695,8 +4632,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: KD8DmV
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -4946,7 +4881,6 @@ spec:
       - name: secrets
         secret:
           secretName: 9RweMGWqBs
-status: {}
 ---
 # Source: console/templates/ingress.yaml
 apiVersion: networking.k8s.io/v1
@@ -4987,8 +4921,6 @@ spec:
     - g
     - "N"
     secretName: YQl
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -5116,8 +5048,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: SC
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -5402,7 +5332,6 @@ spec:
       - name: secrets
         secret:
           secretName: 6maz
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -5530,8 +5459,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: tPiY
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -5976,7 +5903,6 @@ spec:
         secret:
           defaultMode: 13
           secretName: WzM
-status: {}
 -- testdata/case-018.yaml.golden --
 ---
 # Source: console/templates/serviceaccount.yaml
@@ -6059,8 +5985,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: 1qyLP36T
   type: 2cM
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -6386,7 +6310,6 @@ spec:
       - name: secrets
         secret:
           secretName: ExFU3
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -6509,8 +6432,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: 8MIg
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -6655,7 +6576,6 @@ spec:
       - name: secrets
         secret:
           secretName: NZ7h9
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -6779,8 +6699,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: zzmAR9
   type: ""
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -7177,7 +7095,6 @@ spec:
           defaultMode: 346
           secretName: fA1q0
       - name: NAOsiOkX6so
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -7313,8 +7230,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: Rys
   type: tptHu3Q
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/hpa.yaml
 apiVersion: autoscaling/v2
@@ -7350,9 +7265,6 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: PhRk
-status:
-  currentMetrics: null
-  desiredReplicas: 0
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -7475,8 +7387,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: xNnu
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -8026,7 +7936,6 @@ spec:
       - name: JjbRU
       - name: QNtf
       - name: a
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -8137,8 +8046,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: s3YOF
   type: Xz6f
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -8416,7 +8323,6 @@ spec:
       - name: fJAnP
       - name: 5joihzuxxGJCwn
       - name: tv
-status: {}
 ---
 # Source: console/templates/ingress.yaml
 apiVersion: networking.k8s.io/v1
@@ -8446,8 +8352,6 @@ spec:
         path: /
         pathType: ImplementationSpecific
   tls: null
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -8538,8 +8442,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: aD
   type: uvupqC6hE4
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -8607,8 +8509,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: Mh
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -9130,7 +9030,6 @@ spec:
       - name: Jq0CSftnp
       - name: QMHGzzYC2HW
       - name: 1PkbzhfK
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -9207,8 +9106,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: vLjrafvp
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -9417,7 +9314,6 @@ spec:
       - name: LeIYAb
       - name: 176OvjD
       - name: b6NpMGfVo1N
-status: {}
 ---
 # Source: console/templates/ingress.yaml
 apiVersion: networking.k8s.io/v1
@@ -9479,8 +9375,6 @@ spec:
     - T
     - twxgtsi
     secretName: lg5siLdo
-status:
-  loadBalancer: {}
 -- testdata/case-027.yaml.golden --
 ---
 # Source: console/templates/serviceaccount.yaml
@@ -9532,8 +9426,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: h9P
   type: G2gqK
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/ingress.yaml
 apiVersion: networking.k8s.io/v1
@@ -9570,8 +9462,6 @@ spec:
     secretName: x
   - hosts: null
     secretName: aSf1
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -9683,8 +9573,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: 5XQu4RW
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -9991,7 +9879,6 @@ spec:
           secretName: odFI2M4
       - name: 0nP
       - name: 5Mq
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -10111,8 +9998,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: 3Wh
   type: sIQBZD
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -10625,7 +10510,6 @@ spec:
           secretName: HK
       - name: ""
       - name: SXJ
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -10721,8 +10605,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: J
   type: QAVsE
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/hpa.yaml
 apiVersion: autoscaling/v2
@@ -10759,9 +10641,6 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: G9
-status:
-  currentMetrics: null
-  desiredReplicas: 0
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -10844,8 +10723,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: xknw
   type: N9chrF
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/hpa.yaml
 apiVersion: autoscaling/v2
@@ -10881,9 +10758,6 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: 59cQ0qKLI
-status:
-  currentMetrics: null
-  desiredReplicas: 0
 ---
 # Source: console/templates/ingress.yaml
 apiVersion: networking.k8s.io/v1
@@ -10941,8 +10815,6 @@ spec:
     - C
     - wxjmQWXDn
     secretName: ESgom5IBQR
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -11036,8 +10908,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: wB
   type: aaIqePq
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -11682,7 +11552,6 @@ spec:
       - name: 1zZI6J
       - name: D
       - name: OUqOnvjvba
-status: {}
 ---
 # Source: console/templates/hpa.yaml
 apiVersion: autoscaling/v2
@@ -11719,9 +11588,6 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: llK4G
-status:
-  currentMetrics: null
-  desiredReplicas: 0
 ---
 # Source: console/templates/ingress.yaml
 apiVersion: networking.k8s.io/v1
@@ -11765,8 +11631,6 @@ spec:
     - EHuJ
     - 95my0
     secretName: XOIr
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -11851,8 +11715,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: bCPeYVWao
   type: 2K35
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -12854,7 +12716,6 @@ spec:
           defaultMode: 354
           secretName: "2"
       - name: MqQb15NA
-status: {}
 -- testdata/case-034.yaml.golden --
 ---
 # Source: console/templates/serviceaccount.yaml
@@ -12936,8 +12797,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: zE
   type: d2QGeqxiX
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -13042,8 +12901,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: console
   type: ZQQlqx7Np
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -13970,7 +13827,6 @@ spec:
       - name: 00PT1WRWHX
       - name: P4
       - name: fn
-status: {}
 ---
 # Source: console/templates/ingress.yaml
 apiVersion: networking.k8s.io/v1
@@ -14045,8 +13901,6 @@ spec:
     - zPo
     - Z7
     secretName: SiZz
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -14146,8 +14000,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: 9mG8n4Wu4
   type: XHYb2qmrk
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -15070,7 +14922,6 @@ spec:
         secret:
           secretName: AumW
       - name: HUa7xM
-status: {}
 -- testdata/case-037.yaml.golden --
 ---
 # Source: console/templates/serviceaccount.yaml
@@ -15151,8 +15002,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: u2r6
   type: At
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/ingress.yaml
 apiVersion: networking.k8s.io/v1
@@ -15219,8 +15068,6 @@ spec:
         path: dzn1ldJ5h
         pathType: M
   tls: null
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -15318,8 +15165,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: ld
   type: uqFB
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -15415,8 +15260,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: o2F37Lr
   type: dPOD9Kzb
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/ingress.yaml
 apiVersion: networking.k8s.io/v1
@@ -15449,8 +15292,6 @@ spec:
     - F7m23
     - "7"
     secretName: M
-status:
-  loadBalancer: {}
 -- testdata/case-040.yaml.golden --
 ---
 # Source: console/templates/configmap.yaml
@@ -15498,8 +15339,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: 6sW
   type: oZi
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -16546,7 +16385,6 @@ spec:
           secretName: mD0jl
       - name: iPeR
       - name: ZgdCb2kUB
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -16692,8 +16530,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: x
   type: tJUW
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -17279,7 +17115,6 @@ spec:
       - name: R
       - name: w
       - name: ui8e5
-status: {}
 ---
 # Source: console/templates/hpa.yaml
 apiVersion: autoscaling/v2
@@ -17315,9 +17150,6 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: Wq
-status:
-  currentMetrics: null
-  desiredReplicas: 0
 ---
 # Source: console/templates/ingress.yaml
 apiVersion: networking.k8s.io/v1
@@ -17350,8 +17182,6 @@ spec:
         path: /
         pathType: ImplementationSpecific
   tls: null
-status:
-  loadBalancer: {}
 -- testdata/case-042.yaml.golden --
 ---
 # Source: console/templates/configmap.yaml
@@ -17413,8 +17243,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: 84QIe
   type: uTyclgj9tVV
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -18355,7 +18183,6 @@ spec:
           secretName: RG
       - name: "4"
       - name: Kry
-status: {}
 ---
 # Source: console/templates/hpa.yaml
 apiVersion: autoscaling/v2
@@ -18391,9 +18218,6 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: eHZ
-status:
-  currentMetrics: null
-  desiredReplicas: 0
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -18461,8 +18285,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: console
   type: 9TsjJQkJZ
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/ingress.yaml
 apiVersion: networking.k8s.io/v1
@@ -18506,8 +18328,6 @@ spec:
     secretName: HtA
   - hosts: null
     secretName: jRYKg
-status:
-  loadBalancer: {}
 -- testdata/case-044.yaml.golden --
 ---
 # Source: console/templates/serviceaccount.yaml
@@ -18587,8 +18407,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: tvDI
   type: ""
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -19252,7 +19070,6 @@ spec:
         name: configs
       - name: Kt6NIoVzEY
       - name: O
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -19362,8 +19179,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: tOoxEiwdVpT
   type: C
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/hpa.yaml
 apiVersion: autoscaling/v2
@@ -19398,9 +19213,6 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: 9gCm5xz
-status:
-  currentMetrics: null
-  desiredReplicas: 0
 ---
 # Source: console/templates/ingress.yaml
 apiVersion: networking.k8s.io/v1
@@ -19447,8 +19259,6 @@ spec:
   - hosts:
     - SzMunki
     secretName: OT
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -19545,8 +19355,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: console
   type: PK7oH1pcU3
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/ingress.yaml
 apiVersion: networking.k8s.io/v1
@@ -19588,8 +19396,6 @@ spec:
     - Cu
     - xuscoJ
     secretName: fBCynrlb
-status:
-  loadBalancer: {}
 -- testdata/case-047.yaml.golden --
 ---
 # Source: console/templates/serviceaccount.yaml
@@ -19638,8 +19444,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: nEojiMtRc
   type: WAAXkZY
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -20278,7 +20082,6 @@ spec:
         secret:
           defaultMode: 184
           secretName: LF0O
-status: {}
 ---
 # Source: console/templates/hpa.yaml
 apiVersion: autoscaling/v2
@@ -20312,9 +20115,6 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: YUi5JpG
-status:
-  currentMetrics: null
-  desiredReplicas: 0
 -- testdata/case-048.yaml.golden --
 ---
 # Source: console/templates/serviceaccount.yaml
@@ -20392,8 +20192,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: W7q3X
   type: l5gj
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -21223,7 +21021,6 @@ spec:
         secret:
           defaultMode: 80
           secretName: ZxXI0Hhv
-status: {}
 ---
 # Source: console/templates/hpa.yaml
 apiVersion: autoscaling/v2
@@ -21260,9 +21057,6 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: 3um
-status:
-  currentMetrics: null
-  desiredReplicas: 0
 -- testdata/case-049.yaml.golden --
 ---
 # Source: console/templates/serviceaccount.yaml
@@ -21358,8 +21152,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: 8dJzE
   type: IfYfRoHRG
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -22170,7 +21962,6 @@ spec:
         secret:
           defaultMode: 246
           secretName: tz
-status: {}
 ---
 # Source: console/templates/hpa.yaml
 apiVersion: autoscaling/v2
@@ -22207,9 +21998,6 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: 0BIfuN
-status:
-  currentMetrics: null
-  desiredReplicas: 0
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -22336,8 +22124,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: console
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -22434,7 +22220,6 @@ spec:
       - name: secrets
         secret:
           secretName: console
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -22556,8 +22341,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: console
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -22654,7 +22437,6 @@ spec:
       - name: secrets
         secret:
           secretName: console
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -22784,8 +22566,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: console
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -22882,7 +22662,6 @@ spec:
       - name: secrets
         secret:
           secretName: console
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -23023,8 +22802,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: console
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -23121,7 +22898,6 @@ spec:
       - name: secrets
         secret:
           secretName: console
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -23253,8 +23029,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: console
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -23351,7 +23125,6 @@ spec:
       - name: secrets
         secret:
           secretName: console
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -23472,8 +23245,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: console
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -23570,7 +23341,6 @@ spec:
       - name: secrets
         secret:
           secretName: console
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -23691,8 +23461,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: console
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -23789,7 +23557,6 @@ spec:
       - name: secrets
         secret:
           secretName: console
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -23910,8 +23677,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: console
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -24017,7 +23782,6 @@ spec:
       - name: secrets
         secret:
           secretName: console
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -24138,8 +23902,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: console
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -24236,7 +23998,6 @@ spec:
       - name: secrets
         secret:
           secretName: console
-status: {}
 ---
 # Source: console/templates/ingress.yaml
 apiVersion: networking.k8s.io/v1
@@ -24269,8 +24030,6 @@ spec:
   - hosts:
     - '"blah"'
     secretName: my-secret
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -24391,8 +24150,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: console
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -24489,7 +24246,6 @@ spec:
       - name: secrets
         secret:
           secretName: console
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -24610,8 +24366,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: console
   type: NodePort
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -24708,7 +24462,6 @@ spec:
       - name: secrets
         secret:
           secretName: console
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1
@@ -24831,8 +24584,6 @@ spec:
     app.kubernetes.io/instance: console
     app.kubernetes.io/name: console
   type: NodePort
-status:
-  loadBalancer: {}
 ---
 # Source: console/templates/deployment.yaml
 apiVersion: apps/v1
@@ -24929,7 +24680,6 @@ spec:
       - name: secrets
         secret:
           secretName: console
-status: {}
 ---
 # Source: console/templates/tests/test-connection.yaml
 apiVersion: v1

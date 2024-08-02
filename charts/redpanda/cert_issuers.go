@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// +gotohelm:filename=cert-issuers.go.tpl
+// +gotohelm:filename=_cert-issuers.go.tpl
 package redpanda
 
 import (

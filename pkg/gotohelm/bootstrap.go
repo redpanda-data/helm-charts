@@ -20,6 +20,35 @@ var (
 	shims *File
 )
 
+// renderManifest is a helper function to call and render the results of a
+// gotohelm function as a Kubernetes manifest. It handles nil checking and
+// rendering either slices or individual manifests. It additionally contains a
+// bit of extra logic to cut the `status` and `creationTimestamp` fields out of
+// manifests before rendering them. Such fields have been reported to cause
+// issues with tools such as ArgoCD (See #1458). Removal is done at this level
+// to avoid breaking the invariant that gotohelm produces templates that are
+// equivalent to their go source (which include .Status and
+// .CreationTimestamp).
+//
+// Usage:
+//
+//	{{- include "_shims.render-manifest" (list "template.ToRender" .) -}}
+const renderManifest = `{{- define "_shims.render-manifest" -}}
+{{- $tpl := (index . 0) -}}
+{{- $dot := (index . 1) -}}
+{{- $manifests := (get ((include $tpl (dict "a" (list $dot))) | fromJson) "r") -}}
+{{- if not (typeIs "[]interface {}" $manifests) -}}
+{{- $manifests = (list $manifests) -}}
+{{- end -}}
+{{- range $_, $manifest := $manifests -}}
+{{- if ne $manifest nil }}
+---
+{{toYaml (unset (unset $manifest "status") "creationTimestamp")}}
+{{- end -}}
+{{- end -}}
+{{- end -}}
+`
+
 func init() {
 	// Oh yes. We transpile the bootstrap package when this package is first
 	// loaded to generate _shims.tpl. It's a weird process but removes any
@@ -49,6 +78,10 @@ func init() {
 	// The result is then shoved into a global variable so all further calls to
 	// Transpile can make use of our shim/bootstrap layer.
 	shims = bootstrapChart.Files[0]
+
+	// Attach a foot of helpers written in raw gotpl that can't be expressed in
+	// gotohelm.
+	shims.Footer = renderManifest
 }
 
 func fsToOverlay(fsys *embed.FS, prefix string) map[string][]byte {

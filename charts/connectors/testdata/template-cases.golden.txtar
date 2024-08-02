@@ -31,8 +31,6 @@ spec:
     app.kubernetes.io/name: pO5m
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -192,7 +190,6 @@ spec:
           medium: Memory
           sizeLimit: 5Mi
         name: rp-connect-tmp
-status: {}
 ---
 # Source: connectors/templates/pod-monitor.yaml
 apiVersion: monitoring.coreos.com/v1
@@ -251,8 +248,6 @@ spec:
     app.kubernetes.io/name: nZ
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -409,7 +404,6 @@ spec:
           medium: Memory
           sizeLimit: 5Mi
         name: rp-connect-tmp
-status: {}
 -- testdata/case-002.yaml.golden --
 ---
 # Source: connectors/templates/serviceaccount.yaml
@@ -459,8 +453,6 @@ spec:
     app.kubernetes.io/name: ZZ5
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -629,7 +621,6 @@ spec:
         whenUnsatisfiable: ScheduleAnyway
       volumes:
       - name: AhJ
-status: {}
 -- testdata/case-003.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -663,8 +654,6 @@ spec:
     app.kubernetes.io/name: Wvpgs
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -824,7 +813,6 @@ spec:
           medium: Memory
           sizeLimit: 5Mi
         name: rp-connect-tmp
-status: {}
 -- testdata/case-004.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -858,8 +846,6 @@ spec:
     app.kubernetes.io/name: xhLPt0
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -1017,7 +1003,6 @@ spec:
           medium: Memory
           sizeLimit: 5Mi
         name: rp-connect-tmp
-status: {}
 -- testdata/case-005.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -1051,8 +1036,6 @@ spec:
     app.kubernetes.io/name: W
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -1223,7 +1206,6 @@ spec:
           medium: Memory
           sizeLimit: 5Mi
         name: rp-connect-tmp
-status: {}
 -- testdata/case-006.yaml.golden --
 ---
 # Source: connectors/templates/serviceaccount.yaml
@@ -1283,8 +1265,6 @@ spec:
     m2DRq: cS
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -1456,7 +1436,6 @@ spec:
           medium: Memory
           sizeLimit: 5Mi
         name: rp-connect-tmp
-status: {}
 -- testdata/case-007.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -1490,8 +1469,6 @@ spec:
     app.kubernetes.io/name: Gb7J7k
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -1650,7 +1627,6 @@ spec:
           medium: Memory
           sizeLimit: 5Mi
         name: rp-connect-tmp
-status: {}
 -- testdata/case-008.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -1684,8 +1660,6 @@ spec:
     app.kubernetes.io/name: tPhRiQRK
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -1839,7 +1813,6 @@ spec:
           medium: Memory
           sizeLimit: 5Mi
         name: rp-connect-tmp
-status: {}
 -- testdata/case-009.yaml.golden --
 ---
 # Source: connectors/templates/serviceaccount.yaml
@@ -1890,8 +1863,6 @@ spec:
     app.kubernetes.io/name: wCD97n
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 -- testdata/case-010.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -1931,8 +1902,6 @@ spec:
     h4yNA: fJL
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -2104,7 +2073,6 @@ spec:
           medium: Memory
           sizeLimit: 5Mi
         name: rp-connect-tmp
-status: {}
 ---
 # Source: connectors/templates/pod-monitor.yaml
 apiVersion: monitoring.coreos.com/v1
@@ -2168,8 +2136,6 @@ spec:
     mO: pT
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -2386,7 +2352,6 @@ spec:
           medium: Memory
           sizeLimit: 5Mi
         name: rp-connect-tmp
-status: {}
 -- testdata/case-012.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -2420,8 +2385,6 @@ spec:
     app.kubernetes.io/name: MexiU
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 -- testdata/case-013.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -2455,8 +2418,6 @@ spec:
     app.kubernetes.io/name: w8tCi3K
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/pod-monitor.yaml
 apiVersion: monitoring.coreos.com/v1
@@ -2512,8 +2473,6 @@ spec:
     app.kubernetes.io/name: dA1zsc
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -2672,7 +2631,6 @@ spec:
           medium: Memory
           sizeLimit: 5Mi
         name: rp-connect-tmp
-status: {}
 ---
 # Source: connectors/templates/pod-monitor.yaml
 apiVersion: monitoring.coreos.com/v1
@@ -2739,8 +2697,6 @@ spec:
     etW: "9"
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 -- testdata/case-016.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -2780,8 +2736,6 @@ spec:
     app.kubernetes.io/name: Cex3v
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -2940,7 +2894,6 @@ spec:
       - name: X7ZZu
       - name: KkkMA7
       - name: Btxy
-status: {}
 -- testdata/case-017.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -2976,8 +2929,6 @@ spec:
     wR: GAm
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -3190,7 +3141,6 @@ spec:
           medium: Memory
           sizeLimit: 5Mi
         name: rp-connect-tmp
-status: {}
 -- testdata/case-018.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -3224,8 +3174,6 @@ spec:
     app.kubernetes.io/name: C
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -3408,7 +3356,6 @@ spec:
           medium: Memory
           sizeLimit: 5Mi
         name: rp-connect-tmp
-status: {}
 -- testdata/case-019.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -3446,8 +3393,6 @@ spec:
     app.kubernetes.io/name: qQY
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -3640,7 +3585,6 @@ spec:
           medium: Memory
           sizeLimit: 5Mi
         name: rp-connect-tmp
-status: {}
 -- testdata/case-020.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -3674,8 +3618,6 @@ spec:
     app.kubernetes.io/name: kUuRn
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 -- testdata/case-021.yaml.golden --
 ---
 # Source: connectors/templates/serviceaccount.yaml
@@ -3737,8 +3679,6 @@ spec:
     "y": TxHhxVY2tRx1i
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -4007,7 +3947,6 @@ spec:
           medium: Memory
           sizeLimit: 5Mi
         name: rp-connect-tmp
-status: {}
 -- testdata/case-022.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -4047,8 +3986,6 @@ spec:
     app.kubernetes.io/name: 6MJPA
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -4309,7 +4246,6 @@ spec:
           medium: Memory
           sizeLimit: 5Mi
         name: rp-connect-tmp
-status: {}
 ---
 # Source: connectors/templates/pod-monitor.yaml
 apiVersion: monitoring.coreos.com/v1
@@ -4369,8 +4305,6 @@ spec:
     app.kubernetes.io/name: ZI341xw
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -4530,7 +4464,6 @@ spec:
         whenUnsatisfiable: ScheduleAnyway
       volumes:
       - name: naPNMJ
-status: {}
 -- testdata/case-024.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -4564,8 +4497,6 @@ spec:
     app.kubernetes.io/name: Y47
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -4742,7 +4673,6 @@ spec:
           medium: Memory
           sizeLimit: 5Mi
         name: rp-connect-tmp
-status: {}
 -- testdata/case-025.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -4778,8 +4708,6 @@ spec:
     app.kubernetes.io/name: z3C
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -5010,7 +4938,6 @@ spec:
           medium: Memory
           sizeLimit: 5Mi
         name: rp-connect-tmp
-status: {}
 ---
 # Source: connectors/templates/pod-monitor.yaml
 apiVersion: monitoring.coreos.com/v1
@@ -5095,8 +5022,6 @@ spec:
     op: VnL9o7
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 -- testdata/case-027.yaml.golden --
 ---
 # Source: connectors/templates/serviceaccount.yaml
@@ -5152,8 +5077,6 @@ spec:
     app.kubernetes.io/name: ffe2
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -5324,7 +5247,6 @@ spec:
           medium: Memory
           sizeLimit: 5Mi
         name: rp-connect-tmp
-status: {}
 -- testdata/case-028.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -5361,8 +5283,6 @@ spec:
     app.kubernetes.io/name: "3"
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -5575,7 +5495,6 @@ spec:
           medium: Memory
           sizeLimit: 5Mi
         name: rp-connect-tmp
-status: {}
 ---
 # Source: connectors/templates/pod-monitor.yaml
 apiVersion: monitoring.coreos.com/v1
@@ -5640,8 +5559,6 @@ spec:
     app.kubernetes.io/name: tl2YFI
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -5918,7 +5835,6 @@ spec:
           medium: Memory
           sizeLimit: 5Mi
         name: rp-connect-tmp
-status: {}
 -- testdata/case-030.yaml.golden --
 ---
 # Source: connectors/templates/serviceaccount.yaml
@@ -5970,8 +5886,6 @@ spec:
     app.kubernetes.io/name: P7
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 -- testdata/case-031.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -6010,8 +5924,6 @@ spec:
     app.kubernetes.io/name: pLehdV
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -6212,7 +6124,6 @@ spec:
       - name: T6INhQ
       - name: p0
       - name: EO
-status: {}
 -- testdata/case-032.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -6246,8 +6157,6 @@ spec:
     app.kubernetes.io/name: connectors
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 -- testdata/case-033.yaml.golden --
 ---
 # Source: connectors/templates/serviceaccount.yaml
@@ -6312,8 +6221,6 @@ spec:
     app.kubernetes.io/name: bz0yr
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 -- testdata/case-034.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -6358,8 +6265,6 @@ spec:
     trc: W
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 -- testdata/case-035.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -6401,8 +6306,6 @@ spec:
     wle: mprjb
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/pod-monitor.yaml
 apiVersion: monitoring.coreos.com/v1
@@ -6467,8 +6370,6 @@ spec:
     app.kubernetes.io/name: taotfWzUIl
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -6774,7 +6675,6 @@ spec:
           secretName: Na4b
       - name: qx
       - name: XeUJ
-status: {}
 -- testdata/case-037.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -6817,8 +6717,6 @@ spec:
     app.kubernetes.io/name: 03U7
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -7136,7 +7034,6 @@ spec:
           secretName: TaD
       - name: QbE11Wi
       - name: 5p
-status: {}
 -- testdata/case-038.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -7172,8 +7069,6 @@ spec:
     app.kubernetes.io/name: BX8JrNja9K1E
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 -- testdata/case-039.yaml.golden --
 ---
 # Source: connectors/templates/serviceaccount.yaml
@@ -7229,8 +7124,6 @@ spec:
     app.kubernetes.io/name: mn
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -7490,7 +7383,6 @@ spec:
       - name: PQgVp5UAKMh
       - name: m
       - name: ""
-status: {}
 -- testdata/case-040.yaml.golden --
 ---
 # Source: connectors/templates/serviceaccount.yaml
@@ -7558,8 +7450,6 @@ spec:
     "n": ""
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -7822,7 +7712,6 @@ spec:
           defaultMode: 292
           secretName: M4pqhD32D
       - name: kXFFnM
-status: {}
 ---
 # Source: connectors/templates/pod-monitor.yaml
 apiVersion: monitoring.coreos.com/v1
@@ -7893,8 +7782,6 @@ spec:
     eP0gw: ZlmzgOXE
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -8206,7 +8093,6 @@ spec:
           secretName: 2h
       - name: JoBYh
       - name: 4s31
-status: {}
 -- testdata/case-042.yaml.golden --
 ---
 # Source: connectors/templates/serviceaccount.yaml
@@ -8266,8 +8152,6 @@ spec:
     app.kubernetes.io/name: s9WyH2Y
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 -- testdata/case-043.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -8310,8 +8194,6 @@ spec:
     xYCcuP: zC
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/pod-monitor.yaml
 apiVersion: monitoring.coreos.com/v1
@@ -8392,8 +8274,6 @@ spec:
     app.kubernetes.io/name: R64C
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -8711,7 +8591,6 @@ spec:
           secretName: mhOAME
       - name: RXJ
       - name: JJ
-status: {}
 ---
 # Source: connectors/templates/pod-monitor.yaml
 apiVersion: monitoring.coreos.com/v1
@@ -8796,8 +8675,6 @@ spec:
     h52qwPFCCL1xE: q
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/pod-monitor.yaml
 apiVersion: monitoring.coreos.com/v1
@@ -8876,8 +8753,6 @@ spec:
     app.kubernetes.io/name: fa1XvkvO
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/pod-monitor.yaml
 apiVersion: monitoring.coreos.com/v1
@@ -8961,8 +8836,6 @@ spec:
     ytV2tl: icxW
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -9215,7 +9088,6 @@ spec:
       - name: Cm
       - name: eHp5
       - name: r1T
-status: {}
 ---
 # Source: connectors/templates/pod-monitor.yaml
 apiVersion: monitoring.coreos.com/v1
@@ -9282,8 +9154,6 @@ spec:
     x3: e1lz
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -9608,7 +9478,6 @@ spec:
           defaultMode: 292
           secretName: i5
       - name: I0
-status: {}
 -- testdata/case-049.yaml.golden --
 ---
 # Source: connectors/templates/serviceaccount.yaml
@@ -9669,8 +9538,6 @@ spec:
     wy9DijfF9: pY
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 -- testdata/custom-anti-affinity.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -9704,8 +9571,6 @@ spec:
     app.kubernetes.io/name: connectors
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -9865,7 +9730,6 @@ spec:
           medium: Memory
           sizeLimit: 5Mi
         name: rp-connect-tmp
-status: {}
 -- testdata/defaults.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -9899,8 +9763,6 @@ spec:
     app.kubernetes.io/name: connectors
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -10057,7 +9919,6 @@ spec:
           medium: Memory
           sizeLimit: 5Mi
         name: rp-connect-tmp
-status: {}
 -- testdata/hard-anti-affinity.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -10091,8 +9952,6 @@ spec:
     app.kubernetes.io/name: connectors
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -10249,7 +10108,6 @@ spec:
           medium: Memory
           sizeLimit: 5Mi
         name: rp-connect-tmp
-status: {}
 -- testdata/soft-anti-affinity.yaml.golden --
 ---
 # Source: connectors/templates/service.yaml
@@ -10283,8 +10141,6 @@ spec:
     app.kubernetes.io/name: connectors
   sessionAffinity: None
   type: ClusterIP
-status:
-  loadBalancer: {}
 ---
 # Source: connectors/templates/deployment.yaml
 apiVersion: apps/v1
@@ -10443,4 +10299,3 @@ spec:
           medium: Memory
           sizeLimit: 5Mi
         name: rp-connect-tmp
-status: {}

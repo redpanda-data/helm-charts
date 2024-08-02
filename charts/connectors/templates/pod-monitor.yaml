@@ -14,9 +14,4 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{ $pm := (get ((include "connectors.PodMonitor" (dict "a" (list .))) | fromJson) "r") }}
-{{- if ne $pm nil -}}
----
-{{ toYaml $pm }}
-{{- end }}
-
+{{- include "_shims.render-manifest" (list "connectors.PodMonitor" .) -}}

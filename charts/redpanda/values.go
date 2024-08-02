@@ -1,4 +1,4 @@
-// +gotohelm:filename=values.go.tpl
+// +gotohelm:filename=_values.go.tpl
 package redpanda
 
 import (
