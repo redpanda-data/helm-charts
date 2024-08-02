@@ -14,13 +14,5 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{- $is := (get ((include "redpanda.CertIssuers" (dict "a" (list .))) | fromJson) "r") }}
-{{- range $_, $i := $is }}
----
-{{ toYaml $i }}
-{{- end }}
-{{- $cas := (get ((include "redpanda.RootCAs" (dict "a" (list .))) | fromJson) "r") }}
-{{- range $_, $ca := $cas }}
----
-{{ toYaml $ca }}
-{{- end }}
+{{- include "_shims.render-manifest" (list "redpanda.CertIssuers" .) -}}
+{{- include "_shims.render-manifest" (list "redpanda.RootCAs" .) -}}

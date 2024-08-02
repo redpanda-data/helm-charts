@@ -273,3 +273,17 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "_shims.render-manifest" -}}
+{{- $tpl := (index . 0) -}}
+{{- $dot := (index . 1) -}}
+{{- $manifests := (get ((include $tpl (dict "a" (list $dot))) | fromJson) "r") -}}
+{{- if not (typeIs "[]interface {}" $manifests) -}}
+{{- $manifests = (list $manifests) -}}
+{{- end -}}
+{{- range $_, $manifest := $manifests -}}
+{{- if ne $manifest nil }}
+---
+{{toYaml (unset (unset $manifest "status") "creationTimestamp")}}
+{{- end -}}
+{{- end -}}
+{{- end -}}

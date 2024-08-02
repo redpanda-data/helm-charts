@@ -14,8 +14,4 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */}}
-{{ $hpa := (get ((include "console.HorizontalPodAutoscaler" (dict "a" (list .))) | fromJson) "r") }}
-{{- if ne $hpa nil -}}
----
-{{ toYaml $hpa }}
-{{- end }}
+{{- include "_shims.render-manifest" (list "console.HorizontalPodAutoscaler" .) -}}

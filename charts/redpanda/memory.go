@@ -1,4 +1,4 @@
-// +gotohelm:filename=memory.go.tpl
+// +gotohelm:filename=_memory.go.tpl
 package redpanda
 
 import (
