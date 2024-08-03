@@ -15,9 +15,11 @@ import (
 	"github.com/redpanda-data/helm-charts/pkg/kube"
 	"github.com/redpanda-data/helm-charts/pkg/testutil"
 	"github.com/redpanda-data/helm-charts/pkg/valuesutil"
+	"github.com/redpanda-data/redpanda/src/go/rpk/pkg/config"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/tools/txtar"
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/util/jsonpath"
 	"k8s.io/utils/ptr"
 	"sigs.k8s.io/yaml"
@@ -109,6 +111,10 @@ func TestTemplate(t *testing.T) {
 				case `ASSERT-FIELD-EQUALS`:
 					require.NoError(t, err)
 					AssertFieldEquals(t, params, out)
+
+				case `ASSERT-VALID-RPK-CONFIGURATION`:
+					require.NoError(t, err)
+					AssertValidRPKConfiguration(t, out)
 
 				default:
 					t.Fatalf("unknown assertion marker: %q\nFull Line: %s", name, assertion[0])
@@ -291,6 +297,23 @@ func AssertNoCertficates(t *testing.T, manifests []byte) {
 	}
 
 	require.NotContains(t, manifests, []byte(certmanagerv1.CertificateKind))
+}
+
+func AssertValidRPKConfiguration(t *testing.T, manifests []byte) {
+	objs, err := kube.DecodeYAML(manifests, redpanda.Scheme)
+	require.NoError(t, err)
+
+	for _, obj := range objs {
+		cm, ok := obj.(*corev1.ConfigMap)
+		if !(ok && obj.GetName() == "redpanda") {
+			continue
+		}
+		rpCfg, exist := cm.Data["redpanda.yaml"]
+		require.True(t, exist, "redpanda.yaml not found")
+
+		var cfg config.RedpandaYaml
+		require.NoError(t, yaml.Unmarshal([]byte(rpCfg), &cfg))
+	}
 }
 
 func AssertFieldEquals(t *testing.T, params []json.RawMessage, manifests []byte) {

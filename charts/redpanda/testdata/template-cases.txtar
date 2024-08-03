@@ -167,3 +167,12 @@ statefulset:
   replicas: 3
   securityContext:
     allowPriviledgeEscalation: false
+
+-- node-config-boolean-type-regression --
+# RPK can not
+# ASSERT-NO-ERROR
+# ASSERT-GOLDEN
+# ASSERT-VALID-RPK-CONFIGURATION
+config:
+  node:
+    developer_mode: true

@@ -1100,8 +1100,11 @@
 {{- $ok_14 := $tmp_tuple_13.T2 -}}
 {{- if $ok_14 -}}
 {{- $_ := (set $result $k $v) -}}
+{{- else -}}{{- if (kindIs "bool" $v) -}}
+{{- $_ := (set $result $k $v) -}}
 {{- else -}}
 {{- $_ := (set $result $k (toYaml $v)) -}}
+{{- end -}}
 {{- end -}}
 {{- end -}}
 {{- end -}}

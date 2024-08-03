@@ -1570,6 +1570,8 @@ func (c *NodeConfig) Translate() map[string]any {
 		if !helmette.Empty(v) {
 			if _, ok := helmette.AsNumeric(v); ok {
 				result[k] = v
+			} else if helmette.KindIs("bool", v) {
+				result[k] = v
 			} else {
 				result[k] = helmette.ToYaml(v)
 			}
