@@ -207,7 +207,10 @@ func StatefulSetVolumes(dot *helmette.Dot) []corev1.Volume {
 				},
 			},
 		},
-		{
+	}...)
+
+	if values.Statefulset.InitContainers.FSValidator.Enabled {
+		volumes = append(volumes, corev1.Volume{
 			Name: fmt.Sprintf("%.49s-fs-validator", fullname),
 			VolumeSource: corev1.VolumeSource{
 				Secret: &corev1.SecretVolumeSource{
@@ -215,8 +218,8 @@ func StatefulSetVolumes(dot *helmette.Dot) []corev1.Volume {
 					DefaultMode: ptr.To[int32](0o775),
 				},
 			},
-		},
-	}...)
+		})
+	}
 
 	if vol := values.Listeners.TrustStoreVolume(&values.TLS); vol != nil {
 		volumes = append(volumes, *vol)

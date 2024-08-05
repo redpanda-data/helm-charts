@@ -5,6 +5,7 @@
 # ASSERT-TRUST-STORES ["http",            {"default": "/etc/tls/certs/external/ca.crt", "internal": "/etc/tls/certs/default/ca.crt"}]
 # ASSERT-TRUST-STORES ["kafka",           {"default": "/etc/tls/certs/external/ca.crt", "internal": "/etc/tls/certs/default/ca.crt"}]
 # ASSERT-TRUST-STORES ["schema_registry", {"default": "/etc/tls/certs/external/ca.crt", "internal": "/etc/tls/certs/default/ca.crt"}]
+# ASSERT-STATEFULSET-ALL-VOLUMES-ARE-USED
 # Base case for TrustStores.
 tls:
   certs:
@@ -20,6 +21,7 @@ tls:
 # ASSERT-TRUST-STORES ["http",            {"default": "/etc/tls/certs/external/ca.crt", "internal": "/etc/truststores/configmaps/http-cm-ca.crt", "my-http": "/etc/truststores/configmaps/http-cm-my-http.crt"}]
 # ASSERT-TRUST-STORES ["kafka",           {"default": "/etc/tls/certs/external/ca.crt", "internal": "/etc/truststores/configmaps/my-ca-bundle-ca.crt", "my-kafka": "/etc/truststores/secrets/kafka-secret-my-kafka.crt"}]
 # ASSERT-TRUST-STORES ["schema_registry", {"default": "/etc/tls/certs/external/ca.crt", "internal": "/etc/truststores/secrets/sr-secret-ca.crt", "my-sr": "/etc/truststores/secrets/sr-secret-my-sr.crt"}]
+# ASSERT-STATEFULSET-ALL-VOLUMES-ARE-USED
 listeners:
   admin:
     external:
@@ -93,6 +95,7 @@ tls:
 # ASSERT-NO-ERROR
 # ASSERT-GOLDEN
 # ASSERT-NO-CERTIFICATES
+# ASSERT-STATEFULSET-ALL-VOLUMES-ARE-USED
 tls:
   certs:
     default:
@@ -106,6 +109,7 @@ tls:
 # ASSERT-NO-ERROR
 # ASSERT-GOLDEN
 # ASSERT-NO-CERTIFICATES
+# ASSERT-STATEFULSET-ALL-VOLUMES-ARE-USED
 listeners:
   http:
     external:
@@ -152,6 +156,7 @@ tls:
 # ASSERT-NO-ERROR
 # ASSERT-GOLDEN
 # ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.containers[*].securityContext.allowPrivilegeEscalation}", false]
+# ASSERT-STATEFULSET-ALL-VOLUMES-ARE-USED
 statefulset:
   replicas: 3
   securityContext:
@@ -163,6 +168,7 @@ statefulset:
 # ASSERT-NO-ERROR
 # ASSERT-GOLDEN
 # ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.containers[*].securityContext.allowPrivilegeEscalation}", false]
+# ASSERT-STATEFULSET-ALL-VOLUMES-ARE-USED
 statefulset:
   replicas: 3
   securityContext:
