@@ -224,7 +224,8 @@ func CommonMounts(dot *helmette.Dot) []corev1.VolumeMount {
 			})
 		}
 
-		if ClientAuthRequired(dot) {
+		adminTLS := values.Listeners.Admin.TLS
+		if adminTLS.RequireClientAuth {
 			mounts = append(mounts, corev1.VolumeMount{
 				Name:      "mtls-client",
 				MountPath: fmt.Sprintf("/etc/tls/certs/%s-client", Fullname(dot)),

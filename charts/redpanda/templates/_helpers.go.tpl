@@ -240,7 +240,8 @@
 {{- if $_is_returning -}}
 {{- break -}}
 {{- end -}}
-{{- if (get (fromJson (include "redpanda.ClientAuthRequired" (dict "a" (list $dot) ))) "r") -}}
+{{- $adminTLS := $values.listeners.admin.tls -}}
+{{- if $adminTLS.requireClientAuth -}}
 {{- $mounts = (concat (default (list ) $mounts) (list (mustMergeOverwrite (dict "name" "" "mountPath" "" ) (dict "name" "mtls-client" "mountPath" (printf "/etc/tls/certs/%s-client" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r")) )))) -}}
 {{- end -}}
 {{- end -}}
