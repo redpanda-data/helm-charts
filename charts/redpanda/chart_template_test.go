@@ -121,6 +121,10 @@ func TestTemplate(t *testing.T) {
 					require.NoError(t, err)
 					AssertStatefulSetVolumeMountsVerification(t, out)
 
+				case `ASSERT-STATEFULSET-ALL-VOLUMES-ARE-USED`:
+					require.NoError(t, err)
+					AssertStatefulsetAllVolumesAreUsed(t, out)
+
 				default:
 					t.Fatalf("unknown assertion marker: %q\nFull Line: %s", name, assertion[0])
 				}
@@ -159,6 +163,37 @@ func AssertStatefulSetVolumeMountsVerification(t *testing.T, manifests []byte) {
 	}
 }
 
+func AssertStatefulsetAllVolumesAreUsed(t *testing.T, manifests []byte) {
+	objs, err := kube.DecodeYAML(manifests, redpanda.Scheme)
+	require.NoError(t, err)
+
+	for _, obj := range objs {
+		sts, ok := obj.(*appsv1.StatefulSet)
+		if !ok {
+			continue
+		}
+
+		volumes := map[string]struct{}{}
+		for _, v := range sts.Spec.Template.Spec.Containers {
+			for _, m := range v.VolumeMounts {
+				volumes[m.Name] = struct{}{}
+			}
+		}
+
+		for _, v := range sts.Spec.Template.Spec.InitContainers {
+			for _, m := range v.VolumeMounts {
+				volumes[m.Name] = struct{}{}
+			}
+		}
+
+		for _, v := range sts.Spec.Template.Spec.Volumes {
+			if _, ok := volumes[v.Name]; !ok {
+				t.Fatalf("missing volume %s", v.Name)
+			}
+		}
+	}
+}
+
 func CIGoldenTestCases(t *testing.T) []txtar.File {
 	values, err := os.ReadDir("./ci")
 	require.NoError(t, err)
@@ -170,7 +205,7 @@ func CIGoldenTestCases(t *testing.T) []txtar.File {
 
 		cases[i] = txtar.File{
 			Name: f.Name(),
-			Data: append([]byte("# ASSERT-NO-ERROR\n# ASSERT-GOLDEN\n"), data...),
+			Data: append([]byte("# ASSERT-NO-ERROR\n# ASSERT-GOLDEN\n# ASSERT-STATEFULSET-ALL-VOLUMES-ARE-USED\n"), data...),
 		}
 	}
 	return cases
@@ -263,7 +298,7 @@ func VersionGoldenTestsCases(t *testing.T) []txtar.File {
 
 			name := fmt.Sprintf("%s-%s-%d", ptr.Deref(version.Image.Repository, "default"), *version.Image.Tag, i)
 
-			header := []byte("# ASSERT-NO-ERROR\n# ASSERT-GOLDEN\n")
+			header := []byte("# ASSERT-NO-ERROR\n# ASSERT-GOLDEN\n# ASSERT-STATEFULSET-ALL-VOLUMES-ARE-USED\n")
 			if version.ErrMsg != nil {
 				header = []byte(fmt.Sprintf("# ASSERT-ERROR-CONTAINS [%q]\n# ASSERT-GOLDEN\n", *version.ErrMsg))
 			}
