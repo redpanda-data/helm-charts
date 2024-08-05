@@ -1,4 +1,4 @@
-apiVersion: cluster.redpanda.com/v1alpha1
+apiVersion: cluster.redpanda.com/v1alpha2
 kind: Redpanda
 metadata:
   name: cluster-tls
@@ -10,14 +10,13 @@ spec:
       enabled: false
     image:
       repository: docker.redpanda.com/redpandadata/redpanda
-      tag: v23.2.2
+      tag: v24.2.1
     listeners:
       admin:
         external: {}
         port: 9644
         tls:
-          # TODO(chrisseto): Uncomment once #1428 is released
-          # cert: ""
+          cert: ""
           enabled: false
           requireClientAuth: false
       http:
@@ -27,8 +26,7 @@ spec:
         kafkaEndpoint: kafka-default
         port: 8082
         tls:
-          # TODO(chrisseto): Uncomment once #1428 is released
-          # cert: ""
+          cert: ""
           enabled: false
           requireClientAuth: false
       kafka:
@@ -38,7 +36,7 @@ spec:
         tls:
           cert: kafka-internal-0
           enabled: true
-          requireClientAuth: true
+          requireClientAuth: false
       rpc:
         port: 33145
     logging:
