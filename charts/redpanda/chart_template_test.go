@@ -19,6 +19,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/tools/txtar"
+	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/util/jsonpath"
 	"k8s.io/utils/ptr"
@@ -116,11 +117,45 @@ func TestTemplate(t *testing.T) {
 					require.NoError(t, err)
 					AssertValidRPKConfiguration(t, out)
 
+				case `ASSERT-STATEFULSET-VOLUME-MOUNTS-VERIFICATION`:
+					require.NoError(t, err)
+					AssertStatefulSetVolumeMountsVerification(t, out)
+
 				default:
 					t.Fatalf("unknown assertion marker: %q\nFull Line: %s", name, assertion[0])
 				}
 			}
 		})
+	}
+}
+
+func AssertStatefulSetVolumeMountsVerification(t *testing.T, manifests []byte) {
+	objs, err := kube.DecodeYAML(manifests, redpanda.Scheme)
+	require.NoError(t, err)
+
+	for _, obj := range objs {
+		sts, ok := obj.(*appsv1.StatefulSet)
+		if !ok {
+			continue
+		}
+
+		volumes := map[string]struct{}{}
+		for _, v := range sts.Spec.Template.Spec.Containers {
+			for _, m := range v.VolumeMounts {
+				volumes[m.Name] = struct{}{}
+			}
+		}
+
+		for _, v := range sts.Spec.Template.Spec.InitContainers {
+			for _, m := range v.VolumeMounts {
+				volumes[m.Name] = struct{}{}
+			}
+		}
+
+		for _, v := range sts.Spec.Template.Spec.Volumes {
+			delete(volumes, v.Name)
+		}
+		require.Len(t, volumes, 0)
 	}
 }
 

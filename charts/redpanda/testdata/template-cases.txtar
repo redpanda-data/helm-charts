@@ -176,3 +176,20 @@ statefulset:
 config:
   node:
     developer_mode: true
+
+-- mtls-client-regression --
+# ASSERT-NO-ERROR
+# ASSERT-GOLDEN
+# ASSERT-STATEFULSET-VOLUME-MOUNTS-VERIFICATION
+listeners:
+  kafka:
+    authenticationMethod: none
+    external: {}
+    tls:
+      cert: kafka-internal-0
+      enabled: true
+      requireClientAuth: true
+tls:
+  certs:
+    kafka-internal-0:
+      caEnabled: true
