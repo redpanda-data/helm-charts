@@ -931,6 +931,8 @@ listeners:
   admin:
     # -- The port for both internal and external connections to the Admin API.
     port: 9644
+    # -- Instrumentation hint - https://kubernetes.io/docs/concepts/services-networking/service/#application-protocol
+    appprotocol: "http"
     # -- Optional external access settings.
     external:
       # -- Name of the external listener.

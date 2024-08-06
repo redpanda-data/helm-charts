@@ -916,6 +916,9 @@
       "properties": {
         "admin": {
           "properties": {
+            "appprotocol": {
+              "type": "string"
+            },
             "external": {
               "minProperties": 1,
               "patternProperties": {
@@ -1050,6 +1053,7 @@
           },
           "required": [
             "port",
+            "appprotocol",
             "tls"
           ],
           "type": "object"
