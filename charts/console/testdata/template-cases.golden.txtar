@@ -12,7 +12,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 ---
@@ -26,7 +26,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 stringData:
   enterprise-license: ""
@@ -68,7 +68,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 ---
 # Source: console/templates/service.yaml
@@ -82,7 +82,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 spec:
@@ -107,7 +107,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 spec:
@@ -120,7 +120,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: f43dc9cf448fe7d01bb2e301b8135797164ae8b94805397bfdff177f19997009
+        checksum/config: 0d8cd108cc142c478b56f052e03e8a02c85de95db65e2275d0d484e042492689
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -202,7 +202,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 spec:
   maxReplicas: 100
@@ -236,7 +236,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -261,7 +261,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 ---
@@ -275,7 +275,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 stringData:
   enterprise-license: ""
@@ -317,7 +317,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 ---
 # Source: console/templates/service.yaml
@@ -331,7 +331,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 spec:
@@ -356,7 +356,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 spec:
@@ -369,7 +369,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: f43dc9cf448fe7d01bb2e301b8135797164ae8b94805397bfdff177f19997009
+        checksum/config: 0d8cd108cc142c478b56f052e03e8a02c85de95db65e2275d0d484e042492689
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -451,7 +451,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 spec:
   maxReplicas: 100
@@ -479,7 +479,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -504,7 +504,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 ---
@@ -518,7 +518,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 stringData:
   enterprise-license: ""
@@ -560,7 +560,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 ---
 # Source: console/templates/service.yaml
@@ -574,7 +574,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 spec:
@@ -599,7 +599,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 spec:
@@ -612,7 +612,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: f43dc9cf448fe7d01bb2e301b8135797164ae8b94805397bfdff177f19997009
+        checksum/config: 0d8cd108cc142c478b56f052e03e8a02c85de95db65e2275d0d484e042492689
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -694,7 +694,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 spec:
   maxReplicas: 100
@@ -722,7 +722,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -748,7 +748,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: "n"
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: HRoLg
   namespace: default
 ---
@@ -763,7 +763,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: "n"
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: hvGoJL
 stringData:
   enterprise-license: ""
@@ -806,7 +806,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: "n"
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: hvGoJL
 ---
 # Source: console/templates/service.yaml
@@ -821,7 +821,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: "n"
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: hvGoJL
   namespace: default
 spec:
@@ -848,7 +848,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: "n"
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: hvGoJL
   namespace: default
 spec:
@@ -862,7 +862,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 25c8070fc004db4abedf0271bf72a2bbe704a30c7f1b306afca2cb1a4eb08055
+        checksum/config: dd6b2660225e985a0bb3c6b66cdf05aefd376f4cfa9dad91779c19a59527b045
         lyW: mn
         pjq6fDr: YA2w301
         uXvFB: VQ5gP9
@@ -956,7 +956,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: "n"
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -981,7 +981,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Sh
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: T50cZi
   namespace: default
 ---
@@ -995,7 +995,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Sh
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: T50cZi
 stringData:
   enterprise-license: ""
@@ -1037,7 +1037,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Sh
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: T50cZi
 ---
 # Source: console/templates/service.yaml
@@ -1051,7 +1051,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Sh
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: T50cZi
   namespace: default
 spec:
@@ -1076,7 +1076,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Sh
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: T50cZi
   namespace: default
 spec:
@@ -1089,7 +1089,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: f6897648bdd7a6cc0d50cf17450940cf08a6f8a8d8b78e6d94a1c6e9fa6a046e
+        checksum/config: 627603944599b4c6e8368c56baa4caa3a79072bedeacc496a13908ded12d68be
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -1223,7 +1223,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Sh
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -1248,7 +1248,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: vN4yH7I
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: R1Yar8
   namespace: default
 ---
@@ -1262,7 +1262,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: vN4yH7I
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: xZty
 stringData:
   enterprise-license: ""
@@ -1304,7 +1304,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: vN4yH7I
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: xZty
 ---
 # Source: console/templates/service.yaml
@@ -1318,7 +1318,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: vN4yH7I
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: xZty
   namespace: default
 spec:
@@ -1343,7 +1343,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: vN4yH7I
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: xZty
   namespace: default
 spec:
@@ -1358,7 +1358,7 @@ spec:
       annotations:
         8vRMfVroYC2: QXbUbLea
         VV4w: s4sL
-        checksum/config: a91f3d6c5f7683a364d0d6a729ac88c0af591b0beae637ffe04d1c988be58e19
+        checksum/config: 3d21ca949f21bb15e1999e5bc0f98f094da6397a6170209f69c429cc4c644f32
         upwTMuIqflmD: 9J0H45zXX
       creationTimestamp: null
       labels:
@@ -1470,7 +1470,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: vN4yH7I
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -1498,7 +1498,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: w6
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 8nE
   namespace: default
 ---
@@ -1512,7 +1512,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: w6
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 8nE
 stringData:
   enterprise-license: ""
@@ -1551,7 +1551,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: w6
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 8nE
   namespace: default
 spec:
@@ -1576,7 +1576,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: w6
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 8nE
 spec:
   ingressClassName: EqUYi
@@ -1612,7 +1612,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: w6
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -1638,7 +1638,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: YMl
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console-YMl
   namespace: default
 ---
@@ -1653,7 +1653,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: YMl
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console-YMl
 stringData:
   enterprise-license: ""
@@ -1696,7 +1696,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: YMl
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console-YMl
 ---
 # Source: console/templates/service.yaml
@@ -1711,7 +1711,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: YMl
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console-YMl
   namespace: default
 spec:
@@ -1737,7 +1737,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: YMl
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console-YMl
   namespace: default
 spec:
@@ -1754,7 +1754,7 @@ spec:
         1iK8Ic: Qo3FCg9qi
         63SsVxDT: v
         A1Q4J4: U9jygY2t1F
-        checksum/config: 415afb0105c4b89f08e247eb09f993d0def5907a2273c0038b8a6ee59aba5dbf
+        checksum/config: 259c78f2eff3694362c1925332111e4c8a6d0b0cb26271bfa2911795bdca79b6
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -1852,7 +1852,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: YMl
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -1877,7 +1877,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: MW
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: pN
   namespace: default
 ---
@@ -1891,7 +1891,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: MW
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: pN
 stringData:
   enterprise-license: ""
@@ -1930,7 +1930,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: MW
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: pN
   namespace: default
 spec:
@@ -1955,7 +1955,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: MW
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: pN
   namespace: default
 spec:
@@ -2078,7 +2078,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: MW
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -2106,7 +2106,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: gCH15URsJZr
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: nd7TSb2mNTS
   namespace: default
 ---
@@ -2120,7 +2120,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: gCH15URsJZr
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: rzd
 stringData:
   enterprise-license: ""
@@ -2162,7 +2162,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: gCH15URsJZr
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: rzd
 ---
 # Source: console/templates/service.yaml
@@ -2176,7 +2176,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: gCH15URsJZr
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: rzd
   namespace: default
 spec:
@@ -2201,7 +2201,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: gCH15URsJZr
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: rzd
   namespace: default
 spec:
@@ -2214,7 +2214,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: a6da1dd7808415738d10674dd1aab2551239d70a2ddf2e1e82cf6dee43d2d15c
+        checksum/config: 5cddb73f57b9885ed0ddeb08897272056609e8137f99c696ec30fd8c8073dd21
         s2D: DMU7
       creationTimestamp: null
       labels:
@@ -2348,7 +2348,7 @@ metadata:
     app.kubernetes.io/version: v2.7.0
     cV05TKdtF: 55lItpeJD
     h: 1Y7dqm4wZL
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: RFjc7
   namespace: default
 ---
@@ -2364,7 +2364,7 @@ metadata:
     app.kubernetes.io/version: v2.7.0
     cV05TKdtF: 55lItpeJD
     h: 1Y7dqm4wZL
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: "y"
 stringData:
   enterprise-license: ""
@@ -2412,7 +2412,7 @@ metadata:
     app.kubernetes.io/version: v2.7.0
     cV05TKdtF: 55lItpeJD
     h: 1Y7dqm4wZL
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: "y"
 ---
 # Source: console/templates/service.yaml
@@ -2428,7 +2428,7 @@ metadata:
     app.kubernetes.io/version: v2.7.0
     cV05TKdtF: 55lItpeJD
     h: 1Y7dqm4wZL
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: "y"
   namespace: default
 spec:
@@ -2455,7 +2455,7 @@ metadata:
     app.kubernetes.io/version: v2.7.0
     cV05TKdtF: 55lItpeJD
     h: 1Y7dqm4wZL
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: "y"
   namespace: default
 spec:
@@ -2468,7 +2468,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 048743aace35dec919372aaaee3669db119dadf69264faf6d70c2304996e1f12
+        checksum/config: 2140347e08ce4a061a9919de003fe8f18d559737bc126f90fe7f02c2ee693ee3
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -2609,7 +2609,7 @@ metadata:
     app.kubernetes.io/version: v2.7.0
     cV05TKdtF: 55lItpeJD
     h: 1Y7dqm4wZL
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -2634,7 +2634,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: RW
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: YcV5zP8
   namespace: default
 ---
@@ -2652,7 +2652,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: RW
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: GbgHqD
 ---
 # Source: console/templates/service.yaml
@@ -2666,7 +2666,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: RW
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: GbgHqD
   namespace: default
 spec:
@@ -2692,7 +2692,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: RW
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: GbgHqD
   namespace: default
 spec:
@@ -2709,7 +2709,7 @@ spec:
       annotations:
         BTlN: z8t
         a: Pqjhw
-        checksum/config: eec7402e7693b56cf7328ad2c9de337f4f2ec9b63cf8d0a250da84819871179f
+        checksum/config: 47d7a51b7ff2692f07af47c1f96aa400d74254750edfa3934739fc53825c611e
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -2814,7 +2814,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: RW
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -2839,7 +2839,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: BKV
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: l1Bnpx
   namespace: default
 ---
@@ -2853,7 +2853,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: BKV
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: l1Bnpx
 stringData:
   enterprise-license: ""
@@ -2893,7 +2893,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: BKV
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: l1Bnpx
   namespace: default
 spec:
@@ -2918,7 +2918,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: BKV
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: l1Bnpx
   namespace: default
 spec:
@@ -3052,7 +3052,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: BKV
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -3081,7 +3081,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: JFcK
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: kIzbDF
   namespace: default
 ---
@@ -3096,7 +3096,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: JFcK
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: ivK
   namespace: default
 spec:
@@ -3121,7 +3121,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: JFcK
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: ivK
   namespace: default
 spec:
@@ -3359,7 +3359,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: JFcK
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -3385,7 +3385,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Cy9eHCiP
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     v7E: 1g6JB
   name: hbe
   namespace: default
@@ -3401,7 +3401,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Cy9eHCiP
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     v7E: 1g6JB
   name: hbe
 stringData:
@@ -3445,7 +3445,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Cy9eHCiP
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     v7E: 1g6JB
   name: hbe
 ---
@@ -3464,7 +3464,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Cy9eHCiP
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     v7E: 1g6JB
   name: hbe
   namespace: default
@@ -3492,7 +3492,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Cy9eHCiP
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     v7E: 1g6JB
   name: hbe
   namespace: default
@@ -3506,7 +3506,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 27cbed38792f4474082343c71478de0c29bbc3b9be83037788eb26ceafa2a508
+        checksum/config: f64726a4726459f59ea24bf1816b811098f4b281d11a478f473eadbc4979f63e
       creationTimestamp: null
       labels:
         "2": RgUAFm
@@ -3711,7 +3711,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Cy9eHCiP
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     v7E: 1g6JB
   annotations:
     "helm.sh/hook": test
@@ -3737,7 +3737,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Qr03ts
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: tmn2Kt
   namespace: default
 ---
@@ -3751,7 +3751,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Qr03ts
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: tmn2Kt
 stringData:
   enterprise-license: ""
@@ -3793,7 +3793,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Qr03ts
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: tmn2Kt
 ---
 # Source: console/templates/service.yaml
@@ -3807,7 +3807,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Qr03ts
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: tmn2Kt
   namespace: default
 spec:
@@ -3833,7 +3833,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Qr03ts
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: tmn2Kt
   namespace: default
 spec:
@@ -3848,7 +3848,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 2c59dbb4e3d783232187065a1d16a6d91b40f49df238829759d9d54f9d0c4533
+        checksum/config: a9f6ea656a524364ef3fd8d44561ac07f6f641a204432c29b02156da24480a68
       creationTimestamp: null
       labels:
         "": S7BNyT
@@ -4081,7 +4081,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Qr03ts
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -4106,7 +4106,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: dDkIKgMwXv
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: RttlJN
   namespace: default
 ---
@@ -4120,7 +4120,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: dDkIKgMwXv
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: RttlJN
 stringData:
   enterprise-license: ""
@@ -4162,7 +4162,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: dDkIKgMwXv
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: RttlJN
 ---
 # Source: console/templates/service.yaml
@@ -4176,7 +4176,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: dDkIKgMwXv
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: RttlJN
   namespace: default
 spec:
@@ -4201,7 +4201,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: dDkIKgMwXv
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: RttlJN
   namespace: default
 spec:
@@ -4214,7 +4214,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 8e6ca8711d123128a96e7bfd2503e24ff9284d4c6d8eed4effefdbe14b94dab5
+        checksum/config: 59fd15b9ebcbe052ec8dd617fc56d602db7e89f72dfee2a5f4202dbdec4c4232
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -4386,7 +4386,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: dDkIKgMwXv
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -4411,7 +4411,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Vi2vH
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: h6eHrUr
   namespace: default
 ---
@@ -4425,7 +4425,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Vi2vH
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: htymHJ
 stringData:
   enterprise-license: ""
@@ -4470,7 +4470,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Vi2vH
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: htymHJ
 ---
 # Source: console/templates/service.yaml
@@ -4484,7 +4484,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Vi2vH
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: htymHJ
   namespace: default
 spec:
@@ -4509,7 +4509,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Vi2vH
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -4540,7 +4540,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: KD8DmV
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: zmr
   namespace: default
 ---
@@ -4557,7 +4557,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: KD8DmV
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 9RweMGWqBs
 stringData:
   enterprise-license: ""
@@ -4602,7 +4602,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: KD8DmV
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 9RweMGWqBs
 ---
 # Source: console/templates/service.yaml
@@ -4619,7 +4619,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: KD8DmV
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 9RweMGWqBs
   namespace: default
 spec:
@@ -4649,7 +4649,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: KD8DmV
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 9RweMGWqBs
   namespace: default
 spec:
@@ -4662,7 +4662,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 4b4e48234780513edd15ff8289bcdb281de336335e092a7e8add8c53c07b7eb0
+        checksum/config: 0593b04582f1182b4c1b6f2468bd94410cbeda87149fc5b81d5f8bd15a0e2c4c
       creationTimestamp: null
       labels:
         FlwBgvWNMrbg5: YKgnz8q
@@ -4898,7 +4898,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: KD8DmV
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 9RweMGWqBs
 spec:
   ingressClassName: x7Um
@@ -4936,7 +4936,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: KD8DmV
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -4961,7 +4961,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: SC
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: DdF7ALq
   namespace: default
 ---
@@ -4975,7 +4975,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: SC
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 6maz
 stringData:
   enterprise-license: ""
@@ -5021,7 +5021,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: SC
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 6maz
 ---
 # Source: console/templates/service.yaml
@@ -5035,7 +5035,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: SC
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 6maz
   namespace: default
 spec:
@@ -5060,7 +5060,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: SC
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 6maz
   namespace: default
 spec:
@@ -5076,7 +5076,7 @@ spec:
     metadata:
       annotations:
         JYLUc483y: gTnWiG
-        checksum/config: 6ff63b195e810767af5b4dc7bc15c38bc2a743120e741f371996329ac6d86a73
+        checksum/config: bf32ef8217f211485bf3f6b62753806974440cf9af07ec8b40b3b9b3ec197e60
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -5344,7 +5344,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: SC
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -5369,7 +5369,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: tPiY
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 9XG3SZW
   namespace: default
 ---
@@ -5383,7 +5383,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: tPiY
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 9XG3SZW
 stringData:
   enterprise-license: ""
@@ -5432,7 +5432,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: tPiY
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 9XG3SZW
 ---
 # Source: console/templates/service.yaml
@@ -5446,7 +5446,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: tPiY
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 9XG3SZW
   namespace: default
 spec:
@@ -5474,7 +5474,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: tPiY
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 9XG3SZW
   namespace: default
 spec:
@@ -5487,7 +5487,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 0d5852bdd6b942482d2c79ccfa444e3ed155cae036bb25ed02c780c258f08656
+        checksum/config: 3bae1b572a1cf2acd085cc10cdbc6e657cae85b25ae987a39615c766e561b6fc
       creationTimestamp: null
       labels:
         LBQpbD: AHB4hNVL
@@ -5919,7 +5919,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 1qyLP36T
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: uAvlOXf
   namespace: default
 ---
@@ -5933,7 +5933,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 1qyLP36T
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: ExFU3
 stringData:
   enterprise-license: ""
@@ -5972,7 +5972,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 1qyLP36T
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: ExFU3
   namespace: default
 spec:
@@ -5998,7 +5998,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 1qyLP36T
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: ExFU3
   namespace: default
 spec:
@@ -6322,7 +6322,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 1qyLP36T
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -6349,7 +6349,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 8MIg
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: NZ7h9
   namespace: default
 ---
@@ -6363,7 +6363,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 8MIg
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: NZ7h9
 stringData:
   enterprise-license: ""
@@ -6405,7 +6405,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 8MIg
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: NZ7h9
 ---
 # Source: console/templates/service.yaml
@@ -6419,7 +6419,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 8MIg
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: NZ7h9
   namespace: default
 spec:
@@ -6446,7 +6446,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 8MIg
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: NZ7h9
   namespace: default
 spec:
@@ -6460,7 +6460,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 49634999690e36a8d642a6ce05e1656298bb83d5e7f26dad8e236c5a2d5a73f3
+        checksum/config: cdb3ddbf6125cd4ab186be19ef3abf2cd8d872a30261acb5ca564e5439ab0d45
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -6588,7 +6588,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 8MIg
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -6616,7 +6616,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: zzmAR9
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: HMpc
   namespace: default
 ---
@@ -6630,7 +6630,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: zzmAR9
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: Om7
 stringData:
   enterprise-license: ""
@@ -6672,7 +6672,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: zzmAR9
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: Om7
 ---
 # Source: console/templates/service.yaml
@@ -6686,7 +6686,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: zzmAR9
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: Om7
   namespace: default
 spec:
@@ -6714,7 +6714,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: zzmAR9
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: Om7
   namespace: default
 spec:
@@ -6729,7 +6729,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 9666a7c89dd55ea912f3e394ca39954ecfd73ede9b8231a1918373bfb3652e28
+        checksum/config: fc241d8acbb12740b4df4506dd0683cec575079a2787ddc9df644ee566fa0591
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -7107,7 +7107,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: zzmAR9
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -7138,7 +7138,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Rys
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: tW
   namespace: default
 ---
@@ -7154,7 +7154,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Rys
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: PhRk
 stringData:
   enterprise-license: ""
@@ -7198,7 +7198,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Rys
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: PhRk
 ---
 # Source: console/templates/service.yaml
@@ -7217,7 +7217,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Rys
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: PhRk
   namespace: default
 spec:
@@ -7243,7 +7243,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Rys
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: PhRk
 spec:
   maxReplicas: 421
@@ -7279,7 +7279,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Rys
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -7304,7 +7304,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: xNnu
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: GVjeLRc
   namespace: default
 ---
@@ -7318,7 +7318,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: xNnu
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: GVjeLRc
 stringData:
   enterprise-license: ""
@@ -7360,7 +7360,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: xNnu
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: GVjeLRc
 ---
 # Source: console/templates/service.yaml
@@ -7374,7 +7374,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: xNnu
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: GVjeLRc
   namespace: default
 spec:
@@ -7400,7 +7400,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: xNnu
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: GVjeLRc
   namespace: default
 spec:
@@ -7413,7 +7413,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 78d17bad8524d5344af709ae74a74971f1e4553c1719e8865afd35a357911baf
+        checksum/config: 611017621b1737439ee4cb54616c2de79811308762f8211bc64eebf855c845da
       creationTimestamp: null
       labels:
         "": thv6Fja
@@ -7948,7 +7948,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: xNnu
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -7977,7 +7977,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: s3YOF
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: Pga
   namespace: default
 ---
@@ -7991,7 +7991,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: s3YOF
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: fXCb
 stringData:
   enterprise-license: ""
@@ -8033,7 +8033,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: s3YOF
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: fXCb
   namespace: default
 spec:
@@ -8058,7 +8058,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: s3YOF
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: fXCb
   namespace: default
 spec:
@@ -8336,7 +8336,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: s3YOF
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: fXCb
 spec:
   ingressClassName: r3Vd
@@ -8364,7 +8364,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: s3YOF
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -8389,7 +8389,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: aD
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: Wpq
   namespace: default
 ---
@@ -8415,7 +8415,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: aD
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: Wpq
 ---
 # Source: console/templates/service.yaml
@@ -8429,7 +8429,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: aD
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: Wpq
   namespace: default
 spec:
@@ -8454,7 +8454,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: aD
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -8481,7 +8481,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Mh
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: H5TDAALUdD
   namespace: default
 ---
@@ -8496,7 +8496,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Mh
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: Uo
   namespace: default
 spec:
@@ -8523,7 +8523,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Mh
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: Uo
   namespace: default
 spec:
@@ -9042,7 +9042,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: Mh
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -9075,7 +9075,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: vLjrafvp
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     kuKPk7: ""
   name: Utu8ZHG2
   namespace: default
@@ -9092,7 +9092,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: vLjrafvp
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     kuKPk7: ""
   name: qhaD
   namespace: default
@@ -9119,7 +9119,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: vLjrafvp
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     kuKPk7: ""
   name: qhaD
   namespace: default
@@ -9329,7 +9329,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: vLjrafvp
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     kuKPk7: ""
   name: qhaD
 spec:
@@ -9393,7 +9393,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: h9P
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 55C9f3
   namespace: default
 ---
@@ -9413,7 +9413,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: h9P
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 61hunk
   namespace: default
 spec:
@@ -9442,7 +9442,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: h9P
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 61hunk
 spec:
   ingressClassName: Ijdd3
@@ -9476,7 +9476,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: h9P
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -9502,7 +9502,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 5XQu4RW
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: odFI2M4
 stringData:
   enterprise-license: ""
@@ -9545,7 +9545,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 5XQu4RW
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: odFI2M4
 ---
 # Source: console/templates/service.yaml
@@ -9560,7 +9560,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 5XQu4RW
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: odFI2M4
   namespace: default
 spec:
@@ -9587,7 +9587,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 5XQu4RW
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: odFI2M4
   namespace: default
 spec:
@@ -9603,7 +9603,7 @@ spec:
     metadata:
       annotations:
         YefFO9J: uVUZra
-        checksum/config: 9c03061f7e2b7027c1da7924cf67c1d613022ce9921fea9a810f0fcb3a54d143
+        checksum/config: 1e641667fd24704ad0980aa18bcaaafc17b9998165c03cb7541f2d6a15541127
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -9892,7 +9892,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 5XQu4RW
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -9919,7 +9919,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 3Wh
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     xi7L: ibI45
   name: HK
 stringData:
@@ -9967,7 +9967,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 3Wh
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     xi7L: ibI45
   name: HK
 ---
@@ -9984,7 +9984,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 3Wh
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     xi7L: ibI45
   name: HK
   namespace: default
@@ -10014,7 +10014,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 3Wh
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     xi7L: ibI45
   name: HK
   namespace: default
@@ -10030,7 +10030,7 @@ spec:
     metadata:
       annotations:
         IVy: ho3qpcI
-        checksum/config: ebda3d7785ecb06b07d0ff5ee7217c0d5c8ff74f5758f61f3c9b3db87be3c072
+        checksum/config: e7ce8eda132231369bec7a4b74cd17733891cd6ad6dfae9d9cd00f36f6e7fa43
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -10523,7 +10523,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 3Wh
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     xi7L: ibI45
   annotations:
     "helm.sh/hook": test
@@ -10548,7 +10548,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: J
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     jwrBMvwfg: K6I5HsI5
     nk8eJc: nS
   name: G9
@@ -10590,7 +10590,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: J
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     jwrBMvwfg: K6I5HsI5
     nk8eJc: nS
   name: G9
@@ -10617,7 +10617,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: J
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     jwrBMvwfg: K6I5HsI5
     nk8eJc: nS
   name: G9
@@ -10654,7 +10654,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: J
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     jwrBMvwfg: K6I5HsI5
     nk8eJc: nS
   annotations:
@@ -10692,7 +10692,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: xknw
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     q4ZdG9q: IJWaYu9mhun
     sFTTcyl: qVyaa0ULC
   name: 59cQ0qKLI
@@ -10708,7 +10708,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: xknw
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     q4ZdG9q: IJWaYu9mhun
     sFTTcyl: qVyaa0ULC
   name: 59cQ0qKLI
@@ -10734,7 +10734,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: xknw
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     q4ZdG9q: IJWaYu9mhun
     sFTTcyl: qVyaa0ULC
   name: 59cQ0qKLI
@@ -10773,7 +10773,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: xknw
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     q4ZdG9q: IJWaYu9mhun
     sFTTcyl: qVyaa0ULC
   name: 59cQ0qKLI
@@ -10827,7 +10827,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: xknw
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     q4ZdG9q: IJWaYu9mhun
     sFTTcyl: qVyaa0ULC
   annotations:
@@ -10878,7 +10878,7 @@ metadata:
     app.kubernetes.io/name: wB
     app.kubernetes.io/version: v2.7.0
     e3Cx: MIAO
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: llK4G
 ---
 # Source: console/templates/service.yaml
@@ -10895,7 +10895,7 @@ metadata:
     app.kubernetes.io/name: wB
     app.kubernetes.io/version: v2.7.0
     e3Cx: MIAO
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: llK4G
   namespace: default
 spec:
@@ -10924,7 +10924,7 @@ metadata:
     app.kubernetes.io/name: wB
     app.kubernetes.io/version: v2.7.0
     e3Cx: MIAO
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: llK4G
   namespace: default
 spec:
@@ -10939,7 +10939,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 980b64e9305466e4c9aef6c6951848ec5c3602886c8da30da787121658d3c1c0
+        checksum/config: 6f11d45d7713d29b8a241744e23d27448c4a7f4cef703b4319fc2ceaf676b321
       creationTimestamp: null
       labels:
         So: waKMMvnY
@@ -11566,7 +11566,7 @@ metadata:
     app.kubernetes.io/name: wB
     app.kubernetes.io/version: v2.7.0
     e3Cx: MIAO
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: llK4G
 spec:
   maxReplicas: 459
@@ -11605,7 +11605,7 @@ metadata:
     app.kubernetes.io/name: wB
     app.kubernetes.io/version: v2.7.0
     e3Cx: MIAO
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: llK4G
 spec:
   ingressClassName: EXqR
@@ -11646,7 +11646,7 @@ metadata:
     app.kubernetes.io/name: wB
     app.kubernetes.io/version: v2.7.0
     e3Cx: MIAO
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -11684,7 +11684,7 @@ metadata:
     app.kubernetes.io/name: bCPeYVWao
     app.kubernetes.io/version: v2.7.0
     gZ85uw3T: e
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     qO: F4dqLo67vKYZ
   name: foGC
 ---
@@ -11701,7 +11701,7 @@ metadata:
     app.kubernetes.io/name: bCPeYVWao
     app.kubernetes.io/version: v2.7.0
     gZ85uw3T: e
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     qO: F4dqLo67vKYZ
   name: foGC
   namespace: default
@@ -11728,7 +11728,7 @@ metadata:
     app.kubernetes.io/name: bCPeYVWao
     app.kubernetes.io/version: v2.7.0
     gZ85uw3T: e
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     qO: F4dqLo67vKYZ
   name: foGC
   namespace: default
@@ -11744,7 +11744,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 9087183fe8e6ce0aa096ce99afa71e8fa0ec1a30b34d8b8149dbfa7e2a91a8b8
+        checksum/config: 0c3f17880f8844f2f8d67dbe6e883f089da2b2c9d2cbf2f6a9783739e0a869e0
       creationTimestamp: null
       labels:
         1bb6: ""
@@ -12732,7 +12732,7 @@ metadata:
     app.kubernetes.io/name: zE
     app.kubernetes.io/version: v2.7.0
     blGSa: Hnim0SflkfpF
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: QxrM
   namespace: default
 ---
@@ -12766,7 +12766,7 @@ metadata:
     app.kubernetes.io/name: zE
     app.kubernetes.io/version: v2.7.0
     blGSa: Hnim0SflkfpF
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: l
 ---
 # Source: console/templates/service.yaml
@@ -12784,7 +12784,7 @@ metadata:
     app.kubernetes.io/name: zE
     app.kubernetes.io/version: v2.7.0
     blGSa: Hnim0SflkfpF
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: l
   namespace: default
 spec:
@@ -12811,7 +12811,7 @@ metadata:
     app.kubernetes.io/name: zE
     app.kubernetes.io/version: v2.7.0
     blGSa: Hnim0SflkfpF
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -12844,7 +12844,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: HMyYp
   namespace: default
 ---
@@ -12870,7 +12870,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: Bv0I
 ---
 # Source: console/templates/service.yaml
@@ -12888,7 +12888,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: Bv0I
   namespace: default
 spec:
@@ -12916,7 +12916,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: Bv0I
   namespace: default
 spec:
@@ -12931,7 +12931,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 3e078bff6f789b0b5954cf48c6a5f7364632fa75f6262ac8f3855f362530844d
+        checksum/config: d21df84b239cf5765730e82c87c4fe09fb9b128a4903b6fa6ff551dcf825f1bb
       creationTimestamp: null
       labels:
         Klzm: we
@@ -13842,7 +13842,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: Bv0I
 spec:
   ingressClassName: vg
@@ -13916,7 +13916,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -13945,7 +13945,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 9mG8n4Wu4
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: AumW
 stringData:
   enterprise-license: ""
@@ -13987,7 +13987,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 9mG8n4Wu4
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: AumW
   namespace: default
 spec:
@@ -14018,7 +14018,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 9mG8n4Wu4
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: AumW
   namespace: default
 spec:
@@ -14938,7 +14938,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: u2r6
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     uEVMkDkYRvnn: zvptNai
   name: ItYso
   namespace: default
@@ -14971,7 +14971,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: u2r6
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     uEVMkDkYRvnn: zvptNai
   name: ADIhC
 ---
@@ -14988,7 +14988,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: u2r6
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     uEVMkDkYRvnn: zvptNai
   name: ADIhC
   namespace: default
@@ -15017,7 +15017,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: u2r6
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     uEVMkDkYRvnn: zvptNai
   name: ADIhC
 spec:
@@ -15082,7 +15082,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: u2r6
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     uEVMkDkYRvnn: zvptNai
   annotations:
     "helm.sh/hook": test
@@ -15112,7 +15112,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: ld
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: fP77cJ3T
   namespace: default
 ---
@@ -15138,7 +15138,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: ld
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: j1dUk8TGy8Np
 ---
 # Source: console/templates/service.yaml
@@ -15152,7 +15152,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: ld
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: j1dUk8TGy8Np
   namespace: default
 spec:
@@ -15177,7 +15177,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: ld
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -15207,7 +15207,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: o2F37Lr
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 8s2qVhKEW
   namespace: default
 ---
@@ -15230,7 +15230,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: o2F37Lr
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: bbshm
 ---
 # Source: console/templates/service.yaml
@@ -15247,7 +15247,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: o2F37Lr
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: bbshm
   namespace: default
 spec:
@@ -15272,7 +15272,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: o2F37Lr
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: bbshm
 spec:
   ingressClassName: qyKUEOUT4u
@@ -15310,7 +15310,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 6sW
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: KchYZFsbB3
 ---
 # Source: console/templates/service.yaml
@@ -15326,7 +15326,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 6sW
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: KchYZFsbB3
   namespace: default
 spec:
@@ -15353,7 +15353,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 6sW
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: KchYZFsbB3
   namespace: default
 spec:
@@ -15368,7 +15368,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 2290149b885f014ca0a2d4e123e748127eb7e669637672673c0921c2e6f24027
+        checksum/config: f4a59bdb95e718965a9a93d0c8fcc83a457d2751b31542b83a25c4627c934749
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -16399,7 +16399,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 6sW
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -16433,7 +16433,7 @@ metadata:
     app.kubernetes.io/name: x
     app.kubernetes.io/version: v2.7.0
     cxAL7zvwvb: tmEjSXwTK6
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 0Z71mJNQUx
   namespace: default
 ---
@@ -16449,7 +16449,7 @@ metadata:
     app.kubernetes.io/name: x
     app.kubernetes.io/version: v2.7.0
     cxAL7zvwvb: tmEjSXwTK6
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: Wq
 stringData:
   enterprise-license: ""
@@ -16500,7 +16500,7 @@ metadata:
     app.kubernetes.io/name: x
     app.kubernetes.io/version: v2.7.0
     cxAL7zvwvb: tmEjSXwTK6
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: Wq
 ---
 # Source: console/templates/service.yaml
@@ -16517,7 +16517,7 @@ metadata:
     app.kubernetes.io/name: x
     app.kubernetes.io/version: v2.7.0
     cxAL7zvwvb: tmEjSXwTK6
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: Wq
   namespace: default
 spec:
@@ -16545,7 +16545,7 @@ metadata:
     app.kubernetes.io/name: x
     app.kubernetes.io/version: v2.7.0
     cxAL7zvwvb: tmEjSXwTK6
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: Wq
   namespace: default
 spec:
@@ -16560,7 +16560,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: cbbdf08f78340b9cad3907b167cbaa2ae8af0e13bf653f8e84a51d18f6fc5d7f
+        checksum/config: 3948702ad79b07a9ac053f1708969e5d40b65c907cd6a3ab41f22db6c5164184
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -17128,7 +17128,7 @@ metadata:
     app.kubernetes.io/name: x
     app.kubernetes.io/version: v2.7.0
     cxAL7zvwvb: tmEjSXwTK6
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: Wq
 spec:
   maxReplicas: 309
@@ -17166,7 +17166,7 @@ metadata:
     app.kubernetes.io/name: x
     app.kubernetes.io/version: v2.7.0
     cxAL7zvwvb: tmEjSXwTK6
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: Wq
 spec:
   ingressClassName: 9Kl
@@ -17214,7 +17214,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 84QIe
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: eHZ
 ---
 # Source: console/templates/service.yaml
@@ -17230,7 +17230,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 84QIe
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: eHZ
   namespace: default
 spec:
@@ -17260,7 +17260,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 84QIe
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: eHZ
   namespace: default
 spec:
@@ -17276,7 +17276,7 @@ spec:
     metadata:
       annotations:
         JkW1: feghYA7
-        checksum/config: fb96d22ee3ae014b4b45aff32e12c5981a66eb7bd06aa0100bbd8adeb84ba116
+        checksum/config: 92a48d91fe87a76964bec2b45d322dc3310629b66d33a1672997917fbf48b511
         okSVM8H: 7Pau
         yYrmYn: uT
       creationTimestamp: null
@@ -18196,7 +18196,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 84QIe
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: eHZ
 spec:
   maxReplicas: 165
@@ -18232,7 +18232,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 84QIe
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -18257,7 +18257,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: Gma
   namespace: default
 ---
@@ -18272,7 +18272,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: y0pa6pm83
   namespace: default
 spec:
@@ -18300,7 +18300,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: y0pa6pm83
 spec:
   ingressClassName: 4Z1r6JSTY
@@ -18343,7 +18343,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: tvDI
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: W9k
   namespace: default
 ---
@@ -18378,7 +18378,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: tvDI
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: resP
 ---
 # Source: console/templates/service.yaml
@@ -18394,7 +18394,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: tvDI
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: resP
   namespace: default
 spec:
@@ -18423,7 +18423,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: tvDI
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: resP
   namespace: default
 spec:
@@ -18439,7 +18439,7 @@ spec:
     metadata:
       annotations:
         N0F: vSjZxkjW
-        checksum/config: 5429d32165cc55d8110c80adbb0b22371bbb566c8942c1886b731f37fcc743b0
+        checksum/config: 483ab5015f962638d71d1ad374773894baa5ecd48e6ad927ecd3d7ccb350b125
       creationTimestamp: null
       labels:
         K1uahi: UMygEU2O2
@@ -19083,7 +19083,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: tvDI
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -19111,7 +19111,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: tOoxEiwdVpT
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: nX5G
   namespace: default
 ---
@@ -19126,7 +19126,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: tOoxEiwdVpT
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 9gCm5xz
 stringData:
   enterprise-license: ""
@@ -19166,7 +19166,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: tOoxEiwdVpT
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 9gCm5xz
   namespace: default
 spec:
@@ -19191,7 +19191,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: tOoxEiwdVpT
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 9gCm5xz
 spec:
   maxReplicas: 305
@@ -19226,7 +19226,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: tOoxEiwdVpT
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 9gCm5xz
 spec:
   ingressClassName: y6u9o
@@ -19272,7 +19272,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: tOoxEiwdVpT
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -19299,7 +19299,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     rHtDM6k: ZY6Kw
   name: fB6TF
 stringData:
@@ -19341,7 +19341,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     rHtDM6k: ZY6Kw
   name: fB6TF
   namespace: default
@@ -19371,7 +19371,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     rHtDM6k: ZY6Kw
   name: fB6TF
 spec:
@@ -19413,7 +19413,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: nEojiMtRc
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: DSw7
   namespace: default
 ---
@@ -19431,7 +19431,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: nEojiMtRc
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: YUi5JpG
   namespace: default
 spec:
@@ -19458,7 +19458,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: nEojiMtRc
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: YUi5JpG
   namespace: default
 spec:
@@ -20093,7 +20093,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: nEojiMtRc
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: YUi5JpG
 spec:
   maxReplicas: 122
@@ -20132,7 +20132,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: W7q3X
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: sKa
   namespace: default
 ---
@@ -20160,7 +20160,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: W7q3X
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 3um
 ---
 # Source: console/templates/service.yaml
@@ -20179,7 +20179,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: W7q3X
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 3um
   namespace: default
 spec:
@@ -20208,7 +20208,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: W7q3X
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 3um
   namespace: default
 spec:
@@ -20223,7 +20223,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: dac41fc00bf7bb588f3c2be4059fcb72e045e53ad183a33fe6a65ee1535764f6
+        checksum/config: c86ce201e0461fdc70624b07030321bb214933704156f30627266e3e2cf9c391
         eG: vxInc0
         g: BI6yk
         xCtSP: rQ
@@ -21035,7 +21035,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: W7q3X
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: 3um
 spec:
   maxReplicas: 1
@@ -21076,7 +21076,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 8dJzE
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     ztm: qegfb80
   name: z12W
   namespace: default
@@ -21093,7 +21093,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 8dJzE
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     ztm: qegfb80
   name: 0BIfuN
 stringData:
@@ -21138,7 +21138,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 8dJzE
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     ztm: qegfb80
   name: 0BIfuN
   namespace: default
@@ -21167,7 +21167,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 8dJzE
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     ztm: qegfb80
   name: 0BIfuN
   namespace: default
@@ -21975,7 +21975,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 8dJzE
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     ztm: qegfb80
   name: 0BIfuN
 spec:
@@ -22012,7 +22012,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: 8dJzE
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
     ztm: qegfb80
   annotations:
     "helm.sh/hook": test
@@ -22040,7 +22040,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 ---
@@ -22054,7 +22054,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 stringData:
   enterprise-license: ""
@@ -22097,7 +22097,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 ---
 # Source: console/templates/service.yaml
@@ -22111,7 +22111,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 spec:
@@ -22136,7 +22136,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 spec:
@@ -22149,7 +22149,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: ada95c0d590a341f97ff93b9236dbe30b3a375f5ae27e7369cb7f9008853b129
+        checksum/config: f688dc3f862ad2c604e5181c586c8eef097aa333c11d6f043649958e7aaba817
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -22232,7 +22232,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -22257,7 +22257,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 ---
@@ -22271,7 +22271,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 stringData:
   enterprise-license: ""
@@ -22314,7 +22314,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 ---
 # Source: console/templates/service.yaml
@@ -22328,7 +22328,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 spec:
@@ -22353,7 +22353,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 spec:
@@ -22366,7 +22366,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: ada95c0d590a341f97ff93b9236dbe30b3a375f5ae27e7369cb7f9008853b129
+        checksum/config: f688dc3f862ad2c604e5181c586c8eef097aa333c11d6f043649958e7aaba817
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -22449,7 +22449,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -22474,7 +22474,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 ---
@@ -22488,7 +22488,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 stringData:
   enterprise-license: ""
@@ -22539,7 +22539,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 ---
 # Source: console/templates/service.yaml
@@ -22553,7 +22553,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 spec:
@@ -22578,7 +22578,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 spec:
@@ -22591,7 +22591,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: cb0e9be81ffd2d4cf98c605031874fc2cb2a637c4bdec8613263d1a66221bbf7
+        checksum/config: edfa2bbc86d42336aaa757d862e62b7c2a8f476ef9420c90840dedca96b27f59
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -22674,7 +22674,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -22699,7 +22699,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 ---
@@ -22713,7 +22713,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 stringData:
   enterprise-license: ""
@@ -22775,7 +22775,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 ---
 # Source: console/templates/service.yaml
@@ -22789,7 +22789,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 spec:
@@ -22814,7 +22814,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 spec:
@@ -22827,7 +22827,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: dc10412d7fe7e9675e0280f923683c4cbe1f43a6c2cd69abfdbf5b073050b941
+        checksum/config: ff92c0b60c7e15697daf4043e021b0b48c6183b73b67cf3c9007ad72197dc982
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -22910,7 +22910,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -22935,7 +22935,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 ---
@@ -22949,7 +22949,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 stringData:
   enterprise-license: ""
@@ -23002,7 +23002,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 ---
 # Source: console/templates/service.yaml
@@ -23016,7 +23016,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 spec:
@@ -23041,7 +23041,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 spec:
@@ -23054,7 +23054,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 913f100623f7b1ac2165753400399451207838fb2cea9645274ecfb833e62b5e
+        checksum/config: ae51ef1ddd2ae3380191c34563e97b8e6bb34ba6773bf8f572718c605ff9639f
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -23137,7 +23137,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -23162,7 +23162,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 ---
@@ -23176,7 +23176,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 stringData:
   enterprise-license: ""
@@ -23218,7 +23218,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 ---
 # Source: console/templates/service.yaml
@@ -23232,7 +23232,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 spec:
@@ -23257,7 +23257,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 spec:
@@ -23270,7 +23270,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: f43dc9cf448fe7d01bb2e301b8135797164ae8b94805397bfdff177f19997009
+        checksum/config: 0d8cd108cc142c478b56f052e03e8a02c85de95db65e2275d0d484e042492689
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -23353,7 +23353,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -23378,7 +23378,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 ---
@@ -23392,7 +23392,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 stringData:
   enterprise-license: ""
@@ -23434,7 +23434,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 ---
 # Source: console/templates/service.yaml
@@ -23448,7 +23448,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 spec:
@@ -23473,7 +23473,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 spec:
@@ -23486,7 +23486,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: f43dc9cf448fe7d01bb2e301b8135797164ae8b94805397bfdff177f19997009
+        checksum/config: 0d8cd108cc142c478b56f052e03e8a02c85de95db65e2275d0d484e042492689
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -23569,7 +23569,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -23594,7 +23594,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 ---
@@ -23608,7 +23608,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 stringData:
   enterprise-license: ""
@@ -23650,7 +23650,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 ---
 # Source: console/templates/service.yaml
@@ -23664,7 +23664,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 spec:
@@ -23689,7 +23689,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 spec:
@@ -23702,7 +23702,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: f43dc9cf448fe7d01bb2e301b8135797164ae8b94805397bfdff177f19997009
+        checksum/config: 0d8cd108cc142c478b56f052e03e8a02c85de95db65e2275d0d484e042492689
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -23794,7 +23794,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -23819,7 +23819,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 ---
@@ -23833,7 +23833,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 stringData:
   enterprise-license: ""
@@ -23875,7 +23875,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 ---
 # Source: console/templates/service.yaml
@@ -23889,7 +23889,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 spec:
@@ -23914,7 +23914,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 spec:
@@ -23927,7 +23927,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: f43dc9cf448fe7d01bb2e301b8135797164ae8b94805397bfdff177f19997009
+        checksum/config: 0d8cd108cc142c478b56f052e03e8a02c85de95db65e2275d0d484e042492689
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -24011,7 +24011,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 spec:
   ingressClassName: null
@@ -24042,7 +24042,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -24067,7 +24067,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 ---
@@ -24081,7 +24081,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 stringData:
   enterprise-license: ""
@@ -24123,7 +24123,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 ---
 # Source: console/templates/service.yaml
@@ -24137,7 +24137,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 spec:
@@ -24162,7 +24162,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 spec:
@@ -24175,7 +24175,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: f43dc9cf448fe7d01bb2e301b8135797164ae8b94805397bfdff177f19997009
+        checksum/config: 0d8cd108cc142c478b56f052e03e8a02c85de95db65e2275d0d484e042492689
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -24258,7 +24258,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -24283,7 +24283,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 ---
@@ -24297,7 +24297,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 stringData:
   enterprise-license: ""
@@ -24339,7 +24339,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 ---
 # Source: console/templates/service.yaml
@@ -24353,7 +24353,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 spec:
@@ -24378,7 +24378,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 spec:
@@ -24391,7 +24391,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: f43dc9cf448fe7d01bb2e301b8135797164ae8b94805397bfdff177f19997009
+        checksum/config: 0d8cd108cc142c478b56f052e03e8a02c85de95db65e2275d0d484e042492689
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -24474,7 +24474,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
@@ -24499,7 +24499,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 ---
@@ -24513,7 +24513,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 stringData:
   enterprise-license: ""
@@ -24555,7 +24555,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
 ---
 # Source: console/templates/service.yaml
@@ -24570,7 +24570,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 spec:
@@ -24596,7 +24596,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   name: console
   namespace: default
 spec:
@@ -24609,7 +24609,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: f43dc9cf448fe7d01bb2e301b8135797164ae8b94805397bfdff177f19997009
+        checksum/config: 0d8cd108cc142c478b56f052e03e8a02c85de95db65e2275d0d484e042492689
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -24692,7 +24692,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: console
     app.kubernetes.io/version: v2.7.0
-    helm.sh/chart: console-0.7.26
+    helm.sh/chart: console-0.7.27
   annotations:
     "helm.sh/hook": test
 spec:
