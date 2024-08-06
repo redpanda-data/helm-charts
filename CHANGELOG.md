@@ -10,6 +10,7 @@
 
 ### [5.8.13](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.8.13) - 2024-07-25
 #### Added
+* `appProtocol` added to the `listeners.admin` configuration
 #### Changed
 * Updated `appVersion` to `v24.1.11`
 #### Fixed
