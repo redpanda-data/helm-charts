@@ -29,7 +29,7 @@ func ClientServerCertificate(chartReleaseName, chartReleaseNamespace string) (ca
 		NotAfter:     now.Add(time.Hour),
 
 		KeyUsage:    x509.KeyUsageCertSign | x509.KeyUsageDigitalSignature,
-		ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
+		ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth, x509.ExtKeyUsageClientAuth},
 
 		BasicConstraintsValid: true,
 		IsCA:                  true,
@@ -74,7 +74,7 @@ func ClientServerCertificate(chartReleaseName, chartReleaseNamespace string) (ca
 		SignatureAlgorithm: x509.ECDSAWithSHA384,
 
 		KeyUsage:    x509.KeyUsageDigitalSignature,
-		ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
+		ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth, x509.ExtKeyUsageClientAuth},
 
 		BasicConstraintsValid: true,
 		IsCA:                  false,
@@ -124,7 +124,7 @@ func ClientServerCertificate(chartReleaseName, chartReleaseNamespace string) (ca
 		SignatureAlgorithm: x509.ECDSAWithSHA384,
 
 		KeyUsage:    x509.KeyUsageDigitalSignature,
-		ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
+		ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth, x509.ExtKeyUsageClientAuth},
 
 		BasicConstraintsValid: true,
 		IsCA:                  false,

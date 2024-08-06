@@ -191,8 +191,8 @@ func TestChart(t *testing.T) {
 		assert.NoErrorf(t, kafkaListenerTest(ctx, rpk), "Kafka listener sub test failed")
 		assert.NoErrorf(t, adminListenerTest(ctx, rpk), "Admin listener sub test failed")
 		schemaBytes, retrievedSchema, err := schemaRegistryListenerTest(ctx, rpk)
-		assert.JSONEq(t, string(schemaBytes), retrievedSchema)
 		assert.NoErrorf(t, err, "Schema Registry listener sub test failed")
+		assert.JSONEq(t, string(schemaBytes), retrievedSchema)
 		assert.NoErrorf(t, httpProxyListenerTest(ctx, rpk), "HTTP Proxy listener sub test failed")
 	})
 }
@@ -325,7 +325,9 @@ func schemaRegistryListenerTest(ctx context.Context, rpk Client) ([]byte, string
 	if err != nil {
 		return nil, "", errors.WithStack(err)
 	}
-	if len(formats) != 2 {
+
+	// There is JSON, PROTOBUF and AVRO formats
+	if len(formats) != 3 {
 		return nil, "", fmt.Errorf("expected 2 supported formats, got %d", len(formats))
 	}
 
