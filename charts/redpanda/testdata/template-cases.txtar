@@ -266,3 +266,12 @@ post_upgrade_job:
           value: "HELM"
         securityContext:
           privileged: false
+
+-- app-protocol-regression --
+# Regression test for admin.appProtocol
+# ASSERT-NO-ERROR
+# ASSERT-GOLDEN
+# ASSERT-FIELD-EQUALS ["v1/Service", "default/redpanda", "{.spec.ports[*].appProtocol}", "http"]
+listeners:
+  admin:
+    appProtocol: http

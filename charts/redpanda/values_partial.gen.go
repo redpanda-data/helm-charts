@@ -380,9 +380,10 @@ type PartialSecurityContext struct {
 }
 
 type PartialAdminListeners struct {
-	External PartialExternalListeners[PartialAdminExternal] "json:\"external,omitempty\""
-	Port     *int32                                         "json:\"port,omitempty\" jsonschema:\"required\""
-	TLS      *PartialInternalTLS                            "json:\"tls,omitempty\" jsonschema:\"required\""
+	External    PartialExternalListeners[PartialAdminExternal] "json:\"external,omitempty\""
+	Port        *int32                                         "json:\"port,omitempty\" jsonschema:\"required\""
+	AppProtocol *string                                        "json:\"appProtocol,omitempty\""
+	TLS         *PartialInternalTLS                            "json:\"tls,omitempty\" jsonschema:\"required\""
 }
 
 type PartialHTTPListeners struct {

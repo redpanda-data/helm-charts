@@ -12,6 +12,7 @@
   `statefulset.podTemplate.spec.securityContext` and
   `statefulset.podTemplate.spec.containers[*].securityContext` may be used to
   set/override the pod and container security contexts respectively.
+* `appProtocol` added to the `listeners.admin` configuration
 #### Changed
 * The container name of the post-upgrade job is now statically set to
   `post-upgrade` to facilitate strategic merge patching.
