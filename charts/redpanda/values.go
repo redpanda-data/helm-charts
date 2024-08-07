@@ -1012,7 +1012,7 @@ func (t *ExternalTLS) IsEnabled(i *InternalTLS, tls *TLS) bool {
 type AdminListeners struct {
 	External    ExternalListeners[AdminExternal] `json:"external"`
 	Port        int32                            `json:"port" jsonschema:"required"`
-	AppProtocol string                           `json:"appprotocol" jsonschema:"required"`
+	AppProtocol string                           `json:"appProtocol" jsonschema:"required"`
 	TLS         InternalTLS                      `json:"tls" jsonschema:"required"`
 }
 
