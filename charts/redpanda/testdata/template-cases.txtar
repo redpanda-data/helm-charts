@@ -199,3 +199,20 @@ tls:
   certs:
     kafka-internal-0:
       caEnabled: true
+
+-- default-sasl-mechanism-regression --
+# ASSERT-NO-ERROR
+# ASSERT-GOLDEN
+# ASSERT-SUPER-USERS-ARE-VALID
+auth:
+  sasl:
+    enabled: true
+    users:
+    - name: empty-mechanism
+      password: valid
+    - name: mechanism-256
+      password: valid
+      mechanism: SCRAM-SHA-256
+    - name: mechanism-512
+      password: valid
+      mechanism: SCRAM-SHA-512

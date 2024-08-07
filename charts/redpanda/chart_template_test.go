@@ -125,11 +125,48 @@ func TestTemplate(t *testing.T) {
 					require.NoError(t, err)
 					AssertStatefulsetAllVolumesAreUsed(t, out)
 
+				case `ASSERT-SUPER-USERS-ARE-VALID`:
+					require.NoError(t, err)
+					AssertSuperUsersAreValid(t, out)
+
 				default:
 					t.Fatalf("unknown assertion marker: %q\nFull Line: %s", name, assertion[0])
 				}
 			}
 		})
+	}
+}
+
+func AssertSuperUsersAreValid(t *testing.T, manifests []byte) {
+	objs, err := kube.DecodeYAML(manifests, redpanda.Scheme)
+	require.NoError(t, err)
+
+	for _, obj := range objs {
+		secret, ok := obj.(*corev1.Secret)
+		if !ok || !strings.Contains(secret.Name, "users") {
+			continue
+		}
+		users, ok := secret.StringData["users.txt"]
+		require.True(t, ok)
+		usersArray := strings.Split(string(users), "\n")
+		for _, user := range usersArray {
+			line := strings.Split(user, ":")
+			// Username
+			require.True(t, len(line[0]) > 0)
+			// Password
+			require.True(t, len(line[1]) > 0)
+
+			// Sometimes mechanism can be missing
+			if len(line) > 2 {
+				// Machanism
+				switch line[2] {
+				case "SCRAM-SHA-256":
+				case "SCRAM-SHA-512":
+				default:
+					t.Fatalf("mechanism is not recognized: %s", line[2])
+				}
+			}
+		}
 	}
 }
 

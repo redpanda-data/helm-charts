@@ -62,10 +62,10 @@
 {{- $secret := (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) ) (mustMergeOverwrite (dict ) (dict "apiVersion" "v1" "kind" "Secret" )) (dict "metadata" (mustMergeOverwrite (dict "creationTimestamp" (coalesce nil) ) (dict "name" $values.auth.sasl.secretRef "namespace" $dot.Release.Namespace "labels" (get (fromJson (include "redpanda.FullLabels" (dict "a" (list $dot) ))) "r") )) "type" "Opaque" "stringData" (dict ) )) -}}
 {{- $usersTxt := (list ) -}}
 {{- range $_, $user := $values.auth.sasl.users -}}
-{{- if (ne $user.mechanism "") -}}
-{{- $usersTxt = (concat (default (list ) $usersTxt) (list (printf "%s:%s:%s" $user.name $user.password $user.mechanism))) -}}
-{{- else -}}
+{{- if (empty $user.mechanism) -}}
 {{- $usersTxt = (concat (default (list ) $usersTxt) (list (printf "%s:%s" $user.name $user.password))) -}}
+{{- else -}}
+{{- $usersTxt = (concat (default (list ) $usersTxt) (list (printf "%s:%s:%s" $user.name $user.password $user.mechanism))) -}}
 {{- end -}}
 {{- end -}}
 {{- if $_is_returning -}}
