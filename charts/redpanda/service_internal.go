@@ -40,24 +40,14 @@ func ServiceInternal(dot *helmette.Dot) *corev1.Service {
 	values := helmette.Unwrap[Values](dot.Values)
 	ports := []corev1.ServicePort{}
 
-	appProtocol := values.Listeners.Admin.AppProtocol
+	ports = append(ports, corev1.ServicePort{
+		Name:        "admin",
+		Protocol:    "TCP",
+		AppProtocol: values.Listeners.Admin.AppProtocol,
+		Port:        values.Listeners.Admin.Port,
+		TargetPort:  intstr.FromInt32(values.Listeners.Admin.Port),
+	})
 
-	if appProtocol != nil {
-		ports = append(ports, corev1.ServicePort{
-			Name:        "admin",
-			Protocol:    "TCP",
-			AppProtocol: appProtocol,
-			Port:        values.Listeners.Admin.Port,
-			TargetPort:  intstr.FromInt32(values.Listeners.Admin.Port),
-		})
-	} else {
-		ports = append(ports, corev1.ServicePort{
-			Name:       "admin",
-			Protocol:   "TCP",
-			Port:       values.Listeners.Admin.Port,
-			TargetPort: intstr.FromInt32(values.Listeners.Admin.Port),
-		})
-	}
 	if values.Listeners.HTTP.Enabled {
 		ports = append(ports, corev1.ServicePort{
 			Name:       "http",
