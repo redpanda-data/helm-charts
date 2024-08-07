@@ -58,7 +58,7 @@ func TestTemplate(t *testing.T) {
 			require.NotEmpty(t, assertions, "no ASSERT- markers found. All cases must have at least 1 marker.")
 
 			var values map[string]any
-			require.NoError(t, yaml.Unmarshal(tc.Data, &values))
+			require.NoError(t, yaml.Unmarshal(tc.Data, &values), "input values are invalid YAML")
 
 			out, err := client.Template(ctx, ".", helm.TemplateOptions{
 				Name:   "redpanda",

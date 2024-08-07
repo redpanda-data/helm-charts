@@ -216,3 +216,53 @@ auth:
     - name: mechanism-512
       password: valid
       mechanism: SCRAM-SHA-512
+      caEnabled: true
+
+-- pod-template-overrides --
+# ASSERT-NO-ERROR
+
+# Showcase that most fields of the post_install_job's PodSpec may be overridden.
+# ASSERT-FIELD-EQUALS ["batch/v1/Job", "default/redpanda-configuration", "{.spec.template.spec.securityContext.fsGroup}", 1234]
+# ASSERT-FIELD-EQUALS ["batch/v1/Job", "default/redpanda-configuration", "{.spec.template.spec.containers[*].securityContext.privileged}", true]
+# ASSERT-FIELD-EQUALS ["batch/v1/Job", "default/redpanda-configuration", "{.spec.template.metadata.labels.label}", "post-install"]
+# ASSERT-FIELD-EQUALS ["batch/v1/Job", "default/redpanda-configuration", "{.spec.template.metadata.annotations.anno}", "post-install"]
+# ASSERT-FIELD-EQUALS ["batch/v1/Job", "default/redpanda-configuration", "{.spec.template.spec.containers[*].env[?(@.name==\"HELLO\")].value}", "WORLD"]
+post_install_job:
+  podTemplate:
+    labels:
+      label: post-install
+    annotations:
+      anno: post-install
+    spec:
+      securityContext:
+        fsGroup: 1234
+      containers:
+      - name: post-install
+        env:
+        - name: "HELLO"
+          value: "WORLD"
+        securityContext:
+          privileged: true
+
+# Showcase that most fields of the post_upgrade_job's PodSpec may be overridden.
+# ASSERT-FIELD-EQUALS ["batch/v1/Job", "default/redpanda-post-upgrade", "{.spec.template.spec.securityContext.fsGroup}", 5678]
+# ASSERT-FIELD-EQUALS ["batch/v1/Job", "default/redpanda-post-upgrade", "{.spec.template.spec.containers[*].securityContext.privileged}", false]
+# ASSERT-FIELD-EQUALS ["batch/v1/Job", "default/redpanda-post-upgrade", "{.spec.template.metadata.labels.label}", "post-upgrade"]
+# ASSERT-FIELD-EQUALS ["batch/v1/Job", "default/redpanda-post-upgrade", "{.spec.template.metadata.annotations.anno}", "post-upgrade"]
+# ASSERT-FIELD-EQUALS ["batch/v1/Job", "default/redpanda-post-upgrade", "{.spec.template.spec.containers[*].env[?(@.name==\"HELLO\")].value}", "HELM"]
+post_upgrade_job:
+  podTemplate:
+    labels:
+      label: post-upgrade
+    annotations:
+      anno: post-upgrade
+    spec:
+      securityContext:
+        fsGroup: 5678
+      containers:
+      - name: post-upgrade
+        env:
+        - name: "HELLO"
+          value: "HELM"
+        securityContext:
+          privileged: false

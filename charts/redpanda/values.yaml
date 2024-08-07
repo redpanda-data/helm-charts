@@ -594,11 +594,21 @@ post_install_job:
   #     memory: 1024Mi
   # labels: {}
   # annotations: {}
-  # You can set the security context as nessesary for the post-install job as follows
-  # securityContext:
-  #   allowPrivilegeEscalation: false
-  #   runAsNonRoot: true
   affinity: {}
+
+  podTemplate:
+    # -- Additional labels to apply to the Pods of this Job.
+    labels: {}
+    # -- Additional annotations to apply to the Pods of this Job.
+    annotations: {}
+    # -- A subset of Kubernetes' PodSpec type that will be merged into the
+    # final PodSpec. See [Merge Semantics](#merging-semantics) for details.
+    spec:
+      securityContext: {}
+      containers:
+      - name: post-install
+        securityContext: {}
+        env: []
 
 post_upgrade_job:
   enabled: true
@@ -623,6 +633,7 @@ post_upgrade_job:
   # extraEnvFrom:
   #   - secretRef:
   #       name: redpanda-aws-secrets
+  # DEPRECATED. Please use podTemplate.securityContext
   # You can set the security context as nessesary for the post-upgrade job as follows
   # securityContext:
   #   allowPrivilegeEscalation: false
@@ -631,6 +642,20 @@ post_upgrade_job:
   # When helm upgrade is performed the post-upgrade job is scheduled before Statefulset successfully finish
   # its rollout. User can extend Job default backoff limit of `6`.
   # backoffLimit:
+
+  podTemplate:
+    # -- Additional labels to apply to the Pods of this Job.
+    labels: {}
+    # -- Additional annotations to apply to the Pods of this Job.
+    annotations: {}
+    # -- A subset of Kubernetes' PodSpec type that will be merged into the
+    # final PodSpec. See [Merge Semantics](#merging-semantics) for details.
+    spec:
+      securityContext: {}
+      containers:
+      - name: post-upgrade
+        securityContext: {}
+        env: []
 
 statefulset:
   # -- Number of Redpanda brokers (Redpanda Data recommends setting this to the number of worker nodes in the cluster)
@@ -647,18 +672,18 @@ statefulset:
   # For example, `my.k8s.service: redpanda`.
   additionalSelectorLabels: {}
   podTemplate:
-    # -- Additional labels to apply to the Pods of this StatefulSet.
+    # -- Additional labels to apply to the Pods of the StatefulSet.
     labels: {}
-    # -- Additional annotations to apply to the Pods of this StatefulSet.
+    # -- Additional annotations to apply to the Pods of the StatefulSet.
     annotations: {}
-    # -- A subset of Kubernetes' PodSpec type that will be merged into the redpanda StatefulSet via a [strategic merge patch](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/#use-a-strategic-merge-patch-to-update-a-deployment).
+    # -- A subset of Kubernetes' PodSpec type that will be merged into the
+    # final PodSpec. See [Merge Semantics](#merging-semantics) for details.
     spec:
-      containers: []
-      # - name: redpanda
-      #   env:
-      #   - name: EXTRA_ENV_VAR
-      #     value: THIS_IS_AN_EXAMPLE
-      # securityContext: {}
+      securityContext: {}
+      containers:
+      - name: redpanda
+        securityContext: {}
+        env: []
   # -- Adjust the period for your probes to meet your needs.
   # For details,
   # see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes).
@@ -726,6 +751,7 @@ statefulset:
   - maxSkew: 1
     topologyKey: topology.kubernetes.io/zone
     whenUnsatisfiable: ScheduleAnyway
+  # -- DEPRECATED: Prefer to use podTemplate.spec.securityContext or podTemplate.spec.containers[0].securityContext.
   securityContext:
     fsGroup: 101
     runAsUser: 101

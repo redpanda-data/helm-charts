@@ -551,6 +551,28 @@ Node selection constraints for scheduling Pods, can override this for StatefulSe
 
 **Default:** `true`
 
+### [post_install_job.podTemplate.annotations](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=post_install_job.podTemplate.annotations)
+
+Additional annotations to apply to the Pods of this Job.
+
+**Default:** `{}`
+
+### [post_install_job.podTemplate.labels](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=post_install_job.podTemplate.labels)
+
+Additional labels to apply to the Pods of this Job.
+
+**Default:** `{}`
+
+### [post_install_job.podTemplate.spec](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=post_install_job.podTemplate.spec)
+
+A subset of Kubernetes' PodSpec type that will be merged into the final PodSpec. See [Merge Semantics](#merging-semantics) for details.
+
+**Default:**
+
+```
+{"containers":[{"env":[],"name":"post-install","securityContext":{}}],"securityContext":{}}
+```
+
 ### [post_upgrade_job.affinity](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=post_upgrade_job.affinity)
 
 **Default:** `{}`
@@ -558,6 +580,28 @@ Node selection constraints for scheduling Pods, can override this for StatefulSe
 ### [post_upgrade_job.enabled](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=post_upgrade_job.enabled)
 
 **Default:** `true`
+
+### [post_upgrade_job.podTemplate.annotations](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=post_upgrade_job.podTemplate.annotations)
+
+Additional annotations to apply to the Pods of this Job.
+
+**Default:** `{}`
+
+### [post_upgrade_job.podTemplate.labels](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=post_upgrade_job.podTemplate.labels)
+
+Additional labels to apply to the Pods of this Job.
+
+**Default:** `{}`
+
+### [post_upgrade_job.podTemplate.spec](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=post_upgrade_job.podTemplate.spec)
+
+A subset of Kubernetes' PodSpec type that will be merged into the final PodSpec. See [Merge Semantics](#merging-semantics) for details.
+
+**Default:**
+
+```
+{"containers":[{"env":[],"name":"post-upgrade","securityContext":{}}],"securityContext":{}}
+```
 
 ### [rackAwareness](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=rackAwareness)
 
@@ -845,21 +889,25 @@ Weight for `soft` anti-affinity rules. Does not apply to other anti-affinity typ
 
 ### [statefulset.podTemplate.annotations](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.podTemplate.annotations)
 
-Additional annotations to apply to the Pods of this StatefulSet.
+Additional annotations to apply to the Pods of the StatefulSet.
 
 **Default:** `{}`
 
 ### [statefulset.podTemplate.labels](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.podTemplate.labels)
 
-Additional labels to apply to the Pods of this StatefulSet.
+Additional labels to apply to the Pods of the StatefulSet.
 
 **Default:** `{}`
 
 ### [statefulset.podTemplate.spec](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.podTemplate.spec)
 
-A subset of Kubernetes' PodSpec type that will be merged into the redpanda StatefulSet via a [strategic merge patch](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/#use-a-strategic-merge-patch-to-update-a-deployment).
+A subset of Kubernetes' PodSpec type that will be merged into the final PodSpec. See [Merge Semantics](#merging-semantics) for details.
 
-**Default:** `{"containers":[]}`
+**Default:**
+
+```
+{"containers":[{"env":[],"name":"redpanda","securityContext":{}}],"securityContext":{}}
+```
 
 ### [statefulset.priorityClassName](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.priorityClassName)
 
@@ -889,17 +937,15 @@ Number of Redpanda brokers (Redpanda Data recommends setting this to the number 
 
 **Default:** `3`
 
-### [statefulset.securityContext.fsGroup](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.securityContext.fsGroup)
+### [statefulset.securityContext](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.securityContext)
 
-**Default:** `101`
+DEPRECATED: Prefer to use podTemplate.spec.securityContext or podTemplate.spec.containers[0].securityContext.
 
-### [statefulset.securityContext.fsGroupChangePolicy](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.securityContext.fsGroupChangePolicy)
+**Default:**
 
-**Default:** `"OnRootMismatch"`
-
-### [statefulset.securityContext.runAsUser](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.securityContext.runAsUser)
-
-**Default:** `101`
+```
+{"fsGroup":101,"fsGroupChangePolicy":"OnRootMismatch","runAsUser":101}
+```
 
 ### [statefulset.sideCars.configWatcher.enabled](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.sideCars.configWatcher.enabled)
 
@@ -1237,3 +1283,18 @@ Increase the maximum number of outstanding asynchronous IO operations if the cur
 
 **Default:** `true`
 
+## Merging Semantics
+
+The redpanda chart implements a form of object merging that's roughly a
+middleground of [JSON Merge Patch][k8s.jsonmp] and [Kubernetes' Strategic Merge
+Patch][k8s.smp]. This is done to aid end users in setting or overriding fields
+that are not directly exposed via the chart.
+
+- Directives are not supported.
+- List fields that are merged by a unique key in Kubernetes' SMP (e.g.
+  `containers`, `env`) will be merged in a similar awy.
+- Only fields explicitly allowed by the chart's JSON schema will be merged.
+- Additional containers that are not present in the original value will NOT be added.
+
+[k8s.smp]: https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/#use-a-strategic-merge-patch-to-update-a-deployment
+[k8s.jsonmp]: https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/#use-a-json-merge-patch-to-update-a-deployment

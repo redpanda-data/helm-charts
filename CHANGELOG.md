@@ -4,7 +4,26 @@
 
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-FILLMEIN) - YYYY-MM-DD
 #### Added
+* `post_install_job.podTemplate` and `post_upgrade_job.podTemplate` have been
+  added, which allow overriding various aspects of the corresponding
+  `corev1.PodTemplate`. Notably, this field may be used to set labels and
+  annotations on the Pod produced by the Job which was not previously possible.
+* `statefulset.podTemplate` has benefited from the above additions as well.
+  `statefulset.podTemplate.spec.securityContext` and
+  `statefulset.podTemplate.spec.containers[*].securityContext` may be used to
+  set/override the pod and container security contexts respectively.
 #### Changed
+* The container name of the post-upgrade job is now statically set to
+  `post-upgrade` to facilitate strategic merge patching.
+* The container name of the post-install job is now statically set to
+  `post-install` to facilitate strategic merge patching.
+* `statefulset.securityContext`, `statefulset.podSecurityContext`,
+  `post_upgrade_job.securityContext`, and `post_install_job.securityContext`
+  have all been deprecated due to historically incorrect and confusing
+  behavior. The desire to preserve backwards compatibility and not suddenly
+  change sensitive fields has left us unable to cleanly correct said issues.
+  `{statefulset,post_upgrade_job,post_install_job}.podTemplate` may be used to
+  override either the Pod or Container security context.
 #### Fixed
 #### Removed
 

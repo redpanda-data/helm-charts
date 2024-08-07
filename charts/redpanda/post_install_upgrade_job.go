@@ -59,7 +59,7 @@ func PostInstallUpgradeJob(dot *helmette.Dot) *batchv1.Job {
 			),
 		},
 		Spec: batchv1.JobSpec{
-			Template: corev1.PodTemplateSpec{
+			Template: StrategicMergePatch(values.PostInstallJob.PodTemplate, corev1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
 					GenerateName: fmt.Sprintf("%s-post-", dot.Release.Name),
 					Labels: helmette.Merge(
@@ -80,7 +80,7 @@ func PostInstallUpgradeJob(dot *helmette.Dot) *batchv1.Job {
 					ImagePullSecrets: helmette.Default(nil, values.ImagePullSecrets),
 					Containers: []corev1.Container{
 						{
-							Name:      fmt.Sprintf("%s-post-install", Name(dot)),
+							Name:      PostInstallContainerName,
 							Image:     fmt.Sprintf("%s:%s", values.Image.Repository, Tag(dot)),
 							Env:       PostInstallUpgradeEnvironmentVariables(dot),
 							Command:   []string{"bash", "-c"},
@@ -97,7 +97,7 @@ func PostInstallUpgradeJob(dot *helmette.Dot) *batchv1.Job {
 					Volumes:            DefaultVolumes(dot),
 					ServiceAccountName: ServiceAccountName(dot),
 				},
-			},
+			}),
 		},
 	}
 
