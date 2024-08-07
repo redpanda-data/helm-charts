@@ -8,6 +8,26 @@
 #### Fixed
 #### Removed
 
+### [5.8.15](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.8.15) - 2024-08-08
+#### Added
+#### Changed
+* Bump Redpanda version due to a bug in Redpanda
+#### Fixed
+* Fix mechanism check in superuser file creation
+#### Removed
+
+### [5.8.14](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.8.14) - 2024-08-07
+#### Added
+* unset `status` and `creationTimestamp` before rendering resource
+#### Changed
+* Convert connectors to go
+* Bump redpanda, connectors, operator and console helm chart application version
+#### Fixed
+* Fix Redpanda node configuration generation, so that rpk can parse it
+* Fix volume mounts in mTLS setup
+* Correct boolean coalescing
+#### Removed
+
 ### [5.8.13](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.8.13) - 2024-07-25
 #### Added
 #### Changed
