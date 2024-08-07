@@ -199,3 +199,12 @@ tls:
   certs:
     kafka-internal-0:
       caEnabled: true
+
+-- app-protocol-regression -- 
+# ASSERT-NO-ERROR
+# ASSERT-GOLDEN
+# ASSERT-FIELD-EQUALS ["v1/Service", "default/redpanda", "{.spec.ports[*].admin.appProtocol}", "http"]
+# ASSERT-SERVICE-APPPROTOCOL-SET 
+listeners: 
+  admin:
+    appProtocol: http
