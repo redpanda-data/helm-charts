@@ -19,6 +19,18 @@ const (
 	fiveGiB = 5368709120
 	// That default path inside Redpanda container which is based on debian.
 	defaultTruststorePath = "/etc/ssl/certs/ca-certificates.crt"
+
+	// RedpandaContainerName is the user facing name of the redpanda container
+	// in the redpanda StatefulSet. While the name of the container can
+	// technically change, this is the name that is used to locate the
+	// [corev1.Container] that will be smp'd into the redpanda container.
+	RedpandaContainerName = "redpanda"
+	// PostUpgradeContainerName is the user facing name of the post-install
+	// job's container.
+	PostInstallContainerName = "post-install"
+	// PostUpgradeContainerName is the user facing name of the post-upgrade
+	// job's container.
+	PostUpgradeContainerName = "post-upgrade"
 )
 
 // values.go contains a collection of go structs that (loosely) map to
@@ -32,39 +44,40 @@ const (
 // the Values struct as well to ensure that nothing can ever get out of sync.
 
 type Values struct {
-	NameOverride     string                        `json:"nameOverride"`
-	FullnameOverride string                        `json:"fullnameOverride"`
-	ClusterDomain    string                        `json:"clusterDomain"`
-	CommonLabels     map[string]string             `json:"commonLabels"`
-	NodeSelector     map[string]string             `json:"nodeSelector"`
-	Affinity         corev1.Affinity               `json:"affinity" jsonschema:"required"`
-	Tolerations      []corev1.Toleration           `json:"tolerations"`
-	Image            Image                         `json:"image" jsonschema:"required,description=Values used to define the container image to be used for Redpanda"`
-	Service          *Service                      `json:"service"`
-	ImagePullSecrets []corev1.LocalObjectReference `json:"imagePullSecrets"`
-	LicenseKey       string                        `json:"license_key" jsonschema:"deprecated,pattern=^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?\\.(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$|^$"`
-	LicenseSecretRef *LicenseSecretRef             `json:"license_secret_ref" jsonschema:"deprecated"`
-	AuditLogging     AuditLogging                  `json:"auditLogging"`
-	Enterprise       Enterprise                    `json:"enterprise"`
-	RackAwareness    RackAwareness                 `json:"rackAwareness"`
-	Console          Console                       `json:"console"`
-	Connectors       Connectors                    `json:"connectors"`
-	Auth             Auth                          `json:"auth"`
-	TLS              TLS                           `json:"tls"`
-	External         ExternalConfig                `json:"external"`
-	Logging          Logging                       `json:"logging"`
-	Monitoring       Monitoring                    `json:"monitoring"`
-	Resources        RedpandaResources             `json:"resources"`
-	Storage          Storage                       `json:"storage"`
-	PostInstallJob   PostInstallJob                `json:"post_install_job"`
-	PostUpgradeJob   PostUpgradeJob                `json:"post_upgrade_job"`
-	Statefulset      Statefulset                   `json:"statefulset"`
-	ServiceAccount   ServiceAccountCfg             `json:"serviceAccount"`
-	RBAC             RBAC                          `json:"rbac"`
-	Tuning           Tuning                        `json:"tuning"`
-	Listeners        Listeners                     `json:"listeners"`
-	Config           Config                        `json:"config"`
-	Tests            *struct {
+	NameOverride      string                        `json:"nameOverride"`
+	FullnameOverride  string                        `json:"fullnameOverride"`
+	ClusterDomain     string                        `json:"clusterDomain"`
+	CommonLabels      map[string]string             `json:"commonLabels"`
+	CommonAnnotations map[string]string             `json:"commonAnnotations"`
+	NodeSelector      map[string]string             `json:"nodeSelector"`
+	Affinity          corev1.Affinity               `json:"affinity" jsonschema:"required"`
+	Tolerations       []corev1.Toleration           `json:"tolerations"`
+	Image             Image                         `json:"image" jsonschema:"required,description=Values used to define the container image to be used for Redpanda"`
+	Service           *Service                      `json:"service"`
+	ImagePullSecrets  []corev1.LocalObjectReference `json:"imagePullSecrets"`
+	LicenseKey        string                        `json:"license_key" jsonschema:"deprecated,pattern=^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?\\.(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$|^$"`
+	LicenseSecretRef  *LicenseSecretRef             `json:"license_secret_ref" jsonschema:"deprecated"`
+	AuditLogging      AuditLogging                  `json:"auditLogging"`
+	Enterprise        Enterprise                    `json:"enterprise"`
+	RackAwareness     RackAwareness                 `json:"rackAwareness"`
+	Console           Console                       `json:"console"`
+	Connectors        Connectors                    `json:"connectors"`
+	Auth              Auth                          `json:"auth"`
+	TLS               TLS                           `json:"tls"`
+	External          ExternalConfig                `json:"external"`
+	Logging           Logging                       `json:"logging"`
+	Monitoring        Monitoring                    `json:"monitoring"`
+	Resources         RedpandaResources             `json:"resources"`
+	Storage           Storage                       `json:"storage"`
+	PostInstallJob    PostInstallJob                `json:"post_install_job"`
+	PostUpgradeJob    PostUpgradeJob                `json:"post_upgrade_job"`
+	Statefulset       Statefulset                   `json:"statefulset"`
+	ServiceAccount    ServiceAccountCfg             `json:"serviceAccount"`
+	RBAC              RBAC                          `json:"rbac"`
+	Tuning            Tuning                        `json:"tuning"`
+	Listeners         Listeners                     `json:"listeners"`
+	Config            Config                        `json:"config"`
+	Tests             *struct {
 		Enabled bool `json:"enabled"`
 	} `json:"tests"`
 	Force bool `json:"force"`
@@ -539,51 +552,58 @@ func (s *Storage) StorageMinFreeBytes() int64 {
 }
 
 type PostInstallJob struct {
-	Resources       *corev1.ResourceRequirements `json:"resources"`
-	Affinity        corev1.Affinity              `json:"affinity"`
-	Enabled         bool                         `json:"enabled"`
-	Labels          map[string]string            `json:"labels"`
-	Annotations     map[string]string            `json:"annotations"`
-	SecurityContext *corev1.SecurityContext      `json:"securityContext"`
+	Resources   *corev1.ResourceRequirements `json:"resources"`
+	Affinity    corev1.Affinity              `json:"affinity"`
+	Enabled     bool                         `json:"enabled"`
+	Labels      map[string]string            `json:"labels"`
+	Annotations map[string]string            `json:"annotations"`
+	// Deprecated. Prefer [PodTemplate.Spec.SecurityContext].
+	SecurityContext *corev1.SecurityContext `json:"securityContext"`
+	PodTemplate     PodTemplate             `json:"podTemplate"`
 }
 
 type PostUpgradeJob struct {
-	Resources       corev1.ResourceRequirements `json:"resources"`
-	Affinity        corev1.Affinity             `json:"affinity"`
-	Enabled         bool                        `json:"enabled"`
-	Labels          map[string]string           `json:"labels"`
-	Annotations     map[string]string           `json:"annotations"`
-	BackoffLimit    *int32                      `json:"backoffLimit"`
-	ExtraEnv        []corev1.EnvVar             `json:"extraEnv"`
-	ExtraEnvFrom    []corev1.EnvFromSource      `json:"extraEnvFrom"`
-	SecurityContext *corev1.SecurityContext     `json:"securityContext"`
+	Resources    corev1.ResourceRequirements `json:"resources"`
+	Affinity     corev1.Affinity             `json:"affinity"`
+	Enabled      bool                        `json:"enabled"`
+	Labels       map[string]string           `json:"labels"`
+	Annotations  map[string]string           `json:"annotations"`
+	BackoffLimit *int32                      `json:"backoffLimit"`
+	// Deprecated. Prefer [PodTemplate.Spec.Containers.Env].
+	ExtraEnv     []corev1.EnvVar        `json:"extraEnv"`
+	ExtraEnvFrom []corev1.EnvFromSource `json:"extraEnvFrom"`
+	// Deprecated. Prefer [PodTemplate.Spec.SecurityContext].
+	SecurityContext *corev1.SecurityContext `json:"securityContext"`
+	PodTemplate     PodTemplate             `json:"podTemplate"`
 }
 
 type ContainerName string
 
 // +gotohelm:ignore=true
 func (ContainerName) JSONSchemaExtend(s *jsonschema.Schema) {
-	s.Enum = append(s.Enum, RedpandaContainerName)
+	s.Enum = append(s.Enum, RedpandaContainerName, PostInstallContainerName, PostUpgradeContainerName)
 }
 
 type Container struct {
-	Name ContainerName   `json:"name" jsonschema:"required"`
-	Env  []corev1.EnvVar `json:"env" jsonschema:"required"`
+	Name            ContainerName           `json:"name" jsonschema:"required"`
+	SecurityContext *corev1.SecurityContext `json:"securityContext,omitempty"`
+	Env             []corev1.EnvVar         `json:"env" jsonschema:"required"`
 }
 
 // PodSpec is a subset of [corev1.PodSpec] that will be merged into the objects
 // constructed by this helm chart via means of a [strategic merge
 // patch](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/#use-a-strategic-merge-patch-to-update-a-deployment).
 // NOTE: At the time of writing, merging is manually implemented for each
-// field. Ideally, a more generally applicable solution could be used.
+// field. Ideally, a more generally applicable solution should be used.
 type PodSpec struct {
-	Containers []Container `json:"containers" jsonschema:"required"`
+	Containers      []Container                `json:"containers,omitempty" jsonschema:"required"`
+	SecurityContext *corev1.PodSecurityContext `json:"securityContext,omitempty"`
 }
 
 type PodTemplate struct {
-	Labels      map[string]string `json:"labels" jsonschema:"required"`
-	Annotations map[string]string `json:"annotations" jsonschema:"required"`
-	Spec        PodSpec           `json:"spec" jsonschema:"required"`
+	Labels      map[string]string `json:"labels,omitempty" jsonschema:"required"`
+	Annotations map[string]string `json:"annotations,omitempty" jsonschema:"required"`
+	Spec        PodSpec           `json:"spec,omitempty" jsonschema:"required"`
 }
 
 type Statefulset struct {
@@ -634,11 +654,11 @@ type Statefulset struct {
 		WhenUnsatisfiable corev1.UnsatisfiableConstraintAction `json:"whenUnsatisfiable" jsonschema:"pattern=^(ScheduleAnyway|DoNotSchedule)$"`
 	} `json:"topologySpreadConstraints" jsonschema:"required,minItems=1"`
 	Tolerations []corev1.Toleration `json:"tolerations" jsonschema:"required"`
-	// DEPRECATED. Not to be confused with [corev1.PodSecurityContext], this
-	// field is a historical artifact that should be quickly removed.
+	// Deprecated. Prefer [PodTemplate.Spec.SecurityContext].
 	PodSecurityContext *SecurityContext `json:"podSecurityContext"`
-	SecurityContext    SecurityContext  `json:"securityContext" jsonschema:"required"`
-	SideCars           struct {
+	// Deprecated. Prefer [PodTemplate.Spec.Containers[*].SecurityContext].
+	SecurityContext SecurityContext `json:"securityContext" jsonschema:"required"`
+	SideCars        struct {
 		ConfigWatcher struct {
 			Enabled           bool                    `json:"enabled"`
 			ExtraVolumeMounts string                  `json:"extraVolumeMounts"` // XXX this is template-expanded into yaml
@@ -697,7 +717,7 @@ type Statefulset struct {
 
 // +gotohelm:ignore=true
 func (Statefulset) JSONSchemaExtend(schema *jsonschema.Schema) {
-	deprecate(schema, "podSecurityContext")
+	deprecate(schema, "podSecurityContext", "securityContext")
 }
 
 type ServiceAccountCfg struct {

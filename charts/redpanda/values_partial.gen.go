@@ -13,39 +13,40 @@ import (
 )
 
 type PartialValues struct {
-	NameOverride     *string                       "json:\"nameOverride,omitempty\""
-	FullnameOverride *string                       "json:\"fullnameOverride,omitempty\""
-	ClusterDomain    *string                       "json:\"clusterDomain,omitempty\""
-	CommonLabels     map[string]string             "json:\"commonLabels,omitempty\""
-	NodeSelector     map[string]string             "json:\"nodeSelector,omitempty\""
-	Affinity         *corev1.Affinity              "json:\"affinity,omitempty\" jsonschema:\"required\""
-	Tolerations      []corev1.Toleration           "json:\"tolerations,omitempty\""
-	Image            *PartialImage                 "json:\"image,omitempty\" jsonschema:\"required,description=Values used to define the container image to be used for Redpanda\""
-	Service          *PartialService               "json:\"service,omitempty\""
-	ImagePullSecrets []corev1.LocalObjectReference "json:\"imagePullSecrets,omitempty\""
-	LicenseKey       *string                       "json:\"license_key,omitempty\" jsonschema:\"deprecated,pattern=^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?\\\\.(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$|^$\""
-	LicenseSecretRef *PartialLicenseSecretRef      "json:\"license_secret_ref,omitempty\" jsonschema:\"deprecated\""
-	AuditLogging     *PartialAuditLogging          "json:\"auditLogging,omitempty\""
-	Enterprise       *PartialEnterprise            "json:\"enterprise,omitempty\""
-	RackAwareness    *PartialRackAwareness         "json:\"rackAwareness,omitempty\""
-	Console          *PartialConsole               "json:\"console,omitempty\""
-	Connectors       *PartialConnectors            "json:\"connectors,omitempty\""
-	Auth             *PartialAuth                  "json:\"auth,omitempty\""
-	TLS              *PartialTLS                   "json:\"tls,omitempty\""
-	External         *PartialExternalConfig        "json:\"external,omitempty\""
-	Logging          *PartialLogging               "json:\"logging,omitempty\""
-	Monitoring       *PartialMonitoring            "json:\"monitoring,omitempty\""
-	Resources        *PartialRedpandaResources     "json:\"resources,omitempty\""
-	Storage          *PartialStorage               "json:\"storage,omitempty\""
-	PostInstallJob   *PartialPostInstallJob        "json:\"post_install_job,omitempty\""
-	PostUpgradeJob   *PartialPostUpgradeJob        "json:\"post_upgrade_job,omitempty\""
-	Statefulset      *PartialStatefulset           "json:\"statefulset,omitempty\""
-	ServiceAccount   *PartialServiceAccountCfg     "json:\"serviceAccount,omitempty\""
-	RBAC             *PartialRBAC                  "json:\"rbac,omitempty\""
-	Tuning           *PartialTuning                "json:\"tuning,omitempty\""
-	Listeners        *PartialListeners             "json:\"listeners,omitempty\""
-	Config           *PartialConfig                "json:\"config,omitempty\""
-	Tests            *struct {
+	NameOverride      *string                       "json:\"nameOverride,omitempty\""
+	FullnameOverride  *string                       "json:\"fullnameOverride,omitempty\""
+	ClusterDomain     *string                       "json:\"clusterDomain,omitempty\""
+	CommonLabels      map[string]string             "json:\"commonLabels,omitempty\""
+	CommonAnnotations map[string]string             "json:\"commonAnnotations,omitempty\""
+	NodeSelector      map[string]string             "json:\"nodeSelector,omitempty\""
+	Affinity          *corev1.Affinity              "json:\"affinity,omitempty\" jsonschema:\"required\""
+	Tolerations       []corev1.Toleration           "json:\"tolerations,omitempty\""
+	Image             *PartialImage                 "json:\"image,omitempty\" jsonschema:\"required,description=Values used to define the container image to be used for Redpanda\""
+	Service           *PartialService               "json:\"service,omitempty\""
+	ImagePullSecrets  []corev1.LocalObjectReference "json:\"imagePullSecrets,omitempty\""
+	LicenseKey        *string                       "json:\"license_key,omitempty\" jsonschema:\"deprecated,pattern=^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?\\\\.(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$|^$\""
+	LicenseSecretRef  *PartialLicenseSecretRef      "json:\"license_secret_ref,omitempty\" jsonschema:\"deprecated\""
+	AuditLogging      *PartialAuditLogging          "json:\"auditLogging,omitempty\""
+	Enterprise        *PartialEnterprise            "json:\"enterprise,omitempty\""
+	RackAwareness     *PartialRackAwareness         "json:\"rackAwareness,omitempty\""
+	Console           *PartialConsole               "json:\"console,omitempty\""
+	Connectors        *PartialConnectors            "json:\"connectors,omitempty\""
+	Auth              *PartialAuth                  "json:\"auth,omitempty\""
+	TLS               *PartialTLS                   "json:\"tls,omitempty\""
+	External          *PartialExternalConfig        "json:\"external,omitempty\""
+	Logging           *PartialLogging               "json:\"logging,omitempty\""
+	Monitoring        *PartialMonitoring            "json:\"monitoring,omitempty\""
+	Resources         *PartialRedpandaResources     "json:\"resources,omitempty\""
+	Storage           *PartialStorage               "json:\"storage,omitempty\""
+	PostInstallJob    *PartialPostInstallJob        "json:\"post_install_job,omitempty\""
+	PostUpgradeJob    *PartialPostUpgradeJob        "json:\"post_upgrade_job,omitempty\""
+	Statefulset       *PartialStatefulset           "json:\"statefulset,omitempty\""
+	ServiceAccount    *PartialServiceAccountCfg     "json:\"serviceAccount,omitempty\""
+	RBAC              *PartialRBAC                  "json:\"rbac,omitempty\""
+	Tuning            *PartialTuning                "json:\"tuning,omitempty\""
+	Listeners         *PartialListeners             "json:\"listeners,omitempty\""
+	Config            *PartialConfig                "json:\"config,omitempty\""
+	Tests             *struct {
 		Enabled *bool "json:\"enabled,omitempty\""
 	} "json:\"tests,omitempty\""
 	Force *bool "json:\"force,omitempty\""
@@ -178,6 +179,7 @@ type PartialPostInstallJob struct {
 	Labels          map[string]string            "json:\"labels,omitempty\""
 	Annotations     map[string]string            "json:\"annotations,omitempty\""
 	SecurityContext *corev1.SecurityContext      "json:\"securityContext,omitempty\""
+	PodTemplate     *PartialPodTemplate          "json:\"podTemplate,omitempty\""
 }
 
 type PartialPostUpgradeJob struct {
@@ -190,6 +192,7 @@ type PartialPostUpgradeJob struct {
 	ExtraEnv        []corev1.EnvVar              "json:\"extraEnv,omitempty\""
 	ExtraEnvFrom    []corev1.EnvFromSource       "json:\"extraEnvFrom,omitempty\""
 	SecurityContext *corev1.SecurityContext      "json:\"securityContext,omitempty\""
+	PodTemplate     *PartialPodTemplate          "json:\"podTemplate,omitempty\""
 }
 
 type PartialStatefulset struct {
@@ -479,7 +482,8 @@ type PartialTLSCert struct {
 }
 
 type PartialPodSpec struct {
-	Containers []PartialContainer "json:\"containers,omitempty\" jsonschema:\"required\""
+	Containers      []PartialContainer         "json:\"containers,omitempty\" jsonschema:\"required\""
+	SecurityContext *corev1.PodSecurityContext "json:\"securityContext,omitempty\""
 }
 
 type PartialTieredStorageCredentials struct {
@@ -541,8 +545,9 @@ type PartialTrustStore struct {
 }
 
 type PartialContainer struct {
-	Name *ContainerName  "json:\"name,omitempty\" jsonschema:\"required\""
-	Env  []corev1.EnvVar "json:\"env,omitempty\" jsonschema:\"required\""
+	Name            *ContainerName          "json:\"name,omitempty\" jsonschema:\"required\""
+	SecurityContext *corev1.SecurityContext "json:\"securityContext,omitempty\""
+	Env             []corev1.EnvVar         "json:\"env,omitempty\" jsonschema:\"required\""
 }
 
 type PartialSecretRef struct {

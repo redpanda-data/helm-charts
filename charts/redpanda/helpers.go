@@ -419,3 +419,74 @@ func coalesce[T any](values []*T) *T {
 	}
 	return nil
 }
+
+// StrategicMergePatch is a half-baked implementation of Kubernetes' strategic
+// merge patch. It's closer to a merge patch with smart handling of lists
+// that's tailored to the values permitted by [PodTemplate].
+func StrategicMergePatch(overrides PodTemplate, original corev1.PodTemplateSpec) corev1.PodTemplateSpec {
+	// TODO(chrisseto): I'd like to march this towards being a more general
+	// solution but getting go & helm to work correctly is going to take some
+	// critical thinking.
+	// - Pushing everything into a single MergeTo call won't work without VERY
+	// careful handling as `merge` is quite sensitive to the inclusion of `nil`
+	// values.
+	// - Full support of SMP (e.i. directive keys) would require a custom data
+	// type or just accepting JSON/YAML strings.
+	// - Potentially some careful handling of generics and `get` could be used
+	// to make a mostly generic SMP implementation.
+	// - Or just use real SMP in go and inject static metadata into helm to
+	// have a minimal recursive solution.
+
+	if overrides.Labels != nil {
+		original.ObjectMeta.Labels = helmette.MergeTo[map[string]string](
+			overrides.Labels,
+			helmette.Default(map[string]string{}, original.ObjectMeta.Labels),
+		)
+	}
+
+	if overrides.Annotations != nil {
+		original.ObjectMeta.Annotations = helmette.MergeTo[map[string]string](
+			overrides.Annotations,
+			helmette.Default(map[string]string{}, original.ObjectMeta.Annotations),
+		)
+	}
+
+	if overrides.Spec.SecurityContext != nil {
+		original.Spec.SecurityContext = helmette.MergeTo[*corev1.PodSecurityContext](
+			overrides.Spec.SecurityContext,
+			helmette.Default(&corev1.PodSecurityContext{}, original.Spec.SecurityContext),
+		)
+	}
+
+	overrideContainers := map[string]*Container{}
+	for i := range overrides.Spec.Containers {
+		container := &overrides.Spec.Containers[i]
+		overrideContainers[string(container.Name)] = container
+	}
+
+	var merged []corev1.Container
+	for _, container := range original.Spec.Containers {
+		if override, ok := overrideContainers[container.Name]; ok {
+			// TODO(chrisseto): Actually implement this as a strategic merge patch.
+			// EnvVar's are "last in wins" so there's not too much of a need to fully
+			// implement a patch for this usecase.
+			env := append(container.Env, override.Env...)
+			container = helmette.MergeTo[corev1.Container](override, container)
+			container.Env = env
+		}
+
+		// TODO(chrisseto): There's a minor divergence in gotohelm that'll be tedious to fix.
+		// In go: append(nil, nil) -> nil
+		// In helm: append(nil, nil) -> []T{}
+		// Work around for now by setting Env to []T{} if it's nil.
+		if container.Env == nil {
+			container.Env = []corev1.EnvVar{}
+		}
+
+		merged = append(merged, container)
+	}
+
+	original.Spec.Containers = merged
+
+	return original
+}

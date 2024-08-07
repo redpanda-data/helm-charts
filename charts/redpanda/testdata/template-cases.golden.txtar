@@ -856,9 +856,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -892,6 +890,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -1278,6 +1277,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -1312,7 +1312,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -1366,6 +1366,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -1391,11 +1392,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -2163,9 +2162,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -2195,6 +2192,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -2369,6 +2367,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -2404,7 +2403,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -2447,6 +2446,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -2474,11 +2474,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -3318,9 +3316,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -3354,6 +3350,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -3740,6 +3737,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -3774,7 +3772,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -3828,6 +3826,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -3853,11 +3852,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -4739,9 +4736,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -4774,6 +4769,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -4958,6 +4954,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -4992,7 +4989,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -5040,6 +5037,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -5065,11 +5063,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -6051,9 +6047,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -6090,6 +6084,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -6488,6 +6483,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -6522,7 +6518,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -6582,6 +6578,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -6608,11 +6605,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -7626,9 +7621,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -7662,6 +7655,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -8048,6 +8042,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -8082,7 +8077,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -8136,6 +8131,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -8161,11 +8157,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -9134,9 +9128,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -9172,6 +9164,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -9665,6 +9658,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -9699,7 +9693,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -9759,6 +9753,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -9784,11 +9779,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -10682,9 +10675,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -10718,6 +10709,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -11104,6 +11096,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -11138,7 +11131,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -11192,6 +11185,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -11217,11 +11211,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -12165,9 +12157,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -12203,6 +12193,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -12671,6 +12662,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -12705,7 +12697,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -12759,6 +12751,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -12784,11 +12777,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -13677,9 +13668,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -13713,6 +13702,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -14103,6 +14093,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -14137,7 +14128,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -14191,6 +14182,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -14216,11 +14208,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -15245,9 +15235,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -15284,6 +15272,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -15682,6 +15671,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -15716,7 +15706,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -15776,6 +15766,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -15801,11 +15792,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -16700,9 +16689,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -16736,6 +16723,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -17027,6 +17015,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -17061,7 +17050,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -17115,6 +17104,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -17140,11 +17130,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -18120,9 +18108,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -18156,6 +18142,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -18447,6 +18434,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -18481,7 +18469,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -18535,6 +18523,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -18560,11 +18549,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -19357,9 +19344,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -19389,6 +19374,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -19587,6 +19573,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -19621,7 +19608,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -19663,6 +19650,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -19688,11 +19676,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -20569,9 +20555,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -20605,6 +20589,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -21022,6 +21007,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -21056,7 +21042,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -21110,6 +21096,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -21135,11 +21122,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -22258,9 +22243,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -22294,6 +22277,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -22695,6 +22679,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -22729,7 +22714,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -22783,6 +22768,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -22808,11 +22794,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -23704,9 +23688,7 @@ spec:
             cpu: "1"
             memory: 2500Mi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -23740,6 +23722,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -24126,6 +24109,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -24160,7 +24144,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -24214,6 +24198,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -24239,11 +24224,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -25132,9 +25115,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -25168,6 +25149,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -25558,6 +25540,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -25592,7 +25575,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -25646,6 +25629,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -25671,11 +25655,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -26637,9 +26619,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -26675,6 +26655,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -27080,6 +27061,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -27136,7 +27118,7 @@ spec:
         - name: RPK_CLOUD_STORAGE_SEGMENT_MAX_UPLOAD_INTERVAL_SEC
           value: "1"
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -27190,6 +27172,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -27215,11 +27198,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -28182,9 +28163,7 @@ spec:
             cpu: 400m
             memory: 2.0Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -28220,6 +28199,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -28625,6 +28605,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -28683,7 +28664,7 @@ spec:
         - name: RPK_CLOUD_STORAGE_SEGMENT_MAX_UPLOAD_INTERVAL_SEC
           value: "1"
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -28737,6 +28718,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -28762,11 +28744,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -29727,9 +29707,7 @@ spec:
             cpu: 400m
             memory: 2.0Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -29765,6 +29743,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -30171,6 +30150,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -30225,7 +30205,7 @@ spec:
         - name: RPK_CLOUD_STORAGE_SEGMENT_MAX_UPLOAD_INTERVAL_SEC
           value: "1"
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -30279,6 +30259,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -30304,11 +30285,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -31206,9 +31185,7 @@ spec:
             cpu: 400m
             memory: 2.0Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -31244,6 +31221,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -31650,6 +31628,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -31702,7 +31681,7 @@ spec:
         - name: RPK_CLOUD_STORAGE_SEGMENT_MAX_UPLOAD_INTERVAL_SEC
           value: "1"
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -31756,6 +31735,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -31781,11 +31761,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -32747,9 +32725,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -32785,6 +32761,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -33202,6 +33179,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -33258,7 +33236,7 @@ spec:
         - name: RPK_CLOUD_STORAGE_SEGMENT_MAX_UPLOAD_INTERVAL_SEC
           value: "1"
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -33312,6 +33290,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -33337,11 +33316,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -34304,9 +34281,7 @@ spec:
             cpu: 400m
             memory: 2.0Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -34342,6 +34317,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -34759,6 +34735,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -34817,7 +34794,7 @@ spec:
         - name: RPK_CLOUD_STORAGE_SEGMENT_MAX_UPLOAD_INTERVAL_SEC
           value: "1"
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -34871,6 +34848,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -34896,11 +34874,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -35861,9 +35837,7 @@ spec:
             cpu: 400m
             memory: 2.0Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -35899,6 +35873,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -36318,6 +36293,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -36372,7 +36348,7 @@ spec:
         - name: RPK_CLOUD_STORAGE_SEGMENT_MAX_UPLOAD_INTERVAL_SEC
           value: "1"
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -36426,6 +36402,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -36451,11 +36428,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -37353,9 +37328,7 @@ spec:
             cpu: 400m
             memory: 2.0Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -37391,6 +37364,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -37810,6 +37784,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -37862,7 +37837,7 @@ spec:
         - name: RPK_CLOUD_STORAGE_SEGMENT_MAX_UPLOAD_INTERVAL_SEC
           value: "1"
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -37916,6 +37891,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -37941,11 +37917,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -38907,9 +38881,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -38945,6 +38917,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -39362,6 +39335,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -39418,7 +39392,7 @@ spec:
         - name: RPK_CLOUD_STORAGE_SEGMENT_MAX_UPLOAD_INTERVAL_SEC
           value: "1"
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -39472,6 +39446,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -39497,11 +39472,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -40464,9 +40437,7 @@ spec:
             cpu: 400m
             memory: 2.0Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -40502,6 +40473,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -40919,6 +40891,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -40977,7 +40950,7 @@ spec:
         - name: RPK_CLOUD_STORAGE_SEGMENT_MAX_UPLOAD_INTERVAL_SEC
           value: "1"
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -41031,6 +41004,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -41056,11 +41030,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -42021,9 +41993,7 @@ spec:
             cpu: 400m
             memory: 2.0Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -42059,6 +42029,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -42478,6 +42449,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -42532,7 +42504,7 @@ spec:
         - name: RPK_CLOUD_STORAGE_SEGMENT_MAX_UPLOAD_INTERVAL_SEC
           value: "1"
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -42586,6 +42558,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -42611,11 +42584,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -43513,9 +43484,7 @@ spec:
             cpu: 400m
             memory: 2.0Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -43551,6 +43520,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -43970,6 +43940,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -44022,7 +43993,7 @@ spec:
         - name: RPK_CLOUD_STORAGE_SEGMENT_MAX_UPLOAD_INTERVAL_SEC
           value: "1"
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -44076,6 +44047,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -44101,11 +44073,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -44994,9 +44964,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -45030,6 +44998,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -45416,6 +45385,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -45450,7 +45420,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -45504,6 +45474,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -45529,11 +45500,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -46423,9 +46392,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -46459,6 +46426,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -46845,6 +46813,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -46879,7 +46848,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -46933,6 +46902,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -46958,11 +46928,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -47891,6 +47859,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -48277,6 +48246,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -48311,7 +48281,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -48365,6 +48335,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -48390,11 +48361,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -49359,9 +49328,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -49395,6 +49362,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -49781,6 +49749,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -49815,7 +49784,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -49869,6 +49838,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -49894,11 +49864,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -50805,9 +50773,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -50841,6 +50807,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -51230,6 +51197,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -51264,7 +51232,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -51318,6 +51286,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -51343,11 +51312,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -52466,9 +52433,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 2222
-          runAsNonRoot: null
           runAsUser: 1111
         startupProbe:
           exec:
@@ -52502,6 +52467,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -52915,6 +52881,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -52949,7 +52916,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 2222
@@ -53003,6 +52970,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -53028,11 +52996,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 2222
           runAsUser: 1111
@@ -54108,9 +54074,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -54144,6 +54108,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -54571,6 +54536,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -54605,7 +54571,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -54659,6 +54625,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -54684,11 +54651,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -55770,9 +55735,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -55806,6 +55769,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -56192,6 +56156,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -56226,7 +56191,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -56280,6 +56245,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -56305,11 +56271,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -57198,9 +57162,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -57234,6 +57196,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -57624,6 +57587,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -57658,7 +57622,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -57712,6 +57676,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -57737,11 +57702,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -58637,9 +58600,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -58673,6 +58634,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -59091,6 +59053,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -59125,7 +59088,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -59179,6 +59142,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -59204,11 +59168,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -60106,9 +60068,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 1000
-          runAsNonRoot: null
           runAsUser: 1000
         startupProbe:
           exec:
@@ -60142,6 +60102,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -60534,6 +60495,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -60577,7 +60539,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources:
           limits:
             cpu: 200m
@@ -60641,6 +60603,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -60675,11 +60638,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 1000
           runAsUser: 1000
@@ -61583,9 +61544,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 1000
-          runAsNonRoot: null
           runAsUser: 1000
         startupProbe:
           exec:
@@ -61619,6 +61578,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -62011,6 +61971,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -62054,7 +62015,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources:
           limits:
             cpu: 200m
@@ -62120,6 +62081,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -62154,11 +62116,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 1000
           runAsUser: 1000
@@ -63053,9 +63013,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -63089,6 +63047,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -63477,6 +63436,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -63511,7 +63471,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -63567,6 +63527,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -63592,11 +63553,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -64278,9 +64237,7 @@ spec:
             cpu: 1
             memory: 2Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -64316,6 +64273,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.2.2
         name: config-watcher
         resources: {}
@@ -64806,6 +64764,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -64840,7 +64799,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -64900,6 +64859,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -64925,11 +64885,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -65824,9 +65782,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -65860,6 +65816,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -66190,6 +66147,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -66224,7 +66182,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -66278,6 +66236,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -66303,11 +66262,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -67401,9 +67358,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -67440,6 +67395,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -67838,6 +67794,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -67874,7 +67831,7 @@ spec:
         - name: REDPANDA_LICENSE
           value: ${REDPANDA_LICENSE}
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -67934,6 +67891,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -67959,11 +67917,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -68921,9 +68877,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -68957,6 +68911,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -69343,6 +69298,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -69379,7 +69335,7 @@ spec:
         - name: REDPANDA_LICENSE
           value: ${REDPANDA_LICENSE}
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -69433,6 +69389,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -69458,11 +69415,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -70356,9 +70311,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -70392,6 +70345,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -70778,6 +70732,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -70817,7 +70772,7 @@ spec:
               key: license-key
               name: redpanda-license
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -70871,6 +70826,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -70896,11 +70852,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -71814,9 +71768,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -71852,6 +71804,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -72257,6 +72210,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -72314,7 +72268,7 @@ spec:
         - name: RPK_CLOUD_STORAGE_REGION
           value: test
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -72368,6 +72322,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -72393,11 +72348,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -73288,7 +73241,6 @@ spec:
         securityContext:
           allowPrivilegeEscalation: false
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -73322,6 +73274,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -73708,6 +73661,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -73742,7 +73696,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           allowPrivilegeEscalation: false
@@ -73797,6 +73751,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -73822,11 +73777,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           allowPrivilegeEscalation: false
           runAsGroup: 101
@@ -74718,7 +74671,6 @@ spec:
         securityContext:
           allowPrivilegeEscalation: false
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -74752,6 +74704,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -75138,6 +75091,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -75172,7 +75126,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           allowPrivilegeEscalation: false
@@ -75227,6 +75181,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -75252,11 +75207,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           allowPrivilegeEscalation: false
           runAsGroup: 101
@@ -76279,9 +76232,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -76318,6 +76269,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -76716,6 +76668,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -76750,7 +76703,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -76810,6 +76763,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -76835,11 +76789,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -77756,9 +77708,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -77792,6 +77742,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v22.3.14
         name: config-watcher
         resources: {}
@@ -78178,6 +78129,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -78212,7 +78164,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v22.3.14
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -78266,6 +78218,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -78284,11 +78237,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v22.3.14
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -79238,9 +79189,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -79274,6 +79223,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v22.3.14
         name: config-watcher
         resources: {}
@@ -79660,6 +79610,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -79696,7 +79647,7 @@ spec:
         - name: REDPANDA_LICENSE
           value: ATOTALLYVALIDLICENSE
         image: docker.redpanda.com/redpandadata/redpanda:v22.3.14
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -79750,6 +79701,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -79768,11 +79720,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v22.3.14
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -80665,9 +80615,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -80701,6 +80649,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v22.3.14
         name: config-watcher
         resources: {}
@@ -81087,6 +81036,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -81121,7 +81071,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v22.3.14
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -81175,6 +81125,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -81193,11 +81144,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v22.3.14
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -82096,9 +82045,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -82132,6 +82079,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.1.2
         name: config-watcher
         resources: {}
@@ -82518,6 +82466,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -82552,7 +82501,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.1.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -82606,6 +82555,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -82624,11 +82574,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.1.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -83578,9 +83526,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -83614,6 +83560,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.1.2
         name: config-watcher
         resources: {}
@@ -84000,6 +83947,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -84036,7 +83984,7 @@ spec:
         - name: REDPANDA_LICENSE
           value: ATOTALLYVALIDLICENSE
         image: docker.redpanda.com/redpandadata/redpanda:v23.1.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -84090,6 +84038,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -84108,11 +84057,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.1.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -85005,9 +84952,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -85041,6 +84986,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.1.2
         name: config-watcher
         resources: {}
@@ -85427,6 +85373,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -85461,7 +85408,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.1.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -85515,6 +85462,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -85533,11 +85481,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.1.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -86424,9 +86370,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -86460,6 +86404,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.1.3
         name: config-watcher
         resources: {}
@@ -86846,6 +86791,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -86880,7 +86826,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.1.3
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -86934,6 +86880,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -86952,11 +86899,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.1.3
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -87906,9 +87851,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -87942,6 +87885,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.1.3
         name: config-watcher
         resources: {}
@@ -88328,6 +88272,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -88364,7 +88309,7 @@ spec:
         - name: REDPANDA_LICENSE
           value: ATOTALLYVALIDLICENSE
         image: docker.redpanda.com/redpandadata/redpanda:v23.1.3
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -88418,6 +88363,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -88436,11 +88382,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.1.3
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -89333,9 +89277,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -89369,6 +89311,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.1.3
         name: config-watcher
         resources: {}
@@ -89755,6 +89698,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -89789,7 +89733,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.1.3
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -89843,6 +89787,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -89861,11 +89806,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.1.3
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -90752,9 +90695,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -90788,6 +90729,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.2.1
         name: config-watcher
         resources: {}
@@ -91174,6 +91116,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -91208,7 +91151,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.2.1
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -91262,6 +91205,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -91287,11 +91231,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.2.1
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -92241,9 +92183,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -92277,6 +92217,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.2.1
         name: config-watcher
         resources: {}
@@ -92663,6 +92604,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -92699,7 +92641,7 @@ spec:
         - name: REDPANDA_LICENSE
           value: ATOTALLYVALIDLICENSE
         image: docker.redpanda.com/redpandadata/redpanda:v23.2.1
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -92753,6 +92695,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -92778,11 +92721,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.2.1
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -93675,9 +93616,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -93711,6 +93650,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.2.1
         name: config-watcher
         resources: {}
@@ -94097,6 +94037,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -94131,7 +94072,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.2.1
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -94185,6 +94126,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -94210,11 +94152,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.2.1
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -95103,9 +95043,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -95139,6 +95077,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.3.0
         name: config-watcher
         resources: {}
@@ -95525,6 +95464,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -95559,7 +95499,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.3.0
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -95613,6 +95553,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -95638,11 +95579,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.3.0
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -96594,9 +96533,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -96630,6 +96567,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.3.0
         name: config-watcher
         resources: {}
@@ -97016,6 +96954,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -97052,7 +96991,7 @@ spec:
         - name: REDPANDA_LICENSE
           value: ATOTALLYVALIDLICENSE
         image: docker.redpanda.com/redpandadata/redpanda:v23.3.0
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -97106,6 +97045,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -97131,11 +97071,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.3.0
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -98030,9 +97968,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -98066,6 +98002,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.3.0
         name: config-watcher
         resources: {}
@@ -98452,6 +98389,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -98486,7 +98424,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.3.0
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -98540,6 +98478,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -98565,11 +98504,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v23.3.0
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -99458,9 +99395,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -99494,6 +99429,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.1.0
         name: config-watcher
         resources: {}
@@ -99880,6 +99816,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -99914,7 +99851,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.1.0
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -99968,6 +99905,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -99993,11 +99931,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.1.0
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -100949,9 +100885,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -100985,6 +100919,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.1.0
         name: config-watcher
         resources: {}
@@ -101371,6 +101306,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -101407,7 +101343,7 @@ spec:
         - name: REDPANDA_LICENSE
           value: ATOTALLYVALIDLICENSE
         image: docker.redpanda.com/redpandadata/redpanda:v24.1.0
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -101461,6 +101397,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -101486,11 +101423,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.1.0
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -102385,9 +102320,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -102421,6 +102354,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.1.0
         name: config-watcher
         resources: {}
@@ -102807,6 +102741,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -102841,7 +102776,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.1.0
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -102895,6 +102830,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -102920,11 +102856,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.1.0
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -103813,9 +103747,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -103849,6 +103781,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -104041,6 +103974,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -104075,7 +104009,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -104129,6 +104063,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -104154,11 +104089,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -105027,9 +104960,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -105063,6 +104994,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -105255,6 +105187,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -105289,7 +105222,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -105343,6 +105276,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -105368,11 +105302,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -106351,9 +106283,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -106390,6 +106320,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -106819,6 +106750,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -106853,7 +106785,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -106907,6 +106839,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -106932,11 +106865,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -107830,9 +107761,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -107868,6 +107797,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -108386,6 +108316,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -108420,7 +108351,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -108480,6 +108411,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -108505,11 +108437,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -109404,9 +109334,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -109440,6 +109368,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -109826,6 +109755,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -109860,7 +109790,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -109914,6 +109844,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -109939,11 +109870,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -110830,9 +110759,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -110866,6 +110793,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: somecustomrepo:v23.2.8
         name: config-watcher
         resources: {}
@@ -111252,6 +111180,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -111286,7 +111215,7 @@ spec:
         - -c
         env: []
         image: somecustomrepo:v23.2.8
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -111340,6 +111269,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -111365,11 +111295,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: somecustomrepo:v23.2.8
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -112319,9 +112247,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -112355,6 +112281,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: somecustomrepo:v23.2.8
         name: config-watcher
         resources: {}
@@ -112741,6 +112668,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -112777,7 +112705,7 @@ spec:
         - name: REDPANDA_LICENSE
           value: ATOTALLYVALIDLICENSE
         image: somecustomrepo:v23.2.8
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -112831,6 +112759,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -112856,11 +112785,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: somecustomrepo:v23.2.8
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -113753,9 +113680,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -113789,6 +113714,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: somecustomrepo:v23.2.8
         name: config-watcher
         resources: {}
@@ -114175,6 +114101,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -114209,7 +114136,7 @@ spec:
         - -c
         env: []
         image: somecustomrepo:v23.2.8
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -114263,6 +114190,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -114288,11 +114216,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: somecustomrepo:v23.2.8
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -115181,9 +115107,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -115217,6 +115141,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: somecustomrepo:v24.1.0
         name: config-watcher
         resources: {}
@@ -115603,6 +115528,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -115637,7 +115563,7 @@ spec:
         - -c
         env: []
         image: somecustomrepo:v24.1.0
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -115691,6 +115617,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -115716,11 +115643,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: somecustomrepo:v24.1.0
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -116672,9 +116597,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -116708,6 +116631,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: somecustomrepo:v24.1.0
         name: config-watcher
         resources: {}
@@ -117094,6 +117018,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -117130,7 +117055,7 @@ spec:
         - name: REDPANDA_LICENSE
           value: ATOTALLYVALIDLICENSE
         image: somecustomrepo:v24.1.0
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -117184,6 +117109,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -117209,11 +117135,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: somecustomrepo:v24.1.0
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -118108,9 +118032,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -118144,6 +118066,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: somecustomrepo:v24.1.0
         name: config-watcher
         resources: {}
@@ -118530,6 +118453,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -118564,7 +118488,7 @@ spec:
         - -c
         env: []
         image: somecustomrepo:v24.1.0
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -118618,6 +118542,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -118643,11 +118568,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: somecustomrepo:v24.1.0
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101
@@ -119536,9 +119459,7 @@ spec:
             cpu: 1
             memory: 2.5Gi
         securityContext:
-          allowPrivilegeEscalation: null
           runAsGroup: 101
-          runAsNonRoot: null
           runAsUser: 101
         startupProbe:
           exec:
@@ -119572,6 +119493,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
         name: config-watcher
         resources: {}
@@ -119958,6 +119880,7 @@ metadata:
 spec:
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       generateName: redpanda-post-
       labels:
@@ -119992,7 +119915,7 @@ spec:
         - -c
         env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-install
+        name: post-install
         resources: {}
         securityContext:
           runAsGroup: 101
@@ -120046,6 +119969,7 @@ spec:
   backoffLimit: null
   template:
     metadata:
+      annotations: {}
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-post-upgrade
@@ -120071,11 +119995,9 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: null
-        envFrom: null
+        env: []
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
-        name: redpanda-post-upgrade
-        resources: null
+        name: post-upgrade
         securityContext:
           runAsGroup: 101
           runAsUser: 101

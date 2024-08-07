@@ -29,37 +29,16 @@ import (
 )
 
 const (
-	// RedpandaContainerName is the user facing name of the redpanda container
-	// in the redpanda StatefulSet. While the name of the container can
-	// technically change, this is the name that is used to locate the
-	// [corev1.Container] that will be smp'd into the redpanda container.
-	RedpandaContainerName = "redpanda"
 	// TrustStoreMountPath is the absolute path at which the
 	// [corev1.VolumeProjection] of truststores will be mounted to the redpanda
 	// container. (Without a trailing slash)
 	TrustStoreMountPath = "/etc/truststores"
 )
 
-// StatefulSetRedpandaEnv returns the environment variables for the Redpanda
+// statefulSetRedpandaEnv returns the environment variables for the Redpanda
 // container of the Redpanda Statefulset.
-func StatefulSetRedpandaEnv(dot *helmette.Dot) []corev1.EnvVar {
-	values := helmette.Unwrap[Values](dot.Values)
-
-	// Ideally, this would just be a part of the strategic merge patch. While
-	// we're moving the chart into go in a piecemeal fashion there isn't a "top
-	// level" location to perform the merge so we're instead required to
-	// Implement aspects of the SMP by hand.
-	var userEnv []corev1.EnvVar
-	for _, container := range values.Statefulset.PodTemplate.Spec.Containers {
-		if container.Name == RedpandaContainerName {
-			userEnv = container.Env
-		}
-	}
-
-	// TODO(chrisseto): Actually implement this as a strategic merge patch.
-	// EnvVar's are "last in wins" so there's not too much of a need to fully
-	// implement a patch for this usecase.
-	return append([]corev1.EnvVar{
+func statefulSetRedpandaEnv() []corev1.EnvVar {
+	return []corev1.EnvVar{
 		{
 			Name: "SERVICE_NAME",
 			ValueFrom: &corev1.EnvVarSource{
@@ -84,7 +63,7 @@ func StatefulSetRedpandaEnv(dot *helmette.Dot) []corev1.EnvVar {
 				},
 			},
 		},
-	}, userEnv...)
+	}
 }
 
 // StatefulSetPodLabelsSelector returns the label selector for the Redpanda StatefulSet.
@@ -583,7 +562,7 @@ func statefulSetContainerRedpanda(dot *helmette.Dot) *corev1.Container {
 	container := &corev1.Container{
 		Name:  Name(dot),
 		Image: fmt.Sprintf(`%s:%s`, values.Image.Repository, Tag(dot)),
-		Env:   StatefulSetRedpandaEnv(dot),
+		Env:   statefulSetRedpandaEnv(),
 		Lifecycle: &corev1.Lifecycle{
 			// finish the lifecycle scripts with "true" to prevent them from terminating the pod prematurely
 			PostStart: &corev1.LifecycleHandler{
@@ -916,7 +895,7 @@ func StatefulSet(dot *helmette.Dot) *appsv1.StatefulSet {
 			Replicas:            ptr.To(values.Statefulset.Replicas),
 			UpdateStrategy:      helmette.UnmarshalInto[appsv1.StatefulSetUpdateStrategy](values.Statefulset.UpdateStrategy),
 			PodManagementPolicy: "Parallel",
-			Template: corev1.PodTemplateSpec{
+			Template: StrategicMergePatch(values.Statefulset.PodTemplate, corev1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
 					Labels:      StatefulSetPodLabels(dot),
 					Annotations: StatefulSetPodAnnotations(dot, statefulSetChecksumAnnotation(dot)),
@@ -935,7 +914,7 @@ func StatefulSet(dot *helmette.Dot) *appsv1.StatefulSet {
 					PriorityClassName:             values.Statefulset.PriorityClassName,
 					Tolerations:                   statefulSetTolerations(dot),
 				},
-			},
+			}),
 			VolumeClaimTemplates: nil, // Set below
 		},
 	}

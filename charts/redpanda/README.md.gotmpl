@@ -52,3 +52,19 @@ For instructions on how to install and use the chart, including how to override 
 {{ template "chart.requirementsSection" . }}
 
 {{ template "chart.valuesTable" . }}
+
+## Merging Semantics
+
+The redpanda chart implements a form of object merging that's roughly a
+middleground of [JSON Merge Patch][k8s.jsonmp] and [Kubernetes' Strategic Merge
+Patch][k8s.smp]. This is done to aid end users in setting or overriding fields
+that are not directly exposed via the chart.
+
+- Directives are not supported.
+- List fields that are merged by a unique key in Kubernetes' SMP (e.g.
+  `containers`, `env`) will be merged in a similar awy.
+- Only fields explicitly allowed by the chart's JSON schema will be merged.
+- Additional containers that are not present in the original value will NOT be added.
+
+[k8s.smp]: https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/#use-a-strategic-merge-patch-to-update-a-deployment
+[k8s.jsonmp]: https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/#use-a-json-merge-patch-to-update-a-deployment

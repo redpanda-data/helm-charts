@@ -486,3 +486,50 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "redpanda.StrategicMergePatch" -}}
+{{- $overrides := (index .a 0) -}}
+{{- $original := (index .a 1) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- if (ne $overrides.labels (coalesce nil)) -}}
+{{- $_ := (set $original.metadata "labels" (merge (dict ) $overrides.labels (default (dict ) $original.metadata.labels))) -}}
+{{- end -}}
+{{- if (ne $overrides.annotations (coalesce nil)) -}}
+{{- $_ := (set $original.metadata "annotations" (merge (dict ) $overrides.annotations (default (dict ) $original.metadata.annotations))) -}}
+{{- end -}}
+{{- if (ne $overrides.spec.securityContext (coalesce nil)) -}}
+{{- $_ := (set $original.spec "securityContext" (merge (dict ) $overrides.spec.securityContext (default (mustMergeOverwrite (dict ) (dict )) $original.spec.securityContext))) -}}
+{{- end -}}
+{{- $overrideContainers := (dict ) -}}
+{{- range $i, $_ := $overrides.spec.containers -}}
+{{- $container := (index $overrides.spec.containers $i) -}}
+{{- $_ := (set $overrideContainers (toString $container.name) $container) -}}
+{{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $merged := (coalesce nil) -}}
+{{- range $_, $container := $original.spec.containers -}}
+{{- $tmp_tuple_4 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $overrideContainers $container.name (coalesce nil)) ))) "r")) ))) "r") -}}
+{{- $ok_8 := $tmp_tuple_4.T2 -}}
+{{- $override_7 := $tmp_tuple_4.T1 -}}
+{{- if $ok_8 -}}
+{{- $env := (concat (default (list ) $container.env) (default (list ) $override_7.env)) -}}
+{{- $container = (merge (dict ) $override_7 $container) -}}
+{{- $_ := (set $container "env" $env) -}}
+{{- end -}}
+{{- if (eq $container.env (coalesce nil)) -}}
+{{- $_ := (set $container "env" (list )) -}}
+{{- end -}}
+{{- $merged = (concat (default (list ) $merged) (list $container)) -}}
+{{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_ := (set $original.spec "containers" $merged) -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" $original) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
