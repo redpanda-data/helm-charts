@@ -200,11 +200,12 @@ tls:
     kafka-internal-0:
       caEnabled: true
 
--- app-protocol-regression -- 
+-- app-protocol-regression --
+# Regression test for admin.appProtocol
 # ASSERT-NO-ERROR
 # ASSERT-GOLDEN
 # ASSERT-FIELD-EQUALS ["v1/Service", "default/redpanda", "{.spec.ports[*].admin.appProtocol}", "http"]
-# ASSERT-SERVICE-APPPROTOCOL-SET 
-listeners: 
+# ASSERT-SERVICE-APPPROTOCOL
+listeners:
   admin:
     appProtocol: http
