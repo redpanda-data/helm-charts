@@ -23,7 +23,7 @@ type: application
 # The chart version and the app version are not the same and will not track
 # together. The chart version is a semver representation of changes to this
 # chart.
-version: 0.1.11
+version: 0.1.12
 
 # The app version is the default version of Redpanda Connectors to install.
 appVersion: v1.0.29
@@ -44,6 +44,6 @@ annotations:
       url: https://helm.sh/docs/intro/install/
   artifacthub.io/images: |
     - name: connectors
-      image: docker.redpanda.com/redpandadata/connectors:v1.0.6
+      image: docker.redpanda.com/redpandadata/connectors:v1.0.29
     - name: rpk
       image: docker.redpanda.com/redpandadata/redpanda:latest
