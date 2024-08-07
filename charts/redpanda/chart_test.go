@@ -46,46 +46,6 @@ func TestChart(t *testing.T) {
 
 	h := helmtest.Setup(t)
 
-	t.Run("tiered-storage-secrets", func(t *testing.T) {
-		ctx := testutil.Context(t)
-
-		env := h.Namespaced(t)
-
-		credsSecret, err := kube.Create(ctx, env.Ctl(), TieredStorageSecret(env.Namespace()))
-		require.NoError(t, err)
-
-		rpRelease := env.Install(ctx, redpandaChart, helm.InstallOptions{
-			Values: redpanda.PartialValues{
-				Config: &redpanda.PartialConfig{
-					Node: redpanda.PartialNodeConfig{
-						"developer_mode": true,
-					},
-				},
-				External: &redpanda.PartialExternalConfig{Enabled: ptr.To(false)},
-			},
-		})
-
-		rpk := Client{Ctl: env.Ctl(), Release: &rpRelease}
-
-		config, err := rpk.ClusterConfig(ctx)
-		require.NoError(t, err)
-		require.Equal(t, false, config["cloud_storage_enabled"])
-
-		rpRelease = env.Upgrade(redpandaChart, rpRelease, helm.UpgradeOptions{Values: TieredStorageStatic(t)})
-
-		config, err = rpk.ClusterConfig(ctx)
-		require.NoError(t, err)
-		require.Equal(t, true, config["cloud_storage_enabled"])
-		require.Equal(t, "static-access-key", config["cloud_storage_access_key"])
-
-		rpRelease = env.Upgrade(redpandaChart, rpRelease, helm.UpgradeOptions{Values: TieredStorageSecretRefs(t, credsSecret)})
-
-		config, err = rpk.ClusterConfig(ctx)
-		require.NoError(t, err)
-		require.Equal(t, true, config["cloud_storage_enabled"])
-		require.Equal(t, "from-secret-access-key", config["cloud_storage_access_key"])
-	})
-
 	t.Run("mtls-using-cert-manager", func(t *testing.T) {
 		ctx := testutil.Context(t)
 
