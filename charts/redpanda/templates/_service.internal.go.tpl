@@ -17,8 +17,9 @@
 {{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $ports := (list ) -}}
-{{- if (ne $values.listeners.admin.appProtocol "") -}}
-{{- $ports = (concat (default (list ) $ports) (list (mustMergeOverwrite (dict "port" 0 "targetPort" 0 ) (dict "name" "admin" "protocol" "TCP" "appProtocol" $values.listeners.admin.appProtocol "port" ($values.listeners.admin.port | int) "targetPort" ($values.listeners.admin.port | int) )))) -}}
+{{- $appProtocol := $values.listeners.admin.appProtocol -}}
+{{- if (ne $appProtocol (coalesce nil)) -}}
+{{- $ports = (concat (default (list ) $ports) (list (mustMergeOverwrite (dict "port" 0 "targetPort" 0 ) (dict "name" "admin" "protocol" "TCP" "appProtocol" $appProtocol "port" ($values.listeners.admin.port | int) "targetPort" ($values.listeners.admin.port | int) )))) -}}
 {{- else -}}
 {{- $ports = (concat (default (list ) $ports) (list (mustMergeOverwrite (dict "port" 0 "targetPort" 0 ) (dict "name" "admin" "protocol" "TCP" "port" ($values.listeners.admin.port | int) "targetPort" ($values.listeners.admin.port | int) )))) -}}
 {{- end -}}
