@@ -4,6 +4,35 @@ entries:
   - annotations:
       artifacthub.io/images: |
         - name: connectors
+          image: docker.redpanda.com/redpandadata/connectors:v1.0.29
+        - name: rpk
+          image: docker.redpanda.com/redpandadata/redpanda:latest
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://docs.redpanda.com
+        - name: "Helm (>= 3.6.0)"
+          url: https://helm.sh/docs/intro/install/
+    apiVersion: v2
+    appVersion: v1.0.29
+    created: "2024-08-07T09:07:29.967101178Z"
+    description: Redpanda managed Connectors helm chart
+    digest: fed776267b2434fa0992aff3d75cb163d94083a405390db08d67a5f4814dcd96
+    icon: https://images.ctfassets.net/paqvtpyf8rwu/3cYHw5UzhXCbKuR24GDFGO/73fb682e6157d11c10d5b2b5da1d5af0/skate-stand-panda.svg
+    kubeVersion: ^1.21.0-0
+    maintainers:
+    - name: redpanda-data
+      url: https://github.com/orgs/redpanda-data/people
+    name: connectors
+    sources:
+    - https://github.com/redpanda-data/helm-charts
+    type: application
+    urls:
+    - https://github.com/redpanda-data/helm-charts/releases/download/connectors-0.1.12/connectors-0.1.12.tgz
+    version: 0.1.12
+  - annotations:
+      artifacthub.io/images: |
+        - name: connectors
           image: docker.redpanda.com/redpandadata/connectors:v1.0.6
         - name: rpk
           image: docker.redpanda.com/redpandadata/redpanda:latest
@@ -346,6 +375,33 @@ entries:
     - https://github.com/redpanda-data/helm-charts/releases/download/connectors-0.1.0/connectors-0.1.0.tgz
     version: 0.1.0
   console:
+  - annotations:
+      artifacthub.io/images: |
+        - name: redpanda
+          image: docker.redpanda.com/redpandadata/console:v2.7.0
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://docs.redpanda.com
+        - name: "Helm (>= 3.6.0)"
+          url: https://helm.sh/docs/intro/install/
+    apiVersion: v2
+    appVersion: v2.7.0
+    created: "2024-08-07T09:07:30.103167608Z"
+    description: Helm chart to deploy Redpanda Console.
+    digest: 7a31cdb4d368f3fee3990298425e1998f012e10a946b057e497dc7d7b750b295
+    icon: https://images.ctfassets.net/paqvtpyf8rwu/3cYHw5UzhXCbKuR24GDFGO/73fb682e6157d11c10d5b2b5da1d5af0/skate-stand-panda.svg
+    kubeVersion: '>= 1.21'
+    maintainers:
+    - name: redpanda-data
+      url: https://github.com/orgs/redpanda-data/people
+    name: console
+    sources:
+    - https://github.com/redpanda-data/helm-charts
+    type: application
+    urls:
+    - https://github.com/redpanda-data/helm-charts/releases/download/console-0.7.27/console-0.7.27.tgz
+    version: 0.7.27
   - annotations:
       artifacthub.io/images: |
         - name: redpanda
@@ -1919,6 +1975,51 @@ entries:
     - https://github.com/redpanda-data/helm-charts/releases/download/kminion-0.12.0/kminion-0.12.0.tgz
     version: 0.12.0
   operator:
+  - annotations:
+      artifacthub.io/crds: |
+        - kind: Redpanda
+          version: v1alpha1
+          name: redpanda
+          displayName: Redpanda
+          description: Define a Redpanda cluster
+      artifacthub.io/images: |
+        - name: redpanda-operator
+          image: docker.redpanda.com/redpandadata/redpanda-operator:v2.1.28-24.2.1
+        - name: configurator
+          image: docker.redpanda.com/redpandadata/configurator:v2.1.28-24.2.1
+        - name: redpanda
+          image: docker.redpanda.com/redpandadata/redpanda:v24.2.1
+        - name: kube-rbac-proxy
+          image: gcr.io/kubebuilder/kube-rbac-proxy:v0.14.0
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://docs.redpanda.com
+        - name: "Helm (>= 3.6.0)"
+          url: https://helm.sh/docs/intro/install/
+      artifacthub.io/operator: "true"
+      artifacthub.io/operatorCapabilities: Seamless Upgrades
+    apiVersion: v2
+    appVersion: v2.1.28-24.2.1
+    created: "2024-08-07T09:07:30.28603047Z"
+    dependencies:
+    - condition: monitoring.deployPrometheusKubeStack
+      name: kube-prometheus-stack
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 51.2.0
+    description: Redpanda operator helm chart
+    digest: 1d6df7118ad3df7d6b29c29508e11d37cad04582ccd27b603ec12498e432ba02
+    icon: https://go.redpanda.com/hubfs/Redpandas/operator-panda.png
+    maintainers:
+    - name: redpanda-data
+      url: https://github.com/orgs/redpanda-data/people
+    name: operator
+    sources:
+    - https://github.com/redpanda-data/helm-charts
+    type: application
+    urls:
+    - https://github.com/redpanda-data/helm-charts/releases/download/operator-0.4.26/operator-0.4.26.tgz
+    version: 0.4.26
   - annotations:
       artifacthub.io/crds: |
         - kind: Redpanda
@@ -4192,6 +4293,46 @@ entries:
     - https://github.com/redpanda-data/helm-charts/releases/download/operator-0.3.1/operator-0.3.1.tgz
     version: 0.3.1
   redpanda:
+  - annotations:
+      artifacthub.io/images: |
+        - name: redpanda
+          image: docker.redpanda.com/redpandadata/redpanda:v24.2.1
+        - name: busybox
+          image: busybox:latest
+        - name: mintel/docker-alpine-bash-curl-jq
+          image: mintel/docker-alpine-bash-curl-jq:latest
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://docs.redpanda.com
+        - name: "Helm (>= 3.10.0)"
+          url: https://helm.sh/docs/intro/install/
+    apiVersion: v2
+    appVersion: v24.2.1
+    created: "2024-08-07T09:07:30.406816515Z"
+    dependencies:
+    - condition: console.enabled
+      name: console
+      repository: https://charts.redpanda.com
+      version: '>=0.5 <1.0'
+    - condition: connectors.enabled
+      name: connectors
+      repository: https://charts.redpanda.com
+      version: '>=0.1.2 <1.0'
+    description: Redpanda is the real-time engine for modern apps.
+    digest: 5e93a5ba10f0e7d3b787d186dee4afda03dd299e5f470e5755caf6937a2179e9
+    icon: https://images.ctfassets.net/paqvtpyf8rwu/3cYHw5UzhXCbKuR24GDFGO/73fb682e6157d11c10d5b2b5da1d5af0/skate-stand-panda.svg
+    kubeVersion: ^1.21.0-0
+    maintainers:
+    - name: redpanda-data
+      url: https://github.com/orgs/redpanda-data/people
+    name: redpanda
+    sources:
+    - https://github.com/redpanda-data/helm-charts
+    type: application
+    urls:
+    - https://github.com/redpanda-data/helm-charts/releases/download/redpanda-5.8.14/redpanda-5.8.14.tgz
+    version: 5.8.14
   - annotations:
       artifacthub.io/images: |
         - name: redpanda
@@ -15826,4 +15967,4 @@ entries:
     urls:
     - https://charts.redpanda.com/redpanda-0.1.0.tgz
     version: 0.1.0
-generated: "2024-07-25T18:39:46.025840238Z"
+generated: "2024-08-07T09:07:30.407842809Z"
