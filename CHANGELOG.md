@@ -8,13 +8,6 @@
 #### Fixed
 #### Removed
 
-### [0.7.28](https://github.com/redpanda-data/helm-charts/releases/tag/console-0.7.28) - 2024-08-08
-#### Added
-#### Changed
-#### Fixed
-* Fixed kubeVersion to be able to deploy on AWS EKS clusters.
-#### Removed
-
 ### [5.8.15](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.8.15) - 2024-08-08
 #### Added
 #### Changed
@@ -128,6 +121,14 @@
 #### Removed
 
 ## Console Chart
+
+### [0.7.28](https://github.com/redpanda-data/helm-charts/releases/tag/console-0.7.28) - 2024-08-08
+#### Added
+#### Changed
+#### Fixed
+* Fixed kubeVersion to be able to deploy on AWS EKS clusters.
+#### Removed
+
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/console-FILLMEIN) - YYYY-MM-DD
 #### Added
 #### Changed
