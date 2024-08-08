@@ -387,6 +387,33 @@ entries:
           url: https://helm.sh/docs/intro/install/
     apiVersion: v2
     appVersion: v2.7.0
+    created: "2024-08-08T20:07:30.339130694Z"
+    description: Helm chart to deploy Redpanda Console.
+    digest: bdb73ce6b1e2a021703a968b1260916e46699bebf17cac217c509c3e61bbbb44
+    icon: https://images.ctfassets.net/paqvtpyf8rwu/3cYHw5UzhXCbKuR24GDFGO/73fb682e6157d11c10d5b2b5da1d5af0/skate-stand-panda.svg
+    kubeVersion: '>= 1.21.0-0'
+    maintainers:
+    - name: redpanda-data
+      url: https://github.com/orgs/redpanda-data/people
+    name: console
+    sources:
+    - https://github.com/redpanda-data/helm-charts
+    type: application
+    urls:
+    - https://github.com/redpanda-data/helm-charts/releases/download/console-0.7.28/console-0.7.28.tgz
+    version: 0.7.28
+  - annotations:
+      artifacthub.io/images: |
+        - name: redpanda
+          image: docker.redpanda.com/redpandadata/console:v2.7.0
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://docs.redpanda.com
+        - name: "Helm (>= 3.6.0)"
+          url: https://helm.sh/docs/intro/install/
+    apiVersion: v2
+    appVersion: v2.7.0
     created: "2024-08-07T09:07:30.103167608Z"
     description: Helm chart to deploy Redpanda Console.
     digest: 7a31cdb4d368f3fee3990298425e1998f012e10a946b057e497dc7d7b750b295
@@ -16052,4 +16079,4 @@ entries:
     urls:
     - https://charts.redpanda.com/redpanda-0.1.0.tgz
     version: 0.1.0
-generated: "2024-08-08T14:26:44.075865931Z"
+generated: "2024-08-08T20:07:30.341101457Z"
