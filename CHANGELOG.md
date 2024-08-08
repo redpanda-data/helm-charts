@@ -4,6 +4,12 @@
 
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-FILLMEIN) - YYYY-MM-DD
 #### Added
+#### Changed
+#### Fixed
+#### Removed
+
+### [5.9.0](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.0) - 2024-08-09
+#### Added
 * `post_install_job.podTemplate` and `post_upgrade_job.podTemplate` have been
   added, which allow overriding various aspects of the corresponding
   `corev1.PodTemplate`. Notably, this field may be used to set labels and
