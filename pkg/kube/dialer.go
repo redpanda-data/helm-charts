@@ -228,7 +228,6 @@ func wrapConn(network, remote string, s, err httpstream.Stream) *conn {
 
 func (c *conn) pollErrors() {
 	data, err := io.ReadAll(c.errorStream)
-
 	if err != nil {
 		c.writeError(err)
 		return
@@ -323,6 +322,7 @@ func (c *conn) SetWriteDeadline(t time.Time) error {
 func (c *conn) LocalAddr() net.Addr {
 	return addr{c.network, "localhost:0"}
 }
+
 func (c *conn) RemoteAddr() net.Addr {
 	return addr{c.network, c.remote}
 }
