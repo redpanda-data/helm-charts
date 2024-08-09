@@ -64,7 +64,11 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
-{{- $image := (printf "%s:%s" $values.image.repository (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $values.image.tag $dot.Chart.AppVersion) ))) "r")) -}}
+{{- $tag := $dot.Chart.AppVersion -}}
+{{- if (not (empty $values.image.tag)) -}}
+{{- $tag = $values.image.tag -}}
+{{- end -}}
+{{- $image := (printf "%s:%s" $values.image.repository $tag) -}}
 {{- if (not (empty $values.image.registry)) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" (printf "%s/%s" $values.image.registry $image)) | toJson -}}
