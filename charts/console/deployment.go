@@ -184,7 +184,12 @@ func Deployment(dot *helmette.Dot) *appsv1.Deployment {
 func containerImage(dot *helmette.Dot) string {
 	values := helmette.Unwrap[Values](dot.Values)
 
-	image := fmt.Sprintf("%s:%s", values.Image.Repository, ptr.Deref(values.Image.Tag, dot.Chart.AppVersion))
+	tag := dot.Chart.AppVersion
+	if !helmette.Empty(values.Image.Tag) {
+		tag = *values.Image.Tag
+	}
+
+	image := fmt.Sprintf("%s:%s", values.Image.Repository, tag)
 
 	if !helmette.Empty(values.Image.Registry) {
 		return fmt.Sprintf("%s/%s", values.Image.Registry, image)
