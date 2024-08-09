@@ -13,12 +13,13 @@ import (
 	"time"
 
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/apimachinery/pkg/runtime/serializer"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/httpstream"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/transport/spdy"
-	"k8s.io/kubectl/pkg/scheme"
 )
 
 const (
@@ -32,6 +33,8 @@ const (
 var (
 	ErrInvalidPodFQDN = errors.New("invalid pod FQDN")
 	ErrNoPort         = errors.New("no port specified")
+
+	negotiatedSerializer = serializer.NewCodecFactory(runtime.NewScheme()).WithoutConversion()
 )
 
 // PodDialer is a basic port-forwarding dialer that doesn't start
@@ -176,7 +179,7 @@ func (p *PodDialer) connectionForPod(pod types.NamespacedName) (httpstream.Conne
 	cfg := p.config
 	cfg.APIPath = "/api"
 	cfg.GroupVersion = &schema.GroupVersion{Version: "v1"}
-	cfg.NegotiatedSerializer = scheme.Codecs.WithoutConversion()
+	cfg.NegotiatedSerializer = negotiatedSerializer
 	restClient, err := rest.RESTClientFor(cfg)
 	if err != nil {
 		return nil, err
