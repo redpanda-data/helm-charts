@@ -9,6 +9,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/redpanda-data/helm-charts/charts/redpanda"
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	"github.com/twmb/franz-go/pkg/kgo"
 	"github.com/twmb/franz-go/pkg/sasl"
@@ -77,24 +78,24 @@ func saslOpt(user, password, mechanism string) kgo.Opt {
 
 // KafkaClient creates a client to talk to a Redpanda cluster based on its helm
 // configuration over its internal listeners.
-func KafkaClient(release helmette.Release, partial PartialValues, opts ...kgo.Opt) (*kgo.Client, error) {
-	dot, err := Dot(release, partial)
+func KafkaClient(release helmette.Release, partial redpanda.PartialValues, opts ...kgo.Opt) (*kgo.Client, error) {
+	dot, err := redpanda.Dot(release, partial)
 	if err != nil {
 		return nil, err
 	}
 
-	values := helmette.Unwrap[Values](dot.Values)
+	values := helmette.Unwrap[redpanda.Values](dot.Values)
 
-	name := Fullname(dot)
+	name := redpanda.Fullname(dot)
 	namespace := dot.Release.Namespace
-	serviceName := ServiceName(dot)
-	saslUsers := SecretSASLUsers(dot)
+	serviceName := redpanda.ServiceName(dot)
+	saslUsers := redpanda.SecretSASLUsers(dot)
 	clientCertName := fmt.Sprintf("%s-client", name)
 	kafkaRootCertName := fmt.Sprintf("%s-%s-root-certificate", name, values.Listeners.Kafka.TLS.Cert)
 
 	brokers := []string{}
 	for i := int32(0); i < values.Statefulset.Replicas; i++ {
-		brokers = append(brokers, fmt.Sprintf("%s-%d.%s.%s.svc", name, i, serviceName, namespace))
+		brokers = append(brokers, fmt.Sprintf("%s-%d.%s.%s.svc:%d", name, i, serviceName, namespace, values.Listeners.Kafka.Port))
 	}
 
 	opts = append(opts, kgo.SeedBrokers(brokers...))
@@ -109,7 +110,7 @@ func KafkaClient(release helmette.Release, partial PartialValues, opts ...kgo.Op
 		return fmt.Errorf("error fetching SASL authentication for %s/%s: %w", saslUsers.Namespace, saslUsers.Name, err)
 	}
 
-	if TLSEnabled(dot) {
+	if redpanda.TLSEnabled(dot) {
 		tlsConfig := &tls.Config{MinVersion: tls.VersionTLS12}
 
 		serverCert, found := helmette.Lookup[corev1.Secret](dot, namespace, kafkaRootCertName)
@@ -132,7 +133,7 @@ func KafkaClient(release helmette.Release, partial PartialValues, opts ...kgo.Op
 
 		tlsConfig.RootCAs = pool
 
-		if ClientAuthRequired(dot) {
+		if redpanda.ClientAuthRequired(dot) {
 			clientCert, found := helmette.Lookup[corev1.Secret](dot, "default", clientCertName)
 			if !found {
 				return nil, clientTLSError(ErrServerCertificateNotFound)
