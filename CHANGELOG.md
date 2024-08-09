@@ -150,6 +150,13 @@
 
 ## Console Chart
 
+### [0.7.29](https://github.com/redpanda-data/helm-charts/releases/tag/console-0.7.29) - 2024-08-09
+#### Added
+#### Changed
+#### Fixed
+* Fixed empty tag for the console image if tag is not overridden in values [#1476](https://github.com/redpanda-data/helm-charts/issues/1476)
+#### Removed
+
 ### [0.7.28](https://github.com/redpanda-data/helm-charts/releases/tag/console-0.7.28) - 2024-08-08
 #### Added
 #### Changed
