@@ -51,7 +51,7 @@ func ChartMeta() helmette.Chart {
 	return chartMeta
 }
 
-func Template(release helmette.Release, values PartialValues) ([]kube.Object, error) {
+func Dot(release helmette.Release, values PartialValues) (*helmette.Dot, error) {
 	valuesYaml, err := yaml.Marshal(values)
 	if err != nil {
 		return nil, err
@@ -63,33 +63,40 @@ func Template(release helmette.Release, values PartialValues) ([]kube.Object, er
 		return nil, err1
 	}
 
-	dot := helmette.Dot{
+	return &helmette.Dot{
 		Values:  merged,
 		Chart:   ChartMeta(),
 		Release: release,
+	}, nil
+}
+
+func Template(release helmette.Release, values PartialValues) ([]kube.Object, error) {
+	dot, err := Dot(release, values)
+	if err != nil {
+		return nil, err
 	}
 
 	manifests := []kube.Object{
-		NodePortService(&dot),
-		PodDisruptionBudget(&dot),
-		ServiceAccount(&dot),
-		ServiceInternal(&dot),
-		ServiceMonitor(&dot),
-		SidecarControllersRole(&dot),
-		SidecarControllersRoleBinding(&dot),
-		StatefulSet(&dot),
-		PostUpgrade(&dot),
-		PostInstallUpgradeJob(&dot),
+		NodePortService(dot),
+		PodDisruptionBudget(dot),
+		ServiceAccount(dot),
+		ServiceInternal(dot),
+		ServiceMonitor(dot),
+		SidecarControllersRole(dot),
+		SidecarControllersRoleBinding(dot),
+		StatefulSet(dot),
+		PostUpgrade(dot),
+		PostInstallUpgradeJob(dot),
 	}
 
-	manifests = append(manifests, asObj(ConfigMaps(&dot))...)
-	manifests = append(manifests, asObj(CertIssuers(&dot))...)
-	manifests = append(manifests, asObj(RootCAs(&dot))...)
-	manifests = append(manifests, asObj(ClientCerts(&dot))...)
-	manifests = append(manifests, asObj(ClusterRoleBindings(&dot))...)
-	manifests = append(manifests, asObj(ClusterRoles(&dot))...)
-	manifests = append(manifests, asObj(LoadBalancerServices(&dot))...)
-	manifests = append(manifests, asObj(Secrets(&dot))...)
+	manifests = append(manifests, asObj(ConfigMaps(dot))...)
+	manifests = append(manifests, asObj(CertIssuers(dot))...)
+	manifests = append(manifests, asObj(RootCAs(dot))...)
+	manifests = append(manifests, asObj(ClientCerts(dot))...)
+	manifests = append(manifests, asObj(ClusterRoleBindings(dot))...)
+	manifests = append(manifests, asObj(ClusterRoles(dot))...)
+	manifests = append(manifests, asObj(LoadBalancerServices(dot))...)
+	manifests = append(manifests, asObj(Secrets(dot))...)
 
 	j := 0
 	for i := range manifests {
