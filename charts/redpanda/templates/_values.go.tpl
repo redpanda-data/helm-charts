@@ -415,9 +415,30 @@
 {{- $tls := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
-{{- $sources := (coalesce nil) -}}
+{{- $cmSources := (dict ) -}}
+{{- $secretSources := (dict ) -}}
 {{- range $_, $ts := (get (fromJson (include "redpanda.Listeners.TrustStores" (dict "a" (list $l $tls) ))) "r") -}}
-{{- $sources = (concat (default (list ) $sources) (list (get (fromJson (include "redpanda.TrustStore.VolumeProjection" (dict "a" (list $ts) ))) "r"))) -}}
+{{- $projection := (get (fromJson (include "redpanda.TrustStore.VolumeProjection" (dict "a" (list $ts) ))) "r") -}}
+{{- if (ne $projection.secret (coalesce nil)) -}}
+{{- $_ := (set $secretSources $projection.secret.name (concat (default (list ) (index $secretSources $projection.secret.name)) (default (list ) $projection.secret.items))) -}}
+{{- else -}}
+{{- $_ := (set $cmSources $projection.configMap.name (concat (default (list ) (index $cmSources $projection.configMap.name)) (default (list ) $projection.configMap.items))) -}}
+{{- end -}}
+{{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $sources := (coalesce nil) -}}
+{{- range $_, $name := (sortAlpha (keys $cmSources)) -}}
+{{- $keys := (index $cmSources $name) -}}
+{{- $sources = (concat (default (list ) $sources) (list (mustMergeOverwrite (dict ) (dict "configMap" (mustMergeOverwrite (dict ) (mustMergeOverwrite (dict ) (dict "name" $name )) (dict "items" (get (fromJson (include "redpanda.dedupKeyToPaths" (dict "a" (list $keys) ))) "r") )) )))) -}}
+{{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- range $_, $name := (sortAlpha (keys $secretSources)) -}}
+{{- $keys := (index $secretSources $name) -}}
+{{- $sources = (concat (default (list ) $sources) (list (mustMergeOverwrite (dict ) (dict "secret" (mustMergeOverwrite (dict ) (mustMergeOverwrite (dict ) (dict "name" $name )) (dict "items" (get (fromJson (include "redpanda.dedupKeyToPaths" (dict "a" (list $keys) ))) "r") )) )))) -}}
 {{- end -}}
 {{- if $_is_returning -}}
 {{- break -}}
@@ -429,6 +450,30 @@
 {{- end -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" (mustMergeOverwrite (dict "name" "" ) (mustMergeOverwrite (dict ) (dict "projected" (mustMergeOverwrite (dict "sources" (coalesce nil) ) (dict "sources" $sources )) )) (dict "name" "truststores" ))) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.dedupKeyToPaths" -}}
+{{- $items := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $seen := (dict ) -}}
+{{- $deduped := (coalesce nil) -}}
+{{- range $_, $item := $items -}}
+{{- $tmp_tuple_10 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $seen $item.key (coalesce nil)) ))) "r")) ))) "r") -}}
+{{- $ok_8 := $tmp_tuple_10.T2 -}}
+{{- if $ok_8 -}}
+{{- continue -}}
+{{- end -}}
+{{- $deduped = (concat (default (list ) $deduped) (list $item)) -}}
+{{- $_ := (set $seen $item.key true) -}}
+{{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" $deduped) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -470,9 +515,9 @@
 {{- $name := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
-{{- $tmp_tuple_10 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $m $name (coalesce nil)) ))) "r")) ))) "r") -}}
-{{- $ok := $tmp_tuple_10.T2 -}}
-{{- $cert := $tmp_tuple_10.T1 -}}
+{{- $tmp_tuple_11 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $m $name (coalesce nil)) ))) "r")) ))) "r") -}}
+{{- $ok := $tmp_tuple_11.T2 -}}
+{{- $cert := $tmp_tuple_11.T1 -}}
 {{- if (not $ok) -}}
 {{- $_ := (fail (printf "Certificate %q referenced, but not found in the tls.certs map" $name)) -}}
 {{- end -}}
@@ -697,7 +742,8 @@
 {{- if (and (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $l.tls $tls) ))) "r") (ne $l.tls.trustStore (coalesce nil))) -}}
 {{- $tss = (concat (default (list ) $tss) (list $l.tls.trustStore)) -}}
 {{- end -}}
-{{- range $_, $lis := $l.external -}}
+{{- range $_, $key := (sortAlpha (keys $l.external)) -}}
+{{- $lis := (index $l.external $key) -}}
 {{- if (or (or (not (get (fromJson (include "redpanda.AdminExternal.IsEnabled" (dict "a" (list $lis) ))) "r")) (not (get (fromJson (include "redpanda.ExternalTLS.IsEnabled" (dict "a" (list $lis.tls $l.tls $tls) ))) "r"))) (eq $lis.tls.trustStore (coalesce nil))) -}}
 {{- continue -}}
 {{- end -}}
@@ -731,9 +777,9 @@
 {{- if $saslEnabled -}}
 {{- $_ := (set $internal "authentication_method" "http_basic") -}}
 {{- end -}}
-{{- $am_8 := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $l.authenticationMethod "") ))) "r") -}}
-{{- if (ne $am_8 "") -}}
-{{- $_ := (set $internal "authentication_method" $am_8) -}}
+{{- $am_9 := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $l.authenticationMethod "") ))) "r") -}}
+{{- if (ne $am_9 "") -}}
+{{- $_ := (set $internal "authentication_method" $am_9) -}}
 {{- end -}}
 {{- $result := (list $internal) -}}
 {{- range $k, $l := $l.external -}}
@@ -744,9 +790,9 @@
 {{- if $saslEnabled -}}
 {{- $_ := (set $listener "authentication_method" "http_basic") -}}
 {{- end -}}
-{{- $am_9 := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $l.authenticationMethod "") ))) "r") -}}
-{{- if (ne $am_9 "") -}}
-{{- $_ := (set $listener "authentication_method" $am_9) -}}
+{{- $am_10 := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $l.authenticationMethod "") ))) "r") -}}
+{{- if (ne $am_10 "") -}}
+{{- $_ := (set $listener "authentication_method" $am_10) -}}
 {{- end -}}
 {{- $result = (concat (default (list ) $result) (list $listener)) -}}
 {{- end -}}
@@ -794,7 +840,8 @@
 {{- if (and (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $l.tls $tls) ))) "r") (ne $l.tls.trustStore (coalesce nil))) -}}
 {{- $tss = (concat (default (list ) $tss) (list $l.tls.trustStore)) -}}
 {{- end -}}
-{{- range $_, $lis := $l.external -}}
+{{- range $_, $key := (sortAlpha (keys $l.external)) -}}
+{{- $lis := (index $l.external $key) -}}
 {{- if (or (or (not (get (fromJson (include "redpanda.HTTPExternal.IsEnabled" (dict "a" (list $lis) ))) "r")) (not (get (fromJson (include "redpanda.ExternalTLS.IsEnabled" (dict "a" (list $lis.tls $l.tls $tls) ))) "r"))) (eq $lis.tls.trustStore (coalesce nil))) -}}
 {{- continue -}}
 {{- end -}}
@@ -828,9 +875,9 @@
 {{- if (get (fromJson (include "redpanda.Auth.IsSASLEnabled" (dict "a" (list $auth) ))) "r") -}}
 {{- $_ := (set $internal "authentication_method" "sasl") -}}
 {{- end -}}
-{{- $am_10 := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $l.authenticationMethod "") ))) "r") -}}
-{{- if (ne $am_10 "") -}}
-{{- $_ := (set $internal "authentication_method" $am_10) -}}
+{{- $am_11 := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $l.authenticationMethod "") ))) "r") -}}
+{{- if (ne $am_11 "") -}}
+{{- $_ := (set $internal "authentication_method" $am_11) -}}
 {{- end -}}
 {{- $kafka := (list $internal) -}}
 {{- range $k, $l := $l.external -}}
@@ -841,9 +888,9 @@
 {{- if (get (fromJson (include "redpanda.Auth.IsSASLEnabled" (dict "a" (list $auth) ))) "r") -}}
 {{- $_ := (set $listener "authentication_method" "sasl") -}}
 {{- end -}}
-{{- $am_11 := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $l.authenticationMethod "") ))) "r") -}}
-{{- if (ne $am_11 "") -}}
-{{- $_ := (set $listener "authentication_method" $am_11) -}}
+{{- $am_12 := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $l.authenticationMethod "") ))) "r") -}}
+{{- if (ne $am_12 "") -}}
+{{- $_ := (set $listener "authentication_method" $am_12) -}}
 {{- end -}}
 {{- $kafka = (concat (default (list ) $kafka) (list $listener)) -}}
 {{- end -}}
@@ -891,7 +938,8 @@
 {{- if (and (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $l.tls $tls) ))) "r") (ne $l.tls.trustStore (coalesce nil))) -}}
 {{- $tss = (concat (default (list ) $tss) (list $l.tls.trustStore)) -}}
 {{- end -}}
-{{- range $_, $lis := $l.external -}}
+{{- range $_, $key := (sortAlpha (keys $l.external)) -}}
+{{- $lis := (index $l.external $key) -}}
 {{- if (or (or (not (get (fromJson (include "redpanda.KafkaExternal.IsEnabled" (dict "a" (list $lis) ))) "r")) (not (get (fromJson (include "redpanda.ExternalTLS.IsEnabled" (dict "a" (list $lis.tls $l.tls $tls) ))) "r"))) (eq $lis.tls.trustStore (coalesce nil))) -}}
 {{- continue -}}
 {{- end -}}
@@ -951,9 +999,9 @@
 {{- if $saslEnabled -}}
 {{- $_ := (set $internal "authentication_method" "http_basic") -}}
 {{- end -}}
-{{- $am_12 := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $sr.authenticationMethod "") ))) "r") -}}
-{{- if (ne $am_12 "") -}}
-{{- $_ := (set $internal "authentication_method" $am_12) -}}
+{{- $am_13 := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $sr.authenticationMethod "") ))) "r") -}}
+{{- if (ne $am_13 "") -}}
+{{- $_ := (set $internal "authentication_method" $am_13) -}}
 {{- end -}}
 {{- $result := (list $internal) -}}
 {{- range $k, $l := $sr.external -}}
@@ -964,9 +1012,9 @@
 {{- if $saslEnabled -}}
 {{- $_ := (set $listener "authentication_method" "http_basic") -}}
 {{- end -}}
-{{- $am_13 := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $l.authenticationMethod "") ))) "r") -}}
-{{- if (ne $am_13 "") -}}
-{{- $_ := (set $listener "authentication_method" $am_13) -}}
+{{- $am_14 := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $l.authenticationMethod "") ))) "r") -}}
+{{- if (ne $am_14 "") -}}
+{{- $_ := (set $listener "authentication_method" $am_14) -}}
 {{- end -}}
 {{- $result = (concat (default (list ) $result) (list $listener)) -}}
 {{- end -}}
@@ -1014,7 +1062,8 @@
 {{- if (and (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $l.tls $tls) ))) "r") (ne $l.tls.trustStore (coalesce nil))) -}}
 {{- $tss = (concat (default (list ) $tss) (list $l.tls.trustStore)) -}}
 {{- end -}}
-{{- range $_, $lis := $l.external -}}
+{{- range $_, $key := (sortAlpha (keys $l.external)) -}}
+{{- $lis := (index $l.external $key) -}}
 {{- if (or (or (not (get (fromJson (include "redpanda.SchemaRegistryExternal.IsEnabled" (dict "a" (list $lis) ))) "r")) (not (get (fromJson (include "redpanda.ExternalTLS.IsEnabled" (dict "a" (list $lis.tls $l.tls $tls) ))) "r"))) (eq $lis.tls.trustStore (coalesce nil))) -}}
 {{- continue -}}
 {{- end -}}
@@ -1096,9 +1145,9 @@
 {{- $result := (dict ) -}}
 {{- range $k, $v := $c -}}
 {{- if (not (empty $v)) -}}
-{{- $tmp_tuple_13 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asnumeric" (dict "a" (list $v) ))) "r")) ))) "r") -}}
-{{- $ok_14 := $tmp_tuple_13.T2 -}}
-{{- if $ok_14 -}}
+{{- $tmp_tuple_14 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asnumeric" (dict "a" (list $v) ))) "r")) ))) "r") -}}
+{{- $ok_15 := $tmp_tuple_14.T2 -}}
+{{- if $ok_15 -}}
 {{- $_ := (set $result $k $v) -}}
 {{- else -}}{{- if (kindIs "bool" $v) -}}
 {{- $_ := (set $result $k $v) -}}
@@ -1128,26 +1177,26 @@
 {{- if (and (eq $k "default_topic_replications") (not $skipDefaultTopic)) -}}
 {{- $r := ($replicas | int) -}}
 {{- $input := ($r | int) -}}
-{{- $tmp_tuple_14 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asintegral" (dict "a" (list $v) ))) "r")) ))) "r") -}}
-{{- $ok_16 := $tmp_tuple_14.T2 -}}
-{{- $num_15 := ($tmp_tuple_14.T1 | int) -}}
-{{- if $ok_16 -}}
-{{- $input = $num_15 -}}
+{{- $tmp_tuple_15 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asintegral" (dict "a" (list $v) ))) "r")) ))) "r") -}}
+{{- $ok_17 := $tmp_tuple_15.T2 -}}
+{{- $num_16 := ($tmp_tuple_15.T1 | int) -}}
+{{- if $ok_17 -}}
+{{- $input = $num_16 -}}
 {{- end -}}
-{{- $tmp_tuple_15 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asnumeric" (dict "a" (list $v) ))) "r")) ))) "r") -}}
-{{- $ok_18 := $tmp_tuple_15.T2 -}}
-{{- $f_17 := ($tmp_tuple_15.T1 | float64) -}}
-{{- if $ok_18 -}}
-{{- $input = ($f_17 | int) -}}
+{{- $tmp_tuple_16 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asnumeric" (dict "a" (list $v) ))) "r")) ))) "r") -}}
+{{- $ok_19 := $tmp_tuple_16.T2 -}}
+{{- $f_18 := ($tmp_tuple_16.T1 | float64) -}}
+{{- if $ok_19 -}}
+{{- $input = ($f_18 | int) -}}
 {{- end -}}
 {{- $_ := (set $result $k (min ($input | int64) (((sub ((add $r (((mod $r (2 | int)) | int))) | int) (1 | int)) | int) | int64))) -}}
 {{- continue -}}
 {{- end -}}
-{{- $tmp_tuple_16 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "bool" $v false) ))) "r")) ))) "r") -}}
-{{- $ok_20 := $tmp_tuple_16.T2 -}}
-{{- $b_19 := $tmp_tuple_16.T1 -}}
-{{- if $ok_20 -}}
-{{- $_ := (set $result $k $b_19) -}}
+{{- $tmp_tuple_17 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "bool" $v false) ))) "r")) ))) "r") -}}
+{{- $ok_21 := $tmp_tuple_17.T2 -}}
+{{- $b_20 := $tmp_tuple_17.T1 -}}
+{{- if $ok_21 -}}
+{{- $_ := (set $result $k $b_20) -}}
 {{- continue -}}
 {{- end -}}
 {{- if (not (empty $v)) -}}

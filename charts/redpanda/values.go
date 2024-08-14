@@ -793,9 +793,43 @@ func (l *Listeners) AdminList(replicas int32, fullname, internalDomain string) [
 // that mounts all required truststore files. If no truststores are configured,
 // it returns nil.
 func (l *Listeners) TrustStoreVolume(tls *TLS) *corev1.Volume {
-	var sources []corev1.VolumeProjection
+	cmSources := map[string][]corev1.KeyToPath{}
+	secretSources := map[string][]corev1.KeyToPath{}
+
 	for _, ts := range l.TrustStores(tls) {
-		sources = append(sources, ts.VolumeProjection())
+		projection := ts.VolumeProjection()
+
+		if projection.Secret != nil {
+			secretSources[projection.Secret.Name] = append(secretSources[projection.Secret.Name], projection.Secret.Items...)
+		} else {
+			cmSources[projection.ConfigMap.Name] = append(cmSources[projection.ConfigMap.Name], projection.ConfigMap.Items...)
+		}
+	}
+
+	var sources []corev1.VolumeProjection
+
+	for _, name := range helmette.SortedKeys(cmSources) {
+		keys := cmSources[name]
+		sources = append(sources, corev1.VolumeProjection{
+			ConfigMap: &corev1.ConfigMapProjection{
+				LocalObjectReference: corev1.LocalObjectReference{
+					Name: name,
+				},
+				Items: dedupKeyToPaths(keys),
+			},
+		})
+	}
+
+	for _, name := range helmette.SortedKeys(secretSources) {
+		keys := secretSources[name]
+		sources = append(sources, corev1.VolumeProjection{
+			Secret: &corev1.SecretProjection{
+				LocalObjectReference: corev1.LocalObjectReference{
+					Name: name,
+				},
+				Items: dedupKeyToPaths(keys),
+			},
+		})
 	}
 
 	if len(sources) < 1 {
@@ -810,6 +844,25 @@ func (l *Listeners) TrustStoreVolume(tls *TLS) *corev1.Volume {
 			},
 		},
 	}
+}
+
+func dedupKeyToPaths(items []corev1.KeyToPath) []corev1.KeyToPath {
+	// NB: This logic is a non-idiomatic fashion to dance around suspected
+	// limitations in gotohelm.
+
+	seen := map[string]bool{}
+	var deduped []corev1.KeyToPath
+
+	for _, item := range items {
+		if _, ok := seen[item.Key]; ok {
+			continue
+		}
+
+		deduped = append(deduped, item)
+		seen[item.Key] = true
+	}
+
+	return deduped
 }
 
 // TrustStores returns an aggregate slice of all "active" [TrustStore]s across
@@ -914,6 +967,12 @@ type SASLAuth struct {
 type TrustStore struct {
 	ConfigMapKeyRef *corev1.ConfigMapKeySelector `json:"configMapKeyRef"`
 	SecretKeyRef    *corev1.SecretKeySelector    `json:"secretKeyRef"`
+}
+
+// +gotohelm:ignore=true
+func (TrustStore) JSONSchemaExtend(schema *jsonschema.Schema) {
+	schema.MaxProperties = ptr.To[uint64](1)
+	schema.MinProperties = ptr.To[uint64](1)
 }
 
 func (t *TrustStore) TrustStoreFilePath() string {
@@ -1111,7 +1170,8 @@ func (l *AdminListeners) TrustStores(tls *TLS) []*TrustStore {
 		tss = append(tss, l.TLS.TrustStore)
 	}
 
-	for _, lis := range l.External {
+	for _, key := range helmette.SortedKeys(l.External) {
+		lis := l.External[key]
 		if !lis.IsEnabled() || !lis.TLS.IsEnabled(&l.TLS, tls) || lis.TLS.TrustStore == nil {
 			continue
 		}
@@ -1226,7 +1286,8 @@ func (l *HTTPListeners) TrustStores(tls *TLS) []*TrustStore {
 		tss = append(tss, l.TLS.TrustStore)
 	}
 
-	for _, lis := range l.External {
+	for _, key := range helmette.SortedKeys(l.External) {
+		lis := l.External[key]
 		if !lis.IsEnabled() || !lis.TLS.IsEnabled(&l.TLS, tls) || lis.TLS.TrustStore == nil {
 			continue
 		}
@@ -1354,7 +1415,8 @@ func (l *KafkaListeners) TrustStores(tls *TLS) []*TrustStore {
 		tss = append(tss, l.TLS.TrustStore)
 	}
 
-	for _, lis := range l.External {
+	for _, key := range helmette.SortedKeys(l.External) {
+		lis := l.External[key]
 		if !lis.IsEnabled() || !lis.TLS.IsEnabled(&l.TLS, tls) || lis.TLS.TrustStore == nil {
 			continue
 		}
@@ -1499,7 +1561,8 @@ func (l *SchemaRegistryListeners) TrustStores(tls *TLS) []*TrustStore {
 		tss = append(tss, l.TLS.TrustStore)
 	}
 
-	for _, lis := range l.External {
+	for _, key := range helmette.SortedKeys(l.External) {
+		lis := l.External[key]
 		if !lis.IsEnabled() || !lis.TLS.IsEnabled(&l.TLS, tls) || lis.TLS.TrustStore == nil {
 			continue
 		}

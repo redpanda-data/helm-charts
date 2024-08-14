@@ -107949,6 +107949,20 @@ spec:
           sources:
           - configMap:
               items:
+              - key: other.crt
+                path: configmaps/admin-cm-other.crt
+              - key: my-admin.crt
+                path: configmaps/admin-cm-my-admin.crt
+              name: admin-cm
+          - configMap:
+              items:
+              - key: ca.crt
+                path: configmaps/http-cm-ca.crt
+              - key: my-http.crt
+                path: configmaps/http-cm-my-http.crt
+              name: http-cm
+          - configMap:
+              items:
               - key: ca.crt
                 path: configmaps/my-ca-bundle-ca.crt
               name: my-ca-bundle
@@ -107957,33 +107971,10 @@ spec:
               - key: my-kafka.crt
                 path: secrets/kafka-secret-my-kafka.crt
               name: kafka-secret
-          - configMap:
-              items:
-              - key: other.crt
-                path: configmaps/admin-cm-other.crt
-              name: admin-cm
-          - configMap:
-              items:
-              - key: my-admin.crt
-                path: configmaps/admin-cm-my-admin.crt
-              name: admin-cm
-          - configMap:
-              items:
-              - key: ca.crt
-                path: configmaps/http-cm-ca.crt
-              name: http-cm
-          - configMap:
-              items:
-              - key: my-http.crt
-                path: configmaps/http-cm-my-http.crt
-              name: http-cm
           - secret:
               items:
               - key: ca.crt
                 path: secrets/sr-secret-ca.crt
-              name: sr-secret
-          - secret:
-              items:
               - key: my-sr.crt
                 path: secrets/sr-secret-my-sr.crt
               name: sr-secret

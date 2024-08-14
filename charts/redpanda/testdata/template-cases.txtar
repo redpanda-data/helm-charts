@@ -275,3 +275,17 @@ post_upgrade_job:
 listeners:
   admin:
     appProtocol: http
+
+-- trust-stores-only-one --
+# Showcase that trustStore may not have more than 1 property.
+# ASSERT-ERROR-CONTAINS ["Must have at most 1 properties"]
+listeners:
+  admin:
+    tls:
+      trustStore:
+        configMapKeyRef:
+          key: redpanda-truststore.pem
+          name: redpanda-truststore.crt
+        secretKeyRef:
+          key: redpanda-truststore.pem
+          name: redpanda-truststore.crt

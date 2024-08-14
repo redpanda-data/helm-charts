@@ -78,10 +78,12 @@ func TrimPrefix(prefix, s string) string {
 	return s
 }
 
-// SortAlpha is the go equivalent of sprig's `sortAlpha`
+// SortAlpha is the go equivalent of sprig's `sortAlpha`.
+// It mutates the provided slice in place and returns the mutated slice.
 // +gotohelm:builtin=sortAlpha
-func SortAlpha(x []string) {
+func SortAlpha(x []string) []string {
 	sort.Strings(x)
+	return x
 }
 
 // Printf is the go equivalent of text/templates's `printf`
@@ -461,4 +463,11 @@ func RandAlphaNum(length int) string {
 // +gotohelm:builtin=replace
 func Replace(old, new, s string) string {
 	return strings.ReplaceAll(s, old, new)
+}
+
+// SortedKeys is a convenience function to aid in iterating over maps in a
+// deterministic order.
+func SortedKeys[T any](m map[string]T) []string {
+	keys := Keys(m)
+	return SortAlpha(keys)
 }
