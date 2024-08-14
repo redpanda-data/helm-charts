@@ -114,15 +114,20 @@ func TestDialer(t *testing.T) {
 	}
 
 	for _, host := range []string{
+		// http service-based DNS
 		"http://name.service.default.svc.cluster.local",
 		"http://name.service.default.svc",
 		"http://name.service.default",
-		"http://name.service",
-		// https
+		// https pod-based DNS
+		"http://name.default",
+		"http://name",
+		// https service-based DNS
 		"https://name.service.default.svc.cluster.local",
 		"https://name.service.default.svc",
 		"https://name.service.default",
-		"https://name.service",
+		// https pod-based DNS
+		"https://name.default",
+		"https://name",
 	} {
 		t.Run(host, func(t *testing.T) {
 			_, err = httpClient.Get(host)

@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	corev1 "k8s.io/api/core/v1"
@@ -37,6 +38,11 @@ var (
 	negotiatedSerializer = serializer.NewCodecFactory(runtime.NewScheme()).WithoutConversion()
 )
 
+type refCountedConnection struct {
+	httpstream.Connection
+	references int
+}
+
 // PodDialer is a basic port-forwarding dialer that doesn't start
 // any local listeners, but returns a net.Conn directly.
 type PodDialer struct {
@@ -44,7 +50,7 @@ type PodDialer struct {
 	clusterDomain string
 	requestID     int
 
-	connections map[types.NamespacedName]httpstream.Connection
+	connections map[types.NamespacedName]*refCountedConnection
 	mutex       sync.RWMutex
 }
 
@@ -53,7 +59,7 @@ func NewPodDialer(config *rest.Config) *PodDialer {
 	return &PodDialer{
 		config:        config,
 		clusterDomain: defaultClusterDomain,
-		connections:   make(map[types.NamespacedName]httpstream.Connection),
+		connections:   make(map[types.NamespacedName]*refCountedConnection),
 	}
 }
 
@@ -63,9 +69,32 @@ func (p *PodDialer) WithClusterDomain(domain string) *PodDialer {
 	return p
 }
 
-// Dial dials the given pod's service-based DNS address and returns a
-// net.Conn that can be used to reach the pod directly.
-func (p *PodDialer) Dial(network string, address string) (net.Conn, error) {
+// cleanupConnection should be called via a function callback
+// any time that one of its underlying streams is closed
+// when it's called, it decrements the reference counted connection
+// pruning it from our connection map when its references hit 0.
+func (p *PodDialer) cleanupConnection(pod types.NamespacedName) {
+	p.mutex.Lock()
+	defer p.mutex.Unlock()
+
+	connection, ok := p.connections[pod]
+	if !ok {
+		return
+	}
+
+	connection.references--
+
+	if connection.references == 0 {
+		connection.Close()
+
+		delete(p.connections, pod)
+	}
+}
+
+// DialContext dials the given pod's service-based DNS address and returns a
+// net.Conn that can be used to reach the pod directly. It uses the passed in
+// context to close the underlying connection when
+func (p *PodDialer) DialContext(ctx context.Context, network string, address string) (net.Conn, error) {
 	switch network {
 	case "tcp", "tcp4", "tcp6":
 	default:
@@ -80,7 +109,7 @@ func (p *PodDialer) Dial(network string, address string) (net.Conn, error) {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
 
-	conn, err := p.connectionForPod(pod)
+	conn, err := p.connectionForPodLocked(pod)
 	if err != nil {
 		return nil, err
 	}
@@ -100,26 +129,28 @@ func (p *PodDialer) Dial(network string, address string) (net.Conn, error) {
 	headers.Set(corev1.StreamType, corev1.StreamTypeData)
 	dataStream, err := conn.CreateStream(headers)
 	if err != nil {
+		// close off the error stream that's been opened
+		errorStream.Reset()
+
 		return nil, err
 	}
 
-	return wrapConn(network, address, dataStream, errorStream), nil
-}
+	conn.references++
+	onClose := func() {
+		p.cleanupConnection(pod)
+	}
 
-// DialContext is a simple wrapper around Dial.
-func (p *PodDialer) DialContext(_ context.Context, network string, address string) (net.Conn, error) {
-	return p.Dial(network, address)
+	return wrapConn(ctx, onClose, network, address, dataStream, errorStream), nil
 }
 
 // parseDNS attempts to determine the intended pod to target, currently the
-// following formats are supported:
+// following formats are supported for resolution of "service-based" hostnames:
 //  1. [pod-name].[service-name].[namespace-name].svc.[cluster-domain]
 //  2. [pod-name].[service-name].[namespace-name].svc
 //  3. [pod-name].[service-name].[namespace-name]
-//  4. [pod-name].[service-name]
 //
 // If no cluster-domain is supplied, the dialer's configured domain is assumed.
-// If no namespace-name is supplied, the default namespace is assumed.
+//
 // No validation is done to ensure that the pod is actually referenced by the
 // given service or that the DNS record exists in Kubernetes, instead this assumes
 // that things are set up properly in Kubernetes such that the FQDN passed here
@@ -128,22 +159,42 @@ func (p *PodDialer) DialContext(_ context.Context, network string, address strin
 //
 // These assumptions allow us to use this dialer to issues requests *as if* we are
 // in the Kubernetes network even from outside of it (i.e. in tests that attempt to
-// connect to a pod at a given DNS address).
-func (p *PodDialer) parseDNS(fqdn string) (pod types.NamespacedName, port int, err error) {
+// connect to a pod at a given hostname).
+//
+// The implementation of parsing for shorter, non-`svc` suffixed domains does not
+// follow the typical service DNS scheme. Rather it allows for the following custom
+// pod direct-dialing strategy:
+//
+//  4. [pod-name].[namespace-name]
+//  5. [pod-name]
+//
+// If no namespace-name is supplied, the default namespace is assumed.
+func (p *PodDialer) parseDNS(fqdn string) (types.NamespacedName, int, error) {
+	var pod types.NamespacedName
+
 	addressPort := strings.Split(fqdn, ":")
 	if len(addressPort) != 2 {
-		err = ErrNoPort
-		return
+		return pod, 0, ErrNoPort
 	}
 
-	port, err = strconv.Atoi(addressPort[1])
+	port, err := strconv.Atoi(addressPort[1])
 	if err != nil {
-		return
+		return pod, 0, ErrNoPort
 	}
 
 	fqdn = addressPort[0]
-	fqdn = strings.TrimSuffix(fqdn, "."+p.clusterDomain)
-	fqdn = strings.TrimSuffix(fqdn, "."+svcLabel)
+
+	isServiceDNS := true
+
+	if strings.Count(fqdn, ".") < 2 {
+		// we have a direct pod DNS address
+		isServiceDNS = false
+	} else {
+		// we have a service-based DNS address
+		fqdn = strings.TrimSuffix(fqdn, "."+p.clusterDomain)
+		fqdn = strings.TrimSuffix(fqdn, "."+svcLabel)
+	}
+
 	labels := strings.Split(fqdn, ".")
 
 	// since we only dial pods we require 2 labels
@@ -151,22 +202,30 @@ func (p *PodDialer) parseDNS(fqdn string) (pod types.NamespacedName, port int, e
 	// default namespace) or 3 (for a pod outside
 	// of the default namespace)
 	switch len(labels) {
+	case 1:
+		if !isServiceDNS {
+			pod.Namespace = defaultNamespace
+		} else {
+			return pod, 0, ErrInvalidPodFQDN
+		}
 	case 2:
-		pod.Namespace = defaultNamespace
+		if isServiceDNS {
+			pod.Namespace = defaultNamespace
+		} else {
+			pod.Namespace = labels[1]
+		}
 	case 3:
 		pod.Namespace = labels[2]
 	default:
-		err = ErrInvalidPodFQDN
-		return
+		return pod, 0, ErrInvalidPodFQDN
 	}
 
-	// service - labels[1]
 	pod.Name = labels[0]
-	return
+
+	return pod, port, nil
 }
 
-// mutex must be held while calling this
-func (p *PodDialer) connectionForPod(pod types.NamespacedName) (httpstream.Connection, error) {
+func (p *PodDialer) connectionForPodLocked(pod types.NamespacedName) (*refCountedConnection, error) {
 	if conn, ok := p.connections[pod]; ok {
 		return conn, nil
 	}
@@ -196,37 +255,64 @@ func (p *PodDialer) connectionForPod(pod types.NamespacedName) (httpstream.Conne
 	if err != nil {
 		return nil, err
 	}
+
 	if protocol != portForwardProtocolV1Name {
+		if conn != nil {
+			conn.Close()
+		}
+
 		return nil, fmt.Errorf("unable to negotiate protocol: client supports %q, server returned %q", portForwardProtocolV1Name, protocol)
 	}
 
-	p.connections[pod] = conn
-	return conn, nil
+	refCountedConn := &refCountedConnection{Connection: conn}
+
+	p.connections[pod] = refCountedConn
+	return refCountedConn, nil
 }
 
 type conn struct {
-	httpstream.Stream
+	dataStream  httpstream.Stream
 	errorStream httpstream.Stream
 	network     string
 	remote      string
+	onClose     func()
 
-	errCh chan error
+	errCh  chan error
+	stopCh chan error
+	closed atomic.Bool
 }
 
-func wrapConn(network, remote string, s, err httpstream.Stream) *conn {
+var _ net.Conn = (*conn)(nil)
+
+func wrapConn(ctx context.Context, onClose func(), network, remote string, s, err httpstream.Stream) *conn {
 	c := &conn{
-		Stream:      s,
+		dataStream:  s,
 		errorStream: err,
 		network:     network,
 		remote:      remote,
+		onClose:     onClose,
 		errCh:       make(chan error, 1),
+		stopCh:      make(chan error),
 	}
 
 	go c.pollErrors()
+	go c.checkCancelation(ctx)
+
 	return c
 }
 
+func (c *conn) checkCancelation(ctx context.Context) {
+	select {
+	case <-ctx.Done():
+		c.writeError(ctx.Err())
+		c.Close()
+	case <-c.stopCh:
+	}
+}
+
 func (c *conn) pollErrors() {
+	defer c.Close()
+
 	data, err := io.ReadAll(c.errorStream)
 	if err != nil {
 		c.writeError(err)
@@ -234,7 +320,7 @@ func (c *conn) pollErrors() {
 	}
 
 	if len(data) != 0 {
-		c.writeError(errors.New(string(data)))
+		c.writeError(fmt.Errorf("received error message from error stream: %s", string(data)))
 		return
 	}
 }
@@ -247,6 +333,10 @@ func (c *conn) writeError(err error) {
 }
 
 func (c *conn) checkError() error {
+	if c.closed.Load() {
+		return net.ErrClosed
+	}
+
 	select {
 	case err := <-c.errCh:
 		return err
@@ -255,14 +345,12 @@ func (c *conn) checkError() error {
 	}
 }
 
-var _ net.Conn = (*conn)(nil)
-
 func (c *conn) Read(data []byte) (int, error) {
 	if err := c.checkError(); err != nil {
 		return 0, err
 	}
 
-	n, err := c.Stream.Read(data)
+	n, err := c.dataStream.Read(data)
 
 	// prioritize any sort of checks propagated on
 	// the error stream
@@ -277,7 +365,7 @@ func (c *conn) Write(b []byte) (int, error) {
 		return 0, err
 	}
 
-	n, err := c.Stream.Write(b)
+	n, err := c.dataStream.Write(b)
 
 	// prioritize any sort of checks propagated on
 	// the error stream
@@ -288,32 +376,51 @@ func (c *conn) Write(b []byte) (int, error) {
 }
 
 func (c *conn) Close() error {
-	closeErr := c.Reset()
+	// make Close idempotent since we may close off
+	// the stream when a context is canceled but also
+	// may have had Close called manually
+	if !c.closed.CompareAndSwap(false, true) {
+		return nil
+	}
+
+	// call our onClose cleanup handler
+	defer c.onClose()
+
+	// signal to any underlying goroutines that we are
+	// stopping
+	defer close(c.stopCh)
+
+	// closing the underlying connection should cause
+	// our error stream reading routine to stop
+	c.errorStream.Reset()
+	closeErr := c.dataStream.Reset()
 
 	// prioritize any sort of checks propagated on
 	// the error stream
 	if err := c.checkError(); err != nil {
-		return err
+		if !errors.Is(err, net.ErrClosed) {
+			return err
+		}
 	}
 	return closeErr
 }
 
 func (c *conn) SetDeadline(t time.Time) error {
-	if conn, ok := c.Stream.(net.Conn); ok {
+	if conn, ok := c.dataStream.(net.Conn); ok {
 		return conn.SetDeadline(t)
 	}
 	return nil
 }
 
 func (c *conn) SetReadDeadline(t time.Time) error {
-	if conn, ok := c.Stream.(net.Conn); ok {
+	if conn, ok := c.dataStream.(net.Conn); ok {
 		return conn.SetReadDeadline(t)
 	}
 	return nil
 }
 
 func (c *conn) SetWriteDeadline(t time.Time) error {
-	if conn, ok := c.Stream.(net.Conn); ok {
+	if conn, ok := c.dataStream.(net.Conn); ok {
 		return conn.SetWriteDeadline(t)
 	}
 	return nil
