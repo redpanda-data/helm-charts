@@ -333,14 +333,13 @@ func (c *conn) writeError(err error) {
 }
 
 func (c *conn) checkError() error {
-	if c.closed.Load() {
-		return net.ErrClosed
-	}
-
 	select {
 	case err := <-c.errCh:
 		return err
 	default:
+		if c.closed.Load() {
+			return net.ErrClosed
+		}
 		return nil
 	}
 }
