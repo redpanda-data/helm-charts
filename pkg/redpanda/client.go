@@ -13,7 +13,6 @@ import (
 
 	"github.com/redpanda-data/helm-charts/charts/redpanda"
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
-	"github.com/redpanda-data/helm-charts/pkg/kube"
 	"github.com/twmb/franz-go/pkg/kgo"
 	"github.com/twmb/franz-go/pkg/sasl"
 	"github.com/twmb/franz-go/pkg/sasl/scram"
@@ -40,71 +39,19 @@ var (
 	}
 )
 
-func firstUser(data []byte) (user string, password string, mechanism string) {
-	file := string(data)
-
-	for _, line := range strings.Split(file, "\n") {
-		tokens := strings.Split(line, ":")
-		if len(tokens) != 3 {
-			continue
-		}
-
-		if !slices.Contains(supportedSASLMechanisms, tokens[2]) {
-			continue
-		}
-
-		user, password, mechanism = tokens[0], tokens[1], tokens[2]
-		return
-	}
-
-	return
-}
-
-func saslOpt(user, password, mechanism string) kgo.Opt {
-	var m sasl.Mechanism
-	switch mechanism {
-	case "SCRAM-SHA-256", "SCRAM-SHA-512":
-		scram := scram.Auth{User: user, Pass: password}
-
-		switch mechanism {
-		case "SCRAM-SHA-256":
-			m = scram.AsSha256Mechanism()
-		case "SCRAM-SHA-512":
-			m = scram.AsSha512Mechanism()
-		}
-	default:
-		panic(fmt.Sprintf("unhandled SASL mechanism: %s", mechanism))
-	}
-
-	return kgo.SASL(m)
-}
-
 // DialContextFunc is a function that acts as a dialer for the underlying Kafka client.
 type DialContextFunc = func(ctx context.Context, network, host string) (net.Conn, error)
 
-func wrapTLSDialer(dialer DialContextFunc, config *tls.Config) DialContextFunc {
-	return func(ctx context.Context, network, host string) (net.Conn, error) {
-		conn, err := dialer(ctx, network, host)
-		if err != nil {
-			return nil, err
-		}
-		return tls.Client(conn, config), nil
-	}
-}
-
 // AdminClient creates a client to talk to a Redpanda cluster admin API based on its helm
 // configuration over its internal listeners.
-func AdminClient(config kube.Config, release helmette.Release, partial redpanda.PartialValues, dialer DialContextFunc) (*rpadmin.AdminAPI, error) {
-	dot, err := redpanda.Dot(release, partial)
-	if err != nil {
-		return nil, err
-	}
-	dot.KubeConfig = config
-
+func AdminClient(dot *helmette.Dot, dialer DialContextFunc) (*rpadmin.AdminAPI, error) {
 	values := helmette.Unwrap[redpanda.Values](dot.Values)
+	name := redpanda.Fullname(dot)
+	domain := redpanda.InternalDomain(dot)
 	prefix := "http://"
 
 	var tlsConfig *tls.Config
+	var err error
 
 	if redpanda.TLSEnabled(dot) {
 		prefix = "https://"
@@ -130,21 +77,19 @@ func AdminClient(config kube.Config, release helmette.Release, partial redpanda.
 		auth = &rpadmin.NopAuth{}
 	}
 
-	hosts := urlsFromDot(dot, prefix, values.Statefulset.Replicas, values.Listeners.Admin.Port)
+	hosts := redpanda.ServerList(values.Statefulset.Replicas, prefix, name, domain, values.Listeners.Admin.Port)
+
 	return rpadmin.NewAdminAPIWithDialer(hosts, auth, tlsConfig, dialer)
 }
 
 // KafkaClient creates a client to talk to a Redpanda cluster based on its helm
 // configuration over its internal listeners.
-func KafkaClient(config kube.Config, release helmette.Release, partial redpanda.PartialValues, dialer DialContextFunc, opts ...kgo.Opt) (*kgo.Client, error) {
-	dot, err := redpanda.Dot(release, partial)
-	if err != nil {
-		return nil, err
-	}
-	dot.KubeConfig = config
-
+func KafkaClient(dot *helmette.Dot, dialer DialContextFunc, opts ...kgo.Opt) (*kgo.Client, error) {
 	values := helmette.Unwrap[redpanda.Values](dot.Values)
-	brokers := urlsFromDot(dot, "", values.Statefulset.Replicas, values.Listeners.Kafka.Port)
+	name := redpanda.Fullname(dot)
+	domain := redpanda.InternalDomain(dot)
+
+	brokers := redpanda.ServerList(values.Statefulset.Replicas, "", name, domain, values.Listeners.Kafka.Port)
 
 	opts = append(opts, kgo.SeedBrokers(brokers...))
 
@@ -186,7 +131,12 @@ func authFromDot(dot *helmette.Dot) (username string, password string, mechanism
 	if saslUsers != nil {
 		// read from the server since we're assuming all the resources
 		// have already been created
-		users, found := helmette.Lookup[corev1.Secret](dot, saslUsers.Namespace, saslUsers.Name)
+		users, found, lookupErr := helmette.SafeLookup[corev1.Secret](dot, saslUsers.Namespace, saslUsers.Name)
+		if lookupErr != nil {
+			err = saslError(lookupErr)
+			return
+		}
+
 		if !found {
 			err = saslError(ErrSASLSecretNotFound)
 			return
@@ -208,19 +158,6 @@ func authFromDot(dot *helmette.Dot) (username string, password string, mechanism
 	return
 }
 
-func urlsFromDot(dot *helmette.Dot, prefix string, replicas int32, port int32) []string {
-	name := redpanda.Fullname(dot)
-	namespace := dot.Release.Namespace
-	serviceName := redpanda.ServiceName(dot)
-
-	urls := []string{}
-	for i := int32(0); i < replicas; i++ {
-		urls = append(urls, fmt.Sprintf("%s%s-%d.%s.%s.svc:%d", prefix, name, i, serviceName, namespace, port))
-	}
-
-	return urls
-}
-
 func tlsConfigFromDot(dot *helmette.Dot, cert string) (*tls.Config, error) {
 	name := redpanda.Fullname(dot)
 	namespace := dot.Release.Namespace
@@ -238,7 +175,11 @@ func tlsConfigFromDot(dot *helmette.Dot, cert string) (*tls.Config, error) {
 
 	tlsConfig := &tls.Config{MinVersion: tls.VersionTLS12, ServerName: serverName}
 
-	serverCert, found := helmette.Lookup[corev1.Secret](dot, namespace, rootCertName)
+	serverCert, found, lookupErr := helmette.SafeLookup[corev1.Secret](dot, namespace, rootCertName)
+	if lookupErr != nil {
+		return nil, serverTLSError(lookupErr)
+	}
+
 	if !found {
 		return nil, serverTLSError(ErrServerCertificateNotFound)
 	}
@@ -259,7 +200,11 @@ func tlsConfigFromDot(dot *helmette.Dot, cert string) (*tls.Config, error) {
 	tlsConfig.RootCAs = pool
 
 	if redpanda.ClientAuthRequired(dot) {
-		clientCert, found := helmette.Lookup[corev1.Secret](dot, "default", clientCertName)
+		clientCert, found, lookupErr := helmette.SafeLookup[corev1.Secret](dot, "", clientCertName)
+		if lookupErr != nil {
+			return nil, clientTLSError(lookupErr)
+		}
+
 		if !found {
 			return nil, clientTLSError(ErrServerCertificateNotFound)
 		}
@@ -283,4 +228,53 @@ func tlsConfigFromDot(dot *helmette.Dot, cert string) (*tls.Config, error) {
 	}
 
 	return tlsConfig, nil
+}
+
+func firstUser(data []byte) (user string, password string, mechanism string) {
+	file := string(data)
+
+	for _, line := range strings.Split(file, "\n") {
+		tokens := strings.Split(line, ":")
+		if len(tokens) != 3 {
+			continue
+		}
+
+		if !slices.Contains(supportedSASLMechanisms, tokens[2]) {
+			continue
+		}
+
+		user, password, mechanism = tokens[0], tokens[1], tokens[2]
+		return
+	}
+
+	return
+}
+
+func saslOpt(user, password, mechanism string) kgo.Opt {
+	var m sasl.Mechanism
+	switch mechanism {
+	case "SCRAM-SHA-256", "SCRAM-SHA-512":
+		scram := scram.Auth{User: user, Pass: password}
+
+		switch mechanism {
+		case "SCRAM-SHA-256":
+			m = scram.AsSha256Mechanism()
+		case "SCRAM-SHA-512":
+			m = scram.AsSha512Mechanism()
+		}
+	default:
+		panic(fmt.Sprintf("unhandled SASL mechanism: %s", mechanism))
+	}
+
+	return kgo.SASL(m)
+}
+
+func wrapTLSDialer(dialer DialContextFunc, config *tls.Config) DialContextFunc {
+	return func(ctx context.Context, network, host string) (net.Conn, error) {
+		conn, err := dialer(ctx, network, host)
+		if err != nil {
+			return nil, err
+		}
+		return tls.Client(conn, config), nil
+	}
 }
