@@ -405,24 +405,15 @@ func (c *conn) Close() error {
 }
 
 func (c *conn) SetDeadline(t time.Time) error {
-	if conn, ok := c.dataStream.(net.Conn); ok {
-		return conn.SetDeadline(t)
-	}
-	return nil
+	return c.dataStream.(net.Conn).SetDeadline(t)
 }
 
 func (c *conn) SetReadDeadline(t time.Time) error {
-	if conn, ok := c.dataStream.(net.Conn); ok {
-		return conn.SetReadDeadline(t)
-	}
-	return nil
+	return c.dataStream.(net.Conn).SetReadDeadline(t)
 }
 
 func (c *conn) SetWriteDeadline(t time.Time) error {
-	if conn, ok := c.dataStream.(net.Conn); ok {
-		return conn.SetWriteDeadline(t)
-	}
-	return nil
+	return c.dataStream.(net.Conn).SetWriteDeadline(t)
 }
 
 func (c *conn) LocalAddr() net.Addr {
