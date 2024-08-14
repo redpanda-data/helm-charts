@@ -6,6 +6,8 @@
 #### Added
 #### Changed
 #### Fixed
+* The `truststores` projected volume no longer duplicates entries when the same
+  trust store is specified across multiple TLS configurations.
 #### Removed
 
 ### [5.9.0](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.0) - 2024-08-09
