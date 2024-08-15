@@ -200,7 +200,7 @@ func tlsConfigFromDot(dot *helmette.Dot, cert string) (*tls.Config, error) {
 	tlsConfig.RootCAs = pool
 
 	if redpanda.ClientAuthRequired(dot) {
-		clientCert, found, lookupErr := helmette.SafeLookup[corev1.Secret](dot, "", clientCertName)
+		clientCert, found, lookupErr := helmette.SafeLookup[corev1.Secret](dot, namespace, clientCertName)
 		if lookupErr != nil {
 			return nil, clientTLSError(lookupErr)
 		}
