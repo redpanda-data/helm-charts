@@ -64,19 +64,31 @@ func Tpl(tpl string, context any) string {
 // returns `nil, false` if the lookup fails instead of an empty dictionary.
 // See: https://github.com/helm/helm/blob/e24e31f6cc122405ae25069f5b3960036c202c46/pkg/engine/lookup_func.go#L60-L97
 func Lookup[T any, PT kube.AddrofObject[T]](dot *Dot, namespace, name string) (obj *T, found bool) {
-	ctl, err := kube.FromConfig(dot.KubeConfig)
+	obj, found, err := SafeLookup[T, PT](dot, namespace, name)
 	if err != nil {
 		panic(err)
 	}
 
-	obj, err = kube.Get[T, PT](context.Background(), ctl, kube.ObjectKey{Namespace: namespace, Name: name})
-	if err != nil {
-		if !errors.IsNotFound(err) {
-			panic(err)
-		}
+	return obj, found
+}
 
-		return nil, false
+// SafeLookup is a wrapper around helm's builtin lookup function. It acts
+// exactly like Lookup except it returns any errors that may have occurred
+// in the underlying lookup operations.
+func SafeLookup[T any, PT kube.AddrofObject[T]](dot *Dot, namespace, name string) (*T, bool, error) {
+	ctl, err := kube.FromConfig(dot.KubeConfig)
+	if err != nil {
+		return nil, false, err
 	}
 
-	return obj, true
+	obj, err := kube.Get[T, PT](context.Background(), ctl, kube.ObjectKey{Namespace: namespace, Name: name})
+	if err != nil {
+		if !errors.IsNotFound(err) {
+			return nil, false, err
+		}
+
+		return nil, false, nil
+	}
+
+	return obj, true, nil
 }

@@ -397,9 +397,23 @@
 {{- $internalDomain := (index .a 3) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (get (fromJson (include "redpanda.ServerList" (dict "a" (list $replicas "" $fullname $internalDomain ($l.admin.port | int)) ))) "r")) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.ServerList" -}}
+{{- $replicas := (index .a 0) -}}
+{{- $prefix := (index .a 1) -}}
+{{- $fullname := (index .a 2) -}}
+{{- $internalDomain := (index .a 3) -}}
+{{- $port := (index .a 4) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $result := (coalesce nil) -}}
 {{- range $_, $i := untilStep (((0 | int) | int)|int) ($replicas|int) (1|int) -}}
-{{- $result = (concat (default (list ) $result) (list (printf "%s-%d.%s:%d" $fullname $i $internalDomain (($l.admin.port | int) | int)))) -}}
+{{- $result = (concat (default (list ) $result) (list (printf "%s%s-%d.%s:%d" $prefix $fullname $i $internalDomain ($port | int)))) -}}
 {{- end -}}
 {{- if $_is_returning -}}
 {{- break -}}
