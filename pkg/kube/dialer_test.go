@@ -3,6 +3,7 @@ package kube
 import (
 	"context"
 	"crypto/tls"
+	"net"
 	"net/http"
 	"testing"
 	"time"
@@ -109,7 +110,28 @@ func TestDialer(t *testing.T) {
 	httpClient := &http.Client{
 		Transport: &http.Transport{
 			TLSClientConfig: tlsConfig,
-			DialContext:     dialer.DialContext,
+			DialContext: func(ctx context.Context, network string, address string) (net.Conn, error) {
+				conn, err := dialer.DialContext(ctx, network, address)
+				if err != nil {
+					return nil, err
+				}
+
+				// add in some deadline calls to make sure we don't panic/error
+
+				if err := conn.SetReadDeadline(time.Now().Add(1 * time.Minute)); err != nil {
+					return nil, err
+				}
+
+				if err := conn.SetWriteDeadline(time.Now().Add(1 * time.Minute)); err != nil {
+					return nil, err
+				}
+
+				if err := conn.SetDeadline(time.Now().Add(1 * time.Minute)); err != nil {
+					return nil, err
+				}
+
+				return conn, nil
+			},
 		},
 	}
 
