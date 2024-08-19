@@ -6,6 +6,12 @@
 #### Added
 #### Changed
 #### Fixed
+#### Removed
+
+### [5.9.1](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.1) - 2024-8-19
+#### Added
+#### Changed
+#### Fixed
 * The `truststores` projected volume no longer duplicates entries when the same
   trust store is specified across multiple TLS configurations.
 #### Removed
@@ -150,7 +156,13 @@
 
 ## Console Chart
 
-### [0.7.29](https://github.com/redpanda-data/helm-charts/releases/tag/console-0.7.29) - 2024-08-09
+### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/console-FILLMEIN) - YYYY-MM-DD
+#### Added
+#### Changed
+#### Fixed
+#### Removed
+
+### [0.7.29](https://github.com/redpanda-data/helm-charts/releases/tag/console-0.7.29) - 2024-08-19
 #### Added
 #### Changed
 #### Fixed
