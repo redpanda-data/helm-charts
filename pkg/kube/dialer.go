@@ -184,6 +184,10 @@ func (p *PodDialer) parseDNS(fqdn string) (types.NamespacedName, int, error) {
 
 	fqdn = addressPort[0]
 
+	// Trim any empty labels as our Helm chart-based
+	// URLS use FQDNs ending with an empty label
+	fqdn = strings.TrimSuffix(fqdn, ".")
+
 	isServiceDNS := true
 
 	if strings.Count(fqdn, ".") < 2 {
