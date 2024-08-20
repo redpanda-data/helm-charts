@@ -150,6 +150,8 @@ func TestDialer(t *testing.T) {
 		// https pod-based DNS
 		"https://name.default",
 		"https://name",
+		// trailing dots
+		"http://name.service.default.svc.cluster.local.",
 	} {
 		t.Run(host, func(t *testing.T) {
 			_, err = httpClient.Get(host)
