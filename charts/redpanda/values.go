@@ -44,40 +44,39 @@ const (
 // the Values struct as well to ensure that nothing can ever get out of sync.
 
 type Values struct {
-	NameOverride      string                        `json:"nameOverride"`
-	FullnameOverride  string                        `json:"fullnameOverride"`
-	ClusterDomain     string                        `json:"clusterDomain"`
-	CommonLabels      map[string]string             `json:"commonLabels"`
-	CommonAnnotations map[string]string             `json:"commonAnnotations"`
-	NodeSelector      map[string]string             `json:"nodeSelector"`
-	Affinity          corev1.Affinity               `json:"affinity" jsonschema:"required"`
-	Tolerations       []corev1.Toleration           `json:"tolerations"`
-	Image             Image                         `json:"image" jsonschema:"required,description=Values used to define the container image to be used for Redpanda"`
-	Service           *Service                      `json:"service"`
-	ImagePullSecrets  []corev1.LocalObjectReference `json:"imagePullSecrets"`
-	LicenseKey        string                        `json:"license_key" jsonschema:"deprecated,pattern=^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?\\.(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$|^$"`
-	LicenseSecretRef  *LicenseSecretRef             `json:"license_secret_ref" jsonschema:"deprecated"`
-	AuditLogging      AuditLogging                  `json:"auditLogging"`
-	Enterprise        Enterprise                    `json:"enterprise"`
-	RackAwareness     RackAwareness                 `json:"rackAwareness"`
-	Console           Console                       `json:"console"`
-	Connectors        Connectors                    `json:"connectors"`
-	Auth              Auth                          `json:"auth"`
-	TLS               TLS                           `json:"tls"`
-	External          ExternalConfig                `json:"external"`
-	Logging           Logging                       `json:"logging"`
-	Monitoring        Monitoring                    `json:"monitoring"`
-	Resources         RedpandaResources             `json:"resources"`
-	Storage           Storage                       `json:"storage"`
-	PostInstallJob    PostInstallJob                `json:"post_install_job"`
-	PostUpgradeJob    PostUpgradeJob                `json:"post_upgrade_job"`
-	Statefulset       Statefulset                   `json:"statefulset"`
-	ServiceAccount    ServiceAccountCfg             `json:"serviceAccount"`
-	RBAC              RBAC                          `json:"rbac"`
-	Tuning            Tuning                        `json:"tuning"`
-	Listeners         Listeners                     `json:"listeners"`
-	Config            Config                        `json:"config"`
-	Tests             *struct {
+	NameOverride     string                        `json:"nameOverride"`
+	FullnameOverride string                        `json:"fullnameOverride"`
+	ClusterDomain    string                        `json:"clusterDomain"`
+	CommonLabels     map[string]string             `json:"commonLabels"`
+	NodeSelector     map[string]string             `json:"nodeSelector"`
+	Affinity         corev1.Affinity               `json:"affinity" jsonschema:"required"`
+	Tolerations      []corev1.Toleration           `json:"tolerations"`
+	Image            Image                         `json:"image" jsonschema:"required,description=Values used to define the container image to be used for Redpanda"`
+	Service          *Service                      `json:"service"`
+	ImagePullSecrets []corev1.LocalObjectReference `json:"imagePullSecrets"`
+	LicenseKey       string                        `json:"license_key" jsonschema:"deprecated,pattern=^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?\\.(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$|^$"`
+	LicenseSecretRef *LicenseSecretRef             `json:"license_secret_ref" jsonschema:"deprecated"`
+	AuditLogging     AuditLogging                  `json:"auditLogging"`
+	Enterprise       Enterprise                    `json:"enterprise"`
+	RackAwareness    RackAwareness                 `json:"rackAwareness"`
+	Console          Console                       `json:"console"`
+	Connectors       Connectors                    `json:"connectors"`
+	Auth             Auth                          `json:"auth"`
+	TLS              TLS                           `json:"tls"`
+	External         ExternalConfig                `json:"external"`
+	Logging          Logging                       `json:"logging"`
+	Monitoring       Monitoring                    `json:"monitoring"`
+	Resources        RedpandaResources             `json:"resources"`
+	Storage          Storage                       `json:"storage"`
+	PostInstallJob   PostInstallJob                `json:"post_install_job"`
+	PostUpgradeJob   PostUpgradeJob                `json:"post_upgrade_job"`
+	Statefulset      Statefulset                   `json:"statefulset"`
+	ServiceAccount   ServiceAccountCfg             `json:"serviceAccount"`
+	RBAC             RBAC                          `json:"rbac"`
+	Tuning           Tuning                        `json:"tuning"`
+	Listeners        Listeners                     `json:"listeners"`
+	Config           Config                        `json:"config"`
+	Tests            *struct {
 		Enabled bool `json:"enabled"`
 	} `json:"tests"`
 	Force bool `json:"force"`
