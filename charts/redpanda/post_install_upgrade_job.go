@@ -106,6 +106,14 @@ func PostInstallUpgradeJob(dot *helmette.Dot) *batchv1.Job {
 		`set -e`,
 	)
 
+	script = append(script,
+		`if [ -d "/etc/secrets/users/" ]; then`,
+		`  IFS=":" read -r RPK_USER RPK_PASS MECHANISM < <(grep "" $(find /etc/secrets/users/* -print))`,
+		`  export RPK_USER`,
+		`  export RPK_PASS`,
+		`fi`,
+	)
+
 	if RedpandaAtLeast_22_2_0(dot) {
 		script = append(script,
 			`if [[ -n "$REDPANDA_LICENSE" ]] then`,
@@ -146,6 +154,7 @@ func PostInstallUpgradeJob(dot *helmette.Dot) *batchv1.Job {
 		//     "${!KEY}" => Dynamic variable resolution. ie: What is the value of the variable with a name equal to the value of $KEY?
 
 		`for KEY in "${!RPK_@}"; do`,
+		`  if [[ "$KEY" = "RPK_USER" || "$KEY" = "RPK_PASS" ]]; then continue; fi`,
 		`  config="${KEY#*RPK_}"`,
 		`  rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"`,
 		`done`,
@@ -203,6 +212,20 @@ func PostInstallUpgradeEnvironmentVariables(dot *helmette.Dot) []corev1.EnvVar {
 				SecretKeyRef: secretReference,
 			},
 		})
+	}
+
+	if adminAuth, found := values.Config.Cluster["admin_api_require_auth"]; found {
+		if str, ok := adminAuth.(string); ok {
+			envars = append(envars, corev1.EnvVar{
+				Name:  "RPK_ADMIN_API_REQUIRE_AUTH",
+				Value: str,
+			})
+		} else {
+			envars = append(envars, corev1.EnvVar{
+				Name:  "RPK_ADMIN_API_REQUIRE_AUTH",
+				Value: helmette.MustToJSON(adminAuth),
+			})
+		}
 	}
 
 	if !values.Storage.IsTieredStorageEnabled() {

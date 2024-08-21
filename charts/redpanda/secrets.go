@@ -99,6 +99,7 @@ func SecretSTSLifecycle(dot *helmette.Dot) *corev1.Secret {
 		`  done`,
 	}
 	if values.Auth.SASL.Enabled && values.Auth.SASL.SecretRef != "" {
+		// TODO: will fail if auth is required, but that's probably fine since it means superusers already exist?
 		postStartSh = append(postStartSh,
 			`  # Setup and export SASL bootstrap-user`,
 			`  IFS=":" read -r USER_NAME PASSWORD MECHANISM < <(grep "" $(find /etc/secrets/users/* -print))`,
@@ -271,6 +272,17 @@ func SecretConfigWatcher(dot *helmette.Dot) *corev1.Secret {
 			`    USERS_FILE=$(find ${USERS_DIR}/* -print)`,
 			`    USERS_LIST=""`,
 			`    READ_LIST_SUCCESS=0`,
+			``,
+			// TODO: handle case where auth is enabled and existing user is not first user, or existing user has password
+			// changed. Could maybe be handled by (1) trying all users found in secret until one passes auth and/or (2)
+			// persisting last user that worked from last time around the loop
+			`    # Set auth in case it's enabled`,
+			`    if [ -d "/etc/secrets/users/" ]; then`,
+			`      IFS=":" read -r RPK_USER RPK_PASS MECHANISM < <(grep "" $(find /etc/secrets/users/* -print))`,
+			`      export RPK_USER`,
+			`      export RPK_PASS`,
+			`    fi`,
+			``,
 			`    # Read line by line, handle a missing EOL at the end of file`,
 			`    while read p || [ -n "$p" ] ; do`,
 			`      IFS=":" read -r USER_NAME PASSWORD MECHANISM <<< $p`,
@@ -290,6 +302,8 @@ func SecretConfigWatcher(dot *helmette.Dot) *corev1.Secret {
 			`        if [[ $creation_result == *"User already exists"* ]]; then`,
 			`          echo "Update user ${USER_NAME}"`,
 			`          # we will try to update by first deleting`,
+			// TODO: absolutely do not delete if we have auth required
+			// TODO: use `rpk security user update $USER_NAME --new-password $PASSWORD --mechanism $MECHANISM`?
 			`          deletion_result=$(rpk acl user delete ${USER_NAME} 2>&1) && deletion_result_exit_code=$? || deletion_result_exit_code=$?`,
 			`          if [[ $deletion_result_exit_code -ne 0 ]]; then`,
 			`            echo "deletion of user ${USER_NAME} failed: ${deletion_result}"`,
@@ -638,15 +652,24 @@ func secretConfiguratorHTTPConfig(dot *helmette.Dot) []string {
 func adminTLSCurlFlags(dot *helmette.Dot) string {
 	values := helmette.Unwrap[Values](dot.Values)
 
-	if !values.Listeners.Admin.TLS.IsEnabled(&values.TLS) {
-		return ""
+	var snippet []string
+
+	// TODO: does this work? clean up basic auth stuff
+	// TODO: handle case where first user in secret doesn't auth, try all users
+	if values.Auth.IsSASLEnabled() {
+		snippet = append(snippet, `-K <(IFS=":" read -r USER PASS MECHANISM < <(grep "" $(find /etc/secrets/users/* -print)); echo "user: \"USER:PASS\"")`)
 	}
-	path := fmt.Sprintf("/etc/tls/certs/%s", values.Listeners.Admin.TLS.Cert)
-	if values.Listeners.Admin.TLS.RequireClientAuth {
-		return fmt.Sprintf("--cacert %s/ca.crt --cert %s/tls.crt --key %s/tls.key", path, path, path)
+
+	if values.Listeners.Admin.TLS.IsEnabled(&values.TLS) {
+		path := fmt.Sprintf("/etc/tls/certs/%s", values.Listeners.Admin.TLS.Cert)
+		if values.Listeners.Admin.TLS.RequireClientAuth {
+			snippet = append(snippet, fmt.Sprintf("--cacert %s/ca.crt --cert %s/tls.crt --key %s/tls.key", path, path, path))
+		} else {
+			// XXX fix up a bug in the template
+			snippet = append(snippet, fmt.Sprintf("--cacert %s/ca.crt", path))
+		}
 	}
-	// XXX fix up a bug in the template
-	return fmt.Sprintf("--cacert %s/ca.crt", path)
+	return helmette.Join(" ", snippet)
 }
 
 func externalAdvertiseAddress(dot *helmette.Dot) string {

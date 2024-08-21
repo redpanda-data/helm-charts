@@ -606,8 +606,7 @@ func statefulSetContainerRedpanda(dot *helmette.Dot) *corev1.Container {
 						`-c`,
 						helmette.Join("\n", []string{
 							`set -e`,
-							fmt.Sprintf(`RESULT=$(curl --silent --fail -k -m 5 %s "%s://%s/v1/status/ready")`,
-								adminTLSCurlFlags(dot),
+							fmt.Sprintf(`RESULT=$(curl --silent --fail -k -m 5 "%s://%s/v1/status/ready")`,
 								adminInternalHTTPProtocol(dot),
 								adminApiURLs(dot),
 							),
@@ -629,8 +628,7 @@ func statefulSetContainerRedpanda(dot *helmette.Dot) *corev1.Container {
 					Command: []string{
 						`/bin/sh`,
 						`-c`,
-						fmt.Sprintf(`curl --silent --fail -k -m 5 %s "%s://%s/v1/status/ready"`,
-							adminTLSCurlFlags(dot),
+						fmt.Sprintf(`curl --silent --fail -k -m 5 "%s://%s/v1/status/ready"`,
 							adminInternalHTTPProtocol(dot),
 							adminApiURLs(dot),
 						),

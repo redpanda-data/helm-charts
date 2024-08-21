@@ -1671,10 +1671,13 @@ func (c *NodeConfig) Translate() map[string]any {
 
 type ClusterConfig map[string]any
 
-func (c *ClusterConfig) Translate(replicas int32, skipDefaultTopic bool) map[string]any {
+func (c *ClusterConfig) Translate(replicas int32, skipDefaultTopic bool, skipAdminApiRequireAuth bool) map[string]any {
 	result := map[string]any{}
 
 	for k, v := range *c {
+		if k == "admin_api_require_auth" && !skipAdminApiRequireAuth {
+			continue
+		}
 		if k == "default_topic_replications" && !skipDefaultTopic {
 			r := int(replicas)
 			input := int(r)

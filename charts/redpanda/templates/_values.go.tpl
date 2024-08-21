@@ -1184,10 +1184,14 @@
 {{- $c := (index .a 0) -}}
 {{- $replicas := (index .a 1) -}}
 {{- $skipDefaultTopic := (index .a 2) -}}
+{{- $skipAdminApiRequireAuth := (index .a 3) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $result := (dict ) -}}
 {{- range $k, $v := $c -}}
+{{- if (and (eq $k "admin_api_require_auth") (not $skipAdminApiRequireAuth)) -}}
+{{- continue -}}
+{{- end -}}
 {{- if (and (eq $k "default_topic_replications") (not $skipDefaultTopic)) -}}
 {{- $r := ($replicas | int) -}}
 {{- $input := ($r | int) -}}

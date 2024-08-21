@@ -25,6 +25,7 @@
 {{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $script := (list `set -e` ``) -}}
+{{- $script = (concat (default (list ) $script) (list `if [ -d "/etc/secrets/users/" ]; then` `  IFS=":" read -r RPK_USER RPK_PASS RPK_SASL_MECHANISM < <(grep "" $(find /etc/secrets/users/* -print))` `  export RPK_USER` `  export RPK_PASS` `fi`)) -}}
 {{- range $key, $value := $values.config.cluster -}}
 {{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asintegral" (dict "a" (list $value) ))) "r")) ))) "r") -}}
 {{- $isInt64 := $tmp_tuple_1.T2 -}}

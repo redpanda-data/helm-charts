@@ -68,7 +68,7 @@ func BootstrapFile(dot *helmette.Dot) string {
 	bootstrap = helmette.Merge(bootstrap, values.AuditLogging.Translate(dot, values.Auth.IsSASLEnabled()))
 	bootstrap = helmette.Merge(bootstrap, values.Logging.Translate())
 	bootstrap = helmette.Merge(bootstrap, values.Config.Tunable.Translate())
-	bootstrap = helmette.Merge(bootstrap, values.Config.Cluster.Translate(values.Statefulset.Replicas, false))
+	bootstrap = helmette.Merge(bootstrap, values.Config.Cluster.Translate(values.Statefulset.Replicas, false, false))
 	bootstrap = helmette.Merge(bootstrap, values.Auth.Translate(values.Auth.IsSASLEnabled()))
 
 	return helmette.ToYaml(bootstrap)
@@ -91,7 +91,7 @@ func RedpandaConfigFile(dot *helmette.Dot, includeSeedServer bool) string {
 	redpanda = helmette.Merge(redpanda, values.AuditLogging.Translate(dot, values.Auth.IsSASLEnabled()))
 	redpanda = helmette.Merge(redpanda, values.Logging.Translate())
 	redpanda = helmette.Merge(redpanda, values.Config.Tunable.Translate())
-	redpanda = helmette.Merge(redpanda, values.Config.Cluster.Translate(values.Statefulset.Replicas, true))
+	redpanda = helmette.Merge(redpanda, values.Config.Cluster.Translate(values.Statefulset.Replicas, true, true))
 	redpanda = helmette.Merge(redpanda, values.Auth.Translate(values.Auth.IsSASLEnabled()))
 	redpanda = helmette.Merge(redpanda, values.Config.Node.Translate())
 

@@ -83,6 +83,15 @@ func PostUpgradeJobScript(dot *helmette.Dot) string {
 	values := helmette.Unwrap[Values](dot.Values)
 
 	script := []string{`set -e`, ``}
+
+	script = append(script,
+		`if [ -d "/etc/secrets/users/" ]; then`,
+		`  IFS=":" read -r RPK_USER RPK_PASS RPK_SASL_MECHANISM < <(grep "" $(find /etc/secrets/users/* -print))`,
+		`  export RPK_USER`,
+		`  export RPK_PASS`,
+		`fi`,
+	)
+
 	for key, value := range values.Config.Cluster {
 		asInt64, isInt64 := helmette.AsIntegral[int64](value)
 
