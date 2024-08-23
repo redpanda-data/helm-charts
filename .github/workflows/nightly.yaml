@@ -30,8 +30,7 @@ jobs:
       - uses: cachix/install-nix-action@V27
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - run: |
@@ -62,14 +61,12 @@ jobs:
       fail-fast: false
     runs-on: ubuntu-22.04
     steps:
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      - uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_SM_READONLY_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SM_READONLY_SECRET_ACCESS_KEY }}
           aws-region: us-west-2
-      - name: get secrets from aws sm
-        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+      - uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           secret-ids: |
             ,sdlc/prod/github/redpanda_sample_license
@@ -77,8 +74,7 @@ jobs:
       - uses: cachix/install-nix-action@V27
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - run: |
@@ -98,11 +94,9 @@ jobs:
         run: .github/annotate_kind_nodes.sh chart-testing
         # ===== Required Test Files === start
       - name: Create tls helm templates
-        run: |
-          .github/create_tls.sh "random-domain"
+        run: .github/create_tls.sh "random-domain"
       - name: Create sasl secret templates
-        run: |
-          .github/create-sasl-secret.sh "some-users"
+        run: .github/create-sasl-secret.sh "some-users"
       - name: Move files to redpanda template dir
         run: |
           mv external-tls-secret.yaml charts/redpanda/templates/
@@ -133,13 +127,13 @@ jobs:
 
           mv redpanda-license.yaml ./charts/redpanda/templates/
         # ===== Required Test Files === end
-      - name: install cert-manager
+      - name: Install cert-manager
         run: |
           helm repo add jetstack https://charts.jetstack.io &&
           helm install cert-manager --namespace cert-manager \
             --create-namespace --version v1.11.0 jetstack/cert-manager \
             --set installCRDs=true --wait --wait-for-jobs
-      - name: install prometheus-operator
+      - name: Install prometheus-operator
         run: |
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts &&
           helm install prometheus prometheus-community/kube-prometheus-stack \
@@ -152,14 +146,13 @@ jobs:
             --set alertmanager.enabled=false \
             --wait \
             --wait-for-jobs
-      - name: install metallb
+      - name: Install metallb
         run: |
           helm repo add metallb https://metallb.github.io/metallb &&
           helm install metallb metallb/metallb -n metallb-system \
             --create-namespace --version 0.13.10 --wait --wait-for-jobs
-      - name: apply metallb resources
-        run: |
-          kubectl -n metallb-system apply -f .github/metallb-config.yaml
+      - name: Apply metallb resources
+        run: kubectl -n metallb-system apply -f .github/metallb-config.yaml
       # we're testing console in the Redpanda chart
       - name: Run chart-testing (install and upgrade)
         run: |
