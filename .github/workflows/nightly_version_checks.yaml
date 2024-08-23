@@ -35,15 +35,13 @@ jobs:
     runs-on: ubuntu-22.04
     permissions:
       contents: write
+      id-token: write
     steps:
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      - uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_SM_READONLY_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SM_READONLY_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
-      - name: get secrets from aws sm
-        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+          aws-region: ${{ vars.RP_AWS_CRED_REGION }}
+          role-to-assume: arn:aws:iam::${{ secrets.RP_AWS_CRED_ACCOUNT_ID }}:role/${{ vars.RP_AWS_CRED_BASE_ROLE_NAME }}${{ github.event.repository.name }}
+      - uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           secret-ids: |
             ,sdlc/prod/github/actions_bot_token
@@ -76,7 +74,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: .github/bump_chart_versions.sh ${{ matrix.chart }}
       - run: task ci:lint
-      - name: debug -- delete me
+      - name: Debug -- delete me
         run: |
           echo TITLE
           echo steps.chartversion.outputs.TITLE
@@ -84,7 +82,7 @@ jobs:
           echo "${INPUT_BODY}"
           echo CHANGED
           echo steps.chartversion.outputs.CHANGED
-      - name: create PR
+      - name: Create PR
         if: steps.chartversion.outputs.CHANGED == 'true'
         uses: peter-evans/create-pull-request@c5a7806660adbe173f04e3e038b0ccdcd758773c  # v6.1.0
         with:
