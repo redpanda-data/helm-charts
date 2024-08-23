@@ -1,3 +1,4 @@
+---
 # Licensed to the Apache Software Foundation (ASF) under one or more
 # contributor license agreements.  See the NOTICE file distributed with
 # this work for additional information regarding copyright ownership.
@@ -14,16 +15,13 @@
 # limitations under the License.
 
 name: Test Connectors Chart
-
 on:
   workflow_call:
     inputs: {}
     secrets: {}
-
 defaults:
   run:
     shell: nix develop --impure --command bash {0}
-
 jobs:
   test:
     name: Run ct tests for connectors chart
@@ -34,41 +32,31 @@ jobs:
       - uses: cachix/install-nix-action@V27
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
-
       # Cache the nix store.
       - uses: DeterminateSystems/magic-nix-cache-action@v7
-
       # Cache helm repositories.
       - uses: actions/cache@v4
         with:
           key: helm-repositories
           path: |
             ~/.cache/helm
-
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - name: Create kind cluster
-        uses: helm/kind-action@0025e74a8c7512023d06dc019c617aa3cf561fde # v1.10.0
+        uses: helm/kind-action@0025e74a8c7512023d06dc019c617aa3cf561fde  # v1.10.0
         with:
           config: .github/kind.yaml
-
       - name: Check kind config worked
         run: kubectl get nodes
-
       - name: install cert-manager
-        run: |
-          task helm:install:cert-manager
-
-      - name: install Redpanda
+        run: task helm:install:cert-manager
+      - name: Install Redpanda
         run: |
           helm repo add redpanda https://charts.redpanda.com
           helm dependency build charts/redpanda
           helm install --namespace redpanda --create-namespace redpanda charts/redpanda --wait --wait-for-jobs \
             --set connectors.enabled=false
-
       - name: Copy Redpanda tls cert to connectors chart
         run: |
           kubectl -n redpanda wait --for=condition=Ready --timeout=10m certificates/redpanda-default-cert
@@ -77,14 +65,11 @@ jobs:
             sed -e '/namespace/d' | \
             sed -e '/resourceVersion/d' | \
             sed -e '/uid/d'  > charts/connectors/templates/hidden-only-for-ci/redpanda-tls.yaml
-
         # Chart-testing requires there to be a branch on the local repository
         # for diffing. This will create such a branch without performing a
         # checkout.
       - name: Fetch origin/main
-        run: |
-          git fetch origin ${{ github.event.repository.default_branch }}:${{ github.event.repository.default_branch }}
-
+        run: git fetch origin ${{ github.event.repository.default_branch }}:${{ github.event.repository.default_branch }}
       - name: Run chart-testing (install and upgrade)
         run: |
           ct install \
