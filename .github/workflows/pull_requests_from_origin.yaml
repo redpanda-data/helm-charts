@@ -46,12 +46,14 @@ jobs:
           - '9[6-9]*'  # some tests depend on a github secret that isn't available for fork PRs. Only run these tests in branch PRs.
       fail-fast: false
     runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_SM_READONLY_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SM_READONLY_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2
+          aws-region: ${{ vars.RP_AWS_CRED_REGION }}
+          role-to-assume: arn:aws:iam::${{ secrets.RP_AWS_CRED_ACCOUNT_ID }}:role/${{ vars.RP_AWS_CRED_BASE_ROLE_NAME }}${{ github.event.repository.name }}
       - uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           secret-ids: |
