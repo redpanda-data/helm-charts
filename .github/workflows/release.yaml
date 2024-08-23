@@ -19,11 +19,10 @@
 # FOR MORE DETAILS ON CR AND ENVIRONMENT VARS:
 # https://github.com/helm/chart-releaser#environment-variables
 
-name: release
+name: Release
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 defaults:
   run:
     shell: nix develop --impure --command bash {0}
@@ -33,14 +32,12 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      - uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_SM_READONLY_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SM_READONLY_SECRET_ACCESS_KEY }}
           aws-region: us-west-2
-      - name: get secrets from aws sm
-        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+      - uses: aws-actions/aws-secretsmanager-get-secrets@v2
         with:
           secret-ids: |
             ,sdlc/prod/github/actions_bot_token
@@ -66,14 +63,12 @@ jobs:
         with:
           token: ${{ env.ACTIONS_BOT_TOKEN }}
           fetch-depth: 0
-      - name: configure git
+      - name: Configure git
         run: |
           git config --global user.name 'vbotbuildovich'
           git config --global user.email 'vbotbuildovich@users.noreply.github.com'
           git config --global --add --bool push.autoSetupRemote true
-      - name: Add Repositories for each chart
-        run: |
-          helm repo add redpanda https://charts.redpanda.com
+      - run: helm repo add redpanda https://charts.redpanda.com
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@a917fd15b20e8b64b94d9158ad54cd6345335584  # v1.6.0
         env:
@@ -81,8 +76,7 @@ jobs:
           CR_SKIP_EXISTING: true
           CR_GENERATE_RELEASE_NOTES: true
       - name: Update testdata
-        run: |
-          go test ./charts/redpanda -update -short
+        run: go test ./charts/redpanda -update -short
       - name: Commit changes for testdata golden files
         run: |
           git add charts/redpanda/testdata
@@ -99,8 +93,7 @@ jobs:
           helm repo add prometheus https://prometheus-community.github.io/helm-charts
           helm dependency build charts/operator
       - name: Template the operator chart
-        run: |
-          helm template -n redpanda operator charts/operator --no-hooks > kustomize/operator/resources.yaml
+        run: helm template -n redpanda operator charts/operator --no-hooks > kustomize/operator/resources.yaml
       - name: Build kustomization for operator
         run: |
           cd kustomize/operator
