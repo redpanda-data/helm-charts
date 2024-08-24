@@ -1,14 +1,12 @@
+---
 name: Test Redpanda Chart
-
 on:
   workflow_call:
     inputs: {}
     secrets: {}
-
 defaults:
   run:
     shell: nix develop --impure --command bash {0}
-
 jobs:
   test-redpanda:
     name: "${{ matrix.version }}/${{ matrix.testvaluespattern }}: Run ct tests"
@@ -35,22 +33,17 @@ jobs:
       - uses: cachix/install-nix-action@V27
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
-
       # Cache the nix store.
       - uses: DeterminateSystems/magic-nix-cache-action@v7
-
       # Cache helm repositories.
       - uses: actions/cache@v4
         with:
           key: helm-repositories
           path: |
             ~/.cache/helm
-
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       # we're excluding console from testing until we have a way to test it with Redpanda
       - name: Run chart-testing (list-changed)
         id: list-changed
@@ -60,71 +53,51 @@ jobs:
           if [[ -n "$changed" ]]; then
             echo changed="true" >> "$GITHUB_OUTPUT"
           fi
-
       - name: Set up for matrix
         if: steps.list-changed.outputs.changed == 'true'
         run: |
           echo bash -O extglob -c "rm -v charts/redpanda/ci/!(${{ matrix.testvaluespattern }})"
           bash -O extglob -c "rm -v charts/redpanda/ci/!(${{ matrix.testvaluespattern }})"
-
       - name: Create kind cluster
-        uses: helm/kind-action@0025e74a8c7512023d06dc019c617aa3cf561fde # v1.10.0
+        uses: helm/kind-action@0025e74a8c7512023d06dc019c617aa3cf561fde  # v1.10.0
         if: steps.list-changed.outputs.changed == 'true'
         with:
           config: .github/kind.yaml
-
       - name: Check kind config worked
         if: steps.list-changed.outputs.changed == 'true'
         run: kubectl get nodes
-
       - name: Annotate nodes for rack awareness
         if: steps.list-changed.outputs.changed == 'true'
         run: .github/annotate_kind_nodes.sh chart-testing
-
-    #===== Required Test Files === start
-
+        # ===== Required Test Files === start
       - name: Create tls helm templates
         if: steps.list-changed.outputs.changed == 'true'
-        run: |
-          .github/create_tls.sh "random-domain"
-
+        run: .github/create_tls.sh "random-domain"
       - name: Create sasl secret templates
         if: steps.list-changed.outputs.changed == 'true'
-        run: |
-          .github/create-sasl-secret.sh "some-users"
-
+        run: .github/create-sasl-secret.sh "some-users"
       - name: Move files to redpanda template dir
         if: steps.list-changed.outputs.changed == 'true'
         run: |
           mv external-tls-secret.yaml charts/redpanda/templates/
           cp .github/external-service.yaml charts/redpanda/templates/
           mv some-users-updated.yaml charts/redpanda/templates/
-
-    #===== Required Test Files === end
-
-      - name: install cert-manager
+        # ===== Required Test Files === end
+      - name: Install cert-manager
         if: steps.list-changed.outputs.changed == 'true'
-        run: |
-          task helm:install:cert-manager
-
-      - name: install prometheus-operator
+        run: task helm:install:cert-manager
+      - name: Install prometheus-operator
         if: steps.list-changed.outputs.changed == 'true'
-        run: |
-          task helm:install:kube-prometheus-stack
-
-      - name: install metallb
+        run: task helm:install:kube-prometheus-stack
+      - name: Install metallb
         if: steps.list-changed.outputs.changed == 'true'
-        run: |
-          task helm:install:metallb
-
+        run: task helm:install:metallb
         # Chart-testing requires there to be a branch on the local repository
         # for diffing. This will create such a branch without performing a
         # checkout.
       - name: Fetch origin/main
         if: steps.list-changed.outputs.changed == 'true'
-        run: |
-          git fetch origin ${{ github.event.repository.default_branch }}:${{ github.event.repository.default_branch }}
-
+        run: git fetch origin ${{ github.event.repository.default_branch }}:${{ github.event.repository.default_branch }}
       - name: Run chart-testing (install and upgrade)
         if: steps.list-changed.outputs.changed == 'true'
         run: |
