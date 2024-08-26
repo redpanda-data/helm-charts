@@ -110,7 +110,7 @@ jobs:
     uses: ./.github/workflows/test_redpanda.yaml
     secrets: inherit
   test-charts-redpanda-integration:
-    needs: [ changes, lint ]
+    needs: [changes, lint]
     if: ${{ needs.changes.outputs.charts-redpanda == 'true' }}
     uses: ./.github/workflows/test_redpanda_integration.yaml
     secrets: inherit
