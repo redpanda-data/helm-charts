@@ -220,6 +220,41 @@ auth:
 
 -- pod-template-overrides --
 # ASSERT-NO-ERROR
+#
+# Showcase that most fields of the Statefulset's PodSpec may be overridden.
+# ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.securityContext.fsGroup}", 7878]
+# ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.securityContext.runAsGroup}", 8989]
+# ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.securityContext.runAsUser}", 9090]
+# ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.securityContext.runAsNonRoot}", true]
+# ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.containers[0].securityContext.allowPrivilegeEscalation}", false]
+# ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.containers[0].securityContext.privileged}", false]
+# ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.containers[0].securityContext.runAsGroup}", 6767]
+# ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.containers[0].securityContext.runAsUser}", 5656]
+# ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.metadata.labels.label}", "rp-sts"]
+# ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.metadata.annotations.anno}", "rp-sts"]
+# ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.containers[0].env[?(@.name==\"HELLO\")].value}", "WORLD"]
+statefulset:
+  podTemplate:
+    labels:
+      label: rp-sts
+    annotations:
+      anno: rp-sts
+    spec:
+      securityContext:
+        fsGroup: 7878
+        runAsGroup: 8989
+        runAsNonRoot: true
+        runAsUser: 9090
+      containers:
+      - name: redpanda
+        env:
+        - name: "HELLO"
+          value: "WORLD"
+        securityContext:
+          allowPrivilegeEscalation: false
+          privileged: false
+          runAsGroup: 6767
+          runAsUser: 5656
 
 # Showcase that most fields of the post_install_job's PodSpec may be overridden.
 # ASSERT-FIELD-EQUALS ["batch/v1/Job", "default/redpanda-configuration", "{.spec.template.spec.securityContext.fsGroup}", 1234]

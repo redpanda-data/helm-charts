@@ -789,7 +789,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -892,7 +892,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -911,7 +911,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -952,7 +952,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -1312,7 +1312,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -1394,7 +1394,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -2097,7 +2097,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -2195,7 +2195,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -2210,7 +2210,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -2247,7 +2247,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -2404,7 +2404,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -2477,7 +2477,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -3251,7 +3251,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -3354,7 +3354,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -3373,7 +3373,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -3414,7 +3414,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -3774,7 +3774,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -3856,7 +3856,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -4673,7 +4673,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -4774,7 +4774,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -4792,7 +4792,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -4832,7 +4832,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -4992,7 +4992,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -5068,7 +5068,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -5984,7 +5984,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -6090,7 +6090,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -6112,7 +6112,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -6156,7 +6156,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -6522,7 +6522,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -6611,7 +6611,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -7559,7 +7559,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -7662,7 +7662,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -7681,7 +7681,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -7722,7 +7722,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -8082,7 +8082,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -8164,7 +8164,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -9055,7 +9055,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -9172,7 +9172,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -9193,7 +9193,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -9236,7 +9236,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -9699,7 +9699,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -9787,7 +9787,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -10615,7 +10615,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -10718,7 +10718,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -10737,7 +10737,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -10778,7 +10778,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -11138,7 +11138,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -11220,7 +11220,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -12098,7 +12098,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -12203,7 +12203,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -12224,7 +12224,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -12271,7 +12271,7 @@ spec:
           ext4 & wait $!
         command:
         - /bin/sh
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: fs-validator
         resources:
           limits:
@@ -12320,7 +12320,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources:
           limits:
@@ -12705,7 +12705,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -12787,7 +12787,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -13610,7 +13610,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -13713,7 +13713,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -13732,7 +13732,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -13773,7 +13773,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -14137,7 +14137,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -14219,7 +14219,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -15178,7 +15178,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -15284,7 +15284,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -15306,7 +15306,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -15350,7 +15350,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -15716,7 +15716,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -15804,7 +15804,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -16633,7 +16633,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -16736,7 +16736,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -16755,7 +16755,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -16796,7 +16796,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -17061,7 +17061,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -17143,7 +17143,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -18053,7 +18053,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -18156,7 +18156,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -18175,7 +18175,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -18216,7 +18216,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -18481,7 +18481,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -18563,7 +18563,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -19291,7 +19291,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -19389,7 +19389,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -19404,7 +19404,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -19441,7 +19441,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -19621,7 +19621,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -19691,7 +19691,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -20502,7 +20502,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -20605,7 +20605,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -20624,7 +20624,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -20665,7 +20665,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -21056,7 +21056,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -21138,7 +21138,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -22191,7 +22191,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -22294,7 +22294,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -22328,7 +22328,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -22369,7 +22369,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -22729,7 +22729,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -22811,7 +22811,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -23634,7 +23634,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -23740,7 +23740,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -23759,7 +23759,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -23800,7 +23800,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -24160,7 +24160,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -24242,7 +24242,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -25065,7 +25065,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -25168,7 +25168,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -25187,7 +25187,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -25228,7 +25228,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -25592,7 +25592,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -25674,7 +25674,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -26570,7 +26570,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -26675,7 +26675,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -26694,7 +26694,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -26751,7 +26751,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -27136,7 +27136,7 @@ spec:
           value: ${AWS_REGION}
         - name: RPK_CLOUD_STORAGE_SEGMENT_MAX_UPLOAD_INTERVAL_SEC
           value: "1"
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -27218,7 +27218,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -28115,7 +28115,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -28220,7 +28220,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -28239,7 +28239,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -28296,7 +28296,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -28683,7 +28683,7 @@ spec:
           value: US-WEST1
         - name: RPK_CLOUD_STORAGE_SEGMENT_MAX_UPLOAD_INTERVAL_SEC
           value: "1"
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -28765,7 +28765,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -29660,7 +29660,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -29765,7 +29765,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -29784,7 +29784,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -29841,7 +29841,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -30225,7 +30225,7 @@ spec:
           value: "true"
         - name: RPK_CLOUD_STORAGE_SEGMENT_MAX_UPLOAD_INTERVAL_SEC
           value: "1"
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -30307,7 +30307,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -31139,7 +31139,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -31244,7 +31244,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -31263,7 +31263,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -31320,7 +31320,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -31702,7 +31702,7 @@ spec:
           value: "true"
         - name: RPK_CLOUD_STORAGE_SEGMENT_MAX_UPLOAD_INTERVAL_SEC
           value: "1"
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -31784,7 +31784,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -32680,7 +32680,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -32785,7 +32785,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -32804,7 +32804,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -32861,7 +32861,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -33258,7 +33258,7 @@ spec:
           value: ${AWS_REGION}
         - name: RPK_CLOUD_STORAGE_SEGMENT_MAX_UPLOAD_INTERVAL_SEC
           value: "1"
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -33340,7 +33340,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -34237,7 +34237,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -34342,7 +34342,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -34361,7 +34361,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -34418,7 +34418,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -34817,7 +34817,7 @@ spec:
           value: US-WEST1
         - name: RPK_CLOUD_STORAGE_SEGMENT_MAX_UPLOAD_INTERVAL_SEC
           value: "1"
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -34899,7 +34899,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -35794,7 +35794,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -35899,7 +35899,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -35918,7 +35918,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -35975,7 +35975,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -36372,7 +36372,7 @@ spec:
           value: "true"
         - name: RPK_CLOUD_STORAGE_SEGMENT_MAX_UPLOAD_INTERVAL_SEC
           value: "1"
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -36454,7 +36454,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -37286,7 +37286,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -37391,7 +37391,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -37410,7 +37410,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -37467,7 +37467,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -37862,7 +37862,7 @@ spec:
           value: "true"
         - name: RPK_CLOUD_STORAGE_SEGMENT_MAX_UPLOAD_INTERVAL_SEC
           value: "1"
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -37944,7 +37944,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -38840,7 +38840,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -38945,7 +38945,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -38964,7 +38964,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -39021,7 +39021,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -39418,7 +39418,7 @@ spec:
           value: ${AWS_REGION}
         - name: RPK_CLOUD_STORAGE_SEGMENT_MAX_UPLOAD_INTERVAL_SEC
           value: "1"
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -39500,7 +39500,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -40397,7 +40397,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -40502,7 +40502,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -40521,7 +40521,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -40578,7 +40578,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -40977,7 +40977,7 @@ spec:
           value: US-WEST1
         - name: RPK_CLOUD_STORAGE_SEGMENT_MAX_UPLOAD_INTERVAL_SEC
           value: "1"
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -41059,7 +41059,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -41954,7 +41954,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -42059,7 +42059,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -42078,7 +42078,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -42135,7 +42135,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -42532,7 +42532,7 @@ spec:
           value: "true"
         - name: RPK_CLOUD_STORAGE_SEGMENT_MAX_UPLOAD_INTERVAL_SEC
           value: "1"
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -42614,7 +42614,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -43446,7 +43446,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -43551,7 +43551,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -43570,7 +43570,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -43627,7 +43627,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -44022,7 +44022,7 @@ spec:
           value: "true"
         - name: RPK_CLOUD_STORAGE_SEGMENT_MAX_UPLOAD_INTERVAL_SEC
           value: "1"
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -44104,7 +44104,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -44927,7 +44927,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -45030,7 +45030,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -45049,7 +45049,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -45090,7 +45090,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -45450,7 +45450,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -45532,7 +45532,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -46356,7 +46356,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -46459,7 +46459,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -46478,7 +46478,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -46519,7 +46519,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -46879,7 +46879,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -46961,7 +46961,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -47788,7 +47788,7 @@ spec:
           value: THIS_IS_AN_EXAMPLE
         - name: POD_IP
           value: This is an override and will break the deployment
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -47893,7 +47893,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -47912,7 +47912,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -47953,7 +47953,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -48313,7 +48313,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -48395,7 +48395,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -49286,7 +49286,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -49397,7 +49397,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -49416,7 +49416,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -49457,7 +49457,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -49817,7 +49817,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -49899,7 +49899,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -50740,7 +50740,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -50843,7 +50843,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -50862,7 +50862,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -50903,7 +50903,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -51266,7 +51266,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -51348,7 +51348,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -52401,7 +52401,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -52504,7 +52504,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext:
@@ -52550,7 +52550,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -52591,7 +52591,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -52951,7 +52951,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -53033,7 +53033,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 2222
@@ -54043,7 +54043,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -54146,7 +54146,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -54165,7 +54165,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -54202,7 +54202,7 @@ spec:
           xfs & wait $!
         command:
         - /bin/sh
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: fs-validator
         resources: {}
         securityContext:
@@ -54243,7 +54243,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -54607,7 +54607,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -54689,7 +54689,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -55705,7 +55705,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -55808,7 +55808,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -55827,7 +55827,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -55868,7 +55868,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -56228,7 +56228,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -56310,7 +56310,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -57133,7 +57133,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -57236,7 +57236,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -57255,7 +57255,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -57296,7 +57296,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -57660,7 +57660,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -57742,7 +57742,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -58572,7 +58572,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -58675,7 +58675,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -58694,7 +58694,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -58735,7 +58735,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -59127,7 +59127,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -59209,7 +59209,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -60041,7 +60041,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -60144,7 +60144,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -60163,7 +60163,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -60204,7 +60204,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -60579,7 +60579,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources:
           limits:
@@ -60680,7 +60680,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 1000
@@ -61518,7 +61518,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -61621,7 +61621,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -61640,7 +61640,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -61681,7 +61681,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -62056,7 +62056,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources:
           limits:
@@ -62159,7 +62159,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 1000
@@ -62988,7 +62988,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -63091,7 +63091,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -63112,7 +63112,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -63153,7 +63153,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -63513,7 +63513,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -63597,7 +63597,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -65759,7 +65759,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -65862,7 +65862,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -65881,7 +65881,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -65922,7 +65922,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -66226,7 +66226,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -66308,7 +66308,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -67336,7 +67336,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -67442,7 +67442,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -67464,7 +67464,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -67508,7 +67508,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -67876,7 +67876,7 @@ spec:
         env:
         - name: REDPANDA_LICENSE
           value: ${REDPANDA_LICENSE}
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -67964,7 +67964,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -68856,7 +68856,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -68959,7 +68959,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -68978,7 +68978,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -69019,7 +69019,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -69381,7 +69381,7 @@ spec:
         env:
         - name: REDPANDA_LICENSE
           value: ${REDPANDA_LICENSE}
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -69463,7 +69463,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -70291,7 +70291,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -70394,7 +70394,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -70413,7 +70413,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -70454,7 +70454,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -70819,7 +70819,7 @@ spec:
             secretKeyRef:
               key: license-key
               name: redpanda-license
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -70901,7 +70901,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -71749,7 +71749,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -71854,7 +71854,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -71873,7 +71873,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -71930,7 +71930,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -72316,7 +72316,7 @@ spec:
           value: "true"
         - name: RPK_CLOUD_STORAGE_REGION
           value: test
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -72398,7 +72398,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -73221,7 +73221,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -73325,7 +73325,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -73344,7 +73344,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -73385,7 +73385,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -73745,7 +73745,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -73828,7 +73828,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           allowPrivilegeEscalation: false
@@ -74652,7 +74652,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -74756,7 +74756,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -74775,7 +74775,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -74816,7 +74816,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -75176,7 +75176,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -75259,7 +75259,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           allowPrivilegeEscalation: false
@@ -76083,7 +76083,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -76186,7 +76186,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -76205,7 +76205,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -76246,7 +76246,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -76606,7 +76606,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -76688,7 +76688,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -77644,7 +77644,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -77750,7 +77750,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -77772,7 +77772,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -77816,7 +77816,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -78182,7 +78182,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -78270,7 +78270,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -105178,7 +105178,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -105281,7 +105281,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -105300,7 +105300,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -105341,7 +105341,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -105507,7 +105507,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -105589,7 +105589,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -106392,7 +106392,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -106495,7 +106495,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -106514,7 +106514,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -106555,7 +106555,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -106721,7 +106721,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -106803,7 +106803,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -107708,7 +107708,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -107822,7 +107822,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -107841,7 +107841,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -107882,7 +107882,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -108276,7 +108276,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -108358,7 +108358,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -109186,7 +109186,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -109291,7 +109291,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -109312,7 +109312,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -109355,7 +109355,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -109843,7 +109843,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -109931,7 +109931,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -110760,7 +110760,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -110863,7 +110863,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -110882,7 +110882,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -110923,7 +110923,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -111283,7 +111283,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -111365,7 +111365,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
@@ -120892,7 +120892,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
             exec:
@@ -120995,7 +120995,7 @@ spec:
         command:
         - /bin/sh
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
         securityContext: {}
@@ -121014,7 +121014,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: tuning
         resources: {}
         securityContext:
@@ -121055,7 +121055,7 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
         securityContext:
@@ -121415,7 +121415,7 @@ spec:
         - bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
         securityContext:
@@ -121497,7 +121497,7 @@ spec:
         - /bin/bash
         - -c
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda:v24.2.2
+        image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
           runAsGroup: 101
