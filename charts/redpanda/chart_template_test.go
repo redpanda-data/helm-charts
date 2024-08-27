@@ -459,7 +459,7 @@ func AssertFieldEquals(t *testing.T, params []json.RawMessage, manifests []byte)
 			actual, err := json.Marshal(result[0].Interface())
 			require.NoError(t, err)
 
-			require.JSONEq(t, string(fieldValue), string(actual))
+			require.JSONEq(t, string(fieldValue), string(actual), "%q", fieldPath)
 		}
 
 		return
