@@ -134,3 +134,10 @@ initContainers:
        - |
          set -xe
          echo "Hello {{ add 1 2 }}!"
+
+-- console-with-oidc-conf --
+
+console:
+  config:
+    login:
+      enabled: true
