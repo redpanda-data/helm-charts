@@ -324,3 +324,34 @@ listeners:
         secretKeyRef:
           key: redpanda-truststore.pem
           name: redpanda-truststore.crt
+
+-- service-monitor-without-tls-in-admin-api --
+# ASSERT-NO-ERROR
+# ASSERT-GOLDEN
+# ASSERT-STATEFULSET-ALL-VOLUMES-ARE-USED
+# ASSERT-STATEFULSET-VOLUME-MOUNTS-VERIFICATION
+# ASSERT-VALID-RPK-CONFIGURATION
+# ASSERT-FIELD-EQUALS ["monitoring.coreos.com/v1/ServiceMonitor", "default/redpanda", "{.spec.endpoints[*].scheme}", "http"]
+monitoring:
+  enabled: true
+
+listeners:
+  admin:
+    tls:
+      enabled: false
+
+-- service-monitor-with-tls-in-admin-api --
+# By default Admin API listeners has enabled TLS but this explicitly enable this
+# ASSERT-NO-ERROR
+# ASSERT-GOLDEN
+# ASSERT-STATEFULSET-ALL-VOLUMES-ARE-USED
+# ASSERT-STATEFULSET-VOLUME-MOUNTS-VERIFICATION
+# ASSERT-VALID-RPK-CONFIGURATION
+# ASSERT-FIELD-EQUALS ["monitoring.coreos.com/v1/ServiceMonitor", "default/redpanda", "{.spec.endpoints[*].scheme}", "https"]
+monitoring:
+  enabled: true
+
+listeners:
+  admin:
+    tls:
+      enabled: true

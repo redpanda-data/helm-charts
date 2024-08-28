@@ -35,9 +35,10 @@ func ServiceMonitor(dot *helmette.Dot) *monitoringv1.ServiceMonitor {
 		Path:        "/public_metrics",
 		Port:        "admin",
 		EnableHttp2: values.Monitoring.EnableHttp2,
+		Scheme:      "http",
 	}
 
-	if TLSEnabled(dot) || values.Monitoring.TLSConfig != nil {
+	if values.Listeners.Admin.TLS.IsEnabled(&values.TLS) || values.Monitoring.TLSConfig != nil {
 		endpoint.Scheme = "https"
 		endpoint.TLSConfig = values.Monitoring.TLSConfig
 
