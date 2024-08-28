@@ -10,8 +10,8 @@
 {{- (dict "r" (coalesce nil)) | toJson -}}
 {{- break -}}
 {{- end -}}
-{{- $endpoint := (mustMergeOverwrite (dict ) (dict "interval" $values.monitoring.scrapeInterval "path" "/public_metrics" "port" "admin" "enableHttp2" $values.monitoring.enableHttp2 )) -}}
-{{- if (or (get (fromJson (include "redpanda.TLSEnabled" (dict "a" (list $dot) ))) "r") (ne $values.monitoring.tlsConfig (coalesce nil))) -}}
+{{- $endpoint := (mustMergeOverwrite (dict ) (dict "interval" $values.monitoring.scrapeInterval "path" "/public_metrics" "port" "admin" "enableHttp2" $values.monitoring.enableHttp2 "scheme" "http" )) -}}
+{{- if (or (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $values.listeners.admin.tls $values.tls) ))) "r") (ne $values.monitoring.tlsConfig (coalesce nil))) -}}
 {{- $_ := (set $endpoint "scheme" "https") -}}
 {{- $_ := (set $endpoint "tlsConfig" $values.monitoring.tlsConfig) -}}
 {{- if (eq $endpoint.tlsConfig (coalesce nil)) -}}
