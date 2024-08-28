@@ -42,7 +42,7 @@ spec:
       - bash
       - -c
       - |
-        curl {{ template "curl-options" . }} http://{{ include "redpanda.fullname" . }}-console.{{ .Release.Namespace }}.svc:{{ include "console.containerPort" (dict "Values" .Values.console) }}/api/cluster
+        curl {{ template "curl-options" . }} http://{{ include "redpanda.fullname" . }}-console.{{ .Release.Namespace }}.svc:{{ (get (fromJson (include "console.ContainerPort" (dict "a" (list (dict "Values" (dict "AsMap" .Values.console)) )))) "r" ) }}/api/cluster
       volumeMounts: {{ include "default-mounts" . | nindent 8 }}
       securityContext: {{ include "container-security-context" . | nindent 8 }}
   volumes: {{ include "default-volumes" . | nindent 4 }}
