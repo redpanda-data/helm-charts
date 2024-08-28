@@ -38,9 +38,10 @@ limitations under the License.
   "secret" $secretConfig
   )}}
 
-{{ $console := merge $config .Subcharts.console }}
+{{ $secretValues := merge $config .Subcharts.console }}
+{{ $wrappedSecretValues := (dict "Chart" .Subcharts.console.Chart "Release" .Release "Values" (dict "AsMap" $secretValues.Values)) }}
 ---
-{{ include (print .Subcharts.console.Template.BasePath "/secret.yaml") $console }}
+{{- include "_shims.render-manifest" (list "console.Secret" $wrappedSecretValues) -}}
   {{ end }}
 {{ end }}
 
@@ -59,10 +60,11 @@ limitations under the License.
     )
 }}
 
-{{ $console := merge $config .Subcharts.console }}
+{{ $configMapValues := merge $config .Subcharts.console }}
 ---
-{{ include (print .Subcharts.console.Template.BasePath "/configmap.yaml") $console }}
-{{ $configmap = include (print .Subcharts.console.Template.BasePath "/configmap.yaml") $console }}
+{{ $wrappedSecretValues := (dict "Chart" .Subcharts.console.Chart "Release" .Release "Values" (dict "AsMap" $configMapValues.Values)) }}
+{{- include "_shims.render-manifest" (list "console.ConfigMap" $wrappedSecretValues) -}}
+{{ $configmap = include "_shims.render-manifest" (list "console.ConfigMap" $wrappedSecretValues) }}
 {{ end }}
 
 {{/* Deployment */}}
@@ -221,8 +223,9 @@ limitations under the License.
 {{ $consoleValues := merge $consoleValues (dict "Values" (dict "podAnnotations" (dict "checksum-redpanda-chart/config" ( $configmap | toYaml | sha256sum )))) }}
 {{ end }}
 
-{{ $helmVars := merge $consoleValues .Subcharts.console }}
+{{ $deploymentValues := merge $consoleValues .Subcharts.console }}
+{{ $wrappedDeploymentValues := (dict "Chart" .Subcharts.console.Chart "Release" .Release "Values" (dict "AsMap" $deploymentValues.Values)) }}
 
 ---
-{{ include (print .Subcharts.console.Template.BasePath "/deployment.yaml") $helmVars }}
+{{- include "_shims.render-manifest" (list "console.Deployment" $wrappedDeploymentValues) -}}
 {{ end }}

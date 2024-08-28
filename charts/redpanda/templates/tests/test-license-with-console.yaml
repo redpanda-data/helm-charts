@@ -15,6 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */}}
 {{- if and .Values.tests.enabled (include "is-licensed" . | fromJson).bool .Values.console.enabled }}
+{{- $consolePort := (get (fromJson (include "console.ContainerPort" (dict "a" (list (dict "Values" (dict "AsMap" .Values.console)) )))) "r" ) }}
 apiVersion: v1
 kind: Pod
 metadata:
@@ -45,14 +46,14 @@ spec:
           set -xe
 
           max_iteration=10
-          curl -vm3 --fail --retry "120" --retry-max-time "120" http://{{ include "redpanda.fullname" . }}-console.{{ .Release.Namespace }}.svc:{{ include "console.containerPort" (dict "Values" .Values.console) }}/api/cluster/overview | jq .
-          type=$(curl -svm3 --fail --retry "120" --retry-max-time "120" http://{{ include "redpanda.fullname" . }}-console.{{ .Release.Namespace }}.svc:{{ include "console.containerPort" (dict "Values" .Values.console) }}/api/cluster/overview | jq -r .console.license.type)
+          curl -vm3 --fail --retry "120" --retry-max-time "120" http://{{ include "redpanda.fullname" . }}-console.{{ .Release.Namespace }}.svc:{{$consolePort}}/api/cluster/overview | jq .
+          type=$(curl -svm3 --fail --retry "120" --retry-max-time "120" http://{{ include "redpanda.fullname" . }}-console.{{ .Release.Namespace }}.svc:{{$consolePort}}/api/cluster/overview | jq -r .console.license.type)
           while [[ $max_iteration -gt 0 && ("$type" == "open_source" || "$type" == "") ]]; do
             max_iteration=$(( max_iteration - 1 ))
-            type=$(curl -svm3 --fail --retry "120" --retry-max-time "120" http://{{ include "redpanda.fullname" . }}-console.{{ .Release.Namespace }}.svc:{{ include "console.containerPort" (dict "Values" .Values.console) }}/api/cluster/overview | jq -r .console.license.type)
+            type=$(curl -svm3 --fail --retry "120" --retry-max-time "120" http://{{ include "redpanda.fullname" . }}-console.{{ .Release.Namespace }}.svc:{{$consolePort}}/api/cluster/overview | jq -r .console.license.type)
           done
           if [[ "$type" == "open_source" || "$type" == "" ]]; then
-            curl -svm3 --fail --retry "120" --retry-max-time "120" http://{{ include "redpanda.fullname" . }}-console.{{ .Release.Namespace }}.svc:{{ include "console.containerPort" (dict "Values" .Values.console) }}/api/cluster/overview | jq .
+            curl -svm3 --fail --retry "120" --retry-max-time "120" http://{{ include "redpanda.fullname" . }}-console.{{ .Release.Namespace }}.svc:{{$consolePort}}/api/cluster/overview | jq .
             exit 1
           fi
           set +x
