@@ -137,7 +137,34 @@ initContainers:
 
 -- console-with-oidc-conf --
 
+extraEnvFrom:
+  - secretRef:
+      name: my-client-secret-oidc
+
+extraVolumes:
+  - name: oidc-issuer-tls
+    secret:
+      secretName: corporate-issuer-tls
+
+extraVolumeMounts:
+  - name: oidc-issuer-tls
+    mountPath: /oidc-tls
+    readOnly: true
+
 console:
   config:
     login:
       enabled: true
+      oidc:
+        enabled: true
+        clientId: XYZ
+        domain: my-test-domain.com
+        issuerUrl: my-oidc-issuer.com
+        displayName: my-corp-provider
+        userIdentifyingClaimKey: corpo-name
+        issuerTls:
+          enabled: true
+          caFilepath: /oidc-tls/ca.crt
+          certFilepath: /oidc-tls/tls.crt
+          keyFilepath: /oidc-tls/tls.key
+          insecureSkipTlsVerify: false
