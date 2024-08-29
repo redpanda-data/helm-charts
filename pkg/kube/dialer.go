@@ -140,7 +140,7 @@ func (p *PodDialer) DialContext(ctx context.Context, network string, address str
 		p.cleanupConnection(pod)
 	}
 
-	return wrapConn(ctx, onClose, network, address, dataStream, errorStream), nil
+	return wrapConn(onClose, network, address, dataStream, errorStream), nil
 }
 
 // parseDNS attempts to determine the intended pod to target, currently the
@@ -282,13 +282,12 @@ type conn struct {
 	onClose     func()
 
 	errCh  chan error
-	stopCh chan error
 	closed atomic.Bool
 }
 
 var _ net.Conn = (*conn)(nil)
 
-func wrapConn(ctx context.Context, onClose func(), network, remote string, s, err httpstream.Stream) *conn {
+func wrapConn(onClose func(), network, remote string, s, err httpstream.Stream) *conn {
 	c := &conn{
 		dataStream:  s,
 		errorStream: err,
@@ -296,22 +295,11 @@ func wrapConn(ctx context.Context, onClose func(), network, remote string, s, er
 		remote:      remote,
 		onClose:     onClose,
 		errCh:       make(chan error, 1),
-		stopCh:      make(chan error),
 	}
 
 	go c.pollErrors()
-	go c.checkCancelation(ctx)
 
 	return c
-}
-
-func (c *conn) checkCancelation(ctx context.Context) {
-	select {
-	case <-ctx.Done():
-		c.writeError(ctx.Err())
-		c.Close()
-	case <-c.stopCh:
-	}
 }
 
 func (c *conn) pollErrors() {
@@ -388,10 +376,6 @@ func (c *conn) Close() error {
 
 	// call our onClose cleanup handler
 	defer c.onClose()
-
-	// signal to any underlying goroutines that we are
-	// stopping
-	defer close(c.stopCh)
 
 	// closing the underlying connection should cause
 	// our error stream reading routine to stop

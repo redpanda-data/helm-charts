@@ -3,6 +3,7 @@ package kube
 import (
 	"context"
 	"crypto/tls"
+	"io"
 	"net"
 	"net/http"
 	"testing"
@@ -154,8 +155,31 @@ func TestDialer(t *testing.T) {
 		"http://name.service.default.svc.cluster.local.",
 	} {
 		t.Run(host, func(t *testing.T) {
-			_, err = httpClient.Get(host)
-			require.NoError(t, err)
+			// Test the pooling behavior of HTTPClient by making requests to
+			// the same hosts a few times.
+			for i := 0; i < 5; i++ {
+				func() {
+					// Run in a closure so we have a context scoped to the life
+					// time of each request we make, which is distinct from the
+					// lifetime of the connection due to http.Transport's
+					// connection pooling.
+					ctx, cancel := context.WithCancel(context.Background())
+					defer cancel()
+
+					req, err := http.NewRequestWithContext(ctx, http.MethodGet, host, nil)
+					require.NoError(t, err)
+
+					resp, err := httpClient.Do(req)
+					require.NoError(t, err)
+
+					defer resp.Body.Close()
+
+					_, err = io.ReadAll(resp.Body)
+					require.NoError(t, err)
+
+					require.Equal(t, http.StatusOK, resp.StatusCode)
+				}()
+			}
 		})
 	}
 }
