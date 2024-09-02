@@ -613,6 +613,22 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "redpanda.InternalTLS.ServerCAPath" -}}
+{{- $t := (index .a 0) -}}
+{{- $tls := (index .a 1) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- if (get (fromJson (include "redpanda.TLSCertMap.MustGet" (dict "a" (list (deepCopy $tls.certs) $t.cert) ))) "r").caEnabled -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (printf "/etc/tls/certs/%s/ca.crt" $t.cert)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (printf "/etc/tls/certs/%s/tls.crt" $t.cert)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "redpanda.ExternalTLS.GetCert" -}}
 {{- $t := (index .a 0) -}}
 {{- $i := (index .a 1) -}}
