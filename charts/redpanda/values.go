@@ -1047,6 +1047,20 @@ func (t *InternalTLS) TrustStoreFilePath(tls *TLS) string {
 	return defaultTruststorePath
 }
 
+// ServerCAPath returns the path on disk to a certificate that may be used to
+// verify a connection with this server.
+func (t *InternalTLS) ServerCAPath(tls *TLS) string {
+	if tls.Certs.MustGet(t.Cert).CAEnabled {
+		return fmt.Sprintf("/etc/tls/certs/%s/ca.crt", t.Cert)
+	}
+	// Strange but technically correct, if CAEnabled is false, we can't safely
+	// assume that a ca.crt file will exist. So we fallback to using the
+	// server's certificate itself.
+	// Other options would be: failing or falling back to the container's
+	// default truststore.
+	return fmt.Sprintf("/etc/tls/certs/%s/tls.crt", t.Cert)
+}
+
 // ExternalTLS is the TLS configuration associated with a given "external"
 // listener. The schema is more loose than InternalTLS. All fields have default
 // values but are interpreted differently depending on their context (IE kafka

@@ -946,7 +946,9 @@ func semver(dot *helmette.Dot) string {
 func statefulSetChecksumAnnotation(dot *helmette.Dot) string {
 	values := helmette.Unwrap[Values](dot.Values)
 	var dependencies []any
-	dependencies = append(dependencies, ConfigMapsWithoutSeedServer(dot))
+	// NB: Seed servers is excluded to avoid a rolling restart when only
+	// replicas is changed.
+	dependencies = append(dependencies, RedpandaConfigMap(dot, false))
 	if values.External.Enabled {
 		dependencies = append(dependencies, ptr.Deref(values.External.Domain, ""))
 		if helmette.Empty(values.External.Addresses) {

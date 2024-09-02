@@ -26,14 +26,7 @@ import (
 )
 
 func ConfigMaps(dot *helmette.Dot) []*corev1.ConfigMap {
-	cms := []*corev1.ConfigMap{RedpandaConfigMap(dot, true)}
-	cms = append(cms, RPKProfile(dot)...)
-	return cms
-}
-
-func ConfigMapsWithoutSeedServer(dot *helmette.Dot) []*corev1.ConfigMap {
-	cms := []*corev1.ConfigMap{RedpandaConfigMap(dot, false)}
-	cms = append(cms, RPKProfile(dot)...)
+	cms := []*corev1.ConfigMap{RedpandaConfigMap(dot, true), RPKProfile(dot)}
 	return cms
 }
 
@@ -103,7 +96,7 @@ func RedpandaConfigFile(dot *helmette.Dot, includeSeedServer bool) string {
 		"schema_registry_client": kafkaClient(dot),
 		"pandaproxy":             pandaProxyListener(dot),
 		"pandaproxy_client":      kafkaClient(dot),
-		"rpk":                    rpkConfiguration(dot),
+		"rpk":                    rpkNodeConfig(dot),
 		"config_file":            "/etc/redpanda/redpanda.yaml",
 	}
 
@@ -116,31 +109,35 @@ func RedpandaConfigFile(dot *helmette.Dot, includeSeedServer bool) string {
 	return helmette.ToYaml(redpandaYaml)
 }
 
-func RPKProfile(dot *helmette.Dot) []*corev1.ConfigMap {
+// RPKProfile returns a [corev1.ConfigMap] for aiding users in connecting to
+// the external listeners of their redpanda cluster.
+// It is meant for external consumption via NOTES.txt and is not used within
+// this chart.
+func RPKProfile(dot *helmette.Dot) *corev1.ConfigMap {
 	values := helmette.Unwrap[Values](dot.Values)
 
 	if !values.External.Enabled {
 		return nil
 	}
 
-	return []*corev1.ConfigMap{
-		{
-			TypeMeta: metav1.TypeMeta{
-				Kind:       "ConfigMap",
-				APIVersion: "v1",
-			},
-			ObjectMeta: metav1.ObjectMeta{
-				Name:      fmt.Sprintf("%s-rpk", Fullname(dot)),
-				Namespace: dot.Release.Namespace,
-				Labels:    FullLabels(dot),
-			},
-			Data: map[string]string{
-				"profile": helmette.ToYaml(rpkProfile(dot)),
-			},
+	return &corev1.ConfigMap{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "ConfigMap",
+			APIVersion: "v1",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      fmt.Sprintf("%s-rpk", Fullname(dot)),
+			Namespace: dot.Release.Namespace,
+			Labels:    FullLabels(dot),
+		},
+		Data: map[string]string{
+			"profile": helmette.ToYaml(rpkProfile(dot)),
 		},
 	}
 }
 
+// rpkProfile generates an RPK Profile for connecting to external listeners.
+// It is intended to be used by the end user via a prompt in NOTES.txt.
 func rpkProfile(dot *helmette.Dot) map[string]any {
 	values := helmette.Unwrap[Values](dot.Values)
 
@@ -154,16 +151,14 @@ func rpkProfile(dot *helmette.Dot) map[string]any {
 		adminAdvertisedList = append(adminAdvertisedList, fmt.Sprintf("%s:%d", advertisedHost(dot, i), int(advertisedAdminPort(dot, i))))
 	}
 
-	kafkaTLS := brokersTLSConfiguration(dot)
-	if _, ok := kafkaTLS["truststore_file"]; ok {
+	kafkaTLS := rpkKafkaClientTLSConfiguration(dot)
+	if _, ok := kafkaTLS["ca_file"]; ok {
 		kafkaTLS["ca_file"] = "ca.crt"
-		delete(kafkaTLS, "truststore_file")
 	}
 
-	adminTLS := adminTLSConfiguration(dot)
-	if _, ok := adminTLS["truststore_file"]; ok {
+	adminTLS := rpkAdminAPIClientTLSConfiguration(dot)
+	if _, ok := adminTLS["ca_file"]; ok {
 		adminTLS["ca_file"] = "ca.crt"
-		delete(adminTLS, "truststore_file")
 	}
 
 	ka := map[string]any{
@@ -286,18 +281,19 @@ func BrokerList(dot *helmette.Dot, replicas int32, port int32) []string {
 	return bl
 }
 
-func rpkConfiguration(dot *helmette.Dot) map[string]any {
+// https://github.com/redpanda-data/redpanda/blob/817450a480f4f2cadf66de1adc301cfaf6ccde46/src/go/rpk/pkg/config/redpanda_yaml.go#L143
+func rpkNodeConfig(dot *helmette.Dot) map[string]any {
 	values := helmette.Unwrap[Values](dot.Values)
 
 	brokerList := BrokerList(dot, values.Statefulset.Replicas, values.Listeners.Kafka.Port)
 
 	var adminTLS map[string]any
-	if tls := adminTLSConfiguration(dot); len(tls) > 0 {
+	if tls := rpkAdminAPIClientTLSConfiguration(dot); len(tls) > 0 {
 		adminTLS = tls
 	}
 
 	var brokerTLS map[string]any
-	if tls := brokersTLSConfiguration(dot); len(tls) > 0 {
+	if tls := rpkKafkaClientTLSConfiguration(dot); len(tls) > 0 {
 		brokerTLS = tls
 	}
 
@@ -321,49 +317,57 @@ func rpkConfiguration(dot *helmette.Dot) map[string]any {
 	return result
 }
 
-func brokersTLSConfiguration(dot *helmette.Dot) map[string]any {
+// rpkKafkaClientTLSConfiguration returns a value suitable for use as RPK's
+// "TLS" type.
+// https://github.com/redpanda-data/redpanda/blob/817450a480f4f2cadf66de1adc301cfaf6ccde46/src/go/rpk/pkg/config/redpanda_yaml.go#L178
+func rpkKafkaClientTLSConfiguration(dot *helmette.Dot) map[string]any {
 	values := helmette.Unwrap[Values](dot.Values)
 
-	if !values.Listeners.Kafka.TLS.IsEnabled(&values.TLS) {
+	tls := values.Listeners.Kafka.TLS
+
+	if !tls.IsEnabled(&values.TLS) {
 		return map[string]any{}
 	}
 
-	result := map[string]any{}
-
-	if truststore := values.Listeners.Kafka.TLS.TrustStoreFilePath(&values.TLS); truststore != defaultTruststorePath {
-		result["truststore_file"] = truststore
+	result := map[string]any{
+		"ca_file": tls.ServerCAPath(&values.TLS),
 	}
 
-	if values.Listeners.Kafka.TLS.RequireClientAuth {
+	if tls.RequireClientAuth {
 		result["cert_file"] = fmt.Sprintf("/etc/tls/certs/%s-client/tls.crt", Fullname(dot))
 		result["key_file"] = fmt.Sprintf("/etc/tls/certs/%s-client/tls.key", Fullname(dot))
-
 	}
 
 	return result
 }
 
-func adminTLSConfiguration(dot *helmette.Dot) map[string]any {
+// rpkAdminAPIClientTLSConfiguration returns a value suitable for use as RPK's
+// "TLS" type.
+// https://github.com/redpanda-data/redpanda/blob/817450a480f4f2cadf66de1adc301cfaf6ccde46/src/go/rpk/pkg/config/redpanda_yaml.go#L184
+func rpkAdminAPIClientTLSConfiguration(dot *helmette.Dot) map[string]any {
 	values := helmette.Unwrap[Values](dot.Values)
 
-	result := map[string]any{}
-	if !values.Listeners.Admin.TLS.IsEnabled(&values.TLS) {
-		return result
+	tls := values.Listeners.Admin.TLS
+
+	if !tls.IsEnabled(&values.TLS) {
+		return map[string]any{}
 	}
 
-	if truststore := values.Listeners.Admin.TLS.TrustStoreFilePath(&values.TLS); truststore != defaultTruststorePath {
-		result["truststore_file"] = truststore
+	result := map[string]any{
+		"ca_file": tls.ServerCAPath(&values.TLS),
 	}
 
-	if values.Listeners.Admin.TLS.RequireClientAuth {
+	if tls.RequireClientAuth {
 		result["cert_file"] = fmt.Sprintf("/etc/tls/certs/%s-client/tls.crt", Fullname(dot))
 		result["key_file"] = fmt.Sprintf("/etc/tls/certs/%s-client/tls.key", Fullname(dot))
-
 	}
 
 	return result
 }
 
+// kafkaClient returns the configuration for internal components of redpanda to
+// connect to its own Kafka API. This is distinct from RPK's configuration for
+// Kafka API interactions.
 func kafkaClient(dot *helmette.Dot) map[string]any {
 	values := helmette.Unwrap[Values](dot.Values)
 
@@ -381,11 +385,18 @@ func kafkaClient(dot *helmette.Dot) map[string]any {
 	if values.Listeners.Kafka.TLS.IsEnabled(&values.TLS) {
 		brokerTLS = map[string]any{
 			"enabled":             true,
-			"cert_file":           fmt.Sprintf("/etc/tls/certs/%s/tls.crt", kafkaTLS.Cert),
-			"key_file":            fmt.Sprintf("/etc/tls/certs/%s/tls.key", kafkaTLS.Cert),
 			"require_client_auth": kafkaTLS.RequireClientAuth,
-			"truststore_file":     kafkaTLS.TrustStoreFilePath(&values.TLS),
+			// NB: truststore_file here is synonymous with ca_file in the RPK
+			// configuration. The difference being that redpanda does NOT read
+			// the ca_file key.
+			"truststore_file": kafkaTLS.ServerCAPath(&values.TLS),
 		}
+
+		if kafkaTLS.RequireClientAuth {
+			brokerTLS["cert_file"] = fmt.Sprintf("/etc/tls/certs/%s-client/tls.crt", Fullname(dot))
+			brokerTLS["key_file"] = fmt.Sprintf("/etc/tls/certs/%s-client/tls.key", Fullname(dot))
+		}
+
 	}
 
 	cfg := map[string]any{

@@ -641,12 +641,14 @@ func adminTLSCurlFlags(dot *helmette.Dot) string {
 	if !values.Listeners.Admin.TLS.IsEnabled(&values.TLS) {
 		return ""
 	}
-	path := fmt.Sprintf("/etc/tls/certs/%s", values.Listeners.Admin.TLS.Cert)
+
 	if values.Listeners.Admin.TLS.RequireClientAuth {
+		path := fmt.Sprintf("/etc/tls/certs/%s-client", Fullname(dot))
 		return fmt.Sprintf("--cacert %s/ca.crt --cert %s/tls.crt --key %s/tls.key", path, path, path)
 	}
-	// XXX fix up a bug in the template
-	return fmt.Sprintf("--cacert %s/ca.crt", path)
+
+	path := values.Listeners.Admin.TLS.ServerCAPath(&values.TLS)
+	return fmt.Sprintf("--cacert %s", path)
 }
 
 func externalAdvertiseAddress(dot *helmette.Dot) string {

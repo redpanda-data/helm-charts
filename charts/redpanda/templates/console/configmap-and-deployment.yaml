@@ -27,9 +27,10 @@ limitations under the License.
 # for now only if we have a license do we print, however, this may be an issue for some
 # since if we do include a license we MUST also print all secret items.
   {{ if ( not (empty $licenseKey ) ) }}
+{{/* License and license are set twice here as a work around to a bug in the post-go console chart. */}}
 {{ $secretConfig = ( dict
   "create" true
-  "enterprise" ( dict "license" $licenseKey)
+  "enterprise" ( dict "license" $licenseKey "License" $licenseKey)
   )
 }}
 
