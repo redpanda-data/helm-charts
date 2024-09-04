@@ -137,16 +137,6 @@ func PostUpgradeJobScript(dot *helmette.Dot) string {
 			`    curl -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors --ssl-reqd \`,
 			fmt.Sprintf(`    %s \`, caCert),
 			`    -X PUT -u ${USER_NAME}:${PASSWORD} \`,
-		)
-
-		if values.Auth.SASL.Enabled {
-			script = append(script,
-				`    -u ${RPK_USER}:${RPK_PASS} \`,
-			)
-		}
-
-		script = append(
-			script,
 			fmt.Sprintf(`    %s || true`, url),
 			`fi`,
 		)
