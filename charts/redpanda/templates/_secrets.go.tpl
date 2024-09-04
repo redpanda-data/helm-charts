@@ -19,6 +19,10 @@
 {{- if (ne $fsValidator_3 (coalesce nil)) -}}
 {{- $secrets = (concat (default (list ) $secrets) (list $fsValidator_3)) -}}
 {{- end -}}
+{{- $bootstrapUser_4 := (get (fromJson (include "redpanda.SecretBootstrapUser" (dict "a" (list $dot) ))) "r") -}}
+{{- if (ne $bootstrapUser_4 (coalesce nil)) -}}
+{{- $secrets = (concat (default (list ) $secrets) (list $bootstrapUser_4)) -}}
+{{- end -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $secrets) | toJson -}}
 {{- break -}}
@@ -83,6 +87,22 @@
 {{- break -}}
 {{- end -}}
 {{- end -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.SecretBootstrapUser" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $values := $dot.Values.AsMap -}}
+{{- if (or (not $values.auth.sasl.enabled) (ne $values.auth.sasl.bootstrapUser.secretKeyRef (coalesce nil))) -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (coalesce nil)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) ) (mustMergeOverwrite (dict ) (dict "apiVersion" "v1" "kind" "Secret" )) (dict "metadata" (mustMergeOverwrite (dict "creationTimestamp" (coalesce nil) ) (dict "name" (printf "%s-bootstrap-user" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r")) "labels" (get (fromJson (include "redpanda.FullLabels" (dict "a" (list $dot) ))) "r") )) "type" "Opaque" "stringData" (dict "password" (randAlphaNum (32 | int)) ) ))) | toJson -}}
+{{- break -}}
 {{- end -}}
 {{- end -}}
 
@@ -343,9 +363,9 @@ echo "passed"`) -}}
 {{- else -}}
 {{- $address = (index $values.external.addresses (0 | int)) -}}
 {{- end -}}
-{{- $domain_4 := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $values.external.domain "") ))) "r") -}}
-{{- if (ne $domain_4 "") -}}
-{{- $host = (dict "name" $externalName "address" (printf "%s.%s" $address $domain_4) "port" $port ) -}}
+{{- $domain_5 := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $values.external.domain "") ))) "r") -}}
+{{- if (ne $domain_5 "") -}}
+{{- $host = (dict "name" $externalName "address" (printf "%s.%s" $address $domain_5) "port" $port ) -}}
 {{- else -}}
 {{- $host = (dict "name" $externalName "address" $address "port" $port ) -}}
 {{- end -}}

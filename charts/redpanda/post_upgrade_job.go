@@ -62,7 +62,7 @@ func PostUpgrade(dot *helmette.Dot) *batchv1.Job {
 							Image:   fmt.Sprintf("%s:%s", values.Image.Repository, Tag(dot)),
 							Command: []string{"/bin/bash", "-c"},
 							Args:    []string{PostUpgradeJobScript(dot)},
-							Env:     values.PostUpgradeJob.ExtraEnv,
+							Env:     rpkEnvVars(dot, values.PostUpgradeJob.ExtraEnv),
 							EnvFrom: values.PostUpgradeJob.ExtraEnvFrom,
 							SecurityContext: ptr.To(helmette.MergeTo[corev1.SecurityContext](
 								ptr.Deref(values.PostUpgradeJob.SecurityContext, corev1.SecurityContext{}),
@@ -137,6 +137,16 @@ func PostUpgradeJobScript(dot *helmette.Dot) string {
 			`    curl -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors --ssl-reqd \`,
 			fmt.Sprintf(`    %s \`, caCert),
 			`    -X PUT -u ${USER_NAME}:${PASSWORD} \`,
+		)
+
+		if values.Auth.SASL.Enabled {
+			script = append(script,
+				`    -u ${RPK_USER}:${RPK_PASS} \`,
+			)
+		}
+
+		script = append(
+			script,
 			fmt.Sprintf(`    %s || true`, url),
 			`fi`,
 		)

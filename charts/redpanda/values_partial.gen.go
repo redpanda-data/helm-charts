@@ -417,10 +417,11 @@ type PartialNodeConfig map[string]any
 type PartialTunableConfig map[string]any
 
 type PartialSASLAuth struct {
-	Enabled   *bool             "json:\"enabled,omitempty\" jsonschema:\"required\""
-	Mechanism *string           "json:\"mechanism,omitempty\""
-	SecretRef *string           "json:\"secretRef,omitempty\""
-	Users     []PartialSASLUser "json:\"users,omitempty\""
+	Enabled       *bool                 "json:\"enabled,omitempty\" jsonschema:\"required\""
+	Mechanism     *string               "json:\"mechanism,omitempty\""
+	SecretRef     *string               "json:\"secretRef,omitempty\""
+	Users         []PartialSASLUser     "json:\"users,omitempty\""
+	BootstrapUser *PartialBootstrapUser "json:\"bootstrapUser,omitempty\""
 }
 
 type PartialTiered struct {
@@ -484,6 +485,11 @@ type PartialTLSCert struct {
 type PartialPodSpec struct {
 	Containers      []PartialContainer         "json:\"containers,omitempty\" jsonschema:\"required\""
 	SecurityContext *corev1.PodSecurityContext "json:\"securityContext,omitempty\""
+}
+
+type PartialBootstrapUser struct {
+	SecretKeyRef *corev1.SecretKeySelector "json:\"secretKeyRef,omitempty\""
+	Mechanism    *string                   "json:\"mechanism,omitempty\" jsonschema:\"pattern=^(SCRAM-SHA-512|SCRAM-SHA-256)$\""
 }
 
 type PartialTieredStorageCredentials struct {

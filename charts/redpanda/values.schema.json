@@ -588,6 +588,29 @@
       "properties": {
         "sasl": {
           "properties": {
+            "bootstrapUser": {
+              "properties": {
+                "mechanism": {
+                  "pattern": "^(SCRAM-SHA-512|SCRAM-SHA-256)$",
+                  "type": "string"
+                },
+                "secretKeyRef": {
+                  "properties": {
+                    "key": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "optional": {
+                      "type": "boolean"
+                    }
+                  },
+                  "type": "object"
+                }
+              },
+              "type": "object"
+            },
             "enabled": {
               "type": "boolean"
             },

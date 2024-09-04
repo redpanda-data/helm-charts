@@ -39,6 +39,9 @@ func Secrets(dot *helmette.Dot) []*corev1.Secret {
 	if fsValidator := SecretFSValidator(dot); fsValidator != nil {
 		secrets = append(secrets, fsValidator)
 	}
+	if bootstrapUser := SecretBootstrapUser(dot); bootstrapUser != nil {
+		secrets = append(secrets, bootstrapUser)
+	}
 	return secrets
 }
 
@@ -201,6 +204,28 @@ func SecretSASLUsers(dot *helmette.Dot) *corev1.Secret {
 	} else {
 		// XXX no secret generated when enabled, we have a secret ref, but we have no users
 		return nil
+	}
+}
+
+func SecretBootstrapUser(dot *helmette.Dot) *corev1.Secret {
+	values := helmette.Unwrap[Values](dot.Values)
+	if !values.Auth.SASL.Enabled || values.Auth.SASL.BootstrapUser.SecretKeyRef != nil {
+		return nil
+	}
+
+	return &corev1.Secret{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "Secret",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:   fmt.Sprintf("%s-bootstrap-user", Fullname(dot)),
+			Labels: FullLabels(dot),
+		},
+		Type: corev1.SecretTypeOpaque,
+		StringData: map[string]string{
+			"password": helmette.RandAlphaNum(32),
+		},
 	}
 }
 

@@ -114,7 +114,7 @@
 {{- break -}}
 {{- end -}}
 {{- $_is_returning = true -}}
-{{- (dict "r" $envars) | toJson -}}
+{{- (dict "r" (get (fromJson (include "redpanda.rpkEnvVars" (dict "a" (list $dot $envars) ))) "r")) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

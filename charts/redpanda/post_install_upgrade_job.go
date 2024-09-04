@@ -253,7 +253,7 @@ func PostInstallUpgradeEnvironmentVariables(dot *helmette.Dot) []corev1.EnvVar {
 		}
 	}
 
-	return envars
+	return rpkEnvVars(dot, envars)
 }
 
 func addCloudStorageAccessKey(tieredStorageConfig TieredStorageConfig, values Values) []corev1.EnvVar {
