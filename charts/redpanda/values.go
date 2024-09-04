@@ -977,8 +977,15 @@ func (b *BootstrapUser) RpkEnvironment(fullname string) []corev1.EnvVar {
 		Value: "kubernetes-controller",
 	}, {
 		Name:  "RPK_SASL_MECHANISM",
-		Value: b.Mechanism,
+		Value: b.GetMechanism(),
 	}}
+}
+
+func (b *BootstrapUser) GetMechanism() string {
+	if b.Mechanism == "" {
+		return "SCRAM-SHA-256"
+	}
+	return b.Mechanism
 }
 
 func (b *BootstrapUser) SecretKeySelector(fullname string) *corev1.SecretKeySelector {
