@@ -213,6 +213,14 @@ func SecretBootstrapUser(dot *helmette.Dot) *corev1.Secret {
 		return nil
 	}
 
+	secretName := fmt.Sprintf("%s-bootstrap-user", Fullname(dot))
+
+	if dot.Release.IsUpgrade {
+		if existing, ok := helmette.Lookup[corev1.Secret](dot, dot.Release.Namespace, secretName); ok {
+			return existing
+		}
+	}
+
 	password := helmette.RandAlphaNum(32)
 
 	userPassword := values.Auth.SASL.BootstrapUser.Password
@@ -226,7 +234,7 @@ func SecretBootstrapUser(dot *helmette.Dot) *corev1.Secret {
 			Kind:       "Secret",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      fmt.Sprintf("%s-bootstrap-user", Fullname(dot)),
+			Name:      secretName,
 			Namespace: dot.Release.Namespace,
 			Labels:    FullLabels(dot),
 		},

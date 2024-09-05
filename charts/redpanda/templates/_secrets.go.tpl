@@ -100,13 +100,24 @@
 {{- (dict "r" (coalesce nil)) | toJson -}}
 {{- break -}}
 {{- end -}}
+{{- $secretName := (printf "%s-bootstrap-user" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r")) -}}
+{{- if $dot.Release.IsUpgrade -}}
+{{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.lookup" (dict "a" (list "v1" "Secret" $dot.Release.Namespace $secretName) ))) "r")) ))) "r") -}}
+{{- $ok_6 := $tmp_tuple_1.T2 -}}
+{{- $existing_5 := $tmp_tuple_1.T1 -}}
+{{- if $ok_6 -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" $existing_5) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
 {{- $password := (randAlphaNum (32 | int)) -}}
 {{- $userPassword := $values.auth.sasl.bootstrapUser.password -}}
 {{- if (ne $userPassword (coalesce nil)) -}}
 {{- $password = $userPassword -}}
 {{- end -}}
 {{- $_is_returning = true -}}
-{{- (dict "r" (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) ) (mustMergeOverwrite (dict ) (dict "apiVersion" "v1" "kind" "Secret" )) (dict "metadata" (mustMergeOverwrite (dict "creationTimestamp" (coalesce nil) ) (dict "name" (printf "%s-bootstrap-user" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r")) "namespace" $dot.Release.Namespace "labels" (get (fromJson (include "redpanda.FullLabels" (dict "a" (list $dot) ))) "r") )) "type" "Opaque" "stringData" (dict "password" $password ) ))) | toJson -}}
+{{- (dict "r" (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) ) (mustMergeOverwrite (dict ) (dict "apiVersion" "v1" "kind" "Secret" )) (dict "metadata" (mustMergeOverwrite (dict "creationTimestamp" (coalesce nil) ) (dict "name" $secretName "namespace" $dot.Release.Namespace "labels" (get (fromJson (include "redpanda.FullLabels" (dict "a" (list $dot) ))) "r") )) "type" "Opaque" "stringData" (dict "password" $password ) ))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -368,9 +379,9 @@ echo "passed"`) -}}
 {{- else -}}
 {{- $address = (index $values.external.addresses (0 | int)) -}}
 {{- end -}}
-{{- $domain_5 := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $values.external.domain "") ))) "r") -}}
-{{- if (ne $domain_5 "") -}}
-{{- $host = (dict "name" $externalName "address" (printf "%s.%s" $address $domain_5) "port" $port ) -}}
+{{- $domain_7 := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $values.external.domain "") ))) "r") -}}
+{{- if (ne $domain_7 "") -}}
+{{- $host = (dict "name" $externalName "address" (printf "%s.%s" $address $domain_7) "port" $port ) -}}
 {{- else -}}
 {{- $host = (dict "name" $externalName "address" $address "port" $port ) -}}
 {{- end -}}
