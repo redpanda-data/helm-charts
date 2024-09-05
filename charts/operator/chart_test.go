@@ -3,23 +3,25 @@ package operator
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/redpanda-data/helm-charts/pkg/helm"
-	"github.com/redpanda-data/helm-charts/pkg/testutil"
-	"github.com/santhosh-tekuri/jsonschema/v5"
-	"golang.org/x/tools/txtar"
-	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/api/resource"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/util/intstr"
-	"k8s.io/utils/ptr"
 	"os"
+	"path/filepath"
 	"regexp"
 	"slices"
 	"strconv"
 	"testing"
 
 	fuzz "github.com/google/gofuzz"
+	"github.com/redpanda-data/helm-charts/pkg/helm"
+	"github.com/redpanda-data/helm-charts/pkg/kube"
+	"github.com/redpanda-data/helm-charts/pkg/testutil"
+	"github.com/santhosh-tekuri/jsonschema/v5"
 	"github.com/stretchr/testify/require"
+	"golang.org/x/tools/txtar"
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/util/intstr"
+	"k8s.io/utils/ptr"
 	"sigs.k8s.io/yaml"
 )
 
@@ -48,6 +50,12 @@ func TestTemplate(t *testing.T) {
 	client, err := helm.New(helm.Options{ConfigHome: testutil.TempDir(t)})
 	require.NoError(t, err)
 
+	// Chart deps are kept within ./charts as a tgz archive, which is git
+	// ignored. Helm dep build will ensure that ./charts is in sync with
+	// Chart.lock, which is tracked by git.
+	require.NoError(t, client.RepoAdd(ctx, "prometheus", "https://prometheus-community.github.io/helm-charts"))
+	require.NoError(t, client.DependencyBuild(ctx, "."), "failed to refresh helm dependencies")
+
 	casesArchive, err := txtar.ParseFile("testdata/template-cases.txtar")
 	require.NoError(t, err)
 
@@ -59,6 +67,8 @@ func TestTemplate(t *testing.T) {
 	for _, tc := range append(casesArchive.Files, generatedCasesArchive.Files...) {
 		tc := tc
 		t.Run(tc.Name, func(t *testing.T) {
+			t.Parallel()
+
 			var values PartialValues
 			require.NoError(t, yaml.Unmarshal(tc.Data, &values))
 
@@ -213,4 +223,100 @@ func makeSureTagIsNotEmptyString(values PartialValues, fuzzer *fuzz.Fuzzer) {
 			fuzzer.Fuzz(t)
 		}
 	}
+}
+
+// preTranspilerChartVersion is the latest release of the Redpanda helm chart prior to the introduction of
+// ConfigMap go base implementation. It's used to verify that translated code is functionally equivalent.
+const preTranspilerChartVersion = "0.4.28"
+
+// TestChartDifferences can be removed if in the next operator chart version values definition changes or any resource.
+// That test only validates clean transition to gotohelm definition of the operator helm chart.
+func TestChartDifferences(t *testing.T) {
+	ctx := testutil.Context(t)
+	client, err := helm.New(helm.Options{ConfigHome: testutil.TempDir(t)})
+	require.NoError(t, err)
+
+	// Downloading Operator helm chart release is required as client.Template
+	// function does not pass HELM_CONFIG_HOME, that prevents from downloading specific
+	// Operator helm chart version from public helm repository.
+	require.NoError(t, client.DownloadFile(ctx,
+		fmt.Sprintf("https://github.com/redpanda-data/helm-charts/releases/download/operator-%s/operator-%s.tgz", preTranspilerChartVersion, preTranspilerChartVersion),
+		fmt.Sprintf("operator-%s.tgz", preTranspilerChartVersion)))
+
+	values, err := os.ReadDir("./ci")
+	require.NoError(t, err)
+
+	for _, v := range values {
+		t.Run(v.Name(), func(t *testing.T) {
+			t.Parallel()
+
+			// First generate latest released Redpanda charts manifests. From ConfigMap bootstrap,
+			// redpanda node configuration and RPK profile.
+			manifests, err := client.Template(ctx,
+				filepath.Join(client.GetConfigHome(), fmt.Sprintf("operator-%s.tgz", preTranspilerChartVersion)),
+				helm.TemplateOptions{
+					Name:       "operator",
+					ValuesFile: "./ci/" + v.Name(),
+					Set:        []string{},
+				})
+			require.NoError(t, err)
+
+			oldOperator, err := convertToMap(manifests)
+			require.NoError(t, err)
+
+			// Now helm template will generate Redpanda configuration from local definition
+			manifests, err = client.Template(ctx, ".", helm.TemplateOptions{
+				Name:       "operator",
+				ValuesFile: "./ci/" + v.Name(),
+				Set:        []string{},
+			})
+			require.NoError(t, err)
+
+			operator, err := convertToMap(manifests)
+			require.NoError(t, err)
+
+			for key, val := range oldOperator {
+				require.Equal(t, val, operator[key])
+				delete(oldOperator, key)
+				delete(operator, key)
+			}
+
+			require.Len(t, oldOperator, 0)
+			require.Len(t, operator, 0)
+		})
+	}
+}
+
+func convertToMap(manifests []byte) (map[string]string, error) {
+	objs, err := kube.DecodeYAML(manifests, Scheme)
+	if err != nil {
+		return nil, err
+	}
+
+	result := map[string]string{}
+	for _, obj := range objs {
+		key := fmt.Sprintf("%s, %s", obj.GetObjectKind().GroupVersionKind().String(), obj.GetName())
+		if _, exist := result[key]; exist {
+			panic("duplicate key " + key)
+		}
+
+		// Previous operator configuration was malformed as `{{.values.config}}` was dictionary
+		// which should be translated by `toYaml` function
+		if cfg, ok := obj.(*corev1.ConfigMap); ok && obj.GetName() == "operator-config" {
+			cfg.Data = map[string]string{}
+			obj = kube.Object(cfg)
+		}
+
+		// In previous operator templates namespace was omitted in multiple places
+		obj.SetNamespace("")
+
+		b, err := yaml.Marshal(obj)
+		if err != nil {
+			return nil, err
+		}
+
+		result[key] = string(b)
+	}
+
+	return result, nil
 }
