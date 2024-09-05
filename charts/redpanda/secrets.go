@@ -213,6 +213,13 @@ func SecretBootstrapUser(dot *helmette.Dot) *corev1.Secret {
 		return nil
 	}
 
+	password := helmette.RandAlphaNum(32)
+
+	userPassword := values.Auth.SASL.BootstrapUser.Password
+	if userPassword != nil {
+		password = *userPassword
+	}
+
 	return &corev1.Secret{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "v1",
@@ -225,7 +232,7 @@ func SecretBootstrapUser(dot *helmette.Dot) *corev1.Secret {
 		},
 		Type: corev1.SecretTypeOpaque,
 		StringData: map[string]string{
-			"password": helmette.RandAlphaNum(32),
+			"password": password,
 		},
 	}
 }

@@ -956,6 +956,7 @@ func (m TLSCertMap) MustGet(name string) *TLSCert {
 
 type BootstrapUser struct {
 	SecretKeyRef *corev1.SecretKeySelector `json:"secretKeyRef"`
+	Password     *string                   `json:"password"`
 	Mechanism    string                    `json:"mechanism" jsonschema:"pattern=^(SCRAM-SHA-512|SCRAM-SHA-256)$"`
 }
 

@@ -489,6 +489,7 @@ type PartialPodSpec struct {
 
 type PartialBootstrapUser struct {
 	SecretKeyRef *corev1.SecretKeySelector "json:\"secretKeyRef,omitempty\""
+	Password     *string                   "json:\"password,omitempty\""
 	Mechanism    *string                   "json:\"mechanism,omitempty\" jsonschema:\"pattern=^(SCRAM-SHA-512|SCRAM-SHA-256)$\""
 }
 
