@@ -180,7 +180,7 @@ type OIDCLoginSecrets struct {
 }
 
 type EnterpriseSecrets struct {
-	License *string `json:"License,omitempty"`
+	License *string `json:"license,omitempty"`
 }
 
 type RedpandaSecrets struct {

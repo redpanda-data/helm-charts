@@ -157,7 +157,7 @@ type PartialLoginSecrets struct {
 }
 
 type PartialEnterpriseSecrets struct {
-	License *string "json:\"License,omitempty\""
+	License *string "json:\"license,omitempty\""
 }
 
 type PartialRedpandaSecrets struct {

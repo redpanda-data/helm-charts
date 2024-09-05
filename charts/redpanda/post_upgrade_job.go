@@ -118,14 +118,7 @@ func PostUpgradeJobScript(dot *helmette.Dot) string {
 
 		if service.TLS.IsEnabled(&values.TLS) {
 			scheme = "https"
-
-			// NB: Only call MustGet _after_ we've checked that TLS is enabled
-			// as setting cert to "" is a valid way to disable TLS.
-			cert := values.TLS.Certs.MustGet(service.TLS.Cert)
-
-			if cert.CAEnabled {
-				caCert = fmt.Sprintf("--cacert /etc/tls/certs/%s/ca.crt", service.TLS.Cert)
-			}
+			caCert = fmt.Sprintf("--cacert %q", service.TLS.ServerCAPath(&values.TLS))
 		}
 
 		url := fmt.Sprintf("%s://%s:%d/v1/debug/restart_service?service=schema-registry", scheme, InternalDomain(dot), int64(service.Port))

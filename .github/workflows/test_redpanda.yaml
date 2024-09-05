@@ -13,9 +13,10 @@ jobs:
     strategy:
       matrix:
         version:
-          - ""
-          - v23.1.21
-          - v23.2.24
+          # See also: https://redpandadata.atlassian.net/wiki/spaces/CORE/pages/16711857/Releases+Backports
+          - v23.3.20
+          - v24.1.15
+          - "" # Test the default / Most recent version of Redpanda.
         testvaluespattern:
           - '0[1-3]*'
           - '0[4-6]*'

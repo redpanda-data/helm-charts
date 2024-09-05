@@ -73,10 +73,7 @@
 {{- $scheme := "http" -}}
 {{- if (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $service.tls $values.tls) ))) "r") -}}
 {{- $scheme = "https" -}}
-{{- $cert := (get (fromJson (include "redpanda.TLSCertMap.MustGet" (dict "a" (list (deepCopy $values.tls.certs) $service.tls.cert) ))) "r") -}}
-{{- if $cert.caEnabled -}}
-{{- $caCert = (printf "--cacert /etc/tls/certs/%s/ca.crt" $service.tls.cert) -}}
-{{- end -}}
+{{- $caCert = (printf "--cacert %q" (get (fromJson (include "redpanda.InternalTLS.ServerCAPath" (dict "a" (list $service.tls $values.tls) ))) "r")) -}}
 {{- end -}}
 {{- $url := (printf "%s://%s:%d/v1/debug/restart_service?service=schema-registry" $scheme (get (fromJson (include "redpanda.InternalDomain" (dict "a" (list $dot) ))) "r") (($service.port | int) | int64)) -}}
 {{- $script = (concat (default (list ) $script) (list `if [ -d "/etc/secrets/users/" ]; then` `    IFS=":" read -r USER_NAME PASSWORD MECHANISM < <(grep "" $(find /etc/secrets/users/* -print))` `    curl -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors --ssl-reqd \` (printf `    %s \` $caCert) `    -X PUT -u ${USER_NAME}:${PASSWORD} \` (printf `    %s || true` $url) `fi`)) -}}

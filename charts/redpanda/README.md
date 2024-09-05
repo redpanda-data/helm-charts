@@ -1259,7 +1259,7 @@ This key is the Certificate name. To apply the Certificate to a specific listene
 
 ### [tls.certs.default.caEnabled](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=tls.certs.default.caEnabled)
 
-Set the `caEnabled` flag to `true` only for Certificates that are not authenticated using public authorities.
+Indicates whether or not the Secret holding this certificate includes a `ca.crt` key. When `true`, chart managed clients, such as rpk, will use `ca.crt` for certificate verification and listeners with `require_client_auth` and no explicit `truststore` will use `ca.crt` as their `truststore_file` for verification of client certificates. When `false`, chart managed clients will use `tls.crt` for certificate verification and listeners with `require_client_auth` and no explicit `truststore` will use the container's CA certificates.
 
 **Default:** `true`
 
@@ -1271,7 +1271,7 @@ Example external tls configuration uncomment and set the right key to the listen
 
 ### [tls.certs.external.caEnabled](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=tls.certs.external.caEnabled)
 
-Set the `caEnabled` flag to `true` only for Certificates that are not authenticated using public authorities.
+Indicates whether or not the Secret holding this certificate includes a `ca.crt` key. When `true`, chart managed clients, such as rpk, will use `ca.crt` for certificate verification and listeners with `require_client_auth` and no explicit `truststore` will use `ca.crt` as their `truststore_file` for verification of client certificates. When `false`, chart managed clients will use `tls.crt` for certificate verification and listeners with `require_client_auth` and no explicit `truststore` will use the container's CA certificates.
 
 **Default:** `true`
 

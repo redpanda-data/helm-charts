@@ -227,8 +227,14 @@ tls:
       # -- To use a secret with custom tls files,
       # secretRef:
       #  name: my-tls-secret
-      # -- Set the `caEnabled` flag to `true` only for Certificates
-      # that are not authenticated using public authorities.
+      # -- Indicates whether or not the Secret holding this certificate
+      # includes a `ca.crt` key. When `true`, chart managed clients, such as
+      # rpk, will use `ca.crt` for certificate verification and listeners with
+      # `require_client_auth` and no explicit `truststore` will use `ca.crt` as
+      # their `truststore_file` for verification of client certificates. When
+      # `false`, chart managed clients will use `tls.crt` for certificate
+      # verification and listeners with `require_client_auth` and no explicit
+      # `truststore` will use the container's CA certificates.
       caEnabled: true
       # duration: 43800h
       # if you wish to have Kubernetes internal dns names (IE the headless service of the redpanda StatefulSet) included in `dnsNames` of the  certificate even, when supplying an issuer.
@@ -245,8 +251,14 @@ tls:
       # -- To use a secret with custom tls files,
       # secretRef:
       #   name: my-tls-secret
-      # -- Set the `caEnabled` flag to `true` only for Certificates
-      # that are not authenticated using public authorities.
+      # -- Indicates whether or not the Secret holding this certificate
+      # includes a `ca.crt` key. When `true`, chart managed clients, such as
+      # rpk, will use `ca.crt` for certificate verification and listeners with
+      # `require_client_auth` and no explicit `truststore` will use `ca.crt` as
+      # their `truststore_file` for verification of client certificates. When
+      # `false`, chart managed clients will use `tls.crt` for certificate
+      # verification and listeners with `require_client_auth` and no explicit
+      # `truststore` will use the container's CA certificates.
       caEnabled: true
       # duration: 43800h
       # if you wish to for apply internal dns names to the certificate even when supplying an issuer
