@@ -449,7 +449,7 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
-{{- if $values.auth.sasl.enabled -}}
+{{- if (and (ne $values.auth.sasl (coalesce nil)) $values.auth.sasl.enabled) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" (concat (default (list ) $envVars) (default (list ) (get (fromJson (include "redpanda.BootstrapUser.RpkEnvironment" (dict "a" (list $values.auth.sasl.bootstrapUser (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r")) ))) "r")))) | toJson -}}
 {{- break -}}
@@ -466,7 +466,7 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
-{{- if $values.auth.sasl.enabled -}}
+{{- if (and (ne $values.auth.sasl (coalesce nil)) $values.auth.sasl.enabled) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" (concat (default (list ) $envVars) (default (list ) (get (fromJson (include "redpanda.BootstrapUser.BootstrapEnvironment" (dict "a" (list $values.auth.sasl.bootstrapUser (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r")) ))) "r")))) | toJson -}}
 {{- break -}}

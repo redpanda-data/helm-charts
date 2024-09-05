@@ -857,7 +857,7 @@ func statefulSetContainerControllers(dot *helmette.Dot) *corev1.Container {
 
 func rpkEnvVars(dot *helmette.Dot, envVars []corev1.EnvVar) []corev1.EnvVar {
 	values := helmette.Unwrap[Values](dot.Values)
-	if values.Auth.SASL.Enabled {
+	if values.Auth.SASL != nil && values.Auth.SASL.Enabled {
 		return append(envVars, values.Auth.SASL.BootstrapUser.RpkEnvironment(Fullname(dot))...)
 	}
 	return envVars
@@ -865,7 +865,7 @@ func rpkEnvVars(dot *helmette.Dot, envVars []corev1.EnvVar) []corev1.EnvVar {
 
 func bootstrapEnvVars(dot *helmette.Dot, envVars []corev1.EnvVar) []corev1.EnvVar {
 	values := helmette.Unwrap[Values](dot.Values)
-	if values.Auth.SASL.Enabled {
+	if values.Auth.SASL != nil && values.Auth.SASL.Enabled {
 		return append(envVars, values.Auth.SASL.BootstrapUser.BootstrapEnvironment(Fullname(dot))...)
 	}
 	return envVars
