@@ -10,22 +10,22 @@ webhook:
 
 -- operator-namespaced-scoped-with-secuirty-context --
 
-podSpec:
-  securityContext:
-    runAsUser: 888
-    runAsGroup: 777
-    supplementalGroups:
-    - 555
-    - 444
-    fsGroup: 222
-    fsGroupChangePolicy: Always
-
-operatorSecurityContext:
-  privileged: true
-  runAsUser: 1020
-  runAsGroup: 100
-  readOnlyRootFilesystem: true
-  allowPrivilegeEscalation: true
-  procMount: Default
-  fsGroup: 400
-  fsGroupChangePolicy: Always
+podTemplate:
+  spec:
+    securityContext:
+      runAsUser: 888
+      runAsGroup: 777
+      supplementalGroups:
+      - 555
+      - 444
+      fsGroup: 222
+      fsGroupChangePolicy: Always
+    containers:
+    - name: manager
+      securityContext:
+        allowPrivilegeEscalation: false
+        runAsNonRoot: true
+    - name: kube-rbac-proxy
+      securityContext:
+        allowPrivilegeEscalation: false
+        runAsNonRoot: true

@@ -46,7 +46,7 @@ Sets the Kubernetes cluster domain.
 
 Additional labels to add to all Kubernetes objects. For example, `my.k8s.service: redpanda-operator`.
 
-**Default:** `nil`
+**Default:** `{}`
 
 ### [config](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=config)
 
@@ -195,7 +195,7 @@ Configuration for the `kube-rbac-proxy`, a component that provides an HTTP proxy
 **Default:**
 
 ```
-{"image":{"pullPolicy":"IfNotPresent","repository":"gcr.io/kubebuilder/kube-rbac-proxy","tag":"v0.14.0"}}
+{"image":{"pullPolicy":"IfNotPresent","repository":"gcr.io/kubebuilder/kube-rbac-proxy","tag":"v0.14.0"},"logLevel":10}
 ```
 
 ### [kubeRbacProxy.image](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=kubeRbacProxy.image)
@@ -229,6 +229,12 @@ Sets the repository in which the `kube-rbac-proxy` image is available.
 Sets the `kube-rbac-proxy` image tag.
 
 **Default:** `"v0.14.0"`
+
+### [kubeRbacProxy.logLevel](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=kubeRbacProxy.logLevel)
+
+Sets log level for kube rbac proxy
+
+**Default:** `10`
 
 ### [logLevel](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=logLevel)
 
@@ -272,11 +278,33 @@ Node selection constraints for scheduling Pods on specific nodes. For details, s
 
 ### [podAnnotations](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=podAnnotations)
 
+Sets deployment strategy. For details, see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy). strategy: "" Sets additional annotations for Pods.
+
 **Default:** `{}`
 
 ### [podLabels](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=podLabels)
 
 **Default:** `{}`
+
+### [podTemplate](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=podTemplate)
+
+Sets almost all fields of operator Deployment PodTemplate For details, see the [Kubernetes documentation](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-template-v1/#PodTemplateSpec).
+
+**Default:**
+
+```
+{"metadata":{},"spec":{"containers":[{"name":"manager","resources":{}}],"securityContext":{"runAsUser":65532}}}
+```
+
+### [podTemplate.spec](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=podTemplate.spec)
+
+A subset of Kubernetes' PodSpec type that will be merged into the final PodSpec. See [Merge Semantics](#merging-semantics) for details.
+
+**Default:**
+
+```
+{"containers":[{"name":"manager","resources":{}}],"securityContext":{"runAsUser":65532}}
+```
 
 ### [rbac](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=rbac)
 
@@ -328,19 +356,13 @@ Sets the scope of the Redpanda Operator. Valid values are `Cluster` or `Namespac
 
 Service account management.
 
-**Default:** `{"create":true,"name":null}`
+**Default:** `{"create":true}`
 
 ### [serviceAccount.create](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=serviceAccount.create)
 
 Specifies whether a service account should be created.
 
 **Default:** `true`
-
-### [serviceAccount.name](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=serviceAccount.name)
-
-The name of the service account to use. If not set and `serviceAccount.create` is `true`, a name is generated using the `redpanda-operator.fullname` template.
-
-**Default:** `nil`
 
 ### [tolerations](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=tolerations)
 

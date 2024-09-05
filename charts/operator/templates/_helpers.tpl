@@ -72,8 +72,3 @@ Create the name of the service account to use
 {{- $tag := default .Chart.AppVersion .Values.image.tag -}}
 {{- $tag -}}
 {{- end -}}
-
-{{- define "configurator.tag" -}}
-{{- $tag := default .Chart.AppVersion .Values.configurator.tag -}}
-{{- $tag -}}
-{{- end -}}

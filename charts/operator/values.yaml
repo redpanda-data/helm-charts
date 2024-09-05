@@ -128,6 +128,11 @@ tolerations: []
 # see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity).
 affinity: {}
 
+# -- Sets deployment strategy.
+# For details,
+# see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy).
+# strategy: ""
+
 # Sets additional annotations for Pods.
 podAnnotations: {}
 # Adds additional labels to Pods.
@@ -153,6 +158,41 @@ monitoring:
 
 # Sets the name of the Secret in which to store the self-signed TLS certificate for the Webhooks when `webhook.enabled` is `true`.
 webhookSecretName: webhook-server-cert
+
+# -- Sets almost all fields of operator Deployment PodTemplate
+# For details,
+# see the [Kubernetes documentation](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-template-v1/#PodTemplateSpec).
+podTemplate:
+  metadata: {}
+    # -- Additional labels to apply to the Pods of the StatefulSet.
+    # labels: {}
+    # -- Additional annotations to apply to the Pods of the StatefulSet.
+    # annotations: {}
+  # -- A subset of Kubernetes' PodSpec type that will be merged into the
+  # final PodSpec. See [Merge Semantics](#merging-semantics) for details.
+  spec:
+    securityContext:
+      runAsUser: 65532
+    containers:
+      - name: manager
+        resources: {}
+        # securityContext: {}
+        # env: []
+
+# -- Sets operator container security context
+# For details,
+# see the [Kubernetes documentation](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#security-context-1).
+# operatorSecurityContext:
+
+# -- Sets operator container liveness probe various durations
+# For details,
+# see the [Kubernetes documentation](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#Probe).
+# livenessProbe:
+
+# -- Sets operator container readiness probe various durations
+# For details,
+# see the [Kubernetes documentation](https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#Probe).
+# readinessProbe:
 
 # -- Sets the scope of the Redpanda Operator.
 # Valid values are `Cluster` or `Namespace`.

@@ -1,0 +1,294 @@
+{{- /* Generated from "helpers.go" */ -}}
+
+{{- define "operator.Name" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $values := $dot.Values.AsMap -}}
+{{- $name := (default $dot.Chart.Name $values.nameOverride) -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (get (fromJson (include "operator.cleanForK8s" (dict "a" (list $name) ))) "r")) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "operator.Fullname" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $values := $dot.Values.AsMap -}}
+{{- if (ne $values.fullnameOverride "") -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (get (fromJson (include "operator.cleanForK8s" (dict "a" (list $values.fullnameOverride) ))) "r")) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- $name := (default $dot.Chart.Name $values.nameOverride) -}}
+{{- if (contains $name $dot.Release.Name) -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (get (fromJson (include "operator.cleanForK8s" (dict "a" (list $dot.Release.Name) ))) "r")) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (get (fromJson (include "operator.cleanForK8s" (dict "a" (list (printf "%s-%s" $dot.Release.Name $name)) ))) "r")) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "operator.Chart" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $chart := (printf "%s-%s" $dot.Chart.Name $dot.Chart.Version) -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (get (fromJson (include "operator.cleanForK8s" (dict "a" (list (replace "+" "_" $chart)) ))) "r")) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "operator.Labels" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $values := $dot.Values.AsMap -}}
+{{- $labels := (dict "helm.sh/chart" (get (fromJson (include "operator.Chart" (dict "a" (list $dot) ))) "r") "app.kubernetes.io/managed-by" $dot.Release.Service ) -}}
+{{- if (ne $dot.Chart.AppVersion "") -}}
+{{- $_ := (set $labels "app.kubernetes.io/version" $dot.Chart.AppVersion) -}}
+{{- end -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (merge (dict ) $labels (get (fromJson (include "operator.SelectorLabels" (dict "a" (list $dot) ))) "r") $values.commonLabels)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "operator.SelectorLabels" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (dict "app.kubernetes.io/name" (get (fromJson (include "operator.Name" (dict "a" (list $dot) ))) "r") "app.kubernetes.io/instance" $dot.Release.Name )) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "operator.cleanForK8s" -}}
+{{- $s := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (trimSuffix "-" (trunc (63 | int) $s))) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "operator.cleanForK8sWithSuffix" -}}
+{{- $s := (index .a 0) -}}
+{{- $suffix := (index .a 1) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $lengthToTruncate := ((sub (((add ((get (fromJson (include "_shims.len" (dict "a" (list $s) ))) "r") | int) ((get (fromJson (include "_shims.len" (dict "a" (list $suffix) ))) "r") | int)) | int)) (63 | int)) | int) -}}
+{{- if (gt $lengthToTruncate (0 | int)) -}}
+{{- $s = (trunc $lengthToTruncate $s) -}}
+{{- end -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (printf "%s-%s" $s $suffix)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "operator.StrategicMergePatch" -}}
+{{- $overrides := (index .a 0) -}}
+{{- $original := (index .a 1) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- if (ne $overrides.metadata.labels (coalesce nil)) -}}
+{{- $_ := (set $original.metadata "labels" (merge (dict ) $overrides.metadata.labels (default (dict ) $original.metadata.labels))) -}}
+{{- end -}}
+{{- if (ne $overrides.metadata.annotations (coalesce nil)) -}}
+{{- $_ := (set $original.metadata "annotations" (merge (dict ) $overrides.metadata.annotations (default (dict ) $original.metadata.annotations))) -}}
+{{- end -}}
+{{- if (ne $overrides.spec.securityContext (coalesce nil)) -}}
+{{- $_ := (set $original.spec "securityContext" (merge (dict ) $overrides.spec.securityContext (default (mustMergeOverwrite (dict ) (dict )) $original.spec.securityContext))) -}}
+{{- end -}}
+{{- if (not (empty $overrides.spec.automountServiceAccountToken)) -}}
+{{- $_ := (set $original.spec "automountServiceAccountToken" $overrides.spec.automountServiceAccountToken) -}}
+{{- end -}}
+{{- if (and (ne $overrides.spec.imagePullSecrets (coalesce nil)) (gt ((get (fromJson (include "_shims.len" (dict "a" (list $overrides.spec.imagePullSecrets) ))) "r") | int) (0 | int))) -}}
+{{- $_ := (set $original.spec "imagePullSecrets" $overrides.spec.imagePullSecrets) -}}
+{{- end -}}
+{{- if (not (empty $overrides.spec.serviceAccountName)) -}}
+{{- $_ := (set $original.spec "serviceAccountName" $overrides.spec.serviceAccountName) -}}
+{{- end -}}
+{{- if (not (empty $overrides.spec.nodeSelector)) -}}
+{{- $_ := (set $original.spec "nodeSelector" (merge (dict ) $overrides.spec.nodeSelector (default (dict ) $original.spec.nodeSelector))) -}}
+{{- end -}}
+{{- if (ne $overrides.spec.affinity (coalesce nil)) -}}
+{{- $_ := (set $original.spec "affinity" (merge (dict ) $overrides.spec.affinity (default (mustMergeOverwrite (dict ) (dict )) $original.spec.affinity))) -}}
+{{- end -}}
+{{- if (and (ne $overrides.spec.topologySpreadConstraints (coalesce nil)) (gt ((get (fromJson (include "_shims.len" (dict "a" (list $overrides.spec.topologySpreadConstraints) ))) "r") | int) (0 | int))) -}}
+{{- $_ := (set $original.spec "topologySpreadConstraints" $overrides.spec.topologySpreadConstraints) -}}
+{{- end -}}
+{{- if (and (ne $overrides.spec.volumes (coalesce nil)) (gt ((get (fromJson (include "_shims.len" (dict "a" (list $overrides.spec.volumes) ))) "r") | int) (0 | int))) -}}
+{{- $_ := (set $original.spec "volumes" $overrides.spec.volumes) -}}
+{{- end -}}
+{{- $overrideContainers := (dict ) -}}
+{{- range $i, $_ := $overrides.spec.containers -}}
+{{- $container := (index $overrides.spec.containers $i) -}}
+{{- $_ := (set $overrideContainers (toString $container.name) $container) -}}
+{{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- if (not (empty $overrides.spec.restartPolicy)) -}}
+{{- $_ := (set $original.spec "restartPolicy" $overrides.spec.restartPolicy) -}}
+{{- end -}}
+{{- if (ne $overrides.spec.terminationGracePeriodSeconds (coalesce nil)) -}}
+{{- $_ := (set $original.spec "terminationGracePeriodSeconds" $overrides.spec.terminationGracePeriodSeconds) -}}
+{{- end -}}
+{{- if (ne $overrides.spec.activeDeadlineSeconds (coalesce nil)) -}}
+{{- $_ := (set $original.spec "activeDeadlineSeconds" $overrides.spec.activeDeadlineSeconds) -}}
+{{- end -}}
+{{- if (not (empty $overrides.spec.dnsPolicy)) -}}
+{{- $_ := (set $original.spec "dnsPolicy" $overrides.spec.dnsPolicy) -}}
+{{- end -}}
+{{- if (not (empty $overrides.spec.nodeName)) -}}
+{{- $_ := (set $original.spec "nodeName" $overrides.spec.nodeName) -}}
+{{- end -}}
+{{- if (not (empty $overrides.spec.hostNetwork)) -}}
+{{- $_ := (set $original.spec "hostNetwork" $overrides.spec.hostNetwork) -}}
+{{- end -}}
+{{- if (not (empty $overrides.spec.hostPID)) -}}
+{{- $_ := (set $original.spec "hostPID" $overrides.spec.hostPID) -}}
+{{- end -}}
+{{- if (not (empty $overrides.spec.hostIPC)) -}}
+{{- $_ := (set $original.spec "hostIPC" $overrides.spec.hostIPC) -}}
+{{- end -}}
+{{- if (not (empty $overrides.spec.shareProcessNamespace)) -}}
+{{- $_ := (set $original.spec "shareProcessNamespace" $overrides.spec.shareProcessNamespace) -}}
+{{- end -}}
+{{- if (not (empty $overrides.spec.hostname)) -}}
+{{- $_ := (set $original.spec "hostname" $overrides.spec.hostname) -}}
+{{- end -}}
+{{- if (not (empty $overrides.spec.subdomain)) -}}
+{{- $_ := (set $original.spec "subdomain" $overrides.spec.subdomain) -}}
+{{- end -}}
+{{- if (not (empty $overrides.spec.schedulerName)) -}}
+{{- $_ := (set $original.spec "schedulerName" $overrides.spec.schedulerName) -}}
+{{- end -}}
+{{- if (and (ne $overrides.spec.tolerations (coalesce nil)) (gt ((get (fromJson (include "_shims.len" (dict "a" (list $overrides.spec.tolerations) ))) "r") | int) (0 | int))) -}}
+{{- $_ := (set $original.spec "tolerations" $overrides.spec.tolerations) -}}
+{{- end -}}
+{{- if (and (ne $overrides.spec.hostAliases (coalesce nil)) (gt ((get (fromJson (include "_shims.len" (dict "a" (list $overrides.spec.hostAliases) ))) "r") | int) (0 | int))) -}}
+{{- $_ := (set $original.spec "hostAliases" $overrides.spec.hostAliases) -}}
+{{- end -}}
+{{- if (not (empty $overrides.spec.priorityClassName)) -}}
+{{- $_ := (set $original.spec "priorityClassName" $overrides.spec.priorityClassName) -}}
+{{- end -}}
+{{- if (not (empty $overrides.spec.priority)) -}}
+{{- $_ := (set $original.spec "priority" $overrides.spec.priority) -}}
+{{- end -}}
+{{- if (ne $overrides.spec.dnsConfig (coalesce nil)) -}}
+{{- $_ := (set $original.spec "dnsConfig" (merge (dict ) $overrides.spec.dnsConfig (default (mustMergeOverwrite (dict ) (dict )) $original.spec.dnsConfig))) -}}
+{{- end -}}
+{{- if (and (ne $overrides.spec.readinessGates (coalesce nil)) (gt ((get (fromJson (include "_shims.len" (dict "a" (list $overrides.spec.readinessGates) ))) "r") | int) (0 | int))) -}}
+{{- $_ := (set $original.spec "readinessGates" $overrides.spec.readinessGates) -}}
+{{- end -}}
+{{- if (not (empty $overrides.spec.runtimeClassName)) -}}
+{{- $_ := (set $original.spec "runtimeClassName" $overrides.spec.runtimeClassName) -}}
+{{- end -}}
+{{- if (not (empty $overrides.spec.enableServiceLinks)) -}}
+{{- $_ := (set $original.spec "enableServiceLinks" $overrides.spec.enableServiceLinks) -}}
+{{- end -}}
+{{- if (ne $overrides.spec.preemptionPolicy (coalesce nil)) -}}
+{{- $_ := (set $original.spec "preemptionPolicy" $overrides.spec.preemptionPolicy) -}}
+{{- end -}}
+{{- if (ne $overrides.spec.setHostnameAsFQDN (coalesce nil)) -}}
+{{- $_ := (set $original.spec "setHostnameAsFQDN" $overrides.spec.setHostnameAsFQDN) -}}
+{{- end -}}
+{{- if (ne $overrides.spec.hostUsers (coalesce nil)) -}}
+{{- $_ := (set $original.spec "hostUsers" $overrides.spec.hostUsers) -}}
+{{- end -}}
+{{- if (and (ne $overrides.spec.schedulingGates (coalesce nil)) (gt ((get (fromJson (include "_shims.len" (dict "a" (list $overrides.spec.schedulingGates) ))) "r") | int) (0 | int))) -}}
+{{- $_ := (set $original.spec "schedulingGates" $overrides.spec.schedulingGates) -}}
+{{- end -}}
+{{- if (and (ne $overrides.spec.resourceClaims (coalesce nil)) (gt ((get (fromJson (include "_shims.len" (dict "a" (list $overrides.spec.resourceClaims) ))) "r") | int) (0 | int))) -}}
+{{- $_ := (set $original.spec "resourceClaims" $overrides.spec.resourceClaims) -}}
+{{- end -}}
+{{- $merged := (coalesce nil) -}}
+{{- range $_, $container := $original.spec.containers -}}
+{{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $overrideContainers $container.name (coalesce nil)) ))) "r")) ))) "r") -}}
+{{- $ok_2 := $tmp_tuple_1.T2 -}}
+{{- $override_1 := $tmp_tuple_1.T1 -}}
+{{- if $ok_2 -}}
+{{- $env := (concat (default (list ) $container.env) (default (list ) $override_1.env)) -}}
+{{- $container = (merge (dict ) $override_1 $container) -}}
+{{- $_ := (set $container "env" $env) -}}
+{{- end -}}
+{{- if (eq $container.env (coalesce nil)) -}}
+{{- $_ := (set $container "env" (list )) -}}
+{{- end -}}
+{{- $merged = (concat (default (list ) $merged) (list $container)) -}}
+{{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_ := (set $original.spec "containers" $merged) -}}
+{{- $overrideContainers = (dict ) -}}
+{{- range $i, $_ := $overrides.spec.initContainers -}}
+{{- $container := (index $overrides.spec.initContainers $i) -}}
+{{- $_ := (set $overrideContainers (toString $container.name) $container) -}}
+{{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $merged = (list ) -}}
+{{- range $_, $container := $original.spec.initContainers -}}
+{{- $tmp_tuple_2 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $overrideContainers $container.name (coalesce nil)) ))) "r")) ))) "r") -}}
+{{- $ok_4 := $tmp_tuple_2.T2 -}}
+{{- $override_3 := $tmp_tuple_2.T1 -}}
+{{- if $ok_4 -}}
+{{- $env := (concat (default (list ) $container.env) (default (list ) $override_3.env)) -}}
+{{- $container = (merge (dict ) $override_3 $container) -}}
+{{- $_ := (set $container "env" $env) -}}
+{{- end -}}
+{{- if (eq $container.env (coalesce nil)) -}}
+{{- $_ := (set $container "env" (list )) -}}
+{{- end -}}
+{{- $merged = (concat (default (list ) $merged) (list $container)) -}}
+{{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_ := (set $original.spec "initContainers" $merged) -}}
+{{- $overrideEphemeralContainers := (dict ) -}}
+{{- range $i, $_ := $overrides.spec.ephemeralContainers -}}
+{{- $container := (index $overrides.spec.ephemeralContainers $i) -}}
+{{- $_ := (set $overrideEphemeralContainers (toString $container.name) $container) -}}
+{{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $mergedEphemeralContainers := (coalesce nil) -}}
+{{- range $_, $container := $original.spec.ephemeralContainers -}}
+{{- $tmp_tuple_3 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $overrideEphemeralContainers $container.name (coalesce nil)) ))) "r")) ))) "r") -}}
+{{- $ok_6 := $tmp_tuple_3.T2 -}}
+{{- $override_5 := $tmp_tuple_3.T1 -}}
+{{- if $ok_6 -}}
+{{- $env := (concat (default (list ) $container.env) (default (list ) $override_5.env)) -}}
+{{- $container = (merge (dict ) $override_5 $container) -}}
+{{- $_ := (set $container "env" $env) -}}
+{{- end -}}
+{{- if (eq $container.env (coalesce nil)) -}}
+{{- $_ := (set $container "env" (list )) -}}
+{{- end -}}
+{{- $mergedEphemeralContainers = (concat (default (list ) $mergedEphemeralContainers) (list $container)) -}}
+{{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_ := (set $original.spec "ephemeralContainers" $mergedEphemeralContainers) -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" $original) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
