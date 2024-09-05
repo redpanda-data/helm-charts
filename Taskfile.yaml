@@ -75,6 +75,7 @@ tasks:
       # Generate chart README.md's
       - nix develop -c helm-docs -c ./charts/
       - task: chart:generate:console
+      - task: chart:generate:operator
       - task: chart:generate:redpanda
       - task: chart:generate:connectors
       # Ensure go deps are up to date
@@ -92,6 +93,16 @@ tasks:
       - go run ./cmd/genpartial -out charts/console/values_partial.gen.go -struct Values ./charts/console
       # Generate helm templates from Go definitions
       - go run ./cmd/gotohelm -write ./charts/console/templates ./charts/console
+
+  chart:generate:operator:
+    desc: "Generate files for the operator Helm chart"
+    cmds:
+      # Generate a "partial" version of the Values struct.
+      - go run ./cmd/genpartial -out charts/operator/values_partial.gen.go -struct Values ./charts/operator
+      # Generate the values JSON schema from the Values struct
+      - go run ./cmd/genschema operator > charts/operator/values.schema.json
+      # Generate helm templates from Go definitions
+      - go run ./cmd/gotohelm -write ./charts/operator/templates ./charts/operator
 
   chart:generate:redpanda:
     desc: "Generate files for the redpanda Helm chart"
