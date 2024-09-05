@@ -232,7 +232,7 @@ func PostInstallUpgradeEnvironmentVariables(dot *helmette.Dot) []corev1.EnvVar {
 
 		// cloud_storage_cache_size can be represented as Resource.Quantity that why value can be converted
 		// from value with SI suffix to bytes number.
-		if k == "cloud_storage_cache_size" && v != nil {
+		if k == "cloud_storage_cache_size" {
 			envars = append(envars, corev1.EnvVar{
 				Name:  fmt.Sprintf("RPK_%s", helmette.Upper(k)),
 				Value: helmette.ToJSON(helmette.UnmarshalInto[*resource.Quantity](v).Value()),

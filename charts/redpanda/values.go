@@ -521,7 +521,7 @@ func (s *Storage) Translate() map[string]any {
 			continue
 		}
 
-		if k == "cloud_storage_cache_size" && v != nil {
+		if k == "cloud_storage_cache_size" {
 			result[k] = fmt.Sprintf("%d", helmette.UnmarshalInto[*resource.Quantity](v).Value())
 			continue
 		}

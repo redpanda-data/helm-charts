@@ -97,7 +97,7 @@
 {{- if (or (eq $v (coalesce nil)) (empty $v)) -}}
 {{- continue -}}
 {{- end -}}
-{{- if (and (eq $k "cloud_storage_cache_size") (ne $v (coalesce nil))) -}}
+{{- if (eq $k "cloud_storage_cache_size") -}}
 {{- $envars = (concat (default (list ) $envars) (list (mustMergeOverwrite (dict "name" "" ) (dict "name" (printf "RPK_%s" (upper $k)) "value" (toJson ((get (fromJson (include "_shims.resource_Value" (dict "a" (list $v) ))) "r") | int64)) )))) -}}
 {{- continue -}}
 {{- end -}}

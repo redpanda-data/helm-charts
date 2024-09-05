@@ -293,7 +293,7 @@
 {{- if (or (eq $v (coalesce nil)) (empty $v)) -}}
 {{- continue -}}
 {{- end -}}
-{{- if (and (eq $k "cloud_storage_cache_size") (ne $v (coalesce nil))) -}}
+{{- if (eq $k "cloud_storage_cache_size") -}}
 {{- $_ := (set $result $k (printf "%d" ((get (fromJson (include "_shims.resource_Value" (dict "a" (list $v) ))) "r") | int64))) -}}
 {{- continue -}}
 {{- end -}}
