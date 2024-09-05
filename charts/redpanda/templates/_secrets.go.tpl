@@ -95,7 +95,7 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
-{{- if (or (or (eq $values.auth.sasl (coalesce nil)) (not $values.auth.sasl.enabled)) (ne $values.auth.sasl.bootstrapUser.secretKeyRef (coalesce nil))) -}}
+{{- if (or (not $values.auth.sasl.enabled) (ne $values.auth.sasl.bootstrapUser.secretKeyRef (coalesce nil))) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" (coalesce nil)) | toJson -}}
 {{- break -}}

@@ -110,8 +110,24 @@ Authentication settings. For details, see the [SASL documentation](https://docs.
 **Default:**
 
 ```
-{"sasl":{"enabled":false,"mechanism":"SCRAM-SHA-512","secretRef":"redpanda-users","users":[]}}
+{"sasl":{"bootstrapUser":{"mechanism":"SCRAM-SHA-256"},"enabled":false,"mechanism":"SCRAM-SHA-512","secretRef":"redpanda-users","users":[]}}
 ```
+
+### [auth.sasl.bootstrapUser](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=auth.sasl.bootstrapUser)
+
+Details about how to create the bootstrap user for the cluster. The secretKeyRef is optionally specified. If it is specified, the chart will use a password written to that secret when creating the "kubernetes-controller" bootstrap user. If it is unspecified, then the secret will be generated and stored in the secret "releasename"-bootstrap-user, with the key "password".
+
+**Default:**
+
+```
+{"mechanism":"SCRAM-SHA-256"}
+```
+
+### [auth.sasl.bootstrapUser.mechanism](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=auth.sasl.bootstrapUser.mechanism)
+
+The authentication mechanism to use for the bootstrap user. Options are `SCRAM-SHA-256` and `SCRAM-SHA-512`.
+
+**Default:** `"SCRAM-SHA-256"`
 
 ### [auth.sasl.enabled](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=auth.sasl.enabled)
 

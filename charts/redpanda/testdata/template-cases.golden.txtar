@@ -4208,6 +4208,17 @@ stringData:
         fi
       }
 
+      # before we do anything ensure we have the bootstrap user
+      echo "Ensuring bootstrap user ${RPK_USER}..."
+      creation_result=$(rpk acl user create ${USER_NAME} --password=${RPK_PASS} --mechanism ${RPK_SASL_MECHANISM} 2>&1) && creation_result_exit_code=$? || creation_result_exit_code=$?  # On a non-success exit code
+      if [[ $creation_result_exit_code -ne 0 ]]; then
+        if [[ $creation_result == *"User already exists"* ]]; then
+          echo "Bootstrap user already created"
+        else
+          echo "error creating user ${RPK_USER}: ${creation_result}"
+        fi
+      fi
+
       # first time processing
       process_users $USERS_DIR
 
@@ -4266,6 +4277,23 @@ stringData:
     ADVERTISED_HTTP_ADDRESSES+=("{\"address\":\"${SERVICE_NAME}\",\"name\":\"default\",\"port\":30082}")
 
     rpk redpanda config --config "$CONFIG" set pandaproxy.advertised_pandaproxy_api[1] "${ADVERTISED_HTTP_ADDRESSES[$POD_ORDINAL]}"
+type: Opaque
+---
+# Source: redpanda/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/component: redpanda
+    app.kubernetes.io/instance: redpanda
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: redpanda
+    helm.sh/chart: redpanda-5.9.2
+  name: redpanda-bootstrap-user
+  namespace: default
+stringData:
+  password: 9z2IM7Akpnl81sKznd89Xdjjpu5mCD8D
 type: Opaque
 ---
 # Source: redpanda/templates/configmap.yaml
@@ -4748,6 +4776,17 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
+        - name: RPK_PASS
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: redpanda-bootstrap-user
+        - name: RPK_USER
+          value: kubernetes-controller
+        - name: RPK_SASL_MECHANISM
+          value: SCRAM-SHA-256
+        - name: RP_BOOTSTRAP_USER
+          value: $(RPK_USER):$(RPK_PASS):$(RPK_SASL_MECHANISM)
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
@@ -4907,6 +4946,15 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
+        - name: RPK_PASS
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: redpanda-bootstrap-user
+        - name: RPK_USER
+          value: kubernetes-controller
+        - name: RPK_SASL_MECHANISM
+          value: SCRAM-SHA-256
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
@@ -5142,7 +5190,16 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: []
+        env:
+        - name: RPK_PASS
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: redpanda-bootstrap-user
+        - name: RPK_USER
+          value: kubernetes-controller
+        - name: RPK_SASL_MECHANISM
+          value: SCRAM-SHA-256
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
@@ -5438,6 +5495,17 @@ stringData:
         fi
       }
 
+      # before we do anything ensure we have the bootstrap user
+      echo "Ensuring bootstrap user ${RPK_USER}..."
+      creation_result=$(rpk acl user create ${USER_NAME} --password=${RPK_PASS} --mechanism ${RPK_SASL_MECHANISM} 2>&1) && creation_result_exit_code=$? || creation_result_exit_code=$?  # On a non-success exit code
+      if [[ $creation_result_exit_code -ne 0 ]]; then
+        if [[ $creation_result == *"User already exists"* ]]; then
+          echo "Bootstrap user already created"
+        else
+          echo "error creating user ${RPK_USER}: ${creation_result}"
+        fi
+      fi
+
       # first time processing
       process_users $USERS_DIR
 
@@ -5496,6 +5564,23 @@ stringData:
     ADVERTISED_HTTP_ADDRESSES+=("{\"address\":\"${SERVICE_NAME}\",\"name\":\"default\",\"port\":30082}")
 
     rpk redpanda config --config "$CONFIG" set pandaproxy.advertised_pandaproxy_api[1] "${ADVERTISED_HTTP_ADDRESSES[$POD_ORDINAL]}"
+type: Opaque
+---
+# Source: redpanda/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/component: redpanda
+    app.kubernetes.io/instance: redpanda
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: redpanda
+    helm.sh/chart: redpanda-5.9.2
+  name: redpanda-bootstrap-user
+  namespace: default
+stringData:
+  password: w0ZXmf4QCSSqcoZtTaxRgkv7NCY48If9
 type: Opaque
 ---
 # Source: redpanda/templates/configmap.yaml
@@ -6083,6 +6168,17 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
+        - name: RPK_PASS
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: redpanda-bootstrap-user
+        - name: RPK_USER
+          value: kubernetes-controller
+        - name: RPK_SASL_MECHANISM
+          value: SCRAM-SHA-256
+        - name: RP_BOOTSTRAP_USER
+          value: $(RPK_USER):$(RPK_PASS):$(RPK_SASL_MECHANISM)
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
@@ -6255,6 +6351,15 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
+        - name: RPK_PASS
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: redpanda-bootstrap-user
+        - name: RPK_USER
+          value: kubernetes-controller
+        - name: RPK_SASL_MECHANISM
+          value: SCRAM-SHA-256
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
@@ -6709,7 +6814,16 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: []
+        env:
+        - name: RPK_PASS
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: redpanda-bootstrap-user
+        - name: RPK_USER
+          value: kubernetes-controller
+        - name: RPK_SASL_MECHANISM
+          value: SCRAM-SHA-256
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
@@ -14707,6 +14821,17 @@ stringData:
         fi
       }
 
+      # before we do anything ensure we have the bootstrap user
+      echo "Ensuring bootstrap user ${RPK_USER}..."
+      creation_result=$(rpk acl user create ${USER_NAME} --password=${RPK_PASS} --mechanism ${RPK_SASL_MECHANISM} 2>&1) && creation_result_exit_code=$? || creation_result_exit_code=$?  # On a non-success exit code
+      if [[ $creation_result_exit_code -ne 0 ]]; then
+        if [[ $creation_result == *"User already exists"* ]]; then
+          echo "Bootstrap user already created"
+        else
+          echo "error creating user ${RPK_USER}: ${creation_result}"
+        fi
+      fi
+
       # first time processing
       process_users $USERS_DIR
 
@@ -14777,6 +14902,23 @@ stringData:
     ADVERTISED_HTTP_ADDRESSES+=("{\"address\":\"${SERVICE_NAME}\",\"name\":\"default\",\"port\":30082}")
 
     rpk redpanda config --config "$CONFIG" set pandaproxy.advertised_pandaproxy_api[1] "${ADVERTISED_HTTP_ADDRESSES[$POD_ORDINAL]}"
+type: Opaque
+---
+# Source: redpanda/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/component: redpanda
+    app.kubernetes.io/instance: redpanda
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: redpanda
+    helm.sh/chart: redpanda-5.9.2
+  name: redpanda-bootstrap-user
+  namespace: default
+stringData:
+  password: td9CquC3mpWZUFALZPP8VabG8628KEaS
 type: Opaque
 ---
 # Source: redpanda/templates/configmap.yaml
@@ -15386,6 +15528,17 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
+        - name: RPK_PASS
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: redpanda-bootstrap-user
+        - name: RPK_USER
+          value: kubernetes-controller
+        - name: RPK_SASL_MECHANISM
+          value: SCRAM-SHA-256
+        - name: RP_BOOTSTRAP_USER
+          value: $(RPK_USER):$(RPK_PASS):$(RPK_SASL_MECHANISM)
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
@@ -15558,6 +15711,15 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
+        - name: RPK_PASS
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: redpanda-bootstrap-user
+        - name: RPK_USER
+          value: kubernetes-controller
+        - name: RPK_SASL_MECHANISM
+          value: SCRAM-SHA-256
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
@@ -16011,7 +16173,16 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: []
+        env:
+        - name: RPK_PASS
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: redpanda-bootstrap-user
+        - name: RPK_USER
+          value: kubernetes-controller
+        - name: RPK_SASL_MECHANISM
+          value: SCRAM-SHA-256
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
@@ -67312,6 +67483,17 @@ stringData:
         fi
       }
 
+      # before we do anything ensure we have the bootstrap user
+      echo "Ensuring bootstrap user ${RPK_USER}..."
+      creation_result=$(rpk acl user create ${USER_NAME} --password=${RPK_PASS} --mechanism ${RPK_SASL_MECHANISM} 2>&1) && creation_result_exit_code=$? || creation_result_exit_code=$?  # On a non-success exit code
+      if [[ $creation_result_exit_code -ne 0 ]]; then
+        if [[ $creation_result == *"User already exists"* ]]; then
+          echo "Bootstrap user already created"
+        else
+          echo "error creating user ${RPK_USER}: ${creation_result}"
+        fi
+      fi
+
       # first time processing
       process_users $USERS_DIR
 
@@ -67382,6 +67564,23 @@ stringData:
     ADVERTISED_HTTP_ADDRESSES+=("{\"address\":\"${SERVICE_NAME}\",\"name\":\"default\",\"port\":30082}")
 
     rpk redpanda config --config "$CONFIG" set pandaproxy.advertised_pandaproxy_api[1] "${ADVERTISED_HTTP_ADDRESSES[$POD_ORDINAL]}"
+type: Opaque
+---
+# Source: redpanda/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/component: redpanda
+    app.kubernetes.io/instance: redpanda
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: redpanda
+    helm.sh/chart: redpanda-5.9.2
+  name: redpanda-bootstrap-user
+  namespace: default
+stringData:
+  password: ikU5BjaCfJThlZp68uLtW6hjDv22psFE
 type: Opaque
 ---
 # Source: redpanda/templates/configmap.yaml
@@ -68012,6 +68211,17 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
+        - name: RPK_PASS
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: redpanda-bootstrap-user
+        - name: RPK_USER
+          value: kubernetes-controller
+        - name: RPK_SASL_MECHANISM
+          value: SCRAM-SHA-256
+        - name: RP_BOOTSTRAP_USER
+          value: $(RPK_USER):$(RPK_PASS):$(RPK_SASL_MECHANISM)
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
@@ -68184,6 +68394,15 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
+        - name: RPK_PASS
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: redpanda-bootstrap-user
+        - name: RPK_USER
+          value: kubernetes-controller
+        - name: RPK_SASL_MECHANISM
+          value: SCRAM-SHA-256
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
@@ -68639,7 +68858,16 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: []
+        env:
+        - name: RPK_PASS
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: redpanda-bootstrap-user
+        - name: RPK_USER
+          value: kubernetes-controller
+        - name: RPK_SASL_MECHANISM
+          value: SCRAM-SHA-256
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
@@ -77756,6 +77984,17 @@ stringData:
         fi
       }
 
+      # before we do anything ensure we have the bootstrap user
+      echo "Ensuring bootstrap user ${RPK_USER}..."
+      creation_result=$(rpk acl user create ${USER_NAME} --password=${RPK_PASS} --mechanism ${RPK_SASL_MECHANISM} 2>&1) && creation_result_exit_code=$? || creation_result_exit_code=$?  # On a non-success exit code
+      if [[ $creation_result_exit_code -ne 0 ]]; then
+        if [[ $creation_result == *"User already exists"* ]]; then
+          echo "Bootstrap user already created"
+        else
+          echo "error creating user ${RPK_USER}: ${creation_result}"
+        fi
+      fi
+
       # first time processing
       process_users $USERS_DIR
 
@@ -77826,6 +78065,23 @@ stringData:
     ADVERTISED_HTTP_ADDRESSES+=("{\"address\":\"${SERVICE_NAME}\",\"name\":\"default\",\"port\":30082}")
 
     rpk redpanda config --config "$CONFIG" set pandaproxy.advertised_pandaproxy_api[1] "${ADVERTISED_HTTP_ADDRESSES[$POD_ORDINAL]}"
+type: Opaque
+---
+# Source: redpanda/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/component: redpanda
+    app.kubernetes.io/instance: redpanda
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: redpanda
+    helm.sh/chart: redpanda-5.9.2
+  name: redpanda-bootstrap-user
+  namespace: default
+stringData:
+  password: hbzEhQl2sT0Czj3WuCifXBeljfbzFGVF
 type: Opaque
 ---
 # Source: redpanda/templates/configmap.yaml
@@ -78433,6 +78689,17 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
+        - name: RPK_PASS
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: redpanda-bootstrap-user
+        - name: RPK_USER
+          value: kubernetes-controller
+        - name: RPK_SASL_MECHANISM
+          value: SCRAM-SHA-256
+        - name: RP_BOOTSTRAP_USER
+          value: $(RPK_USER):$(RPK_PASS):$(RPK_SASL_MECHANISM)
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         lifecycle:
           postStart:
@@ -78605,6 +78872,15 @@ spec:
             fieldRef:
               apiVersion: v1
               fieldPath: status.hostIP
+        - name: RPK_PASS
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: redpanda-bootstrap-user
+        - name: RPK_USER
+          value: kubernetes-controller
+        - name: RPK_SASL_MECHANISM
+          value: SCRAM-SHA-256
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: redpanda-configurator
         resources: {}
@@ -79058,7 +79334,16 @@ spec:
         command:
         - /bin/bash
         - -c
-        env: []
+        env:
+        - name: RPK_PASS
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: redpanda-bootstrap-user
+        - name: RPK_USER
+          value: kubernetes-controller
+        - name: RPK_SASL_MECHANISM
+          value: SCRAM-SHA-256
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-upgrade
         securityContext:
