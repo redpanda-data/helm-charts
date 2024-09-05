@@ -209,7 +209,7 @@ func SecretSASLUsers(dot *helmette.Dot) *corev1.Secret {
 
 func SecretBootstrapUser(dot *helmette.Dot) *corev1.Secret {
 	values := helmette.Unwrap[Values](dot.Values)
-	if !values.Auth.SASL.Enabled || values.Auth.SASL.BootstrapUser.SecretKeyRef != nil {
+	if values.Auth.SASL == nil || !values.Auth.SASL.Enabled || values.Auth.SASL.BootstrapUser.SecretKeyRef != nil {
 		return nil
 	}
 
