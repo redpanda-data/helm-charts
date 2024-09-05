@@ -27,6 +27,8 @@ image:
 
 # -- Configuration for the `kube-rbac-proxy`, a component that provides an HTTP proxy to perform authorization checks.
 kubeRbacProxy:
+  # -- Sets log level for kube rbac proxy
+  logLevel: 10
   # -- Sets settings for pulling the `kube-rbac-proxy` image.
   image:
     # -- Sets the repository in which the `kube-rbac-proxy` image is available.
@@ -99,7 +101,7 @@ serviceAccount:
   # -- The name of the service account to use.
   # If not set and `serviceAccount.create` is `true`,
   # a name is generated using the `redpanda-operator.fullname` template.
-  name:
+  # name:
 
 # -- Sets resources requests/limits for Redpanda Operator Pods.
 # By default requests and limits are not set to increase the chances that the charts run on environments with few
@@ -140,7 +142,7 @@ additionalCmdFlags: []
 
 # -- Additional labels to add to all Kubernetes objects.
 # For example, `my.k8s.service: redpanda-operator`.
-commonLabels:
+commonLabels: {}
 
 # -- Configuration for monitoring.
 monitoring:
