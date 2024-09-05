@@ -1319,8 +1319,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -2428,8 +2430,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -3815,8 +3819,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -4147,7 +4153,7 @@ stringData:
       process_users() {
         USERS_DIR=${1-"/etc/secrets/users"}
         USERS_FILE=$(find ${USERS_DIR}/* -print)
-        USERS_LIST=""
+        USERS_LIST="kubernetes-controller"
         READ_LIST_SUCCESS=0
         # Read line by line, handle a missing EOL at the end of file
         while read p || [ -n "$p" ] ; do
@@ -4210,7 +4216,7 @@ stringData:
 
       # before we do anything ensure we have the bootstrap user
       echo "Ensuring bootstrap user ${RPK_USER}..."
-      creation_result=$(rpk acl user create ${USER_NAME} --password=${RPK_PASS} --mechanism ${RPK_SASL_MECHANISM} 2>&1) && creation_result_exit_code=$? || creation_result_exit_code=$?  # On a non-success exit code
+      creation_result=$(rpk acl user create ${RPK_USER} --password=${RPK_PASS} --mechanism ${RPK_SASL_MECHANISM} 2>&1) && creation_result_exit_code=$? || creation_result_exit_code=$?  # On a non-success exit code
       if [[ $creation_result_exit_code -ne 0 ]]; then
         if [[ $creation_result == *"User already exists"* ]]; then
           echo "Bootstrap user already created"
@@ -4315,6 +4321,7 @@ data:
     max_compacted_log_segment_size: 536870912
     storage_min_free_bytes: 161061273
     superusers:
+    - kubernetes-controller
     - admin
     topic_partitions_per_shard: 1000
   redpanda.yaml: |-
@@ -4376,6 +4383,7 @@ data:
           port: 33145
       storage_min_free_bytes: 161061273
       superusers:
+      - kubernetes-controller
       - admin
       topic_partitions_per_shard: 1000
     rpk:
@@ -4655,7 +4663,8 @@ spec:
         - set -e; IFS=':' read -r KAFKA_SASL_USERNAME KAFKA_SASL_PASSWORD KAFKA_SASL_MECHANISM
           < <(grep "" $(find /mnt/users/* -print)); KAFKA_SASL_MECHANISM=${KAFKA_SASL_MECHANISM:-SCRAM-SHA-512};
           export KAFKA_SASL_USERNAME KAFKA_SASL_PASSWORD KAFKA_SASL_MECHANISM;  export
-          KAFKA_SCHEMAREGISTRY_USERNAME=$KAFKA_SASL_USERNAME;  export KAFKA_SCHEMAREGISTRY_PASSWORD=$KAFKA_SASL_PASSWORD;  /app/console
+          KAFKA_SCHEMAREGISTRY_USERNAME=$KAFKA_SASL_USERNAME;  export KAFKA_SCHEMAREGISTRY_PASSWORD=$KAFKA_SASL_PASSWORD;  export
+          REDPANDA_ADMINAPI_USERNAME=$KAFKA_SASL_USERNAME;  export REDPANDA_ADMINAPI_PASSWORD=$KAFKA_SASL_PASSWORD;  /app/console
           $@
         - --
         env: []
@@ -4738,7 +4747,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 07291d9900228e25b276ef01f455efcf0ed0ac7845bb26769161168ce594d97a
+        config.redpanda.com/checksum: 3ecf41865085b9ec980054fab2b5ca2966adfda1f632041123f51e3be06c7165
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -4887,7 +4896,16 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env:
+        - name: RPK_PASS
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: redpanda-bootstrap-user
+        - name: RPK_USER
+          value: kubernetes-controller
+        - name: RPK_SASL_MECHANISM
+          value: SCRAM-SHA-256
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
@@ -5105,8 +5123,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -5114,7 +5134,16 @@ spec:
         command:
         - bash
         - -c
-        env: []
+        env:
+        - name: RPK_PASS
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: redpanda-bootstrap-user
+        - name: RPK_USER
+          value: kubernetes-controller
+        - name: RPK_SASL_MECHANISM
+          value: SCRAM-SHA-256
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
@@ -5434,7 +5463,7 @@ stringData:
       process_users() {
         USERS_DIR=${1-"/etc/secrets/users"}
         USERS_FILE=$(find ${USERS_DIR}/* -print)
-        USERS_LIST=""
+        USERS_LIST="kubernetes-controller"
         READ_LIST_SUCCESS=0
         # Read line by line, handle a missing EOL at the end of file
         while read p || [ -n "$p" ] ; do
@@ -5497,7 +5526,7 @@ stringData:
 
       # before we do anything ensure we have the bootstrap user
       echo "Ensuring bootstrap user ${RPK_USER}..."
-      creation_result=$(rpk acl user create ${USER_NAME} --password=${RPK_PASS} --mechanism ${RPK_SASL_MECHANISM} 2>&1) && creation_result_exit_code=$? || creation_result_exit_code=$?  # On a non-success exit code
+      creation_result=$(rpk acl user create ${RPK_USER} --password=${RPK_PASS} --mechanism ${RPK_SASL_MECHANISM} 2>&1) && creation_result_exit_code=$? || creation_result_exit_code=$?  # On a non-success exit code
       if [[ $creation_result_exit_code -ne 0 ]]; then
         if [[ $creation_result == *"User already exists"* ]]; then
           echo "Bootstrap user already created"
@@ -5607,6 +5636,7 @@ data:
     max_compacted_log_segment_size: 536870912
     storage_min_free_bytes: 161061273
     superusers:
+    - kubernetes-controller
     - admins
     topic_partitions_per_shard: 1000
   redpanda.yaml: |-
@@ -5721,6 +5751,7 @@ data:
           port: 33145
       storage_min_free_bytes: 161061273
       superusers:
+      - kubernetes-controller
       - admins
       topic_partitions_per_shard: 1000
     rpk:
@@ -6022,7 +6053,8 @@ spec:
         - set -e; IFS=':' read -r KAFKA_SASL_USERNAME KAFKA_SASL_PASSWORD KAFKA_SASL_MECHANISM
           < <(grep "" $(find /mnt/users/* -print)); KAFKA_SASL_MECHANISM=${KAFKA_SASL_MECHANISM:-SCRAM-SHA-512};
           export KAFKA_SASL_USERNAME KAFKA_SASL_PASSWORD KAFKA_SASL_MECHANISM;  export
-          KAFKA_SCHEMAREGISTRY_USERNAME=$KAFKA_SASL_USERNAME;  export KAFKA_SCHEMAREGISTRY_PASSWORD=$KAFKA_SASL_PASSWORD;  /app/console
+          KAFKA_SCHEMAREGISTRY_USERNAME=$KAFKA_SASL_USERNAME;  export KAFKA_SCHEMAREGISTRY_PASSWORD=$KAFKA_SASL_PASSWORD;  export
+          REDPANDA_ADMINAPI_USERNAME=$KAFKA_SASL_USERNAME;  export REDPANDA_ADMINAPI_PASSWORD=$KAFKA_SASL_PASSWORD;  /app/console
           $@
         - --
         env:
@@ -6130,7 +6162,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 77ff6a819863362ce96153d0464f2eb04b5f71baccfa412f4f4c2e4b403b588d
+        config.redpanda.com/checksum: 7817707bc9d493ef4814108f2940c8dea8d62255739597bdfa1d736251bbbe9b
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -6284,7 +6316,16 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env:
+        - name: RPK_PASS
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: redpanda-bootstrap-user
+        - name: RPK_USER
+          value: kubernetes-controller
+        - name: RPK_SASL_MECHANISM
+          value: SCRAM-SHA-256
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
@@ -6716,8 +6757,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -6725,7 +6768,16 @@ spec:
         command:
         - bash
         - -c
-        env: []
+        env:
+        - name: RPK_PASS
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: redpanda-bootstrap-user
+        - name: RPK_USER
+          value: kubernetes-controller
+        - name: RPK_SASL_MECHANISM
+          value: SCRAM-SHA-256
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
@@ -8302,8 +8354,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -9936,8 +9990,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -11392,8 +11448,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -12976,8 +13034,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -14425,8 +14485,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -14760,7 +14822,7 @@ stringData:
       process_users() {
         USERS_DIR=${1-"/etc/secrets/users"}
         USERS_FILE=$(find ${USERS_DIR}/* -print)
-        USERS_LIST=""
+        USERS_LIST="kubernetes-controller"
         READ_LIST_SUCCESS=0
         # Read line by line, handle a missing EOL at the end of file
         while read p || [ -n "$p" ] ; do
@@ -14823,7 +14885,7 @@ stringData:
 
       # before we do anything ensure we have the bootstrap user
       echo "Ensuring bootstrap user ${RPK_USER}..."
-      creation_result=$(rpk acl user create ${USER_NAME} --password=${RPK_PASS} --mechanism ${RPK_SASL_MECHANISM} 2>&1) && creation_result_exit_code=$? || creation_result_exit_code=$?  # On a non-success exit code
+      creation_result=$(rpk acl user create ${RPK_USER} --password=${RPK_PASS} --mechanism ${RPK_SASL_MECHANISM} 2>&1) && creation_result_exit_code=$? || creation_result_exit_code=$?  # On a non-success exit code
       if [[ $creation_result_exit_code -ne 0 ]]; then
         if [[ $creation_result == *"User already exists"* ]]; then
           echo "Bootstrap user already created"
@@ -14940,6 +15002,7 @@ data:
     max_compacted_log_segment_size: 536870912
     storage_min_free_bytes: 1073741824
     superusers:
+    - kubernetes-controller
     - admin
     - user1
     - someuser
@@ -15062,6 +15125,7 @@ data:
           port: 33145
       storage_min_free_bytes: 1073741824
       superusers:
+      - kubernetes-controller
       - admin
       - user1
       - someuser
@@ -15382,7 +15446,8 @@ spec:
         - set -e; IFS=':' read -r KAFKA_SASL_USERNAME KAFKA_SASL_PASSWORD KAFKA_SASL_MECHANISM
           < <(grep "" $(find /mnt/users/* -print)); KAFKA_SASL_MECHANISM=${KAFKA_SASL_MECHANISM:-SCRAM-SHA-512};
           export KAFKA_SASL_USERNAME KAFKA_SASL_PASSWORD KAFKA_SASL_MECHANISM;  export
-          KAFKA_SCHEMAREGISTRY_USERNAME=$KAFKA_SASL_USERNAME;  export KAFKA_SCHEMAREGISTRY_PASSWORD=$KAFKA_SASL_PASSWORD;  /app/console
+          KAFKA_SCHEMAREGISTRY_USERNAME=$KAFKA_SASL_USERNAME;  export KAFKA_SCHEMAREGISTRY_PASSWORD=$KAFKA_SASL_PASSWORD;  export
+          REDPANDA_ADMINAPI_USERNAME=$KAFKA_SASL_USERNAME;  export REDPANDA_ADMINAPI_PASSWORD=$KAFKA_SASL_PASSWORD;  /app/console
           $@
         - --
         env:
@@ -15490,7 +15555,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: f28985896f77801885f9932ec78b708c822af1da028ac2ef75dca94508d2f118
+        config.redpanda.com/checksum: 45ae9a53ad448935bf79b816cd100de1ff77a933f9d6f1a9030736e4a541525b
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -15644,7 +15709,16 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env:
+        - name: RPK_PASS
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: redpanda-bootstrap-user
+        - name: RPK_USER
+          value: kubernetes-controller
+        - name: RPK_SASL_MECHANISM
+          value: SCRAM-SHA-256
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
@@ -16076,8 +16150,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -16085,7 +16161,16 @@ spec:
         command:
         - bash
         - -c
-        env: []
+        env:
+        - name: RPK_PASS
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: redpanda-bootstrap-user
+        - name: RPK_USER
+          value: kubernetes-controller
+        - name: RPK_SASL_MECHANISM
+          value: SCRAM-SHA-256
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
@@ -17447,8 +17532,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -18884,8 +18971,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -20042,8 +20131,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -21494,8 +21585,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -23184,8 +23277,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -24632,8 +24727,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -26081,8 +26178,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -27607,8 +27706,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -29156,8 +29257,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -30706,8 +30809,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -32202,8 +32307,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -33758,8 +33865,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -35319,8 +35428,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -36882,8 +36993,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -38391,8 +38504,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -39947,8 +40062,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -41508,8 +41625,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -43071,8 +43190,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -44580,8 +44701,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -46043,8 +46166,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -47489,8 +47614,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -48940,8 +49067,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -50461,8 +50590,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -51927,8 +52058,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -53629,8 +53762,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -55302,8 +55437,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -56952,8 +57089,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -58401,8 +58540,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -59885,8 +60026,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -61354,8 +61497,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -62848,8 +62993,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -64322,8 +64469,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -65651,8 +65800,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -67052,8 +67203,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -67422,7 +67575,7 @@ stringData:
       process_users() {
         USERS_DIR=${1-"/etc/secrets/users"}
         USERS_FILE=$(find ${USERS_DIR}/* -print)
-        USERS_LIST=""
+        USERS_LIST="kubernetes-controller"
         READ_LIST_SUCCESS=0
         # Read line by line, handle a missing EOL at the end of file
         while read p || [ -n "$p" ] ; do
@@ -67485,7 +67638,7 @@ stringData:
 
       # before we do anything ensure we have the bootstrap user
       echo "Ensuring bootstrap user ${RPK_USER}..."
-      creation_result=$(rpk acl user create ${USER_NAME} --password=${RPK_PASS} --mechanism ${RPK_SASL_MECHANISM} 2>&1) && creation_result_exit_code=$? || creation_result_exit_code=$?  # On a non-success exit code
+      creation_result=$(rpk acl user create ${RPK_USER} --password=${RPK_PASS} --mechanism ${RPK_SASL_MECHANISM} 2>&1) && creation_result_exit_code=$? || creation_result_exit_code=$?  # On a non-success exit code
       if [[ $creation_result_exit_code -ne 0 ]]; then
         if [[ $creation_result == *"User already exists"* ]]; then
           echo "Bootstrap user already created"
@@ -67603,6 +67756,7 @@ data:
     max_compacted_log_segment_size: 536870912
     storage_min_free_bytes: 1073741824
     superusers:
+    - kubernetes-controller
     - admin
     topic_partitions_per_shard: 1000
   redpanda.yaml: |-
@@ -67737,6 +67891,7 @@ data:
           port: 33145
       storage_min_free_bytes: 1073741824
       superusers:
+      - kubernetes-controller
       - admin
       topic_partitions_per_shard: 1000
     rpk:
@@ -68054,7 +68209,8 @@ spec:
         - set -e; IFS=':' read -r KAFKA_SASL_USERNAME KAFKA_SASL_PASSWORD KAFKA_SASL_MECHANISM
           < <(grep "" $(find /mnt/users/* -print)); KAFKA_SASL_MECHANISM=${KAFKA_SASL_MECHANISM:-SCRAM-SHA-512};
           export KAFKA_SASL_USERNAME KAFKA_SASL_PASSWORD KAFKA_SASL_MECHANISM;  export
-          KAFKA_SCHEMAREGISTRY_USERNAME=$KAFKA_SASL_USERNAME;  export KAFKA_SCHEMAREGISTRY_PASSWORD=$KAFKA_SASL_PASSWORD;  /app/console
+          KAFKA_SCHEMAREGISTRY_USERNAME=$KAFKA_SASL_USERNAME;  export KAFKA_SCHEMAREGISTRY_PASSWORD=$KAFKA_SASL_PASSWORD;  export
+          REDPANDA_ADMINAPI_USERNAME=$KAFKA_SASL_USERNAME;  export REDPANDA_ADMINAPI_PASSWORD=$KAFKA_SASL_PASSWORD;  /app/console
           $@
         - --
         env:
@@ -68173,7 +68329,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: de4ed090774bfc759578b1c701bee574a8498ac2aac09e125dd77dcbbd181931
+        config.redpanda.com/checksum: 8b0d0fff80c9356cba4383cb322f9d949e79ad63f057d9dda4d268b195f4d92e
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -68327,7 +68483,16 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env:
+        - name: RPK_PASS
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: redpanda-bootstrap-user
+        - name: RPK_USER
+          value: kubernetes-controller
+        - name: RPK_SASL_MECHANISM
+          value: SCRAM-SHA-256
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
@@ -68759,8 +68924,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -68771,6 +68938,15 @@ spec:
         env:
         - name: REDPANDA_LICENSE
           value: ${REDPANDA_LICENSE}
+        - name: RPK_PASS
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: redpanda-bootstrap-user
+        - name: RPK_USER
+          value: kubernetes-controller
+        - name: RPK_SASL_MECHANISM
+          value: SCRAM-SHA-256
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
@@ -70277,8 +70453,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -71729,8 +71907,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -73225,8 +73405,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -74694,8 +74876,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -76142,8 +76326,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -77589,8 +77775,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -77923,7 +78111,7 @@ stringData:
       process_users() {
         USERS_DIR=${1-"/etc/secrets/users"}
         USERS_FILE=$(find ${USERS_DIR}/* -print)
-        USERS_LIST=""
+        USERS_LIST="kubernetes-controller"
         READ_LIST_SUCCESS=0
         # Read line by line, handle a missing EOL at the end of file
         while read p || [ -n "$p" ] ; do
@@ -77986,7 +78174,7 @@ stringData:
 
       # before we do anything ensure we have the bootstrap user
       echo "Ensuring bootstrap user ${RPK_USER}..."
-      creation_result=$(rpk acl user create ${USER_NAME} --password=${RPK_PASS} --mechanism ${RPK_SASL_MECHANISM} 2>&1) && creation_result_exit_code=$? || creation_result_exit_code=$?  # On a non-success exit code
+      creation_result=$(rpk acl user create ${RPK_USER} --password=${RPK_PASS} --mechanism ${RPK_SASL_MECHANISM} 2>&1) && creation_result_exit_code=$? || creation_result_exit_code=$?  # On a non-success exit code
       if [[ $creation_result_exit_code -ne 0 ]]; then
         if [[ $creation_result == *"User already exists"* ]]; then
           echo "Bootstrap user already created"
@@ -78103,6 +78291,7 @@ data:
     max_compacted_log_segment_size: 536870912
     storage_min_free_bytes: 1073741824
     superusers:
+    - kubernetes-controller
     - empty-mechanism
     - mechanism-256
     - mechanism-512
@@ -78224,6 +78413,7 @@ data:
           port: 33145
       storage_min_free_bytes: 1073741824
       superusers:
+      - kubernetes-controller
       - empty-mechanism
       - mechanism-256
       - mechanism-512
@@ -78543,7 +78733,8 @@ spec:
         - set -e; IFS=':' read -r KAFKA_SASL_USERNAME KAFKA_SASL_PASSWORD KAFKA_SASL_MECHANISM
           < <(grep "" $(find /mnt/users/* -print)); KAFKA_SASL_MECHANISM=${KAFKA_SASL_MECHANISM:-SCRAM-SHA-512};
           export KAFKA_SASL_USERNAME KAFKA_SASL_PASSWORD KAFKA_SASL_MECHANISM;  export
-          KAFKA_SCHEMAREGISTRY_USERNAME=$KAFKA_SASL_USERNAME;  export KAFKA_SCHEMAREGISTRY_PASSWORD=$KAFKA_SASL_PASSWORD;  /app/console
+          KAFKA_SCHEMAREGISTRY_USERNAME=$KAFKA_SASL_USERNAME;  export KAFKA_SCHEMAREGISTRY_PASSWORD=$KAFKA_SASL_PASSWORD;  export
+          REDPANDA_ADMINAPI_USERNAME=$KAFKA_SASL_USERNAME;  export REDPANDA_ADMINAPI_PASSWORD=$KAFKA_SASL_PASSWORD;  /app/console
           $@
         - --
         env:
@@ -78651,7 +78842,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 50b858acd9612d68b52fd130534df0e0e9b29a814ab958ca6a193e6fb6888548
+        config.redpanda.com/checksum: ccec795d7c5d69911517c79952948b0b8d6782115a29e551d7a3974f14822f73
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -78805,7 +78996,16 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env:
+        - name: RPK_PASS
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: redpanda-bootstrap-user
+        - name: RPK_USER
+          value: kubernetes-controller
+        - name: RPK_SASL_MECHANISM
+          value: SCRAM-SHA-256
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: config-watcher
         resources: {}
@@ -79237,8 +79437,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -79246,7 +79448,16 @@ spec:
         command:
         - bash
         - -c
-        env: []
+        env:
+        - name: RPK_PASS
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: redpanda-bootstrap-user
+        - name: RPK_USER
+          value: kubernetes-controller
+        - name: RPK_SASL_MECHANISM
+          value: SCRAM-SHA-256
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.3
         name: post-install
         resources: {}
@@ -80725,8 +80936,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -82211,8 +82424,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -83655,8 +83870,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -85103,8 +85320,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -86589,8 +86808,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -88033,8 +88254,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -89469,8 +89692,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -90955,8 +91180,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -92399,8 +92626,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -93835,8 +94064,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -95328,8 +95559,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -96779,8 +97012,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -98224,8 +98459,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -99719,8 +99956,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -101172,8 +101411,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -102617,8 +102858,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -104112,8 +104355,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -105565,8 +105810,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -106816,8 +107063,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -108047,8 +108296,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -109619,8 +109870,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -111203,8 +111456,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -112660,8 +112915,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -114136,8 +114393,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -115586,8 +115845,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -117029,8 +117290,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -118522,8 +118785,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -119973,8 +120238,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -121418,8 +121685,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -122913,8 +123182,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -124366,8 +124637,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
@@ -125811,8 +126084,10 @@ spec:
 
 
           for KEY in "${!RPK_@}"; do
-            config="${KEY#*RPK_}"
-            rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then
+              config="${KEY#*RPK_}"
+              rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"
+            fi
           done
 
 
