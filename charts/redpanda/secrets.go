@@ -365,7 +365,7 @@ func SecretConfigWatcher(dot *helmette.Dot) *corev1.Secret {
 			``,
 			`  # before we do anything ensure we have the bootstrap user`,
 			`  echo "Ensuring bootstrap user ${RPK_USER}..."`,
-			`  creation_result=$(rpk acl user create ${USER_NAME} --password=${RPK_PASS} --mechanism ${RPK_SASL_MECHANISM} 2>&1) && creation_result_exit_code=$? || creation_result_exit_code=$?  # On a non-success exit code`,
+			`  creation_result=$(rpk acl user create ${RPK_USER} --password=${RPK_PASS} --mechanism ${RPK_SASL_MECHANISM} 2>&1) && creation_result_exit_code=$? || creation_result_exit_code=$?  # On a non-success exit code`,
 			`  if [[ $creation_result_exit_code -ne 0 ]]; then`,
 			`    if [[ $creation_result == *"User already exists"* ]]; then`,
 			`      echo "Bootstrap user already created"`,
