@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/redpanda-data/helm-charts/pkg/helm"
+	"github.com/redpanda-data/helm-charts/pkg/testutil"
 	"github.com/santhosh-tekuri/jsonschema/v5"
 	"golang.org/x/tools/txtar"
 	corev1 "k8s.io/api/core/v1"
@@ -40,6 +41,36 @@ func TestValues(t *testing.T) {
 	require.NoError(t, err)
 
 	require.JSONEq(t, string(unstructuredValuesJSON), string(typedValuesJSON))
+}
+
+func TestTemplate(t *testing.T) {
+	ctx := testutil.Context(t)
+	client, err := helm.New(helm.Options{ConfigHome: testutil.TempDir(t)})
+	require.NoError(t, err)
+
+	casesArchive, err := txtar.ParseFile("testdata/template-cases.txtar")
+	require.NoError(t, err)
+
+	generatedCasesArchive, err := txtar.ParseFile("testdata/template-cases-generated.txtar")
+	require.NoError(t, err)
+
+	goldens := testutil.NewTxTar(t, "testdata/template-cases.golden.txtar")
+
+	for _, tc := range append(casesArchive.Files, generatedCasesArchive.Files...) {
+		tc := tc
+		t.Run(tc.Name, func(t *testing.T) {
+			var values PartialValues
+			require.NoError(t, yaml.Unmarshal(tc.Data, &values))
+
+			out, err := client.Template(ctx, ".", helm.TemplateOptions{
+				Name:   "operator",
+				Values: values,
+				Set:    []string{},
+			})
+			require.NoError(t, err)
+			goldens.AssertGolden(t, testutil.YAML, fmt.Sprintf("testdata/%s.yaml.golden", tc.Name), out)
+		})
+	}
 }
 
 // TestGenerateCases is not a test case (sorry) but a test case generator for
