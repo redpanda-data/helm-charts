@@ -244,11 +244,7 @@ func (a *Auth) Translate(isSASLEnabled bool) map[string]any {
 		return nil
 	}
 
-	if len(a.SASL.Users) == 0 {
-		return nil
-	}
-
-	users := []string{}
+	users := []string{"kubernetes-controller"}
 	for _, u := range a.SASL.Users {
 		users = append(users, u.Name)
 	}

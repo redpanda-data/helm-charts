@@ -799,6 +799,7 @@ func statefulSetContainerConfigWatcher(dot *helmette.Dot) *corev1.Container {
 			`-c`,
 			`trap "exit 0" TERM; exec /etc/secrets/config-watcher/scripts/sasl-user.sh & wait $!`,
 		},
+		Env:             rpkEnvVars(dot, nil),
 		Resources:       helmette.UnmarshalInto[corev1.ResourceRequirements](values.Statefulset.SideCars.ConfigWatcher.Resources),
 		SecurityContext: values.Statefulset.SideCars.ConfigWatcher.SecurityContext,
 		VolumeMounts: append(

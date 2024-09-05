@@ -302,7 +302,7 @@ func SecretConfigWatcher(dot *helmette.Dot) *corev1.Secret {
 			`  process_users() {`,
 			`    USERS_DIR=${1-"/etc/secrets/users"}`,
 			`    USERS_FILE=$(find ${USERS_DIR}/* -print)`,
-			`    USERS_LIST=""`,
+			`    USERS_LIST="kubernetes-controller"`,
 			`    READ_LIST_SUCCESS=0`,
 			`    # Read line by line, handle a missing EOL at the end of file`,
 			`    while read p || [ -n "$p" ] ; do`,

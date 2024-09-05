@@ -74,12 +74,7 @@
 {{- (dict "r" (coalesce nil)) | toJson -}}
 {{- break -}}
 {{- end -}}
-{{- if (eq ((get (fromJson (include "_shims.len" (dict "a" (list $a.sasl.users) ))) "r") | int) (0 | int)) -}}
-{{- $_is_returning = true -}}
-{{- (dict "r" (coalesce nil)) | toJson -}}
-{{- break -}}
-{{- end -}}
-{{- $users := (list ) -}}
+{{- $users := (list "kubernetes-controller") -}}
 {{- range $_, $u := $a.sasl.users -}}
 {{- $users = (concat (default (list ) $users) (list $u.name)) -}}
 {{- end -}}

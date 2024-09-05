@@ -82,7 +82,7 @@ func PostInstallUpgradeJob(dot *helmette.Dot) *batchv1.Job {
 						{
 							Name:      PostInstallContainerName,
 							Image:     fmt.Sprintf("%s:%s", values.Image.Repository, Tag(dot)),
-							Env:       PostInstallUpgradeEnvironmentVariables(dot),
+							Env:       rpkEnvVars(dot, PostInstallUpgradeEnvironmentVariables(dot)),
 							Command:   []string{"bash", "-c"},
 							Args:      []string{},
 							Resources: ptr.Deref(values.PostInstallJob.Resources, corev1.ResourceRequirements{}),
@@ -138,7 +138,7 @@ func PostInstallUpgradeJob(dot *helmette.Dot) *batchv1.Job {
 
 		// Second: For each environment variable with the prefix RPK
 		// ("${!RPK_@}"), use `rpk redpanda config set` to update the exported
-		// config.
+		// config, ignoring any authentication environment variables.
 
 		// Lots of Bash Jargon here:
 		//     "${KEY#*RPK_}" => Strip the RPK_ prefix from KEY.
@@ -146,8 +146,10 @@ func PostInstallUpgradeJob(dot *helmette.Dot) *batchv1.Job {
 		//     "${!KEY}" => Dynamic variable resolution. ie: What is the value of the variable with a name equal to the value of $KEY?
 
 		`for KEY in "${!RPK_@}"; do`,
-		`  config="${KEY#*RPK_}"`,
-		`  rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"`,
+		`  if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then`,
+		`    config="${KEY#*RPK_}"`,
+		`    rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"`,
+		`  fi`,
 		`done`,
 		``, ``,
 
