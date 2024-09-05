@@ -136,7 +136,37 @@
 #### Added
 #### Changed
 #### Fixed
-* Added missing permissions for the NodeWatcher controller (`rbac.createAdditionalControllerCRs`)
+#### Removed
+
+### [0.4.29](https://github.com/redpanda-data/helm-charts/releases/tag/operator-0.4.29) - 2024-09-11
+#### Added
+#### Changed
+* Allow to overwrite `appsv1.Deployment.Spec.PodTemplate`
+* Bump operator version [v2.2.2-24.2.4](https://github.com/redpanda-data/redpanda-operator/releases/tag/v2.2.2-24.2.4)
+* Translate operator helm chart to go.
+#### Fixed
+#### Removed
+
+### [0.4.28](https://github.com/redpanda-data/helm-charts/releases/tag/operator-0.4.28) - 2024-08-23
+#### Added
+#### Changed
+* Bump operator version [v2.2.0-24.2.2](https://github.com/redpanda-data/redpanda-operator/releases/tag/v2.2.0-24.2.2)
+#### Fixed
+#### Removed
+
+### [0.4.27](https://github.com/redpanda-data/helm-charts/releases/tag/operator-0.4.27) - 2024-08-08
+#### Added
+#### Changed
+* Bump operator version [v2.1.29-24.2.2](https://github.com/redpanda-data/redpanda-operator/releases/tag/v2.1.29-24.2.2)
+#### Fixed
+#### Removed
+
+### [0.4.26](https://github.com/redpanda-data/helm-charts/releases/tag/operator-0.4.26) - 2024-08-07
+#### Added
+#### Changed
+* Bump operator version [v2.1.28-24.2.1](https://github.com/redpanda-data/redpanda-operator/releases/tag/v2.1.28-24.2.1)
+#### Fixed
+* Fix e2e operator tests
 #### Removed
 
 ### [0.4.25](https://github.com/redpanda-data/helm-charts/releases/tag/operator-0.4.25) - 2024-07-17
