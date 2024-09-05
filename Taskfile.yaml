@@ -99,7 +99,7 @@ tasks:
       # Generate a "partial" version of the Values struct.
       - go run ./cmd/genpartial -out charts/redpanda/values_partial.gen.go -struct Values ./charts/redpanda
       # Generate the values JSON schema from the Values struct
-      - go run ./cmd/genschema > charts/redpanda/values.schema.json
+      - go run ./cmd/genschema redpanda > charts/redpanda/values.schema.json
       # Generate helm templates from Go definitions
       - go run ./cmd/gotohelm -write ./charts/redpanda/templates ./charts/redpanda 
 
