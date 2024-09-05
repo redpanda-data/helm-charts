@@ -1,0 +1,31 @@
+Manually crafted test cases for TestTemplate
+-- default-values --
+# Intentionally left blank. (test of default values)
+
+-- operator-cluster-scoped --
+scope: Cluster
+
+webhook:
+  enabled: true
+
+-- operator-namespaced-scoped-with-secuirty-context --
+
+podSpec:
+  securityContext:
+    runAsUser: 888
+    runAsGroup: 777
+    supplementalGroups:
+    - 555
+    - 444
+    fsGroup: 222
+    fsGroupChangePolicy: Always
+
+operatorSecurityContext:
+  privileged: true
+  runAsUser: 1020
+  runAsGroup: 100
+  readOnlyRootFilesystem: true
+  allowPrivilegeEscalation: true
+  procMount: Default
+  fsGroup: 400
+  fsGroupChangePolicy: Always
