@@ -155,6 +155,61 @@ func TestChart(t *testing.T) {
 		assert.JSONEq(t, string(schemaBytes), retrievedSchema)
 		assert.NoErrorf(t, httpProxyListenerTest(ctx, rpk), "HTTP Proxy listener sub test failed")
 	})
+
+	t.Run("admin api auth required", func(t *testing.T) {
+		ctx := testutil.Context(t)
+
+		env := h.Namespaced(t)
+
+		partial := redpanda.PartialValues{
+			External:      &redpanda.PartialExternalConfig{Enabled: ptr.To(false)},
+			ClusterDomain: ptr.To("cluster.local"),
+			Config: &redpanda.PartialConfig{
+				Cluster: redpanda.PartialClusterConfig{
+					"admin_api_require_auth": true,
+				},
+			},
+			Auth: &redpanda.PartialAuth{
+				SASL: &redpanda.PartialSASLAuth{
+					Enabled: ptr.To(true),
+					Users: []redpanda.PartialSASLUser{{
+						Name:      ptr.To("superuser"),
+						Password:  ptr.To("superpassword"),
+						Mechanism: ptr.To("SCRAM-SHA-512"),
+					}},
+				},
+			},
+		}
+
+		r, err := rand.Int(rand.Reader, new(big.Int).SetInt64(1799999999))
+		require.NoError(t, err)
+
+		chartReleaseName := fmt.Sprintf("chart-%d", r.Int64())
+		rpRelease := env.Install(ctx, redpandaChart, helm.InstallOptions{
+			Values:    partial,
+			Name:      chartReleaseName,
+			Namespace: env.Namespace(),
+		})
+
+		rpk := Client{Ctl: env.Ctl(), Release: &rpRelease}
+
+		dot := &helmette.Dot{
+			Values:  *helmette.UnmarshalInto[*helmette.Values](partial),
+			Release: helmette.Release{Name: rpRelease.Name, Namespace: rpRelease.Namespace},
+			Chart: helmette.Chart{
+				Name: "redpanda",
+			},
+		}
+
+		cleanup, err := rpk.ExposeRedpandaCluster(ctx, dot, w, wErr)
+		if cleanup != nil {
+			t.Cleanup(cleanup)
+		}
+		require.NoError(t, err)
+
+		assert.NoErrorf(t, kafkaListenerTest(ctx, rpk), "Kafka listener sub test failed")
+		assert.NoErrorf(t, adminListenerTest(ctx, rpk), "Admin listener sub test failed")
+	})
 }
 
 func TieredStorageStatic(t *testing.T) redpanda.PartialValues {

@@ -19,6 +19,10 @@
 {{- if (ne $fsValidator_3 (coalesce nil)) -}}
 {{- $secrets = (concat (default (list ) $secrets) (list $fsValidator_3)) -}}
 {{- end -}}
+{{- $bootstrapUser_4 := (get (fromJson (include "redpanda.SecretBootstrapUser" (dict "a" (list $dot) ))) "r") -}}
+{{- if (ne $bootstrapUser_4 (coalesce nil)) -}}
+{{- $secrets = (concat (default (list ) $secrets) (list $bootstrapUser_4)) -}}
+{{- end -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $secrets) | toJson -}}
 {{- break -}}
@@ -35,7 +39,7 @@
 {{- $_ := (set $secret.stringData "common.sh" (join "\n" (list `#!/usr/bin/env bash` `` `# the SERVICE_NAME comes from the metadata.name of the pod, essentially the POD_NAME` (printf `CURL_URL="%s"` (get (fromJson (include "redpanda.adminInternalURL" (dict "a" (list $dot) ))) "r")) `` `# commands used throughout` (printf `CURL_NODE_ID_CMD="curl --silent --fail %s ${CURL_URL}/v1/node_config"` $adminCurlFlags) `` `CURL_MAINTENANCE_DELETE_CMD_PREFIX='curl -X DELETE --silent -o /dev/null -w "%{http_code}"'` `CURL_MAINTENANCE_PUT_CMD_PREFIX='curl -X PUT --silent -o /dev/null -w "%{http_code}"'` (printf `CURL_MAINTENANCE_GET_CMD="curl -X GET --silent %s ${CURL_URL}/v1/maintenance"` $adminCurlFlags)))) -}}
 {{- $postStartSh := (list `#!/usr/bin/env bash` `# This code should be similar if not exactly the same as that found in the panda-operator, see` `# https://github.com/redpanda-data/redpanda/blob/e51d5b7f2ef76d5160ca01b8c7a8cf07593d29b6/src/go/k8s/pkg/resources/secret.go` `` `# path below should match the path defined on the statefulset` `source /var/lifecycle/common.sh` `` `postStartHook () {` `  set -x` `` `  touch /tmp/postStartHookStarted` `` `  until NODE_ID=$(${CURL_NODE_ID_CMD} | grep -o '\"node_id\":[^,}]*' | grep -o '[^: ]*$'); do` `      sleep 0.5` `  done` `` `  echo "Clearing maintenance mode on node ${NODE_ID}"` (printf `  CURL_MAINTENANCE_DELETE_CMD="${CURL_MAINTENANCE_DELETE_CMD_PREFIX} %s ${CURL_URL}/v1/brokers/${NODE_ID}/maintenance"` $adminCurlFlags) `  # a 400 here would mean not in maintenance mode` `  until [ "${status:-}" = '"200"' ] || [ "${status:-}" = '"400"' ]; do` `      status=$(${CURL_MAINTENANCE_DELETE_CMD})` `      sleep 0.5` `  done`) -}}
 {{- if (and $values.auth.sasl.enabled (ne $values.auth.sasl.secretRef "")) -}}
-{{- $postStartSh = (concat (default (list ) $postStartSh) (list `  # Setup and export SASL bootstrap-user` `  IFS=":" read -r USER_NAME PASSWORD MECHANISM < <(grep "" $(find /etc/secrets/users/* -print))` (printf `  MECHANISM=${MECHANISM:-%s}` (dig "auth" "sasl" "mechanism" "SCRAM-SHA-512" $dot.Values.AsMap)) `  rpk acl user create ${USER_NAME} --password=${PASSWORD} --mechanism ${MECHANISM} || true`)) -}}
+{{- $postStartSh = (concat (default (list ) $postStartSh) (list `  # Setup and export SASL bootstrap-user` `  IFS=":" read -r USER_NAME PASSWORD MECHANISM < <(grep "" $(find /etc/secrets/users/* -print))` (printf `  MECHANISM=${MECHANISM:-%s}` (dig "auth" "sasl" "mechanism" "SCRAM-SHA-512" $dot.Values.AsMap)) `  rpk acl user create ${USER_NAME} -p {PASSWORD} --mechanism ${MECHANISM} || true`)) -}}
 {{- end -}}
 {{- $postStartSh = (concat (default (list ) $postStartSh) (list `` `  touch /tmp/postStartHookFinished` `}` `` `postStartHook` `true`)) -}}
 {{- $_ := (set $secret.stringData "postStart.sh" (join "\n" $postStartSh)) -}}
@@ -86,6 +90,38 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "redpanda.SecretBootstrapUser" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $values := $dot.Values.AsMap -}}
+{{- if (or (not $values.auth.sasl.enabled) (ne $values.auth.sasl.bootstrapUser.secretKeyRef (coalesce nil))) -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (coalesce nil)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- $secretName := (printf "%s-bootstrap-user" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r")) -}}
+{{- if $dot.Release.IsUpgrade -}}
+{{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.lookup" (dict "a" (list "v1" "Secret" $dot.Release.Namespace $secretName) ))) "r")) ))) "r") -}}
+{{- $ok_6 := $tmp_tuple_1.T2 -}}
+{{- $existing_5 := $tmp_tuple_1.T1 -}}
+{{- if $ok_6 -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" $existing_5) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+{{- $password := (randAlphaNum (32 | int)) -}}
+{{- $userPassword := $values.auth.sasl.bootstrapUser.password -}}
+{{- if (ne $userPassword (coalesce nil)) -}}
+{{- $password = $userPassword -}}
+{{- end -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) ) (mustMergeOverwrite (dict ) (dict "apiVersion" "v1" "kind" "Secret" )) (dict "metadata" (mustMergeOverwrite (dict "creationTimestamp" (coalesce nil) ) (dict "name" $secretName "namespace" $dot.Release.Namespace "labels" (get (fromJson (include "redpanda.FullLabels" (dict "a" (list $dot) ))) "r") )) "type" "Opaque" "stringData" (dict "password" $password ) ))) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "redpanda.SecretConfigWatcher" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
@@ -101,7 +137,7 @@
 {{- $saslUserSh := (coalesce nil) -}}
 {{- $saslUserSh = (concat (default (list ) $saslUserSh) (list `#!/usr/bin/env bash` `` `trap 'error_handler $? $LINENO' ERR` `` `error_handler() {` `  echo "Error: ($1) occurred at line $2"` `}` `` `set -e` `` `# rpk cluster health can exit non-zero if it's unable to dial brokers. This` `# can happen for many reasons but we never want this script to crash as it` `# would take down yet another broker and make a bad situation worse.` `# Instead, just wait for the command to eventually exit zero.` `echo "Waiting for cluster to be ready"` `until rpk cluster health --watch --exit-when-healthy; do` `  echo "rpk cluster health failed. Waiting 5 seconds before trying again..."` `  sleep 5` `done`)) -}}
 {{- if (and $sasl.enabled (ne $sasl.secretRef "")) -}}
-{{- $saslUserSh = (concat (default (list ) $saslUserSh) (list `while true; do` `  echo "RUNNING: Monitoring and Updating SASL users"` `  USERS_DIR="/etc/secrets/users"` `` `  new_users_list(){` `    LIST=$1` `    NEW_USER=$2` `    if [[ -n "${LIST}" ]]; then` `      LIST="${NEW_USER},${LIST}"` `    else` `      LIST="${NEW_USER}"` `    fi` `` `    echo "${LIST}"` `  }` `` `  process_users() {` `    USERS_DIR=${1-"/etc/secrets/users"}` `    USERS_FILE=$(find ${USERS_DIR}/* -print)` `    USERS_LIST=""` `    READ_LIST_SUCCESS=0` `    # Read line by line, handle a missing EOL at the end of file` `    while read p || [ -n "$p" ] ; do` `      IFS=":" read -r USER_NAME PASSWORD MECHANISM <<< $p` `      # Do not process empty lines` `      if [ -z "$USER_NAME" ]; then` `        continue` `      fi` `      if [[ "${USER_NAME// /}" != "$USER_NAME" ]]; then` `        continue` `      fi` `      echo "Creating user ${USER_NAME}..."` (printf `      MECHANISM=${MECHANISM:-%s}` (dig "auth" "sasl" "mechanism" "SCRAM-SHA-512" $dot.Values.AsMap)) `      creation_result=$(rpk acl user create ${USER_NAME} --password=${PASSWORD} --mechanism ${MECHANISM} 2>&1) && creation_result_exit_code=$? || creation_result_exit_code=$?  # On a non-success exit code` `      if [[ $creation_result_exit_code -ne 0 ]]; then` `        # Check if the stderr contains "User already exists"` `        # this error occurs when password has changed` `        if [[ $creation_result == *"User already exists"* ]]; then` `          echo "Update user ${USER_NAME}"` `          # we will try to update by first deleting` `          deletion_result=$(rpk acl user delete ${USER_NAME} 2>&1) && deletion_result_exit_code=$? || deletion_result_exit_code=$?` `          if [[ $deletion_result_exit_code -ne 0 ]]; then` `            echo "deletion of user ${USER_NAME} failed: ${deletion_result}"` `            READ_LIST_SUCCESS=1` `            break` `          fi` `          # Now we update the user` `          update_result=$(rpk acl user create ${USER_NAME} --password=${PASSWORD} --mechanism ${MECHANISM} 2>&1) && update_result_exit_code=$? || update_result_exit_code=$?  # On a non-success exit code` `          if [[ $update_result_exit_code -ne 0 ]]; then` `            echo "updating user ${USER_NAME} failed: ${update_result}"` `            READ_LIST_SUCCESS=1` `            break` `          else` `            echo "Updated user ${USER_NAME}..."` `            USERS_LIST=$(new_users_list "${USERS_LIST}" "${USER_NAME}")` `          fi` `        else` `          # Another error occurred, so output the original message and exit code` `          echo "error creating user ${USER_NAME}: ${creation_result}"` `          READ_LIST_SUCCESS=1` `          break` `        fi` `      # On a success, the user was created so output that` `      else` `        echo "Created user ${USER_NAME}..."` `        USERS_LIST=$(new_users_list "${USERS_LIST}" "${USER_NAME}")` `      fi` `    done < $USERS_FILE` `` `    if [[ -n "${USERS_LIST}" && ${READ_LIST_SUCCESS} ]]; then` `      echo "Setting superusers configurations with users [${USERS_LIST}]"` `      superuser_result=$(rpk cluster config set superusers [${USERS_LIST}] 2>&1) && superuser_result_exit_code=$? || superuser_result_exit_code=$?` `      if [[ $superuser_result_exit_code -ne 0 ]]; then` `          echo "Setting superusers configurations failed: ${superuser_result}"` `      else` `          echo "Completed setting superusers configurations"` `      fi` `    fi` `  }` `` `  # first time processing` `  process_users $USERS_DIR` `` `  # subsequent changes detected here` `  # watching delete_self as documented in https://ahmet.im/blog/kubernetes-inotify/` `  USERS_FILE=$(find ${USERS_DIR}/* -print)` `  while RES=$(inotifywait -q -e delete_self ${USERS_FILE}); do` `    process_users $USERS_DIR` `  done` `done`)) -}}
+{{- $saslUserSh = (concat (default (list ) $saslUserSh) (list `while true; do` `  echo "RUNNING: Monitoring and Updating SASL users"` `  USERS_DIR="/etc/secrets/users"` `` `  new_users_list(){` `    LIST=$1` `    NEW_USER=$2` `    if [[ -n "${LIST}" ]]; then` `      LIST="${NEW_USER},${LIST}"` `    else` `      LIST="${NEW_USER}"` `    fi` `` `    echo "${LIST}"` `  }` `` `  process_users() {` `    USERS_DIR=${1-"/etc/secrets/users"}` `    USERS_FILE=$(find ${USERS_DIR}/* -print)` `    USERS_LIST="kubernetes-controller"` `    READ_LIST_SUCCESS=0` `    # Read line by line, handle a missing EOL at the end of file` `    while read p || [ -n "$p" ] ; do` `      IFS=":" read -r USER_NAME PASSWORD MECHANISM <<< $p` `      # Do not process empty lines` `      if [ -z "$USER_NAME" ]; then` `        continue` `      fi` `      if [[ "${USER_NAME// /}" != "$USER_NAME" ]]; then` `        continue` `      fi` `      echo "Creating user ${USER_NAME}..."` (printf `      MECHANISM=${MECHANISM:-%s}` (dig "auth" "sasl" "mechanism" "SCRAM-SHA-512" $dot.Values.AsMap)) `      creation_result=$(rpk acl user create ${USER_NAME} -p ${PASSWORD} --mechanism ${MECHANISM} 2>&1) && creation_result_exit_code=$? || creation_result_exit_code=$?  # On a non-success exit code` `      if [[ $creation_result_exit_code -ne 0 ]]; then` `        # Check if the stderr contains "User already exists"` `        # this error occurs when password has changed` `        if [[ $creation_result == *"User already exists"* ]]; then` `          echo "Update user ${USER_NAME}"` `          # we will try to update by first deleting` `          deletion_result=$(rpk acl user delete ${USER_NAME} 2>&1) && deletion_result_exit_code=$? || deletion_result_exit_code=$?` `          if [[ $deletion_result_exit_code -ne 0 ]]; then` `            echo "deletion of user ${USER_NAME} failed: ${deletion_result}"` `            READ_LIST_SUCCESS=1` `            break` `          fi` `          # Now we update the user` `          update_result=$(rpk acl user create ${USER_NAME} -p ${PASSWORD} --mechanism ${MECHANISM} 2>&1) && update_result_exit_code=$? || update_result_exit_code=$?  # On a non-success exit code` `          if [[ $update_result_exit_code -ne 0 ]]; then` `            echo "updating user ${USER_NAME} failed: ${update_result}"` `            READ_LIST_SUCCESS=1` `            break` `          else` `            echo "Updated user ${USER_NAME}..."` `            USERS_LIST=$(new_users_list "${USERS_LIST}" "${USER_NAME}")` `          fi` `        else` `          # Another error occurred, so output the original message and exit code` `          echo "error creating user ${USER_NAME}: ${creation_result}"` `          READ_LIST_SUCCESS=1` `          break` `        fi` `      # On a success, the user was created so output that` `      else` `        echo "Created user ${USER_NAME}..."` `        USERS_LIST=$(new_users_list "${USERS_LIST}" "${USER_NAME}")` `      fi` `    done < $USERS_FILE` `` `    if [[ -n "${USERS_LIST}" && ${READ_LIST_SUCCESS} ]]; then` `      echo "Setting superusers configurations with users [${USERS_LIST}]"` `      superuser_result=$(rpk cluster config set superusers [${USERS_LIST}] 2>&1) && superuser_result_exit_code=$? || superuser_result_exit_code=$?` `      if [[ $superuser_result_exit_code -ne 0 ]]; then` `          echo "Setting superusers configurations failed: ${superuser_result}"` `      else` `          echo "Completed setting superusers configurations"` `      fi` `    fi` `  }` `` `  # before we do anything ensure we have the bootstrap user` `  echo "Ensuring bootstrap user ${RPK_USER}..."` `  creation_result=$(rpk acl user create ${RPK_USER} -p ${RPK_PASS} --mechanism ${RPK_SASL_MECHANISM} 2>&1) && creation_result_exit_code=$? || creation_result_exit_code=$?  # On a non-success exit code` `  if [[ $creation_result_exit_code -ne 0 ]]; then` `    if [[ $creation_result == *"User already exists"* ]]; then` `      echo "Bootstrap user already created"` `    else` `      echo "error creating user ${RPK_USER}: ${creation_result}"` `    fi` `  fi` `` `  # first time processing` `  process_users $USERS_DIR` `` `  # subsequent changes detected here` `  # watching delete_self as documented in https://ahmet.im/blog/kubernetes-inotify/` `  USERS_FILE=$(find ${USERS_DIR}/* -print)` `  while RES=$(inotifywait -q -e delete_self ${USERS_FILE}); do` `    process_users $USERS_DIR` `  done` `done`)) -}}
 {{- else -}}
 {{- $saslUserSh = (concat (default (list ) $saslUserSh) (list `echo "Nothing to do. Sleeping..."` `sleep infinity`)) -}}
 {{- end -}}
@@ -344,9 +380,9 @@ echo "passed"`) -}}
 {{- else -}}
 {{- $address = (index $values.external.addresses (0 | int)) -}}
 {{- end -}}
-{{- $domain_4 := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $values.external.domain "") ))) "r") -}}
-{{- if (ne $domain_4 "") -}}
-{{- $host = (dict "name" $externalName "address" (printf "%s.%s" $address $domain_4) "port" $port ) -}}
+{{- $domain_7 := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $values.external.domain "") ))) "r") -}}
+{{- if (ne $domain_7 "") -}}
+{{- $host = (dict "name" $externalName "address" (printf "%s.%s" $address $domain_7) "port" $port ) -}}
 {{- else -}}
 {{- $host = (dict "name" $externalName "address" $address "port" $port ) -}}
 {{- end -}}

@@ -244,11 +244,7 @@ func (a *Auth) Translate(isSASLEnabled bool) map[string]any {
 		return nil
 	}
 
-	if len(a.SASL.Users) == 0 {
-		return nil
-	}
-
-	users := []string{}
+	users := []string{"kubernetes-controller"}
 	for _, u := range a.SASL.Users {
 		users = append(users, u.Name)
 	}
@@ -521,7 +517,7 @@ func (s *Storage) Translate() map[string]any {
 			continue
 		}
 
-		if k == "cloud_storage_cache_size" && v != nil {
+		if k == "cloud_storage_cache_size" {
 			result[k] = fmt.Sprintf("%d", helmette.UnmarshalInto[*resource.Quantity](v).Value())
 			continue
 		}
@@ -954,6 +950,54 @@ func (m TLSCertMap) MustGet(name string) *TLSCert {
 	return &cert
 }
 
+type BootstrapUser struct {
+	SecretKeyRef *corev1.SecretKeySelector `json:"secretKeyRef"`
+	Password     *string                   `json:"password"`
+	Mechanism    string                    `json:"mechanism" jsonschema:"pattern=^(SCRAM-SHA-512|SCRAM-SHA-256)$"`
+}
+
+func (b *BootstrapUser) BootstrapEnvironment(fullname string) []corev1.EnvVar {
+	return append(b.RpkEnvironment(fullname), corev1.EnvVar{
+		Name:  "RP_BOOTSTRAP_USER",
+		Value: "$(RPK_USER):$(RPK_PASS):$(RPK_SASL_MECHANISM)",
+	})
+}
+
+func (b *BootstrapUser) RpkEnvironment(fullname string) []corev1.EnvVar {
+	return []corev1.EnvVar{{
+		Name: "RPK_PASS",
+		ValueFrom: &corev1.EnvVarSource{
+			SecretKeyRef: b.SecretKeySelector(fullname),
+		},
+	}, {
+		Name:  "RPK_USER",
+		Value: "kubernetes-controller",
+	}, {
+		Name:  "RPK_SASL_MECHANISM",
+		Value: b.GetMechanism(),
+	}}
+}
+
+func (b *BootstrapUser) GetMechanism() string {
+	if b.Mechanism == "" {
+		return "SCRAM-SHA-256"
+	}
+	return b.Mechanism
+}
+
+func (b *BootstrapUser) SecretKeySelector(fullname string) *corev1.SecretKeySelector {
+	if b.SecretKeyRef != nil {
+		return b.SecretKeyRef
+	}
+
+	return &corev1.SecretKeySelector{
+		LocalObjectReference: corev1.LocalObjectReference{
+			Name: fmt.Sprintf("%s-bootstrap-user", fullname),
+		},
+		Key: "password",
+	}
+}
+
 type SASLUser struct {
 	Name      string `json:"name"`
 	Password  string `json:"password"`
@@ -961,10 +1005,11 @@ type SASLUser struct {
 }
 
 type SASLAuth struct {
-	Enabled   bool       `json:"enabled" jsonschema:"required"`
-	Mechanism string     `json:"mechanism"`
-	SecretRef string     `json:"secretRef"`
-	Users     []SASLUser `json:"users"`
+	Enabled       bool          `json:"enabled" jsonschema:"required"`
+	Mechanism     string        `json:"mechanism"`
+	SecretRef     string        `json:"secretRef"`
+	Users         []SASLUser    `json:"users"`
+	BootstrapUser BootstrapUser `json:"bootstrapUser"`
 }
 
 type TrustStore struct {

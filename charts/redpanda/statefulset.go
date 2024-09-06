@@ -488,7 +488,7 @@ func statefulSetInitContainerConfigurator(dot *helmette.Dot) *corev1.Container {
 			`-c`,
 			`trap "exit 0" TERM; exec $CONFIGURATOR_SCRIPT "${SERVICE_NAME}" "${KUBERNETES_NODE_NAME}" & wait $!`,
 		},
-		Env: []corev1.EnvVar{
+		Env: rpkEnvVars(dot, []corev1.EnvVar{
 			{
 				Name:  "CONFIGURATOR_SCRIPT",
 				Value: "/etc/secrets/configurator/scripts/configurator.sh",
@@ -521,7 +521,7 @@ func statefulSetInitContainerConfigurator(dot *helmette.Dot) *corev1.Container {
 					},
 				},
 			},
-		},
+		}),
 		SecurityContext: ptr.To(ContainerSecurityContext(dot)),
 		VolumeMounts: append(append(CommonMounts(dot),
 			templateToVolumeMounts(dot, values.Statefulset.InitContainers.Configurator.ExtraVolumeMounts)...),
@@ -562,7 +562,7 @@ func statefulSetContainerRedpanda(dot *helmette.Dot) *corev1.Container {
 	container := &corev1.Container{
 		Name:  Name(dot),
 		Image: fmt.Sprintf(`%s:%s`, values.Image.Repository, Tag(dot)),
-		Env:   statefulSetRedpandaEnv(),
+		Env:   bootstrapEnvVars(dot, statefulSetRedpandaEnv()),
 		Lifecycle: &corev1.Lifecycle{
 			// finish the lifecycle scripts with "true" to prevent them from terminating the pod prematurely
 			PostStart: &corev1.LifecycleHandler{
@@ -799,6 +799,7 @@ func statefulSetContainerConfigWatcher(dot *helmette.Dot) *corev1.Container {
 			`-c`,
 			`trap "exit 0" TERM; exec /etc/secrets/config-watcher/scripts/sasl-user.sh & wait $!`,
 		},
+		Env:             rpkEnvVars(dot, nil),
 		Resources:       helmette.UnmarshalInto[corev1.ResourceRequirements](values.Statefulset.SideCars.ConfigWatcher.Resources),
 		SecurityContext: values.Statefulset.SideCars.ConfigWatcher.SecurityContext,
 		VolumeMounts: append(
@@ -853,6 +854,22 @@ func statefulSetContainerControllers(dot *helmette.Dot) *corev1.Container {
 		Resources:       helmette.UnmarshalInto[corev1.ResourceRequirements](values.Statefulset.SideCars.Controllers.Resources),
 		SecurityContext: values.Statefulset.SideCars.Controllers.SecurityContext,
 	}
+}
+
+func rpkEnvVars(dot *helmette.Dot, envVars []corev1.EnvVar) []corev1.EnvVar {
+	values := helmette.Unwrap[Values](dot.Values)
+	if values.Auth.SASL != nil && values.Auth.SASL.Enabled {
+		return append(envVars, values.Auth.SASL.BootstrapUser.RpkEnvironment(Fullname(dot))...)
+	}
+	return envVars
+}
+
+func bootstrapEnvVars(dot *helmette.Dot, envVars []corev1.EnvVar) []corev1.EnvVar {
+	values := helmette.Unwrap[Values](dot.Values)
+	if values.Auth.SASL != nil && values.Auth.SASL.Enabled {
+		return append(envVars, values.Auth.SASL.BootstrapUser.BootstrapEnvironment(Fullname(dot))...)
+	}
+	return envVars
 }
 
 func templateToVolumeMounts(dot *helmette.Dot, template string) []corev1.VolumeMount {

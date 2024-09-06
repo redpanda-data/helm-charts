@@ -62,7 +62,7 @@ func PostUpgrade(dot *helmette.Dot) *batchv1.Job {
 							Image:   fmt.Sprintf("%s:%s", values.Image.Repository, Tag(dot)),
 							Command: []string{"/bin/bash", "-c"},
 							Args:    []string{PostUpgradeJobScript(dot)},
-							Env:     values.PostUpgradeJob.ExtraEnv,
+							Env:     rpkEnvVars(dot, values.PostUpgradeJob.ExtraEnv),
 							EnvFrom: values.PostUpgradeJob.ExtraEnvFrom,
 							SecurityContext: ptr.To(helmette.MergeTo[corev1.SecurityContext](
 								ptr.Deref(values.PostUpgradeJob.SecurityContext, corev1.SecurityContext{}),

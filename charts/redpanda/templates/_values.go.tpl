@@ -74,12 +74,7 @@
 {{- (dict "r" (coalesce nil)) | toJson -}}
 {{- break -}}
 {{- end -}}
-{{- if (eq ((get (fromJson (include "_shims.len" (dict "a" (list $a.sasl.users) ))) "r") | int) (0 | int)) -}}
-{{- $_is_returning = true -}}
-{{- (dict "r" (coalesce nil)) | toJson -}}
-{{- break -}}
-{{- end -}}
-{{- $users := (list ) -}}
+{{- $users := (list "kubernetes-controller") -}}
 {{- range $_, $u := $a.sasl.users -}}
 {{- $users = (concat (default (list ) $users) (list $u.name)) -}}
 {{- end -}}
@@ -293,7 +288,7 @@
 {{- if (or (eq $v (coalesce nil)) (empty $v)) -}}
 {{- continue -}}
 {{- end -}}
-{{- if (and (eq $k "cloud_storage_cache_size") (ne $v (coalesce nil))) -}}
+{{- if (eq $k "cloud_storage_cache_size") -}}
 {{- $_ := (set $result $k (printf "%d" ((get (fromJson (include "_shims.resource_Value" (dict "a" (list $v) ))) "r") | int64))) -}}
 {{- continue -}}
 {{- end -}}
@@ -537,6 +532,59 @@
 {{- end -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $cert) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.BootstrapUser.BootstrapEnvironment" -}}
+{{- $b := (index .a 0) -}}
+{{- $fullname := (index .a 1) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (concat (default (list ) (get (fromJson (include "redpanda.BootstrapUser.RpkEnvironment" (dict "a" (list $b $fullname) ))) "r")) (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RP_BOOTSTRAP_USER" "value" "$(RPK_USER):$(RPK_PASS):$(RPK_SASL_MECHANISM)" ))))) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.BootstrapUser.RpkEnvironment" -}}
+{{- $b := (index .a 0) -}}
+{{- $fullname := (index .a 1) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_PASS" "valueFrom" (mustMergeOverwrite (dict ) (dict "secretKeyRef" (get (fromJson (include "redpanda.BootstrapUser.SecretKeySelector" (dict "a" (list $b $fullname) ))) "r") )) )) (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_USER" "value" "kubernetes-controller" )) (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_SASL_MECHANISM" "value" (get (fromJson (include "redpanda.BootstrapUser.GetMechanism" (dict "a" (list $b) ))) "r") )))) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.BootstrapUser.GetMechanism" -}}
+{{- $b := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- if (eq $b.mechanism "") -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" "SCRAM-SHA-256") | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" $b.mechanism) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.BootstrapUser.SecretKeySelector" -}}
+{{- $b := (index .a 0) -}}
+{{- $fullname := (index .a 1) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- if (ne $b.secretKeyRef (coalesce nil)) -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" $b.secretKeyRef) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (mustMergeOverwrite (dict "key" "" ) (mustMergeOverwrite (dict ) (dict "name" (printf "%s-bootstrap-user" $fullname) )) (dict "key" "password" ))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

@@ -122,9 +122,25 @@ func KafkaClient(dot *helmette.Dot, dialer DialContextFunc, opts ...kgo.Opt) (*k
 }
 
 func authFromDot(dot *helmette.Dot) (username string, password string, mechanism string, err error) {
-	saslUsers := redpanda.SecretSASLUsers(dot)
+	values := helmette.Unwrap[redpanda.Values](dot.Values)
 
-	saslError := func(err error) error {
+	bootstrapUser := redpanda.SecretBootstrapUser(dot)
+
+	if bootstrapUser != nil {
+		// if we have any errors grabbing the credentials from the bootstrap user
+		// then we'll just fallback to the superuser parsing code
+		user, found, lookupErr := helmette.SafeLookup[corev1.Secret](dot, bootstrapUser.Namespace, bootstrapUser.Name)
+		if lookupErr == nil && found {
+			selector := values.Auth.SASL.BootstrapUser.SecretKeySelector(redpanda.Fullname(dot))
+			mechanism := values.Auth.SASL.BootstrapUser.GetMechanism()
+			if data, found := user.Data[selector.Key]; found {
+				return "kubernetes-controller", string(data), mechanism, nil
+			}
+		}
+	}
+
+	saslUsers := redpanda.SecretSASLUsers(dot)
+	saslUsersError := func(err error) error {
 		return fmt.Errorf("error fetching SASL authentication for %s/%s: %w", saslUsers.Namespace, saslUsers.Name, err)
 	}
 
@@ -133,24 +149,24 @@ func authFromDot(dot *helmette.Dot) (username string, password string, mechanism
 		// have already been created
 		users, found, lookupErr := helmette.SafeLookup[corev1.Secret](dot, saslUsers.Namespace, saslUsers.Name)
 		if lookupErr != nil {
-			err = saslError(lookupErr)
+			err = saslUsersError(lookupErr)
 			return
 		}
 
 		if !found {
-			err = saslError(ErrSASLSecretNotFound)
+			err = saslUsersError(ErrSASLSecretNotFound)
 			return
 		}
 
 		data, found := users.Data["users.txt"]
 		if !found {
-			err = saslError(ErrSASLSecretKeyNotFound)
+			err = saslUsersError(ErrSASLSecretKeyNotFound)
 			return
 		}
 
 		username, password, mechanism = firstUser(data)
 		if username == "" {
-			err = saslError(ErrSASLSecretSuperuserNotFound)
+			err = saslUsersError(ErrSASLSecretSuperuserNotFound)
 			return
 		}
 	}

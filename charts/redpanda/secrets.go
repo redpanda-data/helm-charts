@@ -39,6 +39,9 @@ func Secrets(dot *helmette.Dot) []*corev1.Secret {
 	if fsValidator := SecretFSValidator(dot); fsValidator != nil {
 		secrets = append(secrets, fsValidator)
 	}
+	if bootstrapUser := SecretBootstrapUser(dot); bootstrapUser != nil {
+		secrets = append(secrets, bootstrapUser)
+	}
 	return secrets
 }
 
@@ -103,7 +106,7 @@ func SecretSTSLifecycle(dot *helmette.Dot) *corev1.Secret {
 			`  # Setup and export SASL bootstrap-user`,
 			`  IFS=":" read -r USER_NAME PASSWORD MECHANISM < <(grep "" $(find /etc/secrets/users/* -print))`,
 			fmt.Sprintf(`  MECHANISM=${MECHANISM:-%s}`, helmette.Dig(dot.Values.AsMap(), "SCRAM-SHA-512", "auth", "sasl", "mechanism")),
-			`  rpk acl user create ${USER_NAME} --password=${PASSWORD} --mechanism ${MECHANISM} || true`,
+			`  rpk acl user create ${USER_NAME} -p {PASSWORD} --mechanism ${MECHANISM} || true`,
 		)
 	}
 	postStartSh = append(postStartSh,
@@ -204,6 +207,44 @@ func SecretSASLUsers(dot *helmette.Dot) *corev1.Secret {
 	}
 }
 
+func SecretBootstrapUser(dot *helmette.Dot) *corev1.Secret {
+	values := helmette.Unwrap[Values](dot.Values)
+	if !values.Auth.SASL.Enabled || values.Auth.SASL.BootstrapUser.SecretKeyRef != nil {
+		return nil
+	}
+
+	secretName := fmt.Sprintf("%s-bootstrap-user", Fullname(dot))
+
+	if dot.Release.IsUpgrade {
+		if existing, ok := helmette.Lookup[corev1.Secret](dot, dot.Release.Namespace, secretName); ok {
+			return existing
+		}
+	}
+
+	password := helmette.RandAlphaNum(32)
+
+	userPassword := values.Auth.SASL.BootstrapUser.Password
+	if userPassword != nil {
+		password = *userPassword
+	}
+
+	return &corev1.Secret{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "v1",
+			Kind:       "Secret",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      secretName,
+			Namespace: dot.Release.Namespace,
+			Labels:    FullLabels(dot),
+		},
+		Type: corev1.SecretTypeOpaque,
+		StringData: map[string]string{
+			"password": password,
+		},
+	}
+}
+
 func SecretConfigWatcher(dot *helmette.Dot) *corev1.Secret {
 	values := helmette.Unwrap[Values](dot.Values)
 
@@ -269,7 +310,7 @@ func SecretConfigWatcher(dot *helmette.Dot) *corev1.Secret {
 			`  process_users() {`,
 			`    USERS_DIR=${1-"/etc/secrets/users"}`,
 			`    USERS_FILE=$(find ${USERS_DIR}/* -print)`,
-			`    USERS_LIST=""`,
+			`    USERS_LIST="kubernetes-controller"`,
 			`    READ_LIST_SUCCESS=0`,
 			`    # Read line by line, handle a missing EOL at the end of file`,
 			`    while read p || [ -n "$p" ] ; do`,
@@ -283,7 +324,7 @@ func SecretConfigWatcher(dot *helmette.Dot) *corev1.Secret {
 			`      fi`,
 			`      echo "Creating user ${USER_NAME}..."`,
 			fmt.Sprintf(`      MECHANISM=${MECHANISM:-%s}`, helmette.Dig(dot.Values.AsMap(), "SCRAM-SHA-512", "auth", "sasl", "mechanism")),
-			`      creation_result=$(rpk acl user create ${USER_NAME} --password=${PASSWORD} --mechanism ${MECHANISM} 2>&1) && creation_result_exit_code=$? || creation_result_exit_code=$?  # On a non-success exit code`,
+			`      creation_result=$(rpk acl user create ${USER_NAME} -p ${PASSWORD} --mechanism ${MECHANISM} 2>&1) && creation_result_exit_code=$? || creation_result_exit_code=$?  # On a non-success exit code`,
 			`      if [[ $creation_result_exit_code -ne 0 ]]; then`,
 			`        # Check if the stderr contains "User already exists"`,
 			`        # this error occurs when password has changed`,
@@ -297,7 +338,7 @@ func SecretConfigWatcher(dot *helmette.Dot) *corev1.Secret {
 			`            break`,
 			`          fi`,
 			`          # Now we update the user`,
-			`          update_result=$(rpk acl user create ${USER_NAME} --password=${PASSWORD} --mechanism ${MECHANISM} 2>&1) && update_result_exit_code=$? || update_result_exit_code=$?  # On a non-success exit code`,
+			`          update_result=$(rpk acl user create ${USER_NAME} -p ${PASSWORD} --mechanism ${MECHANISM} 2>&1) && update_result_exit_code=$? || update_result_exit_code=$?  # On a non-success exit code`,
 			`          if [[ $update_result_exit_code -ne 0 ]]; then`,
 			`            echo "updating user ${USER_NAME} failed: ${update_result}"`,
 			`            READ_LIST_SUCCESS=1`,
@@ -329,6 +370,17 @@ func SecretConfigWatcher(dot *helmette.Dot) *corev1.Secret {
 			`      fi`,
 			`    fi`,
 			`  }`,
+			``,
+			`  # before we do anything ensure we have the bootstrap user`,
+			`  echo "Ensuring bootstrap user ${RPK_USER}..."`,
+			`  creation_result=$(rpk acl user create ${RPK_USER} -p ${RPK_PASS} --mechanism ${RPK_SASL_MECHANISM} 2>&1) && creation_result_exit_code=$? || creation_result_exit_code=$?  # On a non-success exit code`,
+			`  if [[ $creation_result_exit_code -ne 0 ]]; then`,
+			`    if [[ $creation_result == *"User already exists"* ]]; then`,
+			`      echo "Bootstrap user already created"`,
+			`    else`,
+			`      echo "error creating user ${RPK_USER}: ${creation_result}"`,
+			`    fi`,
+			`  fi`,
 			``,
 			`  # first time processing`,
 			`  process_users $USERS_DIR`,

@@ -189,6 +189,18 @@ auth:
     # - name: admin
     #   password: change-me
     #   mechanism: SCRAM-SHA-512
+    # -- Details about how to create the bootstrap user for the cluster.
+    # The secretKeyRef is optionally specified. If it is specified, the
+    # chart will use a password written to that secret when creating the
+    # "kubernetes-controller" bootstrap user. If it is unspecified, then
+    # the secret will be generated and stored in the secret
+    # "releasename"-bootstrap-user, with the key "password".
+    bootstrapUser:
+      # -- The authentication mechanism to use for the bootstrap user. Options are `SCRAM-SHA-256` and `SCRAM-SHA-512`.
+      mechanism: SCRAM-SHA-256
+      # secretKeyRef:
+      #   name: my-password
+      #   key: my-key 
 
 # -- TLS settings.
 # For details, see the [TLS documentation](https://docs.redpanda.com/docs/manage/kubernetes/security/kubernetes-tls/).

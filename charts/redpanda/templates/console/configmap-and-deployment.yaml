@@ -79,6 +79,8 @@ limitations under the License.
   {{ $consoleSASLConfig := (printf "set -e; IFS=':' read -r KAFKA_SASL_USERNAME KAFKA_SASL_PASSWORD KAFKA_SASL_MECHANISM < <(grep \"\" $(find /mnt/users/* -print)); KAFKA_SASL_MECHANISM=${KAFKA_SASL_MECHANISM:-%s}; export KAFKA_SASL_USERNAME KAFKA_SASL_PASSWORD KAFKA_SASL_MECHANISM;" ( include "sasl-mechanism" . )) }}
   {{ $consoleSASLConfig = cat $consoleSASLConfig " export KAFKA_SCHEMAREGISTRY_USERNAME=$KAFKA_SASL_USERNAME;" }}
   {{ $consoleSASLConfig = cat $consoleSASLConfig " export KAFKA_SCHEMAREGISTRY_PASSWORD=$KAFKA_SASL_PASSWORD;" }}
+  {{ $consoleSASLConfig = cat $consoleSASLConfig " export REDPANDA_ADMINAPI_USERNAME=$KAFKA_SASL_USERNAME;" }}
+  {{ $consoleSASLConfig = cat $consoleSASLConfig " export REDPANDA_ADMINAPI_PASSWORD=$KAFKA_SASL_PASSWORD;" }}
   {{ $consoleSASLConfig = cat $consoleSASLConfig " /app/console $@" }}
   {{ $command = append $command $consoleSASLConfig }}
   {{ $command = append $command "--" }}
