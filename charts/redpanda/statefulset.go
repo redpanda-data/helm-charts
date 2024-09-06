@@ -845,12 +845,12 @@ func statefulSetContainerControllers(dot *helmette.Dot) *corev1.Container {
 				helmette.Join(",", values.Statefulset.SideCars.Controllers.Run),
 			),
 		},
-		Env: rpkEnvVars(dot, []corev1.EnvVar{
+		Env: []corev1.EnvVar{
 			{
 				Name:  "REDPANDA_HELM_RELEASE_NAME",
 				Value: dot.Release.Name,
 			},
-		}),
+		},
 		Resources:       helmette.UnmarshalInto[corev1.ResourceRequirements](values.Statefulset.SideCars.Controllers.Resources),
 		SecurityContext: values.Statefulset.SideCars.Controllers.SecurityContext,
 	}
