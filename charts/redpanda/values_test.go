@@ -1,6 +1,7 @@
 package redpanda
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -506,6 +507,105 @@ func TestListeners_TrustStoreVolumes(t *testing.T) {
 		t.Run(tc.Name, func(t *testing.T) {
 			vol := tc.Listeners.TrustStoreVolume(&tls)
 			require.Equal(t, tc.Out, vol)
+		})
+	}
+}
+
+func TestTieredStorageConfigCreds(t *testing.T) {
+	cases := []struct {
+		Name     string
+		Config   TieredStorageConfig
+		Creds    TieredStorageCredentials
+		Expected []corev1.EnvVar
+	}{
+		{
+			Name: "azure-secrets",
+			Config: TieredStorageConfig{
+				"cloud_storage_enabled":               true,
+				"cloud_storage_azure_container":       "fake-azure-container",
+				"cloud_storage_azure_storage_account": "fake-storage-account",
+			},
+			Creds: TieredStorageCredentials{
+				AccessKey: &SecretRef{},
+				SecretKey: &SecretRef{
+					Key:  "some-key",
+					Name: "some-secret",
+				},
+			},
+			Expected: []corev1.EnvVar{{
+				Name: "REDPANDA_CLOUD_STORAGE_AZURE_SHARED_KEY",
+				ValueFrom: &corev1.EnvVarSource{
+					SecretKeyRef: &corev1.SecretKeySelector{
+						LocalObjectReference: corev1.LocalObjectReference{Name: "some-secret"},
+						Key:                  "some-key",
+					},
+				},
+			}},
+		},
+		{
+			Name:   "standard-secrets",
+			Config: TieredStorageConfig{},
+			Creds: TieredStorageCredentials{
+				AccessKey: &SecretRef{Name: "access-secret", Key: "access-key"},
+				SecretKey: &SecretRef{Name: "secret-secret", Key: "secret-key"},
+			},
+			Expected: []corev1.EnvVar{{
+				Name: "REDPANDA_CLOUD_STORAGE_ACCESS_KEY",
+				ValueFrom: &corev1.EnvVarSource{
+					SecretKeyRef: &corev1.SecretKeySelector{
+						LocalObjectReference: corev1.LocalObjectReference{Name: "access-secret"},
+						Key:                  "access-key",
+					},
+				},
+			}, {
+				Name: "REDPANDA_CLOUD_STORAGE_SECRET_KEY",
+				ValueFrom: &corev1.EnvVarSource{
+					SecretKeyRef: &corev1.SecretKeySelector{
+						LocalObjectReference: corev1.LocalObjectReference{Name: "secret-secret"},
+						Key:                  "secret-key",
+					},
+				},
+			}},
+		},
+		{
+			Name: "explicit-precedence",
+			Config: TieredStorageConfig{
+				"cloud_storage_access_key":            "ACCESS_KEY",
+				"cloud_storage_azure_shared_key":      "AZURE_SHARED",
+				"cloud_storage_azure_container":       "fake-azure-container",
+				"cloud_storage_azure_storage_account": "fake-storage-account",
+			},
+			Creds: TieredStorageCredentials{
+				AccessKey: &SecretRef{Name: "access-secret", Key: "access-key"},
+				SecretKey: &SecretRef{Name: "secret-secret", Key: "secret-key"},
+			},
+		},
+		{
+			Name: "explicit-precedence-azure",
+			Config: TieredStorageConfig{
+				"cloud_storage_access_key": "ACCESS_KEY",
+				"cloud_storage_secret_key": "SECRET_KEY",
+			},
+			Creds: TieredStorageCredentials{
+				AccessKey: &SecretRef{Name: "access-secret", Key: "access-key"},
+				SecretKey: &SecretRef{Name: "secret-secret", Key: "secret-key"},
+			},
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.Name, func(t *testing.T) {
+			envvars := tc.Creds.AsEnvVars(tc.Config)
+			clusterConfig := tc.Config.Translate(&tc.Creds)
+
+			require.EqualValues(t, tc.Expected, envvars)
+
+			// Assert that any envvars have corrosponding placeholders at the
+			// expected keys in the config. See also: [BootstrapFile].
+			for _, envar := range envvars {
+				key := strings.ToLower(envar.Name[len("REDPANDA_"):])
+				require.Equal(t, "$"+envar.Name, clusterConfig[key])
+			}
 		})
 	}
 }

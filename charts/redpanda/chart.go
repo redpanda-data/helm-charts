@@ -73,7 +73,6 @@ func render(dot *helmette.Dot) []kube.Object {
 		SidecarControllersRole(dot),
 		SidecarControllersRoleBinding(dot),
 		StatefulSet(dot),
-		PostUpgrade(dot),
 		PostInstallUpgradeJob(dot),
 	}
 

@@ -377,8 +377,8 @@ func (rr *RedpandaResources) GetOverProvisionValue() bool {
 }
 
 type Storage struct {
-	HostPath         string  `json:"hostPath" jsonschema:"required"`
-	Tiered           *Tiered `json:"tiered" jsonschema:"required"`
+	HostPath         string `json:"hostPath" jsonschema:"required"`
+	Tiered           Tiered `json:"tiered" jsonschema:"required"`
 	PersistentVolume *struct {
 		Annotations   map[string]string `json:"annotations" jsonschema:"required"`
 		Enabled       bool              `json:"enabled" jsonschema:"required"`
@@ -415,7 +415,7 @@ func (s *Storage) GetTieredStorageConfig() TieredStorageConfig {
 // was: storage-tiered-hostpath
 func (s *Storage) GetTieredStorageHostPath() string {
 	hp := s.TieredStorageHostPath
-	if helmette.Empty(hp) && s.Tiered != nil {
+	if helmette.Empty(hp) {
 		hp = s.Tiered.HostPath
 	}
 	if helmette.Empty(hp) {
@@ -424,14 +424,6 @@ func (s *Storage) GetTieredStorageHostPath() string {
 		))
 	}
 	return hp
-}
-
-func (s *Storage) CloudStorageCacheSize() *resource.Quantity {
-	value, ok := s.GetTieredStorageConfig()[`cloud_storage_cache_size`]
-	if !ok {
-		return nil
-	}
-	return ptr.To(helmette.UnmarshalInto[resource.Quantity](value))
 }
 
 // TieredCacheDirectory was: tieredStorage.cacheDirectory
@@ -473,10 +465,7 @@ func (s *Storage) TieredPersistentVolumeLabels() map[string]string {
 	if s.TieredStoragePersistentVolume != nil {
 		return s.TieredStoragePersistentVolume.Labels
 	}
-	if s.Tiered != nil {
-		return s.Tiered.PersistentVolume.Labels
-	}
-	panic(`storage.tiered.mountType is "persistentVolume" but storage.tiered.persistentVolume is not configured`)
+	return s.Tiered.PersistentVolume.Labels
 }
 
 // Storage.TieredPersistentVolumeAnnotations was storage-tiered-persistentVolume.annotations
@@ -485,10 +474,7 @@ func (s *Storage) TieredPersistentVolumeAnnotations() map[string]string {
 	if s.TieredStoragePersistentVolume != nil {
 		return s.TieredStoragePersistentVolume.Annotations
 	}
-	if s.Tiered != nil {
-		return s.Tiered.PersistentVolume.Annotations
-	}
-	panic(`storage.tiered.mountType is "persistentVolume" but storage.tiered.persistentVolume is not configured`)
+	return s.Tiered.PersistentVolume.Annotations
 }
 
 // storage.TieredPersistentVolumeStorageClass was storage-tiered-persistentVolume.storageClass
@@ -497,10 +483,7 @@ func (s *Storage) TieredPersistentVolumeStorageClass() string {
 	if s.TieredStoragePersistentVolume != nil {
 		return s.TieredStoragePersistentVolume.StorageClass
 	}
-	if s.Tiered != nil {
-		return s.Tiered.PersistentVolume.StorageClass
-	}
-	panic(`storage.tiered.mountType is "persistentVolume" but storage.tiered.persistentVolume is not configured`)
+	return s.Tiered.PersistentVolume.StorageClass
 }
 
 // +gotohelm:ignore=true
@@ -510,38 +493,6 @@ func (Storage) JSONSchemaExtend(schema *jsonschema.Schema) {
 	// TODO note why we do this.
 	tieredConfig, _ := schema.Properties.Get("tieredConfig")
 	tieredConfig.Required = []string{}
-}
-
-func (s *Storage) Translate() map[string]any {
-	result := map[string]any{}
-
-	if !s.IsTieredStorageEnabled() {
-		return result
-	}
-
-	tieredStorageConfig := s.GetTieredStorageConfig()
-	for k, v := range tieredStorageConfig {
-		if v == nil || helmette.Empty(v) {
-			continue
-		}
-
-		if k == "cloud_storage_cache_size" {
-			result[k] = fmt.Sprintf("%d", helmette.UnmarshalInto[*resource.Quantity](v).Value())
-			continue
-		}
-
-		if str, ok := v.(string); ok {
-			result[k] = str
-		} else if b, ok := v.(bool); ok {
-			result[k] = b
-		} else if f, isFloat := helmette.AsNumeric(v); isFloat {
-			result[k] = int(f)
-		} else {
-			result[k] = helmette.MustToJSON(v)
-		}
-	}
-
-	return result
 }
 
 func (s *Storage) StorageMinFreeBytes() int64 {
@@ -1763,9 +1714,19 @@ func (c *ClusterConfig) Translate() map[string]any {
 }
 
 type SecretRef struct {
+	// ConfigurationKey is never read.
 	ConfigurationKey string `json:"configurationKey"`
 	Key              string `json:"key"`
 	Name             string `json:"name"`
+}
+
+func (sr *SecretRef) AsSource() *corev1.EnvVarSource {
+	return &corev1.EnvVarSource{
+		SecretKeyRef: &corev1.SecretKeySelector{
+			LocalObjectReference: corev1.LocalObjectReference{Name: sr.Name},
+			Key:                  sr.Key,
+		},
+	}
 }
 
 // IsValid confirms whether EnvVarSource could be built from
@@ -1775,27 +1736,96 @@ func (sr *SecretRef) IsValid() bool {
 }
 
 type TieredStorageCredentials struct {
-	ConfigurationKey string     `json:"configurationKey" jsonschema:"deprecated"`
-	Key              string     `json:"key" jsonschema:"deprecated"`
-	Name             string     `json:"name" jsonschema:"deprecated"`
-	AccessKey        *SecretRef `json:"accessKey"`
-	SecretKey        *SecretRef `json:"secretKey"`
+	// ConfigurationKey string `json:"configurationKey" jsonschema:"deprecated"`
+	// Key              string     `json:"key" jsonschema:"deprecated"`
+	// Name             string     `json:"name" jsonschema:"deprecated"`
+	AccessKey *SecretRef `json:"accessKey"`
+	SecretKey *SecretRef `json:"secretKey"`
 }
 
-func (tsc *TieredStorageCredentials) IsAccessKeyReferenceValid() bool {
-	return tsc.AccessKey != nil && tsc.AccessKey.Name != "" && tsc.AccessKey.Key != ""
+func (tsc *TieredStorageCredentials) AsEnvVars(config TieredStorageConfig) []corev1.EnvVar {
+	// Environment variables will only respected if their corresponding keys
+	// are not explicitly set. This is historical behavior and is largely an
+	// implementation details than an explicitly choice.
+	_, hasAccessKey := config["cloud_storage_access_key"]
+	_, hasSecretKey := config["cloud_storage_secret_key"]
+	_, hasSharedKey := config["cloud_storage_azure_shared_key"]
+
+	var envvars []corev1.EnvVar
+
+	if !hasAccessKey && tsc.AccessKey.IsValid() {
+		envvars = append(envvars, corev1.EnvVar{
+			Name:      "REDPANDA_CLOUD_STORAGE_ACCESS_KEY",
+			ValueFrom: tsc.AccessKey.AsSource(),
+		})
+	}
+
+	if tsc.SecretKey.IsValid() {
+		if !hasSecretKey && !config.HasAzureCanaries() {
+			envvars = append(envvars, corev1.EnvVar{
+				Name:      "REDPANDA_CLOUD_STORAGE_SECRET_KEY",
+				ValueFrom: tsc.SecretKey.AsSource(),
+			})
+		} else if !hasSharedKey && config.HasAzureCanaries() {
+			envvars = append(envvars, corev1.EnvVar{
+				Name:      "REDPANDA_CLOUD_STORAGE_AZURE_SHARED_KEY",
+				ValueFrom: tsc.SecretKey.AsSource(),
+			})
+		}
+	}
+
+	return envvars
 }
 
-func (tsc *TieredStorageCredentials) IsSecretKeyReferenceValid() bool {
-	return tsc.SecretKey != nil && tsc.SecretKey.Name != "" && tsc.SecretKey.Key != ""
-}
-
-// +gotohelm:ignore=true
-func (TieredStorageCredentials) JSONSchemaExtend(schema *jsonschema.Schema) {
-	deprecate(schema, "configurationKey", "key", "name")
-}
+// // +gotohelm:ignore=true
+// func (TieredStorageCredentials) JSONSchemaExtend(schema *jsonschema.Schema) {
+// 	deprecate(schema, "configurationKey", "key", "name")
+// }
 
 type TieredStorageConfig map[string]any
+
+// HasAzureCanaries returns true if this configuration has keys set that would
+// indicate the configuration is for a MSFT Azure environment.
+//
+// If true, [TieredStorageCredentials.SecretKey] should be treated as the value
+// for `cloud_storage_azure_shared_key` instead of `cloud_storage_secret_key`.
+func (c TieredStorageConfig) HasAzureCanaries() bool {
+	_, containerExists := c["cloud_storage_azure_container"]
+	_, accountExists := c["cloud_storage_azure_storage_account"]
+	return containerExists && accountExists
+}
+
+func (c TieredStorageConfig) CloudStorageCacheSize() *resource.Quantity {
+	value, ok := c[`cloud_storage_cache_size`]
+	if !ok {
+		return nil
+	}
+	return ptr.To(helmette.UnmarshalInto[resource.Quantity](value))
+}
+
+// Translate converts TieredStorageConfig into a map suitable for use in
+// an unexpanded `.bootstrap.yaml`.
+func (c TieredStorageConfig) Translate(creds *TieredStorageCredentials) map[string]any {
+	// Clone ourselves as we're making changes.
+	config := helmette.Merge(map[string]any{}, c)
+
+	// For any values that can be specified as secrets and do not have explicit
+	// values, inject placeholders into config which will be replaced with
+	// `envsubst` in an initcontainer.
+	for _, envvar := range creds.AsEnvVars(c) {
+		key := helmette.Lower(envvar.Name[len("REDPANDA_"):])
+		// NB: No string + string support in gotohelm.
+		config[key] = fmt.Sprintf("$%s", envvar.Name)
+	}
+
+	// Expand cloud_storage_cache_size, if provided, as it can be specified as
+	// a resource.Quantity.
+	if size := c.CloudStorageCacheSize(); size != nil {
+		config["cloud_storage_cache_size"] = size.Value()
+	}
+
+	return config
+}
 
 // +gotohelm:ignore=true
 func (TieredStorageConfig) JSONSchema() *jsonschema.Schema {

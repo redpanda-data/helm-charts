@@ -966,7 +966,6 @@
         "tag": {
           "default": "Chart.appVersion",
           "description": "The container image tag. Use the Redpanda release version. Must be a valid semver prefixed with a 'v'.",
-          "pattern": "^v(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$|^$",
           "type": "string"
         }
       },
@@ -5080,7 +5079,6 @@
                     },
                     "tag": {
                       "default": "Chart.appVersion",
-                      "pattern": "^v(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$|^$",
                       "type": "string"
                     }
                   },
@@ -5497,18 +5495,6 @@
                     }
                   },
                   "type": "object"
-                },
-                "configurationKey": {
-                  "deprecated": true,
-                  "type": "string"
-                },
-                "key": {
-                  "deprecated": true,
-                  "type": "string"
-                },
-                "name": {
-                  "deprecated": true,
-                  "type": "string"
                 },
                 "secretKey": {
                   "properties": {

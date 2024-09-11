@@ -28,12 +28,65 @@ import (
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 )
 
+// bootstrapYamlTemplater returns an initcontainer that will template
+// environment variables into ${base-config}/boostrap.yaml and output it to
+// ${config}/.bootstrap.yaml.
+func bootstrapYamlTemplater(dot *helmette.Dot) corev1.Container {
+	values := helmette.Unwrap[Values](dot.Values)
+
+	env := values.Storage.Tiered.CredentialsSecretRef.AsEnvVars(values.Storage.GetTieredStorageConfig())
+
+	image := fmt.Sprintf(`%s:%s`,
+		values.Statefulset.SideCars.Controllers.Image.Repository,
+		values.Statefulset.SideCars.Controllers.Image.Tag,
+	)
+
+	return corev1.Container{
+		Name:  "bootstrap-yaml-envsubst",
+		Image: image,
+		Command: []string{
+			"/redpanda-operator",
+			"envsubst",
+			"/tmp/base-config/bootstrap.yaml",
+			"--output",
+			"/tmp/config/.bootstrap.yaml",
+		},
+		Env: env,
+		Resources: corev1.ResourceRequirements{
+			Limits: corev1.ResourceList{
+				corev1.ResourceCPU:    resource.MustParse("100m"),
+				corev1.ResourceMemory: resource.MustParse("25Mi"),
+			},
+			Requests: corev1.ResourceList{
+				corev1.ResourceCPU:    resource.MustParse("100m"),
+				corev1.ResourceMemory: resource.MustParse("25Mi"),
+			},
+		},
+		SecurityContext: &corev1.SecurityContext{
+			// NB: RunAsUser and RunAsGroup will be inherited from the
+			// PodSecurityContext of consumers.
+			AllowPrivilegeEscalation: ptr.To(false),
+			ReadOnlyRootFilesystem:   ptr.To(true),
+			RunAsNonRoot:             ptr.To(true),
+		},
+		VolumeMounts: []corev1.VolumeMount{
+			{Name: "config", MountPath: "/tmp/config/"},
+			{Name: "base-config", MountPath: "/tmp/base-config/"},
+		},
+	}
+}
+
 func PostInstallUpgradeJob(dot *helmette.Dot) *batchv1.Job {
 	values := helmette.Unwrap[Values](dot.Values)
 
 	if !values.PostInstallJob.Enabled {
 		return nil
 	}
+
+	image := fmt.Sprintf(`%s:%s`,
+		values.Statefulset.SideCars.Controllers.Image.Repository,
+		values.Statefulset.SideCars.Controllers.Image.Tag,
+	)
 
 	job := &batchv1.Job{
 		TypeMeta: metav1.TypeMeta{
@@ -72,94 +125,69 @@ func PostInstallUpgradeJob(dot *helmette.Dot) *batchv1.Job {
 					),
 				},
 				Spec: corev1.PodSpec{
-					NodeSelector:     values.NodeSelector,
-					Affinity:         postInstallJobAffinity(dot),
-					Tolerations:      tolerations(dot),
-					RestartPolicy:    corev1.RestartPolicyNever,
-					SecurityContext:  PodSecurityContext(dot),
-					ImagePullSecrets: helmette.Default(nil, values.ImagePullSecrets),
+					NodeSelector:                 values.NodeSelector,
+					Affinity:                     postInstallJobAffinity(dot),
+					Tolerations:                  tolerations(dot),
+					RestartPolicy:                corev1.RestartPolicyNever,
+					SecurityContext:              PodSecurityContext(dot),
+					ImagePullSecrets:             helmette.Default(nil, values.ImagePullSecrets),
+					InitContainers:               []corev1.Container{bootstrapYamlTemplater(dot)},
+					AutomountServiceAccountToken: ptr.To(false),
 					Containers: []corev1.Container{
 						{
-							Name:      PostInstallContainerName,
-							Image:     fmt.Sprintf("%s:%s", values.Image.Repository, Tag(dot)),
-							Env:       rpkEnvVars(dot, PostInstallUpgradeEnvironmentVariables(dot)),
-							Command:   []string{"bash", "-c"},
-							Args:      []string{},
+							Name:  PostInstallContainerName,
+							Image: image,
+							Env:   PostInstallUpgradeEnvironmentVariables(dot),
+							// See sync-cluster-config in the operator for exact details. Roughly, it:
+							// 1. Sets the redpanda license
+							// 2. Sets the redpanda cluster config
+							// 3. Restarts schema-registry (see https://github.com/redpanda-data/redpanda-operator/issues/232)
+							// Upon the post-install run, the clusters's
+							// configuration will be re-set (that is set again
+							// not reset) which is an unfortunate but ultimately acceptable side effect.
+							Command: []string{
+								"/redpanda-operator",
+								"sync-cluster-config",
+								"--redpanda-yaml", "/tmp/base-config/redpanda.yaml",
+								"--bootstrap-yaml", "/tmp/config/.bootstrap.yaml",
+							},
 							Resources: ptr.Deref(values.PostInstallJob.Resources, corev1.ResourceRequirements{}),
 							// Note: this is a semantic change/fix from the template, which specified the merge in the incorrect order
 							SecurityContext: ptr.To(helmette.MergeTo[corev1.SecurityContext](
 								ptr.Deref(values.PostInstallJob.SecurityContext, corev1.SecurityContext{}),
 								ContainerSecurityContext(dot),
 							)),
-							VolumeMounts: DefaultMounts(dot),
+							VolumeMounts: append(
+								CommonMounts(dot),
+								corev1.VolumeMount{Name: "config", MountPath: "/tmp/config"},
+								corev1.VolumeMount{Name: "base-config", MountPath: "/tmp/base-config"},
+							),
 						},
 					},
-					Volumes:            DefaultVolumes(dot),
+					Volumes: append(
+						CommonVolumes(dot),
+						corev1.Volume{
+							Name: "base-config",
+							VolumeSource: corev1.VolumeSource{
+								ConfigMap: &corev1.ConfigMapVolumeSource{
+									LocalObjectReference: corev1.LocalObjectReference{
+										Name: Fullname(dot),
+									},
+								},
+							},
+						},
+						corev1.Volume{
+							Name: "config",
+							VolumeSource: corev1.VolumeSource{
+								EmptyDir: &corev1.EmptyDirVolumeSource{},
+							},
+						},
+					),
 					ServiceAccountName: ServiceAccountName(dot),
 				},
 			}),
 		},
 	}
-
-	var script []string
-	script = append(script,
-		`set -e`,
-	)
-
-	if RedpandaAtLeast_22_2_0(dot) {
-		script = append(script,
-			`if [[ -n "$REDPANDA_LICENSE" ]] then`,
-			`  rpk cluster license set "$REDPANDA_LICENSE"`,
-			`fi`,
-		)
-	}
-	/* ### Here be dragons ###
-	This block of bash configures cluster configuration settings by
-	pulling them from environment variables.
-
-	This allows us to support configurations from secrets or their raw
-	values.
-
-	WARNING: There is a small race condition here. `rpk cluster config import`
-	will reset any values that are not specified. To work around this, we first
-	export the the configuration. If there's a change to the configuration
-	while we're updating the exported config on disk, said change will be reverted.
-
-	TODO(chrisseto): Consolidate all cluster configuration setting to this job.
-	*/
-	script = append(script,
-		// First: dump the existing cluster configuration.
-		// We need to use config import to handle conditional configurations
-		// (e.g. cloud_storage_enabled). Maintaining a DAG of configurations
-		// is not an option for the helm chart.
-		``, ``, ``, ``, // TODO: just WS-alignment with the original template; drop these
-		`rpk cluster config export -f /tmp/cfg.yml`,
-		``, ``,
-
-		// Second: For each environment variable with the prefix RPK
-		// ("${!RPK_@}"), use `rpk redpanda config set` to update the exported
-		// config, ignoring any authentication environment variables.
-
-		// Lots of Bash Jargon here:
-		//     "${KEY#*RPK_}" => Strip the RPK_ prefix from KEY.
-		//     "${config,,}" => config.toLower()
-		//     "${!KEY}" => Dynamic variable resolution. ie: What is the value of the variable with a name equal to the value of $KEY?
-
-		`for KEY in "${!RPK_@}"; do`,
-		`  if ! [[ "$KEY" =~ ^(RPK_USER|RPK_PASS|RPK_SASL_MECHANISM)$ ]]; then`,
-		`    config="${KEY#*RPK_}"`,
-		`    rpk redpanda config set --config /tmp/cfg.yml "${config,,}" "${!KEY}"`,
-		`  fi`,
-		`done`,
-		``, ``,
-
-		// The updated file is then loaded via `rpk cluster config import` which
-		// ensures that conditional configurations (cloud_storage_enabled)
-		// "see" all their dependent keys.
-		`rpk cluster config import -f /tmp/cfg.yml`,
-		``,
-	)
-	job.Spec.Template.Spec.Containers[0].Args = append(job.Spec.Template.Spec.Containers[0].Args, helmette.Join("\n", script))
 
 	return job
 }
@@ -189,8 +217,6 @@ func tolerations(dot *helmette.Dot) []corev1.Toleration {
 // PostInstallUpgradeEnvironmentVariables returns environment variables assigned to Redpanda
 // container.
 func PostInstallUpgradeEnvironmentVariables(dot *helmette.Dot) []corev1.EnvVar {
-	values := helmette.Unwrap[Values](dot.Values)
-
 	envars := []corev1.EnvVar{}
 
 	if license := GetLicenseLiteral(dot); license != "" {
@@ -207,129 +233,8 @@ func PostInstallUpgradeEnvironmentVariables(dot *helmette.Dot) []corev1.EnvVar {
 		})
 	}
 
-	if !values.Storage.IsTieredStorageEnabled() {
-		return envars
-	}
-
-	tieredStorageConfig := values.Storage.GetTieredStorageConfig()
-
-	ac, azureContainerExists := tieredStorageConfig["cloud_storage_azure_container"]
-	asa, azureStorageAccountExists := tieredStorageConfig["cloud_storage_azure_storage_account"]
-	if azureContainerExists && ac != nil && azureStorageAccountExists && asa != nil {
-		envars = append(envars, addAzureSharedKey(tieredStorageConfig, values)...)
-	} else {
-		envars = append(envars, addCloudStorageSecretKey(tieredStorageConfig, values)...)
-	}
-
-	envars = append(envars, addCloudStorageAccessKey(tieredStorageConfig, values)...)
-
-	for k, v := range tieredStorageConfig {
-		if k == "cloud_storage_access_key" || k == "cloud_storage_secret_key" || k == "cloud_storage_azure_shared_key" {
-			continue
-		}
-
-		if v == nil || helmette.Empty(v) {
-			continue
-		}
-
-		// cloud_storage_cache_size can be represented as Resource.Quantity that why value can be converted
-		// from value with SI suffix to bytes number.
-		if k == "cloud_storage_cache_size" {
-			envars = append(envars, corev1.EnvVar{
-				Name:  fmt.Sprintf("RPK_%s", helmette.Upper(k)),
-				Value: helmette.ToJSON(helmette.UnmarshalInto[*resource.Quantity](v).Value()),
-			})
-			continue
-		}
-
-		if str, ok := v.(string); ok {
-			envars = append(envars, corev1.EnvVar{
-				Name:  fmt.Sprintf("RPK_%s", helmette.Upper(k)),
-				Value: str,
-			})
-		} else {
-			envars = append(envars, corev1.EnvVar{
-				Name:  fmt.Sprintf("RPK_%s", helmette.Upper(k)),
-				Value: helmette.MustToJSON(v),
-			})
-		}
-	}
-
-	return envars
-}
-
-func addCloudStorageAccessKey(tieredStorageConfig TieredStorageConfig, values Values) []corev1.EnvVar {
-	if v, ok := tieredStorageConfig["cloud_storage_access_key"]; ok && v != "" {
-		return []corev1.EnvVar{
-			{
-				Name:  "RPK_CLOUD_STORAGE_ACCESS_KEY",
-				Value: v.(string),
-			},
-		}
-	} else if ak := values.Storage.Tiered.CredentialsSecretRef.AccessKey; ak.IsValid() {
-		return []corev1.EnvVar{
-			{
-				Name: "RPK_CLOUD_STORAGE_ACCESS_KEY",
-				ValueFrom: &corev1.EnvVarSource{
-					SecretKeyRef: &corev1.SecretKeySelector{
-						LocalObjectReference: corev1.LocalObjectReference{Name: ak.Name},
-						Key:                  ak.Key,
-					},
-				},
-			},
-		}
-	}
-	return []corev1.EnvVar{}
-}
-
-func addCloudStorageSecretKey(tieredStorageConfig TieredStorageConfig, values Values) []corev1.EnvVar {
-	if v, ok := tieredStorageConfig["cloud_storage_secret_key"]; ok && v != "" {
-		return []corev1.EnvVar{
-			{
-				Name:  "RPK_CLOUD_STORAGE_SECRET_KEY",
-				Value: v.(string),
-			},
-		}
-	} else if sk := values.Storage.Tiered.CredentialsSecretRef.SecretKey; sk.IsValid() {
-		return []corev1.EnvVar{
-			{
-				Name: "RPK_CLOUD_STORAGE_SECRET_KEY",
-				ValueFrom: &corev1.EnvVarSource{
-					SecretKeyRef: &corev1.SecretKeySelector{
-						LocalObjectReference: corev1.LocalObjectReference{Name: sk.Name},
-						Key:                  sk.Key,
-					},
-				},
-			},
-		}
-	}
-	return []corev1.EnvVar{}
-}
-
-func addAzureSharedKey(tieredStorageConfig TieredStorageConfig, values Values) []corev1.EnvVar {
-	// Preference Tiered Storage Config over credential secret reference
-	if v, ok := tieredStorageConfig["cloud_storage_azure_shared_key"]; ok && v != "" {
-		return []corev1.EnvVar{
-			{
-				Name:  "RPK_CLOUD_STORAGE_AZURE_SHARED_KEY",
-				Value: v.(string),
-			},
-		}
-	} else if sk := values.Storage.Tiered.CredentialsSecretRef.SecretKey; sk.IsValid() {
-		return []corev1.EnvVar{
-			{
-				Name: "RPK_CLOUD_STORAGE_AZURE_SHARED_KEY",
-				ValueFrom: &corev1.EnvVarSource{
-					SecretKeyRef: &corev1.SecretKeySelector{
-						LocalObjectReference: corev1.LocalObjectReference{Name: sk.Name},
-						Key:                  sk.Key,
-					},
-				},
-			},
-		}
-	}
-
-	return []corev1.EnvVar{}
+	// include any authentication envvars as well.
+	return bootstrapEnvVars(dot, envars)
 }
 
 func GetLicenseLiteral(dot *helmette.Dot) string {

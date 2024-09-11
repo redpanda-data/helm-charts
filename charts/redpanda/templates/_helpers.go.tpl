@@ -212,7 +212,7 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $_is_returning = true -}}
-{{- (dict "r" (concat (default (list ) (list (mustMergeOverwrite (dict "name" "" "mountPath" "" ) (dict "name" "config" "mountPath" "/etc/redpanda" )))) (default (list ) (get (fromJson (include "redpanda.CommonMounts" (dict "a" (list $dot) ))) "r")))) | toJson -}}
+{{- (dict "r" (concat (default (list ) (list (mustMergeOverwrite (dict "name" "" "mountPath" "" ) (dict "name" "base-config" "mountPath" "/etc/redpanda" )))) (default (list ) (get (fromJson (include "redpanda.CommonMounts" (dict "a" (list $dot) ))) "r")))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -256,7 +256,7 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $_is_returning = true -}}
-{{- (dict "r" (concat (default (list ) (list (mustMergeOverwrite (dict "name" "" ) (mustMergeOverwrite (dict ) (dict "configMap" (mustMergeOverwrite (dict ) (mustMergeOverwrite (dict ) (dict "name" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r") )) (dict )) )) (dict "name" "config" )))) (default (list ) (get (fromJson (include "redpanda.CommonVolumes" (dict "a" (list $dot) ))) "r")))) | toJson -}}
+{{- (dict "r" (concat (default (list ) (list (mustMergeOverwrite (dict "name" "" ) (mustMergeOverwrite (dict ) (dict "configMap" (mustMergeOverwrite (dict ) (mustMergeOverwrite (dict ) (dict "name" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r") )) (dict )) )) (dict "name" "base-config" )))) (default (list ) (get (fromJson (include "redpanda.CommonVolumes" (dict "a" (list $dot) ))) "r")))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

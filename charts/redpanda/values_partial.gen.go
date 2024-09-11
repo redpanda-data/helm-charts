@@ -360,6 +360,21 @@ type PartialEnableable struct {
 	Enabled *bool "json:\"enabled,omitempty\" jsonschema:\"required\""
 }
 
+type PartialTiered struct {
+	CredentialsSecretRef *PartialTieredStorageCredentials "json:\"credentialsSecretRef,omitempty\""
+	Config               PartialTieredStorageConfig       "json:\"config,omitempty\""
+	HostPath             *string                          "json:\"hostPath,omitempty\""
+	MountType            *string                          "json:\"mountType,omitempty\" jsonschema:\"required,pattern=^(none|hostPath|emptyDir|persistentVolume)$\""
+	PersistentVolume     *struct {
+		Annotations   map[string]string "json:\"annotations,omitempty\" jsonschema:\"required\""
+		Enabled       *bool             "json:\"enabled,omitempty\""
+		Labels        map[string]string "json:\"labels,omitempty\" jsonschema:\"required\""
+		NameOverwrite *string           "json:\"nameOverwrite,omitempty\""
+		Size          *string           "json:\"size,omitempty\""
+		StorageClass  *string           "json:\"storageClass,omitempty\" jsonschema:\"required\""
+	} "json:\"persistentVolume,omitempty\""
+}
+
 type PartialTieredStorageConfig map[string]any
 
 type PartialPodTemplate struct {
@@ -424,21 +439,6 @@ type PartialSASLAuth struct {
 	BootstrapUser *PartialBootstrapUser "json:\"bootstrapUser,omitempty\""
 }
 
-type PartialTiered struct {
-	CredentialsSecretRef *PartialTieredStorageCredentials "json:\"credentialsSecretRef,omitempty\""
-	Config               PartialTieredStorageConfig       "json:\"config,omitempty\""
-	HostPath             *string                          "json:\"hostPath,omitempty\""
-	MountType            *string                          "json:\"mountType,omitempty\" jsonschema:\"required,pattern=^(none|hostPath|emptyDir|persistentVolume)$\""
-	PersistentVolume     *struct {
-		Annotations   map[string]string "json:\"annotations,omitempty\" jsonschema:\"required\""
-		Enabled       *bool             "json:\"enabled,omitempty\""
-		Labels        map[string]string "json:\"labels,omitempty\" jsonschema:\"required\""
-		NameOverwrite *string           "json:\"nameOverwrite,omitempty\""
-		Size          *string           "json:\"size,omitempty\""
-		StorageClass  *string           "json:\"storageClass,omitempty\" jsonschema:\"required\""
-	} "json:\"persistentVolume,omitempty\""
-}
-
 type PartialInternalTLS struct {
 	Enabled           *bool              "json:\"enabled,omitempty\""
 	Cert              *string            "json:\"cert,omitempty\" jsonschema:\"required\""
@@ -482,6 +482,11 @@ type PartialTLSCert struct {
 	ClientSecretRef       *corev1.LocalObjectReference "json:\"clientSecretRef,omitempty\""
 }
 
+type PartialTieredStorageCredentials struct {
+	AccessKey *PartialSecretRef "json:\"accessKey,omitempty\""
+	SecretKey *PartialSecretRef "json:\"secretKey,omitempty\""
+}
+
 type PartialPodSpec struct {
 	Containers      []PartialContainer         "json:\"containers,omitempty\" jsonschema:\"required\""
 	SecurityContext *corev1.PodSecurityContext "json:\"securityContext,omitempty\""
@@ -492,14 +497,6 @@ type PartialBootstrapUser struct {
 	SecretKeyRef *corev1.SecretKeySelector "json:\"secretKeyRef,omitempty\""
 	Password     *string                   "json:\"password,omitempty\""
 	Mechanism    *string                   "json:\"mechanism,omitempty\" jsonschema:\"pattern=^(SCRAM-SHA-512|SCRAM-SHA-256)$\""
-}
-
-type PartialTieredStorageCredentials struct {
-	ConfigurationKey *string           "json:\"configurationKey,omitempty\" jsonschema:\"deprecated\""
-	Key              *string           "json:\"key,omitempty\" jsonschema:\"deprecated\""
-	Name             *string           "json:\"name,omitempty\" jsonschema:\"deprecated\""
-	AccessKey        *PartialSecretRef "json:\"accessKey,omitempty\""
-	SecretKey        *PartialSecretRef "json:\"secretKey,omitempty\""
 }
 
 type PartialExternalListeners[T any] map[string]T
@@ -552,16 +549,16 @@ type PartialTrustStore struct {
 	SecretKeyRef    *corev1.SecretKeySelector    "json:\"secretKeyRef,omitempty\""
 }
 
-type PartialContainer struct {
-	Name            *ContainerName          "json:\"name,omitempty\" jsonschema:\"required\""
-	SecurityContext *corev1.SecurityContext "json:\"securityContext,omitempty\""
-	Env             []corev1.EnvVar         "json:\"env,omitempty\" jsonschema:\"required\""
-}
-
 type PartialSecretRef struct {
 	ConfigurationKey *string "json:\"configurationKey,omitempty\""
 	Key              *string "json:\"key,omitempty\""
 	Name             *string "json:\"name,omitempty\""
+}
+
+type PartialContainer struct {
+	Name            *ContainerName          "json:\"name,omitempty\" jsonschema:\"required\""
+	SecurityContext *corev1.SecurityContext "json:\"securityContext,omitempty\""
+	Env             []corev1.EnvVar         "json:\"env,omitempty\" jsonschema:\"required\""
 }
 
 type PartialExternalTLS struct {
