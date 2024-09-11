@@ -26,11 +26,11 @@ import (
 )
 
 func ConfigMaps(dot *helmette.Dot) []*corev1.ConfigMap {
-	cms := []*corev1.ConfigMap{RedpandaConfigMap(dot, true), RPKProfile(dot)}
+	cms := []*corev1.ConfigMap{RedpandaConfigMap(dot), RPKProfile(dot)}
 	return cms
 }
 
-func RedpandaConfigMap(dot *helmette.Dot, includeSeedServer bool) *corev1.ConfigMap {
+func RedpandaConfigMap(dot *helmette.Dot) *corev1.ConfigMap {
 	return &corev1.ConfigMap{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "ConfigMap",
@@ -43,7 +43,7 @@ func RedpandaConfigMap(dot *helmette.Dot, includeSeedServer bool) *corev1.Config
 		},
 		Data: map[string]string{
 			"bootstrap.yaml": BootstrapFile(dot),
-			"redpanda.yaml":  RedpandaConfigFile(dot, includeSeedServer),
+			"redpanda.yaml":  RedpandaConfigFile(dot, true /* includeSeedServer */),
 		},
 	}
 }
@@ -63,6 +63,7 @@ func BootstrapFile(dot *helmette.Dot) string {
 	bootstrap = helmette.Merge(bootstrap, values.Config.Tunable.Translate())
 	bootstrap = helmette.Merge(bootstrap, values.Config.Cluster.Translate())
 	bootstrap = helmette.Merge(bootstrap, values.Auth.Translate(values.Auth.IsSASLEnabled()))
+	bootstrap = helmette.Merge(bootstrap, values.Storage.Translate())
 
 	return helmette.ToYaml(bootstrap)
 }
@@ -71,21 +72,13 @@ func RedpandaConfigFile(dot *helmette.Dot, includeSeedServer bool) string {
 	values := helmette.Unwrap[Values](dot.Values)
 
 	redpanda := map[string]any{
-		"kafka_enable_authorization": values.Auth.IsSASLEnabled(),
-		"enable_sasl":                values.Auth.IsSASLEnabled(),
-		"empty_seed_starts_cluster":  false,
-		"storage_min_free_bytes":     values.Storage.StorageMinFreeBytes(),
+		"empty_seed_starts_cluster": false,
 	}
 
 	if includeSeedServer {
 		redpanda["seed_servers"] = values.Listeners.CreateSeedServers(values.Statefulset.Replicas, Fullname(dot), InternalDomain(dot))
 	}
 
-	redpanda = helmette.Merge(redpanda, values.AuditLogging.Translate(dot, values.Auth.IsSASLEnabled()))
-	redpanda = helmette.Merge(redpanda, values.Logging.Translate())
-	redpanda = helmette.Merge(redpanda, values.Config.Tunable.Translate())
-	redpanda = helmette.Merge(redpanda, values.Config.Cluster.Translate())
-	redpanda = helmette.Merge(redpanda, values.Auth.Translate(values.Auth.IsSASLEnabled()))
 	redpanda = helmette.Merge(redpanda, values.Config.Node.Translate())
 
 	configureListeners(redpanda, dot)
@@ -103,8 +96,6 @@ func RedpandaConfigFile(dot *helmette.Dot, includeSeedServer bool) string {
 	if RedpandaAtLeast_23_3_0(dot) && values.AuditLogging.Enabled && values.Auth.IsSASLEnabled() {
 		redpandaYaml["audit_log_client"] = kafkaClient(dot)
 	}
-
-	redpandaYaml = helmette.Merge(redpandaYaml, values.Storage.Translate())
 
 	return helmette.ToYaml(redpandaYaml)
 }

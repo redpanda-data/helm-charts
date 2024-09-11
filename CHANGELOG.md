@@ -5,6 +5,18 @@
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-FILLMEIN) - YYYY-MM-DD
 #### Added
 #### Changed
+* Cluster configurations are no longer include in `redpanda.yaml` or the
+  Redpanda Statefulset's configuration hash.
+
+  This change makes it possible to update cluster configurations without
+  initiating a rolling restart of the entire cluster.
+
+  As has always been the case, users should consult `rpk cluster config status`
+  to determine if a rolling restart needs to be manually performed due to
+  cluster configuration changes.
+
+  Cases requiring manual rolling restarts may increase as fewer chart
+  operations will initiate rolling restart of the cluster.
 #### Fixed
 #### Removed
 * All zero, empty, or default cluster configurations have been removed from

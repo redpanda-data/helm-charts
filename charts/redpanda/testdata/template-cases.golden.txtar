@@ -299,11 +299,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -324,11 +321,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -348,7 +340,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -754,7 +745,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 33a575624572dcacca1375dc74e5c85a7490815bf41be4b9467937bd190419bf
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -1694,11 +1685,8 @@ data:
         name: default
         port: 9645
       admin_api_tls: null
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -1707,12 +1695,6 @@ data:
         name: default
         port: 9094
       kafka_api_tls: null
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
-      retention_local_target_ms_default: 21600000
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -1720,7 +1702,6 @@ data:
       - host:
           address: redpanda-0.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 161061273
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -2070,7 +2051,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 14669000a2c336221de769823bbe11aa4d371e1903f67581e6373ea3b51902ad
+        config.redpanda.com/checksum: ef402e2646f70c856376462b249f68e0b0d0ff303e4a5e6c52906b2acda5e2fe
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -2796,11 +2777,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -2821,11 +2799,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -2839,7 +2812,6 @@ data:
       - host:
           address: redpanda-0.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 161061273
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -3229,7 +3201,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: ebbe1bc803484e6d3365d913ce274637dbc6eba241a467a815165bd254e13e2a
+        config.redpanda.com/checksum: 9722826df7d0ffe86a7ba81f6c68ad8f9817c1e88fd617ce690e839e89681a0b
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -4305,11 +4277,8 @@ data:
         name: default
         port: 9645
       admin_api_tls: null
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: true
       kafka_api:
       - address: 0.0.0.0
         authentication_method: sasl
@@ -4320,11 +4289,6 @@ data:
         name: default
         port: 9094
       kafka_api_tls: null
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: true
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -4332,10 +4296,6 @@ data:
       - host:
           address: redpanda-0.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 161061273
-      superusers:
-      - kubernetes-controller
-      - admin
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -4697,7 +4657,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: e10d1d9b2c7ea2723070c46bc1ad2af6aadb7cc5e49f6b78434343fc80fff74b
+        config.redpanda.com/checksum: 46ffec0fb126d4d2bd104b083f32f6143af3a416899c2932b1d9aa90c89f0841
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -5637,11 +5597,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: true
       kafka_api:
       - address: 0.0.0.0
         authentication_method: sasl
@@ -5664,16 +5621,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: true
-      kafka_nodelete_topics:
-      - audit
-      - consumer_offsets
-      - _schemas
-      - my_sample_topic
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -5687,10 +5634,6 @@ data:
       - host:
           address: redpanda-0.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 161061273
-      superusers:
-      - kubernetes-controller
-      - admins
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -6097,7 +6040,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 42da70f7d939e5f59489eedc055c35514f5d060b83e4f3ce35df7af1859b7543
+        config.redpanda.com/checksum: 7aad9372f61b2d9f1e70eb48af0f60a75f58778b600b29b763fc3c98a1a1f85e
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -7170,11 +7113,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -7195,11 +7135,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -7219,7 +7154,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -7723,7 +7657,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: be3e06677b97b2eda42ab261274a4756e0452e618a593b46862f1e7479c8ad33
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -8755,11 +8689,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -8786,11 +8717,6 @@ data:
         name: ext3
         require_client_auth: true
         truststore_file: /etc/ssl/certs/ca-certificates.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -8810,7 +8736,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -9228,7 +9153,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 2eed82a9f15aab2e20748cfe38bc12e1478182a18eebe9cee737eb6ba684e43d
+        config.redpanda.com/checksum: 7f7625ee743c9f46a4319d58cb5d327f3fd39f7942c6d2f0b709efee768ca947
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -10339,11 +10264,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -10364,11 +10286,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -10388,7 +10305,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -10794,7 +10710,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 33a575624572dcacca1375dc74e5c85a7490815bf41be4b9467937bd190419bf
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -11826,11 +11742,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -11851,11 +11764,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -11875,7 +11783,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -12281,7 +12188,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 33a575624572dcacca1375dc74e5c85a7490815bf41be4b9467937bd190419bf
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -13343,11 +13250,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -13368,11 +13272,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -13392,7 +13291,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -13798,7 +13696,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: c99152832650c399d90b703a6c205356a83c923da317912853b76647a9f79989
+        config.redpanda.com/checksum: 931878c927fe58f1eae93f3a3993095378a5b203e73f18af1eaaad6ec1ef6811
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -14929,11 +14827,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: true
       kafka_api:
       - address: 0.0.0.0
         authentication_method: sasl
@@ -14956,11 +14851,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: true
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -14980,13 +14870,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
-      superusers:
-      - kubernetes-controller
-      - admin
-      - user1
-      - someuser
-      - anotherme
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -15409,7 +15292,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 904dd605efaec7448a42a95cb85d9c7f3bd5ee36e0c8803179805e54d9cc40f9
+        config.redpanda.com/checksum: 28635308956eb868571a78176e97bf20e3aea3e52b96a6db473701f567a1229a
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -16461,11 +16344,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -16486,11 +16366,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -16510,7 +16385,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -16916,7 +16790,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 6f8f0ef46816fbaa1d46dec51e18c558cd1165c94dbef434cda52125a0086a2a
+        config.redpanda.com/checksum: cef2714156066f0d1bf287949062ae8c31c43de9784edfa93a21a753d6637fac
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -17799,11 +17673,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -17824,11 +17695,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -17848,7 +17714,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -18341,7 +18206,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 6f8f0ef46816fbaa1d46dec51e18c558cd1165c94dbef434cda52125a0086a2a
+        config.redpanda.com/checksum: cef2714156066f0d1bf287949062ae8c31c43de9784edfa93a21a753d6637fac
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -19196,11 +19061,8 @@ data:
         name: default
         port: 9645
       admin_api_tls: null
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -19209,11 +19071,6 @@ data:
         name: default
         port: 9094
       kafka_api_tls: null
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -19227,7 +19084,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -19588,7 +19444,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 4654a96cd69d628d5af5bdb616e0b8b79f32b86d2db7093aaf981a287a000327
+        config.redpanda.com/checksum: 713c75d8c1b0478dbfabf0679f4ec323157ea9a352c3b49c50b2824869a9f6b5
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -20350,11 +20206,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -20375,11 +20228,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -20399,7 +20247,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -20805,7 +20652,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 33a575624572dcacca1375dc74e5c85a7490815bf41be4b9467937bd190419bf
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -21814,11 +21661,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -21839,11 +21683,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -21863,7 +21702,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -22499,7 +22337,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 33a575624572dcacca1375dc74e5c85a7490815bf41be4b9467937bd190419bf
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -23492,11 +23330,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -23517,11 +23352,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -23541,7 +23371,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -23947,7 +23776,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 9bd13129df9ac806154cf58e6e5fd7a44130ad5393b09eb0b6adcafc45470a3f
+        config.redpanda.com/checksum: 6d16fb5d08c983678d92c9172709ba475eeee0a6741debf299e102213f69413a
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -24928,11 +24757,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -24953,11 +24779,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -24977,7 +24798,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -25383,7 +25203,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: bb302266cfca0c7d3d1c22a345d0ee65ed95ae868579f1129f7ede85ca2b8288
+        config.redpanda.com/checksum: d51fbbf3bd613148c6f2f9f770534944b398683a2a8ad750562f172db95776c9
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -26339,16 +26159,6 @@ apiVersion: v1
 data:
   bootstrap.yaml: |-
     audit_enabled: false
-    compacted_log_segment_size: 67108864
-    enable_rack_awareness: false
-    enable_sasl: false
-    kafka_connection_rate_limit: 1000
-    kafka_enable_authorization: false
-    log_segment_size_max: 268435456
-    log_segment_size_min: 16777216
-    max_compacted_log_segment_size: 536870912
-    storage_min_free_bytes: 1073741824
-  redpanda.yaml: |-
     cloud_storage_access_key: ${AWS_ACCESS_KEY_ID}
     cloud_storage_bucket: ${TEST_BUCKET}
     cloud_storage_cache_size: "5368709120"
@@ -26359,6 +26169,16 @@ data:
     cloud_storage_region: ${AWS_REGION}
     cloud_storage_secret_key: ${AWS_SECRET_ACCESS_KEY}
     cloud_storage_segment_max_upload_interval_sec: 1
+    compacted_log_segment_size: 67108864
+    enable_rack_awareness: false
+    enable_sasl: false
+    kafka_connection_rate_limit: 1000
+    kafka_enable_authorization: false
+    log_segment_size_max: 268435456
+    log_segment_size_min: 16777216
+    max_compacted_log_segment_size: 536870912
+    storage_min_free_bytes: 1073741824
+  redpanda.yaml: |-
     config_file: /etc/redpanda/redpanda.yaml
     pandaproxy:
       pandaproxy_api:
@@ -26414,11 +26234,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -26439,11 +26256,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -26463,7 +26275,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -26885,7 +26696,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: fc32049e92b506f1d731dabc9be2b9402f4e67e17ebcf28eb5563fed6773ad70
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -27880,16 +27691,6 @@ apiVersion: v1
 data:
   bootstrap.yaml: |-
     audit_enabled: false
-    compacted_log_segment_size: 67108864
-    enable_rack_awareness: false
-    enable_sasl: false
-    kafka_connection_rate_limit: 1000
-    kafka_enable_authorization: false
-    log_segment_size_max: 268435456
-    log_segment_size_min: 16777216
-    max_compacted_log_segment_size: 536870912
-    storage_min_free_bytes: 1073741824
-  redpanda.yaml: |-
     cloud_storage_access_key: ${GCP_ACCESS_KEY_ID}
     cloud_storage_api_endpoint: storage.googleapis.com
     cloud_storage_bucket: ${TEST_BUCKET}
@@ -27901,6 +27702,16 @@ data:
     cloud_storage_region: US-WEST1
     cloud_storage_secret_key: ${GCP_SECRET_ACCESS_KEY}
     cloud_storage_segment_max_upload_interval_sec: 1
+    compacted_log_segment_size: 67108864
+    enable_rack_awareness: false
+    enable_sasl: false
+    kafka_connection_rate_limit: 1000
+    kafka_enable_authorization: false
+    log_segment_size_max: 268435456
+    log_segment_size_min: 16777216
+    max_compacted_log_segment_size: 536870912
+    storage_min_free_bytes: 1073741824
+  redpanda.yaml: |-
     config_file: /etc/redpanda/redpanda.yaml
     pandaproxy:
       pandaproxy_api:
@@ -27956,11 +27767,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -27981,11 +27789,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -28005,7 +27808,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -28427,7 +28229,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: c393c1a9da294a8da436473b942c18f5d45009485463f4598c24f0fbc86e5feb
+        config.redpanda.com/checksum: a936339b049421146a68a944247abca8d6701ae9d54f53f680d7f3f3bc0b4fdf
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -29424,6 +29226,15 @@ apiVersion: v1
 data:
   bootstrap.yaml: |-
     audit_enabled: false
+    cloud_storage_azure_container: ${TEST_STORAGE_CONTAINER}
+    cloud_storage_azure_shared_key: ${TEST_AZURE_SHARED_KEY}
+    cloud_storage_azure_storage_account: ${TEST_STORAGE_ACCOUNT}
+    cloud_storage_cache_size: "5368709120"
+    cloud_storage_credentials_source: config_file
+    cloud_storage_enable_remote_read: true
+    cloud_storage_enable_remote_write: true
+    cloud_storage_enabled: true
+    cloud_storage_segment_max_upload_interval_sec: 1
     compacted_log_segment_size: 67108864
     enable_rack_awareness: false
     enable_sasl: false
@@ -29434,15 +29245,6 @@ data:
     max_compacted_log_segment_size: 536870912
     storage_min_free_bytes: 1073741824
   redpanda.yaml: |-
-    cloud_storage_azure_container: ${TEST_STORAGE_CONTAINER}
-    cloud_storage_azure_shared_key: ${TEST_AZURE_SHARED_KEY}
-    cloud_storage_azure_storage_account: ${TEST_STORAGE_ACCOUNT}
-    cloud_storage_cache_size: "5368709120"
-    cloud_storage_credentials_source: config_file
-    cloud_storage_enable_remote_read: true
-    cloud_storage_enable_remote_write: true
-    cloud_storage_enabled: true
-    cloud_storage_segment_max_upload_interval_sec: 1
     config_file: /etc/redpanda/redpanda.yaml
     pandaproxy:
       pandaproxy_api:
@@ -29498,11 +29300,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -29523,11 +29322,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -29547,7 +29341,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -29969,7 +29762,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 63daa92c3be8e24f4a2e16624cbaa0e4edb8cce17a29ba477c7f4bc89780481d
+        config.redpanda.com/checksum: a936339b049421146a68a944247abca8d6701ae9d54f53f680d7f3f3bc0b4fdf
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -30924,6 +30717,15 @@ apiVersion: v1
 data:
   bootstrap.yaml: |-
     audit_enabled: false
+    cloud_storage_azure_container: ${TEST_STORAGE_CONTAINER}
+    cloud_storage_azure_shared_key: ${TEST_AZURE_SHARED_KEY}
+    cloud_storage_azure_storage_account: TestForStringThatShouldNotBeWrappedWithQuotes
+    cloud_storage_cache_size: "5368709120"
+    cloud_storage_credentials_source: config_file
+    cloud_storage_enable_remote_read: true
+    cloud_storage_enable_remote_write: true
+    cloud_storage_enabled: true
+    cloud_storage_segment_max_upload_interval_sec: 1
     compacted_log_segment_size: 67108864
     enable_rack_awareness: false
     enable_sasl: false
@@ -30934,15 +30736,6 @@ data:
     max_compacted_log_segment_size: 536870912
     storage_min_free_bytes: 1073741824
   redpanda.yaml: |-
-    cloud_storage_azure_container: ${TEST_STORAGE_CONTAINER}
-    cloud_storage_azure_shared_key: ${TEST_AZURE_SHARED_KEY}
-    cloud_storage_azure_storage_account: TestForStringThatShouldNotBeWrappedWithQuotes
-    cloud_storage_cache_size: "5368709120"
-    cloud_storage_credentials_source: config_file
-    cloud_storage_enable_remote_read: true
-    cloud_storage_enable_remote_write: true
-    cloud_storage_enabled: true
-    cloud_storage_segment_max_upload_interval_sec: 1
     config_file: /etc/redpanda/redpanda.yaml
     pandaproxy:
       pandaproxy_api:
@@ -30998,11 +30791,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -31023,11 +30813,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -31047,7 +30832,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -31453,7 +31237,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: ab578e7e41395e320363607cc8e606f9d55da011ef0f31d9d7f39c1fade03462
+        config.redpanda.com/checksum: a936339b049421146a68a944247abca8d6701ae9d54f53f680d7f3f3bc0b4fdf
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -32445,16 +32229,6 @@ apiVersion: v1
 data:
   bootstrap.yaml: |-
     audit_enabled: false
-    compacted_log_segment_size: 67108864
-    enable_rack_awareness: false
-    enable_sasl: false
-    kafka_connection_rate_limit: 1000
-    kafka_enable_authorization: false
-    log_segment_size_max: 268435456
-    log_segment_size_min: 16777216
-    max_compacted_log_segment_size: 536870912
-    storage_min_free_bytes: 1073741824
-  redpanda.yaml: |-
     cloud_storage_access_key: ${AWS_ACCESS_KEY_ID}
     cloud_storage_bucket: ${TEST_BUCKET}
     cloud_storage_cache_size: "5368709120"
@@ -32465,6 +32239,16 @@ data:
     cloud_storage_region: ${AWS_REGION}
     cloud_storage_secret_key: ${AWS_SECRET_ACCESS_KEY}
     cloud_storage_segment_max_upload_interval_sec: 1
+    compacted_log_segment_size: 67108864
+    enable_rack_awareness: false
+    enable_sasl: false
+    kafka_connection_rate_limit: 1000
+    kafka_enable_authorization: false
+    log_segment_size_max: 268435456
+    log_segment_size_min: 16777216
+    max_compacted_log_segment_size: 536870912
+    storage_min_free_bytes: 1073741824
+  redpanda.yaml: |-
     config_file: /etc/redpanda/redpanda.yaml
     pandaproxy:
       pandaproxy_api:
@@ -32520,11 +32304,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -32545,11 +32326,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -32569,7 +32345,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -32991,7 +32766,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: fc32049e92b506f1d731dabc9be2b9402f4e67e17ebcf28eb5563fed6773ad70
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -33998,16 +33773,6 @@ apiVersion: v1
 data:
   bootstrap.yaml: |-
     audit_enabled: false
-    compacted_log_segment_size: 67108864
-    enable_rack_awareness: false
-    enable_sasl: false
-    kafka_connection_rate_limit: 1000
-    kafka_enable_authorization: false
-    log_segment_size_max: 268435456
-    log_segment_size_min: 16777216
-    max_compacted_log_segment_size: 536870912
-    storage_min_free_bytes: 1073741824
-  redpanda.yaml: |-
     cloud_storage_access_key: ${GCP_ACCESS_KEY_ID}
     cloud_storage_api_endpoint: storage.googleapis.com
     cloud_storage_bucket: ${TEST_BUCKET}
@@ -34019,6 +33784,16 @@ data:
     cloud_storage_region: US-WEST1
     cloud_storage_secret_key: ${GCP_SECRET_ACCESS_KEY}
     cloud_storage_segment_max_upload_interval_sec: 1
+    compacted_log_segment_size: 67108864
+    enable_rack_awareness: false
+    enable_sasl: false
+    kafka_connection_rate_limit: 1000
+    kafka_enable_authorization: false
+    log_segment_size_max: 268435456
+    log_segment_size_min: 16777216
+    max_compacted_log_segment_size: 536870912
+    storage_min_free_bytes: 1073741824
+  redpanda.yaml: |-
     config_file: /etc/redpanda/redpanda.yaml
     pandaproxy:
       pandaproxy_api:
@@ -34074,11 +33849,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -34099,11 +33871,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -34123,7 +33890,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -34545,7 +34311,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: c393c1a9da294a8da436473b942c18f5d45009485463f4598c24f0fbc86e5feb
+        config.redpanda.com/checksum: a936339b049421146a68a944247abca8d6701ae9d54f53f680d7f3f3bc0b4fdf
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -35554,6 +35320,15 @@ apiVersion: v1
 data:
   bootstrap.yaml: |-
     audit_enabled: false
+    cloud_storage_azure_container: ${TEST_STORAGE_CONTAINER}
+    cloud_storage_azure_shared_key: ${TEST_AZURE_SHARED_KEY}
+    cloud_storage_azure_storage_account: ${TEST_STORAGE_ACCOUNT}
+    cloud_storage_cache_size: "5368709120"
+    cloud_storage_credentials_source: config_file
+    cloud_storage_enable_remote_read: true
+    cloud_storage_enable_remote_write: true
+    cloud_storage_enabled: true
+    cloud_storage_segment_max_upload_interval_sec: 1
     compacted_log_segment_size: 67108864
     enable_rack_awareness: false
     enable_sasl: false
@@ -35564,15 +35339,6 @@ data:
     max_compacted_log_segment_size: 536870912
     storage_min_free_bytes: 1073741824
   redpanda.yaml: |-
-    cloud_storage_azure_container: ${TEST_STORAGE_CONTAINER}
-    cloud_storage_azure_shared_key: ${TEST_AZURE_SHARED_KEY}
-    cloud_storage_azure_storage_account: ${TEST_STORAGE_ACCOUNT}
-    cloud_storage_cache_size: "5368709120"
-    cloud_storage_credentials_source: config_file
-    cloud_storage_enable_remote_read: true
-    cloud_storage_enable_remote_write: true
-    cloud_storage_enabled: true
-    cloud_storage_segment_max_upload_interval_sec: 1
     config_file: /etc/redpanda/redpanda.yaml
     pandaproxy:
       pandaproxy_api:
@@ -35628,11 +35394,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -35653,11 +35416,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -35677,7 +35435,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -36099,7 +35856,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 63daa92c3be8e24f4a2e16624cbaa0e4edb8cce17a29ba477c7f4bc89780481d
+        config.redpanda.com/checksum: a936339b049421146a68a944247abca8d6701ae9d54f53f680d7f3f3bc0b4fdf
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -37067,6 +36824,15 @@ apiVersion: v1
 data:
   bootstrap.yaml: |-
     audit_enabled: false
+    cloud_storage_azure_container: ${TEST_STORAGE_CONTAINER}
+    cloud_storage_azure_shared_key: ${TEST_AZURE_SHARED_KEY}
+    cloud_storage_azure_storage_account: ${TEST_STORAGE_ACCOUNT}
+    cloud_storage_cache_size: "5368709120"
+    cloud_storage_credentials_source: config_file
+    cloud_storage_enable_remote_read: true
+    cloud_storage_enable_remote_write: true
+    cloud_storage_enabled: true
+    cloud_storage_segment_max_upload_interval_sec: 1
     compacted_log_segment_size: 67108864
     enable_rack_awareness: false
     enable_sasl: false
@@ -37077,15 +36843,6 @@ data:
     max_compacted_log_segment_size: 536870912
     storage_min_free_bytes: 1073741824
   redpanda.yaml: |-
-    cloud_storage_azure_container: ${TEST_STORAGE_CONTAINER}
-    cloud_storage_azure_shared_key: ${TEST_AZURE_SHARED_KEY}
-    cloud_storage_azure_storage_account: ${TEST_STORAGE_ACCOUNT}
-    cloud_storage_cache_size: "5368709120"
-    cloud_storage_credentials_source: config_file
-    cloud_storage_enable_remote_read: true
-    cloud_storage_enable_remote_write: true
-    cloud_storage_enabled: true
-    cloud_storage_segment_max_upload_interval_sec: 1
     config_file: /etc/redpanda/redpanda.yaml
     pandaproxy:
       pandaproxy_api:
@@ -37141,11 +36898,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -37166,11 +36920,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -37190,7 +36939,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -37596,7 +37344,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 63daa92c3be8e24f4a2e16624cbaa0e4edb8cce17a29ba477c7f4bc89780481d
+        config.redpanda.com/checksum: a936339b049421146a68a944247abca8d6701ae9d54f53f680d7f3f3bc0b4fdf
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -38601,16 +38349,6 @@ apiVersion: v1
 data:
   bootstrap.yaml: |-
     audit_enabled: false
-    compacted_log_segment_size: 67108864
-    enable_rack_awareness: false
-    enable_sasl: false
-    kafka_connection_rate_limit: 1000
-    kafka_enable_authorization: false
-    log_segment_size_max: 268435456
-    log_segment_size_min: 16777216
-    max_compacted_log_segment_size: 536870912
-    storage_min_free_bytes: 1073741824
-  redpanda.yaml: |-
     cloud_storage_access_key: ${AWS_ACCESS_KEY_ID}
     cloud_storage_bucket: ${TEST_BUCKET}
     cloud_storage_cache_size: "5368709120"
@@ -38621,6 +38359,16 @@ data:
     cloud_storage_region: ${AWS_REGION}
     cloud_storage_secret_key: ${AWS_SECRET_ACCESS_KEY}
     cloud_storage_segment_max_upload_interval_sec: 1
+    compacted_log_segment_size: 67108864
+    enable_rack_awareness: false
+    enable_sasl: false
+    kafka_connection_rate_limit: 1000
+    kafka_enable_authorization: false
+    log_segment_size_max: 268435456
+    log_segment_size_min: 16777216
+    max_compacted_log_segment_size: 536870912
+    storage_min_free_bytes: 1073741824
+  redpanda.yaml: |-
     config_file: /etc/redpanda/redpanda.yaml
     pandaproxy:
       pandaproxy_api:
@@ -38676,11 +38424,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -38701,11 +38446,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -38725,7 +38465,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -39147,7 +38886,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: fc32049e92b506f1d731dabc9be2b9402f4e67e17ebcf28eb5563fed6773ad70
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -40154,16 +39893,6 @@ apiVersion: v1
 data:
   bootstrap.yaml: |-
     audit_enabled: false
-    compacted_log_segment_size: 67108864
-    enable_rack_awareness: false
-    enable_sasl: false
-    kafka_connection_rate_limit: 1000
-    kafka_enable_authorization: false
-    log_segment_size_max: 268435456
-    log_segment_size_min: 16777216
-    max_compacted_log_segment_size: 536870912
-    storage_min_free_bytes: 1073741824
-  redpanda.yaml: |-
     cloud_storage_access_key: ${GCP_ACCESS_KEY_ID}
     cloud_storage_api_endpoint: storage.googleapis.com
     cloud_storage_bucket: ${TEST_BUCKET}
@@ -40175,6 +39904,16 @@ data:
     cloud_storage_region: US-WEST1
     cloud_storage_secret_key: ${GCP_SECRET_ACCESS_KEY}
     cloud_storage_segment_max_upload_interval_sec: 1
+    compacted_log_segment_size: 67108864
+    enable_rack_awareness: false
+    enable_sasl: false
+    kafka_connection_rate_limit: 1000
+    kafka_enable_authorization: false
+    log_segment_size_max: 268435456
+    log_segment_size_min: 16777216
+    max_compacted_log_segment_size: 536870912
+    storage_min_free_bytes: 1073741824
+  redpanda.yaml: |-
     config_file: /etc/redpanda/redpanda.yaml
     pandaproxy:
       pandaproxy_api:
@@ -40230,11 +39969,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -40255,11 +39991,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -40279,7 +40010,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -40701,7 +40431,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: c393c1a9da294a8da436473b942c18f5d45009485463f4598c24f0fbc86e5feb
+        config.redpanda.com/checksum: a936339b049421146a68a944247abca8d6701ae9d54f53f680d7f3f3bc0b4fdf
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -41710,6 +41440,15 @@ apiVersion: v1
 data:
   bootstrap.yaml: |-
     audit_enabled: false
+    cloud_storage_azure_container: ${TEST_STORAGE_CONTAINER}
+    cloud_storage_azure_shared_key: ${TEST_AZURE_SHARED_KEY}
+    cloud_storage_azure_storage_account: ${TEST_STORAGE_ACCOUNT}
+    cloud_storage_cache_size: "5368709120"
+    cloud_storage_credentials_source: config_file
+    cloud_storage_enable_remote_read: true
+    cloud_storage_enable_remote_write: true
+    cloud_storage_enabled: true
+    cloud_storage_segment_max_upload_interval_sec: 1
     compacted_log_segment_size: 67108864
     enable_rack_awareness: false
     enable_sasl: false
@@ -41720,15 +41459,6 @@ data:
     max_compacted_log_segment_size: 536870912
     storage_min_free_bytes: 1073741824
   redpanda.yaml: |-
-    cloud_storage_azure_container: ${TEST_STORAGE_CONTAINER}
-    cloud_storage_azure_shared_key: ${TEST_AZURE_SHARED_KEY}
-    cloud_storage_azure_storage_account: ${TEST_STORAGE_ACCOUNT}
-    cloud_storage_cache_size: "5368709120"
-    cloud_storage_credentials_source: config_file
-    cloud_storage_enable_remote_read: true
-    cloud_storage_enable_remote_write: true
-    cloud_storage_enabled: true
-    cloud_storage_segment_max_upload_interval_sec: 1
     config_file: /etc/redpanda/redpanda.yaml
     pandaproxy:
       pandaproxy_api:
@@ -41784,11 +41514,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -41809,11 +41536,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -41833,7 +41555,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -42255,7 +41976,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 63daa92c3be8e24f4a2e16624cbaa0e4edb8cce17a29ba477c7f4bc89780481d
+        config.redpanda.com/checksum: a936339b049421146a68a944247abca8d6701ae9d54f53f680d7f3f3bc0b4fdf
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -43223,6 +42944,15 @@ apiVersion: v1
 data:
   bootstrap.yaml: |-
     audit_enabled: false
+    cloud_storage_azure_container: ${TEST_STORAGE_CONTAINER}
+    cloud_storage_azure_shared_key: ${TEST_AZURE_SHARED_KEY}
+    cloud_storage_azure_storage_account: ${TEST_STORAGE_ACCOUNT}
+    cloud_storage_cache_size: "5368709120"
+    cloud_storage_credentials_source: config_file
+    cloud_storage_enable_remote_read: true
+    cloud_storage_enable_remote_write: true
+    cloud_storage_enabled: true
+    cloud_storage_segment_max_upload_interval_sec: 1
     compacted_log_segment_size: 67108864
     enable_rack_awareness: false
     enable_sasl: false
@@ -43233,15 +42963,6 @@ data:
     max_compacted_log_segment_size: 536870912
     storage_min_free_bytes: 1073741824
   redpanda.yaml: |-
-    cloud_storage_azure_container: ${TEST_STORAGE_CONTAINER}
-    cloud_storage_azure_shared_key: ${TEST_AZURE_SHARED_KEY}
-    cloud_storage_azure_storage_account: ${TEST_STORAGE_ACCOUNT}
-    cloud_storage_cache_size: "5368709120"
-    cloud_storage_credentials_source: config_file
-    cloud_storage_enable_remote_read: true
-    cloud_storage_enable_remote_write: true
-    cloud_storage_enabled: true
-    cloud_storage_segment_max_upload_interval_sec: 1
     config_file: /etc/redpanda/redpanda.yaml
     pandaproxy:
       pandaproxy_api:
@@ -43297,11 +43018,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -43322,11 +43040,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -43346,7 +43059,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -43752,7 +43464,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 63daa92c3be8e24f4a2e16624cbaa0e4edb8cce17a29ba477c7f4bc89780481d
+        config.redpanda.com/checksum: a936339b049421146a68a944247abca8d6701ae9d54f53f680d7f3f3bc0b4fdf
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -44783,11 +44495,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -44808,11 +44517,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -44832,7 +44536,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -45238,7 +44941,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: f8921de11cdcff271c401c13f36835edb67eee7e3375a16ddc6e35a14168cc5c
+        config.redpanda.com/checksum: 4725b0577bc9449cd4e6b7bb0d0132e5bcd6666949c700e21549cd43bdd094cd
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -46216,11 +45919,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -46241,11 +45941,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -46265,7 +45960,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -46671,7 +46365,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 33a575624572dcacca1375dc74e5c85a7490815bf41be4b9467937bd190419bf
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -47650,11 +47344,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -47675,11 +47366,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -47699,7 +47385,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -48105,7 +47790,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 33a575624572dcacca1375dc74e5c85a7490815bf41be4b9467937bd190419bf
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -49151,11 +48836,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -49170,11 +48852,6 @@ data:
         name: ext3
         port: 33339
       kafka_api_tls: null
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -49197,7 +48874,6 @@ data:
       - host:
           address: redpanda-3.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -49616,7 +49292,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 1ae41bbf436b5ca0d6ec82c7010cb5e1e854f89c6e30005e812c0e72692935f9
+        config.redpanda.com/checksum: 953d849ab8efccc6b80185b849f3f89e59c9c67272720ba3eb84248d0be348d1
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -50605,11 +50281,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -50630,11 +50303,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -50654,7 +50322,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -51069,7 +50736,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 33a575624572dcacca1375dc74e5c85a7490815bf41be4b9467937bd190419bf
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -52056,11 +51723,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -52081,11 +51745,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -52105,7 +51764,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -52741,7 +52399,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 33a575624572dcacca1375dc74e5c85a7490815bf41be4b9467937bd190419bf
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -53801,11 +53459,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -53826,11 +53481,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -53850,7 +53500,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -54388,7 +54037,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 33a575624572dcacca1375dc74e5c85a7490815bf41be4b9467937bd190419bf
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -55407,11 +55056,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -55432,11 +55078,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -55456,7 +55097,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -56067,7 +55707,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 33a575624572dcacca1375dc74e5c85a7490815bf41be4b9467937bd190419bf
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -57045,11 +56685,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -57070,11 +56707,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -57094,7 +56726,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -57500,7 +57131,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 8ae9e820ce20caa1e3748ca37b1ea7888c08fd6b6f41e36291130a028328c878
+        config.redpanda.com/checksum: 8a071be3bb8ba18f61cddbee0860c7626f94ef0b565f4903e8e43b71f66fe8da
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -58483,11 +58114,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -58508,11 +58136,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -58532,7 +58155,6 @@ data:
       - host:
           address: redpanda-2.change-name.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -58942,7 +58564,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: ef9910e510ed72c93f3f8e78c789e5b7465fe541e9c2f7dde0d5b98cddc1ec11
+        config.redpanda.com/checksum: 74897fe98938f7e3c3b0f56587a2886d3c40d29465b63f3b6749e8140e76cadb
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -59954,11 +59576,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -59979,11 +59598,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -60003,7 +59617,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -60409,7 +60022,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 33a575624572dcacca1375dc74e5c85a7490815bf41be4b9467937bd190419bf
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -61436,11 +61049,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -61461,11 +61071,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -61485,7 +61090,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -61891,7 +61495,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 33a575624572dcacca1375dc74e5c85a7490815bf41be4b9467937bd190419bf
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -62920,11 +62524,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -62945,11 +62546,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -62969,7 +62565,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -63375,7 +62970,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 33a575624572dcacca1375dc74e5c85a7490815bf41be4b9467937bd190419bf
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -64321,10 +63916,8 @@ data:
         name: default
         port: 9645
       admin_api_tls: null
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         authentication_method: none
@@ -64346,11 +63939,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -64370,7 +63958,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 5368709120
     rpk:
       additional_start_flags:
       - --default-log-level=trace
@@ -64590,7 +64177,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 54e4b6604c24ab504790ddd4daead563c309d514c8a35fac977c151effade3d7
+        config.redpanda.com/checksum: 6eaedb1adcde57ccc0c782d6ee07a9ef5318a4ae5881dc754a1ac1610a56b975
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -65688,11 +65275,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -65713,11 +65297,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -65737,7 +65316,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -66143,7 +65721,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 33a575624572dcacca1375dc74e5c85a7490815bf41be4b9467937bd190419bf
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -67259,12 +66837,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: true
-      cluster_id: cluster-id-test
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: true
       kafka_api:
       - address: 0.0.0.0
         authentication_method: sasl
@@ -67287,11 +66861,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: true
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -67311,10 +66880,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
-      superusers:
-      - kubernetes-controller
-      - admin
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -67753,7 +67318,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: c96b3ecb2cc7544e72d67cd38fb7bfd0e0a5db93e5162a5078639ae6118f2a9a
+        config.redpanda.com/checksum: 23396392115ac9f85ee171a7c191b95ee843787398666715e9cc58156c290ce4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -68846,11 +68411,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -68871,11 +68433,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -68895,7 +68452,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -69317,7 +68873,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 33a575624572dcacca1375dc74e5c85a7490815bf41be4b9467937bd190419bf
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -70297,11 +69853,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -70322,11 +69875,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -70346,7 +69894,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -70757,7 +70304,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 33a575624572dcacca1375dc74e5c85a7490815bf41be4b9467937bd190419bf
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -71675,6 +71222,14 @@ apiVersion: v1
 data:
   bootstrap.yaml: |-
     audit_enabled: false
+    cloud_storage_access_key: test
+    cloud_storage_bucket: test
+    cloud_storage_cache_size: "11000000000"
+    cloud_storage_enable_remote_read: true
+    cloud_storage_enable_remote_write: true
+    cloud_storage_enabled: true
+    cloud_storage_region: test
+    cloud_storage_secret_key: test
     compacted_log_segment_size: 67108864
     enable_idempotence: false
     enable_rack_awareness: false
@@ -71686,14 +71241,6 @@ data:
     max_compacted_log_segment_size: 536870912
     storage_min_free_bytes: 1073741824
   redpanda.yaml: |-
-    cloud_storage_access_key: test
-    cloud_storage_bucket: test
-    cloud_storage_cache_size: "11000000000"
-    cloud_storage_enable_remote_read: true
-    cloud_storage_enable_remote_write: true
-    cloud_storage_enabled: true
-    cloud_storage_region: test
-    cloud_storage_secret_key: test
     config_file: /etc/redpanda/redpanda.yaml
     pandaproxy:
       pandaproxy_api:
@@ -71749,12 +71296,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_idempotence: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -71775,11 +71318,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -71799,7 +71337,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -72219,7 +71756,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 785c78fe00055a7512fb479acb2abef5c63e1c682cefe388243df0c0b74acd1e
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -73239,11 +72776,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -73264,11 +72798,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -73288,7 +72817,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -73694,7 +73222,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 33a575624572dcacca1375dc74e5c85a7490815bf41be4b9467937bd190419bf
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -74675,11 +74203,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -74700,11 +74225,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -74724,7 +74244,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -75130,7 +74649,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 33a575624572dcacca1375dc74e5c85a7490815bf41be4b9467937bd190419bf
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -76111,11 +75630,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -76136,11 +75652,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -76160,7 +75671,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -76566,7 +76076,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 33a575624572dcacca1375dc74e5c85a7490815bf41be4b9467937bd190419bf
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -77691,11 +77201,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: true
       kafka_api:
       - address: 0.0.0.0
         authentication_method: sasl
@@ -77718,11 +77225,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: true
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -77742,12 +77244,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
-      superusers:
-      - kubernetes-controller
-      - empty-mechanism
-      - mechanism-256
-      - mechanism-512
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -78170,7 +77666,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: dac1facbb1e77032cc99e7b20578046ba7cafe34aae5ef0208d0245f8ca0b61e
+        config.redpanda.com/checksum: 28635308956eb868571a78176e97bf20e3aea3e52b96a6db473701f567a1229a
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -79246,10 +78742,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -79270,12 +78764,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_batch_max_bytes: 7777
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 99999
-      log_segment_size_min: 100
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -79295,7 +78783,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -79701,7 +79188,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: ea6d69ce96b865cd6e24e333cc6a7fc825816c56b53818f02355650ab2422a13
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -80710,10 +80197,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -80734,11 +80219,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -80758,7 +80238,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -81180,7 +80659,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: e812fd75e60c5440cd112869e7bc8c0322fc0a7af53648568a0aba93855df354
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -82158,10 +81637,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -82182,11 +81659,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -82206,7 +81678,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -82612,7 +82083,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: f471e516f1073fd0abde3a85d487f89ead880dd1b22c9e83574482b5ec080a69
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -83595,10 +83066,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -83619,12 +83088,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_batch_max_bytes: 7777
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 99999
-      log_segment_size_min: 100
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -83644,7 +83107,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -84050,7 +83512,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: ea6d69ce96b865cd6e24e333cc6a7fc825816c56b53818f02355650ab2422a13
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -85059,10 +84521,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -85083,11 +84543,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -85107,7 +84562,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -85529,7 +84983,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: e812fd75e60c5440cd112869e7bc8c0322fc0a7af53648568a0aba93855df354
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -86507,10 +85961,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -86531,11 +85983,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -86555,7 +86002,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -86961,7 +86407,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: f471e516f1073fd0abde3a85d487f89ead880dd1b22c9e83574482b5ec080a69
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -87932,10 +87378,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -87956,12 +87400,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_batch_max_bytes: 7777
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 99999
-      log_segment_size_min: 100
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -87981,7 +87419,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -88387,7 +87824,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: ea6d69ce96b865cd6e24e333cc6a7fc825816c56b53818f02355650ab2422a13
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -89396,10 +88833,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -89420,11 +88855,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -89444,7 +88874,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -89866,7 +89295,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: e812fd75e60c5440cd112869e7bc8c0322fc0a7af53648568a0aba93855df354
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -90844,10 +90273,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -90868,11 +90295,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -90892,7 +90314,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -91298,7 +90719,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: f471e516f1073fd0abde3a85d487f89ead880dd1b22c9e83574482b5ec080a69
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -92269,10 +91690,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -92293,12 +91712,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_batch_max_bytes: 7777
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 99999
-      log_segment_size_min: 100
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -92318,7 +91731,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -92724,7 +92136,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: ea6d69ce96b865cd6e24e333cc6a7fc825816c56b53818f02355650ab2422a13
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -93740,10 +93152,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -93764,11 +93174,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -93788,7 +93193,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -94210,7 +93614,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: e812fd75e60c5440cd112869e7bc8c0322fc0a7af53648568a0aba93855df354
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -95195,10 +94599,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -95219,11 +94621,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -95243,7 +94640,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -95649,7 +95045,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: f471e516f1073fd0abde3a85d487f89ead880dd1b22c9e83574482b5ec080a69
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -96628,11 +96024,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -96653,12 +96046,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_batch_max_bytes: 7777
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 99999
-      log_segment_size_min: 100
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -96678,7 +96065,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -97084,7 +96470,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: abd7b37082a5a3fe100e2cbc8a210f4cd79f533eeb72594be483bf4364821312
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -98101,11 +97487,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -98126,11 +97509,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -98150,7 +97528,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -98572,7 +97949,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 33a575624572dcacca1375dc74e5c85a7490815bf41be4b9467937bd190419bf
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -99558,11 +98935,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -99583,11 +98957,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -99607,7 +98976,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -100013,7 +99381,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: be3e06677b97b2eda42ab261274a4756e0452e618a593b46862f1e7479c8ad33
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -100992,11 +100360,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -101017,12 +100382,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_batch_max_bytes: 7777
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 99999
-      log_segment_size_min: 100
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -101042,7 +100401,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -101448,7 +100806,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: abd7b37082a5a3fe100e2cbc8a210f4cd79f533eeb72594be483bf4364821312
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -102465,11 +101823,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -102490,11 +101845,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -102514,7 +101864,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -102936,7 +102285,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 33a575624572dcacca1375dc74e5c85a7490815bf41be4b9467937bd190419bf
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -103922,11 +103271,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -103947,11 +103293,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -103971,7 +103312,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -104377,7 +103717,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: be3e06677b97b2eda42ab261274a4756e0452e618a593b46862f1e7479c8ad33
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -105355,11 +104695,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -105380,11 +104717,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -105404,7 +104736,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -105810,7 +105141,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 33a575624572dcacca1375dc74e5c85a7490815bf41be4b9467937bd190419bf
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -106594,11 +105925,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -106619,11 +105947,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/ssl/certs/ca-certificates.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -106643,7 +105966,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -107031,7 +106353,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 3f9dbf1d451c7619a15065b8cc4cb232f8374cd85ecc05f93349f9e57e4a379d
+        config.redpanda.com/checksum: 8d5422857b81b1a6b6bed0dc6796ac593722e5ecfc73083e75ca7998f0f48e99
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -107859,11 +107181,8 @@ data:
         name: my-admin
         require_client_auth: false
         truststore_file: /etc/truststores/configmaps/admin-cm-my-admin.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -107893,11 +107212,6 @@ data:
         name: my-kafka
         require_client_auth: false
         truststore_file: /etc/truststores/secrets/kafka-secret-my-kafka.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -107917,7 +107231,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -108352,7 +107665,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 3b391c89f5320753cf5b092eafeed0e55a275bb7becd27e079b4af2ff7ed9a07
+        config.redpanda.com/checksum: 6e0f606e90b04d9f98c75e7002b85b4c2b7f7bc728975da00c2b5716ba12c24e
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -109377,11 +108690,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         authentication_method: none
@@ -109403,11 +108713,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -109427,7 +108732,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -109839,7 +109143,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 710aa6cd59835aa0051f3b632120079ac89b13648f8b9f89c7fca1bf44cb5b6f
+        config.redpanda.com/checksum: 1bc3c10e6eec6e9d1f1fb78aec94ef2781c5bb6aa6d9579c07e7c4573b2e1876
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -110963,12 +110267,9 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       developer_mode: true
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -110989,11 +110290,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -111013,7 +110309,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -111418,7 +110713,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b83676047e7c7dcb410febbe0e342fc93689b71737077a5a29447420646a2ecd
+        config.redpanda.com/checksum: 4d35b6ed55cc90695020a6726b0acbbe12aaa534620aa9cab133e129160e2257
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -112396,11 +111691,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -112421,11 +111713,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -112445,7 +111732,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -112851,7 +112137,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 33a575624572dcacca1375dc74e5c85a7490815bf41be4b9467937bd190419bf
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -113848,11 +113134,8 @@ data:
         name: default
         port: 9645
       admin_api_tls: null
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -113873,11 +113156,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -113897,7 +113175,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -114294,7 +113571,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 96abae508f529ede94467bc9326b5b615f1254d8945665f83b5b691530c2a2dc
+        config.redpanda.com/checksum: c6f48c8739b514c4b7fd7d39760fe94bd5a669efa9a7812124dd4c9bc9d712ec
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -115298,10 +114575,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -115322,12 +114597,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_batch_max_bytes: 7777
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 99999
-      log_segment_size_min: 100
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -115347,7 +114616,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -115753,7 +115021,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: ea6d69ce96b865cd6e24e333cc6a7fc825816c56b53818f02355650ab2422a13
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -116769,10 +116037,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -116793,11 +116059,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -116817,7 +116078,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -117239,7 +116499,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: e812fd75e60c5440cd112869e7bc8c0322fc0a7af53648568a0aba93855df354
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -118224,10 +117484,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -118248,11 +117506,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -118272,7 +117525,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -118678,7 +117930,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: f471e516f1073fd0abde3a85d487f89ead880dd1b22c9e83574482b5ec080a69
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -119657,11 +118909,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -119682,12 +118931,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_batch_max_bytes: 7777
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 99999
-      log_segment_size_min: 100
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -119707,7 +118950,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -120113,7 +119355,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: abd7b37082a5a3fe100e2cbc8a210f4cd79f533eeb72594be483bf4364821312
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -121130,11 +120372,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -121155,11 +120394,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -121179,7 +120413,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -121601,7 +120834,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 33a575624572dcacca1375dc74e5c85a7490815bf41be4b9467937bd190419bf
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -122587,11 +121820,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -122612,11 +121842,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -122636,7 +121861,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -123042,7 +122266,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: be3e06677b97b2eda42ab261274a4756e0452e618a593b46862f1e7479c8ad33
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -124020,11 +123244,8 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      audit_enabled: false
-      compacted_log_segment_size: 67108864
       crash_loop_limit: 5
       empty_seed_starts_cluster: false
-      enable_sasl: false
       kafka_api:
       - address: 0.0.0.0
         name: internal
@@ -124045,11 +123266,6 @@ data:
         name: default
         require_client_auth: false
         truststore_file: /etc/tls/certs/external/ca.crt
-      kafka_connection_rate_limit: 1000
-      kafka_enable_authorization: false
-      log_segment_size_max: 268435456
-      log_segment_size_min: 16777216
-      max_compacted_log_segment_size: 536870912
       rpc_server:
         address: 0.0.0.0
         port: 33145
@@ -124069,7 +123285,6 @@ data:
       - host:
           address: redpanda-2.redpanda.default.svc.cluster.local.
           port: 33145
-      storage_min_free_bytes: 1073741824
     rpk:
       additional_start_flags:
       - --default-log-level=info
@@ -124475,7 +123690,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 33a575624572dcacca1375dc74e5c85a7490815bf41be4b9467937bd190419bf
+        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
