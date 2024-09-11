@@ -67,10 +67,6 @@ spec:
           export {{ include "rpk-sasl-environment-variables" . }}
           if [[ -n "$old_setting" ]]; then set -x; fi
 {{- end }}
-          {{- $i := .Values.statefulset.replicas }}
-          {{- $default_topic_replicas := sub (add $i (mod $i 2)) 1 }}
-          # wait for post-upgrade job to update the default_topic_replications value
-          timeout 600 bash -c "until [[ $(rpk cluster config get default_topic_replications) = {{ $default_topic_replicas }} ]]; do sleep 1; done"
           until rpk topic create produce.consume.test.$POD_NAME {{ $cloudStorageFlags }}
             do sleep 2
           done

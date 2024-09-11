@@ -29,11 +29,6 @@
 {{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asintegral" (dict "a" (list $value) ))) "r")) ))) "r") -}}
 {{- $isInt64 := $tmp_tuple_1.T2 -}}
 {{- $asInt64 := ($tmp_tuple_1.T1 | int64) -}}
-{{- if (and (eq $key "default_topic_replications") $isInt64) -}}
-{{- $r := (($values.statefulset.replicas | int) | int64) -}}
-{{- $r = ((sub (((add $r (((mod $r (2 | int64)) | int64))) | int64)) (1 | int64)) | int64) -}}
-{{- $asInt64 = (min $asInt64 ($r | int64)) -}}
-{{- end -}}
 {{- $tmp_tuple_2 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "bool" $value false) ))) "r")) ))) "r") -}}
 {{- $ok_2 := $tmp_tuple_2.T2 -}}
 {{- $asBool_1 := $tmp_tuple_2.T1 -}}
@@ -62,9 +57,14 @@
 {{- if $_is_returning -}}
 {{- break -}}
 {{- end -}}
-{{- $tmp_tuple_5 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $values.config.cluster "storage_min_free_bytes" (coalesce nil)) ))) "r")) ))) "r") -}}
+{{- $tmp_tuple_5 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $values.config.cluster "default_topic_replications" (coalesce nil)) ))) "r")) ))) "r") -}}
 {{- $ok_7 := $tmp_tuple_5.T2 -}}
-{{- if (not $ok_7) -}}
+{{- if (and (not $ok_7) (ge ($values.statefulset.replicas | int) (3 | int))) -}}
+{{- $script = (concat (default (list ) $script) (list "rpk cluster config set default_topic_replications 3")) -}}
+{{- end -}}
+{{- $tmp_tuple_6 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $values.config.cluster "storage_min_free_bytes" (coalesce nil)) ))) "r")) ))) "r") -}}
+{{- $ok_8 := $tmp_tuple_6.T2 -}}
+{{- if (not $ok_8) -}}
 {{- $script = (concat (default (list ) $script) (list (printf "rpk cluster config set storage_min_free_bytes %d" ((get (fromJson (include "redpanda.Storage.StorageMinFreeBytes" (dict "a" (list $values.storage) ))) "r") | int64)))) -}}
 {{- end -}}
 {{- if (get (fromJson (include "redpanda.RedpandaAtLeast_23_2_1" (dict "a" (list $dot) ))) "r") -}}

@@ -68,11 +68,7 @@ spec:
           export {{ include "rpk-sasl-environment-variables" . }}
           if [[ -n "$old_setting" ]]; then set -x; fi
 {{- end }}
-          {{- $i := .Values.statefulset.replicas }}
-          {{- $default_topic_replicas := sub (add $i (mod $i 2)) 1 }}
-          # wait for post-upgrade job to update the default_topic_replications value
-          timeout 120 bash -c "until [[ $(rpk cluster config get default_topic_replications) = {{ $default_topic_replicas }} ]]; do sleep 1; done"
-  
+
           exists=$(rpk topic list | grep my_sample_topic | awk '{print $1}')
           if [[ "$exists" != "my_sample_topic" ]]; then
             until rpk topic create my_sample_topic {{ $cloudStorageFlags }}
@@ -85,7 +81,7 @@ spec:
           {{- end }}
           sleep 2
           rpk topic consume my_sample_topic -n 1 | grep "Pandas are awesome!"
-         
+
           # now check if we can delete the topic (we should not)
           rpk topic delete my_sample_topic
 

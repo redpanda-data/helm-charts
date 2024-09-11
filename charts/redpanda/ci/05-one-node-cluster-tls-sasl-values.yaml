@@ -30,7 +30,6 @@ auth:
 
 config:
   cluster:
-    default_topic_replications: 3
     kafka_nodelete_topics: ['audit', 'consumer_offsets', '_schemas', 'my_sample_topic']
 
 storage:

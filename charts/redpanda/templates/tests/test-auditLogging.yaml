@@ -51,7 +51,7 @@ spec:
           old_setting=${-//[^x]/}
           audit_topic_name="_redpanda.audit_log"
           expected_partitions={{ .Values.auditLogging.partitions }}
-          
+
           # sasl configurations
           set +x
           IFS=":" read -r {{ include "rpk-sasl-environment-variables" . }} < <(grep "" $(find /etc/secrets/users/* -print))
@@ -62,12 +62,7 @@ spec:
           {{- end }}
           export {{ include "rpk-sasl-environment-variables" . }}
           if [[ -n "$old_setting" ]]; then set -x; fi
-        
-          {{- $i := .Values.statefulset.replicas }}
-          {{- $default_topic_replicas := sub (add $i (mod $i 2)) 1 }}
-          # wait for post-upgrade job to update the default_topic_replications value
-          timeout 600 bash -c "until [[ $(rpk cluster config get default_topic_replications) = {{ $default_topic_replicas }} ]]; do sleep 1; done"
-          
+
           # now run the to determine if we have the right results
           # should describe topic without error
           rpk topic describe ${audit_topic_name}

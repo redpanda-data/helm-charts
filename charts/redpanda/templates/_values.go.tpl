@@ -1246,35 +1246,15 @@
 
 {{- define "redpanda.ClusterConfig.Translate" -}}
 {{- $c := (index .a 0) -}}
-{{- $replicas := (index .a 1) -}}
-{{- $skipDefaultTopic := (index .a 2) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $result := (dict ) -}}
 {{- range $k, $v := $c -}}
-{{- if (and (eq $k "default_topic_replications") (not $skipDefaultTopic)) -}}
-{{- $r := ($replicas | int) -}}
-{{- $input := ($r | int) -}}
-{{- $tmp_tuple_15 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asintegral" (dict "a" (list $v) ))) "r")) ))) "r") -}}
+{{- $tmp_tuple_15 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "bool" $v false) ))) "r")) ))) "r") -}}
 {{- $ok_17 := $tmp_tuple_15.T2 -}}
-{{- $num_16 := ($tmp_tuple_15.T1 | int) -}}
+{{- $b_16 := $tmp_tuple_15.T1 -}}
 {{- if $ok_17 -}}
-{{- $input = $num_16 -}}
-{{- end -}}
-{{- $tmp_tuple_16 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asnumeric" (dict "a" (list $v) ))) "r")) ))) "r") -}}
-{{- $ok_19 := $tmp_tuple_16.T2 -}}
-{{- $f_18 := ($tmp_tuple_16.T1 | float64) -}}
-{{- if $ok_19 -}}
-{{- $input = ($f_18 | int) -}}
-{{- end -}}
-{{- $_ := (set $result $k (min ($input | int64) (((sub ((add $r (((mod $r (2 | int)) | int))) | int) (1 | int)) | int) | int64))) -}}
-{{- continue -}}
-{{- end -}}
-{{- $tmp_tuple_17 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "bool" $v false) ))) "r")) ))) "r") -}}
-{{- $ok_21 := $tmp_tuple_17.T2 -}}
-{{- $b_20 := $tmp_tuple_17.T1 -}}
-{{- if $ok_21 -}}
-{{- $_ := (set $result $k $b_20) -}}
+{{- $_ := (set $result $k $b_16) -}}
 {{- continue -}}
 {{- end -}}
 {{- if (not (empty $v)) -}}
