@@ -568,53 +568,6 @@ post_install_job:
         securityContext: {}
         env: []
 
-post_upgrade_job:
-  enabled: true
-  # Resource requests and limits for the post-upgrade batch job
-  # resources:
-  #   requests:
-  #     cpu: 1
-  #     memory: 512Mi
-  #   limits:
-  #     cpu: 2
-  #     memory: 1024Mi
-  # labels: {}
-  # annotations: {}
-  # Additional environment variables for the Post Upgrade Job
-  # extraEnv:
-  #   - name: AWS_SECRET_ACCESS_KEY
-  #     valueFrom:
-  #       secretKeyRef:
-  #         name: my-secret
-  #         key: redpanda-aws-secret-access-key
-  # Additional environment variables for the Post Upgrade Job mapped from Secret or ConfigMap
-  # extraEnvFrom:
-  #   - secretRef:
-  #       name: redpanda-aws-secrets
-  # DEPRECATED. Please use podTemplate.securityContext
-  # You can set the security context as nessesary for the post-upgrade job as follows
-  # securityContext:
-  #   allowPrivilegeEscalation: false
-  #   runAsNonRoot: true
-  affinity: {}
-  # When helm upgrade is performed the post-upgrade job is scheduled before Statefulset successfully finish
-  # its rollout. User can extend Job default backoff limit of `6`.
-  # backoffLimit:
-
-  podTemplate:
-    # -- Additional labels to apply to the Pods of this Job.
-    labels: {}
-    # -- Additional annotations to apply to the Pods of this Job.
-    annotations: {}
-    # -- A subset of Kubernetes' PodSpec type that will be merged into the
-    # final PodSpec. See [Merge Semantics](#merging-semantics) for details.
-    spec:
-      securityContext: {}
-      containers:
-      - name: post-upgrade
-        securityContext: {}
-        env: []
-
 statefulset:
   # -- Number of Redpanda brokers (Redpanda Data recommends setting this to the number of worker nodes in the cluster)
   replicas: 3
@@ -742,7 +695,7 @@ statefulset:
     # an existing node is removed.
     controllers:
       image:
-        tag: v2.1.10-23.2.18
+        tag: v2.2.4-24.2.5
         repository: docker.redpanda.com/redpandadata/redpanda-operator
       # You must also enable RBAC, `rbac.enabled=true`, to deploy this sidecar
       enabled: false

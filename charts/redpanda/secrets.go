@@ -496,7 +496,6 @@ func SecretConfigurator(dot *helmette.Dot) *corev1.Secret {
 		``,
 		`# Setup config files`,
 		`cp /tmp/base-config/redpanda.yaml "${CONFIG}"`,
-		`cp /tmp/base-config/bootstrap.yaml /etc/redpanda/.bootstrap.yaml`,
 	)
 	if !RedpandaAtLeast_22_3_0(dot) {
 		configuratorSh = append(configuratorSh,

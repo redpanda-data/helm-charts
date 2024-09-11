@@ -187,7 +187,7 @@ func ClientAuthRequired(dot *helmette.Dot) bool {
 func DefaultMounts(dot *helmette.Dot) []corev1.VolumeMount {
 	return append([]corev1.VolumeMount{
 		{
-			Name:      "config",
+			Name:      "base-config",
 			MountPath: "/etc/redpanda",
 		},
 	}, CommonMounts(dot)...)
@@ -239,7 +239,7 @@ func CommonMounts(dot *helmette.Dot) []corev1.VolumeMount {
 func DefaultVolumes(dot *helmette.Dot) []corev1.Volume {
 	return append([]corev1.Volume{
 		{
-			Name: "config",
+			Name: "base-config",
 			VolumeSource: corev1.VolumeSource{
 				ConfigMap: &corev1.ConfigMapVolumeSource{
 					LocalObjectReference: corev1.LocalObjectReference{

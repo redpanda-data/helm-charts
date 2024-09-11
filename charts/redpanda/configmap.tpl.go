@@ -48,6 +48,17 @@ func RedpandaConfigMap(dot *helmette.Dot) *corev1.ConfigMap {
 	}
 }
 
+// BootstrapFile returns contents of `.bootstrap.yaml`. Keys that may be set
+// via environment variables (such as tiered storage secrets) will have
+// placeholders in the form of $ENVVARNAME. An init container is responsible
+// for expanding said placeholders.
+//
+// Convention is to name envvars
+// $REDPANDA_SCREAMING_CASE_CLUSTER_PROPERTY_NAME. For example,
+// cloud_storage_secret_key would be $REDPANDA_CLOUD_STORAGE_SECRET_KEY.
+//
+// `.bootstrap.yaml` is templated and then read by both the redpanda container
+// and the post install/upgrade job.
 func BootstrapFile(dot *helmette.Dot) string {
 	values := helmette.Unwrap[Values](dot.Values)
 
@@ -63,7 +74,21 @@ func BootstrapFile(dot *helmette.Dot) string {
 	bootstrap = helmette.Merge(bootstrap, values.Config.Tunable.Translate())
 	bootstrap = helmette.Merge(bootstrap, values.Config.Cluster.Translate())
 	bootstrap = helmette.Merge(bootstrap, values.Auth.Translate(values.Auth.IsSASLEnabled()))
-	bootstrap = helmette.Merge(bootstrap, values.Storage.Translate())
+	bootstrap = helmette.Merge(bootstrap, values.Storage.GetTieredStorageConfig().Translate(&values.Storage.Tiered.CredentialsSecretRef))
+
+	// If default_topic_replications is not set and we have at least 3 Brokers,
+	// upgrade from redpanda's default of 1 to 3 so, when possible, topics are
+	// HA by default.
+	// See also:
+	// - https://github.com/redpanda-data/helm-charts/issues/583
+	// - https://github.com/redpanda-data/helm-charts/issues/1501
+	if _, ok := values.Config.Cluster["default_topic_replications"]; !ok && values.Statefulset.Replicas >= 3 {
+		bootstrap["default_topic_replications"] = 3
+	}
+
+	if _, ok := values.Config.Cluster["storage_min_free_bytes"]; !ok {
+		bootstrap["storage_min_free_bytes"] = values.Storage.StorageMinFreeBytes()
+	}
 
 	return helmette.ToYaml(bootstrap)
 }

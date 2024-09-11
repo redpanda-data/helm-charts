@@ -571,36 +571,6 @@ A subset of Kubernetes' PodSpec type that will be merged into the final PodSpec.
 {"containers":[{"env":[],"name":"post-install","securityContext":{}}],"securityContext":{}}
 ```
 
-### [post_upgrade_job.affinity](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=post_upgrade_job.affinity)
-
-**Default:** `{}`
-
-### [post_upgrade_job.enabled](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=post_upgrade_job.enabled)
-
-**Default:** `true`
-
-### [post_upgrade_job.podTemplate.annotations](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=post_upgrade_job.podTemplate.annotations)
-
-Additional annotations to apply to the Pods of this Job.
-
-**Default:** `{}`
-
-### [post_upgrade_job.podTemplate.labels](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=post_upgrade_job.podTemplate.labels)
-
-Additional labels to apply to the Pods of this Job.
-
-**Default:** `{}`
-
-### [post_upgrade_job.podTemplate.spec](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=post_upgrade_job.podTemplate.spec)
-
-A subset of Kubernetes' PodSpec type that will be merged into the final PodSpec. See [Merge Semantics](#merging-semantics) for details.
-
-**Default:**
-
-```
-{"containers":[{"env":[],"name":"post-upgrade","securityContext":{}}],"securityContext":{}}
-```
-
 ### [rackAwareness](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=rackAwareness)
 
 Rack Awareness settings. For details, see the [Rack Awareness documentation](https://docs.redpanda.com/docs/manage/kubernetes/kubernetes-rack-awareness/).
@@ -985,7 +955,7 @@ To create `Guaranteed` Pods for Redpanda brokers, provide both requests and limi
 
 ### [statefulset.sideCars.controllers.image.tag](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.sideCars.controllers.image.tag)
 
-**Default:** `"v2.1.10-23.2.18"`
+**Default:** `"v2.2.4-24.2.5"`
 
 ### [statefulset.sideCars.controllers.metricsAddress](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.sideCars.controllers.metricsAddress)
 

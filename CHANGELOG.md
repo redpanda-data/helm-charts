@@ -8,6 +8,13 @@
 #### Changed
 #### Fixed
 #### Removed
+* `post_upgrade_job.*`, and the post-upgrade job itself, has been removed. All
+  it's functionality has been consolidated into the `post_install_job`, which
+  actually runs on both post-install and post-upgrade.
+
+  The consolidated job now runs the redpanda-operator image, which may be
+  controlled the same way as the additional controllers:
+  `statefulset.controllers.{image,repository}`.
 
 ### [5.9.5](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.5) - 2024-09-26
 #### Added

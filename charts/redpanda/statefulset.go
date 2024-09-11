@@ -155,7 +155,7 @@ func StatefulSetVolumes(dot *helmette.Dot) []corev1.Volume {
 			},
 		},
 		{
-			Name: fullname,
+			Name: "base-config",
 			VolumeSource: corev1.VolumeSource{
 				ConfigMap: &corev1.ConfigMapVolumeSource{
 					LocalObjectReference: corev1.LocalObjectReference{Name: fullname},
@@ -267,7 +267,7 @@ func statefulSetVolumeTieredStorageDir(dot *helmette.Dot) *corev1.Volume {
 		Name: "tiered-storage-dir",
 		VolumeSource: corev1.VolumeSource{
 			EmptyDir: &corev1.EmptyDirVolumeSource{
-				SizeLimit: values.Storage.CloudStorageCacheSize(),
+				SizeLimit: values.Storage.GetTieredStorageConfig().CloudStorageCacheSize(),
 			},
 		},
 	}
@@ -283,7 +283,7 @@ func StatefulSetVolumeMounts(dot *helmette.Dot) []corev1.VolumeMount {
 	// TODO: Migrate them into this function.
 	mounts = append(mounts, []corev1.VolumeMount{
 		{Name: "config", MountPath: "/etc/redpanda"},
-		{Name: Fullname(dot), MountPath: "/tmp/base-config"},
+		{Name: "base-config", MountPath: "/tmp/base-config"},
 		{Name: "lifecycle-scripts", MountPath: "/var/lifecycle"},
 		{Name: "datadir", MountPath: "/var/lib/redpanda/data"},
 	}...)
@@ -315,6 +315,7 @@ func StatefulSetInitContainers(dot *helmette.Dot) []corev1.Container {
 		containers = append(containers, *c)
 	}
 	containers = append(containers, *statefulSetInitContainerConfigurator(dot))
+	containers = append(containers, bootstrapYamlTemplater(dot))
 	containers = append(containers, templateToContainers(dot, values.Statefulset.InitContainers.ExtraInitContainers)...)
 	return containers
 }
@@ -345,7 +346,7 @@ func statefulSetInitContainerTuning(dot *helmette.Dot) *corev1.Container {
 		VolumeMounts: append(append(CommonMounts(dot),
 			templateToVolumeMounts(dot, values.Statefulset.InitContainers.Tuning.ExtraVolumeMounts)...),
 			corev1.VolumeMount{
-				Name:      Fullname(dot),
+				Name:      "base-config",
 				MountPath: "/etc/redpanda",
 			},
 		),
@@ -530,7 +531,7 @@ func statefulSetInitContainerConfigurator(dot *helmette.Dot) *corev1.Container {
 				MountPath: "/etc/redpanda",
 			},
 			corev1.VolumeMount{
-				Name:      Fullname(dot),
+				Name:      "base-config",
 				MountPath: "/tmp/base-config",
 			},
 			corev1.VolumeMount{
