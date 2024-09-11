@@ -4,7 +4,7 @@
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
-{{- $cms := (list (get (fromJson (include "redpanda.RedpandaConfigMap" (dict "a" (list $dot true) ))) "r") (get (fromJson (include "redpanda.RPKProfile" (dict "a" (list $dot) ))) "r")) -}}
+{{- $cms := (list (get (fromJson (include "redpanda.RedpandaConfigMap" (dict "a" (list $dot) ))) "r") (get (fromJson (include "redpanda.RPKProfile" (dict "a" (list $dot) ))) "r")) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $cms) | toJson -}}
 {{- break -}}
@@ -13,11 +13,10 @@
 
 {{- define "redpanda.RedpandaConfigMap" -}}
 {{- $dot := (index .a 0) -}}
-{{- $includeSeedServer := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $_is_returning = true -}}
-{{- (dict "r" (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) ) (mustMergeOverwrite (dict ) (dict "kind" "ConfigMap" "apiVersion" "v1" )) (dict "metadata" (mustMergeOverwrite (dict "creationTimestamp" (coalesce nil) ) (dict "name" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r") "namespace" $dot.Release.Namespace "labels" (get (fromJson (include "redpanda.FullLabels" (dict "a" (list $dot) ))) "r") )) "data" (dict "bootstrap.yaml" (get (fromJson (include "redpanda.BootstrapFile" (dict "a" (list $dot) ))) "r") "redpanda.yaml" (get (fromJson (include "redpanda.RedpandaConfigFile" (dict "a" (list $dot $includeSeedServer) ))) "r") ) ))) | toJson -}}
+{{- (dict "r" (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) ) (mustMergeOverwrite (dict ) (dict "kind" "ConfigMap" "apiVersion" "v1" )) (dict "metadata" (mustMergeOverwrite (dict "creationTimestamp" (coalesce nil) ) (dict "name" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r") "namespace" $dot.Release.Namespace "labels" (get (fromJson (include "redpanda.FullLabels" (dict "a" (list $dot) ))) "r") )) "data" (dict "bootstrap.yaml" (get (fromJson (include "redpanda.BootstrapFile" (dict "a" (list $dot) ))) "r") "redpanda.yaml" (get (fromJson (include "redpanda.RedpandaConfigFile" (dict "a" (list $dot true) ))) "r") ) ))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -33,6 +32,7 @@
 {{- $bootstrap = (merge (dict ) $bootstrap (get (fromJson (include "redpanda.TunableConfig.Translate" (dict "a" (list $values.config.tunable) ))) "r")) -}}
 {{- $bootstrap = (merge (dict ) $bootstrap (get (fromJson (include "redpanda.ClusterConfig.Translate" (dict "a" (list $values.config.cluster) ))) "r")) -}}
 {{- $bootstrap = (merge (dict ) $bootstrap (get (fromJson (include "redpanda.Auth.Translate" (dict "a" (list $values.auth (get (fromJson (include "redpanda.Auth.IsSASLEnabled" (dict "a" (list $values.auth) ))) "r")) ))) "r")) -}}
+{{- $bootstrap = (merge (dict ) $bootstrap (get (fromJson (include "redpanda.Storage.Translate" (dict "a" (list $values.storage) ))) "r")) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" (toYaml $bootstrap)) | toJson -}}
 {{- break -}}
@@ -45,22 +45,16 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
-{{- $redpanda := (dict "kafka_enable_authorization" (get (fromJson (include "redpanda.Auth.IsSASLEnabled" (dict "a" (list $values.auth) ))) "r") "enable_sasl" (get (fromJson (include "redpanda.Auth.IsSASLEnabled" (dict "a" (list $values.auth) ))) "r") "empty_seed_starts_cluster" false "storage_min_free_bytes" ((get (fromJson (include "redpanda.Storage.StorageMinFreeBytes" (dict "a" (list $values.storage) ))) "r") | int64) ) -}}
+{{- $redpanda := (dict "empty_seed_starts_cluster" false ) -}}
 {{- if $includeSeedServer -}}
 {{- $_ := (set $redpanda "seed_servers" (get (fromJson (include "redpanda.Listeners.CreateSeedServers" (dict "a" (list $values.listeners ($values.statefulset.replicas | int) (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r") (get (fromJson (include "redpanda.InternalDomain" (dict "a" (list $dot) ))) "r")) ))) "r")) -}}
 {{- end -}}
-{{- $redpanda = (merge (dict ) $redpanda (get (fromJson (include "redpanda.AuditLogging.Translate" (dict "a" (list $values.auditLogging $dot (get (fromJson (include "redpanda.Auth.IsSASLEnabled" (dict "a" (list $values.auth) ))) "r")) ))) "r")) -}}
-{{- $redpanda = (merge (dict ) $redpanda (get (fromJson (include "redpanda.Logging.Translate" (dict "a" (list $values.logging) ))) "r")) -}}
-{{- $redpanda = (merge (dict ) $redpanda (get (fromJson (include "redpanda.TunableConfig.Translate" (dict "a" (list $values.config.tunable) ))) "r")) -}}
-{{- $redpanda = (merge (dict ) $redpanda (get (fromJson (include "redpanda.ClusterConfig.Translate" (dict "a" (list $values.config.cluster) ))) "r")) -}}
-{{- $redpanda = (merge (dict ) $redpanda (get (fromJson (include "redpanda.Auth.Translate" (dict "a" (list $values.auth (get (fromJson (include "redpanda.Auth.IsSASLEnabled" (dict "a" (list $values.auth) ))) "r")) ))) "r")) -}}
 {{- $redpanda = (merge (dict ) $redpanda (get (fromJson (include "redpanda.NodeConfig.Translate" (dict "a" (list $values.config.node) ))) "r")) -}}
 {{- $_ := (get (fromJson (include "redpanda.configureListeners" (dict "a" (list $redpanda $dot) ))) "r") -}}
 {{- $redpandaYaml := (dict "redpanda" $redpanda "schema_registry" (get (fromJson (include "redpanda.schemaRegistry" (dict "a" (list $dot) ))) "r") "schema_registry_client" (get (fromJson (include "redpanda.kafkaClient" (dict "a" (list $dot) ))) "r") "pandaproxy" (get (fromJson (include "redpanda.pandaProxyListener" (dict "a" (list $dot) ))) "r") "pandaproxy_client" (get (fromJson (include "redpanda.kafkaClient" (dict "a" (list $dot) ))) "r") "rpk" (get (fromJson (include "redpanda.rpkNodeConfig" (dict "a" (list $dot) ))) "r") "config_file" "/etc/redpanda/redpanda.yaml" ) -}}
 {{- if (and (and (get (fromJson (include "redpanda.RedpandaAtLeast_23_3_0" (dict "a" (list $dot) ))) "r") $values.auditLogging.enabled) (get (fromJson (include "redpanda.Auth.IsSASLEnabled" (dict "a" (list $values.auth) ))) "r")) -}}
 {{- $_ := (set $redpandaYaml "audit_log_client" (get (fromJson (include "redpanda.kafkaClient" (dict "a" (list $dot) ))) "r")) -}}
 {{- end -}}
-{{- $redpandaYaml = (merge (dict ) $redpandaYaml (get (fromJson (include "redpanda.Storage.Translate" (dict "a" (list $values.storage) ))) "r")) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" (toYaml $redpandaYaml)) | toJson -}}
 {{- break -}}

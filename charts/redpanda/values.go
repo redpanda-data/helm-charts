@@ -436,13 +436,21 @@ func (s *Storage) CloudStorageCacheSize() *resource.Quantity {
 
 // TieredCacheDirectory was: tieredStorage.cacheDirectory
 func (s *Storage) TieredCacheDirectory(dot *helmette.Dot) string {
-	config := s.GetTieredStorageConfig()
+	values := helmette.Unwrap[Values](dot.Values)
 
-	dir := helmette.Dig(config, "/var/lib/redpanda/data/cloud_storage_cache", `cloud_storage_cache_directory`).(string)
-	if dir == "" {
-		return "/var/lib/redpanda/data/cloud_storage_cache"
+	if dir, ok := values.Config.Node["cloud_storage_cache_directory"].(string); ok {
+		return dir
 	}
-	return dir
+
+	// TODO: Deprecate or just remove the ability to set
+	// cloud_storage_cache_directory in tiered config(s) so their reserved for
+	// cluster settings only.
+	tieredConfig := values.Storage.GetTieredStorageConfig()
+	if dir, ok := tieredConfig["cloud_storage_cache_directory"].(string); ok {
+		return dir
+	}
+
+	return "/var/lib/redpanda/data/cloud_storage_cache"
 }
 
 // TieredMountType was: storage-tiered-mountType
@@ -1784,16 +1792,19 @@ type TieredStorageConfig map[string]any
 // +gotohelm:ignore=true
 func (TieredStorageConfig) JSONSchema() *jsonschema.Schema {
 	type schema struct {
-		CloudStorageEnabled                     bool              `json:"cloud_storage_enabled" jsonschema:"required"`
-		CloudStorageAccessKey                   string            `json:"cloud_storage_access_key"`
-		CloudStorageSecretKey                   string            `json:"cloud_storage_secret_key"`
-		CloudStorageAPIEndpoint                 string            `json:"cloud_storage_api_endpoint"`
-		CloudStorageAPIEndpointPort             int               `json:"cloud_storage_api_endpoint_port"`
-		CloudStorageAzureADLSEndpoint           string            `json:"cloud_storage_azure_adls_endpoint"`
-		CloudStorageAzureADLSPort               int               `json:"cloud_storage_azure_adls_port"`
-		CloudStorageBucket                      string            `json:"cloud_storage_bucket"`
-		CloudStorageCacheCheckInterval          int               `json:"cloud_storage_cache_check_interval"`
-		CloudStorageCacheDirectory              string            `json:"cloud_storage_cache_directory"`
+		CloudStorageEnabled            bool   `json:"cloud_storage_enabled" jsonschema:"required"`
+		CloudStorageAccessKey          string `json:"cloud_storage_access_key"`
+		CloudStorageSecretKey          string `json:"cloud_storage_secret_key"`
+		CloudStorageAPIEndpoint        string `json:"cloud_storage_api_endpoint"`
+		CloudStorageAPIEndpointPort    int    `json:"cloud_storage_api_endpoint_port"`
+		CloudStorageAzureADLSEndpoint  string `json:"cloud_storage_azure_adls_endpoint"`
+		CloudStorageAzureADLSPort      int    `json:"cloud_storage_azure_adls_port"`
+		CloudStorageBucket             string `json:"cloud_storage_bucket"`
+		CloudStorageCacheCheckInterval int    `json:"cloud_storage_cache_check_interval"`
+		// CloudStorageCacheDirectory is a node config property unlike
+		// everything else in this struct. It should instead be set via
+		// `config.node`.
+		CloudStorageCacheDirectory              string            `json:"cloud_storage_cache_directory" jsonschema:"deprecated"`
 		CloudStorageCacheSize                   *ResourceQuantity `json:"cloud_storage_cache_size"`
 		CloudStorageCredentialsSource           string            `json:"cloud_storage_credentials_source" jsonschema:"pattern=^(config_file|aws_instance_metadata|sts|gcp_instance_metadata)$"`
 		CloudStorageDisableTLS                  bool              `json:"cloud_storage_disable_tls"`

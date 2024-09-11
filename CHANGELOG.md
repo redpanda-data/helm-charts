@@ -6,6 +6,18 @@
 #### Added
 * Add RBAC rules for the operator chart so it can manage users
 #### Changed
+* Cluster configurations are no longer include in `redpanda.yaml` or the
+  Redpanda Statefulset's configuration hash.
+
+  This change makes it possible to update cluster configurations without
+  initiating a rolling restart of the entire cluster.
+
+  As has always been the case, users should consult `rpk cluster config status`
+  to determine if a rolling restart needs to be manually performed due to
+  cluster configuration changes.
+
+  Cases requiring manual rolling restarts may increase as fewer chart
+  operations will initiate rolling restart of the cluster.
 #### Fixed
 * Fix initialization of configurations using RestToConfig when the passed in rest.Config contain on-disk value files.
 #### Removed

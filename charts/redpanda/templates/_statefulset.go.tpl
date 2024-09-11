@@ -555,7 +555,7 @@
 {{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $dependencies := (coalesce nil) -}}
-{{- $dependencies = (concat (default (list ) $dependencies) (list (get (fromJson (include "redpanda.RedpandaConfigMap" (dict "a" (list $dot false) ))) "r"))) -}}
+{{- $dependencies = (concat (default (list ) $dependencies) (list (get (fromJson (include "redpanda.RedpandaConfigFile" (dict "a" (list $dot false) ))) "r"))) -}}
 {{- if $values.external.enabled -}}
 {{- $dependencies = (concat (default (list ) $dependencies) (list (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $values.external.domain "") ))) "r"))) -}}
 {{- if (empty $values.external.addresses) -}}
