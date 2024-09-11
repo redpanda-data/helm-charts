@@ -199,6 +199,12 @@
 #### Fixed
 #### Removed
 
+### [0.1.12](https://github.com/redpanda-data/helm-charts/releases/tag/connectors-0.1.12)
+#### Added
+#### Changed
+#### Fixed
+#### Removed
+
 ## Console Chart
 
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/console-FILLMEIN) - YYYY-MM-DD
@@ -234,6 +240,12 @@
 
 ## Kminion Chart
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/console-FILLMEIN) - YYYY-MM-DD
+#### Added
+#### Changed
+#### Fixed
+#### Removed
+
+### [0.14.0](https://github.com/redpanda-data/helm-charts/releases/tag/kminion-0.14.0)
 #### Added
 #### Changed
 #### Fixed
