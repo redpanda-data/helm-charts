@@ -86,13 +86,6 @@ func PostUpgradeJobScript(dot *helmette.Dot) string {
 	for key, value := range values.Config.Cluster {
 		asInt64, isInt64 := helmette.AsIntegral[int64](value)
 
-		if key == "default_topic_replications" && isInt64 {
-			r := int64(values.Statefulset.Replicas)
-			// This calculates the closest odd number less than or equal to r: 1=1, 2=1, 3=3, ...
-			r = (r + (r % 2)) - 1
-			asInt64 = helmette.Min(asInt64, int64(r))
-		}
-
 		if asBool, ok := value.(bool); ok && asBool {
 			script = append(script, fmt.Sprintf("rpk cluster config set %s %t", key, asBool))
 		} else if asStr, ok := value.(string); ok && asStr != "" {
@@ -104,6 +97,16 @@ func PostUpgradeJobScript(dot *helmette.Dot) string {
 		} else if !helmette.Empty(value) {
 			script = append(script, fmt.Sprintf("rpk cluster config set %s %v", key, value))
 		}
+	}
+
+	// If default_topic_replications is not set and we have at least 3 Brokers,
+	// upgrade from redpanda's default of 1 to 3 so, when possible, topics are
+	// HA by default.
+	// See also:
+	// - https://github.com/redpanda-data/helm-charts/issues/583
+	// - https://github.com/redpanda-data/helm-charts/issues/1501
+	if _, ok := values.Config.Cluster["default_topic_replications"]; !ok && values.Statefulset.Replicas >= 3 {
+		script = append(script, "rpk cluster config set default_topic_replications 3")
 	}
 
 	if _, ok := values.Config.Cluster["storage_min_free_bytes"]; !ok {

@@ -355,3 +355,28 @@ listeners:
   admin:
     tls:
       enabled: true
+
+-- explicit-default-topic-replications --
+# Regression test for #1501. Respect default_topic_replicas if it's explicitly set.
+# ASSERT-FIELD-CONTAINS ["batch/v1/Job", "default/redpanda-post-upgrade", "{.spec.template.spec.containers[0].args[0]}", "default_topic_replications 25"]
+
+statefulset:
+  replicas: 1
+
+config:
+  cluster:
+    default_topic_replications: 25
+
+-- implicit-default-topic-replications --
+# Regression test for #1501.
+# ASSERT-FIELD-CONTAINS ["batch/v1/Job", "default/redpanda-post-upgrade", "{.spec.template.spec.containers[0].args[0]}", "default_topic_replications 3"]
+
+statefulset:
+  replicas: 10
+
+-- implicit-single-broker-default-topic-replications --
+# Regression test for #1501. When replicas < 3 no default value is injected.
+# ASSERT-FIELD-NOT-CONTAINS ["batch/v1/Job", "default/redpanda-post-upgrade", "{.spec.template.spec.containers[0].args[0]}", "default_topic_replications"]
+
+statefulset:
+  replicas: 1

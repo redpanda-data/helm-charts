@@ -1729,25 +1729,10 @@ func (c *NodeConfig) Translate() map[string]any {
 
 type ClusterConfig map[string]any
 
-func (c *ClusterConfig) Translate(replicas int32, skipDefaultTopic bool) map[string]any {
+func (c *ClusterConfig) Translate() map[string]any {
 	result := map[string]any{}
 
 	for k, v := range *c {
-		if k == "default_topic_replications" && !skipDefaultTopic {
-			r := int(replicas)
-			input := int(r)
-			if num, ok := helmette.AsIntegral[int](v); ok {
-				input = num
-			}
-
-			if f, ok := helmette.AsNumeric(v); ok {
-				input = int(f)
-			}
-
-			result[k] = helmette.Min(int64(input), int64(r+(r%2)-1))
-			continue
-		}
-
 		if b, ok := v.(bool); ok {
 			result[k] = b
 			continue

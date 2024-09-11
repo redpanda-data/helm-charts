@@ -8,6 +8,15 @@
 #### Fixed
 #### Removed
 
+### [5.9.3](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.3) - 2024-09-11
+#### Added
+* Add basic bootstrap user support (#1513)
+#### Changed
+#### Fixed
+* When specified, `truststore_file` is no longer propagated to client configurations.
+* If provided, `config.cluster.default_topic_replications` is now respected regardless of the value of `statefulset.replicas`.
+#### Removed
+
 ### [5.9.1](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.1) - 2024-8-19
 #### Added
 #### Changed

@@ -115,6 +115,14 @@ func TestTemplate(t *testing.T) {
 					require.NoError(t, err)
 					AssertFieldEquals(t, params, out)
 
+				case `ASSERT-FIELD-CONTAINS`:
+					require.NoError(t, err)
+					AssertFieldContains(t, params, out)
+
+				case `ASSERT-FIELD-NOT-CONTAINS`:
+					require.NoError(t, err)
+					AssertFieldNotContains(t, params, out)
+
 				case `ASSERT-VALID-RPK-CONFIGURATION`:
 					require.NoError(t, err)
 					AssertValidRPKConfiguration(t, out)
@@ -435,6 +443,47 @@ func AssertFieldEquals(t *testing.T, params []json.RawMessage, manifests []byte)
 	require.NoError(t, json.Unmarshal(params[1], &key))
 	require.NoError(t, json.Unmarshal(params[2], &fieldPath))
 
+	execJSONPath(t, manifests, gvk, key, fieldPath, func(result any) {
+		actual, err := json.Marshal(result)
+		require.NoError(t, err)
+
+		require.JSONEq(t, string(fieldValue), string(actual), "%q", fieldPath)
+	})
+}
+
+func AssertFieldContains(t *testing.T, params []json.RawMessage, manifests []byte) {
+	var gvk string
+	var key string
+	var fieldPath string
+	var contained any
+
+	require.NoError(t, json.Unmarshal(params[0], &gvk))
+	require.NoError(t, json.Unmarshal(params[1], &key))
+	require.NoError(t, json.Unmarshal(params[2], &fieldPath))
+	require.NoError(t, json.Unmarshal(params[3], &contained))
+
+	execJSONPath(t, manifests, gvk, key, fieldPath, func(result any) {
+		assert.Contains(t, result, contained)
+	})
+}
+
+func AssertFieldNotContains(t *testing.T, params []json.RawMessage, manifests []byte) {
+	var gvk string
+	var key string
+	var fieldPath string
+	var contained any
+
+	require.NoError(t, json.Unmarshal(params[0], &gvk))
+	require.NoError(t, json.Unmarshal(params[1], &key))
+	require.NoError(t, json.Unmarshal(params[2], &fieldPath))
+	require.NoError(t, json.Unmarshal(params[3], &contained))
+
+	execJSONPath(t, manifests, gvk, key, fieldPath, func(result any) {
+		assert.NotContains(t, result, contained)
+	})
+}
+
+func execJSONPath(t *testing.T, manifests []byte, gvk, key, jsonPath string, fn func(any)) {
 	objs, err := kube.DecodeYAML(manifests, redpanda.Scheme)
 	require.NoError(t, err)
 
@@ -452,16 +501,13 @@ func AssertFieldEquals(t *testing.T, params []json.RawMessage, manifests []byte)
 
 		// See https://kubernetes.io/docs/reference/kubectl/jsonpath/
 		path := jsonpath.New("").AllowMissingKeys(true)
-		require.NoError(t, path.Parse(fieldPath))
+		require.NoError(t, path.Parse(jsonPath))
 
 		results, err := path.FindResults(obj)
 		require.NoError(t, err)
 
 		for _, result := range results {
-			actual, err := json.Marshal(result[0].Interface())
-			require.NoError(t, err)
-
-			require.JSONEq(t, string(fieldValue), string(actual), "%q", fieldPath)
+			fn(result[0].Interface())
 		}
 
 		return

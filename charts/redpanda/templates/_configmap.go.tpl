@@ -31,7 +31,7 @@
 {{- $bootstrap = (merge (dict ) $bootstrap (get (fromJson (include "redpanda.AuditLogging.Translate" (dict "a" (list $values.auditLogging $dot (get (fromJson (include "redpanda.Auth.IsSASLEnabled" (dict "a" (list $values.auth) ))) "r")) ))) "r")) -}}
 {{- $bootstrap = (merge (dict ) $bootstrap (get (fromJson (include "redpanda.Logging.Translate" (dict "a" (list $values.logging) ))) "r")) -}}
 {{- $bootstrap = (merge (dict ) $bootstrap (get (fromJson (include "redpanda.TunableConfig.Translate" (dict "a" (list $values.config.tunable) ))) "r")) -}}
-{{- $bootstrap = (merge (dict ) $bootstrap (get (fromJson (include "redpanda.ClusterConfig.Translate" (dict "a" (list $values.config.cluster ($values.statefulset.replicas | int) false) ))) "r")) -}}
+{{- $bootstrap = (merge (dict ) $bootstrap (get (fromJson (include "redpanda.ClusterConfig.Translate" (dict "a" (list $values.config.cluster) ))) "r")) -}}
 {{- $bootstrap = (merge (dict ) $bootstrap (get (fromJson (include "redpanda.Auth.Translate" (dict "a" (list $values.auth (get (fromJson (include "redpanda.Auth.IsSASLEnabled" (dict "a" (list $values.auth) ))) "r")) ))) "r")) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" (toYaml $bootstrap)) | toJson -}}
@@ -52,7 +52,7 @@
 {{- $redpanda = (merge (dict ) $redpanda (get (fromJson (include "redpanda.AuditLogging.Translate" (dict "a" (list $values.auditLogging $dot (get (fromJson (include "redpanda.Auth.IsSASLEnabled" (dict "a" (list $values.auth) ))) "r")) ))) "r")) -}}
 {{- $redpanda = (merge (dict ) $redpanda (get (fromJson (include "redpanda.Logging.Translate" (dict "a" (list $values.logging) ))) "r")) -}}
 {{- $redpanda = (merge (dict ) $redpanda (get (fromJson (include "redpanda.TunableConfig.Translate" (dict "a" (list $values.config.tunable) ))) "r")) -}}
-{{- $redpanda = (merge (dict ) $redpanda (get (fromJson (include "redpanda.ClusterConfig.Translate" (dict "a" (list $values.config.cluster ($values.statefulset.replicas | int) true) ))) "r")) -}}
+{{- $redpanda = (merge (dict ) $redpanda (get (fromJson (include "redpanda.ClusterConfig.Translate" (dict "a" (list $values.config.cluster) ))) "r")) -}}
 {{- $redpanda = (merge (dict ) $redpanda (get (fromJson (include "redpanda.Auth.Translate" (dict "a" (list $values.auth (get (fromJson (include "redpanda.Auth.IsSASLEnabled" (dict "a" (list $values.auth) ))) "r")) ))) "r")) -}}
 {{- $redpanda = (merge (dict ) $redpanda (get (fromJson (include "redpanda.NodeConfig.Translate" (dict "a" (list $values.config.node) ))) "r")) -}}
 {{- $_ := (get (fromJson (include "redpanda.configureListeners" (dict "a" (list $redpanda $dot) ))) "r") -}}

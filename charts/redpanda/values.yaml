@@ -1105,9 +1105,8 @@ listeners:
 config:
   rpk: {}
     # additional_start_flags:                                      # List of flags to pass to rpk, e.g., ` "--idle-poll-time-us=0"`
-  cluster:
-    default_topic_replications: 3                                  # Default replication factor for new topics
-                                                                   # There is logic in the chart that will set this to 1 if there are fewer than 3 statefulset.replicas
+  cluster: {}
+    # default_topic_replications: 3                                # Default replication factor for new topics. If not set, the chart will set it to 3 for clusters with 3 or more brokers.
     # auto_create_topics_enabled: true                             # Allow topic auto creation
     # transaction_coordinator_replication: 1                       # Replication factor for a transaction coordinator topic
     # id_allocator_replication: 1                                  # Replication factor for an ID allocator topic

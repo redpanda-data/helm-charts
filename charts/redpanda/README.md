@@ -3,7 +3,7 @@
 description: Find the default values and descriptions of settings in the Redpanda Helm chart.
 ---
 
-![Version: 5.9.2](https://img.shields.io/badge/Version-5.9.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v24.2.3](https://img.shields.io/badge/AppVersion-v24.2.3-informational?style=flat-square)
+![Version: 5.9.3](https://img.shields.io/badge/Version-5.9.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v24.2.3](https://img.shields.io/badge/AppVersion-v24.2.3-informational?style=flat-square)
 
 This page describes the official Redpanda Helm Chart. In particular, this page describes the contents of the chart’s [`values.yaml` file](https://github.com/redpanda-data/helm-charts/blob/main/charts/redpanda/values.yaml). Each of the settings is listed and described on this page, along with any default values.
 
@@ -172,7 +172,7 @@ This section contains various settings supported by Redpanda that may not work c
 **Default:**
 
 ```
-{"cluster":{"default_topic_replications":3},"node":{"crash_loop_limit":5},"pandaproxy_client":{},"rpk":{},"schema_registry_client":{},"tunable":{"compacted_log_segment_size":67108864,"group_topic_partitions":16,"kafka_batch_max_bytes":1048576,"kafka_connection_rate_limit":1000,"log_segment_size":134217728,"log_segment_size_max":268435456,"log_segment_size_min":16777216,"max_compacted_log_segment_size":536870912,"topic_partitions_per_shard":1000}}
+{"cluster":{},"node":{"crash_loop_limit":5},"pandaproxy_client":{},"rpk":{},"schema_registry_client":{},"tunable":{"compacted_log_segment_size":67108864,"group_topic_partitions":16,"kafka_batch_max_bytes":1048576,"kafka_connection_rate_limit":1000,"log_segment_size":134217728,"log_segment_size_max":268435456,"log_segment_size_min":16777216,"max_compacted_log_segment_size":536870912,"topic_partitions_per_shard":1000}}
 ```
 
 ### [config.node](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=config.node)
