@@ -172,48 +172,42 @@ This section contains various settings supported by Redpanda that may not work c
 **Default:**
 
 ```
-{"cluster":{},"node":{"crash_loop_limit":5},"pandaproxy_client":{},"rpk":{},"schema_registry_client":{},"tunable":{"compacted_log_segment_size":67108864,"group_topic_partitions":16,"kafka_batch_max_bytes":1048576,"kafka_connection_rate_limit":1000,"log_segment_size":134217728,"log_segment_size_max":268435456,"log_segment_size_min":16777216,"max_compacted_log_segment_size":536870912,"topic_partitions_per_shard":1000}}
+{"cluster":{},"node":{"crash_loop_limit":5},"pandaproxy_client":{},"rpk":{},"schema_registry_client":{},"tunable":{"compacted_log_segment_size":67108864,"kafka_connection_rate_limit":1000,"log_segment_size_max":268435456,"log_segment_size_min":16777216,"max_compacted_log_segment_size":536870912}}
 ```
+
+### [config.cluster](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=config.cluster)
+
+[Cluster Configuration Properties](https://docs.redpanda.com/current/reference/properties/cluster-properties/)
+
+**Default:** `{}`
 
 ### [config.node](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=config.node)
 
-Node (broker) properties. See the [property reference documentation](https://docs.redpanda.com/docs/reference/node-properties/).
+[Broker (node) Configuration Properties](https://docs.redpanda.com/docs/reference/broker-properties/).
 
 **Default:** `{"crash_loop_limit":5}`
 
 ### [config.node.crash_loop_limit](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=config.node.crash_loop_limit)
 
-Crash loop limit A limit on the number of consecutive times a broker can crash within one hour before its crash-tracking logic is reset. This limit prevents a broker from getting stuck in an infinite cycle of crashes. User can disable this crash loop limit check by the following action:  * One hour elapses since the last crash * The node configuration file, redpanda.yaml, is updated via config.cluster or config.node or config.tunable objects * The startup_log file in the node’s data_directory is manually deleted  Default to 5 REF: https://docs.redpanda.com/current/reference/node-properties/#crash_loop_limit
+Crash loop limit A limit on the number of consecutive times a broker can crash within one hour before its crash-tracking logic is reset. This limit prevents a broker from getting stuck in an infinite cycle of crashes. User can disable this crash loop limit check by the following action:  * One hour elapses since the last crash * The node configuration file, redpanda.yaml, is updated via config.cluster or config.node or config.tunable objects * The startup_log file in the node’s data_directory is manually deleted  Default to 5 REF: https://docs.redpanda.com/current/reference/broker-properties/#crash_loop_limit
 
 **Default:** `5`
 
 ### [config.tunable](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=config.tunable)
 
-Tunable cluster properties.
+Tunable cluster properties. Deprecated: all settings here may be specified via `config.cluster`.
 
 **Default:**
 
 ```
-{"compacted_log_segment_size":67108864,"group_topic_partitions":16,"kafka_batch_max_bytes":1048576,"kafka_connection_rate_limit":1000,"log_segment_size":134217728,"log_segment_size_max":268435456,"log_segment_size_min":16777216,"max_compacted_log_segment_size":536870912,"topic_partitions_per_shard":1000}
+{"compacted_log_segment_size":67108864,"kafka_connection_rate_limit":1000,"log_segment_size_max":268435456,"log_segment_size_min":16777216,"max_compacted_log_segment_size":536870912}
 ```
 
 ### [config.tunable.compacted_log_segment_size](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=config.tunable.compacted_log_segment_size)
 
-See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#compacted_log_segment_size).
+See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#compacted_log_segment_size).
 
 **Default:** `67108864`
-
-### [config.tunable.group_topic_partitions](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=config.tunable.group_topic_partitions)
-
-See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#group_topic_partitions).
-
-**Default:** `16`
-
-### [config.tunable.kafka_batch_max_bytes](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=config.tunable.kafka_batch_max_bytes)
-
-See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#kafka_batch_max_bytes).
-
-**Default:** `1048576`
 
 ### [config.tunable.kafka_connection_rate_limit](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=config.tunable.kafka_connection_rate_limit)
 
@@ -221,35 +215,23 @@ See the [property reference documentation](https://docs.redpanda.com/docs/refere
 
 **Default:** `1000`
 
-### [config.tunable.log_segment_size](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=config.tunable.log_segment_size)
-
-See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#log_segment_size).
-
-**Default:** `134217728`
-
 ### [config.tunable.log_segment_size_max](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=config.tunable.log_segment_size_max)
 
-See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#log_segment_size_max).
+See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#log_segment_size_max).
 
 **Default:** `268435456`
 
 ### [config.tunable.log_segment_size_min](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=config.tunable.log_segment_size_min)
 
-See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#log_segment_size_min).
+See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#log_segment_size_min).
 
 **Default:** `16777216`
 
 ### [config.tunable.max_compacted_log_segment_size](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=config.tunable.max_compacted_log_segment_size)
 
-See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#max_compacted_log_segment_size).
+See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#max_compacted_log_segment_size).
 
 **Default:** `536870912`
-
-### [config.tunable.topic_partitions_per_shard](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=config.tunable.topic_partitions_per_shard)
-
-See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#topic_partitions_per_shard).
-
-**Default:** `1000`
 
 ### [connectors](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=connectors)
 
@@ -1072,7 +1054,7 @@ Persistence settings. For details, see the [storage documentation](https://docs.
 **Default:**
 
 ```
-{"hostPath":"","persistentVolume":{"annotations":{},"enabled":true,"labels":{},"nameOverwrite":"","size":"20Gi","storageClass":""},"tiered":{"config":{"cloud_storage_access_key":"","cloud_storage_api_endpoint":"","cloud_storage_azure_container":null,"cloud_storage_azure_managed_identity_id":null,"cloud_storage_azure_shared_key":null,"cloud_storage_azure_storage_account":null,"cloud_storage_bucket":"","cloud_storage_cache_size":5368709120,"cloud_storage_credentials_source":"config_file","cloud_storage_enable_remote_read":true,"cloud_storage_enable_remote_write":true,"cloud_storage_enabled":false,"cloud_storage_region":"","cloud_storage_secret_key":""},"credentialsSecretRef":{"accessKey":{"configurationKey":"cloud_storage_access_key"},"secretKey":{"configurationKey":"cloud_storage_secret_key"}},"hostPath":"","mountType":"emptyDir","persistentVolume":{"annotations":{},"labels":{},"storageClass":""}}}
+{"hostPath":"","persistentVolume":{"annotations":{},"enabled":true,"labels":{},"nameOverwrite":"","size":"20Gi","storageClass":""},"tiered":{"config":{"cloud_storage_cache_size":5368709120,"cloud_storage_enable_remote_read":true,"cloud_storage_enable_remote_write":true,"cloud_storage_enabled":false},"credentialsSecretRef":{"accessKey":{"configurationKey":"cloud_storage_access_key"},"secretKey":{"configurationKey":"cloud_storage_secret_key"}},"hostPath":"","mountType":"emptyDir","persistentVolume":{"annotations":{},"labels":{},"storageClass":""}}}
 ```
 
 ### [storage.hostPath](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.hostPath)
@@ -1117,91 +1099,37 @@ To disable dynamic provisioning, set to `-`. If undefined or empty (default), th
 
 ### [storage.tiered.config](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.tiered.config)
 
-Tiered Storage settings Requires `enterprise.licenseKey` or `enterprised.licenseSecretRef` For details, see the [Tiered Storage documentation](https://docs.redpanda.com/docs/manage/kubernetes/tiered-storage/).
+Tiered Storage settings Requires `enterprise.licenseKey` or `enterprised.licenseSecretRef` For details, see the [Tiered Storage documentation](https://docs.redpanda.com/docs/manage/kubernetes/tiered-storage/). For a list of properties, see [Object Storage Properties](https://docs.redpanda.com/current/reference/properties/object-storage-properties/).
 
 **Default:**
 
 ```
-{"cloud_storage_access_key":"","cloud_storage_api_endpoint":"","cloud_storage_azure_container":null,"cloud_storage_azure_managed_identity_id":null,"cloud_storage_azure_shared_key":null,"cloud_storage_azure_storage_account":null,"cloud_storage_bucket":"","cloud_storage_cache_size":5368709120,"cloud_storage_credentials_source":"config_file","cloud_storage_enable_remote_read":true,"cloud_storage_enable_remote_write":true,"cloud_storage_enabled":false,"cloud_storage_region":"","cloud_storage_secret_key":""}
+{"cloud_storage_cache_size":5368709120,"cloud_storage_enable_remote_read":true,"cloud_storage_enable_remote_write":true,"cloud_storage_enabled":false}
 ```
-
-### [storage.tiered.config.cloud_storage_access_key](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.tiered.config.cloud_storage_access_key)
-
-AWS or GCP access key (required for AWS and GCP authentication with access keys). See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_access_key).
-
-**Default:** `""`
-
-### [storage.tiered.config.cloud_storage_api_endpoint](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.tiered.config.cloud_storage_api_endpoint)
-
-AWS or GCP API endpoint. * For AWS, this can be left blank as it is generated automatically using the bucket and region. For example, `<bucket>.s3.<region>.amazonaws.com`. * For GCP, use `storage.googleapis.com` See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_api_endpoint).
-
-**Default:** `""`
-
-### [storage.tiered.config.cloud_storage_azure_container](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.tiered.config.cloud_storage_azure_container)
-
-Name of the Azure container to use with Tiered Storage (required for ABS/ADLS). Note that the container must belong to the account specified by `cloud_storage_azure_storage_account`. See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_azure_container).
-
-**Default:** `nil`
-
-### [storage.tiered.config.cloud_storage_azure_shared_key](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.tiered.config.cloud_storage_azure_shared_key)
-
-Shared key to be used for Azure Shared Key authentication with the Azure storage account specified by `cloud_storage_azure_storage_account`. Note that the key should be base64 encoded. See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_azure_shared_key).
-
-**Default:** `nil`
-
-### [storage.tiered.config.cloud_storage_azure_storage_account](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.tiered.config.cloud_storage_azure_storage_account)
-
-Name of the Azure storage account to use with Tiered Storage (required for ABS/ADLS). See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_azure_storage_account).
-
-**Default:** `nil`
-
-### [storage.tiered.config.cloud_storage_bucket](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.tiered.config.cloud_storage_bucket)
-
-AWS or GCP bucket name used for Tiered Storage (required for AWS and GCP). See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_bucket).
-
-**Default:** `""`
 
 ### [storage.tiered.config.cloud_storage_cache_size](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.tiered.config.cloud_storage_cache_size)
 
-Maximum size of the disk cache used by Tiered Storage. Default is 20 GiB. See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_cache_size).
+Maximum size of the disk cache used by Tiered Storage. Default is 20 GiB. See the [property reference documentation](https://docs.redpanda.com/docs/reference/object-storage-properties/#cloud_storage_cache_size).
 
 **Default:** `5368709120`
 
-### [storage.tiered.config.cloud_storage_credentials_source](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.tiered.config.cloud_storage_credentials_source)
-
-Source of credentials used to connect to cloud services (required for AWS and GCP authentication with IAM roles). * `config_file` * `aws_instance_metadata` * `sts` * `gcp_instance_metadata` * `azure_aks_oidc_federation` * `azure_vm_instance_metadata` See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_credentials_source).
-
-**Default:** `"config_file"`
-
 ### [storage.tiered.config.cloud_storage_enable_remote_read](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.tiered.config.cloud_storage_enable_remote_read)
 
-Cluster level default remote read configuration for new topics. See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#cloud_storage_enable_remote_read).
+Cluster level default remote read configuration for new topics. See the [property reference documentation](https://docs.redpanda.com/docs/reference/object-storage-properties/#cloud_storage_enable_remote_read).
 
 **Default:** `true`
 
 ### [storage.tiered.config.cloud_storage_enable_remote_write](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.tiered.config.cloud_storage_enable_remote_write)
 
-Cluster level default remote write configuration for new topics. See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#cloud_storage_enable_remote_write).
+Cluster level default remote write configuration for new topics. See the [property reference documentation](https://docs.redpanda.com/docs/reference/object-storage-properties/#cloud_storage_enable_remote_write).
 
 **Default:** `true`
 
 ### [storage.tiered.config.cloud_storage_enabled](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.tiered.config.cloud_storage_enabled)
 
-Global flag that enables Tiered Storage if a license key is provided. See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_enabled).
+Global flag that enables Tiered Storage if a license key is provided. See the [property reference documentation](https://docs.redpanda.com/docs/reference/object-storage-properties/#cloud_storage_enabled).
 
 **Default:** `false`
-
-### [storage.tiered.config.cloud_storage_region](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.tiered.config.cloud_storage_region)
-
-AWS or GCP region for where the bucket used for Tiered Storage is located (required for AWS and GCP). See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_region).
-
-**Default:** `""`
-
-### [storage.tiered.config.cloud_storage_secret_key](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.tiered.config.cloud_storage_secret_key)
-
-AWS or GCP secret key (required for AWS and GCP authentication with access keys). See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_secret_key).
-
-**Default:** `""`
 
 ### [storage.tiered.hostPath](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.tiered.hostPath)
 
