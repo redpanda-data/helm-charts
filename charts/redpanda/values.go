@@ -1791,7 +1791,7 @@ func (TieredStorageConfig) JSONSchema() *jsonschema.Schema {
 		CloudStorageAPIEndpointPort             int               `json:"cloud_storage_api_endpoint_port"`
 		CloudStorageAzureADLSEndpoint           string            `json:"cloud_storage_azure_adls_endpoint"`
 		CloudStorageAzureADLSPort               int               `json:"cloud_storage_azure_adls_port"`
-		CloudStorageBucket                      string            `json:"cloud_storage_bucket" jsonschema:"required"`
+		CloudStorageBucket                      string            `json:"cloud_storage_bucket"`
 		CloudStorageCacheCheckInterval          int               `json:"cloud_storage_cache_check_interval"`
 		CloudStorageCacheDirectory              string            `json:"cloud_storage_cache_directory"`
 		CloudStorageCacheSize                   *ResourceQuantity `json:"cloud_storage_cache_size"`
@@ -1804,7 +1804,7 @@ func (TieredStorageConfig) JSONSchema() *jsonschema.Schema {
 		CloudStorageMaxConnectionIdleTimeMS     int               `json:"cloud_storage_max_connection_idle_time_ms"`
 		CloudStorageMaxConnections              int               `json:"cloud_storage_max_connections"`
 		CloudStorageReconciliationIntervalMS    int               `json:"cloud_storage_reconciliation_interval_ms"`
-		CloudStorageRegion                      string            `json:"cloud_storage_region" jsonschema:"required"`
+		CloudStorageRegion                      string            `json:"cloud_storage_region"`
 		CloudStorageSegmentMaxUploadIntervalSec int               `json:"cloud_storage_segment_max_upload_interval_sec"`
 		CloudStorageSegmentUploadTimeoutMS      int               `json:"cloud_storage_segment_upload_timeout_ms"`
 		CloudStorageTrustFile                   string            `json:"cloud_storage_trust_file"`

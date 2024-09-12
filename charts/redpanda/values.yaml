@@ -501,14 +501,14 @@ storage:
     # referenced Kubernetes Secret
     credentialsSecretRef:
       accessKey:
-        # https://docs.redpanda.com/current/reference/cluster-properties/#cloud_storage_access_key
+        # https://docs.redpanda.com/current/reference/object-storage-properties/#cloud_storage_access_key
         configurationKey: cloud_storage_access_key
         # name:
         # key:
       secretKey:
-        # https://docs.redpanda.com/current/reference/cluster-properties/#cloud_storage_secret_key
+        # https://docs.redpanda.com/current/reference/object-storage-properties/#cloud_storage_secret_key
         # or
-        # https://docs.redpanda.com/current/reference/cluster-properties/#cloud_storage_azure_shared_key
+        # https://docs.redpanda.com/current/reference/object-storage-properties/#cloud_storage_azure_shared_key
         configurationKey: cloud_storage_secret_key
         # name:
         # key
@@ -519,92 +519,22 @@ storage:
     #
     # -- Tiered Storage settings
     # Requires `enterprise.licenseKey` or `enterprised.licenseSecretRef`
-    # For details,
-    # see the [Tiered Storage documentation](https://docs.redpanda.com/docs/manage/kubernetes/tiered-storage/).
+    # For details, see the [Tiered Storage documentation](https://docs.redpanda.com/docs/manage/kubernetes/tiered-storage/).
+    # For a list of properties, see [Object Storage Properties](https://docs.redpanda.com/current/reference/properties/object-storage-properties/).
     config:
       # -- Global flag that enables Tiered Storage if a license key is provided.
-      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_enabled).
+      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/object-storage-properties/#cloud_storage_enabled).
       cloud_storage_enabled: false
       # -- Cluster level default remote write configuration for new topics.
-      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#cloud_storage_enable_remote_write).
+      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/object-storage-properties/#cloud_storage_enable_remote_write).
       cloud_storage_enable_remote_write: true
       # -- Cluster level default remote read configuration for new topics.
-      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#cloud_storage_enable_remote_read).
+      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/object-storage-properties/#cloud_storage_enable_remote_read).
       cloud_storage_enable_remote_read: true
-      # -- AWS or GCP region for where the bucket used for Tiered Storage is located (required for AWS and GCP).
-      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_region).
-      cloud_storage_region: ""
-      # -- AWS or GCP bucket name used for Tiered Storage (required for AWS and GCP).
-      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_bucket).
-      cloud_storage_bucket: ""
-      # -- AWS or GCP access key (required for AWS and GCP authentication with access keys).
-      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_access_key).
-      cloud_storage_access_key: ""
-      # -- AWS or GCP secret key (required for AWS and GCP authentication with access keys).
-      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_secret_key).
-      cloud_storage_secret_key: ""
-      # -- AWS or GCP API endpoint.
-      # * For AWS, this can be left blank as it is generated automatically using the bucket and region. For example, `<bucket>.s3.<region>.amazonaws.com`.
-      # * For GCP, use `storage.googleapis.com`
-      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_api_endpoint).
-      cloud_storage_api_endpoint: ""
-      # -- Name of the Azure container to use with Tiered Storage (required for ABS/ADLS).
-      # Note that the container must belong to the account specified by `cloud_storage_azure_storage_account`.
-      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_azure_container).
-      cloud_storage_azure_container: null
-      # The managed identity ID to access the Azure storage account.
-      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_azure_managed_identity_id).
-      cloud_storage_azure_managed_identity_id: null
-      # -- Name of the Azure storage account to use with Tiered Storage (required for ABS/ADLS).
-      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_azure_storage_account).
-      cloud_storage_azure_storage_account: null
-      # -- Shared key to be used for Azure Shared Key authentication with the Azure storage account specified by `cloud_storage_azure_storage_account`.
-      # Note that the key should be base64 encoded.
-      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_azure_shared_key).
-      cloud_storage_azure_shared_key: null
-      # -- Azure ADLS endpoint and port (required for ABS hierarchical namespaces).
-      # Available starting from 23.2.8.
-      # cloud_storage_azure_adls_endpoint: ""
-      # cloud_storage_azure_adls_port: ""
-      # -- Source of credentials used to connect to cloud services (required for AWS and GCP authentication with IAM roles).
-      # * `config_file`
-      # * `aws_instance_metadata`
-      # * `sts`
-      # * `gcp_instance_metadata`
-      # * `azure_aks_oidc_federation`
-      # * `azure_vm_instance_metadata`
-      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_credentials_source).
-      cloud_storage_credentials_source: config_file
-
       # -- Maximum size of the disk cache used by Tiered Storage.
       # Default is 20 GiB.
-      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#cloud_storage_cache_size).
+      # See the [property reference documentation](https://docs.redpanda.com/docs/reference/object-storage-properties/#cloud_storage_cache_size).
       cloud_storage_cache_size: 5368709120
-      # cloud_storage_cache_directory: ""
-      # cloud_storage_cache_check_interval: 30000
-      # cloud_storage_initial_backoff_ms: 100
-      # cloud_storage_max_connections: 20
-      # cloud_storage_segment_upload_timeout_ms: 30000
-      # cloud_storage_manifest_upload_timeout_ms: 10000
-      # cloud_storage_max_connection_idle_time_ms: 5000
-      # cloud_storage_idle_timeout_ms: 10000
-      # cloud_storage_segment_max_upload_interval_sec: 1
-      # cloud_storage_trust_file: ""
-      # cloud_storage_upload_ctrl_update_interval_ms: 60000
-      # cloud_storage_upload_ctrl_p_coeff: -2
-      # cloud_storage_upload_ctrl_d_coeff: 0
-      # cloud_storage_upload_ctrl_min_shares: 100
-      # cloud_storage_upload_ctrl_max_shares: 1000
-      # DEPRECATED: cloud_storage_reconciliation_interval_ms: 10000
-      # cloud_storage_disable_tls: false
-      # cloud_storage_api_endpoint_port: 443
-      # cloud_storage_idle_threshold_rps: 1
-      # cloud_storage_enable_segment_merging: true
-      # cloud_storage_segment_size_target: # The default segment size is controlled by log_segment_size
-      # cloud_storage_segment_size_min: # Default is 50% of log segment size
-  # storage.tieredStorageHostPath has been deprecated. Use storage.tiered.hostPath and configure storage.tiered.mountType instead.
-  # storage.tieredStoragePersistentVolume has been deprecated. Use storage.tiered.persistentVolume and configure storage.tiered.mountType instead.
-  # storage.tieredConfig has been deprecated. Use storage.tiered.config instead.
 
 post_install_job:
   enabled: true
@@ -1105,116 +1035,24 @@ listeners:
 config:
   rpk: {}
     # additional_start_flags:                                      # List of flags to pass to rpk, e.g., ` "--idle-poll-time-us=0"`
+  # -- [Cluster Configuration Properties](https://docs.redpanda.com/current/reference/properties/cluster-properties/)
   cluster: {}
-    # default_topic_replications: 3                                # Default replication factor for new topics. If not set, the chart will set it to 3 for clusters with 3 or more brokers.
-    # auto_create_topics_enabled: true                             # Allow topic auto creation
-    # transaction_coordinator_replication: 1                       # Replication factor for a transaction coordinator topic
-    # id_allocator_replication: 1                                  # Replication factor for an ID allocator topic
-    # default_topic_partitions: 1                                  # Default number of partitions per topic
-    # disable_metrics: false                                       # Disable registering metrics
-    # enable_coproc: false                                         # Enable coprocessing mode
-    # enable_idempotence: false                                    # Enable idempotent producer
-    # enable_pid_file: true                                        # Enable pid file; You probably don't want to change this
-    # enable_transactions: false                                   # Enable transactions
-    # group_max_session_timeout_ms: 300s                           # The maximum allowed session timeout for registered consumers; Longer timeouts give consumers more time to process messages in between heartbeats at the cost of a longer time to detect failures; Default quota tracking window size in milliseconds
-    # group_min_session_timeout_ms: Optional                       # The minimum allowed session timeout for registered consumers; Shorter timeouts result in quicker failure detection at the cost of more frequent consumer heartbeating
-    # kafka_group_recovery_timeout_ms: 30000ms                     # Kafka group recovery timeout expressed in milliseconds
-    # kafka_qdc_enable: false                                      # Enable kafka queue depth control
-    # kafka_qdc_max_latency_ms: 80ms                               # Max latency threshold for kafka queue depth control depth tracking
-    # log_cleanup_policy: deletion                                 # Default topic cleanup policy
-    # log_compaction_interval_ms: 5min                             # How often do we trigger background compaction
-    # log_compression_type: producer                               # Default topic compression type
-    # log_message_timestamp_type: create_time                      # Default topic messages timestamp type
-    # retention_bytes: None                                        # max bytes per partition on disk before triggering a compaction
-    # rm_sync_timeout_ms: 2000ms
-    # rm_violation_recovery_policy: crash                          # Describes how to recover from an invariant violation happened on the partition level
-    # target_quota_byte_rate: 2GB                                  # Target quota byte rate in bytes per second
-    # tm_sync_timeout_ms: 2000ms                                   # Time to wait state catch up before rejecting a request
-    # tm_violation_recovery_policy: crash                          # Describes how to recover from an invariant violation happened on the transaction coordinator level
-    # transactional_id_expiration_ms: 10080min                     # Producer ids are expired once this time has elapsed after the last write with the given producer ID
+
   # -- Tunable cluster properties.
+  # Deprecated: all settings here may be specified via `config.cluster`.
   tunable:
-    # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#log_segment_size).
-    log_segment_size: 134217728                                    # 128 mb
-    # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#log_segment_size_min).
+    # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#log_segment_size_min).
     log_segment_size_min: 16777216                                 # 16 mb
-    # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#log_segment_size_max).
+    # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#log_segment_size_max).
     log_segment_size_max: 268435456                                # 256 mb
-    # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#kafka_batch_max_bytes).
-    kafka_batch_max_bytes: 1048576                                 # 1 mb
-    # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#topic_partitions_per_shard).
-    topic_partitions_per_shard: 1000
-    # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#compacted_log_segment_size).
+    # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#compacted_log_segment_size).
     compacted_log_segment_size: 67108864                           # 64 mb
-    # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#max_compacted_log_segment_size).
+    # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#max_compacted_log_segment_size).
     max_compacted_log_segment_size: 536870912                      # 512 mb
     # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/cluster-properties/#kafka_connection_rate_limit).
     kafka_connection_rate_limit: 1000
-    # -- See the [property reference documentation](https://docs.redpanda.com/docs/reference/tunable-properties/#group_topic_partitions).
-    group_topic_partitions: 16
-    # cloud_storage_enable_remote_read: true                       # cluster wide configuration for read from remote cloud storage
-    # cloud_storage_enable_remote_write: true                      # cluster wide configuration for writing to remote cloud storage
 
-    # alter_topic_cfg_timeout_ms: 5s                               # Time to wait for entries replication in controller log when executing alter configuration request
-    # compacted_log_segment_size: 256MiB                           # How large in bytes should each compacted log segment be (default 256MiB)
-    # controller_backend_housekeeping_interval_ms: 1s              # Interval between iterations of controller backend housekeeping loop
-    # coproc_max_batch_size: 32kb                                  # Maximum amount of bytes to read from one topic read
-    # coproc_max_inflight_bytes: 10MB                              # Maximum amountt of inflight bytes when sending data to wasm engine
-    # coproc_max_ingest_bytes: 640kb                               # Maximum amount of data to hold from input logs in memory
-    # coproc_offset_flush_interval_ms: 300000ms                    # Interval for which all coprocessor offsets are flushed to disk
-    # create_topic_timeout_ms: 2000ms                              # Timeout (ms) to wait for new topic creation
-    # default_num_windows: 10                                      # Default number of quota tracking windows
-    # default_window_sec: 1000ms                                   # Default quota tracking window size in milliseconds
-    # log_retention_ms: 6.048e+8                                   # delete segments older than this (default 1 week)
-    # disable_batch_cache: false                                   # Disable batch cache in log manager
-    # fetch_reads_debounce_timeout: 1ms                            # Time to wait for next read in fetch request when requested min bytes wasn't reached
-    # fetch_session_eviction_timeout_ms: 60s                       # Minimum time before which unused session will get evicted from sessions; Maximum time after which inactive session will be deleted is two time given configuration valuecache
-    # group_initial_rebalance_delay: 300                           # Extra delay (ms) added to rebalance phase to wait for new members
-    # group_new_member_join_timeout: 30000ms                       # Timeout for new member joins
-    # group_topic_partitions: 1                                    # Number of partitions in the internal group membership topic
-    # id_allocator_batch_size: 1000                                # ID allocator allocates messages in batches (each batch is a one log record) and then serves requests from memory without touching the log until the batch is exhausted
-    # id_allocator_log_capacity: 100                               # Capacity of the id_allocator log in number of messages; Once it reached id_allocator_stm should compact the log
-    # join_retry_timeout_ms: 5s                                    # Time between cluster join retries in milliseconds
-    # kafka_qdc_idle_depth: 10                                     # Queue depth when idleness is detected in kafka queue depth control
-    # kafka_qdc_latency_alpha: 0.002                               # Smoothing parameter for kafka queue depth control latency tracking
-    # kafka_qdc_max_depth: 100                                     # Maximum queue depth used in kafka queue depth control
-    # kafka_qdc_min_depth: 1                                       # Minimum queue depth used in kafka queue depth control
-    # kafka_qdc_window_count: 12                                   # Number of windows used in kafka queue depth control latency tracking
-    # kafka_qdc_window_size_ms: 1500ms                             # Window size for kafka queue depth control latency tracking
-    # kvstore_flush_interval: 10ms                                 # Key-value store flush interval (ms)
-    # kvstore_max_segment_size: 16MB                               # Key-value maximum segment size (bytes)
-    # log_segment_size: 1GB                                        # How large in bytes should each log segment be (default 1G)
-    # max_compacted_log_segment_size: 5GB                          # Max compacted segment size after consolidation
-    # max_kafka_throttle_delay_ms: 60000ms                         # Fail-safe maximum throttle delay on kafka requests
-    # metadata_dissemination_interval_ms: 3000ms                   # Interaval for metadata dissemination batching
-    # metadata_dissemination_retries: 10                           # Number of attempts of looking up a topic's meta data like shard before failing a request
-    # metadata_dissemination_retry_delay_ms: 500ms                 # Delay before retry a topic lookup in a shard or other meta tables
-    # quota_manager_gc_sec: 30000ms                                # Quota manager GC frequency in milliseconds
-    # raft_learner_recovery_rate: 104857600                        # Raft learner recovery rate in bytes per second
-    # raft_heartbeat_disconnect_failures: 3                        # After how many failed heartbeats to forcibly close an unresponsive TCP connection. Set to 0 to disable force disconnection.
-    # raft_heartbeat_interval_ms: 150                              # The interval in ms between raft leader heartbeats.
-    # raft_heartbeat_timeout_ms: 3000                              # Raft heartbeat RPC timeout.
-    # raft_io_timeout_ms: 10000                                    # Raft I/O timeout.
-    # raft_max_concurrent_append_requests_per_follower: 16         # Maximum number of concurrent append entries requests sent by leader to one follower.
-    # raft_max_recovery_memory: 33554432                           # Maximum memory that can be used for reads in the raft recovery process.
-    # raft_recovery_default_read_size: 524288                      # Default size of read issued during raft follower recovery.
-    # raft_replicate_batch_window_size: 1048576                    # Maximum size of requests cached for replication.
-    # raft_smp_max_non_local_requests:                             # Maximum number of x-core requests pending in Raft seastar::smp group. (for more details look at seastar::smp_service_group documentation).
-    # raft_timeout_now_timeout_ms: 1000                            # Timeout for a timeout now request.
-    # raft_transfer_leader_recovery_timeout_ms: 1000               # Timeout waiting for follower recovery when transferring leadership.
-    # raft_election_timeout_ms: 1500ms                             # Election timeout expressed in milliseconds TBD - election_time_out
-    # readers_cache_eviction_timeout_ms: 30s                       # Duration after which inactive readers will be evicted from cache
-    # reclaim_growth_window: 3000ms                                # Length of time in which reclaim sizes grow
-    # reclaim_max_size: 4MB                                        # Maximum batch cache reclaim size
-    # reclaim_min_size: 128KB                                      # Minimum batch cache reclaim size
-    # reclaim_stable_window: 10000ms                               # Length of time above which growth is reset
-    # recovery_append_timeout_ms: 5s                               # Timeout for append entries requests issued while updating stale follower
-    # release_cache_on_segment_roll: false                         # Free cache when segments roll
-    # replicate_append_timeout_ms: 3s                              # Timeout for append entries requests issued while replicating entries
-    # segment_appender_flush_timeout_ms: 1ms                       # Maximum delay until buffered data is written
-    # wait_for_leader_timeout_ms: 5000ms                           # Timeout (ms) to wait for leadership in metadata cache
-  # -- Node (broker) properties.
-  # See the [property reference documentation](https://docs.redpanda.com/docs/reference/node-properties/).
+  # -- [Broker (node) Configuration Properties](https://docs.redpanda.com/docs/reference/broker-properties/).
   node:
     # -- Crash loop limit
     # A limit on the number of consecutive times a broker can crash within one hour before its crash-tracking logic is reset.
@@ -1226,16 +1064,8 @@ config:
     # * The startup_log file in the node’s data_directory is manually deleted
     #
     # Default to 5
-    # REF: https://docs.redpanda.com/current/reference/node-properties/#crash_loop_limit
+    # REF: https://docs.redpanda.com/current/reference/broker-properties/#crash_loop_limit
     crash_loop_limit: 5
-    # node_id:                                                     # Unique ID identifying a node in the cluster
-    # data_directory:                                              # Place where redpanda will keep the data
-    # admin_api_doc_dir: /usr/share/redpanda/admin-api-doc         # Admin API doc directory
-    # api_doc_dir: /usr/share/redpanda/proxy-api-doc               # API doc directory
-    # coproc_supervisor_server: 127.0.0.1:43189                    # IpAddress and port for supervisor service
-    # dashboard_dir: None                                          # serve http dashboard on / url
-    # developer_mode: true                                         # Skips most of the checks performed at startup
-    # recovery_mode_enabled: false                                 # Sets recovery mode of a cluster
 
   # Reference schema registry client https://docs.redpanda.com/current/reference/node-configuration-sample/
   schema_registry_client: {}

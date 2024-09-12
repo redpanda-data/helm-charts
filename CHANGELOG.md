@@ -7,6 +7,12 @@
 #### Changed
 #### Fixed
 #### Removed
+* All zero, empty, or default cluster configurations have been removed from
+  `values.yaml` in favor of letting redpanda determine what the defaults will
+  be. 
+
+  Documentation of cluster configurations has also been removed in favor of
+  linking to Redpanda's docs.
 
 ### [5.9.3](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.3) - 2024-09-11
 #### Added
