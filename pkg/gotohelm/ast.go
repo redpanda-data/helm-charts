@@ -149,7 +149,7 @@ func (c *Call) Write(w io.Writer) {
 	args := &DictLiteral{
 		KeysValues: []*KeyValue{
 			{
-				Key: `"a"`,
+				Key: NewLiteral("a"),
 				Value: &BuiltInCall{
 					FuncName:  "list",
 					Arguments: c.Arguments,
@@ -195,12 +195,13 @@ func (d *DictLiteral) Write(w io.Writer) {
 }
 
 type KeyValue struct {
-	Key   string
+	Key   Node
 	Value Node
 }
 
 func (p *KeyValue) Write(w io.Writer) {
-	fmt.Fprintf(w, "%s ", p.Key)
+	p.Key.Write(w)
+	w.Write([]byte{' '})
 	p.Value.Write(w)
 }
 

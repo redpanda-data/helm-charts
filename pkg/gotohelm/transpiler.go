@@ -534,14 +534,16 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 			}
 
 		case *types.Map:
-			if !types.AssignableTo(underlying.Key(), types.Typ[types.String]) {
-				panic(fmt.Sprintf("map keys must be string. Got %#v", underlying.Key()))
+			assignable := types.AssignableTo(underlying.Key(), types.Typ[types.String])
+			convertable := types.ConvertibleTo(underlying.Key(), types.Typ[types.String])
+			if !(assignable || convertable) {
+				panic(fmt.Sprintf("map keys must be assignable or convertable to strings. Got %s", underlying.Key()))
 			}
 
 			var d DictLiteral
 			for _, el := range n.Elts {
 				d.KeysValues = append(d.KeysValues, &KeyValue{
-					Key:   el.(*ast.KeyValueExpr).Key.(*ast.BasicLit).Value,
+					Key:   t.transpileExpr(el.(*ast.KeyValueExpr).Key),
 					Value: t.transpileExpr(el.(*ast.KeyValueExpr).Value),
 				})
 			}
@@ -573,7 +575,7 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 				}
 
 				d.KeysValues = append(d.KeysValues, &KeyValue{
-					Key:   strconv.Quote(field.JSONName()),
+					Key:   NewLiteral(field.JSONName()),
 					Value: t.transpileExpr(value),
 				})
 			}
@@ -1263,7 +1265,7 @@ func (t *Transpiler) zeroOf(typ types.Type) Node {
 			}
 
 			out.KeysValues = append(out.KeysValues, &KeyValue{
-				Key:   strconv.Quote(field.JSONName()),
+				Key:   NewLiteral(field.JSONName()),
 				Value: t.zeroOf(field.Field.Type()),
 			})
 		}
