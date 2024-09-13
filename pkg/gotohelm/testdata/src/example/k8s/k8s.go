@@ -48,6 +48,10 @@ func K8s(dot *helmette.Dot) map[string]any {
 		},
 		"lookup":   lookup(dot),
 		"quantity": quantity(dot),
+		"resources": corev1.ResourceList{
+			// Showcase that string aliases can be used as map keys.
+			corev1.ResourceCPU: resource.MustParse("100m"),
+		},
 	}
 }
 
