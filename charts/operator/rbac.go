@@ -701,6 +701,21 @@ func Roles(dot *helmette.Dot) []rbacv1.Role {
 					APIGroups: []string{"cluster.redpanda.com"},
 					Resources: []string{"topics/status"},
 				},
+				{
+					Verbs:     []string{"get", "list", "patch", "update", "watch"},
+					APIGroups: []string{"cluster.redpanda.com"},
+					Resources: []string{"users"},
+				},
+				{
+					Verbs:     []string{"update"},
+					APIGroups: []string{"cluster.redpanda.com"},
+					Resources: []string{"users/finalizers"},
+				},
+				{
+					Verbs:     []string{"get", "patch", "update"},
+					APIGroups: []string{"cluster.redpanda.com"},
+					Resources: []string{"users/status"},
+				},
 			},
 		})
 	}

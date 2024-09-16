@@ -234,6 +234,10 @@ const preTranspilerChartVersion = "0.4.28"
 // TestChartDifferences can be removed if in the next operator chart version values definition changes or any resource.
 // That test only validates clean transition to gotohelm definition of the operator helm chart.
 func TestChartDifferences(t *testing.T) {
+	// skipping for now since we're adding RBAC policies this
+	// release of the operator.
+	t.Skip()
+
 	ctx := testutil.Context(t)
 	client, err := helm.New(helm.Options{ConfigHome: testutil.TempDir(t)})
 	require.NoError(t, err)
