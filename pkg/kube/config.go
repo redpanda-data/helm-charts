@@ -19,6 +19,7 @@ func RestToConfig(cfg *rest.Config) clientcmdapi.Config {
 	clusters := make(map[string]*clientcmdapi.Cluster)
 	clusters["default-cluster"] = &clientcmdapi.Cluster{
 		Server:                   cfg.Host,
+		CertificateAuthority:     cfg.CAFile,
 		CertificateAuthorityData: cfg.CAData,
 	}
 
@@ -30,8 +31,12 @@ func RestToConfig(cfg *rest.Config) clientcmdapi.Config {
 
 	authinfos := make(map[string]*clientcmdapi.AuthInfo)
 	authinfos["default-user"] = &clientcmdapi.AuthInfo{
+		Token:                 cfg.BearerToken,
+		TokenFile:             cfg.BearerTokenFile,
 		ClientCertificateData: cfg.CertData,
+		ClientCertificate:     cfg.CertFile,
 		ClientKeyData:         cfg.KeyData,
+		ClientKey:             cfg.KeyFile,
 	}
 
 	return clientcmdapi.Config{
