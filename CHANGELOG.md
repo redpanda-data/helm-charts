@@ -4,6 +4,7 @@
 
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-FILLMEIN) - YYYY-MM-DD
 #### Added
+* Add RBAC rules for the operator chart so it can manage users
 #### Changed
 #### Fixed
 #### Removed
