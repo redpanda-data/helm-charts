@@ -7,6 +7,7 @@
 * Add RBAC rules for the operator chart so it can manage users
 #### Changed
 #### Fixed
+* Fix initialization of configurations using RestToConfig when the passed in rest.Config contain on-disk value files.
 #### Removed
 * All zero, empty, or default cluster configurations have been removed from
   `values.yaml` in favor of letting redpanda determine what the defaults will
