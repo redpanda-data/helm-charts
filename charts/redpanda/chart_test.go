@@ -756,7 +756,7 @@ func TestGoHelmEquivalence(t *testing.T) {
 		Name:      "gotohelm",
 		Namespace: "mynamespace",
 		Service:   "Helm",
-	}, values)
+	}, values, kube.Config{})
 	require.NoError(t, err)
 
 	rendered, err := client.Template(context.Background(), ".", helm.TemplateOptions{
