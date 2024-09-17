@@ -83,6 +83,7 @@ jobs:
               - '**.go'
               - 'go.mod'
               - 'go.sum'
+              - 'charts/*/Chart.yaml'
   lint:
     runs-on: ubuntu-22.04
     steps:
