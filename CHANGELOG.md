@@ -4,7 +4,6 @@
 
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-FILLMEIN) - YYYY-MM-DD
 #### Added
-* Add RBAC rules for the operator chart so it can manage users
 #### Changed
 * Cluster configurations are no longer include in `redpanda.yaml` or the
   Redpanda Statefulset's configuration hash.
@@ -163,6 +162,13 @@
 ## Redpanda Operator Chart
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/operator-FILLMEIN) - YYYY-MM-DD
 #### Added
+#### Changed
+#### Fixed
+#### Removed
+
+### [0.4.30](https://github.com/redpanda-data/helm-charts/releases/tag/operator-0.4.30) - 2024-09-17
+#### Added
+* Add RBAC rules for the operator chart so it can manage users
 #### Changed
 #### Fixed
 #### Removed
