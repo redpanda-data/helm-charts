@@ -43,9 +43,9 @@ jobs:
     strategy:
       matrix:
         version:
-          - ""
-          - v23.1.21
-          - v23.2.24
+          - "" # Test the default / Most recent version of Redpanda.
+          - v24.1.16
+          - v23.3.20
         testvaluespattern:
           - '0[1-3]*'
           - '0[4-6]*'
