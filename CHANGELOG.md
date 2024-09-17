@@ -5,6 +5,12 @@
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-FILLMEIN) - YYYY-MM-DD
 #### Added
 #### Changed
+#### Fixed
+#### Removed
+
+### [5.9.4](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.4) - 2024-09-17
+#### Added
+#### Changed
 * Cluster configurations are no longer include in `redpanda.yaml` or the
   Redpanda Statefulset's configuration hash.
 
