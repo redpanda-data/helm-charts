@@ -51,7 +51,7 @@ func ChartMeta() helmette.Chart {
 	return chartMeta
 }
 
-func Dot(release helmette.Release, values PartialValues) (*helmette.Dot, error) {
+func Dot(release helmette.Release, values PartialValues, kubeConfig kube.Config) (*helmette.Dot, error) {
 	valuesYaml, err := yaml.Marshal(values)
 	if err != nil {
 		return nil, err
@@ -64,14 +64,15 @@ func Dot(release helmette.Release, values PartialValues) (*helmette.Dot, error) 
 	}
 
 	return &helmette.Dot{
-		Values:  merged,
-		Chart:   ChartMeta(),
-		Release: release,
+		Values:     merged,
+		Chart:      ChartMeta(),
+		Release:    release,
+		KubeConfig: kubeConfig,
 	}, nil
 }
 
-func Template(release helmette.Release, values PartialValues) ([]kube.Object, error) {
-	dot, err := Dot(release, values)
+func Template(release helmette.Release, values PartialValues, kubeConfig kube.Config) ([]kube.Object, error) {
+	dot, err := Dot(release, values, kubeConfig)
 	if err != nil {
 		return nil, err
 	}
