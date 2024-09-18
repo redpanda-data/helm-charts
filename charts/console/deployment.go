@@ -62,6 +62,9 @@ func Deployment(dot *helmette.Dot) *appsv1.Deployment {
 	if values.InitContainers.ExtraInitContainers != nil {
 		initContainers = helmette.UnmarshalYamlArray[corev1.Container](helmette.Tpl(*values.InitContainers.ExtraInitContainers, dot))
 	}
+	if initContainers == nil {
+		initContainers = []corev1.Container{}
+	}
 
 	volumeMounts := []corev1.VolumeMount{
 		{

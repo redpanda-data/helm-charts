@@ -1043,7 +1043,7 @@
 {{- end -}}
 {{- end -}}
 
-{{- define "redpanda.KafkaListeners.ConsolemTLS" -}}
+{{- define "redpanda.KafkaListeners.ConsoleTLS" -}}
 {{- $k := (index .a 0) -}}
 {{- $tls := (index .a 1) -}}
 {{- range $_ := (list 1) -}}

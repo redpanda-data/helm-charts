@@ -262,7 +262,7 @@ func Empty(value any) bool {
 		return v.IsZero()
 
 	case reflect.Pointer:
-		if !v.IsNil() && v.Elem().Kind() == reflect.Struct {
+		if !v.IsNil() && v.Elem().Kind() == reflect.Struct || v.Elem().Kind() == reflect.String {
 			return v.Elem().IsZero()
 		}
 	}

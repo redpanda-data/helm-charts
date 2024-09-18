@@ -32,7 +32,7 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $_is_returning = true -}}
-{{- (dict "r" (list (tpl `hello world` (coalesce nil)) (tpl `{{ .Foo }}` (dict "Foo" "bar" )) (tpl `{{ . }}` (3 | int)))) | toJson -}}
+{{- (dict "r" (list (tpl `hello world` (coalesce nil)) (tpl `{{ .Foo }}` (dict "Foo" "bar" )) (tpl `{{ . }}` (3 | int)) (tpl `` (3 | int)) (tpl `` (coalesce nil)))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -193,7 +193,7 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $_is_returning = true -}}
-{{- (dict "r" (list (empty (coalesce nil)) (empty (list )) (empty (list "")) (empty (dict )) (empty (dict "key" (coalesce nil) )) (empty (1 | int)) (empty (0 | int)) (empty false) (empty true) (empty "") (empty "hello") (empty (mustMergeOverwrite (dict ) (dict ))) (empty (mustMergeOverwrite (dict ) (dict "Value" (1 | int) ))))) | toJson -}}
+{{- (dict "r" (list (empty (coalesce nil)) (empty "") (empty (list )) (empty (list "")) (empty (dict )) (empty (dict "key" (coalesce nil) )) (empty (1 | int)) (empty (0 | int)) (empty false) (empty true) (empty "") (empty "hello") (empty (mustMergeOverwrite (dict ) (dict ))) (empty (mustMergeOverwrite (dict ) (dict "Value" (1 | int) ))))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

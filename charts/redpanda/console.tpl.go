@@ -20,6 +20,7 @@ import (
 	"fmt"
 
 	"github.com/redpanda-data/console/backend/pkg/config"
+	"github.com/redpanda-data/helm-charts/charts/console"
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 )
 
@@ -48,7 +49,7 @@ func ConsoleConfig(dot *helmette.Dot) any {
 			"sasl": map[string]any{
 				"enabled": values.Auth.IsSASLEnabled(),
 			},
-			"tls": values.Listeners.Kafka.ConsolemTLS(&values.TLS),
+			"tls": values.Listeners.Kafka.ConsoleTLS(&values.TLS),
 			"schemaRegistry": map[string]any{
 				"enabled": values.Listeners.SchemaRegistry.Enabled,
 				"urls":    schemaURLs,
@@ -102,6 +103,12 @@ func ConsoleConfig(dot *helmette.Dot) any {
 					Token:    "",
 				},
 			},
+		}
+	}
+
+	if values.Console.Console == nil {
+		values.Console.Console = &console.PartialConsole{
+			Config: map[string]any{},
 		}
 	}
 

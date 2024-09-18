@@ -63,6 +63,8 @@ func tpl() []string {
 		helmette.Tpl(`hello world`, nil),
 		helmette.Tpl(`{{ .Foo }}`, map[string]any{"Foo": "bar"}),
 		helmette.Tpl(`{{ . }}`, 3),
+		helmette.Tpl(``, 3),
+		helmette.Tpl(``, nil),
 	}
 }
 
@@ -240,6 +242,7 @@ func default_() []any {
 func empty() []bool {
 	return []bool{
 		helmette.Empty(nil),
+		helmette.Empty(""),
 		helmette.Empty([]string{}),
 		helmette.Empty([]string{""}),
 		helmette.Empty(map[string]any{}),

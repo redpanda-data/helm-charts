@@ -42,6 +42,9 @@
 {{- if (ne $values.initContainers.extraInitContainers (coalesce nil)) -}}
 {{- $initContainers = (fromYamlArray (tpl $values.initContainers.extraInitContainers $dot)) -}}
 {{- end -}}
+{{- if (eq $initContainers (coalesce nil)) -}}
+{{- $initContainers = (list ) -}}
+{{- end -}}
 {{- $volumeMounts := (list (mustMergeOverwrite (dict "name" "" "mountPath" "" ) (dict "name" "configs" "mountPath" "/etc/console/configs" "readOnly" true ))) -}}
 {{- if $values.secret.create -}}
 {{- $volumeMounts = (concat (default (list ) $volumeMounts) (list (mustMergeOverwrite (dict "name" "" "mountPath" "" ) (dict "name" "secrets" "mountPath" "/etc/console/secrets" "readOnly" true )))) -}}

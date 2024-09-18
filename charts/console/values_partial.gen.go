@@ -50,6 +50,7 @@ type PartialValues struct {
 	Deployment                   *PartialDeploymentConfig          "json:\"deployment,omitempty\""
 	Strategy                     *appsv1.DeploymentStrategy        "json:\"strategy,omitempty\""
 	Tests                        *PartialEnableable                "json:\"tests,omitempty\""
+	Enabled                      *bool                             "json:\"enabled,omitempty\""
 }
 
 type PartialImage struct {

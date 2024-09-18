@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+	"github.com/redpanda-data/helm-charts/charts/console"
 	"github.com/redpanda-data/helm-charts/charts/redpanda"
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	"github.com/redpanda-data/helm-charts/pkg/helm"
@@ -749,8 +750,17 @@ func TestGoHelmEquivalence(t *testing.T) {
 		Enabled: ptr.To(false),
 	}
 
-	values.Console = &redpanda.PartialConsole{Enabled: ptr.To(false)}
+	values.Console = &console.PartialValues{
+		Enabled: ptr.To(true),
+		Tests:   &console.PartialEnableable{Enabled: ptr.To(false)},
+		Secret: &console.PartialSecretConfig{
+			Login: &console.PartialLoginSecrets{
+				JWTSecret: ptr.To("JWT_PLACEHOLDER"),
+			},
+		},
+	}
 	values.Connectors = &redpanda.PartialConnectors{Enabled: ptr.To(false)}
+	values.Enterprise = &redpanda.PartialEnterprise{License: ptr.To("LICENSE_PLACEHOLDER")}
 
 	goObjs, err := redpanda.Template(helmette.Release{
 		Name:      "gotohelm",
@@ -781,7 +791,8 @@ func TestGoHelmEquivalence(t *testing.T) {
 		return strings.Compare(aStr, bStr)
 	})
 
-	const stsIdx = 7
+	const depIdx = 11
+	const stsIdx = 12
 
 	// resource.Quantity is a special object. To Ensure they compare correctly,
 	// we'll round trip it through JSON so the internal representions will
@@ -792,12 +803,19 @@ func TestGoHelmEquivalence(t *testing.T) {
 	helmObjs[stsIdx].(*appsv1.StatefulSet).Spec.Template.Spec.Containers[0].Resources, err = valuesutil.UnmarshalInto[corev1.ResourceRequirements](helmObjs[stsIdx].(*appsv1.StatefulSet).Spec.Template.Spec.Containers[0].Resources)
 	require.NoError(t, err)
 
+	// Drop annotations that gives different result as ConfigMap translated from go and helm template
+	// gives different result. The ConfigMap is first translated to yaml then calculated sha256sum.
+	goObjs[depIdx].(*appsv1.Deployment).Spec.Template.Annotations["checksum/config"] = ""
+	goObjs[depIdx].(*appsv1.Deployment).Spec.Template.Annotations["checksum-redpanda-chart/config"] = ""
+	helmObjs[depIdx].(*appsv1.Deployment).Spec.Template.Annotations["checksum/config"] = ""
+	helmObjs[depIdx].(*appsv1.Deployment).Spec.Template.Annotations["checksum-redpanda-chart/config"] = ""
+
 	assert.Equal(t, len(helmObjs), len(goObjs))
 
 	// Iterate and compare instead of a single comparison for better error
 	// messages. Some divergences will fail an Equal check on slices but not
 	// report which element(s) aren't equal.
 	for i := range helmObjs {
-		assert.Equal(t, helmObjs[i], goObjs[i])
+		assert.Equal(t, helmObjs[i], goObjs[i], "Index: %d, Name: %s, GroupVersionKind: %s", i, helmObjs[i].GetName(), helmObjs[i].GetObjectKind().GroupVersionKind().String())
 	}
 }
