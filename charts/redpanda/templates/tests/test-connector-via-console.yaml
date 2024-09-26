@@ -17,8 +17,9 @@ limitations under the License.
 {{- if and .Values.tests.enabled .Values.connectors.enabled .Values.console.enabled }}
 {{- $sasl := .Values.auth.sasl }}
 {{- $values := .Values }}
-{{ $consoleValues := dict "Values" .Values.console "Release" .Release "Chart" .Subcharts.console.Chart }}
-{{ $connectorsVars := dict "Values" .Values.connectors "Release" .Release "Chart" .Subcharts.connectors.Chart }}
+{{- $consoleValues := (merge (dict) .Values.console .Subcharts.console.Values) -}}
+{{- $consoleDot := dict "Values" (dict "AsMap" $consoleValues) "Release" .Release "Chart" .Subcharts.console.Chart -}}
+{{- $connectorsDot := dict "Values" (merge (dict) .Values.connectors .Subcharts.connectors.Values) "Release" .Release "Chart" .Subcharts.connectors.Chart -}}
 {{/* brokers */}}
 {{- $kafkaBrokers := list }}
 {{- range (include "seed-server-list" . | mustFromJson) }}
@@ -61,13 +62,13 @@ spec:
 
           connectorsState () {
             echo check connectors expand status
-            curl {{ template "curl-options" . }} http://{{ include "connectors.serviceName" $connectorsVars }}:{{ .Values.connectors.connectors.restPort }}/connectors?expand=status
+            curl {{ template "curl-options" . }} http://{{ include "connectors.serviceName" $connectorsDot }}:{{ .Values.connectors.connectors.restPort }}/connectors?expand=status
             echo check connectors expand info
-            curl {{ template "curl-options" . }} http://{{ include "connectors.serviceName" $connectorsVars }}:{{ .Values.connectors.connectors.restPort }}/connectors?expand=info
+            curl {{ template "curl-options" . }} http://{{ include "connectors.serviceName" $connectorsDot }}:{{ .Values.connectors.connectors.restPort }}/connectors?expand=info
             echo check connector configuration
-            curl {{ template "curl-options" . }} http://{{ include "connectors.serviceName" $connectorsVars }}:{{ .Values.connectors.connectors.restPort }}/connectors/$CONNECTOR_NAME
+            curl {{ template "curl-options" . }} http://{{ include "connectors.serviceName" $connectorsDot }}:{{ .Values.connectors.connectors.restPort }}/connectors/$CONNECTOR_NAME
             echo check connector topics
-            curl {{ template "curl-options" . }} http://{{ include "connectors.serviceName" $connectorsVars }}:{{ .Values.connectors.connectors.restPort }}/connectors/$CONNECTOR_NAME/topics
+            curl {{ template "curl-options" . }} http://{{ include "connectors.serviceName" $connectorsDot }}:{{ .Values.connectors.connectors.restPort }}/connectors/$CONNECTOR_NAME/topics
           }
           
           {{- if .Values.auth.sasl.enabled }}
@@ -147,7 +148,7 @@ spec:
           sed -i "s/JAAS_CONFIG_TARGET/$JAAS_CONFIG_TARGET/g" /tmp/mm2-conf.json
           set -x
 
-          URL=http://{{ include "console.fullname" $consoleValues }}:{{ include "console.containerPort" $consoleValues }}/api/kafka-connect/clusters/connectors/connectors
+          URL=http://{{ get ((include "console.Fullname" (dict "a" (list $consoleDot))) | fromJson) "r" }}:{{ get (fromJson (include "console.ContainerPort" (dict "a" (list $consoleDot) ))) "r" }}/api/kafka-connect/clusters/connectors/connectors
           {{/* outputting to /dev/null because the output contains the user password */}}
           echo "Creating mm2 connector"
           curl {{ template "curl-options" . }} -H 'Content-Type: application/json' "${URL}" -d @/tmp/mm2-conf.json
