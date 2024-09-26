@@ -3,7 +3,7 @@
 description: Find the default values and descriptions of settings in the Redpanda Connectors Helm chart.
 ---
 
-![Version: 0.1.12](https://img.shields.io/badge/Version-0.1.12-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.0.29](https://img.shields.io/badge/AppVersion-v1.0.29-informational?style=flat-square)
+![Version: 0.1.13](https://img.shields.io/badge/Version-0.1.13-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.0.29](https://img.shields.io/badge/AppVersion-v1.0.29-informational?style=flat-square)
 
 This page describes the official Redpanda Connectors Helm Chart. In particular, this page describes the contents of the chart’s [`values.yaml` file](https://github.com/redpanda-data/helm-charts/blob/main/charts/connectors/values.yaml). Each of the settings is listed and described on this page, along with any default values.
 
