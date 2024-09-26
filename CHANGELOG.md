@@ -225,6 +225,14 @@
 #### Fixed
 #### Removed
 
+### [0.1.13](https://github.com/redpanda-data/helm-charts/releases/tag/connectors-0.1.13) - 2024-09-26
+#### Added
+#### Changed
+* Test pod name will be stable (without randomization) [#1541](https://github.com/redpanda-data/helm-charts/pull/1541)
+* Update connectors container tag/application version [#1541](https://github.com/redpanda-data/helm-charts/pull/1541)
+#### Fixed
+#### Removed
+
 ### [0.1.12](https://github.com/redpanda-data/helm-charts/releases/tag/connectors-0.1.12)
 #### Added
 #### Changed
