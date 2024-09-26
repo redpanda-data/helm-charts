@@ -8,6 +8,14 @@
 #### Fixed
 #### Removed
 
+### [5.9.5](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.5) - 2024-09-26
+#### Added
+#### Changed
+* Bump Redpanda container tag/application version [#1543](https://github.com/redpanda-data/helm-charts/pull/1543)
+#### Fixed
+* Connectors deployment [#1543](https://github.com/redpanda-data/helm-charts/pull/1543)
+#### Removed
+
 ### [5.9.4](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.4) - 2024-09-17
 #### Added
 #### Changed

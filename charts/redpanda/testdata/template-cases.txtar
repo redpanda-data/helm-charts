@@ -380,3 +380,9 @@ statefulset:
 
 statefulset:
   replicas: 1
+
+-- enable-connectors --
+# ASSERT-NO-ERROR
+# ASSERT-GOLDEN
+connectors:
+  enabled: true
