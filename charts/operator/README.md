@@ -238,7 +238,7 @@ Sets log level for kube rbac proxy
 
 ### [logLevel](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=logLevel)
 
-Log level Valid values (from least to most verbose) are: `fatal`, `panic`, `error`, `info` and `debug`.
+Log level Valid values (from least to most verbose) are: `warn`, `info`, `debug`, and `trace`.
 
 **Default:** `"info"`
 
