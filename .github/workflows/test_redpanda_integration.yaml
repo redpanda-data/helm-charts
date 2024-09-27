@@ -38,7 +38,7 @@ jobs:
           secret-ids: |
             ,sdlc/prod/github/redpanda_sample_license
           parse-json-secrets: true
-      - uses: cachix/install-nix-action@V28
+      - uses: cachix/install-nix-action@v29
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
       # Cache the nix store.
