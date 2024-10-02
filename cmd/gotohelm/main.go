@@ -12,7 +12,6 @@ import (
 
 func main() {
 	out := flag.String("write", "-", "The directory to write the transpiled templates to or - to write them to standard out")
-
 	flag.Parse()
 
 	cwd, _ := os.Getwd()
@@ -24,11 +23,19 @@ func main() {
 		panic(err)
 	}
 
+	pkgs = append(pkgs, gotohelm.ShimsPkg)
+
 	for _, pkg := range pkgs {
-		chart, err := gotohelm.Transpile(pkg)
+		chart, err := gotohelm.Transpile(pkg, pkgs...)
 		if err != nil {
 			fmt.Printf("Failed to transpile %q: %s\n", pkg.Name, err)
 			continue
+		}
+
+		// Attach a foot of helpers written in raw gotpl that can't be expressed in
+		// gotohelm.
+		if pkg == gotohelm.ShimsPkg {
+			chart.Files[0].Footer = gotohelm.RenderManifest
 		}
 
 		if *out == "-" {

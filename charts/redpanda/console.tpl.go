@@ -79,6 +79,7 @@ func ConsoleConfig(dot *helmette.Dot) any {
 		}
 
 		connectorsURL := fmt.Sprintf("http://%s.%s.svc.%s:%d",
+			// TODO replace it with console.FullName(dot) call
 			ConnectorsFullName(dot),
 			dot.Release.Namespace,
 			helmette.TrimSuffix(".", values.ClusterDomain),

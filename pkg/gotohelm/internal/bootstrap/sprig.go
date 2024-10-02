@@ -1,3 +1,4 @@
+// +gotohelm:ignore=true
 package bootstrap
 
 // This file contains "bindings" to the sprig helpers utilized by bootstrap.go.

@@ -6,6 +6,7 @@
 #### Added
 * Added the ability to override the name of the bootstrap user created when SASL authentication is enabled. [#1547](https://github.com/redpanda-data/helm-charts/pull/1547)
 #### Changed
+* Add ability to generate helm template of all subcharts [#1546](https://github.com/redpanda-data/helm-charts/pull/1546)
 #### Fixed
 #### Removed
 

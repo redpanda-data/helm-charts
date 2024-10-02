@@ -112,7 +112,7 @@ tasks:
       # Generate the values JSON schema from the Values struct
       - go run ./cmd/genschema redpanda > charts/redpanda/values.schema.json
       # Generate helm templates from Go definitions
-      - go run ./cmd/gotohelm -write ./charts/redpanda/templates ./charts/redpanda 
+      - go run ./cmd/gotohelm -write ./charts/redpanda/templates ./charts/redpanda github.com/redpanda-data/helm-charts/charts/console github.com/redpanda-data/helm-charts/charts/connectors
 
   chart:generate:connectors:
     desc: "Generate files for the connectors Helm chart"

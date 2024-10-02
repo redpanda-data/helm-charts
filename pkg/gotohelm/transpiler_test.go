@@ -166,6 +166,9 @@ func TestTranspile(t *testing.T) {
 			chart, err := Transpile(pkg)
 			require.NoError(t, err)
 
+			// Add shims to each test case
+			chart.Files = append(chart.Files, shims)
+
 			for _, f := range chart.Files {
 				var actual bytes.Buffer
 				f.Write(&actual)

@@ -18,9 +18,11 @@ var (
 	// shims the source [File] of _shims.tpl. It's set by the init function in
 	// bootstrap.go.
 	shims *File
+
+	ShimsPkg *packages.Package
 )
 
-// renderManifest is a helper function to call and render the results of a
+// RenderManifest is a helper function to call and render the results of a
 // gotohelm function as a Kubernetes manifest. It handles nil checking and
 // rendering either slices or individual manifests. It additionally contains a
 // bit of extra logic to cut the `status` and `creationTimestamp` fields out of
@@ -33,7 +35,7 @@ var (
 // Usage:
 //
 //	{{- include "_shims.render-manifest" (list "template.ToRender" .) -}}
-const renderManifest = `{{- define "_shims.render-manifest" -}}
+const RenderManifest = `{{- define "_shims.render-manifest" -}}
 {{- $tpl := (index . 0) -}}
 {{- $dot := (index . 1) -}}
 {{- $manifests := (get ((include $tpl (dict "a" (list $dot))) | fromJson) "r") -}}
@@ -69,6 +71,9 @@ func init() {
 		panic(err)
 	}
 
+	// Package that should be added to every gotohelm transpilation
+	ShimsPkg = pkgs[0]
+
 	// Then we transpile the loaded package as we would any other.
 	bootstrapChart, err := Transpile(pkgs[0])
 	if err != nil {
@@ -81,7 +86,7 @@ func init() {
 
 	// Attach a foot of helpers written in raw gotpl that can't be expressed in
 	// gotohelm.
-	shims.Footer = renderManifest
+	shims.Footer = RenderManifest
 }
 
 func fsToOverlay(fsys *embed.FS, prefix string) map[string][]byte {
