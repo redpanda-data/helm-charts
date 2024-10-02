@@ -2,12 +2,14 @@
 
 {{- define "mutability.Mutability" -}}
 {{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $v := (dict "Name" "" "Labels" (coalesce nil) "SubService" (coalesce nil) ) -}}
 {{- $_ := (set $v "Labels" (dict )) -}}
 {{- $_ := (set $v "SubService" (mustMergeOverwrite (dict "Name" "" "Labels" (coalesce nil) ) (dict ))) -}}
 {{- $_ := (set $v.SubService "Labels" (dict )) -}}
 {{- $_ := (set $v.SubService "Name" "Hello!") -}}
 {{- $_ := (set $v.SubService.Labels "hello" "world") -}}
+{{- $_is_returning = true -}}
 {{- (dict "r" (dict "values" (mustFromJson (mustToJson $v)) )) | toJson -}}
 {{- break -}}
 {{- end -}}

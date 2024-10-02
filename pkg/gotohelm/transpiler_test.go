@@ -124,6 +124,7 @@ var testSpecs = map[string]TestSpec{
 			{"t": "a string"},
 		},
 	},
+	"mutability": {},
 }
 
 func TestTranspile(t *testing.T) {
