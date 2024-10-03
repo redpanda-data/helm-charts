@@ -244,7 +244,7 @@ func (a *Auth) Translate(isSASLEnabled bool) map[string]any {
 		return nil
 	}
 
-	users := []string{"kubernetes-controller"}
+	users := []string{a.SASL.BootstrapUser.Username()}
 	for _, u := range a.SASL.Users {
 		users = append(users, u.Name)
 	}
@@ -959,6 +959,7 @@ func (m TLSCertMap) MustGet(name string) *TLSCert {
 }
 
 type BootstrapUser struct {
+	Name         *string                   `json:"name"`
 	SecretKeyRef *corev1.SecretKeySelector `json:"secretKeyRef"`
 	Password     *string                   `json:"password"`
 	Mechanism    string                    `json:"mechanism" jsonschema:"pattern=^(SCRAM-SHA-512|SCRAM-SHA-256)$"`
@@ -971,6 +972,13 @@ func (b *BootstrapUser) BootstrapEnvironment(fullname string) []corev1.EnvVar {
 	})
 }
 
+func (b *BootstrapUser) Username() string {
+	if b.Name != nil {
+		return *b.Name
+	}
+	return "kubernetes-controller"
+}
+
 func (b *BootstrapUser) RpkEnvironment(fullname string) []corev1.EnvVar {
 	return []corev1.EnvVar{{
 		Name: "RPK_PASS",
@@ -979,7 +987,7 @@ func (b *BootstrapUser) RpkEnvironment(fullname string) []corev1.EnvVar {
 		},
 	}, {
 		Name:  "RPK_USER",
-		Value: "kubernetes-controller",
+		Value: b.Username(),
 	}, {
 		Name:  "RPK_SASL_MECHANISM",
 		Value: b.GetMechanism(),

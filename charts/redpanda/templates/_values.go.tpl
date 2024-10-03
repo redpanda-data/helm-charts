@@ -74,7 +74,7 @@
 {{- (dict "r" (coalesce nil)) | toJson -}}
 {{- break -}}
 {{- end -}}
-{{- $users := (list "kubernetes-controller") -}}
+{{- $users := (list (get (fromJson (include "redpanda.BootstrapUser.Username" (dict "a" (list $a.sasl.bootstrapUser) ))) "r")) -}}
 {{- range $_, $u := $a.sasl.users -}}
 {{- $users = (concat (default (list ) $users) (list $u.name)) -}}
 {{- end -}}
@@ -558,13 +558,28 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "redpanda.BootstrapUser.Username" -}}
+{{- $b := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- if (ne $b.name (coalesce nil)) -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" $b.name) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" "kubernetes-controller") | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "redpanda.BootstrapUser.RpkEnvironment" -}}
 {{- $b := (index .a 0) -}}
 {{- $fullname := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $_is_returning = true -}}
-{{- (dict "r" (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_PASS" "valueFrom" (mustMergeOverwrite (dict ) (dict "secretKeyRef" (get (fromJson (include "redpanda.BootstrapUser.SecretKeySelector" (dict "a" (list $b $fullname) ))) "r") )) )) (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_USER" "value" "kubernetes-controller" )) (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_SASL_MECHANISM" "value" (get (fromJson (include "redpanda.BootstrapUser.GetMechanism" (dict "a" (list $b) ))) "r") )))) | toJson -}}
+{{- (dict "r" (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_PASS" "valueFrom" (mustMergeOverwrite (dict ) (dict "secretKeyRef" (get (fromJson (include "redpanda.BootstrapUser.SecretKeySelector" (dict "a" (list $b $fullname) ))) "r") )) )) (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_USER" "value" (get (fromJson (include "redpanda.BootstrapUser.Username" (dict "a" (list $b) ))) "r") )) (mustMergeOverwrite (dict "name" "" ) (dict "name" "RPK_SASL_MECHANISM" "value" (get (fromJson (include "redpanda.BootstrapUser.GetMechanism" (dict "a" (list $b) ))) "r") )))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
