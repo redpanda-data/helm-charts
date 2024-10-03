@@ -8,14 +8,17 @@ import (
 	"errors"
 	"fmt"
 	"net"
+	"net/http"
 	"slices"
 	"strings"
+	"time"
 
 	"github.com/redpanda-data/helm-charts/charts/redpanda"
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	"github.com/twmb/franz-go/pkg/kgo"
 	"github.com/twmb/franz-go/pkg/sasl"
 	"github.com/twmb/franz-go/pkg/sasl/scram"
+	"github.com/twmb/franz-go/pkg/sr"
 
 	"github.com/redpanda-data/common-go/rpadmin"
 
@@ -56,7 +59,7 @@ func AdminClient(dot *helmette.Dot, dialer DialContextFunc) (*rpadmin.AdminAPI, 
 	if redpanda.TLSEnabled(dot) {
 		prefix = "https://"
 
-		tlsConfig, err = tlsConfigFromDot(dot, values.Listeners.Kafka.TLS.Cert)
+		tlsConfig, err = tlsConfigFromDot(dot, values.Listeners.Admin.TLS.Cert)
 		if err != nil {
 			return nil, err
 		}
@@ -80,6 +83,66 @@ func AdminClient(dot *helmette.Dot, dialer DialContextFunc) (*rpadmin.AdminAPI, 
 	hosts := redpanda.ServerList(values.Statefulset.Replicas, prefix, name, domain, values.Listeners.Admin.Port)
 
 	return rpadmin.NewAdminAPIWithDialer(hosts, auth, tlsConfig, dialer)
+}
+
+// SchemaRegistryClient creates a client to talk to a Redpanda cluster admin API based on its helm
+// configuration over its internal listeners.
+func SchemaRegistryClient(dot *helmette.Dot, dialer DialContextFunc, opts ...sr.ClientOpt) (*sr.Client, error) {
+	values := helmette.Unwrap[redpanda.Values](dot.Values)
+	name := redpanda.Fullname(dot)
+	domain := redpanda.InternalDomain(dot)
+	prefix := "http://"
+
+	// These transport values come from the TLS client options found here:
+	// https://github.com/twmb/franz-go/blob/cea7aa5d803781e5f0162187795482ba1990c729/pkg/sr/clientopt.go#L48-L68
+	transport := &http.Transport{
+		Proxy:                 http.ProxyFromEnvironment,
+		ForceAttemptHTTP2:     true,
+		MaxIdleConns:          100,
+		MaxIdleConnsPerHost:   100,
+		DialContext:           dialer,
+		IdleConnTimeout:       90 * time.Second,
+		TLSHandshakeTimeout:   10 * time.Second,
+		ExpectContinueTimeout: 1 * time.Second,
+	}
+
+	if dialer == nil {
+		transport.DialContext = (&net.Dialer{
+			Timeout:   30 * time.Second,
+			KeepAlive: 30 * time.Second,
+		}).DialContext
+	}
+
+	if redpanda.TLSEnabled(dot) {
+		prefix = "https://"
+
+		tlsConfig, err := tlsConfigFromDot(dot, values.Listeners.SchemaRegistry.TLS.Cert)
+		if err != nil {
+			return nil, err
+		}
+		transport.TLSClientConfig = tlsConfig
+	}
+
+	copts := []sr.ClientOpt{sr.HTTPClient(&http.Client{
+		Timeout:   5 * time.Second,
+		Transport: transport,
+	})}
+
+	username, password, _, err := authFromDot(dot)
+	if err != nil {
+		return nil, err
+	}
+
+	if username != "" {
+		copts = append(copts, sr.BasicAuth(username, password))
+	}
+
+	hosts := redpanda.ServerList(values.Statefulset.Replicas, prefix, name, domain, values.Listeners.SchemaRegistry.Port)
+	copts = append(copts, sr.URLs(hosts...))
+
+	// finally, override any calculated client opts with whatever was
+	// passed in
+	return sr.NewClient(append(copts, opts...)...)
 }
 
 // KafkaClient creates a client to talk to a Redpanda cluster based on its helm
