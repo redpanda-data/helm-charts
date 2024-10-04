@@ -57,12 +57,16 @@ type TestSpec struct {
 	// .Values has not be mutated by the chart. Set to `true` to disable.
 	ValuesChanged bool
 	Values        []map[string]any
+	// Namespace, if specified, is used as the gotohelm namespace to filter
+	// templates names. If not specified, the package name is used.
+	Namespace string
 }
 
 var testSpecs = map[string]TestSpec{
+	"aaacommon":   {},
 	"astrewrites": {},
 	"bootstrap":   {},
-	"directives":  {},
+	"directives":  {Namespace: "_directives"},
 	"k8s": {
 		Values: []map[string]any{
 			{},                     // Quantity not specified.
@@ -149,6 +153,16 @@ func TestTranspile(t *testing.T) {
 
 	goRunner := NewGoRunner(t, td)
 
+	// To test package dependencies (subcharting), a single package (aaacommon)
+	// has been elected as the dependency for all others.
+	//
+	// It's prefixed with "aaa" so it's always the first in the pkgs list. This
+	// ensures that consuming packages are always using an up to date version
+	// as it will be transpiled first.
+	require.Equal(t, pkgs[0].Name, "aaacommon", "aaacommon should be the first package in pkgs")
+	commonPkg := pkgs[0].PkgPath
+	commonName := pkgs[0].Name
+
 	for _, pkg := range pkgs {
 		pkg := pkg
 		t.Run(pkg.Name, func(t *testing.T) {
@@ -163,7 +177,7 @@ func TestTranspile(t *testing.T) {
 				t.Skipf("%q is not currently supported", pkg.Name)
 			}
 
-			chart, err := Transpile(pkg)
+			chart, err := Transpile(pkg, commonPkg)
 			require.NoError(t, err)
 
 			for _, f := range chart.Files {
@@ -174,7 +188,20 @@ func TestTranspile(t *testing.T) {
 				testutil.AssertGolden(t, testutil.Text, output, actual.Bytes())
 			}
 
-			helmRunner, err := NewHelmRunner(pkg.Name, filepath.Join(td, "src", "example", pkg.Name), ctl.RestConfig(), t.Logf)
+			namespace := pkg.Name
+			if spec.Namespace != "" {
+				namespace = spec.Namespace
+			}
+
+			helmRunner, err := NewHelmRunner(
+				namespace,
+				ctl.RestConfig(),
+				t.Logf,
+				filepath.Join(td, "src", "example", pkg.Name),
+				// As a special case for testing imports / subcharting, always
+				// include the "aaacommon" package that others may use.
+				filepath.Join(td, "src", "example", commonName),
+			)
 			require.NoError(t, err)
 
 			// If .Values isn't explicitly specified, default to an empty object.
@@ -241,21 +268,23 @@ func TestTranspile(t *testing.T) {
 }
 
 type HelmRunner struct {
-	tpl    *template.Template
-	logf   func(string, ...any)
-	client client.Client
+	namespace string
+	tpl       *template.Template
+	logf      func(string, ...any)
+	client    client.Client
 }
 
-func NewHelmRunner(chartName, chartDir string, cfg *kube.RESTConfig, logf func(string, ...any)) (*HelmRunner, error) {
+func NewHelmRunner(chartName string, cfg *kube.RESTConfig, logf func(string, ...any), dirs ...string) (*HelmRunner, error) {
 	c, err := client.New(cfg, client.Options{})
 	if err != nil {
 		return nil, err
 	}
 
 	runner := &HelmRunner{
-		tpl:    template.New(chartName),
-		logf:   logf,
-		client: c,
+		namespace: chartName,
+		tpl:       template.New(chartName),
+		logf:      logf,
+		client:    c,
 	}
 
 	funcs := sprig.FuncMap()
@@ -266,16 +295,18 @@ func NewHelmRunner(chartName, chartDir string, cfg *kube.RESTConfig, logf func(s
 
 	runner.tpl = runner.tpl.Funcs(funcs)
 
-	logf("loading %q/*.yaml...", chartDir)
+	for _, dir := range dirs {
+		logf("loading %q/*.yaml...", dir)
+		runner.tpl, err = runner.tpl.ParseGlob(filepath.Join(dir, "*.yaml"))
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
 
-	runner.tpl, err = runner.tpl.ParseGlob(filepath.Join(chartDir, "*.yaml"))
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-
-	runner.tpl, err = runner.tpl.ParseGlob(filepath.Join(chartDir, "*.tpl"))
-	if err != nil {
-		return nil, errors.WithStack(err)
+		logf("loading %q/*.tpl...", dir)
+		runner.tpl, err = runner.tpl.ParseGlob(filepath.Join(dir, "*.tpl"))
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
 	}
 
 	return runner, nil
@@ -285,7 +316,7 @@ func (r *HelmRunner) Render(ctx context.Context, dot *helmette.Dot) (map[string]
 	out := map[string]any{}
 	for _, tpl := range r.tpl.Templates() {
 		spl := strings.Split(tpl.Name(), ".")
-		if len(spl) != 2 || !unicode.IsUpper(rune(spl[1][0])) {
+		if len(spl) != 2 || spl[0] != r.namespace || !unicode.IsUpper(rune(spl[1][0])) {
 			continue
 		}
 

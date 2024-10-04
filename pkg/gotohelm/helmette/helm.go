@@ -13,9 +13,10 @@ import (
 // of a helm template.
 // See also: https://github.com/helm/helm/blob/3764b483b385a12e7d3765bff38eced840362049/pkg/chartutil/values.go#L137-L166
 type Dot struct {
-	Values  Values
-	Release Release
-	Chart   Chart
+	Values    Values
+	Release   Release
+	Chart     Chart
+	Subcharts map[string]*Dot
 	// Capabilities
 
 	// KubeConfig is a hacked in value to allow `Lookup` to not rely on global
