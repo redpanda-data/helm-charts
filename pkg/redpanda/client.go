@@ -134,7 +134,7 @@ func authFromDot(dot *helmette.Dot) (username string, password string, mechanism
 			selector := values.Auth.SASL.BootstrapUser.SecretKeySelector(redpanda.Fullname(dot))
 			mechanism := values.Auth.SASL.BootstrapUser.GetMechanism()
 			if data, found := user.Data[selector.Key]; found {
-				return "kubernetes-controller", string(data), mechanism, nil
+				return values.Auth.SASL.BootstrapUser.Username(), string(data), mechanism, nil
 			}
 		}
 	}

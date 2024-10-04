@@ -4,6 +4,7 @@
 
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-FILLMEIN) - YYYY-MM-DD
 #### Added
+* Added the ability to override the name of the bootstrap user created when SASL authentication is enabled. [#1547](https://github.com/redpanda-data/helm-charts/pull/1547)
 #### Changed
 #### Fixed
 #### Removed

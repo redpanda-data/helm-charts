@@ -196,6 +196,10 @@ auth:
     # the secret will be generated and stored in the secret
     # "releasename"-bootstrap-user, with the key "password".
     bootstrapUser:
+      # -- The name used to override the name of the bootstrap user. If unspecified the bootstrap user is named
+      # "kubernetes-controller". This should only be specified when SASL authentication is enabled (usually installation)
+      # and should not be changed afterward.
+      # name: my-user
       # -- The authentication mechanism to use for the bootstrap user. Options are `SCRAM-SHA-256` and `SCRAM-SHA-512`.
       mechanism: SCRAM-SHA-256
       # secretKeyRef:
