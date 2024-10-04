@@ -4,7 +4,9 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"os/exec"
 	"path"
+	"strings"
 
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm"
 	"golang.org/x/tools/go/packages"
@@ -15,31 +17,60 @@ func main() {
 
 	flag.Parse()
 
+	if len(flag.Args()) == 0 {
+		fmt.Printf("usage: gotohelm <package to transpile> [dependencies...]")
+		os.Exit(1)
+	}
+
 	cwd, _ := os.Getwd()
 
 	pkgs, err := gotohelm.LoadPackages(&packages.Config{
 		Dir: cwd,
-	}, flag.Args()...)
+	}, flag.Args()[0])
 	if err != nil {
 		panic(err)
 	}
 
-	for _, pkg := range pkgs {
-		chart, err := gotohelm.Transpile(pkg)
-		if err != nil {
-			fmt.Printf("Failed to transpile %q: %s\n", pkg.Name, err)
-			continue
-		}
-
-		if *out == "-" {
-			writeToStdout(chart)
-		} else {
-			if err := writeToDir(chart, *out); err != nil {
-				panic(err)
-			}
-		}
-
+	if len(pkgs) != 1 {
+		fmt.Printf("loading %q resulted in loading more than one package.", flag.Args()[0])
+		os.Exit(1)
 	}
+
+	pkg := pkgs[0]
+
+	deps, err := goList(flag.Args()[1:]...)
+	if err != nil {
+		panic(err)
+	}
+
+	chart, err := gotohelm.Transpile(pkg, deps...)
+	if err != nil {
+		fmt.Printf("Failed to transpile %q: %s\n", pkg.Name, err)
+		os.Exit(1)
+	}
+
+	if *out == "-" {
+		writeToStdout(chart)
+	} else {
+		if err := writeToDir(chart, *out); err != nil {
+			panic(err)
+		}
+	}
+}
+
+func goList(patterns ...string) ([]string, error) {
+	if len(patterns) == 0 {
+		return nil, nil
+	}
+
+	cmd := exec.Command("go", append([]string{"list"}, patterns...)...)
+
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		return nil, err
+	}
+
+	return strings.Split(string(out), "\n"), nil
 }
 
 func writeToStdout(chart *gotohelm.Chart) {

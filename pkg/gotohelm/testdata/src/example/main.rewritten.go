@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 
+	"example.com/example/aaacommon"
 	"example.com/example/astrewrites"
 	"example.com/example/changing_inputs"
 	"example.com/example/directives"
@@ -60,6 +61,11 @@ func runChart(dot *helmette.Dot) (_ map[string]any, err any) {
 	defer func() { err = recover() }()
 
 	switch dot.Chart.Name {
+	case "aaacommon":
+		return map[string]any{
+			"SharedConstant": aaacommon.SharedConstant(),
+		}, nil
+
 	case "astrewrites":
 		return map[string]any{
 			"ASTRewrites": astrewrites.ASTRewrites(),

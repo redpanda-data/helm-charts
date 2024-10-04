@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 
+	"example.com/example/aaacommon"
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	corev1 "k8s.io/api/core/v1"
 )
@@ -64,14 +65,15 @@ func Syntax() map[string]any {
 		"instance-method":       instanceMethod(),
 		"append":                appends(),
 		"nested-for-and-return": nestedFor(),
+		"import":                aaacommon.SharedConstant(),
 	}
 }
 
 func nestedFor() string {
 	x := []int{1, 2, 3}
-	for _, _ = range x {
-		for _, _ = range x {
-			for _, _ = range x {
+	for range x {
+		for range x {
+			for range x {
 				return "Hello"
 			}
 			panic("unreachable 1")

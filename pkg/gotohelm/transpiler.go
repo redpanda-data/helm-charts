@@ -45,7 +45,7 @@ type Chart struct {
 	Files []*File
 }
 
-func Transpile(pkg *packages.Package) (_ *Chart, err error) {
+func Transpile(pkg *packages.Package, deps ...string) (_ *Chart, err error) {
 	defer func() {
 		switch v := recover().(type) {
 		case nil:
@@ -56,15 +56,21 @@ func Transpile(pkg *packages.Package) (_ *Chart, err error) {
 		}
 	}()
 
+	dependencies := map[string]struct{}{}
+	for _, path := range append(deps, pkg.PkgPath) {
+		dependencies[path] = struct{}{}
+	}
+
 	t := &Transpiler{
 		Package:   pkg,
 		Fset:      pkg.Fset,
 		TypesInfo: pkg.TypesInfo,
 		Files:     pkg.Syntax,
 
-		packages:   mkPkgTree(pkg),
-		namespaces: map[*types.Package]string{},
-		names:      map[*types.Func]string{},
+		packages:     mkPkgTree(pkg),
+		namespaces:   map[*types.Package]string{},
+		dependencies: dependencies,
+		names:        map[*types.Func]string{},
 		builtins: map[string]string{
 			"fmt.Sprintf":                "printf",
 			"golang.org/x/exp/maps.Keys": "keys",
@@ -90,11 +96,15 @@ type Transpiler struct {
 	// builtin. Functions may add a +gotohelm:builtin=blah directive to declare
 	// their builtin equivalent.
 	builtins map[string]string
-	packages map[string]*packages.Package
+	// dependencies is a pre-populated set of fully qualified go package paths of permitted
+	// function calls. It should contain the path of .Package and any dependent
+	// charts (subcharts).
+	dependencies map[string]struct{}
+	packages     map[string]*packages.Package
 	// namespaces is a cache for holding the namespace package directive. It's
 	// exclusively used by `namespaceFor`.
 	namespaces map[*types.Package]string
-	// namespaces is a cache for holding the transpiled name of a function.
+	// names is a cache for holding the transpiled name of a function.
 	// It's exclusively used by `funcNameFor`.
 	names map[*types.Func]string
 }
@@ -953,6 +963,8 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 		}
 	}
 
+	// The above would have populated the builtins cache for us. If we have a
+	// hit, construct a BuiltInCall.
 	if builtin := t.builtins[id]; builtin != "" {
 		if signature.Results().Len() < 2 {
 			return &BuiltInCall{FuncName: builtin, Arguments: args}
@@ -981,60 +993,14 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 		})
 	}
 
-	// Call to function within the same package. A-Okay. It's transpiled. NB:
-	// This is intentionally after the builtins check to support our bootstrap
-	// package's builtin bindings.
-	if callee.Pkg().Path() == t.Package.PkgPath {
-		var call Node
-
-		// Method call.
-		if r := callee.Type().(*types.Signature).Recv(); r != nil {
-			typ := r.Type()
-
-			mutable := false
-			switch t := typ.(type) {
-			case *types.Pointer:
-				typ = t.Elem()
-				mutable = true
-			}
-
-			if _, ok := typ.(*types.Named); !ok {
-				panic(&Unsupported{Fset: t.Fset, Node: n, Msg: "method calls with not pointer type with named type"})
-			}
-			var receiverArg Node
-
-			// When receiver is a pointer then dictionary can be passed as is.
-			// When receiver is not a pointer then dictionary is a deep copied.
-			receiverArg = &BuiltInCall{FuncName: "deepCopy", Arguments: []Node{t.transpileExpr(n.Fun.(*ast.SelectorExpr).X)}}
-			if mutable {
-				receiverArg = t.transpileExpr(n.Fun.(*ast.SelectorExpr).X)
-			}
-
-			call = &Call{
-				FuncName: fmt.Sprintf("%s.%s", t.namespaceFor(callee.Pkg()), t.funcNameFor(callee.(*types.Func))),
-				// Method calls come in as a "top level" CallExpr where .Fun is the
-				// selector up to that call. e.g. `Foo.Bar.Baz()` will be a `CallExpr`.
-				// It's `.Fun` is a `SelectorExpr` where `.X` is `Foo.Bar`, the receiver,
-				// and `.Sel` is `Baz`, the method name.
-				Arguments: append([]Node{receiverArg}, args...),
-			}
-		} else {
-			call = &Call{FuncName: fmt.Sprintf("%s.%s", t.namespaceFor(callee.Pkg()), t.funcNameFor(callee.(*types.Func))), Arguments: args}
-		}
-
-		// If there's only a single return value, we'll possibly want to wrap
-		// the value in a cast for safety. If there are multiple return values,
-		// any casting will be handled by the transpilation of selector
-		// expressions.
-		if signature.Results().Len() == 1 {
-			return t.maybeCast(call, signature.Results().At(0).Type())
-		}
-		return call
-	}
-
-	// Finally, we fall to calls to any other functions. We'll handle any
-	// special cases that require a bit of extra fiddling to make work falling
-	// back to a not supported message.
+	// The second to last stop on this train, the big ol' switch statement of
+	// special cases. We match on the fully qualified function name and
+	// manually handle the transpilation on a case by case basis.
+	// This might include:
+	// - convent functions that we polyfill (ptr.To)
+	// - stdlib functions that just need to have some minor tweaks to map to
+	//   sprig funcs (strings.TrimSuffix)
+	// - helmette utilities
 
 	switch id {
 	case "sort.Strings":
@@ -1147,10 +1113,68 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 		// functionally equivalent. It has the added benefit of normalizing the
 		// string form of the Quantity.
 		return &Call{FuncName: "_shims.resource_MustParse", Arguments: []Node{reciever}}
+	}
 
-	default:
+	// Final stop, all our special cases have been handled. Either this call is
+	// going to a transpiled function or it's not supported. For this, we
+	// consult .dependencies which will have any dependencies (subcharts) and
+	// the package that's currently being transpiled.
+	if _, ok := t.dependencies[callee.Pkg().Path()]; !ok {
 		panic(fmt.Sprintf("unsupported function %q", id))
 	}
+
+	// We've got a function call to something in our dependencies. All we're
+	// going to do is transpile the call itself. The function itself will get
+	// transpiled when the transpiler gets there or it'll be provided via
+	// helm's subcharting functionality.
+	var call Node
+
+	// Method call.
+	if r := callee.Type().(*types.Signature).Recv(); r == nil {
+		// Easy case: if there's no receiver, this is just a function call.
+		call = &Call{FuncName: fmt.Sprintf("%s.%s", t.namespaceFor(callee.Pkg()), t.funcNameFor(callee.(*types.Func))), Arguments: args}
+	} else {
+		// Otherwise, if there is a receiver, we need to emulate a method call.
+		typ := r.Type()
+
+		mutable := false
+		switch t := typ.(type) {
+		case *types.Pointer:
+			typ = t.Elem()
+			mutable = true
+		}
+
+		if _, ok := typ.(*types.Named); !ok {
+			panic(&Unsupported{Fset: t.Fset, Node: n, Msg: "method calls with not pointer type with named type"})
+		}
+		var receiverArg Node
+
+		// When receiver is a pointer then dictionary can be passed as is.
+		// When receiver is not a pointer then dictionary is deep copied to emulate immutability.
+		receiverArg = &BuiltInCall{FuncName: "deepCopy", Arguments: []Node{t.transpileExpr(n.Fun.(*ast.SelectorExpr).X)}}
+		if mutable {
+			receiverArg = t.transpileExpr(n.Fun.(*ast.SelectorExpr).X)
+		}
+
+		call = &Call{
+			FuncName: fmt.Sprintf("%s.%s", t.namespaceFor(callee.Pkg()), t.funcNameFor(callee.(*types.Func))),
+			// Method calls come in as a "top level" CallExpr where .Fun is the
+			// selector up to that call. e.g. `Foo.Bar.Baz()` will be a `CallExpr`.
+			// It's `.Fun` is a `SelectorExpr` where `.X` is `Foo.Bar`, the receiver,
+			// and `.Sel` is `Baz`, the method name.
+			Arguments: append([]Node{receiverArg}, args...),
+		}
+	}
+
+	// If there's only a single return value, we'll possibly want to wrap
+	// the value in a cast for safety. If there are multiple return values,
+	// any casting will be handled by the transpilation of selector
+	// expressions.
+	if signature.Results().Len() == 1 {
+		return t.maybeCast(call, signature.Results().At(0).Type())
+	}
+
+	return call
 }
 
 func (t *Transpiler) transpileTypeRepr(typ types.Type) Node {
