@@ -15,36 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */}}
 
-{{/* Secret */}}
-{{ $secretConfig := dict ( dict
-  "create" $.Values.console.secret.create
-  )
-}}
-{{/* if the console chart has the creation of the secret disabled, create it here instead if needed */}}
-{{ if and .Values.console.enabled (not .Values.console.secret.create) }}
-{{ $licenseKey := ( include "enterprise-license" .  ) }}
-# before license changes, this was not printing a secret, so we gather in which case to print
-# for now only if we have a license do we print, however, this may be an issue for some
-# since if we do include a license we MUST also print all secret items.
-  {{ if ( not (empty $licenseKey ) ) }}
-{{/* License and license are set twice here as a work around to a bug in the post-go console chart. */}}
-{{ $secretConfig = ( dict
-  "create" true
-  "enterprise" ( dict "license" $licenseKey "License" $licenseKey)
-  )
-}}
-
-{{ $config := dict
-  "Values" (dict
-  "secret" $secretConfig
-  )}}
-
-{{ $secretValues := merge $config .Subcharts.console }}
-{{ $wrappedSecretValues := (dict "Chart" .Subcharts.console.Chart "Release" .Release "Values" (dict "AsMap" $secretValues.Values)) }}
----
-{{- include "_shims.render-manifest" (list "console.Secret" $wrappedSecretValues) -}}
-  {{ end }}
-{{ end }}
+{{- include "_shims.render-manifest" (list "redpanda.ConsoleIntegration" .) -}}
 
 {{ $configmap := dict }}
 {{/* if the console chart has the creation of the configmap disabled, create it here instead */}}
@@ -57,7 +28,6 @@ limitations under the License.
     "Values" (dict
       "console" (dict "config" $consoleConfig)
       "configmap" $consoleConfigmap
-      "secret" $secretConfig
     )
 }}
 
@@ -192,7 +162,6 @@ limitations under the License.
   "extraVolumes" $extraVolumes
   "extraVolumeMounts" $extraVolumeMounts
   "extraEnv" $extraEnv
-  "secret" $secretConfig
   "enterprise" $enterprise
   "image" $.Values.console.image
   "autoscaling" .Values.console.autoscaling

@@ -20,8 +20,58 @@ import (
 	"fmt"
 
 	"github.com/redpanda-data/console/backend/pkg/config"
+	"github.com/redpanda-data/helm-charts/charts/connectors"
+	"github.com/redpanda-data/helm-charts/charts/console"
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 )
+
+func ConsoleIntegration(dot *helmette.Dot) []any {
+	values := helmette.Unwrap[Values](dot.Values)
+
+	var manifests []any
+
+	// {{/* Secret */}}
+	// {{ $secretConfig := dict ( dict
+	//   "create" $.Values.console.secret.create
+	//   )
+	// }}
+	// {{ if and .Values.console.enabled (not .Values.console.secret.create) }}
+	// {{ $licenseKey := ( include "enterprise-license" .  ) }}
+	// # before license changes, this was not printing a secret, so we gather in which case to print
+	// # for now only if we have a license do we print, however, this may be an issue for some
+	// # since if we do include a license we MUST also print all secret items.
+	//   {{ if ( not (empty $licenseKey ) ) }}
+	// {{/* License and license are set twice here as a work around to a bug in the post-go console chart. */}}
+	// {{ $secretConfig = ( dict
+	//   "create" true
+	//   "enterprise" ( dict "license" $licenseKey "License" $licenseKey)
+	//   )
+	// }}
+	//
+	// {{ $config := dict
+	//   "Values" (dict
+	//   "secret" $secretConfig
+	//   )}}
+
+	// if the console chart has the creation of the secret disabled, create it here instead if needed
+	if values.Console.Enabled && !values.Console.Secret.Create {
+		consoleDot := helmette.MergeTo[*helmette.Dot](
+			dot.Subcharts["console"],
+			map[string]any{
+				"Values": map[string]any{
+					"secret": map[string]any{
+						"create": true,
+						// TODO enterprise license.
+					},
+				},
+			},
+		)
+
+		manifests = append(manifests, console.Secret(consoleDot))
+	}
+
+	return manifests
+}
 
 func ConsoleConfig(dot *helmette.Dot) any {
 	values := helmette.Unwrap[Values](dot.Values)
@@ -79,7 +129,7 @@ func ConsoleConfig(dot *helmette.Dot) any {
 		}
 
 		connectorsURL := fmt.Sprintf("http://%s.%s.svc.%s:%d",
-			ConnectorsFullName(dot),
+			connectors.Fullname(dot.Subcharts["connectors"]),
 			dot.Release.Namespace,
 			helmette.TrimSuffix(".", values.ClusterDomain),
 			p)

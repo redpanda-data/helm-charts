@@ -1,5 +1,21 @@
 {{- /* Generated from "console.tpl.go" */ -}}
 
+{{- define "redpanda.ConsoleIntegration" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $values := $dot.Values.AsMap -}}
+{{- $manifests := (coalesce nil) -}}
+{{- if (and $values.console.enabled (not $values.console.secret.create)) -}}
+{{- $consoleDot := (merge (dict ) (index $dot.Subcharts "console") (dict "Values" (dict "secret" (dict "create" true ) ) )) -}}
+{{- $manifests = (concat (default (list ) $manifests) (list (get (fromJson (include "console.Secret" (dict "a" (list $consoleDot) ))) "r"))) -}}
+{{- end -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" $manifests) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "redpanda.ConsoleConfig" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
@@ -33,7 +49,7 @@
 {{- (dict "r" $c) | toJson -}}
 {{- break -}}
 {{- end -}}
-{{- $connectorsURL := (printf "http://%s.%s.svc.%s:%d" (get (fromJson (include "redpanda.ConnectorsFullName" (dict "a" (list $dot) ))) "r") $dot.Release.Namespace (trimSuffix "." $values.clusterDomain) $p) -}}
+{{- $connectorsURL := (printf "http://%s.%s.svc.%s:%d" (get (fromJson (include "connectors.Fullname" (dict "a" (list (index $dot.Subcharts "connectors")) ))) "r") $dot.Release.Namespace (trimSuffix "." $values.clusterDomain) $p) -}}
 {{- $_ := (set $c "connect" (mustMergeOverwrite (dict "enabled" false "clusters" (coalesce nil) "connectTimeout" 0 "readTimeout" 0 "requestTimeout" 0 ) (dict "enabled" $values.connectors.enabled "clusters" (list (mustMergeOverwrite (dict "name" "" "url" "" "tls" (dict "enabled" false "caFilepath" "" "certFilepath" "" "keyFilepath" "" "insecureSkipTlsVerify" false ) "username" "" "password" "" "token" "" ) (dict "name" "connectors" "url" $connectorsURL "tls" (mustMergeOverwrite (dict "enabled" false "caFilepath" "" "certFilepath" "" "keyFilepath" "" "insecureSkipTlsVerify" false ) (dict "enabled" false "caFilepath" "" "certFilepath" "" "keyFilepath" "" "insecureSkipTlsVerify" false )) "username" "" "password" "" "token" "" ))) ))) -}}
 {{- end -}}
 {{- $_is_returning = true -}}

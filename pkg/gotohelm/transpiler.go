@@ -45,7 +45,7 @@ type Chart struct {
 	Files []*File
 }
 
-func Transpile(pkg *packages.Package) (_ *Chart, err error) {
+func Transpile(pkg *packages.Package, deps ...*packages.Package) (_ *Chart, err error) {
 	defer func() {
 		switch v := recover().(type) {
 		case nil:
@@ -56,15 +56,21 @@ func Transpile(pkg *packages.Package) (_ *Chart, err error) {
 		}
 	}()
 
+	dependencies := map[string]struct{}{}
+	for _, pkg := range append(deps, pkg) {
+		dependencies[pkg.PkgPath] = struct{}{}
+	}
+
 	t := &Transpiler{
 		Package:   pkg,
 		Fset:      pkg.Fset,
 		TypesInfo: pkg.TypesInfo,
 		Files:     pkg.Syntax,
 
-		packages:   mkPkgTree(pkg),
-		namespaces: map[*types.Package]string{},
-		names:      map[*types.Func]string{},
+		packages:     mkPkgTree(pkg),
+		namespaces:   map[*types.Package]string{},
+		dependencies: dependencies,
+		names:        map[*types.Func]string{},
 		builtins: map[string]string{
 			"fmt.Sprintf":                "printf",
 			"golang.org/x/exp/maps.Keys": "keys",
@@ -91,6 +97,8 @@ type Transpiler struct {
 	// their builtin equivalent.
 	builtins map[string]string
 	packages map[string]*packages.Package
+	// todo
+	dependencies map[string]struct{}
 	// namespaces is a cache for holding the namespace package directive. It's
 	// exclusively used by `namespaceFor`.
 	namespaces map[*types.Package]string
@@ -981,60 +989,7 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 		})
 	}
 
-	// Call to function within the same package. A-Okay. It's transpiled. NB:
-	// This is intentionally after the builtins check to support our bootstrap
-	// package's builtin bindings.
-	if callee.Pkg().Path() == t.Package.PkgPath {
-		var call Node
-
-		// Method call.
-		if r := callee.Type().(*types.Signature).Recv(); r != nil {
-			typ := r.Type()
-
-			mutable := false
-			switch t := typ.(type) {
-			case *types.Pointer:
-				typ = t.Elem()
-				mutable = true
-			}
-
-			if _, ok := typ.(*types.Named); !ok {
-				panic(&Unsupported{Fset: t.Fset, Node: n, Msg: "method calls with not pointer type with named type"})
-			}
-			var receiverArg Node
-
-			// When receiver is a pointer then dictionary can be passed as is.
-			// When receiver is not a pointer then dictionary is a deep copied.
-			receiverArg = &BuiltInCall{FuncName: "deepCopy", Arguments: []Node{t.transpileExpr(n.Fun.(*ast.SelectorExpr).X)}}
-			if mutable {
-				receiverArg = t.transpileExpr(n.Fun.(*ast.SelectorExpr).X)
-			}
-
-			call = &Call{
-				FuncName: fmt.Sprintf("%s.%s", t.namespaceFor(callee.Pkg()), t.funcNameFor(callee.(*types.Func))),
-				// Method calls come in as a "top level" CallExpr where .Fun is the
-				// selector up to that call. e.g. `Foo.Bar.Baz()` will be a `CallExpr`.
-				// It's `.Fun` is a `SelectorExpr` where `.X` is `Foo.Bar`, the receiver,
-				// and `.Sel` is `Baz`, the method name.
-				Arguments: append([]Node{receiverArg}, args...),
-			}
-		} else {
-			call = &Call{FuncName: fmt.Sprintf("%s.%s", t.namespaceFor(callee.Pkg()), t.funcNameFor(callee.(*types.Func))), Arguments: args}
-		}
-
-		// If there's only a single return value, we'll possibly want to wrap
-		// the value in a cast for safety. If there are multiple return values,
-		// any casting will be handled by the transpilation of selector
-		// expressions.
-		if signature.Results().Len() == 1 {
-			return t.maybeCast(call, signature.Results().At(0).Type())
-		}
-		return call
-	}
-
-	// Finally, we fall to calls to any other functions. We'll handle any
-	// special cases that require a bit of extra fiddling to make work falling
-	// back to a not supported message.
+	// Big ol' switch to handle various special cases.
 
 	switch id {
 	case "sort.Strings":
@@ -1147,10 +1102,67 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 		// functionally equivalent. It has the added benefit of normalizing the
 		// string form of the Quantity.
 		return &Call{FuncName: "_shims.resource_MustParse", Arguments: []Node{reciever}}
+	}
 
-	default:
+	// All special cases have been handled. We've got a call into an external package.
+	// If it's not in our dependencies list, the call can't be handled by gotohelm.
+	// If it is, that means we're calling to either a method in the same
+	// package OR a method in a subchart. Either is fine, we'll just transpile
+	// the call.
+
+	if _, ok := t.dependencies[callee.Pkg().Path()]; !ok {
 		panic(fmt.Sprintf("unsupported function %q", id))
 	}
+
+	// Make a comment here about things.
+	var call Node
+
+	// Method call.
+	if r := callee.Type().(*types.Signature).Recv(); r == nil {
+		// Easy case: if there's no receiver, this is just a function call.
+		call = &Call{FuncName: fmt.Sprintf("%s.%s", t.namespaceFor(callee.Pkg()), t.funcNameFor(callee.(*types.Func))), Arguments: args}
+	} else {
+		// Otherwise, if there is a receiver, we need to emulate a method call.
+		typ := r.Type()
+
+		mutable := false
+		switch t := typ.(type) {
+		case *types.Pointer:
+			typ = t.Elem()
+			mutable = true
+		}
+
+		if _, ok := typ.(*types.Named); !ok {
+			panic(&Unsupported{Fset: t.Fset, Node: n, Msg: "method calls with not pointer type with named type"})
+		}
+		var receiverArg Node
+
+		// When receiver is a pointer then dictionary can be passed as is.
+		// When receiver is not a pointer then dictionary is deep copied to emulate immutability.
+		receiverArg = &BuiltInCall{FuncName: "deepCopy", Arguments: []Node{t.transpileExpr(n.Fun.(*ast.SelectorExpr).X)}}
+		if mutable {
+			receiverArg = t.transpileExpr(n.Fun.(*ast.SelectorExpr).X)
+		}
+
+		call = &Call{
+			FuncName: fmt.Sprintf("%s.%s", t.namespaceFor(callee.Pkg()), t.funcNameFor(callee.(*types.Func))),
+			// Method calls come in as a "top level" CallExpr where .Fun is the
+			// selector up to that call. e.g. `Foo.Bar.Baz()` will be a `CallExpr`.
+			// It's `.Fun` is a `SelectorExpr` where `.X` is `Foo.Bar`, the receiver,
+			// and `.Sel` is `Baz`, the method name.
+			Arguments: append([]Node{receiverArg}, args...),
+		}
+	}
+
+	// If there's only a single return value, we'll possibly want to wrap
+	// the value in a cast for safety. If there are multiple return values,
+	// any casting will be handled by the transpilation of selector
+	// expressions.
+	if signature.Results().Len() == 1 {
+		return t.maybeCast(call, signature.Results().At(0).Type())
+	}
+
+	return call
 }
 
 func (t *Transpiler) transpileTypeRepr(typ types.Type) Node {

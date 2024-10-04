@@ -87,6 +87,10 @@ type Console struct {
 	Console struct {
 		Config map[string]any `json:"config"`
 	} `json:"console"`
+
+	Secret struct {
+		Create bool `json:"create"`
+	} `json:"secret"`
 }
 
 type Connectors struct {

@@ -19,13 +19,22 @@ func main() {
 
 	pkgs, err := gotohelm.LoadPackages(&packages.Config{
 		Dir: cwd,
-	}, flag.Args()...)
+	}, flag.Args()[0])
+	if err != nil {
+		panic(err)
+	}
+
+	// falling back to golist might be better here?
+	// Might make the mapping consistent?
+	deps, err := gotohelm.LoadPackages(&packages.Config{
+		Dir: cwd,
+	}, flag.Args()[1:]...)
 	if err != nil {
 		panic(err)
 	}
 
 	for _, pkg := range pkgs {
-		chart, err := gotohelm.Transpile(pkg)
+		chart, err := gotohelm.Transpile(pkg, deps...)
 		if err != nil {
 			fmt.Printf("Failed to transpile %q: %s\n", pkg.Name, err)
 			continue
