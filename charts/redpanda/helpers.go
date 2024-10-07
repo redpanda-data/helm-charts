@@ -37,7 +37,7 @@ const (
 )
 
 // Create chart name and version as used by the chart label.
-func Chart(dot *helmette.Dot) string {
+func ChartLabel(dot *helmette.Dot) string {
 	return cleanForK8s(strings.ReplaceAll(fmt.Sprintf("%s-%s", dot.Chart.Name, dot.Chart.Version), "+", "_"))
 }
 
@@ -68,7 +68,7 @@ func FullLabels(dot *helmette.Dot) map[string]string {
 	}
 
 	defaults := map[string]string{
-		"helm.sh/chart":                Chart(dot),
+		"helm.sh/chart":                ChartLabel(dot),
 		"app.kubernetes.io/name":       Name(dot),
 		"app.kubernetes.io/instance":   dot.Release.Name,
 		"app.kubernetes.io/managed-by": dot.Release.Service,
