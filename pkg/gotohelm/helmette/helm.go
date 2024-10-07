@@ -6,6 +6,7 @@ import (
 	"text/template"
 
 	"github.com/redpanda-data/helm-charts/pkg/kube"
+	"helm.sh/helm/v3/pkg/chartutil"
 	"k8s.io/apimachinery/pkg/api/errors"
 )
 
@@ -41,14 +42,7 @@ type Chart struct {
 	AppVersion string
 }
 
-type Values map[string]any
-
-func (v Values) AsMap() map[string]any {
-	if v == nil {
-		return map[string]any{}
-	}
-	return v
-}
+type Values = chartutil.Values
 
 // https://helm.sh/docs/howto/charts_tips_and_tricks/#using-the-tpl-function
 // +gotohelm:builtin=tpl

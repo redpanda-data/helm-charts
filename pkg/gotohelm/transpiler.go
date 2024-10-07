@@ -1039,7 +1039,8 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.Merge":
 		dict := DictLiteral{}
 		return &BuiltInCall{FuncName: "merge", Arguments: append([]Node{&dict}, args...)}
-	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.(Values).AsMap":
+	// Add note about this change.
+	case "helm.sh/helm/v3/pkg/chartutil.(Values).AsMap":
 		return &Selector{Expr: reciever, Field: "AsMap"}
 	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.MergeTo":
 		dict := DictLiteral{}
