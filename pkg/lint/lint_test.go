@@ -1,10 +1,10 @@
 package lint
 
 import (
+	"bytes"
 	"fmt"
 	"io/fs"
 	"os"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -13,6 +13,12 @@ import (
 )
 
 const tagURL = "https://github.com/redpanda-data/helm-charts/releases/tag/"
+
+type ChartYAML struct {
+	Version     string            `json:"version"`
+	AppVersion  string            `json:"appVersion"`
+	Annotations map[string]string `json:"annotations"`
+}
 
 func TestChartYAMLVersions(t *testing.T) {
 	chartYAMLs, err := fs.Glob(os.DirFS("../.."), "charts/*/Chart.yaml")
@@ -37,10 +43,36 @@ func TestChartYAMLVersions(t *testing.T) {
 		// require.True for friendlier messages.
 		assert.Truef(
 			t,
-			strings.Contains(string(changelog), releaseHeader),
-			"CHANGELOG.md is missing the release header for %s\nDid you forget to add it?\n%s",
+			bytes.Contains(changelog, []byte(releaseHeader)),
+			"CHANGELOG.md is missing the release header for %s %s\nDid you forget to add it?\n%s",
 			chartName,
+			chartVersion,
 			releaseHeader,
 		)
 	}
+}
+
+func TestOperatorArtifactHubImages(t *testing.T) {
+	const operatorRepo = "docker.redpanda.com/redpandadata/redpanda-operator"
+	const configuratorRepo = "docker.redpanda.com/redpandadata/configurator"
+
+	chartBytes, err := os.ReadFile("../../charts/operator/Chart.yaml")
+	require.NoError(t, err)
+
+	var chart ChartYAML
+	require.NoError(t, yaml.Unmarshal(chartBytes, &chart))
+
+	assert.Contains(
+		t,
+		chart.Annotations["artifacthub.io/images"],
+		fmt.Sprintf("%s:%s", operatorRepo, chart.AppVersion),
+		"artifacthub.io/images should be in sync with .appVersion",
+	)
+
+	assert.Contains(
+		t,
+		chart.Annotations["artifacthub.io/images"],
+		fmt.Sprintf("%s:%s", configuratorRepo, chart.AppVersion),
+		"artifacthub.io/images should be in sync with .appVersion",
+	)
 }

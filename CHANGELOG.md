@@ -181,6 +181,13 @@
 #### Fixed
 #### Removed
 
+### [0.4.31](https://github.com/redpanda-data/helm-charts/releases/tag/operator-0.4.31) - 2024-10-7
+#### Added
+#### Changed
+* Bump operator version [v2.2.4-24.2.5](https://github.com/redpanda-data/redpanda-operator/releases/tag/v2.2.5-24.2.5)
+#### Fixed
+#### Removed
+
 ### [0.4.30](https://github.com/redpanda-data/helm-charts/releases/tag/operator-0.4.30) - 2024-09-17
 #### Added
 * Add RBAC rules for the operator chart so it can manage users
