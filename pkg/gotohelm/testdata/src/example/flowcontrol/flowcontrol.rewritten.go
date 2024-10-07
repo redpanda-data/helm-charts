@@ -18,7 +18,7 @@ func FlowControl(dot *helmette.Dot) map[string]any {
 func earlyReturn(dot *helmette.Dot) string {
 	tmp_tuple_1 :=
 		// This is trickily written on purpose.
-		helmette.Compact2(helmette.DictTest[string, any](dot.Values, "boolean"))
+		helmette.Compact2(helmette.DictTest[string, interface{}](dot.Values, "boolean"))
 	ok_2 := tmp_tuple_1.T2
 	b_1 := tmp_tuple_1.T1
 	if ok_2 && b_1.(bool) {
@@ -48,7 +48,7 @@ func ifElse(dot *helmette.Dot) string {
 }
 
 func sliceRanges(dot *helmette.Dot) []any {
-	tmp_tuple_3 := helmette.Compact2(helmette.DictTest[string, any](dot.Values, "ints"))
+	tmp_tuple_3 := helmette.Compact2(helmette.DictTest[string, interface{}](dot.Values, "ints"))
 	ok := tmp_tuple_3.T2
 	intsAny := tmp_tuple_3.T1
 	if !ok {
