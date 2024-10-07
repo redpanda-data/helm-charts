@@ -684,26 +684,25 @@ func TestLabels(t *testing.T) {
 	} {
 		values := &redpanda.PartialValues{
 			CommonLabels: labels,
+			// This guarantee does not currently extend to console.
+			Console: &redpanda.PartialConsole{Enabled: ptr.To(false)},
+			// Nor connectors.
+			Connectors: &redpanda.PartialConnectors{Enabled: ptr.To(false)},
 		}
 
-		helmValues, err := valuesutil.UnmarshalInto[helmette.Values](values)
+		helmValues, err := redpanda.Chart.LoadValues(values)
 		require.NoError(t, err)
 
-		dot := &helmette.Dot{
-			Values: helmValues,
-			Chart:  redpanda.ChartMeta(),
-			Release: helmette.Release{
-				Name:      "redpanda",
-				Namespace: "redpanda",
-				Service:   "Helm",
-			},
-		}
+		dot, err := redpanda.Chart.Dot(kube.Config{}, helmette.Release{
+			Name:      "redpanda",
+			Namespace: "redpanda",
+			Service:   "Helm",
+		}, helmValues)
+		require.NoError(t, err)
 
 		manifests, err := client.Template(ctx, ".", helm.TemplateOptions{
 			Name:      dot.Release.Name,
 			Namespace: dot.Release.Namespace,
-			// This guarantee does not currently extend to console.
-			Set: []string{"console.enabled=false"},
 			// Nor does it extend to tests.
 			SkipTests: true,
 			Values:    values,
@@ -752,11 +751,11 @@ func TestGoHelmEquivalence(t *testing.T) {
 	values.Console = &redpanda.PartialConsole{Enabled: ptr.To(false)}
 	values.Connectors = &redpanda.PartialConnectors{Enabled: ptr.To(false)}
 
-	goObjs, err := redpanda.Template(helmette.Release{
+	goObjs, err := redpanda.Chart.Render(kube.Config{}, helmette.Release{
 		Name:      "gotohelm",
 		Namespace: "mynamespace",
 		Service:   "Helm",
-	}, values, kube.Config{})
+	}, values)
 	require.NoError(t, err)
 
 	rendered, err := client.Template(context.Background(), ".", helm.TemplateOptions{
@@ -784,7 +783,7 @@ func TestGoHelmEquivalence(t *testing.T) {
 	const stsIdx = 7
 
 	// resource.Quantity is a special object. To Ensure they compare correctly,
-	// we'll round trip it through JSON so the internal representions will
+	// we'll round trip it through JSON so the internal representations will
 	// match (assuming the values are actually equal).
 	goObjs[stsIdx].(*appsv1.StatefulSet).Spec.Template.Spec.Containers[0].Resources, err = valuesutil.UnmarshalInto[corev1.ResourceRequirements](goObjs[stsIdx].(*appsv1.StatefulSet).Spec.Template.Spec.Containers[0].Resources)
 	require.NoError(t, err)

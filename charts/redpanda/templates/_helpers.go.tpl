@@ -1,6 +1,6 @@
 {{- /* Generated from "helpers.go" */ -}}
 
-{{- define "redpanda.Chart" -}}
+{{- define "redpanda.ChartLabel" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
@@ -55,7 +55,7 @@
 {{- if (ne $values.commonLabels (coalesce nil)) -}}
 {{- $labels = $values.commonLabels -}}
 {{- end -}}
-{{- $defaults := (dict "helm.sh/chart" (get (fromJson (include "redpanda.Chart" (dict "a" (list $dot) ))) "r") "app.kubernetes.io/name" (get (fromJson (include "redpanda.Name" (dict "a" (list $dot) ))) "r") "app.kubernetes.io/instance" $dot.Release.Name "app.kubernetes.io/managed-by" $dot.Release.Service "app.kubernetes.io/component" (get (fromJson (include "redpanda.Name" (dict "a" (list $dot) ))) "r") ) -}}
+{{- $defaults := (dict "helm.sh/chart" (get (fromJson (include "redpanda.ChartLabel" (dict "a" (list $dot) ))) "r") "app.kubernetes.io/name" (get (fromJson (include "redpanda.Name" (dict "a" (list $dot) ))) "r") "app.kubernetes.io/instance" $dot.Release.Name "app.kubernetes.io/managed-by" $dot.Release.Service "app.kubernetes.io/component" (get (fromJson (include "redpanda.Name" (dict "a" (list $dot) ))) "r") ) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" (merge (dict ) $labels $defaults)) | toJson -}}
 {{- break -}}
