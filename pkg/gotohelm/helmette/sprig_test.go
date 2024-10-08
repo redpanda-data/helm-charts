@@ -13,6 +13,12 @@ import (
 	"k8s.io/apimachinery/pkg/api/resource"
 )
 
+func TestEmpty(t *testing.T) {
+	var ptrString *string
+	require.True(t, helmette.Empty(""))
+	require.True(t, helmette.Empty(ptrString))
+}
+
 func TestDig(t *testing.T) {
 	values := map[string]any{
 		"k1": "v1",

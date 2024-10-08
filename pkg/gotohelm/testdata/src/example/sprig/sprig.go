@@ -240,6 +240,7 @@ func default_() []any {
 func empty() []bool {
 	return []bool{
 		helmette.Empty(nil),
+		helmette.Empty(""),
 		helmette.Empty([]string{}),
 		helmette.Empty([]string{""}),
 		helmette.Empty(map[string]any{}),
