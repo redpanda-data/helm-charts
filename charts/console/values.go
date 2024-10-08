@@ -56,6 +56,7 @@ type Values struct {
 	Deployment                   DeploymentConfig                  `json:"deployment"`
 	Strategy                     appsv1.DeploymentStrategy         `json:"strategy"`
 	Tests                        Enableable                        `json:"tests"`
+	Enabled                      *bool                             `json:"enabled,omitempty"`
 }
 
 type DeploymentConfig struct {

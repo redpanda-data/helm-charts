@@ -266,8 +266,12 @@
 
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/console-FILLMEIN) - YYYY-MM-DD
 #### Added
+* Add Enabled flag that is used in Redpanda chart
+* Add test example for oidc configuration [#1503](https://github.com/redpanda-data/helm-charts/pull/1503)
 #### Changed
+* Align Console init container default value 
 #### Fixed
+* License json tag to correctly set Console license [#1510](https://github.com/redpanda-data/helm-charts/pull/1510)
 #### Removed
 
 ### [0.7.29](https://github.com/redpanda-data/helm-charts/releases/tag/console-0.7.29) - 2024-08-19
