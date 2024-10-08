@@ -20,7 +20,7 @@
 {{- continue -}}
 {{- end -}}
 {{- $names := (coalesce nil) -}}
-{{- if (or (eq $data.issuerRef (coalesce nil)) (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $data.applyInternalDNSNames false) ))) "r")) -}}
+{{- if (or (eq (toJson $data.issuerRef) "null") (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $data.applyInternalDNSNames false) ))) "r")) -}}
 {{- $names = (concat (default (list ) $names) (list (printf "%s-cluster.%s.%s.svc.%s" $fullname $service $ns $domain))) -}}
 {{- $names = (concat (default (list ) $names) (list (printf "%s-cluster.%s.%s.svc" $fullname $service $ns))) -}}
 {{- $names = (concat (default (list ) $names) (list (printf "%s-cluster.%s.%s" $fullname $service $ns))) -}}
@@ -34,7 +34,7 @@
 {{- $names = (concat (default (list ) $names) (list (printf "*.%s.%s.svc" $service $ns))) -}}
 {{- $names = (concat (default (list ) $names) (list (printf "*.%s.%s" $service $ns))) -}}
 {{- end -}}
-{{- if (ne $values.external.domain (coalesce nil)) -}}
+{{- if (ne (toJson $values.external.domain) "null") -}}
 {{- $names = (concat (default (list ) $names) (list (tpl $values.external.domain $dot))) -}}
 {{- $names = (concat (default (list ) $names) (list (tpl (printf "*.%s" $values.external.domain) $dot))) -}}
 {{- end -}}
@@ -58,7 +58,7 @@
 {{- break -}}
 {{- end -}}
 {{- $issuerRef := (mustMergeOverwrite (dict "name" "" ) (dict "group" "cert-manager.io" "kind" "Issuer" "name" (printf "%s-%s-root-issuer" $fullname $name) )) -}}
-{{- if (ne $data.issuerRef (coalesce nil)) -}}
+{{- if (ne (toJson $data.issuerRef) "null") -}}
 {{- $issuerRef = $data.issuerRef -}}
 {{- $_ := (set $issuerRef "group" "cert-manager.io") -}}
 {{- end -}}

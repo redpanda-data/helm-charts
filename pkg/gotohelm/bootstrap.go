@@ -41,7 +41,7 @@ const renderManifest = `{{- define "_shims.render-manifest" -}}
 {{- $manifests = (list $manifests) -}}
 {{- end -}}
 {{- range $_, $manifest := $manifests -}}
-{{- if ne $manifest nil }}
+{{- if ne (toJson $manifest) "null" }}
 ---
 {{toYaml (unset (unset $manifest "status") "creationTimestamp")}}
 {{- end -}}

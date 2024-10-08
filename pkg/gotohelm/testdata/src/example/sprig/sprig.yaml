@@ -95,7 +95,7 @@
 {{- $err := $tmp_tuple_3.T2 -}}
 {{- $invalidInput := ($tmp_tuple_3.T1 | float64) -}}
 {{- $errorHappen := 0.3 -}}
-{{- if (ne $err (coalesce nil)) -}}
+{{- if (ne (toJson $err) "null") -}}
 {{- end -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" (list $f $integer $invalidInput $errorHappen)) | toJson -}}
@@ -123,7 +123,7 @@
 {{- $err := $tmp_tuple_6.T2 -}}
 {{- $invalidInput := ($tmp_tuple_6.T1 | int) -}}
 {{- $errorHappen := (0 | int) -}}
-{{- if (ne $err (coalesce nil)) -}}
+{{- if (ne (toJson $err) "null") -}}
 {{- end -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" (list $positive $negative $errorHappen $invalidInput)) | toJson -}}

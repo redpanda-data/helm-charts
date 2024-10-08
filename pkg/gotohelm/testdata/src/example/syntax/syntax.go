@@ -174,7 +174,7 @@ func workingWithString() map[string]any {
 
 // binaryExprs are a bit tricky because we need to care about the types beyond
 // the syntax. It get's its own function because it's so expansive.
-func binaryExprs() []bool {
+func binaryExprs() []any {
 	// untyped ints
 	_ = 1 * 1
 	_ = 1 + 1
@@ -210,19 +210,23 @@ func binaryExprs() []bool {
 	// Maps
 	_ = map[string]any{} == nil
 	_ = map[string]any{} != nil
-	// TODO strings
 	// TODO floats
 
-	result := []bool{
+	s1 := "one "
+	s2 := "two"
+
+	return []any{
 		1 > 2,
 		1 < 2,
 		1 >= 2,
 		1 <= 2,
 		2 >= 2,
 		2 <= 2,
+		"string " + "concatenation",
+		s1 + s2,
+		"one" + s2,
+		s1 + "two",
 	}
-
-	return result
 }
 
 type Complex struct {

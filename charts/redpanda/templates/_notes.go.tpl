@@ -50,7 +50,7 @@
 {{- $profile := (index $values.listeners.kafka.external $profileName) -}}
 {{- if (get (fromJson (include "redpanda.TLSEnabled" (dict "a" (list $dot) ))) "r") -}}
 {{- $external := "" -}}
-{{- if (and (ne $profile.tls (coalesce nil)) (ne $profile.tls.cert (coalesce nil))) -}}
+{{- if (and (ne (toJson $profile.tls) "null") (ne (toJson $profile.tls.cert) "null")) -}}
 {{- $external = $profile.tls.cert -}}
 {{- else -}}
 {{- $external = $values.listeners.kafka.tls.cert -}}
@@ -90,7 +90,7 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
-{{- if (ne $values.auth.sasl (coalesce nil)) -}}
+{{- if (ne (toJson $values.auth.sasl) "null") -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $values.auth.sasl.mechanism) | toJson -}}
 {{- break -}}

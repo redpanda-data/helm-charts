@@ -6,10 +6,10 @@
 {{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $port := (mustMergeOverwrite (dict "port" 0 "targetPort" 0 ) (dict "name" "http" "port" (($values.service.port | int) | int) "protocol" "TCP" )) -}}
-{{- if (ne $values.service.targetPort (coalesce nil)) -}}
+{{- if (ne (toJson $values.service.targetPort) "null") -}}
 {{- $_ := (set $port "targetPort" $values.service.targetPort) -}}
 {{- end -}}
-{{- if (and (contains "NodePort" (toString $values.service.type)) (ne $values.service.nodePort (coalesce nil))) -}}
+{{- if (and (contains "NodePort" (toString $values.service.type)) (ne (toJson $values.service.nodePort) "null")) -}}
 {{- $_ := (set $port "nodePort" $values.service.nodePort) -}}
 {{- end -}}
 {{- $_is_returning = true -}}

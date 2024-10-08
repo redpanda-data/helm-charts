@@ -76,7 +76,7 @@
 {{- if $_is_returning -}}
 {{- break -}}
 {{- end -}}
-{{- if (ne $values.Quantity (coalesce nil)) -}}
+{{- if (ne (toJson $values.Quantity) "null") -}}
 {{- $quantities = (concat (default (list ) $quantities) (list (get (fromJson (include "_shims.resource_MustParse" (dict "a" (list $values.Quantity) ))) "r"))) -}}
 {{- end -}}
 {{- $millis := (coalesce nil) -}}

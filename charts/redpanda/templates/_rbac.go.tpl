@@ -7,7 +7,7 @@
 {{- $values := $dot.Values.AsMap -}}
 {{- $crs := (coalesce nil) -}}
 {{- $cr_1 := (get (fromJson (include "redpanda.SidecarControllersClusterRole" (dict "a" (list $dot) ))) "r") -}}
-{{- if (ne $cr_1 (coalesce nil)) -}}
+{{- if (ne (toJson $cr_1) "null") -}}
 {{- $crs = (concat (default (list ) $crs) (list $cr_1)) -}}
 {{- end -}}
 {{- if (not $values.rbac.enabled) -}}
@@ -30,7 +30,7 @@
 {{- $values := $dot.Values.AsMap -}}
 {{- $crbs := (coalesce nil) -}}
 {{- $crb_2 := (get (fromJson (include "redpanda.SidecarControllersClusterRoleBinding" (dict "a" (list $dot) ))) "r") -}}
-{{- if (ne $crb_2 (coalesce nil)) -}}
+{{- if (ne (toJson $crb_2) "null") -}}
 {{- $crbs = (concat (default (list ) $crbs) (list $crb_2)) -}}
 {{- end -}}
 {{- if (not $values.rbac.enabled) -}}
