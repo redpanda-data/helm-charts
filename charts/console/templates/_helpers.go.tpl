@@ -34,7 +34,7 @@
 {{- end -}}
 {{- end -}}
 
-{{- define "console.Chart" -}}
+{{- define "console.ChartLabel" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
@@ -50,7 +50,7 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
-{{- $labels := (dict "helm.sh/chart" (get (fromJson (include "console.Chart" (dict "a" (list $dot) ))) "r") "app.kubernetes.io/managed-by" $dot.Release.Service ) -}}
+{{- $labels := (dict "helm.sh/chart" (get (fromJson (include "console.ChartLabel" (dict "a" (list $dot) ))) "r") "app.kubernetes.io/managed-by" $dot.Release.Service ) -}}
 {{- if (ne $dot.Chart.AppVersion "") -}}
 {{- $_ := (set $labels "app.kubernetes.io/version" $dot.Chart.AppVersion) -}}
 {{- end -}}

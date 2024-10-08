@@ -16,7 +16,7 @@
 {{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $vol := (list (mustMergeOverwrite (dict "name" "" ) (mustMergeOverwrite (dict ) (dict "secret" (mustMergeOverwrite (dict ) (dict "secretName" "secretReference" "defaultMode" (0o420 | int) )) )) (dict "name" "included" ))) -}}
-{{- if (ne $values.extraVolumes (coalesce nil)) -}}
+{{- if (ne (toJson $values.extraVolumes) "null") -}}
 {{- $vol = (concat (default (list ) $vol) (list $values.extraVolumes)) -}}
 {{- end -}}
 {{- $_is_returning = true -}}

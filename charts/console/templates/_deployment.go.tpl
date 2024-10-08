@@ -39,7 +39,7 @@
 {{- $replicas = ($values.replicaCount | int) -}}
 {{- end -}}
 {{- $initContainers := (coalesce nil) -}}
-{{- if (ne (toJson $values.initContainers.extraInitContainers) "null") -}}
+{{- if (not (empty $values.initContainers.extraInitContainers)) -}}
 {{- $initContainers = (fromYamlArray (tpl $values.initContainers.extraInitContainers $dot)) -}}
 {{- end -}}
 {{- $volumeMounts := (list (mustMergeOverwrite (dict "name" "" "mountPath" "" ) (dict "name" "configs" "mountPath" "/etc/console/configs" "readOnly" true ))) -}}

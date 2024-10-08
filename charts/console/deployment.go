@@ -59,7 +59,7 @@ func Deployment(dot *helmette.Dot) *appsv1.Deployment {
 	}
 
 	var initContainers []corev1.Container
-	if values.InitContainers.ExtraInitContainers != nil {
+	if !helmette.Empty(values.InitContainers.ExtraInitContainers) {
 		initContainers = helmette.UnmarshalYamlArray[corev1.Container](helmette.Tpl(*values.InitContainers.ExtraInitContainers, dot))
 	}
 
