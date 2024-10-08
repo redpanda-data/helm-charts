@@ -6,7 +6,7 @@
 {{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $rpMem_1 := $values.resources.memory.redpanda -}}
-{{- if (and (ne $rpMem_1 (coalesce nil)) (ne $rpMem_1.reserveMemory (coalesce nil))) -}}
+{{- if (and (ne (toJson $rpMem_1) "null") (ne (toJson $rpMem_1.reserveMemory) "null")) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" ((div ((get (fromJson (include "_shims.resource_Value" (dict "a" (list $rpMem_1.reserveMemory) ))) "r") | int64) ((mul (1024 | int) (1024 | int)))) | int64)) | toJson -}}
 {{- break -}}
@@ -25,7 +25,7 @@
 {{- $memory := ((0 | int64) | int64) -}}
 {{- $containerMemory := ((get (fromJson (include "redpanda.ContainerMemory" (dict "a" (list $dot) ))) "r") | int64) -}}
 {{- $rpMem_2 := $values.resources.memory.redpanda -}}
-{{- if (and (ne $rpMem_2 (coalesce nil)) (ne $rpMem_2.memory (coalesce nil))) -}}
+{{- if (and (ne (toJson $rpMem_2) "null") (ne (toJson $rpMem_2.memory) "null")) -}}
 {{- $memory = ((div ((get (fromJson (include "_shims.resource_Value" (dict "a" (list $rpMem_2.memory) ))) "r") | int64) ((mul (1024 | int) (1024 | int)))) | int64) -}}
 {{- else -}}
 {{- $memory = (((mulf ($containerMemory | float64) 0.8) | float64) | int64) -}}
@@ -50,7 +50,7 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
-{{- if (ne $values.resources.memory.container.min (coalesce nil)) -}}
+{{- if (ne (toJson $values.resources.memory.container.min) "null") -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" ((div ((get (fromJson (include "_shims.resource_Value" (dict "a" (list $values.resources.memory.container.min) ))) "r") | int64) ((mul (1024 | int) (1024 | int)))) | int64)) | toJson -}}
 {{- break -}}

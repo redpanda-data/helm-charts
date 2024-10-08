@@ -33,7 +33,7 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
-{{- if (ne $values.livenessProbe (coalesce nil)) -}}
+{{- if (ne (toJson $values.livenessProbe) "null") -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" (mustMergeOverwrite (dict ) (mustMergeOverwrite (dict ) (dict "httpGet" (mustMergeOverwrite (dict "port" 0 ) (dict "path" "/healthz/" "port" (8081 | int) )) )) (dict "initialDelaySeconds" (default (15 | int) ($values.livenessProbe.initialDelaySeconds | int)) "periodSeconds" (default (20 | int) ($values.livenessProbe.periodSeconds | int)) "timeoutSeconds" ($values.livenessProbe.timeoutSeconds | int) "successThreshold" ($values.livenessProbe.successThreshold | int) "failureThreshold" ($values.livenessProbe.failureThreshold | int) "terminationGracePeriodSeconds" (default $podTerminationGracePeriodSeconds $values.livenessProbe.terminationGracePeriodSeconds) ))) | toJson -}}
 {{- break -}}
@@ -50,7 +50,7 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
-{{- if (ne $values.livenessProbe (coalesce nil)) -}}
+{{- if (ne (toJson $values.livenessProbe) "null") -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" (mustMergeOverwrite (dict ) (mustMergeOverwrite (dict ) (dict "httpGet" (mustMergeOverwrite (dict "port" 0 ) (dict "path" "/readyz" "port" (8081 | int) )) )) (dict "initialDelaySeconds" (default (5 | int) ($values.readinessProbe.initialDelaySeconds | int)) "periodSeconds" (default (10 | int) ($values.readinessProbe.periodSeconds | int)) "timeoutSeconds" ($values.readinessProbe.timeoutSeconds | int) "successThreshold" ($values.readinessProbe.successThreshold | int) "failureThreshold" ($values.readinessProbe.failureThreshold | int) "terminationGracePeriodSeconds" (default $podTerminationGracePeriodSeconds $values.readinessProbe.terminationGracePeriodSeconds) ))) | toJson -}}
 {{- break -}}

@@ -74,7 +74,7 @@
 {{- $secretReference_2 := (get (fromJson (include "redpanda.GetLicenseSecretReference" (dict "a" (list $dot) ))) "r") -}}
 {{- if (ne $license_1 "") -}}
 {{- $envars = (concat (default (list ) $envars) (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "REDPANDA_LICENSE" "value" $license_1 )))) -}}
-{{- else -}}{{- if (ne $secretReference_2 (coalesce nil)) -}}
+{{- else -}}{{- if (ne (toJson $secretReference_2) "null") -}}
 {{- $envars = (concat (default (list ) $envars) (list (mustMergeOverwrite (dict "name" "" ) (dict "name" "REDPANDA_LICENSE" "valueFrom" (mustMergeOverwrite (dict ) (dict "secretKeyRef" $secretReference_2 )) )))) -}}
 {{- end -}}
 {{- end -}}

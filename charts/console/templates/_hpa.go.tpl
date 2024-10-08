@@ -11,10 +11,10 @@
 {{- break -}}
 {{- end -}}
 {{- $metrics := (list ) -}}
-{{- if (ne $values.autoscaling.targetCPUUtilizationPercentage (coalesce nil)) -}}
+{{- if (ne (toJson $values.autoscaling.targetCPUUtilizationPercentage) "null") -}}
 {{- $metrics = (concat (default (list ) $metrics) (list (mustMergeOverwrite (dict "type" "" ) (dict "type" "Resource" "resource" (mustMergeOverwrite (dict "name" "" "target" (dict "type" "" ) ) (dict "name" "cpu" "target" (mustMergeOverwrite (dict "type" "" ) (dict "type" "Utilization" "averageUtilization" $values.autoscaling.targetCPUUtilizationPercentage )) )) )))) -}}
 {{- end -}}
-{{- if (ne $values.autoscaling.targetMemoryUtilizationPercentage (coalesce nil)) -}}
+{{- if (ne (toJson $values.autoscaling.targetMemoryUtilizationPercentage) "null") -}}
 {{- $metrics = (concat (default (list ) $metrics) (list (mustMergeOverwrite (dict "type" "" ) (dict "type" "Resource" "resource" (mustMergeOverwrite (dict "name" "" "target" (dict "type" "" ) ) (dict "name" "memory" "target" (mustMergeOverwrite (dict "type" "" ) (dict "type" "Utilization" "averageUtilization" $values.autoscaling.targetMemoryUtilizationPercentage )) )) )))) -}}
 {{- end -}}
 {{- $_is_returning = true -}}

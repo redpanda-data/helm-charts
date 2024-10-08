@@ -6,7 +6,7 @@
 {{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $listenPort := ((8080 | int) | int) -}}
-{{- if (ne $values.service.targetPort (coalesce nil)) -}}
+{{- if (ne (toJson $values.service.targetPort) "null") -}}
 {{- $listenPort = $values.service.targetPort -}}
 {{- end -}}
 {{- $configListenPort := (dig "server" "listenPort" (coalesce nil) $values.console.config) -}}
@@ -39,7 +39,7 @@
 {{- $replicas = ($values.replicaCount | int) -}}
 {{- end -}}
 {{- $initContainers := (coalesce nil) -}}
-{{- if (ne $values.initContainers.extraInitContainers (coalesce nil)) -}}
+{{- if (ne (toJson $values.initContainers.extraInitContainers) "null") -}}
 {{- $initContainers = (fromYamlArray (tpl $values.initContainers.extraInitContainers $dot)) -}}
 {{- end -}}
 {{- $volumeMounts := (list (mustMergeOverwrite (dict "name" "" "mountPath" "" ) (dict "name" "configs" "mountPath" "/etc/console/configs" "readOnly" true ))) -}}

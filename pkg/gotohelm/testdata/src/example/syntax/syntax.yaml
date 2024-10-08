@@ -201,11 +201,12 @@
 {{- $_ = ((div ((1 | int64) | int64) ((1 | int64) | int64)) | int64) -}}
 {{- $_ = (eq ((1 | int64) | int64) ((1 | int64) | int64)) -}}
 {{- $_ = (ne ((1 | int64) | int64) ((1 | int64) | int64)) -}}
-{{- $_ = (eq (dict ) (coalesce nil)) -}}
-{{- $_ = (ne (dict ) (coalesce nil)) -}}
-{{- $result := (list (gt (1 | int) (2 | int)) (lt (1 | int) (2 | int)) (ge (1 | int) (2 | int)) (le (1 | int) (2 | int)) (ge (2 | int) (2 | int)) (le (2 | int) (2 | int))) -}}
+{{- $_ = (eq (toJson (dict )) "null") -}}
+{{- $_ = (ne (toJson (dict )) "null") -}}
+{{- $s1 := "one " -}}
+{{- $s2 := "two" -}}
 {{- $_is_returning = true -}}
-{{- (dict "r" $result) | toJson -}}
+{{- (dict "r" (list (gt (1 | int) (2 | int)) (lt (1 | int) (2 | int)) (ge (1 | int) (2 | int)) (le (1 | int) (2 | int)) (ge (2 | int) (2 | int)) (le (2 | int) (2 | int)) (printf "%s%s" "string " "concatenation") (printf "%s%s" $s1 $s2) (printf "%s%s" "one" $s2) (printf "%s%s" $s1 "two"))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

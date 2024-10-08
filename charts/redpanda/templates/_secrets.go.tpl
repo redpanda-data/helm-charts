@@ -7,20 +7,20 @@
 {{- $secrets := (coalesce nil) -}}
 {{- $secrets = (concat (default (list ) $secrets) (list (get (fromJson (include "redpanda.SecretSTSLifecycle" (dict "a" (list $dot) ))) "r"))) -}}
 {{- $saslUsers_1 := (get (fromJson (include "redpanda.SecretSASLUsers" (dict "a" (list $dot) ))) "r") -}}
-{{- if (ne $saslUsers_1 (coalesce nil)) -}}
+{{- if (ne (toJson $saslUsers_1) "null") -}}
 {{- $secrets = (concat (default (list ) $secrets) (list $saslUsers_1)) -}}
 {{- end -}}
 {{- $configWatcher_2 := (get (fromJson (include "redpanda.SecretConfigWatcher" (dict "a" (list $dot) ))) "r") -}}
-{{- if (ne $configWatcher_2 (coalesce nil)) -}}
+{{- if (ne (toJson $configWatcher_2) "null") -}}
 {{- $secrets = (concat (default (list ) $secrets) (list $configWatcher_2)) -}}
 {{- end -}}
 {{- $secrets = (concat (default (list ) $secrets) (list (get (fromJson (include "redpanda.SecretConfigurator" (dict "a" (list $dot) ))) "r"))) -}}
 {{- $fsValidator_3 := (get (fromJson (include "redpanda.SecretFSValidator" (dict "a" (list $dot) ))) "r") -}}
-{{- if (ne $fsValidator_3 (coalesce nil)) -}}
+{{- if (ne (toJson $fsValidator_3) "null") -}}
 {{- $secrets = (concat (default (list ) $secrets) (list $fsValidator_3)) -}}
 {{- end -}}
 {{- $bootstrapUser_4 := (get (fromJson (include "redpanda.SecretBootstrapUser" (dict "a" (list $dot) ))) "r") -}}
-{{- if (ne $bootstrapUser_4 (coalesce nil)) -}}
+{{- if (ne (toJson $bootstrapUser_4) "null") -}}
 {{- $secrets = (concat (default (list ) $secrets) (list $bootstrapUser_4)) -}}
 {{- end -}}
 {{- $_is_returning = true -}}
@@ -95,7 +95,7 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
-{{- if (or (not $values.auth.sasl.enabled) (ne $values.auth.sasl.bootstrapUser.secretKeyRef (coalesce nil))) -}}
+{{- if (or (not $values.auth.sasl.enabled) (ne (toJson $values.auth.sasl.bootstrapUser.secretKeyRef) "null")) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" (coalesce nil)) | toJson -}}
 {{- break -}}
@@ -113,7 +113,7 @@
 {{- end -}}
 {{- $password := (randAlphaNum (32 | int)) -}}
 {{- $userPassword := $values.auth.sasl.bootstrapUser.password -}}
-{{- if (ne $userPassword (coalesce nil)) -}}
+{{- if (ne (toJson $userPassword) "null") -}}
 {{- $password = $userPassword -}}
 {{- end -}}
 {{- $_is_returning = true -}}

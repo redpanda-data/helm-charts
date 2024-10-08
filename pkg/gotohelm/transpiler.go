@@ -673,12 +673,15 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 		})
 
 	case *ast.BinaryExpr:
-		untyped := [3]string{"_", n.Op.String(), "_"}
-		typed := [3]string{t.typeOf(n.X).String(), n.Op.String(), t.typeOf(n.Y).String()}
+		// Closure helpers to make the following logic a bit nicer.
+
+		builtin := func(name string, args ...Node) Node {
+			return &BuiltInCall{FuncName: name, Arguments: args}
+		}
 
 		f := func(op string) func(a, b Node) Node {
 			return func(a, b Node) Node {
-				return &BuiltInCall{FuncName: op, Arguments: []Node{a, b}}
+				return builtin(op, a, b)
 			}
 		}
 
@@ -686,6 +689,31 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 			return func(a, b Node) Node {
 				return &Cast{To: cast, X: &BuiltInCall{FuncName: op, Arguments: []Node{a, b}}}
 			}
+		}
+
+		// Nasty workaround to support versions of helm compiled with go < 1.19.
+		// text/template failed to handle $var ==/!= nil. To get this to work
+		// we marshal $var to json and compare to the string literal "null".
+		//
+		// See also:
+		// - https://github.com/redpanda-data/helm-charts/issues/1454
+		// - https://github.com/golang/go/commit/c58f1bb65f2187d79a5842bb19f4db4cafd22794#diff-eaf3618e0348f6d918eede2b03dd275ed9129dcdf10d7cf470137c1af7c755f4L474
+		// - TestTemplateHelm310 in charts/redpanda
+		go119eq := func(op string, side string) func(a, b Node) Node {
+			return func(a, b Node) Node {
+				switch side {
+				case "lhs":
+					return builtin(op, builtin("toJson", a), NewLiteral("null"))
+				case "rhs":
+					return builtin(op, builtin("toJson", b), NewLiteral("null"))
+				default:
+					panic("side should only be lhs or rhs")
+				}
+			}
+		}
+
+		strConcat := func(a, b Node) Node {
+			return builtin("printf", NewLiteral("%s%s"), a, b)
 		}
 
 		// Poor man's pattern matching :[
@@ -698,6 +726,17 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 			{"_", token.LSS.String(), "_"}:  f("lt"),
 			{"_", token.GEQ.String(), "_"}:  f("ge"),
 			{"_", token.LEQ.String(), "_"}:  f("le"),
+
+			{"_", token.EQL.String(), "untyped nil"}: go119eq("eq", "lhs"),
+			{"_", token.NEQ.String(), "untyped nil"}: go119eq("ne", "lhs"),
+			{"untyped nil", token.EQL.String(), "_"}: go119eq("eq", "rhs"),
+			{"untyped nil", token.NEQ.String(), "_"}: go119eq("ne", "rhs"),
+
+			// Support for string + string!
+			{"string", token.ADD.String(), "string"}:                 strConcat,
+			{"string", token.ADD.String(), "untyped string"}:         strConcat,
+			{"untyped string", token.ADD.String(), "string"}:         strConcat,
+			{"untyped string", token.ADD.String(), "untyped string"}: strConcat,
 
 			{"float32", token.ADD.String(), "float32"}: wrapWithCast("addf", "float64"),
 			{"float32", token.MUL.String(), "float32"}: wrapWithCast("mulf", "float64"),
@@ -739,35 +778,25 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 			{"untyped float", token.SUB.String(), "untyped float"}: f("subf"),
 		}
 
-		// Typed versions take precedence.
-		if funcName, ok := mapping[typed]; ok {
-			return funcName(t.transpileExpr(n.X), t.transpileExpr(n.Y))
+		// Iterate though "patterns" in order of priority.
+		patterns := [][3]string{
+			{t.typeOf(n.X).String(), n.Op.String(), t.typeOf(n.Y).String()},
+			{"_", n.Op.String(), t.typeOf(n.Y).String()},
+			{t.typeOf(n.X).String(), n.Op.String(), "_"},
+			{"_", n.Op.String(), "_"},
 		}
 
-		// Fallback to "wild cards" (_).
-		if funcName, ok := mapping[untyped]; ok {
-			return funcName(t.transpileExpr(n.X), t.transpileExpr(n.Y))
+		for _, pattern := range patterns {
+			if funcName, ok := mapping[pattern]; ok {
+				return funcName(t.transpileExpr(n.X), t.transpileExpr(n.Y))
+			}
 		}
 
 		panic(&Unsupported{
 			Node: n,
 			Fset: t.Fset,
-			Msg:  fmt.Sprintf(`No matching %T signature for %v or %v`, n, typed, untyped),
+			Msg:  fmt.Sprintf(`No matching %T signature for %v`, n, patterns),
 		})
-
-		// TODO re-add suport for rewriting str + str into printf "%s%s". For
-		// now its easier to just require writers to use printf
-		// No support for easy string concatenation in helm/sprig/templates soooo. Printf.
-		// if t.isString(n.Y) && t.isString(n.X) {
-		// 	return &BuiltInCall{
-		// 		FuncName: "printf",
-		// 		Arguments: []Node{
-		// 			&Literal{Value: `"%s%s"`},
-		// 			t.transpileExpr(n.X),
-		// 			t.transpileExpr(n.Y),
-		// 		},
-		// 	}
-		// }
 
 	case *ast.UnaryExpr:
 		switch n.Op {

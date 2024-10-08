@@ -3,7 +3,9 @@ package redpanda_test
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
+	"os/exec"
 	"regexp"
 	"strings"
 	"testing"
@@ -26,16 +28,47 @@ import (
 	"sigs.k8s.io/yaml"
 )
 
+func TestMain(m *testing.M) {
+	// Chart deps are kept within ./charts as a tgz archive, which is git
+	// ignored. Helm dep build will ensure that ./charts is in sync with
+	// Chart.lock, which is tracked by git.
+	// This is performed in TestMain as there may be many tests that run the
+	// redpanda helm chart.
+	out, err := exec.Command("helm", "repo", "add", "redpanda", "https://charts.redpanda.com").CombinedOutput()
+	if err != nil {
+		log.Fatalf("failed to run helm repo add: %s", out)
+	}
+
+	out, err = exec.Command("helm", "dep", "build", ".").CombinedOutput()
+	if err != nil {
+		log.Fatalf("failed to run helm dep build: %s", out)
+	}
+
+	os.Exit(m.Run())
+}
+
+// TestTemplateHelm310 is a smoke test that the redpanda helm chart (with
+// default values) can successfully be executed against helm 3.10.3 which
+// happens to ship with many installations of argocd and flux.
+//
+// Thus far issues have been with:
+// - text/template's `eq` implementation in go 1.18.x (used to compile helm 3.10.3)
+// - helm's `tpl` helper needing .Template.BasePath to be present
+//
+// Example Issues:
+// - https://github.com/redpanda-data/helm-charts/issues/1531
+// - https://github.com/redpanda-data/helm-charts/issues/1454
+// - https://redpandadata.slack.com/archives/C01H6JRQX1S/p1728322201042639 (Kinda)
+func TestTemplateHelm310(t *testing.T) {
+	cmd := exec.Command("helm-3.10.3", "template", ".", "--generate-name")
+	out, err := cmd.CombinedOutput()
+	require.NoErrorf(t, err, "helm-3.10.3 template failed:\n%s", out)
+}
+
 func TestTemplate(t *testing.T) {
 	ctx := testutil.Context(t)
 	client, err := helm.New(helm.Options{ConfigHome: testutil.TempDir(t)})
 	require.NoError(t, err)
-
-	// Chart deps are kept within ./charts as a tgz archive, which is git
-	// ignored. Helm dep build will ensure that ./charts is in sync with
-	// Chart.lock, which is tracked by git.
-	require.NoError(t, client.RepoAdd(ctx, "redpanda", "https://charts.redpanda.com"))
-	require.NoError(t, client.DependencyBuild(ctx, "."), "failed to refresh helm dependencies")
 
 	archive, err := txtar.ParseFile("testdata/template-cases.txtar")
 	require.NoError(t, err)

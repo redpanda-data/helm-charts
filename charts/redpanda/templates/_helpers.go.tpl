@@ -52,7 +52,7 @@
 {{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $labels := (dict ) -}}
-{{- if (ne $values.commonLabels (coalesce nil)) -}}
+{{- if (ne (toJson $values.commonLabels) "null") -}}
 {{- $labels = $values.commonLabels -}}
 {{- end -}}
 {{- $defaults := (dict "helm.sh/chart" (get (fromJson (include "redpanda.ChartLabel" (dict "a" (list $dot) ))) "r") "app.kubernetes.io/name" (get (fromJson (include "redpanda.Name" (dict "a" (list $dot) ))) "r") "app.kubernetes.io/instance" $dot.Release.Name "app.kubernetes.io/managed-by" $dot.Release.Service "app.kubernetes.io/component" (get (fromJson (include "redpanda.Name" (dict "a" (list $dot) ))) "r") ) -}}
@@ -113,7 +113,7 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
-{{- if (and (ne $values.service (coalesce nil)) (ne $values.service.name (coalesce nil))) -}}
+{{- if (and (ne (toJson $values.service) "null") (ne (toJson $values.service.name) "null")) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" (get (fromJson (include "redpanda.cleanForK8s" (dict "a" (list $values.service.name) ))) "r")) | toJson -}}
 {{- break -}}
@@ -284,7 +284,7 @@
 {{- $cert := (index $values.tls.certs $adminTLS.cert) -}}
 {{- if $adminTLS.requireClientAuth -}}
 {{- $secretName := (printf "%s-client" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r")) -}}
-{{- if (ne $cert.clientSecretRef (coalesce nil)) -}}
+{{- if (ne (toJson $cert.clientSecretRef) "null") -}}
 {{- $secretName = $cert.clientSecretRef.name -}}
 {{- end -}}
 {{- $volumes = (concat (default (list ) $volumes) (list (mustMergeOverwrite (dict "name" "" ) (mustMergeOverwrite (dict ) (dict "secret" (mustMergeOverwrite (dict ) (dict "secretName" $secretName "defaultMode" (0o440 | int) )) )) (dict "name" "mtls-client" )))) -}}
@@ -306,7 +306,7 @@
 {{- $cert := (index .a 2) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
-{{- if (ne $cert.secretRef (coalesce nil)) -}}
+{{- if (ne (toJson $cert.secretRef) "null") -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $cert.secretRef.name) | toJson -}}
 {{- break -}}
@@ -430,7 +430,7 @@
 {{- $tmp_tuple_3 := (get (fromJson (include "_shims.compact" (dict "a" (list (list (semverCompare $constraint $version) nil)) ))) "r") -}}
 {{- $err := $tmp_tuple_3.T2 -}}
 {{- $result := $tmp_tuple_3.T1 -}}
-{{- if (ne $err (coalesce nil)) -}}
+{{- if (ne (toJson $err) "null") -}}
 {{- $_ := (fail $err) -}}
 {{- end -}}
 {{- $_is_returning = true -}}
@@ -471,7 +471,7 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- range $_, $v := $values -}}
-{{- if (ne $v (coalesce nil)) -}}
+{{- if (ne (toJson $v) "null") -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $v) | toJson -}}
 {{- break -}}
@@ -491,13 +491,13 @@
 {{- $original := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
-{{- if (ne $overrides.labels (coalesce nil)) -}}
+{{- if (ne (toJson $overrides.labels) "null") -}}
 {{- $_ := (set $original.metadata "labels" (merge (dict ) $overrides.labels (default (dict ) $original.metadata.labels))) -}}
 {{- end -}}
-{{- if (ne $overrides.annotations (coalesce nil)) -}}
+{{- if (ne (toJson $overrides.annotations) "null") -}}
 {{- $_ := (set $original.metadata "annotations" (merge (dict ) $overrides.annotations (default (dict ) $original.metadata.annotations))) -}}
 {{- end -}}
-{{- if (ne $overrides.spec.securityContext (coalesce nil)) -}}
+{{- if (ne (toJson $overrides.spec.securityContext) "null") -}}
 {{- $_ := (set $original.spec "securityContext" (merge (dict ) $overrides.spec.securityContext (default (mustMergeOverwrite (dict ) (dict )) $original.spec.securityContext))) -}}
 {{- end -}}
 {{- $overrideContainers := (dict ) -}}
@@ -518,7 +518,7 @@
 {{- $container = (merge (dict ) $override_7 $container) -}}
 {{- $_ := (set $container "env" $env) -}}
 {{- end -}}
-{{- if (eq $container.env (coalesce nil)) -}}
+{{- if (eq (toJson $container.env) "null") -}}
 {{- $_ := (set $container "env" (list )) -}}
 {{- end -}}
 {{- $merged = (concat (default (list ) $merged) (list $container)) -}}

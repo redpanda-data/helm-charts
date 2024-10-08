@@ -23,6 +23,7 @@
                 chart-releaser = pkgs.callPackage ./.github/chart-releaser.nix { };
                 chart-testing = pkgs.callPackage ./.github/chart-testing.nix { };
                 docker-tag-list = pkgs.callPackage ./.github/docker-tag-list.nix { };
+                helm-3-10-3 = pkgs.callPackage ./.github/helm.nix { };
                 setup-envtest = pkgs.callPackage ./.github/setup-envtest.nix { };
               })
             ];
@@ -44,6 +45,7 @@
               pkgs.go-task
               pkgs.go-tools
               pkgs.gofumpt
+              pkgs.helm-3-10-3
               pkgs.helm-docs
               pkgs.jq # CLI JSON swiss army knife
               pkgs.kind

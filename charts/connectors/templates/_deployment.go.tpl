@@ -25,7 +25,7 @@
 {{- break -}}
 {{- end -}}
 {{- $podAntiAffinity := (coalesce nil) -}}
-{{- if (ne $values.deployment.podAntiAffinity (coalesce nil)) -}}
+{{- if (ne (toJson $values.deployment.podAntiAffinity) "null") -}}
 {{- if (eq $values.deployment.podAntiAffinity.type "hard") -}}
 {{- $podAntiAffinity = (mustMergeOverwrite (dict ) (dict "requiredDuringSchedulingIgnoredDuringExecution" (list (mustMergeOverwrite (dict "topologyKey" "" ) (dict "topologyKey" $values.deployment.podAntiAffinity.topologyKey "namespaces" (list $dot.Release.Namespace) "labelSelector" (mustMergeOverwrite (dict ) (dict "matchLabels" (get (fromJson (include "connectors.PodLabels" (dict "a" (list $dot) ))) "r") )) ))) )) -}}
 {{- else -}}{{- if (eq $values.deployment.podAntiAffinity.type "soft") -}}

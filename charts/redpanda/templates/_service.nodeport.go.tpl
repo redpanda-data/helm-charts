@@ -69,7 +69,7 @@
 {{- break -}}
 {{- end -}}
 {{- $annotations := $values.external.annotations -}}
-{{- if (eq $annotations (coalesce nil)) -}}
+{{- if (eq (toJson $annotations) "null") -}}
 {{- $annotations = (dict ) -}}
 {{- end -}}
 {{- $_is_returning = true -}}

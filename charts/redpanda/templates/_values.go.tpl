@@ -53,7 +53,7 @@
 {{- $a := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
-{{- if (eq $a.sasl (coalesce nil)) -}}
+{{- if (eq (toJson $a.sasl) "null") -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" false) | toJson -}}
 {{- break -}}
@@ -196,7 +196,7 @@
 {{- $s := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
-{{- if (and (ne $s.tieredStoragePersistentVolume (coalesce nil)) $s.tieredStoragePersistentVolume.enabled) -}}
+{{- if (and (ne (toJson $s.tieredStoragePersistentVolume) "null") $s.tieredStoragePersistentVolume.enabled) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" "persistentVolume") | toJson -}}
 {{- break -}}
@@ -216,7 +216,7 @@
 {{- $s := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
-{{- if (ne $s.tieredStoragePersistentVolume (coalesce nil)) -}}
+{{- if (ne (toJson $s.tieredStoragePersistentVolume) "null") -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $s.tieredStoragePersistentVolume.labels) | toJson -}}
 {{- break -}}
@@ -231,7 +231,7 @@
 {{- $s := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
-{{- if (ne $s.tieredStoragePersistentVolume (coalesce nil)) -}}
+{{- if (ne (toJson $s.tieredStoragePersistentVolume) "null") -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $s.tieredStoragePersistentVolume.annotations) | toJson -}}
 {{- break -}}
@@ -246,7 +246,7 @@
 {{- $s := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
-{{- if (ne $s.tieredStoragePersistentVolume (coalesce nil)) -}}
+{{- if (ne (toJson $s.tieredStoragePersistentVolume) "null") -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $s.tieredStoragePersistentVolume.storageClass) | toJson -}}
 {{- break -}}
@@ -261,7 +261,7 @@
 {{- $s := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
-{{- if (and (ne $s.persistentVolume (coalesce nil)) (not $s.persistentVolume.enabled)) -}}
+{{- if (and (ne (toJson $s.persistentVolume) "null") (not $s.persistentVolume.enabled)) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" (5368709120 | int)) | toJson -}}
 {{- break -}}
@@ -363,7 +363,7 @@
 {{- $secretSources := (dict ) -}}
 {{- range $_, $ts := (get (fromJson (include "redpanda.Listeners.TrustStores" (dict "a" (list $l $tls) ))) "r") -}}
 {{- $projection := (get (fromJson (include "redpanda.TrustStore.VolumeProjection" (dict "a" (list $ts) ))) "r") -}}
-{{- if (ne $projection.secret (coalesce nil)) -}}
+{{- if (ne (toJson $projection.secret) "null") -}}
 {{- $_ := (set $secretSources $projection.secret.name (concat (default (list ) (index $secretSources $projection.secret.name)) (default (list ) $projection.secret.items))) -}}
 {{- else -}}
 {{- $_ := (set $cmSources $projection.configMap.name (concat (default (list ) (index $cmSources $projection.configMap.name)) (default (list ) $projection.configMap.items))) -}}
@@ -486,7 +486,7 @@
 {{- $b := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
-{{- if (ne $b.name (coalesce nil)) -}}
+{{- if (ne (toJson $b.name) "null") -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $b.name) | toJson -}}
 {{- break -}}
@@ -528,7 +528,7 @@
 {{- $fullname := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
-{{- if (ne $b.secretKeyRef (coalesce nil)) -}}
+{{- if (ne (toJson $b.secretKeyRef) "null") -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $b.secretKeyRef) | toJson -}}
 {{- break -}}
@@ -553,7 +553,7 @@
 {{- $t := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
-{{- if (ne $t.configMapKeyRef (coalesce nil)) -}}
+{{- if (ne (toJson $t.configMapKeyRef) "null") -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" (printf "configmaps/%s-%s" $t.configMapKeyRef.name $t.configMapKeyRef.key)) | toJson -}}
 {{- break -}}
@@ -568,7 +568,7 @@
 {{- $t := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
-{{- if (ne $t.configMapKeyRef (coalesce nil)) -}}
+{{- if (ne (toJson $t.configMapKeyRef) "null") -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" (mustMergeOverwrite (dict ) (dict "configMap" (mustMergeOverwrite (dict ) (mustMergeOverwrite (dict ) (dict "name" $t.configMapKeyRef.name )) (dict "items" (list (mustMergeOverwrite (dict "key" "" "path" "" ) (dict "key" $t.configMapKeyRef.key "path" (get (fromJson (include "redpanda.TrustStore.RelativePath" (dict "a" (list $t) ))) "r") ))) )) ))) | toJson -}}
 {{- break -}}
@@ -595,7 +595,7 @@
 {{- $tls := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
-{{- if (ne $t.trustStore (coalesce nil)) -}}
+{{- if (ne (toJson $t.trustStore) "null") -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" (get (fromJson (include "redpanda.TrustStore.TrustStoreFilePath" (dict "a" (list $t.trustStore) ))) "r")) | toJson -}}
 {{- break -}}
@@ -656,7 +656,7 @@
 {{- $tls := (index .a 2) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
-{{- if (ne $t.trustStore (coalesce nil)) -}}
+{{- if (ne (toJson $t.trustStore) "null") -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" (get (fromJson (include "redpanda.TrustStore.TrustStoreFilePath" (dict "a" (list $t.trustStore) ))) "r")) | toJson -}}
 {{- break -}}
@@ -678,7 +678,7 @@
 {{- $tls := (index .a 2) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
-{{- if (eq $t (coalesce nil)) -}}
+{{- if (eq (toJson $t) "null") -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" false) | toJson -}}
 {{- break -}}
@@ -767,12 +767,12 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $tss := (list ) -}}
-{{- if (and (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $l.tls $tls) ))) "r") (ne $l.tls.trustStore (coalesce nil))) -}}
+{{- if (and (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $l.tls $tls) ))) "r") (ne (toJson $l.tls.trustStore) "null")) -}}
 {{- $tss = (concat (default (list ) $tss) (list $l.tls.trustStore)) -}}
 {{- end -}}
 {{- range $_, $key := (sortAlpha (keys $l.external)) -}}
 {{- $lis := (index $l.external $key) -}}
-{{- if (or (or (not (get (fromJson (include "redpanda.AdminExternal.IsEnabled" (dict "a" (list $lis) ))) "r")) (not (get (fromJson (include "redpanda.ExternalTLS.IsEnabled" (dict "a" (list $lis.tls $l.tls $tls) ))) "r"))) (eq $lis.tls.trustStore (coalesce nil))) -}}
+{{- if (or (or (not (get (fromJson (include "redpanda.AdminExternal.IsEnabled" (dict "a" (list $lis) ))) "r")) (not (get (fromJson (include "redpanda.ExternalTLS.IsEnabled" (dict "a" (list $lis.tls $l.tls $tls) ))) "r"))) (eq (toJson $lis.tls.trustStore) "null")) -}}
 {{- continue -}}
 {{- end -}}
 {{- $tss = (concat (default (list ) $tss) (list $lis.tls.trustStore)) -}}
@@ -865,12 +865,12 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $tss := (coalesce nil) -}}
-{{- if (and (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $l.tls $tls) ))) "r") (ne $l.tls.trustStore (coalesce nil))) -}}
+{{- if (and (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $l.tls $tls) ))) "r") (ne (toJson $l.tls.trustStore) "null")) -}}
 {{- $tss = (concat (default (list ) $tss) (list $l.tls.trustStore)) -}}
 {{- end -}}
 {{- range $_, $key := (sortAlpha (keys $l.external)) -}}
 {{- $lis := (index $l.external $key) -}}
-{{- if (or (or (not (get (fromJson (include "redpanda.HTTPExternal.IsEnabled" (dict "a" (list $lis) ))) "r")) (not (get (fromJson (include "redpanda.ExternalTLS.IsEnabled" (dict "a" (list $lis.tls $l.tls $tls) ))) "r"))) (eq $lis.tls.trustStore (coalesce nil))) -}}
+{{- if (or (or (not (get (fromJson (include "redpanda.HTTPExternal.IsEnabled" (dict "a" (list $lis) ))) "r")) (not (get (fromJson (include "redpanda.ExternalTLS.IsEnabled" (dict "a" (list $lis.tls $l.tls $tls) ))) "r"))) (eq (toJson $lis.tls.trustStore) "null")) -}}
 {{- continue -}}
 {{- end -}}
 {{- $tss = (concat (default (list ) $tss) (list $lis.tls.trustStore)) -}}
@@ -963,12 +963,12 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $tss := (coalesce nil) -}}
-{{- if (and (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $l.tls $tls) ))) "r") (ne $l.tls.trustStore (coalesce nil))) -}}
+{{- if (and (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $l.tls $tls) ))) "r") (ne (toJson $l.tls.trustStore) "null")) -}}
 {{- $tss = (concat (default (list ) $tss) (list $l.tls.trustStore)) -}}
 {{- end -}}
 {{- range $_, $key := (sortAlpha (keys $l.external)) -}}
 {{- $lis := (index $l.external $key) -}}
-{{- if (or (or (not (get (fromJson (include "redpanda.KafkaExternal.IsEnabled" (dict "a" (list $lis) ))) "r")) (not (get (fromJson (include "redpanda.ExternalTLS.IsEnabled" (dict "a" (list $lis.tls $l.tls $tls) ))) "r"))) (eq $lis.tls.trustStore (coalesce nil))) -}}
+{{- if (or (or (not (get (fromJson (include "redpanda.KafkaExternal.IsEnabled" (dict "a" (list $lis) ))) "r")) (not (get (fromJson (include "redpanda.ExternalTLS.IsEnabled" (dict "a" (list $lis.tls $l.tls $tls) ))) "r"))) (eq (toJson $lis.tls.trustStore) "null")) -}}
 {{- continue -}}
 {{- end -}}
 {{- $tss = (concat (default (list ) $tss) (list $lis.tls.trustStore)) -}}
@@ -1087,12 +1087,12 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $tss := (coalesce nil) -}}
-{{- if (and (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $l.tls $tls) ))) "r") (ne $l.tls.trustStore (coalesce nil))) -}}
+{{- if (and (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $l.tls $tls) ))) "r") (ne (toJson $l.tls.trustStore) "null")) -}}
 {{- $tss = (concat (default (list ) $tss) (list $l.tls.trustStore)) -}}
 {{- end -}}
 {{- range $_, $key := (sortAlpha (keys $l.external)) -}}
 {{- $lis := (index $l.external $key) -}}
-{{- if (or (or (not (get (fromJson (include "redpanda.SchemaRegistryExternal.IsEnabled" (dict "a" (list $lis) ))) "r")) (not (get (fromJson (include "redpanda.ExternalTLS.IsEnabled" (dict "a" (list $lis.tls $l.tls $tls) ))) "r"))) (eq $lis.tls.trustStore (coalesce nil))) -}}
+{{- if (or (or (not (get (fromJson (include "redpanda.SchemaRegistryExternal.IsEnabled" (dict "a" (list $lis) ))) "r")) (not (get (fromJson (include "redpanda.ExternalTLS.IsEnabled" (dict "a" (list $lis.tls $l.tls $tls) ))) "r"))) (eq (toJson $lis.tls.trustStore) "null")) -}}
 {{- continue -}}
 {{- end -}}
 {{- $tss = (concat (default (list ) $tss) (list $lis.tls.trustStore)) -}}
@@ -1146,7 +1146,7 @@
 {{- $c := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
-{{- if (eq $c (coalesce nil)) -}}
+{{- if (eq (toJson $c) "null") -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" (coalesce nil)) | toJson -}}
 {{- break -}}
@@ -1235,7 +1235,7 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $_is_returning = true -}}
-{{- (dict "r" (and (and (ne $sr (coalesce nil)) (not (empty $sr.key))) (not (empty $sr.name)))) | toJson -}}
+{{- (dict "r" (and (and (ne (toJson $sr) "null") (not (empty $sr.key))) (not (empty $sr.name)))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -1315,7 +1315,7 @@
 {{- break -}}
 {{- end -}}
 {{- $size_16 := (get (fromJson (include "redpanda.TieredStorageConfig.CloudStorageCacheSize" (dict "a" (list (deepCopy $c)) ))) "r") -}}
-{{- if (ne $size_16 (coalesce nil)) -}}
+{{- if (ne (toJson $size_16) "null") -}}
 {{- $_ := (set $config "cloud_storage_cache_size" ((get (fromJson (include "_shims.resource_Value" (dict "a" (list $size_16) ))) "r") | int64)) -}}
 {{- end -}}
 {{- $_is_returning = true -}}

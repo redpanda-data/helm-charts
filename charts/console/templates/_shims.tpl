@@ -69,7 +69,7 @@
 {{- $ptr := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
-{{- if (eq $ptr (coalesce nil)) -}}
+{{- if (eq (toJson $ptr) "null") -}}
 {{- $_ := (fail "nil dereference") -}}
 {{- end -}}
 {{- $_is_returning = true -}}
@@ -82,7 +82,7 @@
 {{- $m := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
-{{- if (eq $m (coalesce nil)) -}}
+{{- if (eq (toJson $m) "null") -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" (0 | int)) | toJson -}}
 {{- break -}}
@@ -98,7 +98,7 @@
 {{- $def := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
-{{- if (ne $ptr (coalesce nil)) -}}
+{{- if (ne (toJson $ptr) "null") -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $ptr) | toJson -}}
 {{- break -}}
@@ -114,7 +114,7 @@
 {{- $b := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
-{{- if (and (eq $a (coalesce nil)) (eq $b (coalesce nil))) -}}
+{{- if (and (eq (toJson $a) "null") (eq (toJson $b) "null")) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" true) | toJson -}}
 {{- break -}}
@@ -281,7 +281,7 @@
 {{- $manifests = (list $manifests) -}}
 {{- end -}}
 {{- range $_, $manifest := $manifests -}}
-{{- if ne $manifest nil }}
+{{- if ne (toJson $manifest) "null" }}
 ---
 {{toYaml (unset (unset $manifest "status") "creationTimestamp")}}
 {{- end -}}

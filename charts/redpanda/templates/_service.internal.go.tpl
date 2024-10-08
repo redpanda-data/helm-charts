@@ -27,7 +27,7 @@
 {{- $ports = (concat (default (list ) $ports) (list (mustMergeOverwrite (dict "port" 0 "targetPort" 0 ) (dict "name" "schemaregistry" "protocol" "TCP" "port" ($values.listeners.schemaRegistry.port | int) "targetPort" ($values.listeners.schemaRegistry.port | int) )))) -}}
 {{- end -}}
 {{- $annotations := (dict ) -}}
-{{- if (ne $values.service (coalesce nil)) -}}
+{{- if (ne (toJson $values.service) "null") -}}
 {{- $annotations = $values.service.internal.annotations -}}
 {{- end -}}
 {{- $_is_returning = true -}}

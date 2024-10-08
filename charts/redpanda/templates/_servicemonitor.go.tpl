@@ -11,10 +11,10 @@
 {{- break -}}
 {{- end -}}
 {{- $endpoint := (mustMergeOverwrite (dict ) (dict "interval" $values.monitoring.scrapeInterval "path" "/public_metrics" "port" "admin" "enableHttp2" $values.monitoring.enableHttp2 "scheme" "http" )) -}}
-{{- if (or (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $values.listeners.admin.tls $values.tls) ))) "r") (ne $values.monitoring.tlsConfig (coalesce nil))) -}}
+{{- if (or (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $values.listeners.admin.tls $values.tls) ))) "r") (ne (toJson $values.monitoring.tlsConfig) "null")) -}}
 {{- $_ := (set $endpoint "scheme" "https") -}}
 {{- $_ := (set $endpoint "tlsConfig" $values.monitoring.tlsConfig) -}}
-{{- if (eq $endpoint.tlsConfig (coalesce nil)) -}}
+{{- if (eq (toJson $endpoint.tlsConfig) "null") -}}
 {{- $_ := (set $endpoint "tlsConfig" (mustMergeOverwrite (dict "ca" (dict ) "cert" (dict ) ) (mustMergeOverwrite (dict "ca" (dict ) "cert" (dict ) ) (dict "insecureSkipVerify" true )) (dict ))) -}}
 {{- end -}}
 {{- end -}}

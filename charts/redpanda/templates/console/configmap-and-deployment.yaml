@@ -63,7 +63,12 @@ limitations under the License.
 
 {{ $configMapValues := merge $config .Subcharts.console }}
 ---
-{{ $wrappedSecretValues := (dict "Chart" .Subcharts.console.Chart "Release" .Release "Values" (dict "AsMap" $configMapValues.Values)) }}
+{{- $wrappedSecretValues := (dict
+  "Chart" .Subcharts.console.Chart
+  "Release" .Release
+  "Values" (dict "AsMap" $configMapValues.Values)
+  "Template" (dict "BasePath" "" "Name" "")
+) -}}
 {{- include "_shims.render-manifest" (list "console.ConfigMap" $wrappedSecretValues) -}}
 {{ $configmap = include "_shims.render-manifest" (list "console.ConfigMap" $wrappedSecretValues) }}
 {{ end }}
@@ -227,7 +232,7 @@ limitations under the License.
 {{ end }}
 
 {{ $deploymentValues := merge $consoleValues .Subcharts.console }}
-{{ $wrappedDeploymentValues := (dict "Chart" .Subcharts.console.Chart "Release" .Release "Values" (dict "AsMap" $deploymentValues.Values)) }}
+{{ $wrappedDeploymentValues := (dict "Chart" .Subcharts.console.Chart "Release" .Release "Template" (dict "BasePath" "" "Name" "") "Values" (dict "AsMap" $deploymentValues.Values)) }}
 
 ---
 {{- include "_shims.render-manifest" (list "console.Deployment" $wrappedDeploymentValues) -}}
