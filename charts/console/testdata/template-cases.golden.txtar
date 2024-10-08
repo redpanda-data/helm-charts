@@ -1,6 +1,6 @@
 -- testdata/autoscaling-cpu.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -16,7 +16,7 @@ metadata:
   name: console
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -54,7 +54,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -71,7 +71,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: console
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -96,7 +96,7 @@ spec:
     app.kubernetes.io/name: console
   type: ClusterIP
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -175,7 +175,7 @@ spec:
           name: secrets
           readOnly: true
       imagePullSecrets: []
-      initContainers: []
+      initContainers: null
       nodeSelector: {}
       priorityClassName: ""
       securityContext:
@@ -192,7 +192,7 @@ spec:
         secret:
           secretName: console
 ---
-# Source: console/templates/hpa.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -249,7 +249,7 @@ spec:
   priorityClassName:
 -- testdata/autoscaling-memory.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -265,7 +265,7 @@ metadata:
   name: console
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -303,7 +303,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -320,7 +320,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: console
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -345,7 +345,7 @@ spec:
     app.kubernetes.io/name: console
   type: ClusterIP
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -424,7 +424,7 @@ spec:
           name: secrets
           readOnly: true
       imagePullSecrets: []
-      initContainers: []
+      initContainers: null
       nodeSelector: {}
       priorityClassName: ""
       securityContext:
@@ -441,7 +441,7 @@ spec:
         secret:
           secretName: console
 ---
-# Source: console/templates/hpa.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -492,7 +492,7 @@ spec:
   priorityClassName:
 -- testdata/autoscaling-nulls.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -508,7 +508,7 @@ metadata:
   name: console
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -546,7 +546,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -563,7 +563,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: console
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -588,7 +588,7 @@ spec:
     app.kubernetes.io/name: console
   type: ClusterIP
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -667,7 +667,7 @@ spec:
           name: secrets
           readOnly: true
       imagePullSecrets: []
-      initContainers: []
+      initContainers: null
       nodeSelector: {}
       priorityClassName: ""
       securityContext:
@@ -684,7 +684,7 @@ spec:
         secret:
           secretName: console
 ---
-# Source: console/templates/hpa.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -735,7 +735,7 @@ spec:
   priorityClassName:
 -- testdata/case-000.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
@@ -752,7 +752,7 @@ metadata:
   name: HRoLg
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -791,7 +791,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -809,7 +809,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: hvGoJL
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -835,7 +835,7 @@ spec:
     app.kubernetes.io/name: "n"
   type: ClusterIP
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -924,7 +924,7 @@ spec:
           name: secrets
           readOnly: true
       imagePullSecrets: []
-      initContainers: []
+      initContainers: null
       nodeSelector: {}
       priorityClassName: vQhDS
       securityContext:
@@ -969,7 +969,7 @@ spec:
   priorityClassName: vQhDS
 -- testdata/case-001.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -985,7 +985,7 @@ metadata:
   name: T50cZi
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -1023,7 +1023,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -1040,7 +1040,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: T50cZi
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -1065,7 +1065,7 @@ spec:
     app.kubernetes.io/name: Sh
   type: ClusterIP
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1236,7 +1236,7 @@ spec:
   priorityClassName: NyOpfr
 -- testdata/case-002.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -1252,7 +1252,7 @@ metadata:
   name: R1Yar8
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -1290,7 +1290,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -1307,7 +1307,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: xZty
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -1332,7 +1332,7 @@ spec:
     app.kubernetes.io/name: vN4yH7I
   type: ILpSX2Cy
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1430,7 +1430,7 @@ spec:
       imagePullSecrets:
       - {}
       - name: YPVBzxvx
-      initContainers: []
+      initContainers: null
       nodeSelector: {}
       priorityClassName: TeCy
       securityContext:
@@ -1486,7 +1486,7 @@ spec:
   priorityClassName: TeCy
 -- testdata/case-003.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -1502,7 +1502,7 @@ metadata:
   name: 8nE
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -1540,7 +1540,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -1565,7 +1565,7 @@ spec:
     app.kubernetes.io/name: w6
   type: ClusterIP
 ---
-# Source: console/templates/ingress.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -1625,7 +1625,7 @@ spec:
   priorityClassName: HNqN9h2
 -- testdata/case-004.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -1642,7 +1642,7 @@ metadata:
   name: console-YMl
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -1681,7 +1681,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -1699,7 +1699,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: console-YMl
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -1725,7 +1725,7 @@ spec:
     app.kubernetes.io/name: YMl
   type: dO7eovC
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1819,7 +1819,7 @@ spec:
           name: QmzFlXE
           subPath: ""
       imagePullSecrets: []
-      initContainers: []
+      initContainers: null
       nodeSelector: {}
       priorityClassName: JT0MK
       securityContext:
@@ -1865,7 +1865,7 @@ spec:
   priorityClassName: JT0MK
 -- testdata/case-005.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -1881,7 +1881,7 @@ metadata:
   name: pN
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -1919,7 +1919,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -1944,7 +1944,7 @@ spec:
     app.kubernetes.io/name: MW
   type: ClusterIP
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -2094,7 +2094,7 @@ spec:
   priorityClassName: KnLhcy2cw
 -- testdata/case-006.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
@@ -2110,7 +2110,7 @@ metadata:
   name: nd7TSb2mNTS
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -2148,7 +2148,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -2165,7 +2165,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: rzd
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -2190,7 +2190,7 @@ spec:
     app.kubernetes.io/name: gCH15URsJZr
   type: ClusterIP
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -2334,7 +2334,7 @@ spec:
           secretName: rzd
 -- testdata/case-007.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
@@ -2352,7 +2352,7 @@ metadata:
   name: RFjc7
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -2392,7 +2392,7 @@ stringData:
   redpanda-admin-api-tls-key: 56VaHh
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -2415,7 +2415,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: "y"
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -2442,7 +2442,7 @@ spec:
     app.kubernetes.io/name: HWL
   type: Vvrvx
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -2622,7 +2622,7 @@ spec:
   priorityClassName: rs
 -- testdata/case-008.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -2638,7 +2638,7 @@ metadata:
   name: YcV5zP8
   namespace: default
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -2655,7 +2655,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: GbgHqD
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -2680,7 +2680,7 @@ spec:
     app.kubernetes.io/name: RW
   type: ClusterIP
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -2759,7 +2759,7 @@ spec:
           name: configs
           readOnly: true
       imagePullSecrets: []
-      initContainers: []
+      initContainers: null
       nodeSelector: {}
       priorityClassName: 0fXQqWA96
       securityContext:
@@ -2827,7 +2827,7 @@ spec:
   priorityClassName: 0fXQqWA96
 -- testdata/case-009.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -2843,7 +2843,7 @@ metadata:
   name: l1Bnpx
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -2881,7 +2881,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -2907,7 +2907,7 @@ spec:
     app.kubernetes.io/name: BKV
   type: yZy
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -2999,7 +2999,7 @@ spec:
           subPath: ""
       imagePullSecrets:
       - name: x42RbB4KLm
-      initContainers: []
+      initContainers: null
       nodeSelector:
         OBRBvRK: hMXDLGN5
         ky: sv
@@ -3067,7 +3067,7 @@ spec:
   priorityClassName: p0ShP6Yru
 -- testdata/case-010.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -3085,7 +3085,7 @@ metadata:
   name: kIzbDF
   namespace: default
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -3110,7 +3110,7 @@ spec:
     app.kubernetes.io/name: JFcK
   type: ClusterIP
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -3334,7 +3334,7 @@ spec:
         terminationMessagePolicy: Ƒh庛ʘ$8L藑奾ń4說
         workingDir: rgrA
       imagePullSecrets: []
-      initContainers: []
+      initContainers: null
       nodeSelector: {}
       priorityClassName: x0ISc2
       securityContext:
@@ -3372,7 +3372,7 @@ spec:
   priorityClassName: x0ISc2
 -- testdata/case-011.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -3390,7 +3390,7 @@ metadata:
   name: hbe
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -3430,7 +3430,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -3449,7 +3449,7 @@ metadata:
     v7E: 1g6JB
   name: hbe
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -3479,7 +3479,7 @@ spec:
     app.kubernetes.io/name: Cy9eHCiP
   type: sl
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -3725,7 +3725,7 @@ spec:
   priorityClassName: sJXoA3V
 -- testdata/case-012.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -3741,7 +3741,7 @@ metadata:
   name: tmn2Kt
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -3779,7 +3779,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -3796,7 +3796,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: tmn2Kt
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -3821,7 +3821,7 @@ spec:
     app.kubernetes.io/name: Qr03ts
   type: ClusterIP
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -4094,7 +4094,7 @@ spec:
   priorityClassName: vMcB
 -- testdata/case-013.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -4110,7 +4110,7 @@ metadata:
   name: RttlJN
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -4148,7 +4148,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -4165,7 +4165,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: RttlJN
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -4190,7 +4190,7 @@ spec:
     app.kubernetes.io/name: dDkIKgMwXv
   type: ClusterIP
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -4399,7 +4399,7 @@ spec:
   priorityClassName: BDUfm1wSRDI
 -- testdata/case-014.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -4415,7 +4415,7 @@ metadata:
   name: h6eHrUr
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -4453,7 +4453,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -4473,7 +4473,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: htymHJ
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -4522,7 +4522,7 @@ spec:
   priorityClassName: rcxHoi
 -- testdata/case-015.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -4544,7 +4544,7 @@ metadata:
   name: zmr
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -4585,7 +4585,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -4605,7 +4605,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: 9RweMGWqBs
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -4633,7 +4633,7 @@ spec:
     app.kubernetes.io/name: KD8DmV
   type: ClusterIP
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -4882,7 +4882,7 @@ spec:
         secret:
           secretName: 9RweMGWqBs
 ---
-# Source: console/templates/ingress.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -4949,7 +4949,7 @@ spec:
   priorityClassName: 68
 -- testdata/case-016.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -4965,7 +4965,7 @@ metadata:
   name: DdF7ALq
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -5003,7 +5003,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -5024,7 +5024,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: 6maz
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -5049,7 +5049,7 @@ spec:
     app.kubernetes.io/name: SC
   type: ClusterIP
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -5282,7 +5282,7 @@ spec:
         stdinOnce: true
         terminationMessagePath: c0e
       imagePullSecrets: []
-      initContainers: []
+      initContainers: null
       nodeSelector: {}
       priorityClassName: XtKq
       securityContext:
@@ -5357,7 +5357,7 @@ spec:
   priorityClassName: XtKq
 -- testdata/case-017.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -5373,7 +5373,7 @@ metadata:
   name: 9XG3SZW
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -5411,7 +5411,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -5435,7 +5435,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: 9XG3SZW
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -5460,7 +5460,7 @@ spec:
     app.kubernetes.io/name: tPiY
   type: ClusterIP
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -5860,7 +5860,7 @@ spec:
           name: TB
         workingDir: iKksE1
       imagePullSecrets: []
-      initContainers: []
+      initContainers: null
       nodeSelector: {}
       priorityClassName: qcIlT
       securityContext:
@@ -5905,7 +5905,7 @@ spec:
           secretName: WzM
 -- testdata/case-018.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -5923,7 +5923,7 @@ metadata:
   name: uAvlOXf
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -5961,7 +5961,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -5986,7 +5986,7 @@ spec:
     app.kubernetes.io/name: 1qyLP36T
   type: 2cM
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6273,7 +6273,7 @@ spec:
         workingDir: Mh
       imagePullSecrets:
       - name: vlnGQbo3y
-      initContainers: []
+      initContainers: null
       nodeSelector:
         Vckw: ifBZ9p7
       priorityClassName: 6jxv
@@ -6337,7 +6337,7 @@ spec:
   priorityClassName: 6jxv
 -- testdata/case-019.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -6353,7 +6353,7 @@ metadata:
   name: NZ7h9
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -6391,7 +6391,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -6408,7 +6408,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: NZ7h9
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -6433,7 +6433,7 @@ spec:
     app.kubernetes.io/name: 8MIg
   type: ClusterIP
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6552,7 +6552,7 @@ spec:
           subPath: qdDtjk
           subPathExpr: Ew
       imagePullSecrets: []
-      initContainers: []
+      initContainers: null
       nodeSelector: {}
       priorityClassName: FERw
       securityContext:
@@ -6601,7 +6601,7 @@ spec:
   priorityClassName: FERw
 -- testdata/case-020.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -6620,7 +6620,7 @@ metadata:
   name: HMpc
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -6658,7 +6658,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -6675,7 +6675,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: Om7
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -6700,7 +6700,7 @@ spec:
     app.kubernetes.io/name: zzmAR9
   type: ""
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -7124,7 +7124,7 @@ spec:
   priorityClassName: nIBhqM
 -- testdata/case-021.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -7142,7 +7142,7 @@ metadata:
   name: tW
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -7182,7 +7182,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -7201,7 +7201,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: PhRk
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -7231,7 +7231,7 @@ spec:
     app.kubernetes.io/name: Rys
   type: tptHu3Q
 ---
-# Source: console/templates/hpa.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -7292,7 +7292,7 @@ spec:
   priorityClassName: wrfvYOB1yg
 -- testdata/case-022.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -7308,7 +7308,7 @@ metadata:
   name: GVjeLRc
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -7346,7 +7346,7 @@ stringData:
   redpanda-admin-api-tls-key: r8D6l
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -7363,7 +7363,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: GVjeLRc
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -7388,7 +7388,7 @@ spec:
     app.kubernetes.io/name: xNnu
   type: ClusterIP
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -7965,7 +7965,7 @@ spec:
   priorityClassName: tAfrctQhZnbu
 -- testdata/case-023.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -7981,7 +7981,7 @@ metadata:
   name: Pga
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -8019,7 +8019,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -8047,7 +8047,7 @@ spec:
     app.kubernetes.io/name: s3YOF
   type: Xz6f
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -8324,7 +8324,7 @@ spec:
       - name: 5joihzuxxGJCwn
       - name: tv
 ---
-# Source: console/templates/ingress.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -8377,7 +8377,7 @@ spec:
   priorityClassName: S2v
 -- testdata/case-024.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -8393,7 +8393,7 @@ metadata:
   name: Wpq
   namespace: default
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -8418,7 +8418,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: Wpq
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -8469,7 +8469,7 @@ spec:
   priorityClassName: 2v89v
 -- testdata/case-025.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -8485,7 +8485,7 @@ metadata:
   name: H5TDAALUdD
   namespace: default
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -8510,7 +8510,7 @@ spec:
     app.kubernetes.io/name: Mh
   type: ClusterIP
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -9059,7 +9059,7 @@ spec:
   priorityClassName: 0bGHQk7gL
 -- testdata/case-026.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
@@ -9080,7 +9080,7 @@ metadata:
   name: Utu8ZHG2
   namespace: default
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -9107,7 +9107,7 @@ spec:
     app.kubernetes.io/name: vLjrafvp
   type: ClusterIP
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -9315,7 +9315,7 @@ spec:
       - name: 176OvjD
       - name: b6NpMGfVo1N
 ---
-# Source: console/templates/ingress.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -9377,7 +9377,7 @@ spec:
     secretName: lg5siLdo
 -- testdata/case-027.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -9397,7 +9397,7 @@ metadata:
   name: 55C9f3
   namespace: default
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -9427,7 +9427,7 @@ spec:
     app.kubernetes.io/name: h9P
   type: G2gqK
 ---
-# Source: console/templates/ingress.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -9491,7 +9491,7 @@ spec:
   priorityClassName: bpi
 -- testdata/case-028.yaml.golden --
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -9530,7 +9530,7 @@ stringData:
   redpanda-admin-api-tls-key: 7hsD
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -9548,7 +9548,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: odFI2M4
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -9574,7 +9574,7 @@ spec:
     app.kubernetes.io/name: 5XQu4RW
   type: ClusterIP
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -9908,7 +9908,7 @@ spec:
   priorityClassName: u8cTjKLB
 -- testdata/case-029.yaml.golden --
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -9948,7 +9948,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -9971,7 +9971,7 @@ metadata:
     xi7L: ibI45
   name: HK
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -9999,7 +9999,7 @@ spec:
     app.kubernetes.io/name: 3Wh
   type: sIQBZD
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -10537,7 +10537,7 @@ spec:
   priorityClassName: sLkcwZ
 -- testdata/case-030.yaml.golden --
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -10578,7 +10578,7 @@ stringData:
   redpanda-admin-api-tls-key: gzG
 type: Opaque
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -10606,7 +10606,7 @@ spec:
     app.kubernetes.io/name: J
   type: QAVsE
 ---
-# Source: console/templates/hpa.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -10671,7 +10671,7 @@ spec:
   priorityClassName: KuRS
 -- testdata/case-031.yaml.golden --
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -10697,7 +10697,7 @@ metadata:
     sFTTcyl: qVyaa0ULC
   name: 59cQ0qKLI
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -10724,7 +10724,7 @@ spec:
     app.kubernetes.io/name: xknw
   type: N9chrF
 ---
-# Source: console/templates/hpa.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -10759,7 +10759,7 @@ spec:
     kind: Deployment
     name: 59cQ0qKLI
 ---
-# Source: console/templates/ingress.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -10846,7 +10846,7 @@ spec:
   priorityClassName: mFg
 -- testdata/case-032.yaml.golden --
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -10881,7 +10881,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: llK4G
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -10909,7 +10909,7 @@ spec:
     app.kubernetes.io/name: wB
   type: aaIqePq
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -11553,7 +11553,7 @@ spec:
       - name: D
       - name: OUqOnvjvba
 ---
-# Source: console/templates/hpa.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -11589,7 +11589,7 @@ spec:
     kind: Deployment
     name: llK4G
 ---
-# Source: console/templates/ingress.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -11659,7 +11659,7 @@ spec:
   priorityClassName: WeB9y8
 -- testdata/case-033.yaml.golden --
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -11688,7 +11688,7 @@ metadata:
     qO: F4dqLo67vKYZ
   name: foGC
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -11716,7 +11716,7 @@ spec:
     app.kubernetes.io/name: bCPeYVWao
   type: 2K35
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -12718,7 +12718,7 @@ spec:
       - name: MqQb15NA
 -- testdata/case-034.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
@@ -12736,7 +12736,7 @@ metadata:
   name: QxrM
   namespace: default
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -12769,7 +12769,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: l
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -12826,7 +12826,7 @@ spec:
   priorityClassName: ER4
 -- testdata/case-035.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -12848,7 +12848,7 @@ metadata:
   name: HMyYp
   namespace: default
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -12873,7 +12873,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: Bv0I
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -12902,7 +12902,7 @@ spec:
     app.kubernetes.io/name: console
   type: ZQQlqx7Np
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -13828,7 +13828,7 @@ spec:
       - name: P4
       - name: fn
 ---
-# Source: console/templates/ingress.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -13932,7 +13932,7 @@ spec:
   priorityClassName: F
 -- testdata/case-036.yaml.golden --
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -13973,7 +13973,7 @@ stringData:
   redpanda-admin-api-tls-key: IhqyTvQn4T
 type: Opaque
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -14001,7 +14001,7 @@ spec:
     app.kubernetes.io/name: 9mG8n4Wu4
   type: XHYb2qmrk
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14924,7 +14924,7 @@ spec:
       - name: HUa7xM
 -- testdata/case-037.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -14943,7 +14943,7 @@ metadata:
   name: ItYso
   namespace: default
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -14975,7 +14975,7 @@ metadata:
     uEVMkDkYRvnn: zvptNai
   name: ADIhC
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -15003,7 +15003,7 @@ spec:
     app.kubernetes.io/name: u2r6
   type: At
 ---
-# Source: console/templates/ingress.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -15100,7 +15100,7 @@ spec:
   priorityClassName: U7wS
 -- testdata/case-038.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -15116,7 +15116,7 @@ metadata:
   name: fP77cJ3T
   namespace: default
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -15141,7 +15141,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: j1dUk8TGy8Np
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -15194,7 +15194,7 @@ spec:
   priorityClassName: 89gnK9rXyDXui
 -- testdata/case-039.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
@@ -15211,7 +15211,7 @@ metadata:
   name: 8s2qVhKEW
   namespace: default
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -15233,7 +15233,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: bbshm
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -15261,7 +15261,7 @@ spec:
     app.kubernetes.io/name: o2F37Lr
   type: dPOD9Kzb
 ---
-# Source: console/templates/ingress.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -15294,7 +15294,7 @@ spec:
     secretName: M
 -- testdata/case-040.yaml.golden --
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -15313,7 +15313,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: KchYZFsbB3
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -15340,7 +15340,7 @@ spec:
     app.kubernetes.io/name: 6sW
   type: oZi
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -16416,7 +16416,7 @@ spec:
   priorityClassName: 3A
 -- testdata/case-041.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
@@ -16437,7 +16437,7 @@ metadata:
   name: 0Z71mJNQUx
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -16477,7 +16477,7 @@ stringData:
   redpanda-admin-api-tls-key: KR25cT
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -16503,7 +16503,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: Wq
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -16531,7 +16531,7 @@ spec:
     app.kubernetes.io/name: x
   type: tJUW
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -17116,7 +17116,7 @@ spec:
       - name: w
       - name: ui8e5
 ---
-# Source: console/templates/hpa.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -17151,7 +17151,7 @@ spec:
     kind: Deployment
     name: Wq
 ---
-# Source: console/templates/ingress.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -17184,7 +17184,7 @@ spec:
   tls: null
 -- testdata/case-042.yaml.golden --
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -17217,7 +17217,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: eHZ
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -17244,7 +17244,7 @@ spec:
     app.kubernetes.io/name: 84QIe
   type: uTyclgj9tVV
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -18184,7 +18184,7 @@ spec:
       - name: "4"
       - name: Kry
 ---
-# Source: console/templates/hpa.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -18245,7 +18245,7 @@ spec:
   priorityClassName: 6ZbHC
 -- testdata/case-043.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -18261,7 +18261,7 @@ metadata:
   name: Gma
   namespace: default
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -18286,7 +18286,7 @@ spec:
     app.kubernetes.io/name: console
   type: 9TsjJQkJZ
 ---
-# Source: console/templates/ingress.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -18330,7 +18330,7 @@ spec:
     secretName: jRYKg
 -- testdata/case-044.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -18347,7 +18347,7 @@ metadata:
   name: W9k
   namespace: default
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -18381,7 +18381,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: resP
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -18408,7 +18408,7 @@ spec:
     app.kubernetes.io/name: tvDI
   type: ""
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19096,7 +19096,7 @@ spec:
   priorityClassName: 8KMLup9vb
 -- testdata/case-045.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
@@ -19115,7 +19115,7 @@ metadata:
   name: nX5G
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -19154,7 +19154,7 @@ stringData:
   redpanda-admin-api-tls-key: vlrLQ9I9
 type: Opaque
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -19180,7 +19180,7 @@ spec:
     app.kubernetes.io/name: tOoxEiwdVpT
   type: C
 ---
-# Source: console/templates/hpa.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -19214,7 +19214,7 @@ spec:
     kind: Deployment
     name: 9gCm5xz
 ---
-# Source: console/templates/ingress.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -19288,7 +19288,7 @@ spec:
   priorityClassName: Op
 -- testdata/case-046.yaml.golden --
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -19328,7 +19328,7 @@ stringData:
   redpanda-admin-api-tls-key: 3E
 type: Opaque
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -19356,7 +19356,7 @@ spec:
     app.kubernetes.io/name: console
   type: PK7oH1pcU3
 ---
-# Source: console/templates/ingress.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -19398,7 +19398,7 @@ spec:
     secretName: fBCynrlb
 -- testdata/case-047.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -19417,7 +19417,7 @@ metadata:
   name: DSw7
   namespace: default
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -19445,7 +19445,7 @@ spec:
     app.kubernetes.io/name: nEojiMtRc
   type: WAAXkZY
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -20083,7 +20083,7 @@ spec:
           defaultMode: 184
           secretName: LF0O
 ---
-# Source: console/templates/hpa.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -20117,7 +20117,7 @@ spec:
     name: YUi5JpG
 -- testdata/case-048.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -20136,7 +20136,7 @@ metadata:
   name: sKa
   namespace: default
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -20163,7 +20163,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: 3um
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -20193,7 +20193,7 @@ spec:
     app.kubernetes.io/name: W7q3X
   type: l5gj
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -21022,7 +21022,7 @@ spec:
           defaultMode: 80
           secretName: ZxXI0Hhv
 ---
-# Source: console/templates/hpa.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -21059,7 +21059,7 @@ spec:
     name: 3um
 -- testdata/case-049.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -21081,7 +21081,7 @@ metadata:
   name: z12W
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -21122,7 +21122,7 @@ stringData:
   redpanda-admin-api-tls-key: uhB0L
 type: Opaque
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -21153,7 +21153,7 @@ spec:
     app.kubernetes.io/name: 8dJzE
   type: IfYfRoHRG
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -21963,7 +21963,7 @@ spec:
           defaultMode: 246
           secretName: tz
 ---
-# Source: console/templates/hpa.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -22028,7 +22028,7 @@ spec:
   priorityClassName: JhGfjGXQ
 -- testdata/console-config-listen-and-target-port.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -22044,7 +22044,7 @@ metadata:
   name: console
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -22082,7 +22082,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -22100,7 +22100,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: console
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -22125,7 +22125,7 @@ spec:
     app.kubernetes.io/name: console
   type: ClusterIP
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -22204,7 +22204,7 @@ spec:
           name: secrets
           readOnly: true
       imagePullSecrets: []
-      initContainers: []
+      initContainers: null
       nodeSelector: {}
       priorityClassName: ""
       securityContext:
@@ -22245,7 +22245,7 @@ spec:
   priorityClassName:
 -- testdata/console-config-listen-port.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -22261,7 +22261,7 @@ metadata:
   name: console
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -22299,7 +22299,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -22317,7 +22317,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: console
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -22342,7 +22342,7 @@ spec:
     app.kubernetes.io/name: console
   type: ClusterIP
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -22421,7 +22421,7 @@ spec:
           name: secrets
           readOnly: true
       imagePullSecrets: []
-      initContainers: []
+      initContainers: null
       nodeSelector: {}
       priorityClassName: ""
       securityContext:
@@ -22462,7 +22462,7 @@ spec:
   priorityClassName:
 -- testdata/console-with-oidc-conf.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -22478,7 +22478,7 @@ metadata:
   name: console
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -22516,7 +22516,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -22547,7 +22547,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: console
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -22572,7 +22572,7 @@ spec:
     app.kubernetes.io/name: console
   type: ClusterIP
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -22656,7 +22656,7 @@ spec:
           name: oidc-issuer-tls
           readOnly: true
       imagePullSecrets: []
-      initContainers: []
+      initContainers: null
       nodeSelector: {}
       priorityClassName: ""
       securityContext:
@@ -22700,7 +22700,7 @@ spec:
   priorityClassName:
 -- testdata/console-with-role-bindings.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -22716,7 +22716,7 @@ metadata:
   name: console
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -22754,7 +22754,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -22780,7 +22780,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: console
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -22805,7 +22805,7 @@ spec:
     app.kubernetes.io/name: console
   type: ClusterIP
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -22884,7 +22884,7 @@ spec:
           name: secrets
           readOnly: true
       imagePullSecrets: []
-      initContainers: []
+      initContainers: null
       nodeSelector: {}
       priorityClassName: ""
       securityContext:
@@ -22925,7 +22925,7 @@ spec:
   priorityClassName:
 -- testdata/console-with-roles-and-bindings.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -22941,7 +22941,7 @@ metadata:
   name: console
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -22979,7 +22979,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -23016,7 +23016,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: console
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -23041,7 +23041,7 @@ spec:
     app.kubernetes.io/name: console
   type: ClusterIP
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -23120,7 +23120,7 @@ spec:
           name: secrets
           readOnly: true
       imagePullSecrets: []
-      initContainers: []
+      initContainers: null
       nodeSelector: {}
       priorityClassName: ""
       securityContext:
@@ -23161,7 +23161,7 @@ spec:
   priorityClassName:
 -- testdata/console-with-roles.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -23177,7 +23177,7 @@ metadata:
   name: console
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -23215,7 +23215,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -23243,7 +23243,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: console
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -23268,7 +23268,7 @@ spec:
     app.kubernetes.io/name: console
   type: ClusterIP
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -23347,7 +23347,7 @@ spec:
           name: secrets
           readOnly: true
       imagePullSecrets: []
-      initContainers: []
+      initContainers: null
       nodeSelector: {}
       priorityClassName: ""
       securityContext:
@@ -23388,7 +23388,7 @@ spec:
   priorityClassName:
 -- testdata/custom-tag-no-registry.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -23404,7 +23404,7 @@ metadata:
   name: console
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -23442,7 +23442,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -23459,7 +23459,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: console
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -23484,7 +23484,7 @@ spec:
     app.kubernetes.io/name: console
   type: ClusterIP
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -23563,7 +23563,7 @@ spec:
           name: secrets
           readOnly: true
       imagePullSecrets: []
-      initContainers: []
+      initContainers: null
       nodeSelector: {}
       priorityClassName: ""
       securityContext:
@@ -23604,7 +23604,7 @@ spec:
   priorityClassName:
 -- testdata/default-values.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -23620,7 +23620,7 @@ metadata:
   name: console
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -23658,7 +23658,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -23675,7 +23675,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: console
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -23700,7 +23700,7 @@ spec:
     app.kubernetes.io/name: console
   type: ClusterIP
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -23779,7 +23779,7 @@ spec:
           name: secrets
           readOnly: true
       imagePullSecrets: []
-      initContainers: []
+      initContainers: null
       nodeSelector: {}
       priorityClassName: ""
       securityContext:
@@ -23820,7 +23820,7 @@ spec:
   priorityClassName:
 -- testdata/extra-init-containers.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -23836,7 +23836,7 @@ metadata:
   name: console
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -23874,7 +23874,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -23891,7 +23891,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: console
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -23916,7 +23916,7 @@ spec:
     app.kubernetes.io/name: console
   type: ClusterIP
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -24045,7 +24045,7 @@ spec:
   priorityClassName:
 -- testdata/ingress-templating.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -24061,7 +24061,7 @@ metadata:
   name: console
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -24099,7 +24099,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -24116,7 +24116,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: console
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -24141,7 +24141,7 @@ spec:
     app.kubernetes.io/name: console
   type: ClusterIP
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -24220,7 +24220,7 @@ spec:
           name: secrets
           readOnly: true
       imagePullSecrets: []
-      initContainers: []
+      initContainers: null
       nodeSelector: {}
       priorityClassName: ""
       securityContext:
@@ -24237,7 +24237,7 @@ spec:
         secret:
           secretName: console
 ---
-# Source: console/templates/ingress.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -24293,7 +24293,7 @@ spec:
   priorityClassName:
 -- testdata/no-registry.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -24309,7 +24309,7 @@ metadata:
   name: console
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -24347,7 +24347,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -24364,7 +24364,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: console
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -24389,7 +24389,7 @@ spec:
     app.kubernetes.io/name: console
   type: ClusterIP
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -24468,7 +24468,7 @@ spec:
           name: secrets
           readOnly: true
       imagePullSecrets: []
-      initContainers: []
+      initContainers: null
       nodeSelector: {}
       priorityClassName: ""
       securityContext:
@@ -24509,7 +24509,7 @@ spec:
   priorityClassName:
 -- testdata/service-nodeport.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -24525,7 +24525,7 @@ metadata:
   name: console
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -24563,7 +24563,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -24580,7 +24580,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: console
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -24605,7 +24605,7 @@ spec:
     app.kubernetes.io/name: console
   type: NodePort
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -24684,7 +24684,7 @@ spec:
           name: secrets
           readOnly: true
       imagePullSecrets: []
-      initContainers: []
+      initContainers: null
       nodeSelector: {}
       priorityClassName: ""
       securityContext:
@@ -24725,7 +24725,7 @@ spec:
   priorityClassName:
 -- testdata/service-with-nodeport.yaml.golden --
 ---
-# Source: console/templates/serviceaccount.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -24741,7 +24741,7 @@ metadata:
   name: console
   namespace: default
 ---
-# Source: console/templates/secret.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -24779,7 +24779,7 @@ stringData:
   redpanda-admin-api-tls-key: ""
 type: Opaque
 ---
-# Source: console/templates/configmap.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 data:
   config.yaml: |
@@ -24796,7 +24796,7 @@ metadata:
     helm.sh/chart: console-0.7.29
   name: console
 ---
-# Source: console/templates/service.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -24823,7 +24823,7 @@ spec:
     app.kubernetes.io/name: console
   type: NodePort
 ---
-# Source: console/templates/deployment.yaml
+# Source: console/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -24902,7 +24902,7 @@ spec:
           name: secrets
           readOnly: true
       imagePullSecrets: []
-      initContainers: []
+      initContainers: null
       nodeSelector: {}
       priorityClassName: ""
       securityContext:
