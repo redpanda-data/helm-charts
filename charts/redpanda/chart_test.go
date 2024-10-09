@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+	"github.com/redpanda-data/helm-charts/charts/console"
 	"github.com/redpanda-data/helm-charts/charts/redpanda"
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	"github.com/redpanda-data/helm-charts/pkg/helm"
@@ -685,7 +686,7 @@ func TestLabels(t *testing.T) {
 		values := &redpanda.PartialValues{
 			CommonLabels: labels,
 			// This guarantee does not currently extend to console.
-			Console: &redpanda.PartialConsole{Enabled: ptr.To(false)},
+			Console: &console.PartialValues{Enabled: ptr.To(false)},
 			// Nor connectors.
 			Connectors: &redpanda.PartialConnectors{Enabled: ptr.To(false)},
 		}
@@ -738,7 +739,9 @@ func TestGoHelmEquivalence(t *testing.T) {
 
 	// TODO: Add additional cases for better coverage. Generating random inputs
 	// generally results in invalid inputs.
-	var values redpanda.PartialValues
+	values := redpanda.PartialValues{
+		Enterprise: &redpanda.PartialEnterprise{License: ptr.To("LICENSE_PLACEHOLDER")},
+	}
 
 	// We're not interested in tests, console, or connectors so always disable
 	// those.
@@ -748,7 +751,18 @@ func TestGoHelmEquivalence(t *testing.T) {
 		Enabled: ptr.To(false),
 	}
 
-	values.Console = &redpanda.PartialConsole{Enabled: ptr.To(false)}
+	values.Console = &console.PartialValues{
+		Enabled: ptr.To(true),
+		Ingress: &console.PartialIngressConfig{
+			Enabled: ptr.To(true),
+		},
+		Secret: &console.PartialSecretConfig{
+			Login: &console.PartialLoginSecrets{
+				JWTSecret: ptr.To("JWT_PLACEHOLDER"),
+			},
+		},
+		Tests: &console.PartialEnableable{Enabled: ptr.To(false)},
+	}
 	values.Connectors = &redpanda.PartialConnectors{Enabled: ptr.To(false)}
 
 	goObjs, err := redpanda.Chart.Render(kube.Config{}, helmette.Release{
@@ -780,7 +794,7 @@ func TestGoHelmEquivalence(t *testing.T) {
 		return strings.Compare(aStr, bStr)
 	})
 
-	const stsIdx = 7
+	const stsIdx = 12
 
 	// resource.Quantity is a special object. To Ensure they compare correctly,
 	// we'll round trip it through JSON so the internal representations will
