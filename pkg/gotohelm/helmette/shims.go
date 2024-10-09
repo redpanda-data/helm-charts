@@ -9,6 +9,7 @@ import (
 	"github.com/cockroachdb/errors"
 	"github.com/mitchellh/mapstructure"
 	"github.com/redpanda-data/helm-charts/pkg/valuesutil"
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/yaml"
@@ -114,6 +115,8 @@ func Unwrap[T any](from Values) T {
 			switch reflect.New(to).Interface().(type) {
 			case *resource.Quantity:
 				return valuesutil.UnmarshalInto[*resource.Quantity](val)
+			case *corev1.Volume:
+				return valuesutil.UnmarshalInto[*corev1.Volume](val)
 			}
 			return val, nil
 		}),

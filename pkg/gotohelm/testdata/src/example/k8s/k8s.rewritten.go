@@ -15,13 +15,14 @@ import (
 )
 
 type Values struct {
-	Quantity *resource.Quantity
+	Quantity     *resource.Quantity
+	ExtraVolumes *corev1.Volume `json:"extraVolumes,omitempty"`
 }
 
 func K8s(dot *helmette.Dot) map[string]any {
 	return map[string]any{
 		"Objects": []metav1.Object{
-			pod(),
+			pod(dot),
 			pdb(),
 			service(),
 		},
@@ -56,7 +57,24 @@ func K8s(dot *helmette.Dot) map[string]any {
 	}
 }
 
-func pod() *corev1.Pod {
+func pod(dot *helmette.Dot) *corev1.Pod {
+	values := helmette.Unwrap[Values](dot.Values)
+
+	vol := []corev1.Volume{
+		{
+			Name: "included",
+			VolumeSource: corev1.VolumeSource{
+				Secret: &corev1.SecretVolumeSource{
+					SecretName:  "secretReference",
+					DefaultMode: ptr.To[int32](0o420),
+				},
+			},
+		},
+	}
+	if values.ExtraVolumes != nil {
+		vol = append(vol, *values.ExtraVolumes)
+	}
+
 	return &corev1.Pod{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "v1",
@@ -65,6 +83,9 @@ func pod() *corev1.Pod {
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: "spacename",
 			Name:      "eman",
+		},
+		Spec: corev1.PodSpec{
+			Volumes: vol,
 		},
 	}
 }

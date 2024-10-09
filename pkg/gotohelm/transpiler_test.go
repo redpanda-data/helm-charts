@@ -27,6 +27,7 @@ import (
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/kubernetes/scheme"
+	"k8s.io/utils/ptr"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -78,6 +79,12 @@ var testSpecs = map[string]TestSpec{
 			// examples/ for details.
 			// {"Quantity": 999.110},  // Float64 which rounds down
 			// {"Quantity": 999.999},  // Float64 which rounds up
+			{"extraVolumes": corev1.Volume{
+				Name: "test",
+				VolumeSource: corev1.VolumeSource{
+					Secret: &corev1.SecretVolumeSource{SecretName: "test", DefaultMode: ptr.To[int32](0o420)},
+				},
+			}},
 		},
 	},
 	"sprig": {
