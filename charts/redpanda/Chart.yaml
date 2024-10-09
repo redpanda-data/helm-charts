@@ -23,7 +23,7 @@ type: application
 # The chart version and the app version are not the same and will not track
 # together. The chart version is a semver representation of changes to this
 # chart.
-version: 5.9.5
+version: 5.9.6
 
 # The app version is the default version of Redpanda to install.
 # ** NOTE for maintainers: please ensure the artifacthub image annotation is updated before merging
@@ -32,7 +32,7 @@ appVersion: v24.2.5
 # kubeVersion must be suffixed with "-0" to be able to match cloud providers
 # kubernetes versions like "v1.23.8-gke.1900". Their suffix is interpreted as a
 # pre-release. Our "-0" allows pre-releases to be matched.
-kubeVersion: "^1.21.0-0"
+kubeVersion: ">= 1.25.0-0"
 
 dependencies:
   - name: console

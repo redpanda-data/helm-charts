@@ -302,9 +302,13 @@ func (c *Client) Template(ctx context.Context, chart string, opts TemplateOption
 		client.Namespace = "default"
 	}
 
-	// TODO figure out how to remove this. Without it helm complains about K8s
-	// compat issues.
-	client.KubeVersion = &chartutil.KubeVersion{Version: "v1.21.0", Minor: "21", Major: "1"}
+	// Our vendored version of helm has a baked in version of a Kubernetes
+	// version for use with helm template but it's archaic (1.20 as of
+	// writing; check chartutil.DefaultCapabilities).
+	// Bump to some version waaaaaaaaaaaay in the future so we don't have to
+	// deal with this.
+	// Running helm install in our integration tests will catch any real issues.
+	client.KubeVersion = &chartutil.KubeVersion{Version: "v1.99.0", Minor: "99", Major: "1"}
 
 	releaseName, chart, err := client.NameAndChart([]string{opts.Name, chart})
 	if err != nil {

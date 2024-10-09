@@ -4,9 +4,17 @@
 
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-FILLMEIN) - YYYY-MM-DD
 #### Added
-* Added the ability to override the name of the bootstrap user created when SASL authentication is enabled. [#1547](https://github.com/redpanda-data/helm-charts/pull/1547)
 #### Changed
 #### Fixed
+#### Removed
+
+### [5.9.6](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.6) - 2024-10-09
+#### Added
+* Added the ability to override the name of the bootstrap user created when SASL authentication is enabled. [#1547](https://github.com/redpanda-data/helm-charts/pull/1547)
+#### Changed
+* The minimum Kubernetes version has been bumped to `1.25.0`
+#### Fixed
+* Chart render failures in tooling compiled with go < 1.19 (e.g. helm 3.10.x) have been fixed.
 #### Removed
 * `post_upgrade_job.*`, and the post-upgrade job itself, has been removed. All
   it's functionality has been consolidated into the `post_install_job`, which
@@ -185,6 +193,7 @@
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/operator-FILLMEIN) - YYYY-MM-DD
 #### Added
 #### Changed
+* The minimum Kubernetes version has been bumped to `1.25.0`
 #### Fixed
 #### Removed
 
@@ -245,6 +254,7 @@
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/connectors-FILLMEIN) - YYYY-MM-DD
 #### Added
 #### Changed
+* The minimum Kubernetes version has been bumped to `1.25.0`
 #### Fixed
 #### Removed
 
@@ -270,6 +280,7 @@
 * Add test example for oidc configuration [#1503](https://github.com/redpanda-data/helm-charts/pull/1503)
 #### Changed
 * Align Console init container default value 
+* The minimum Kubernetes version has been bumped to `1.25.0`
 #### Fixed
 * License json tag to correctly set Console license [#1510](https://github.com/redpanda-data/helm-charts/pull/1510)
 #### Removed
