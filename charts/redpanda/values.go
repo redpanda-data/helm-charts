@@ -7,7 +7,6 @@ import (
 	cmmeta "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
 	"github.com/invopop/jsonschema"
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
-	"github.com/redpanda-data/console/backend/pkg/config"
 	"github.com/redpanda-data/helm-charts/charts/console"
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	orderedmap "github.com/wk8/go-ordered-map/v2"
@@ -32,6 +31,8 @@ const (
 	// PostUpgradeContainerName is the user facing name of the post-upgrade
 	// job's container.
 	PostUpgradeContainerName = "post-upgrade"
+
+	certificationMountPoint = "/etc/tls/certs"
 )
 
 // values.go contains a collection of go structs that (loosely) map to
@@ -1119,22 +1120,45 @@ type AdminListeners struct {
 	TLS         InternalTLS                      `json:"tls" jsonschema:"required"`
 }
 
-func (l *AdminListeners) ConsoleTLS(tls *TLS) config.RedpandaAdminAPITLS {
-	t := config.RedpandaAdminAPITLS{Enabled: l.TLS.IsEnabled(tls)}
+// ConsoleTLS is a struct that represents TLS configuration used
+// in console configuration in Kafka, Schema Registry and
+// Redpanda Admin API.
+// For the above configuration helm chart could import struct, but
+// as of the writing the struct fields tag have only `yaml` annotation.
+// `sigs.k8s.io/yaml` requires `json` tags.
+type ConsoleTLS struct {
+	Enabled               bool   `json:"enabled"`
+	CaFilepath            string `json:"caFilepath"`
+	CertFilepath          string `json:"certFilepath"`
+	KeyFilepath           string `json:"keyFilepath"`
+	InsecureSkipTLSVerify bool   `json:"insecureSkipTlsVerify"`
+}
+
+func (l *AdminListeners) ConsoleTLS(tls *TLS) ConsoleTLS {
+	t := ConsoleTLS{Enabled: l.TLS.IsEnabled(tls)}
 	if !t.Enabled {
 		return t
 	}
 
-	adminAPIPrefix := "/mnt/cert/adminapi"
+	adminAPIPrefix := fmt.Sprintf("%s/%s", certificationMountPoint, l.TLS.Cert)
 
-	t.CaFilepath = fmt.Sprintf("%s/%s/ca.crt", adminAPIPrefix, l.TLS.Cert)
+	// Strange but technically correct, if CAEnabled is false, we can't safely
+	// assume that a ca.crt file will exist. So we fallback to using the
+	// server's certificate itself.
+	// Other options would be: failing or falling back to the container's
+	// default truststore.
+	if tls.Certs.MustGet(l.TLS.Cert).CAEnabled {
+		t.CaFilepath = fmt.Sprintf("%s/ca.crt", adminAPIPrefix)
+	} else {
+		t.CaFilepath = fmt.Sprintf("%s/tls.crt", adminAPIPrefix)
+	}
 
 	if !l.TLS.RequireClientAuth {
 		return t
 	}
 
-	t.CertFilepath = fmt.Sprintf("%s/%s/tls.crt", adminAPIPrefix, l.TLS.Cert)
-	t.KeyFilepath = fmt.Sprintf("%s/%s/tls.key", adminAPIPrefix, l.TLS.Cert)
+	t.CertFilepath = fmt.Sprintf("%s/tls.crt", adminAPIPrefix)
+	t.KeyFilepath = fmt.Sprintf("%s/tls.key", adminAPIPrefix)
 
 	return t
 }
@@ -1451,22 +1475,31 @@ func (l *KafkaListeners) TrustStores(tls *TLS) []*TrustStore {
 	return tss
 }
 
-func (k *KafkaListeners) ConsolemTLS(tls *TLS) config.KafkaTLS {
-	t := config.KafkaTLS{Enabled: k.TLS.IsEnabled(tls)}
+func (k *KafkaListeners) ConsoleTLS(tls *TLS) ConsoleTLS {
+	t := ConsoleTLS{Enabled: k.TLS.IsEnabled(tls)}
 	if !t.Enabled {
 		return t
 	}
 
-	kafkaPathPrefix := "/mnt/cert/kafka"
+	kafkaPathPrefix := fmt.Sprintf("%s/%s", certificationMountPoint, k.TLS.Cert)
 
-	t.CaFilepath = fmt.Sprintf("%s/%s/ca.crt", kafkaPathPrefix, k.TLS.Cert)
+	// Strange but technically correct, if CAEnabled is false, we can't safely
+	// assume that a ca.crt file will exist. So we fallback to using the
+	// server's certificate itself.
+	// Other options would be: failing or falling back to the container's
+	// default truststore.
+	if tls.Certs.MustGet(k.TLS.Cert).CAEnabled {
+		t.CaFilepath = fmt.Sprintf("%s/ca.crt", kafkaPathPrefix)
+	} else {
+		t.CaFilepath = fmt.Sprintf("%s/tls.crt", kafkaPathPrefix)
+	}
 
 	if !k.TLS.RequireClientAuth {
 		return t
 	}
 
-	t.CertFilepath = fmt.Sprintf("%s/%s/tls.crt", kafkaPathPrefix, k.TLS.Cert)
-	t.KeyFilepath = fmt.Sprintf("%s/%s/tls.key", kafkaPathPrefix, k.TLS.Cert)
+	t.CertFilepath = fmt.Sprintf("%s/tls.crt", kafkaPathPrefix)
+	t.KeyFilepath = fmt.Sprintf("%s/tls.key", kafkaPathPrefix)
 
 	return t
 }
@@ -1597,22 +1630,31 @@ func (l *SchemaRegistryListeners) TrustStores(tls *TLS) []*TrustStore {
 	return tss
 }
 
-func (sr *SchemaRegistryListeners) ConsoleTLS(tls *TLS) config.SchemaTLS {
-	t := config.SchemaTLS{Enabled: sr.TLS.IsEnabled(tls)}
+func (sr *SchemaRegistryListeners) ConsoleTLS(tls *TLS) ConsoleTLS {
+	t := ConsoleTLS{Enabled: sr.TLS.IsEnabled(tls)}
 	if !t.Enabled {
 		return t
 	}
 
-	schemaRegistryPrefix := "/mnt/cert/schemaregistry"
+	schemaRegistryPrefix := fmt.Sprintf("%s/%s", certificationMountPoint, sr.TLS.Cert)
 
-	t.CaFilepath = fmt.Sprintf("%s/%s/ca.crt", schemaRegistryPrefix, sr.TLS.Cert)
+	// Strange but technically correct, if CAEnabled is false, we can't safely
+	// assume that a ca.crt file will exist. So we fallback to using the
+	// server's certificate itself.
+	// Other options would be: failing or falling back to the container's
+	// default truststore.
+	if tls.Certs.MustGet(sr.TLS.Cert).CAEnabled {
+		t.CaFilepath = fmt.Sprintf("%s/ca.crt", schemaRegistryPrefix)
+	} else {
+		t.CaFilepath = fmt.Sprintf("%s/tls.crt", schemaRegistryPrefix)
+	}
 
 	if !sr.TLS.RequireClientAuth {
 		return t
 	}
 
-	t.CertFilepath = fmt.Sprintf("%s/%s/tls.crt", schemaRegistryPrefix, sr.TLS.Cert)
-	t.KeyFilepath = fmt.Sprintf("%s/%s/tls.key", schemaRegistryPrefix, sr.TLS.Cert)
+	t.CertFilepath = fmt.Sprintf("%s/tls.crt", schemaRegistryPrefix)
+	t.KeyFilepath = fmt.Sprintf("%s/tls.key", schemaRegistryPrefix)
 
 	return t
 }
