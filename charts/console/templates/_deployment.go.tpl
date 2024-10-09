@@ -38,7 +38,7 @@
 {{- if (not $values.autoscaling.enabled) -}}
 {{- $replicas = ($values.replicaCount | int) -}}
 {{- end -}}
-{{- $initContainers := (coalesce nil) -}}
+{{- $initContainers := (list ) -}}
 {{- if (not (empty $values.initContainers.extraInitContainers)) -}}
 {{- $initContainers = (fromYamlArray (tpl $values.initContainers.extraInitContainers $dot)) -}}
 {{- end -}}

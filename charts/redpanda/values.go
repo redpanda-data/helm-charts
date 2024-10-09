@@ -7,7 +7,6 @@ import (
 	cmmeta "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
 	"github.com/invopop/jsonschema"
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
-	"github.com/redpanda-data/console/backend/pkg/config"
 	"github.com/redpanda-data/helm-charts/charts/console"
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	orderedmap "github.com/wk8/go-ordered-map/v2"
@@ -1118,8 +1117,16 @@ type AdminListeners struct {
 	TLS         InternalTLS                      `json:"tls" jsonschema:"required"`
 }
 
-func (l *AdminListeners) ConsoleTLS(tls *TLS) config.RedpandaAdminAPITLS {
-	t := config.RedpandaAdminAPITLS{Enabled: l.TLS.IsEnabled(tls)}
+type RedpandaAdminAPITLS struct {
+	Enabled               bool   `json:"enabled"`
+	CaFilepath            string `json:"caFilepath"`
+	CertFilepath          string `json:"certFilepath"`
+	KeyFilepath           string `json:"keyFilepath"`
+	InsecureSkipTLSVerify bool   `json:"insecureSkipTlsVerify"`
+}
+
+func (l *AdminListeners) ConsoleTLS(tls *TLS) RedpandaAdminAPITLS {
+	t := RedpandaAdminAPITLS{Enabled: l.TLS.IsEnabled(tls)}
 	if !t.Enabled {
 		return t
 	}
@@ -1450,8 +1457,16 @@ func (l *KafkaListeners) TrustStores(tls *TLS) []*TrustStore {
 	return tss
 }
 
-func (k *KafkaListeners) ConsolemTLS(tls *TLS) config.KafkaTLS {
-	t := config.KafkaTLS{Enabled: k.TLS.IsEnabled(tls)}
+type KafkaTLS struct {
+	Enabled               bool   `json:"enabled"`
+	CaFilepath            string `json:"caFilepath"`
+	CertFilepath          string `json:"certFilepath"`
+	KeyFilepath           string `json:"keyFilepath"`
+	InsecureSkipTLSVerify bool   `json:"insecureSkipTlsVerify"`
+}
+
+func (k *KafkaListeners) ConsoleTLS(tls *TLS) KafkaTLS {
+	t := KafkaTLS{Enabled: k.TLS.IsEnabled(tls)}
 	if !t.Enabled {
 		return t
 	}
@@ -1596,8 +1611,16 @@ func (l *SchemaRegistryListeners) TrustStores(tls *TLS) []*TrustStore {
 	return tss
 }
 
-func (sr *SchemaRegistryListeners) ConsoleTLS(tls *TLS) config.SchemaTLS {
-	t := config.SchemaTLS{Enabled: sr.TLS.IsEnabled(tls)}
+type SchemaTLS struct {
+	Enabled               bool   `json:"enabled"`
+	CaFilepath            string `json:"caFilepath"`
+	CertFilepath          string `json:"certFilepath"`
+	KeyFilepath           string `json:"keyFilepath"`
+	InsecureSkipTLSVerify bool   `json:"insecureSkipTlsVerify"`
+}
+
+func (sr *SchemaRegistryListeners) ConsoleTLS(tls *TLS) SchemaTLS {
+	t := SchemaTLS{Enabled: sr.TLS.IsEnabled(tls)}
 	if !t.Enabled {
 		return t
 	}
