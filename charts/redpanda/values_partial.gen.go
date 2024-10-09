@@ -8,6 +8,7 @@ package redpanda
 import (
 	cmmeta "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
+	"github.com/redpanda-data/helm-charts/charts/console"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 )
@@ -28,7 +29,7 @@ type PartialValues struct {
 	AuditLogging     *PartialAuditLogging          "json:\"auditLogging,omitempty\""
 	Enterprise       *PartialEnterprise            "json:\"enterprise,omitempty\""
 	RackAwareness    *PartialRackAwareness         "json:\"rackAwareness,omitempty\""
-	Console          *PartialConsole               "json:\"console,omitempty\""
+	Console          *console.PartialValues        "json:\"console,omitempty\""
 	Connectors       *PartialConnectors            "json:\"connectors,omitempty\""
 	Auth             *PartialAuth                  "json:\"auth,omitempty\""
 	TLS              *PartialTLS                   "json:\"tls,omitempty\""
@@ -81,13 +82,6 @@ type PartialEnterprise struct {
 type PartialRackAwareness struct {
 	Enabled        *bool   "json:\"enabled,omitempty\" jsonschema:\"required\""
 	NodeAnnotation *string "json:\"nodeAnnotation,omitempty\" jsonschema:\"required\""
-}
-
-type PartialConsole struct {
-	Enabled *bool "json:\"enabled,omitempty\""
-	Console *struct {
-		Config map[string]any "json:\"config,omitempty\""
-	} "json:\"console,omitempty\""
 }
 
 type PartialConnectors struct {
