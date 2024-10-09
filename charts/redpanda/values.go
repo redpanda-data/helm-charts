@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/jsonschema"
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 	"github.com/redpanda-data/console/backend/pkg/config"
+	"github.com/redpanda-data/helm-charts/charts/console"
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	orderedmap "github.com/wk8/go-ordered-map/v2"
 	corev1 "k8s.io/api/core/v1"
@@ -59,7 +60,7 @@ type Values struct {
 	AuditLogging     AuditLogging                  `json:"auditLogging"`
 	Enterprise       Enterprise                    `json:"enterprise"`
 	RackAwareness    RackAwareness                 `json:"rackAwareness"`
-	Console          Console                       `json:"console"`
+	Console          console.PartialValues         `json:"console,omitempty"`
 	Connectors       Connectors                    `json:"connectors"`
 	Auth             Auth                          `json:"auth"`
 	TLS              TLS                           `json:"tls"`
@@ -80,13 +81,6 @@ type Values struct {
 		Enabled bool `json:"enabled"`
 	} `json:"tests"`
 	Force bool `json:"force"`
-}
-
-type Console struct {
-	Enabled bool `json:"enabled"`
-	Console struct {
-		Config map[string]any `json:"config"`
-	} `json:"console"`
 }
 
 type Connectors struct {
