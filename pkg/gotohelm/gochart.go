@@ -51,7 +51,7 @@ func Load(chartYAML, defaultValuesYAML []byte, render RenderFunc, dependencies .
 }
 
 // LoadValues coheres the provided values into a [helmette.Values] and merges
-// it with the default values of this chart.
+// it with the default values of this chart. Dependencies are not loaded.
 func (c *GoChart) LoadValues(values any) (helmette.Values, error) {
 	valuesYaml, err := yaml.Marshal(values)
 	if err != nil {
@@ -59,48 +59,104 @@ func (c *GoChart) LoadValues(values any) (helmette.Values, error) {
 	}
 
 	merged, err := helm.MergeYAMLValues("", c.defaultValues, valuesYaml)
-	return merged, errors.WithStack(err)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	return merged, nil
+}
+
+func isDependencyEnabled(val helmette.Values, dep *chart.Dependency) (bool, error) {
+	// https://github.com/helm/helm/blob/145d12f82fc7a2e39a17713340825686b661e0a1/pkg/chartutil/dependencies.go#L48
+	if dep.Condition == "" {
+		return true, nil
+	}
+
+	enabled, err := val.PathValue(dep.Condition)
+	if err != nil {
+		return false, errors.WithStack(err)
+	}
+
+	asBool, ok := enabled.(bool)
+	if !ok {
+		return false, errors.Newf("evaluating subchart %q condition %q, expected %t; got: %t (%v)", dep.Name, dep.Condition, true, enabled, enabled)
+	}
+
+	return asBool, nil
+}
+
+func mergeRootValueWithDependency(rootValues helmette.Values, dependencyValues helmette.Values, dep *chart.Dependency) (helmette.Values, error) {
+	root, err := rootValues.YAML()
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	dependency, err := helmette.Values{dep.Name: dependencyValues}.YAML()
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	merged, err := helm.MergeYAMLValues("", []byte(root), []byte(dependency))
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	return merged, nil
 }
 
 // Dot constructs a [helmette.Dot] for this chart and any dependencies it has,
 // taking into consideration the dependencies' condition.
-func (c *GoChart) Dot(cfg kube.Config, release helmette.Release, values helmette.Values) (*helmette.Dot, error) {
+func (c *GoChart) Dot(cfg kube.Config, release helmette.Release, values any) (*helmette.Dot, error) {
 	subcharts := map[string]*helmette.Dot{}
 
+	loaded, err := c.LoadValues(values)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
 	for _, dep := range c.metadata.Dependencies {
-		// https://github.com/helm/helm/blob/145d12f82fc7a2e39a17713340825686b661e0a1/pkg/chartutil/dependencies.go#L48
-		enabled, err := values.PathValue(dep.Condition)
-		if err != nil {
-			return nil, errors.WithStack(err)
-		}
-
-		if asBool, ok := enabled.(bool); ok && !asBool {
-			continue
-		} else if !ok {
-			return nil, errors.Newf("evaluating subchart %q condition %q, expected %t; got: %t (%v)", dep.Name, dep.Condition, true, enabled, enabled)
-		}
-
-		subvalues, err := values.Table(dep.Name)
-		if err != nil {
-			return nil, errors.WithStack(err)
-		}
-
 		subchart, ok := c.dependencies[dep.Name]
 		if !ok {
 			return nil, errors.Newf("missing dependency %q", dep.Name)
 		}
 
-		subcharts[dep.Name], err = subchart.Dot(cfg, release, subvalues)
+		subvalues, err := loaded.Table(dep.Name)
 		if err != nil {
-			return nil, err
+			return nil, errors.WithStack(err)
 		}
+
+		// The global key is added by helm
+		subvalues["global"] = struct{}{}
+
+		// The LoadValues could be less compute intensive as Dot is recursive and LoadValues is not
+		subchartDot, err := subchart.Dot(cfg, release, subvalues)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+
+		mergedWithDep, err := mergeRootValueWithDependency(loaded, subchartDot.Values, dep)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+
+		enabled, err := isDependencyEnabled(mergedWithDep, dep)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+		if !enabled {
+			// When chart does not match condition then global is removed
+			delete(subvalues, "global")
+			continue
+		}
+		loaded = mergedWithDep
+		subcharts[dep.Name] = subchartDot
 	}
 
 	return &helmette.Dot{
 		KubeConfig: cfg,
 		Release:    release,
 		Subcharts:  subcharts,
-		Values:     values,
+		Values:     loaded,
 		Chart: helmette.Chart{
 			Name:       c.metadata.Name,
 			Version:    c.metadata.Version,
@@ -115,12 +171,7 @@ func (c *GoChart) Dot(cfg kube.Config, release helmette.Release, values helmette
 // Helm hooks are included in the returned slice, it's up to the caller
 // to filter them.
 func (c *GoChart) Render(cfg kube.Config, release helmette.Release, values any) ([]kube.Object, error) {
-	loaded, err := c.LoadValues(values)
-	if err != nil {
-		return nil, err
-	}
-
-	dot, err := c.Dot(cfg, release, loaded)
+	dot, err := c.Dot(cfg, release, values)
 	if err != nil {
 		return nil, err
 	}
@@ -161,20 +212,13 @@ func (c *GoChart) render(dot *helmette.Dot) ([]kube.Object, error) {
 		return nil, err
 	}
 
-	for _, dep := range c.metadata.Dependencies {
-		// NB: dot.Subcharts will only contain a dependency is it's condition
-		// has been met.
-		subdot, ok := dot.Subcharts[dep.Name]
+	for _, depDot := range dot.Subcharts {
+		subchart, ok := c.dependencies[depDot.Chart.Name]
 		if !ok {
-			continue
+			return nil, errors.Newf("missing dependency %q", depDot.Chart.Name)
 		}
 
-		subchart, ok := c.dependencies[dep.Name]
-		if !ok {
-			return nil, errors.Newf("missing dependency %q", dep.Name)
-		}
-
-		subchartManifests, err := subchart.render(subdot)
+		subchartManifests, err := subchart.render(depDot)
 		if err != nil {
 			return nil, err
 		}
