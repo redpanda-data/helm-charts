@@ -45,7 +45,7 @@ func Fullname(dot *helmette.Dot) string {
 
 func FullLabels(dot *helmette.Dot) map[string]string {
 	return helmette.Merge(map[string]string{
-		"helm.sh/chart":                Chart(dot),
+		"helm.sh/chart":                ChartLabels(dot),
 		"app.kubernetes.io/managed-by": dot.Release.Service,
 	}, PodLabels(dot))
 }
@@ -59,7 +59,7 @@ func PodLabels(dot *helmette.Dot) map[string]string {
 	}, values.CommonLabels)
 }
 
-func Chart(dot *helmette.Dot) string {
+func ChartLabels(dot *helmette.Dot) string {
 	chart := fmt.Sprintf("%s-%s", dot.Chart.Name, dot.Chart.Version)
 	return trunc(helmette.Replace("+", "_", chart))
 }

@@ -39,7 +39,7 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $_is_returning = true -}}
-{{- (dict "r" (merge (dict ) (dict "helm.sh/chart" (get (fromJson (include "connectors.Chart" (dict "a" (list $dot) ))) "r") "app.kubernetes.io/managed-by" $dot.Release.Service ) (get (fromJson (include "connectors.PodLabels" (dict "a" (list $dot) ))) "r"))) | toJson -}}
+{{- (dict "r" (merge (dict ) (dict "helm.sh/chart" (get (fromJson (include "connectors.ChartLabels" (dict "a" (list $dot) ))) "r") "app.kubernetes.io/managed-by" $dot.Release.Service ) (get (fromJson (include "connectors.PodLabels" (dict "a" (list $dot) ))) "r"))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -55,7 +55,7 @@
 {{- end -}}
 {{- end -}}
 
-{{- define "connectors.Chart" -}}
+{{- define "connectors.ChartLabels" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
