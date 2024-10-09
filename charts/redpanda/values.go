@@ -1736,9 +1736,6 @@ func (sr *SecretRef) IsValid() bool {
 }
 
 type TieredStorageCredentials struct {
-	// ConfigurationKey string `json:"configurationKey" jsonschema:"deprecated"`
-	// Key              string     `json:"key" jsonschema:"deprecated"`
-	// Name             string     `json:"name" jsonschema:"deprecated"`
 	AccessKey *SecretRef `json:"accessKey"`
 	SecretKey *SecretRef `json:"secretKey"`
 }
@@ -1776,11 +1773,6 @@ func (tsc *TieredStorageCredentials) AsEnvVars(config TieredStorageConfig) []cor
 
 	return envvars
 }
-
-// // +gotohelm:ignore=true
-// func (TieredStorageCredentials) JSONSchemaExtend(schema *jsonschema.Schema) {
-// 	deprecate(schema, "configurationKey", "key", "name")
-// }
 
 type TieredStorageConfig map[string]any
 
