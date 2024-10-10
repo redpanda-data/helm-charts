@@ -11,7 +11,6 @@ import (
 	"testing"
 
 	fuzz "github.com/google/gofuzz"
-	"github.com/redpanda-data/helm-charts/charts/redpanda"
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	"github.com/redpanda-data/helm-charts/pkg/helm"
 	"github.com/redpanda-data/helm-charts/pkg/kube"
@@ -196,7 +195,7 @@ func TestGoHelmEquivalence(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	helmObjs, err := kube.DecodeYAML(rendered, redpanda.Scheme)
+	helmObjs, err := kube.DecodeYAML(rendered, Scheme)
 	require.NoError(t, err)
 
 	slices.SortStableFunc(helmObjs, func(a, b kube.Object) int {
