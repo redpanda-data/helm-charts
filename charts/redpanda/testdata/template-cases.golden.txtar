@@ -792,19 +792,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -2059,19 +2057,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -3178,19 +3174,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -3859,10 +3853,6 @@ stringData:
           status=$(${CURL_MAINTENANCE_DELETE_CMD})
           sleep 0.5
       done
-      # Setup and export SASL bootstrap-user
-      IFS=":" read -r USER_NAME PASSWORD MECHANISM < <(grep "" $(find /etc/secrets/users/* -print))
-      MECHANISM=${MECHANISM:-SCRAM-SHA-512}
-      rpk acl user create ${USER_NAME} -p {PASSWORD} --mechanism ${MECHANISM} || true
 
       touch /tmp/postStartHookFinished
     }
@@ -4606,19 +4596,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -5106,10 +5094,6 @@ stringData:
           status=$(${CURL_MAINTENANCE_DELETE_CMD})
           sleep 0.5
       done
-      # Setup and export SASL bootstrap-user
-      IFS=":" read -r USER_NAME PASSWORD MECHANISM < <(grep "" $(find /etc/secrets/users/* -print))
-      MECHANISM=${MECHANISM:-SCRAM-SHA-512}
-      rpk acl user create ${USER_NAME} -p {PASSWORD} --mechanism ${MECHANISM} || true
 
       touch /tmp/postStartHookFinished
     }
@@ -5949,19 +5933,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -7504,19 +7486,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -8961,19 +8941,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -10472,19 +10450,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -11912,19 +11888,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -13381,19 +13355,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -14066,10 +14038,6 @@ stringData:
           status=$(${CURL_MAINTENANCE_DELETE_CMD})
           sleep 0.5
       done
-      # Setup and export SASL bootstrap-user
-      IFS=":" read -r USER_NAME PASSWORD MECHANISM < <(grep "" $(find /etc/secrets/users/* -print))
-      MECHANISM=${MECHANISM:-SCRAM-SHA-512}
-      rpk acl user create ${USER_NAME} -p {PASSWORD} --mechanism ${MECHANISM} || true
 
       touch /tmp/postStartHookFinished
     }
@@ -14949,19 +14917,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -16384,19 +16350,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -17761,19 +17725,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -18960,19 +18922,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -20142,19 +20102,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -21789,19 +21747,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -23189,19 +23145,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -24577,19 +24531,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -26027,19 +25979,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -27497,19 +27447,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -28965,19 +28913,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -30379,19 +30325,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -31847,19 +31791,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -33329,19 +33271,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -34809,19 +34749,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -36236,19 +36174,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -37717,19 +37653,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -39199,19 +39133,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -40679,19 +40611,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -42106,19 +42036,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -43526,19 +43454,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -44912,19 +44838,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -46301,19 +46225,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -47760,19 +47682,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -49171,19 +49091,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -50789,19 +50707,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -52388,19 +52304,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -54019,19 +53933,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -55404,19 +55316,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -56800,19 +56710,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -58226,19 +58134,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -59645,19 +59551,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -61057,19 +60961,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -62223,19 +62125,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -63722,19 +63622,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -64386,10 +64284,6 @@ stringData:
           status=$(${CURL_MAINTENANCE_DELETE_CMD})
           sleep 0.5
       done
-      # Setup and export SASL bootstrap-user
-      IFS=":" read -r USER_NAME PASSWORD MECHANISM < <(grep "" $(find /etc/secrets/users/* -print))
-      MECHANISM=${MECHANISM:-SCRAM-SHA-512}
-      rpk acl user create ${USER_NAME} -p {PASSWORD} --mechanism ${MECHANISM} || true
 
       touch /tmp/postStartHookFinished
     }
@@ -65291,19 +65185,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -66783,19 +66675,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -68175,19 +68065,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -71054,19 +70942,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -72441,19 +72327,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -73828,19 +73712,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -74509,10 +74391,6 @@ stringData:
           status=$(${CURL_MAINTENANCE_DELETE_CMD})
           sleep 0.5
       done
-      # Setup and export SASL bootstrap-user
-      IFS=":" read -r USER_NAME PASSWORD MECHANISM < <(grep "" $(find /etc/secrets/users/* -print))
-      MECHANISM=${MECHANISM:-SCRAM-SHA-512}
-      rpk acl user create ${USER_NAME} -p {PASSWORD} --mechanism ${MECHANISM} || true
 
       touch /tmp/postStartHookFinished
     }
@@ -75390,19 +75268,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -76849,19 +76725,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -78288,19 +78162,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -79680,19 +79552,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -81077,19 +80947,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -82516,19 +82384,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -83908,19 +83774,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -85293,19 +85157,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -86732,19 +86594,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -88124,19 +87984,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -89509,19 +89367,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -90948,19 +90804,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -92340,19 +92194,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -93726,19 +93578,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -95166,19 +95016,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -96559,19 +96407,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -97945,19 +97791,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -99385,19 +99229,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -100778,19 +100620,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -102163,19 +102003,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -103336,19 +103174,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -104740,19 +104576,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -106340,19 +106174,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -107779,19 +107611,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -109304,19 +109134,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -110689,19 +110517,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -112084,19 +111910,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -113495,19 +113319,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -114934,19 +114756,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -116326,19 +116146,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -117712,19 +117530,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -119152,19 +118968,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -120545,19 +120359,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:
@@ -121930,19 +121742,17 @@ spec:
           postStart:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/postStart.sh
-                true
+              - 'timeout -v 45 bash -x /var/lifecycle/postStart.sh 2>&1 | sed "s/^/lifecycle-hook
+                post-start $(date): /" | tee /proc/1/fd/1; true'
           preStop:
             exec:
               command:
-              - /bin/bash
+              - bash
               - -c
-              - |
-                timeout -v 45 bash -x /var/lifecycle/preStop.sh
-                true # do not fail and cause the pod to terminate
+              - 'timeout -v 45 bash -x /var/lifecycle/preStop.sh 2>&1 | sed "s/^/lifecycle-hook
+                pre-stop $(date): /" | tee /proc/1/fd/1; true'
         livenessProbe:
           exec:
             command:

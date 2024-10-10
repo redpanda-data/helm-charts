@@ -555,6 +555,17 @@ func StatefulSetContainers(dot *helmette.Dot) []corev1.Container {
 	return containers
 }
 
+// wrapLifecycleHook wraps the given command in an attempt to make it more friendly for Kubernetes' lifecycle hooks.
+// - It attaches a maximum time limit by wrapping the command with `timeout -v <timeout>`
+// - It redirect stderr to stdout so all logs from cmd get the same treatment.
+// - It prepends the "lifecycle-hook $(hook) $(date)" to al lines emitted by the hook for easy identification.
+// - It tees the output to fd 1 of pid 1 so it shows up in kubectl logs
+// - It terminates the entire command with "true" so it never fails which would cause the Pod to get killed.
+func wrapLifecycleHook(hook string, timeoutSeconds int64, cmd []string) []string {
+	wrapped := helmette.Join(" ", cmd)
+	return []string{"bash", "-c", fmt.Sprintf("timeout -v %d %s 2>&1 | sed \"s/^/lifecycle-hook %s $(date): /\" | tee /proc/1/fd/1; true", timeoutSeconds, wrapped, hook)}
+}
+
 func statefulSetContainerRedpanda(dot *helmette.Dot) *corev1.Container {
 	values := helmette.Unwrap[Values](dot.Values)
 
@@ -568,32 +579,20 @@ func statefulSetContainerRedpanda(dot *helmette.Dot) *corev1.Container {
 			// finish the lifecycle scripts with "true" to prevent them from terminating the pod prematurely
 			PostStart: &corev1.LifecycleHandler{
 				Exec: &corev1.ExecAction{
-					Command: []string{
-						`/bin/bash`,
-						`-c`,
-						helmette.Join("\n", []string{
-							fmt.Sprintf(`timeout -v %d bash -x /var/lifecycle/postStart.sh`,
-								values.Statefulset.TerminationGracePeriodSeconds/2,
-							),
-							`true`,
-							``,
-						}),
-					},
+					Command: wrapLifecycleHook(
+						"post-start",
+						values.Statefulset.TerminationGracePeriodSeconds/2,
+						[]string{"bash", "-x", "/var/lifecycle/postStart.sh"},
+					),
 				},
 			},
 			PreStop: &corev1.LifecycleHandler{
 				Exec: &corev1.ExecAction{
-					Command: []string{
-						`/bin/bash`,
-						`-c`,
-						helmette.Join("\n", []string{
-							fmt.Sprintf(`timeout -v %d bash -x /var/lifecycle/preStop.sh`,
-								values.Statefulset.TerminationGracePeriodSeconds/2,
-							),
-							`true # do not fail and cause the pod to terminate`,
-							``,
-						}),
-					},
+					Command: wrapLifecycleHook(
+						"pre-stop",
+						values.Statefulset.TerminationGracePeriodSeconds/2,
+						[]string{"bash", "-x", "/var/lifecycle/preStop.sh"},
+					),
 				},
 			},
 		},
