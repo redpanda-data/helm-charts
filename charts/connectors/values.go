@@ -193,9 +193,10 @@ type Storage struct {
 }
 
 type ServiceAccountConfig struct {
-	Create      bool              `json:"create"`
-	Annotations map[string]string `json:"annotations"`
-	Name        string            `json:"name"`
+	Annotations                  map[string]string `json:"annotations"`
+	AutomountServiceAccountToken *bool             `json:"automountServiceAccountToken,omitempty"`
+	Create                       bool              `json:"create"`
+	Name                         string            `json:"name"`
 }
 
 type ServiceConfig struct {

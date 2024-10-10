@@ -40,5 +40,6 @@ func ServiceAccount(dot *helmette.Dot) *corev1.ServiceAccount {
 			Labels:      FullLabels(dot),
 			Annotations: values.ServiceAccount.Annotations,
 		},
+		AutomountServiceAccountToken: values.ServiceAccount.AutomountServiceAccountToken,
 	}
 }
