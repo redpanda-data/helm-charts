@@ -21,6 +21,7 @@ import (
 
 	certmanagerv1 "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
+	"github.com/redpanda-data/helm-charts/charts/console"
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm"
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	"github.com/redpanda-data/helm-charts/pkg/kube"
@@ -40,7 +41,7 @@ var (
 	defaultValuesYAML []byte
 
 	// Chart is the go version of the redpanda helm chart.
-	Chart = gotohelm.MustLoad(chartYAML, defaultValuesYAML, render)
+	Chart = gotohelm.MustLoad(chartYAML, defaultValuesYAML, render, console.Chart)
 )
 
 // +gotohelm:ignore=true
@@ -113,6 +114,8 @@ func render(dot *helmette.Dot) []kube.Object {
 	for _, obj := range Secrets(dot) {
 		manifests = append(manifests, obj)
 	}
+
+	manifests = append(manifests, renderConsole(dot)...)
 
 	// NB: This slice may contain nil interfaces!
 	// Filtering happens elsewhere, don't call this function directly if you

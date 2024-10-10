@@ -51,14 +51,37 @@ func Load(chartYAML, defaultValuesYAML []byte, render RenderFunc, dependencies .
 }
 
 // LoadValues coheres the provided values into a [helmette.Values] and merges
-// it with the default values of this chart.
+// it with the default values of this chart and all dependencies.
 func (c *GoChart) LoadValues(values any) (helmette.Values, error) {
 	valuesYaml, err := yaml.Marshal(values)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 
-	merged, err := helm.MergeYAMLValues("", c.defaultValues, valuesYaml)
+	merged := map[string]any{}
+	for _, dep := range c.dependencies {
+		depsValues, err := dep.LoadValues(nil)
+		if err != nil {
+			return nil, errors.WithStack(errors.Wrapf(err, "failed to calculate dependency value of %q dependency", dep.metadata.Name))
+		}
+
+		depsValuesByte, err := yaml.Marshal(depsValues)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+
+		merged[dep.metadata.Name], err = helm.MergeYAMLValues("", dep.defaultValues, depsValuesByte)
+		if err != nil {
+			return nil, errors.WithStack(err)
+		}
+	}
+
+	depsValues, err := yaml.Marshal(merged)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	merged, err = helm.MergeYAMLValues("", depsValues, c.defaultValues, valuesYaml)
 	return merged, errors.WithStack(err)
 }
 
@@ -69,15 +92,17 @@ func (c *GoChart) Dot(cfg kube.Config, release helmette.Release, values helmette
 
 	for _, dep := range c.metadata.Dependencies {
 		// https://github.com/helm/helm/blob/145d12f82fc7a2e39a17713340825686b661e0a1/pkg/chartutil/dependencies.go#L48
-		enabled, err := values.PathValue(dep.Condition)
-		if err != nil {
-			return nil, errors.WithStack(err)
-		}
+		if dep.Condition != "" {
+			enabled, err := values.PathValue(dep.Condition)
+			if err != nil {
+				return nil, errors.WithStack(err)
+			}
 
-		if asBool, ok := enabled.(bool); ok && !asBool {
-			continue
-		} else if !ok {
-			return nil, errors.Newf("evaluating subchart %q condition %q, expected %t; got: %t (%v)", dep.Name, dep.Condition, true, enabled, enabled)
+			if asBool, ok := enabled.(bool); ok && !asBool {
+				continue
+			} else if !ok {
+				return nil, errors.Newf("evaluating subchart %q condition %q, expected %t; got: %t (%v)", dep.Name, dep.Condition, true, enabled, enabled)
+			}
 		}
 
 		subvalues, err := values.Table(dep.Name)
@@ -172,6 +197,11 @@ func (c *GoChart) render(dot *helmette.Dot) ([]kube.Object, error) {
 		subchart, ok := c.dependencies[dep.Name]
 		if !ok {
 			return nil, errors.Newf("missing dependency %q", dep.Name)
+		}
+
+		subdot.Values, err = subchart.LoadValues(dot.Values[dep.Name])
+		if err != nil {
+			return nil, errors.WithStack(err)
 		}
 
 		subchartManifests, err := subchart.render(subdot)
