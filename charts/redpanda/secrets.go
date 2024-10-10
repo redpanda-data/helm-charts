@@ -100,24 +100,13 @@ func SecretSTSLifecycle(dot *helmette.Dot) *corev1.Secret {
 		`      status=$(${CURL_MAINTENANCE_DELETE_CMD})`,
 		`      sleep 0.5`,
 		`  done`,
-	}
-	if values.Auth.SASL.Enabled && values.Auth.SASL.SecretRef != "" {
-		postStartSh = append(postStartSh,
-			`  # Setup and export SASL bootstrap-user`,
-			`  IFS=":" read -r USER_NAME PASSWORD MECHANISM < <(grep "" $(find /etc/secrets/users/* -print))`,
-			fmt.Sprintf(`  MECHANISM=${MECHANISM:-%s}`, helmette.Dig(dot.Values.AsMap(), "SCRAM-SHA-512", "auth", "sasl", "mechanism")),
-			`  rpk acl user create ${USER_NAME} -p {PASSWORD} --mechanism ${MECHANISM} || true`,
-		)
-	}
-	postStartSh = append(postStartSh,
 		``,
-
 		`  touch /tmp/postStartHookFinished`,
 		`}`,
 		``,
 		`postStartHook`,
 		`true`,
-	)
+	}
 	secret.StringData["postStart.sh"] = helmette.Join("\n", postStartSh)
 
 	preStopSh := []string{
