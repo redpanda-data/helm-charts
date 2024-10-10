@@ -125,9 +125,10 @@ type PartialStorage struct {
 }
 
 type PartialServiceAccountConfig struct {
-	Create      *bool             "json:\"create,omitempty\""
-	Annotations map[string]string "json:\"annotations,omitempty\""
-	Name        *string           "json:\"name,omitempty\""
+	Annotations                  map[string]string "json:\"annotations,omitempty\""
+	AutomountServiceAccountToken *bool             "json:\"automountServiceAccountToken,omitempty\""
+	Create                       *bool             "json:\"create,omitempty\""
+	Name                         *string           "json:\"name,omitempty\""
 }
 
 type PartialServiceConfig struct {

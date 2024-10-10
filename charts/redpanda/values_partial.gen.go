@@ -298,9 +298,10 @@ type PartialStatefulset struct {
 }
 
 type PartialServiceAccountCfg struct {
-	Create      *bool             "json:\"create,omitempty\" jsonschema:\"required\""
-	Name        *string           "json:\"name,omitempty\" jsonschema:\"required\""
-	Annotations map[string]string "json:\"annotations,omitempty\" jsonschema:\"required\""
+	Annotations                  map[string]string "json:\"annotations,omitempty\" jsonschema:\"required\""
+	AutomountServiceAccountToken *bool             "json:\"automountServiceAccountToken,omitempty\""
+	Create                       *bool             "json:\"create,omitempty\" jsonschema:\"required\""
+	Name                         *string           "json:\"name,omitempty\" jsonschema:\"required\""
 }
 
 type PartialRBAC struct {

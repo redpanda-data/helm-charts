@@ -675,9 +675,10 @@ func (Statefulset) JSONSchemaExtend(schema *jsonschema.Schema) {
 }
 
 type ServiceAccountCfg struct {
-	Create      bool              `json:"create" jsonschema:"required"`
-	Name        string            `json:"name" jsonschema:"required"`
-	Annotations map[string]string `json:"annotations" jsonschema:"required"`
+	Annotations                  map[string]string `json:"annotations" jsonschema:"required"`
+	AutomountServiceAccountToken *bool             `json:"automountServiceAccountToken,omitempty"`
+	Create                       bool              `json:"create" jsonschema:"required"`
+	Name                         string            `json:"name" jsonschema:"required"`
 }
 
 type RBAC struct {

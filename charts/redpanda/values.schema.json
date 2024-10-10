@@ -4327,6 +4327,9 @@
           },
           "type": "object"
         },
+        "automountServiceAccountToken": {
+          "type": "boolean"
+        },
         "create": {
           "type": "boolean"
         },
@@ -4335,9 +4338,9 @@
         }
       },
       "required": [
+        "annotations",
         "create",
-        "name",
-        "annotations"
+        "name"
       ],
       "type": "object"
     },

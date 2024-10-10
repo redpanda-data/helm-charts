@@ -6632,6 +6632,7 @@ metadata:
 ---
 # Source: redpanda/templates/entry-point.yaml
 apiVersion: v1
+automountServiceAccountToken: null
 kind: ServiceAccount
 metadata:
   annotations: {}

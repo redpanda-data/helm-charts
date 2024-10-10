@@ -40,5 +40,6 @@ func ServiceAccount(dot *helmette.Dot) *corev1.ServiceAccount {
 			Name:        ServiceAccountName(dot),
 			Namespace:   dot.Release.Namespace,
 		},
+		AutomountServiceAccountToken: values.ServiceAccount.AutomountServiceAccountToken,
 	}
 }
