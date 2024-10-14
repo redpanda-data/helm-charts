@@ -8,6 +8,13 @@
 #### Fixed
 #### Removed
 
+### [5.9.7](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.7) - 2024-10-14
+#### Added
+#### Changed
+* Bump Redpanda app version
+#### Fixed
+#### Removed
+
 ### [5.9.6](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.6) - 2024-10-09
 #### Added
 * Added the ability to override the name of the bootstrap user created when SASL authentication is enabled. [#1547](https://github.com/redpanda-data/helm-charts/pull/1547)
@@ -276,10 +283,17 @@
 
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/console-FILLMEIN) - YYYY-MM-DD
 #### Added
+#### Changed
+#### Fixed
+#### Removed
+
+### [0.7.30](https://github.com/redpanda-data/helm-charts/releases/tag/console-0.7.30) - 2024-10-14
+#### Added
 * Add Enabled flag that is used in Redpanda chart
 * Add test example for oidc configuration [#1503](https://github.com/redpanda-data/helm-charts/pull/1503)
 #### Changed
-* Align Console init container default value 
+* Bump Console app version
+* Align Console init container default value
 * The minimum Kubernetes version has been bumped to `1.25.0`
 #### Fixed
 * License json tag to correctly set Console license [#1510](https://github.com/redpanda-data/helm-charts/pull/1510)
