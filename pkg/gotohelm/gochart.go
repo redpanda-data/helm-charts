@@ -128,6 +128,11 @@ func (c *GoChart) Render(cfg kube.Config, release helmette.Release, values any) 
 	return c.render(dot)
 }
 
+// Metadata returns the parsed [chart.Metadata] describing this chart.
+func (c *GoChart) Metadata() chart.Metadata {
+	return c.metadata
+}
+
 // doRender is a helper to catch any panics from renderFunc and convert them to
 // errors.
 func (c *GoChart) doRender(dot *helmette.Dot) (_ []kube.Object, err error) {
