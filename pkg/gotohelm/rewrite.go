@@ -38,9 +38,9 @@ var rewrites = []astRewrite{
 // If need be, the rewritten files can also be dumped to disk and have assertions made
 func LoadPackages(cfg *packages.Config, patterns ...string) ([]*packages.Package, error) {
 	// Ensure we're getting all the values we need (which is pretty much everything...)
-	cfg.Mode |= packages.NeedName | packages.NeedFiles | packages.NeedCompiledGoFiles | packages.NeedImports |
-		packages.NeedTypes | packages.NeedTypesSizes | packages.NeedSyntax | packages.NeedTypesInfo |
-		packages.NeedDeps | packages.NeedModule
+	cfg.Mode |= packages.NeedName | packages.NeedFiles | packages.NeedImports |
+		packages.NeedTypes | packages.NeedSyntax | packages.NeedTypesInfo |
+		packages.NeedDeps
 
 	pkgs, err := packages.Load(cfg, patterns...)
 	if err != nil {

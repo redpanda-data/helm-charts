@@ -45,7 +45,27 @@ type Chart struct {
 	Files []*File
 }
 
-func Transpile(pkg *packages.Package, deps ...string) (_ *Chart, err error) {
+func Transpile(pkg *packages.Package, deps ...string) (*Chart, error) {
+	chart, err := transpile(pkg, deps...)
+	if err != nil {
+		return nil, err
+	}
+
+	shims, err := transpileBootstrap()
+	if err != nil {
+		return nil, err
+	}
+
+	chart.Files = append(chart.Files, shims)
+
+	return chart, nil
+}
+
+// transpile is the entrypoint to the gotohelm transpiler. The public method
+// [Transpile] delegates to this method and injects the shims/bootstrap file
+// before returning the chart. This private method is necessary to prevent any
+// infinite recursion issues.
+func transpile(pkg *packages.Package, deps ...string) (_ *Chart, err error) {
 	defer func() {
 		switch v := recover().(type) {
 		case nil:
@@ -116,10 +136,6 @@ func (t *Transpiler) Transpile() *Chart {
 			chart.Files = append(chart.Files, transpiled)
 		}
 	}
-
-	// Finally, include the shims file with all transpiled charts.
-	// NB: When the bootstrap package is transpiled shims is nil.
-	chart.Files = append(chart.Files, shims)
 
 	return &chart
 }
