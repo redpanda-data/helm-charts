@@ -282,8 +282,8 @@
 {{- end -}}
 {{- $result := (dict "ca_file" (get (fromJson (include "redpanda.InternalTLS.ServerCAPath" (dict "a" (list $tls $values.tls) ))) "r") ) -}}
 {{- if $tls.requireClientAuth -}}
-{{- $_ := (set $result "cert_file" (printf "/etc/tls/certs/%s-client/tls.crt" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r"))) -}}
-{{- $_ := (set $result "key_file" (printf "/etc/tls/certs/%s-client/tls.key" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r"))) -}}
+{{- $_ := (set $result "cert_file" (printf "%s/%s-client/tls.crt" "/etc/tls/certs" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r"))) -}}
+{{- $_ := (set $result "key_file" (printf "%s/%s-client/tls.key" "/etc/tls/certs" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r"))) -}}
 {{- end -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $result) | toJson -}}
@@ -304,8 +304,8 @@
 {{- end -}}
 {{- $result := (dict "ca_file" (get (fromJson (include "redpanda.InternalTLS.ServerCAPath" (dict "a" (list $tls $values.tls) ))) "r") ) -}}
 {{- if $tls.requireClientAuth -}}
-{{- $_ := (set $result "cert_file" (printf "/etc/tls/certs/%s-client/tls.crt" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r"))) -}}
-{{- $_ := (set $result "key_file" (printf "/etc/tls/certs/%s-client/tls.key" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r"))) -}}
+{{- $_ := (set $result "cert_file" (printf "%s/%s-client/tls.crt" "/etc/tls/certs" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r"))) -}}
+{{- $_ := (set $result "key_file" (printf "%s/%s-client/tls.key" "/etc/tls/certs" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r"))) -}}
 {{- end -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $result) | toJson -}}
@@ -330,8 +330,8 @@
 {{- if (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $values.listeners.kafka.tls $values.tls) ))) "r") -}}
 {{- $brokerTLS = (dict "enabled" true "require_client_auth" $kafkaTLS.requireClientAuth "truststore_file" (get (fromJson (include "redpanda.InternalTLS.ServerCAPath" (dict "a" (list $kafkaTLS $values.tls) ))) "r") ) -}}
 {{- if $kafkaTLS.requireClientAuth -}}
-{{- $_ := (set $brokerTLS "cert_file" (printf "/etc/tls/certs/%s-client/tls.crt" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r"))) -}}
-{{- $_ := (set $brokerTLS "key_file" (printf "/etc/tls/certs/%s-client/tls.key" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r"))) -}}
+{{- $_ := (set $brokerTLS "cert_file" (printf "%s/%s-client/tls.crt" "/etc/tls/certs" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r"))) -}}
+{{- $_ := (set $brokerTLS "key_file" (printf "%s/%s-client/tls.key" "/etc/tls/certs" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r"))) -}}
 {{- end -}}
 {{- end -}}
 {{- $cfg := (dict "brokers" $brokerList ) -}}
@@ -422,7 +422,7 @@
 {{- end -}}
 {{- $certName := $r.tls.cert -}}
 {{- $_is_returning = true -}}
-{{- (dict "r" (dict "enabled" true "cert_file" (printf "/etc/tls/certs/%s/tls.crt" $certName) "key_file" (printf "/etc/tls/certs/%s/tls.key" $certName) "require_client_auth" $r.tls.requireClientAuth "truststore_file" (get (fromJson (include "redpanda.InternalTLS.TrustStoreFilePath" (dict "a" (list $r.tls $values.tls) ))) "r") )) | toJson -}}
+{{- (dict "r" (dict "enabled" true "cert_file" (printf "%s/%s/tls.crt" "/etc/tls/certs" $certName) "key_file" (printf "%s/%s/tls.key" "/etc/tls/certs" $certName) "require_client_auth" $r.tls.requireClientAuth "truststore_file" (get (fromJson (include "redpanda.InternalTLS.TrustStoreFilePath" (dict "a" (list $r.tls $values.tls) ))) "r") )) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -449,7 +449,7 @@
 {{- break -}}
 {{- end -}}
 {{- $_is_returning = true -}}
-{{- (dict "r" (dict "name" "internal" "enabled" true "cert_file" (printf "/etc/tls/certs/%s/tls.crt" $internal.cert) "key_file" (printf "/etc/tls/certs/%s/tls.key" $internal.cert) "require_client_auth" $internal.requireClientAuth "truststore_file" (get (fromJson (include "redpanda.InternalTLS.TrustStoreFilePath" (dict "a" (list $internal $tls) ))) "r") )) | toJson -}}
+{{- (dict "r" (dict "name" "internal" "enabled" true "cert_file" (printf "%s/%s/tls.crt" "/etc/tls/certs" $internal.cert) "key_file" (printf "%s/%s/tls.key" "/etc/tls/certs" $internal.cert) "require_client_auth" $internal.requireClientAuth "truststore_file" (get (fromJson (include "redpanda.InternalTLS.TrustStoreFilePath" (dict "a" (list $internal $tls) ))) "r") )) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
