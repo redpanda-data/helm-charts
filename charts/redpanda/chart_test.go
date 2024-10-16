@@ -209,6 +209,69 @@ func TestChart(t *testing.T) {
 
 		assert.NoErrorf(t, kafkaListenerTest(ctx, rpk), "Kafka listener sub test failed")
 		assert.NoErrorf(t, adminListenerTest(ctx, rpk), "Admin listener sub test failed")
+		assert.NoErrorf(t, superuserTest(ctx, rpk, "superuser", "kubernetes-controller"), "Superuser sub test failed")
+	})
+
+	t.Run("admin api auth required - pre-existing secret", func(t *testing.T) {
+		ctx := testutil.Context(t)
+
+		env := h.Namespaced(t)
+
+		env.Ctl().Create(ctx, &corev1.Secret{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      "my-secret",
+				Namespace: env.Namespace(),
+			},
+			StringData: map[string]string{
+				"users.txt": "superuser:superpassword:SCRAM-SHA-512",
+			},
+		})
+
+		partial := redpanda.PartialValues{
+			External:      &redpanda.PartialExternalConfig{Enabled: ptr.To(false)},
+			ClusterDomain: ptr.To("cluster.local"),
+			Config: &redpanda.PartialConfig{
+				Cluster: redpanda.PartialClusterConfig{
+					"admin_api_require_auth": true,
+				},
+			},
+			Auth: &redpanda.PartialAuth{
+				SASL: &redpanda.PartialSASLAuth{
+					Enabled:   ptr.To(true),
+					SecretRef: ptr.To("my-secret"),
+				},
+			},
+		}
+
+		r, err := rand.Int(rand.Reader, new(big.Int).SetInt64(1799999999))
+		require.NoError(t, err)
+
+		chartReleaseName := fmt.Sprintf("chart-%d", r.Int64())
+		rpRelease := env.Install(ctx, redpandaChart, helm.InstallOptions{
+			Values:    partial,
+			Name:      chartReleaseName,
+			Namespace: env.Namespace(),
+		})
+
+		rpk := Client{Ctl: env.Ctl(), Release: &rpRelease}
+
+		dot := &helmette.Dot{
+			Values:  *helmette.UnmarshalInto[*helmette.Values](partial),
+			Release: helmette.Release{Name: rpRelease.Name, Namespace: rpRelease.Namespace},
+			Chart: helmette.Chart{
+				Name: "redpanda",
+			},
+		}
+
+		cleanup, err := rpk.ExposeRedpandaCluster(ctx, dot, w, wErr)
+		if cleanup != nil {
+			t.Cleanup(cleanup)
+		}
+		require.NoError(t, err)
+
+		assert.NoErrorf(t, kafkaListenerTest(ctx, rpk), "Kafka listener sub test failed")
+		assert.NoErrorf(t, adminListenerTest(ctx, rpk), "Admin listener sub test failed")
+		assert.NoErrorf(t, superuserTest(ctx, rpk, "superuser", "kubernetes-controller"), "Superuser sub test failed")
 	})
 }
 
@@ -331,6 +394,47 @@ func adminListenerTest(ctx context.Context, rpk Client) error {
 			return fmt.Errorf("context deadline exceeded")
 		}
 	}
+}
+
+func superuserTest(ctx context.Context, rpk Client, superusers ...string) error {
+	deadline := time.After(1 * time.Minute)
+	for {
+		select {
+		case <-time.Tick(5 * time.Second):
+			configuredSuperusers, err := rpk.GetSuperusers(ctx)
+			if err != nil {
+				continue
+			}
+
+			if equalElements(configuredSuperusers, superusers) {
+				return nil
+			}
+		case <-deadline:
+			return fmt.Errorf("deadline exceeded")
+		case <-ctx.Done():
+			return fmt.Errorf("context deadline exceeded")
+		}
+	}
+}
+
+func equalElements[T comparable](a, b []T) bool {
+	if len(a) != len(b) {
+		return false
+	}
+
+	counts := make(map[T]int)
+	for _, val := range a {
+		counts[val]++
+	}
+
+	for _, val := range b {
+		if counts[val] == 0 {
+			return false
+		}
+		counts[val]--
+	}
+
+	return true
 }
 
 func schemaRegistryListenerTest(ctx context.Context, rpk Client) ([]byte, string, error) {
