@@ -235,14 +235,14 @@
 {{- if (not (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $cert.enabled true) ))) "r")) -}}
 {{- continue -}}
 {{- end -}}
-{{- $mounts = (concat (default (list ) $mounts) (list (mustMergeOverwrite (dict "name" "" "mountPath" "" ) (dict "name" (printf "redpanda-%s-cert" $name) "mountPath" (printf "/etc/tls/certs/%s" $name) )))) -}}
+{{- $mounts = (concat (default (list ) $mounts) (list (mustMergeOverwrite (dict "name" "" "mountPath" "" ) (dict "name" (printf "redpanda-%s-cert" $name) "mountPath" (printf "%s/%s" "/etc/tls/certs" $name) )))) -}}
 {{- end -}}
 {{- if $_is_returning -}}
 {{- break -}}
 {{- end -}}
 {{- $adminTLS := $values.listeners.admin.tls -}}
 {{- if $adminTLS.requireClientAuth -}}
-{{- $mounts = (concat (default (list ) $mounts) (list (mustMergeOverwrite (dict "name" "" "mountPath" "" ) (dict "name" "mtls-client" "mountPath" (printf "/etc/tls/certs/%s-client" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r")) )))) -}}
+{{- $mounts = (concat (default (list ) $mounts) (list (mustMergeOverwrite (dict "name" "" "mountPath" "" ) (dict "name" "mtls-client" "mountPath" (printf "%s/%s-client" "/etc/tls/certs" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r")) )))) -}}
 {{- end -}}
 {{- end -}}
 {{- $_is_returning = true -}}

@@ -147,7 +147,7 @@ func consoleTLSVolumesMounts(dot *helmette.Dot) []corev1.VolumeMount {
 
 		mounts = append(mounts, corev1.VolumeMount{
 			Name:      fmt.Sprintf("redpanda-%s-cert", tlsCfg.Cert),
-			MountPath: fmt.Sprintf("/etc/tls/certs/%s", tlsCfg.Cert),
+			MountPath: fmt.Sprintf("%s/%s", certificateMountPoint, tlsCfg.Cert),
 		})
 	}
 

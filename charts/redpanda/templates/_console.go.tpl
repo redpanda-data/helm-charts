@@ -71,7 +71,7 @@
 {{- continue -}}
 {{- end -}}
 {{- $_ := (set $visitedCert $tlsCfg.cert true) -}}
-{{- $mounts = (concat (default (list ) $mounts) (list (mustMergeOverwrite (dict "name" "" "mountPath" "" ) (dict "name" (printf "redpanda-%s-cert" $tlsCfg.cert) "mountPath" (printf "/etc/tls/certs/%s" $tlsCfg.cert) )))) -}}
+{{- $mounts = (concat (default (list ) $mounts) (list (mustMergeOverwrite (dict "name" "" "mountPath" "" ) (dict "name" (printf "redpanda-%s-cert" $tlsCfg.cert) "mountPath" (printf "%s/%s" "/etc/tls/certs" $tlsCfg.cert) )))) -}}
 {{- end -}}
 {{- if $_is_returning -}}
 {{- break -}}

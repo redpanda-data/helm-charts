@@ -350,8 +350,8 @@ func rpkKafkaClientTLSConfiguration(dot *helmette.Dot) map[string]any {
 	}
 
 	if tls.RequireClientAuth {
-		result["cert_file"] = fmt.Sprintf("/etc/tls/certs/%s-client/tls.crt", Fullname(dot))
-		result["key_file"] = fmt.Sprintf("/etc/tls/certs/%s-client/tls.key", Fullname(dot))
+		result["cert_file"] = fmt.Sprintf("%s/%s-client/tls.crt", certificateMountPoint, Fullname(dot))
+		result["key_file"] = fmt.Sprintf("%s/%s-client/tls.key", certificateMountPoint, Fullname(dot))
 	}
 
 	return result
@@ -374,8 +374,8 @@ func rpkAdminAPIClientTLSConfiguration(dot *helmette.Dot) map[string]any {
 	}
 
 	if tls.RequireClientAuth {
-		result["cert_file"] = fmt.Sprintf("/etc/tls/certs/%s-client/tls.crt", Fullname(dot))
-		result["key_file"] = fmt.Sprintf("/etc/tls/certs/%s-client/tls.key", Fullname(dot))
+		result["cert_file"] = fmt.Sprintf("%s/%s-client/tls.crt", certificateMountPoint, Fullname(dot))
+		result["key_file"] = fmt.Sprintf("%s/%s-client/tls.key", certificateMountPoint, Fullname(dot))
 	}
 
 	return result
@@ -409,8 +409,8 @@ func kafkaClient(dot *helmette.Dot) map[string]any {
 		}
 
 		if kafkaTLS.RequireClientAuth {
-			brokerTLS["cert_file"] = fmt.Sprintf("/etc/tls/certs/%s-client/tls.crt", Fullname(dot))
-			brokerTLS["key_file"] = fmt.Sprintf("/etc/tls/certs/%s-client/tls.key", Fullname(dot))
+			brokerTLS["cert_file"] = fmt.Sprintf("%s/%s-client/tls.crt", certificateMountPoint, Fullname(dot))
+			brokerTLS["key_file"] = fmt.Sprintf("%s/%s-client/tls.key", certificateMountPoint, Fullname(dot))
 		}
 
 	}
@@ -496,8 +496,8 @@ func rpcListenersTLS(dot *helmette.Dot) map[string]any {
 
 	return map[string]any{
 		"enabled":             true,
-		"cert_file":           fmt.Sprintf("/etc/tls/certs/%s/tls.crt", certName),
-		"key_file":            fmt.Sprintf("/etc/tls/certs/%s/tls.key", certName),
+		"cert_file":           fmt.Sprintf("%s/%s/tls.crt", certificateMountPoint, certName),
+		"key_file":            fmt.Sprintf("%s/%s/tls.key", certificateMountPoint, certName),
 		"require_client_auth": r.TLS.RequireClientAuth,
 		"truststore_file":     r.TLS.TrustStoreFilePath(&values.TLS),
 	}
@@ -521,8 +521,8 @@ func createInternalListenerTLSCfg(tls *TLS, internal InternalTLS) map[string]any
 	return map[string]any{
 		"name":                "internal",
 		"enabled":             true,
-		"cert_file":           fmt.Sprintf("/etc/tls/certs/%s/tls.crt", internal.Cert),
-		"key_file":            fmt.Sprintf("/etc/tls/certs/%s/tls.key", internal.Cert),
+		"cert_file":           fmt.Sprintf("%s/%s/tls.crt", certificateMountPoint, internal.Cert),
+		"key_file":            fmt.Sprintf("%s/%s/tls.key", certificateMountPoint, internal.Cert),
 		"require_client_auth": internal.RequireClientAuth,
 		"truststore_file":     internal.TrustStoreFilePath(tls),
 	}

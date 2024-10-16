@@ -32,7 +32,10 @@ const (
 	// job's container.
 	PostUpgradeContainerName = "post-upgrade"
 
-	certificationMountPoint = "/etc/tls/certs"
+	// certificateMountPoint is a common mount point for any TLS certificate
+	// defined as external truststore or as certificate that would be
+	// created by cert-manager.
+	certificateMountPoint = "/etc/tls/certs"
 )
 
 // values.go contains a collection of go structs that (loosely) map to
@@ -1049,7 +1052,7 @@ func (t *InternalTLS) TrustStoreFilePath(tls *TLS) string {
 	}
 
 	if tls.Certs.MustGet(t.Cert).CAEnabled {
-		return fmt.Sprintf("/etc/tls/certs/%s/ca.crt", t.Cert)
+		return fmt.Sprintf("%s/%s/ca.crt", certificateMountPoint, t.Cert)
 	}
 
 	return defaultTruststorePath
@@ -1059,14 +1062,14 @@ func (t *InternalTLS) TrustStoreFilePath(tls *TLS) string {
 // verify a connection with this server.
 func (t *InternalTLS) ServerCAPath(tls *TLS) string {
 	if tls.Certs.MustGet(t.Cert).CAEnabled {
-		return fmt.Sprintf("/etc/tls/certs/%s/ca.crt", t.Cert)
+		return fmt.Sprintf("%s/%s/ca.crt", certificateMountPoint, t.Cert)
 	}
 	// Strange but technically correct, if CAEnabled is false, we can't safely
 	// assume that a ca.crt file will exist. So we fallback to using the
 	// server's certificate itself.
 	// Other options would be: failing or falling back to the container's
 	// default truststore.
-	return fmt.Sprintf("/etc/tls/certs/%s/tls.crt", t.Cert)
+	return fmt.Sprintf("%s/%s/tls.crt", certificateMountPoint, t.Cert)
 }
 
 // ExternalTLS is the TLS configuration associated with a given "external"
@@ -1097,7 +1100,7 @@ func (t *ExternalTLS) TrustStoreFilePath(i *InternalTLS, tls *TLS) string {
 	}
 
 	if t.GetCert(i, tls).CAEnabled {
-		return fmt.Sprintf("/etc/tls/certs/%s/ca.crt", t.GetCertName(i))
+		return fmt.Sprintf("%s/%s/ca.crt", certificateMountPoint, t.GetCertName(i))
 	}
 
 	return defaultTruststorePath
@@ -1140,7 +1143,7 @@ func (l *AdminListeners) ConsoleTLS(tls *TLS) ConsoleTLS {
 		return t
 	}
 
-	adminAPIPrefix := fmt.Sprintf("%s/%s", certificationMountPoint, l.TLS.Cert)
+	adminAPIPrefix := fmt.Sprintf("%s/%s", certificateMountPoint, l.TLS.Cert)
 
 	// Strange but technically correct, if CAEnabled is false, we can't safely
 	// assume that a ca.crt file will exist. So we fallback to using the
@@ -1200,8 +1203,8 @@ func (l *AdminListeners) ListenersTLS(tls *TLS) []map[string]any {
 		admin = append(admin, map[string]any{
 			"name":                k,
 			"enabled":             true,
-			"cert_file":           fmt.Sprintf("/etc/tls/certs/%s/tls.crt", certName),
-			"key_file":            fmt.Sprintf("/etc/tls/certs/%s/tls.key", certName),
+			"cert_file":           fmt.Sprintf("%s/%s/tls.crt", certificateMountPoint, certName),
+			"key_file":            fmt.Sprintf("%s/%s/tls.key", certificateMountPoint, certName),
 			"require_client_auth": ptr.Deref(lis.TLS.RequireClientAuth, false),
 			"truststore_file":     lis.TLS.TrustStoreFilePath(&l.TLS, tls),
 		})
@@ -1316,8 +1319,8 @@ func (l *HTTPListeners) ListenersTLS(tls *TLS) []map[string]any {
 		pp = append(pp, map[string]any{
 			"name":                k,
 			"enabled":             true,
-			"cert_file":           fmt.Sprintf("/etc/tls/certs/%s/tls.crt", certName),
-			"key_file":            fmt.Sprintf("/etc/tls/certs/%s/tls.key", certName),
+			"cert_file":           fmt.Sprintf("%s/%s/tls.crt", certificateMountPoint, certName),
+			"key_file":            fmt.Sprintf("%s/%s/tls.key", certificateMountPoint, certName),
 			"require_client_auth": ptr.Deref(lis.TLS.RequireClientAuth, false),
 			"truststore_file":     lis.TLS.TrustStoreFilePath(&l.TLS, tls),
 		})
@@ -1445,8 +1448,8 @@ func (l *KafkaListeners) ListenersTLS(tls *TLS) []map[string]any {
 		kafka = append(kafka, map[string]any{
 			"name":                k,
 			"enabled":             true,
-			"cert_file":           fmt.Sprintf("/etc/tls/certs/%s/tls.crt", certName),
-			"key_file":            fmt.Sprintf("/etc/tls/certs/%s/tls.key", certName),
+			"cert_file":           fmt.Sprintf("%s/%s/tls.crt", certificateMountPoint, certName),
+			"key_file":            fmt.Sprintf("%s/%s/tls.key", certificateMountPoint, certName),
 			"require_client_auth": ptr.Deref(lis.TLS.RequireClientAuth, false),
 			"truststore_file":     lis.TLS.TrustStoreFilePath(&l.TLS, tls),
 		})
@@ -1481,7 +1484,7 @@ func (k *KafkaListeners) ConsoleTLS(tls *TLS) ConsoleTLS {
 		return t
 	}
 
-	kafkaPathPrefix := fmt.Sprintf("%s/%s", certificationMountPoint, k.TLS.Cert)
+	kafkaPathPrefix := fmt.Sprintf("%s/%s", certificateMountPoint, k.TLS.Cert)
 
 	// Strange but technically correct, if CAEnabled is false, we can't safely
 	// assume that a ca.crt file will exist. So we fallback to using the
@@ -1600,8 +1603,8 @@ func (l *SchemaRegistryListeners) ListenersTLS(tls *TLS) []map[string]any {
 		listeners = append(listeners, map[string]any{
 			"name":                k,
 			"enabled":             true,
-			"cert_file":           fmt.Sprintf("/etc/tls/certs/%s/tls.crt", certName),
-			"key_file":            fmt.Sprintf("/etc/tls/certs/%s/tls.key", certName),
+			"cert_file":           fmt.Sprintf("%s/%s/tls.crt", certificateMountPoint, certName),
+			"key_file":            fmt.Sprintf("%s/%s/tls.key", certificateMountPoint, certName),
 			"require_client_auth": ptr.Deref(lis.TLS.RequireClientAuth, false),
 			"truststore_file":     lis.TLS.TrustStoreFilePath(&l.TLS, tls),
 		})
@@ -1636,7 +1639,7 @@ func (sr *SchemaRegistryListeners) ConsoleTLS(tls *TLS) ConsoleTLS {
 		return t
 	}
 
-	schemaRegistryPrefix := fmt.Sprintf("%s/%s", certificationMountPoint, sr.TLS.Cert)
+	schemaRegistryPrefix := fmt.Sprintf("%s/%s", certificateMountPoint, sr.TLS.Cert)
 
 	// Strange but technically correct, if CAEnabled is false, we can't safely
 	// assume that a ca.crt file will exist. So we fallback to using the
