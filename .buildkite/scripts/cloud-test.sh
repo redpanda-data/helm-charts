@@ -28,7 +28,7 @@ gke() {
 
 aks() {
   echo '--- testing that there is data in the azure storage container'
-  if (docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.50.0 az storage blob list -c $TEST_STORAGE_CONTAINER --account-key $TEST_AZURE_SHARED_KEY --account-name $TEST_STORAGE_ACCOUNT --query "[].{name:name}" --output tsv | grep manifest.json ); then
+  if (docker run -v $(realpath .azure):/root/.azure mcr.microsoft.com/azure-cli:2.55.0 az storage blob list -c $TEST_STORAGE_CONTAINER --account-key $TEST_AZURE_SHARED_KEY --account-name $TEST_STORAGE_ACCOUNT --query "[].{name:name}" --output tsv | grep manifest.json ); then
     echo "Manifest found. Success!"
   else
     echo "No manifest uploaded. Cloud-storage test failed."
