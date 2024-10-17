@@ -168,3 +168,10 @@ console:
           certFilepath: /oidc-tls/tls.crt
           keyFilepath: /oidc-tls/tls.key
           insecureSkipTlsVerify: false
+
+-- service-account-automount-token-in-deployment-resource --
+automountServiceAccountToken: false
+
+-- service-account-automount-token-in-service-account-resource --
+serviceAccount:
+  automountServiceAccountToken: false
