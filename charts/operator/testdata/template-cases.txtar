@@ -29,3 +29,11 @@ podTemplate:
       securityContext:
         allowPrivilegeEscalation: false
         runAsNonRoot: true
+
+-- disabled-service-account-automount-token-in-service-account-resource --
+serviceAccount:
+  automountServiceAccountToken: false
+
+-- enabled-service-account-automount-token-in-service-account-resource --
+serviceAccount:
+  automountServiceAccountToken: true

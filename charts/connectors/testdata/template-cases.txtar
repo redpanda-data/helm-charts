@@ -29,3 +29,13 @@ deployment:
           labelSelector:
             matchLabels:
               foo: bar
+
+-- disabled-service-account-automount-token-in-service-account-resource --
+serviceAccount:
+  create: true
+  automountServiceAccountToken: false
+
+-- enabled-service-account-automount-token-in-service-account-resource --
+serviceAccount:
+  create: true
+  automountServiceAccountToken: true
