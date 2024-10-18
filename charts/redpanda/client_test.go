@@ -1,6 +1,7 @@
 package redpanda_test
 
 import (
+	"bufio"
 	"bytes"
 	"context"
 	"crypto/tls"
@@ -9,6 +10,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/cockroachdb/errors"
@@ -103,7 +105,7 @@ func (c *Client) KafkaProduce(ctx context.Context, input, topicName string) (str
 	}
 
 	if eb.String() != "" {
-		return "", fmt.Errorf(eb.String())
+		return "", errors.New(eb.String())
 	}
 
 	return out.String(), nil
@@ -125,7 +127,7 @@ func (c *Client) KafkaConsume(ctx context.Context, topicName string) (map[string
 	}
 
 	if eb.String() != "" {
-		return nil, fmt.Errorf(eb.String())
+		return nil, errors.New(eb.String())
 	}
 
 	var event map[string]any
@@ -170,6 +172,41 @@ func (c *Client) GetClusterHealth(ctx context.Context) (map[string]any, error) {
 	}
 
 	return clusterHealth, nil
+}
+
+func (c *Client) GetSuperusers(ctx context.Context) ([]string, error) {
+	pod, err := c.getStsPod(ctx, 0)
+	if err != nil {
+		return nil, err
+	}
+
+	var out, eb bytes.Buffer
+	if err = c.Ctl.Exec(ctx, pod, kube.ExecOptions{
+		Command: []string{"bash", "-c", `rpk cluster config get superusers`},
+		Stdout:  &out,
+		Stderr:  &eb,
+	}); err != nil {
+		return nil, err
+	}
+
+	if eb.String() != "" {
+		return nil, errors.New(eb.String())
+	}
+
+	superusers := []string{}
+
+	scanner := bufio.NewScanner(&out)
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		if !strings.HasPrefix(line, "- ") {
+			continue
+		}
+
+		superusers = append(superusers, strings.TrimSpace(strings.TrimPrefix(line, "- ")))
+	}
+
+	return superusers, nil
 }
 
 func (c *Client) QuerySupportedFormats(ctx context.Context) ([]string, error) {

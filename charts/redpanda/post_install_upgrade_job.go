@@ -148,6 +148,7 @@ func PostInstallUpgradeJob(dot *helmette.Dot) *batchv1.Job {
 							Command: []string{
 								"/redpanda-operator",
 								"sync-cluster-config",
+								"--users-directory", "/etc/secrets/users",
 								"--redpanda-yaml", "/tmp/base-config/redpanda.yaml",
 								"--bootstrap-yaml", "/tmp/config/.bootstrap.yaml",
 							},
