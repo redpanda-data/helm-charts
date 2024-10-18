@@ -55,11 +55,11 @@ func bootstrapYamlTemplater(dot *helmette.Dot) corev1.Container {
 		Resources: corev1.ResourceRequirements{
 			Limits: corev1.ResourceList{
 				corev1.ResourceCPU:    resource.MustParse("100m"),
-				corev1.ResourceMemory: resource.MustParse("25Mi"),
+				corev1.ResourceMemory: resource.MustParse("125Mi"),
 			},
 			Requests: corev1.ResourceList{
 				corev1.ResourceCPU:    resource.MustParse("100m"),
-				corev1.ResourceMemory: resource.MustParse("25Mi"),
+				corev1.ResourceMemory: resource.MustParse("125Mi"),
 			},
 		},
 		SecurityContext: &corev1.SecurityContext{

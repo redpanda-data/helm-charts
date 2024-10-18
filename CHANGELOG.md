@@ -6,6 +6,7 @@
 #### Added
 #### Changed
 #### Fixed
+* Increased the memory limits of `bootstrap-yaml-envsubst` to prevent hangs on aarch64 [#1564](https://github.com/redpanda-data/helm-charts/issues/1564).
 #### Removed
 
 ### [5.9.7](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.7) - 2024-10-14
