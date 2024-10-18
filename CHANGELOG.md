@@ -202,6 +202,7 @@
 #### Changed
 * The minimum Kubernetes version has been bumped to `1.25.0`
 #### Fixed
+* `--configurator-tag` now correctly falls back to `.appVersion`
 #### Removed
 
 ### [0.4.31](https://github.com/redpanda-data/helm-charts/releases/tag/operator-0.4.31) - 2024-10-7

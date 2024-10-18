@@ -200,7 +200,7 @@ func containerImage(dot *helmette.Dot) string {
 func configuratorTag(dot *helmette.Dot) string {
 	values := helmette.Unwrap[Values](dot.Values)
 
-	if !helmette.Empty(values.Image.Tag) {
+	if !helmette.Empty(values.Configurator.Tag) {
 		return *values.Configurator.Tag
 	}
 	return dot.Chart.AppVersion
