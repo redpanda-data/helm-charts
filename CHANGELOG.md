@@ -7,6 +7,7 @@
 #### Changed
 * Bump Redpanda app version
 #### Fixed
+* Increased the memory limits of `bootstrap-yaml-envsubst` to prevent hangs on aarch64 [#1564](https://github.com/redpanda-data/helm-charts/issues/1564).
 #### Removed
 
 ### [5.9.7](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.7) - 2024-10-14
@@ -204,6 +205,7 @@
 * The minimum Kubernetes version has been bumped to `1.25.0`
 * Bump operator version [v2.2.5-24.2.7](https://github.com/redpanda-data/redpanda-operator/releases/tag/v2.2.5-24.2.7)
 #### Fixed
+* `--configurator-tag` now correctly falls back to `.appVersion`
 #### Removed
 
 ### [0.4.31](https://github.com/redpanda-data/helm-charts/releases/tag/operator-0.4.31) - 2024-10-7

@@ -81,7 +81,7 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
-{{- if (not (empty $values.image.tag)) -}}
+{{- if (not (empty $values.configurator.tag)) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $values.configurator.tag) | toJson -}}
 {{- break -}}
