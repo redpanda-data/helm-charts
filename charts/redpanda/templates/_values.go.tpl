@@ -602,7 +602,7 @@
 {{- end -}}
 {{- if (get (fromJson (include "redpanda.TLSCertMap.MustGet" (dict "a" (list (deepCopy $tls.certs) $t.cert) ))) "r").caEnabled -}}
 {{- $_is_returning = true -}}
-{{- (dict "r" (printf "/etc/tls/certs/%s/ca.crt" $t.cert)) | toJson -}}
+{{- (dict "r" (printf "%s/%s/ca.crt" "/etc/tls/certs" $t.cert)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- $_is_returning = true -}}
@@ -618,11 +618,11 @@
 {{- $_is_returning := false -}}
 {{- if (get (fromJson (include "redpanda.TLSCertMap.MustGet" (dict "a" (list (deepCopy $tls.certs) $t.cert) ))) "r").caEnabled -}}
 {{- $_is_returning = true -}}
-{{- (dict "r" (printf "/etc/tls/certs/%s/ca.crt" $t.cert)) | toJson -}}
+{{- (dict "r" (printf "%s/%s/ca.crt" "/etc/tls/certs" $t.cert)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- $_is_returning = true -}}
-{{- (dict "r" (printf "/etc/tls/certs/%s/tls.crt" $t.cert)) | toJson -}}
+{{- (dict "r" (printf "%s/%s/tls.crt" "/etc/tls/certs" $t.cert)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -663,7 +663,7 @@
 {{- end -}}
 {{- if (get (fromJson (include "redpanda.ExternalTLS.GetCert" (dict "a" (list $t $i $tls) ))) "r").caEnabled -}}
 {{- $_is_returning = true -}}
-{{- (dict "r" (printf "/etc/tls/certs/%s/ca.crt" (get (fromJson (include "redpanda.ExternalTLS.GetCertName" (dict "a" (list $t $i) ))) "r"))) | toJson -}}
+{{- (dict "r" (printf "%s/%s/ca.crt" "/etc/tls/certs" (get (fromJson (include "redpanda.ExternalTLS.GetCertName" (dict "a" (list $t $i) ))) "r"))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- $_is_returning = true -}}
@@ -700,15 +700,19 @@
 {{- (dict "r" $t) | toJson -}}
 {{- break -}}
 {{- end -}}
-{{- $adminAPIPrefix := "/mnt/cert/adminapi" -}}
-{{- $_ := (set $t "caFilepath" (printf "%s/%s/ca.crt" $adminAPIPrefix $l.tls.cert)) -}}
+{{- $adminAPIPrefix := (printf "%s/%s" "/etc/tls/certs" $l.tls.cert) -}}
+{{- if (get (fromJson (include "redpanda.TLSCertMap.MustGet" (dict "a" (list (deepCopy $tls.certs) $l.tls.cert) ))) "r").caEnabled -}}
+{{- $_ := (set $t "caFilepath" (printf "%s/ca.crt" $adminAPIPrefix)) -}}
+{{- else -}}
+{{- $_ := (set $t "caFilepath" (printf "%s/tls.crt" $adminAPIPrefix)) -}}
+{{- end -}}
 {{- if (not $l.tls.requireClientAuth) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $t) | toJson -}}
 {{- break -}}
 {{- end -}}
-{{- $_ := (set $t "certFilepath" (printf "%s/%s/tls.crt" $adminAPIPrefix $l.tls.cert)) -}}
-{{- $_ := (set $t "keyFilepath" (printf "%s/%s/tls.key" $adminAPIPrefix $l.tls.cert)) -}}
+{{- $_ := (set $t "certFilepath" (printf "%s/tls.crt" $adminAPIPrefix)) -}}
+{{- $_ := (set $t "keyFilepath" (printf "%s/tls.key" $adminAPIPrefix)) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $t) | toJson -}}
 {{- break -}}
@@ -750,7 +754,7 @@
 {{- continue -}}
 {{- end -}}
 {{- $certName := (get (fromJson (include "redpanda.ExternalTLS.GetCertName" (dict "a" (list $lis.tls $l.tls) ))) "r") -}}
-{{- $admin = (concat (default (list ) $admin) (list (dict "name" $k "enabled" true "cert_file" (printf "/etc/tls/certs/%s/tls.crt" $certName) "key_file" (printf "/etc/tls/certs/%s/tls.key" $certName) "require_client_auth" (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $lis.tls.requireClientAuth false) ))) "r") "truststore_file" (get (fromJson (include "redpanda.ExternalTLS.TrustStoreFilePath" (dict "a" (list $lis.tls $l.tls $tls) ))) "r") ))) -}}
+{{- $admin = (concat (default (list ) $admin) (list (dict "name" $k "enabled" true "cert_file" (printf "%s/%s/tls.crt" "/etc/tls/certs" $certName) "key_file" (printf "%s/%s/tls.key" "/etc/tls/certs" $certName) "require_client_auth" (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $lis.tls.requireClientAuth false) ))) "r") "truststore_file" (get (fromJson (include "redpanda.ExternalTLS.TrustStoreFilePath" (dict "a" (list $lis.tls $l.tls $tls) ))) "r") ))) -}}
 {{- end -}}
 {{- if $_is_returning -}}
 {{- break -}}
@@ -848,7 +852,7 @@
 {{- continue -}}
 {{- end -}}
 {{- $certName := (get (fromJson (include "redpanda.ExternalTLS.GetCertName" (dict "a" (list $lis.tls $l.tls) ))) "r") -}}
-{{- $pp = (concat (default (list ) $pp) (list (dict "name" $k "enabled" true "cert_file" (printf "/etc/tls/certs/%s/tls.crt" $certName) "key_file" (printf "/etc/tls/certs/%s/tls.key" $certName) "require_client_auth" (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $lis.tls.requireClientAuth false) ))) "r") "truststore_file" (get (fromJson (include "redpanda.ExternalTLS.TrustStoreFilePath" (dict "a" (list $lis.tls $l.tls $tls) ))) "r") ))) -}}
+{{- $pp = (concat (default (list ) $pp) (list (dict "name" $k "enabled" true "cert_file" (printf "%s/%s/tls.crt" "/etc/tls/certs" $certName) "key_file" (printf "%s/%s/tls.key" "/etc/tls/certs" $certName) "require_client_auth" (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $lis.tls.requireClientAuth false) ))) "r") "truststore_file" (get (fromJson (include "redpanda.ExternalTLS.TrustStoreFilePath" (dict "a" (list $lis.tls $l.tls $tls) ))) "r") ))) -}}
 {{- end -}}
 {{- if $_is_returning -}}
 {{- break -}}
@@ -946,7 +950,7 @@
 {{- continue -}}
 {{- end -}}
 {{- $certName := (get (fromJson (include "redpanda.ExternalTLS.GetCertName" (dict "a" (list $lis.tls $l.tls) ))) "r") -}}
-{{- $kafka = (concat (default (list ) $kafka) (list (dict "name" $k "enabled" true "cert_file" (printf "/etc/tls/certs/%s/tls.crt" $certName) "key_file" (printf "/etc/tls/certs/%s/tls.key" $certName) "require_client_auth" (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $lis.tls.requireClientAuth false) ))) "r") "truststore_file" (get (fromJson (include "redpanda.ExternalTLS.TrustStoreFilePath" (dict "a" (list $lis.tls $l.tls $tls) ))) "r") ))) -}}
+{{- $kafka = (concat (default (list ) $kafka) (list (dict "name" $k "enabled" true "cert_file" (printf "%s/%s/tls.crt" "/etc/tls/certs" $certName) "key_file" (printf "%s/%s/tls.key" "/etc/tls/certs" $certName) "require_client_auth" (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $lis.tls.requireClientAuth false) ))) "r") "truststore_file" (get (fromJson (include "redpanda.ExternalTLS.TrustStoreFilePath" (dict "a" (list $lis.tls $l.tls $tls) ))) "r") ))) -}}
 {{- end -}}
 {{- if $_is_returning -}}
 {{- break -}}
@@ -982,7 +986,7 @@
 {{- end -}}
 {{- end -}}
 
-{{- define "redpanda.KafkaListeners.ConsolemTLS" -}}
+{{- define "redpanda.KafkaListeners.ConsoleTLS" -}}
 {{- $k := (index .a 0) -}}
 {{- $tls := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
@@ -993,15 +997,19 @@
 {{- (dict "r" $t) | toJson -}}
 {{- break -}}
 {{- end -}}
-{{- $kafkaPathPrefix := "/mnt/cert/kafka" -}}
-{{- $_ := (set $t "caFilepath" (printf "%s/%s/ca.crt" $kafkaPathPrefix $k.tls.cert)) -}}
+{{- $kafkaPathPrefix := (printf "%s/%s" "/etc/tls/certs" $k.tls.cert) -}}
+{{- if (get (fromJson (include "redpanda.TLSCertMap.MustGet" (dict "a" (list (deepCopy $tls.certs) $k.tls.cert) ))) "r").caEnabled -}}
+{{- $_ := (set $t "caFilepath" (printf "%s/ca.crt" $kafkaPathPrefix)) -}}
+{{- else -}}
+{{- $_ := (set $t "caFilepath" (printf "%s/tls.crt" $kafkaPathPrefix)) -}}
+{{- end -}}
 {{- if (not $k.tls.requireClientAuth) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $t) | toJson -}}
 {{- break -}}
 {{- end -}}
-{{- $_ := (set $t "certFilepath" (printf "%s/%s/tls.crt" $kafkaPathPrefix $k.tls.cert)) -}}
-{{- $_ := (set $t "keyFilepath" (printf "%s/%s/tls.key" $kafkaPathPrefix $k.tls.cert)) -}}
+{{- $_ := (set $t "certFilepath" (printf "%s/tls.crt" $kafkaPathPrefix)) -}}
+{{- $_ := (set $t "keyFilepath" (printf "%s/tls.key" $kafkaPathPrefix)) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $t) | toJson -}}
 {{- break -}}
@@ -1070,7 +1078,7 @@
 {{- continue -}}
 {{- end -}}
 {{- $certName := (get (fromJson (include "redpanda.ExternalTLS.GetCertName" (dict "a" (list $lis.tls $l.tls) ))) "r") -}}
-{{- $listeners = (concat (default (list ) $listeners) (list (dict "name" $k "enabled" true "cert_file" (printf "/etc/tls/certs/%s/tls.crt" $certName) "key_file" (printf "/etc/tls/certs/%s/tls.key" $certName) "require_client_auth" (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $lis.tls.requireClientAuth false) ))) "r") "truststore_file" (get (fromJson (include "redpanda.ExternalTLS.TrustStoreFilePath" (dict "a" (list $lis.tls $l.tls $tls) ))) "r") ))) -}}
+{{- $listeners = (concat (default (list ) $listeners) (list (dict "name" $k "enabled" true "cert_file" (printf "%s/%s/tls.crt" "/etc/tls/certs" $certName) "key_file" (printf "%s/%s/tls.key" "/etc/tls/certs" $certName) "require_client_auth" (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $lis.tls.requireClientAuth false) ))) "r") "truststore_file" (get (fromJson (include "redpanda.ExternalTLS.TrustStoreFilePath" (dict "a" (list $lis.tls $l.tls $tls) ))) "r") ))) -}}
 {{- end -}}
 {{- if $_is_returning -}}
 {{- break -}}
@@ -1117,15 +1125,19 @@
 {{- (dict "r" $t) | toJson -}}
 {{- break -}}
 {{- end -}}
-{{- $schemaRegistryPrefix := "/mnt/cert/schemaregistry" -}}
-{{- $_ := (set $t "caFilepath" (printf "%s/%s/ca.crt" $schemaRegistryPrefix $sr.tls.cert)) -}}
+{{- $schemaRegistryPrefix := (printf "%s/%s" "/etc/tls/certs" $sr.tls.cert) -}}
+{{- if (get (fromJson (include "redpanda.TLSCertMap.MustGet" (dict "a" (list (deepCopy $tls.certs) $sr.tls.cert) ))) "r").caEnabled -}}
+{{- $_ := (set $t "caFilepath" (printf "%s/ca.crt" $schemaRegistryPrefix)) -}}
+{{- else -}}
+{{- $_ := (set $t "caFilepath" (printf "%s/tls.crt" $schemaRegistryPrefix)) -}}
+{{- end -}}
 {{- if (not $sr.tls.requireClientAuth) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $t) | toJson -}}
 {{- break -}}
 {{- end -}}
-{{- $_ := (set $t "certFilepath" (printf "%s/%s/tls.crt" $schemaRegistryPrefix $sr.tls.cert)) -}}
-{{- $_ := (set $t "keyFilepath" (printf "%s/%s/tls.key" $schemaRegistryPrefix $sr.tls.cert)) -}}
+{{- $_ := (set $t "certFilepath" (printf "%s/tls.crt" $schemaRegistryPrefix)) -}}
+{{- $_ := (set $t "keyFilepath" (printf "%s/tls.key" $schemaRegistryPrefix)) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $t) | toJson -}}
 {{- break -}}

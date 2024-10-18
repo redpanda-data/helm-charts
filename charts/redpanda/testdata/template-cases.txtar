@@ -363,3 +363,37 @@ statefulset:
 # ASSERT-GOLDEN
 connectors:
   enabled: true
+
+-- disabled-service-account-automount-token-in-service-account-resource --
+# By default Admin API listeners has enabled TLS but this explicitly enable this
+# ASSERT-NO-ERROR
+# ASSERT-GOLDEN
+# ASSERT-FIELD-EQUALS ["v1/ServiceAccount", "default/redpanda-console", "{.automountServiceAccountToken}", false]
+# ASSERT-FIELD-EQUALS ["v1/ServiceAccount", "default/redpanda", "{.automountServiceAccountToken}", false]
+# ASSERT-FIELD-EQUALS ["apps/v1/Deployment", "default/redpanda-console", "{.spec.template.spec.automountServiceAccountToken}", false]
+serviceAccount:
+  create: true
+  automountServiceAccountToken: false
+
+# Console example from within Redpanda chart
+console:
+  automountServiceAccountToken: false
+  serviceAccount:
+    automountServiceAccountToken: false
+
+-- enabled-service-account-automount-token-in-service-account-resource --
+# By default Admin API listeners has enabled TLS but this explicitly enable this
+# ASSERT-NO-ERROR
+# ASSERT-GOLDEN
+# ASSERT-FIELD-EQUALS ["v1/ServiceAccount", "default/redpanda-console", "{.automountServiceAccountToken}", false]
+# ASSERT-FIELD-EQUALS ["v1/ServiceAccount", "default/redpanda", "{.automountServiceAccountToken}", true]
+# ASSERT-FIELD-EQUALS ["apps/v1/Deployment", "default/redpanda-console", "{.spec.template.spec.automountServiceAccountToken}", false]
+serviceAccount:
+  create: true
+  automountServiceAccountToken: true
+
+# Console example from within Redpanda chart
+console:
+  automountServiceAccountToken: false
+  serviceAccount:
+    automountServiceAccountToken: false

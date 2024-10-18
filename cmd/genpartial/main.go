@@ -50,9 +50,8 @@ func main() {
 	}
 
 	pkgs := Must(packages.Load(&packages.Config{
-		Dir:        cwd,
-		Mode:       mode,
-		BuildFlags: []string{"-tags=generate"},
+		Dir:  cwd,
+		Mode: mode,
 	}, flag.Arg(0)))
 
 	var buf bytes.Buffer

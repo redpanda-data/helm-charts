@@ -220,7 +220,7 @@ func CommonMounts(dot *helmette.Dot) []corev1.VolumeMount {
 
 			mounts = append(mounts, corev1.VolumeMount{
 				Name:      fmt.Sprintf("redpanda-%s-cert", name),
-				MountPath: fmt.Sprintf("/etc/tls/certs/%s", name),
+				MountPath: fmt.Sprintf("%s/%s", certificateMountPoint, name),
 			})
 		}
 
@@ -228,7 +228,7 @@ func CommonMounts(dot *helmette.Dot) []corev1.VolumeMount {
 		if adminTLS.RequireClientAuth {
 			mounts = append(mounts, corev1.VolumeMount{
 				Name:      "mtls-client",
-				MountPath: fmt.Sprintf("/etc/tls/certs/%s-client", Fullname(dot)),
+				MountPath: fmt.Sprintf("%s/%s-client", certificateMountPoint, Fullname(dot)),
 			})
 		}
 	}
