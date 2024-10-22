@@ -278,6 +278,7 @@
 #### Added
 #### Changed
 * The minimum Kubernetes version has been bumped to `1.25.0`
+* By default auto mount is disabled in ServiceAccount and Deployment PodSpec
 #### Fixed
 #### Removed
 
