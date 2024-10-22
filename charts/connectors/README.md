@@ -521,7 +521,7 @@ ServiceAccount management.
 **Default:**
 
 ```
-{"annotations":{},"create":false,"name":""}
+{"annotations":{},"automountServiceAccountToken":false,"create":false,"name":""}
 ```
 
 ### [serviceAccount.annotations](https://artifacthub.io/packages/helm/redpanda-data/connectors?modal=values&path=serviceAccount.annotations)
@@ -529,6 +529,12 @@ ServiceAccount management.
 Annotations to add to the ServiceAccount.
 
 **Default:** `{}`
+
+### [serviceAccount.automountServiceAccountToken](https://artifacthub.io/packages/helm/redpanda-data/connectors?modal=values&path=serviceAccount.automountServiceAccountToken)
+
+Specifies whether a service account should automount API-Credentials
+
+**Default:** `false`
 
 ### [serviceAccount.create](https://artifacthub.io/packages/helm/redpanda-data/connectors?modal=values&path=serviceAccount.create)
 
