@@ -161,7 +161,24 @@ func StrategicMergePatch(overrides *corev1.PodTemplateSpec, original corev1.PodT
 	}
 
 	if overrides.Spec.Volumes != nil && len(overrides.Spec.Volumes) > 0 {
-		original.Spec.Volumes = overrides.Spec.Volumes
+		newVolumes := []corev1.Volume{}
+		overrideVolumes := map[string]corev1.Volume{}
+		for i := range overrides.Spec.Volumes {
+			vol := overrides.Spec.Volumes[i]
+			overrideVolumes[vol.Name] = vol
+		}
+		for _, vol := range original.Spec.Volumes {
+			if overrideVol, ok := overrideVolumes[vol.Name]; ok {
+				newVolumes = append(newVolumes, overrideVol)
+				delete(overrideVolumes, vol.Name)
+				continue
+			}
+			newVolumes = append(newVolumes, vol)
+		}
+		for _, vol := range overrideVolumes {
+			newVolumes = append(newVolumes, vol)
+		}
+		original.Spec.Volumes = newVolumes
 	}
 
 	overrideContainers := map[string]*corev1.Container{}

@@ -358,7 +358,17 @@ Sets the scope of the Redpanda Operator. Valid values are `Cluster` or `Namespac
 
 Service account management.
 
-**Default:** `{"create":true}`
+**Default:**
+
+```
+{"automountServiceAccountToken":false,"create":true}
+```
+
+### [serviceAccount.automountServiceAccountToken](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=serviceAccount.automountServiceAccountToken)
+
+Specifies whether a service account should automount API-Credentials. The token is used in sidecars.controllers
+
+**Default:** `false`
 
 ### [serviceAccount.create](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=serviceAccount.create)
 

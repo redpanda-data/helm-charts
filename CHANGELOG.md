@@ -210,9 +210,12 @@
 ## Redpanda Operator Chart
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/operator-FILLMEIN) - YYYY-MM-DD
 #### Added
+* Strategic merge of Pod volumes
 #### Changed
 * The minimum Kubernetes version has been bumped to `1.25.0`
 * Bump operator version [v2.2.5-24.2.7](https://github.com/redpanda-data/redpanda-operator/releases/tag/v2.2.5-24.2.7)
+* By default auto mount is disabled in ServiceAccount and Deployment PodSpec
+* Mount volume similar to auto mount functionality for ServiceAccount token
 #### Fixed
 * `--configurator-tag` now correctly falls back to `.appVersion`
 #### Removed
