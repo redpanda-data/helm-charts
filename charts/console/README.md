@@ -37,9 +37,9 @@ Annotations to add to the deployment.
 
 ### [automountServiceAccountToken](https://artifacthub.io/packages/helm/redpanda-data/console?modal=values&path=automountServiceAccountToken)
 
-Automount API credentials for the Service Account into the pod.
+Automount API credentials for the Service Account into the pod. Console does not communicate with Kubernetes API.
 
-**Default:** `true`
+**Default:** `false`
 
 ### [autoscaling.enabled](https://artifacthub.io/packages/helm/redpanda-data/console?modal=values&path=autoscaling.enabled)
 
@@ -319,9 +319,9 @@ Annotations to add to the service account.
 
 ### [serviceAccount.automountServiceAccountToken](https://artifacthub.io/packages/helm/redpanda-data/console?modal=values&path=serviceAccount.automountServiceAccountToken)
 
-Specifies whether a service account should automount API-Credentials
+Specifies whether a service account should automount API-Credentials. Console does not communicate with Kubernetes API. The ServiceAccount could be used for workload identity.
 
-**Default:** `true`
+**Default:** `false`
 
 ### [serviceAccount.create](https://artifacthub.io/packages/helm/redpanda-data/console?modal=values&path=serviceAccount.create)
 

@@ -300,6 +300,7 @@
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/console-FILLMEIN) - YYYY-MM-DD
 #### Added
 #### Changed
+* By default auto mount is disabled in ServiceAccount and Deployment PodSpec
 #### Fixed
 #### Removed
 
