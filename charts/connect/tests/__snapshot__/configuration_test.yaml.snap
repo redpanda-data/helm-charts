@@ -1,0 +1,233 @@
+can set global options with streams mode:
+  1: |
+    redpanda-connect.yaml: |-
+      logger:
+        add_timestamp: false
+        format: logfmt
+        level: INFO
+        static_fields:
+          '@service': redpanda-connect
+      metrics:
+        statsd:
+          address: localhost:8125
+          flush_period: 100ms
+      tracer:
+        jaeger:
+          agent_address: localhost:6831
+          sampler_param: 1
+          sampler_type: const
+      http:
+        address: 127.0.0.0:4095
+        basic_auth:
+          algorithm: sha256
+          enabled: true
+          password_hash: test
+          salt: test
+          username: test
+        cert_file: /my/cert
+        cors:
+          allowed_origins: []
+          enabled: true
+        debug_endpoints: false
+        enabled: true
+        key_file: /my/cert.key
+        root_path: /redpanda-connect
+should set config from string:
+  1: |
+    redpanda-connect.yaml: |
+      http:
+        address: 0.0.0.0:4195
+        cors:
+          enabled: false
+        debug_endpoints: false
+        enabled: true
+        root_path: /redpanda-connect
+      input:
+        nats_jetstream:
+          urls: [ nats://TODO:4222 ]
+          queue: myqueue
+          subject: traffic.light.events
+          deliver: all
+
+      buffer:
+        system_window:
+          timestamp_mapping: root = this.created_at
+          size: 1h
+
+      pipeline:
+        processors:
+          - group_by_value:
+              value: '${! json("traffic_light_id") }'
+          - mapping: |
+              root = if batch_index() == 0 {
+                {
+                  "traffic_light_id": this.traffic_light_id,
+                  "created_at": @window_end_timestamp,
+                  "total_cars": json("registration_plate").from_all().unique().length(),
+                  "passengers": json("passengers").from_all().sum(),
+                }
+              } else { deleted() }
+
+      output:
+        http_client:
+          url: https://example.com/traffic_data
+          verb: POST
+          max_in_flight: 64
+should set config from yaml:
+  1: |
+    redpanda-connect.yaml: |-
+      http:
+        address: 0.0.0.0:4195
+        cors:
+          enabled: false
+        debug_endpoints: false
+        enabled: true
+        root_path: /redpanda-connect
+      buffer:
+        system_window:
+          size: 1h
+          timestamp_mapping: root = this.created_at
+      input:
+        nats_jetstream:
+          deliver: all
+          queue: myqueue
+          subject: traffic.light.events
+          urls:
+          - nats://TODO:4222
+      output:
+        http_client:
+          max_in_flight: 64
+          url: https://example.com/traffic_data
+          verb: POST
+      pipeline:
+        processors:
+        - group_by_value:
+            value: ${! json("traffic_light_id") }
+        - mapping: |
+            root = if batch_index() == 0 {
+              {
+                "traffic_light_id": this.traffic_light_id,
+                "created_at": @window_end_timestamp,
+                "total_cars": json("registration_plate").from_all().unique().length(),
+                "passengers": json("passengers").from_all().sum(),
+              }
+            } else { deleted() }
+should set default configuration:
+  1: |
+    redpanda-connect.yaml: |-
+      http:
+        address: 0.0.0.0:4195
+        cors:
+          enabled: false
+        debug_endpoints: false
+        enabled: true
+        root_path: /redpanda-connect
+      input:
+        label: "no_config_in"
+        generate:
+          mapping: root = "This Redpanda Connect instance is unconfigured!"
+          interval: 1m
+      output:
+        label: "no_config_out"
+        stdout:
+          codec: lines
+should set http options:
+  1: |
+    redpanda-connect.yaml: |-
+      http:
+        address: 127.0.0.0:4095
+        basic_auth:
+          algorithm: sha256
+          enabled: true
+          password_hash: test
+          salt: test
+          username: test
+        cert_file: /my/cert
+        cors:
+          allowed_origins: []
+          enabled: true
+        debug_endpoints: false
+        enabled: true
+        key_file: /my/cert.key
+        root_path: /redpanda-connect
+      input:
+        label: "no_config_in"
+        generate:
+          mapping: root = "This Redpanda Connect instance is unconfigured!"
+          interval: 1m
+      output:
+        label: "no_config_out"
+        stdout:
+          codec: lines
+should set logging options:
+  1: |
+    redpanda-connect.yaml: |-
+      logger:
+        add_timestamp: false
+        format: logfmt
+        level: INFO
+        static_fields:
+          '@service': redpanda-connect
+      http:
+        address: 0.0.0.0:4195
+        cors:
+          enabled: false
+        debug_endpoints: false
+        enabled: true
+        root_path: /redpanda-connect
+      input:
+        label: "no_config_in"
+        generate:
+          mapping: root = "This Redpanda Connect instance is unconfigured!"
+          interval: 1m
+      output:
+        label: "no_config_out"
+        stdout:
+          codec: lines
+should set metrics options:
+  1: |
+    redpanda-connect.yaml: |-
+      metrics:
+        statsd:
+          address: localhost:8125
+          flush_period: 100ms
+      http:
+        address: 0.0.0.0:4195
+        cors:
+          enabled: false
+        debug_endpoints: false
+        enabled: true
+        root_path: /redpanda-connect
+      input:
+        label: "no_config_in"
+        generate:
+          mapping: root = "This Redpanda Connect instance is unconfigured!"
+          interval: 1m
+      output:
+        label: "no_config_out"
+        stdout:
+          codec: lines
+should set tracing options:
+  1: |
+    redpanda-connect.yaml: |-
+      tracer:
+        jaeger:
+          agent_address: localhost:6831
+          sampler_param: 1
+          sampler_type: const
+      http:
+        address: 0.0.0.0:4195
+        cors:
+          enabled: false
+        debug_endpoints: false
+        enabled: true
+        root_path: /redpanda-connect
+      input:
+        label: "no_config_in"
+        generate:
+          mapping: root = "This Redpanda Connect instance is unconfigured!"
+          interval: 1m
+      output:
+        label: "no_config_out"
+        stdout:
+          codec: lines

@@ -1,0 +1,253 @@
+suite: deployment tests
+templates:
+  - deployment.yaml
+tests:
+  - it: should enable http default
+    set:
+      deployment:
+        rolloutConfigMap: false
+      http:
+        enabled: true
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].ports
+          value:
+            - containerPort: 4195
+              name: http
+              protocol: TCP
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe
+          value:
+            failureThreshold: 3
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 2
+            httpGet:
+              path: /ping  
+              port: http
+
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe
+          value:
+            failureThreshold: 1
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 2
+            httpGet:
+              path: /ready
+              port: http
+
+  - it: should enable http custom
+    set:
+      deployment:
+        rolloutConfigMap: false
+      http:
+        enabled: true
+        address: "127.0.0.1:5555"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].ports
+          value:
+            - containerPort: 5555
+              name: http
+              protocol: TCP
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe
+          value:
+            failureThreshold: 3
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 2
+            httpGet:
+              path: /ping  
+              port: http
+
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe
+          value:
+            failureThreshold: 1
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 2
+            httpGet:
+              path: /ready
+              port: http
+
+  - it: should enable probes custom
+    set:
+      deployment:
+        rolloutConfigMap: false
+        livenessProbe:
+          failureThreshold: 5
+          periodSeconds: 10
+          successThreshold: 5
+          timeoutSeconds: 4
+          httpGet:
+            httpHeaders:
+              - name: My-Header
+                value: Bar
+        readinessProbe:
+          failureThreshold: 6
+          periodSeconds: 12
+          successThreshold: 6
+          timeoutSeconds: 5
+          httpGet:
+            httpHeaders:
+              - name: My-Header
+                value: Foo
+      http:
+        enabled: true
+        address: "127.0.0.1:5555"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].ports
+          value:
+            - containerPort: 5555
+              name: http
+              protocol: TCP
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe
+          value:
+            failureThreshold: 5
+            periodSeconds: 10
+            successThreshold: 5
+            timeoutSeconds: 4
+            httpGet:
+              path: /ping
+              port: http
+              httpHeaders:
+                - name: My-Header
+                  value: Bar
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe
+          value:
+            successThreshold: 6
+            timeoutSeconds: 5
+            periodSeconds: 12
+            failureThreshold: 6
+            httpGet:
+              path: /ready
+              port: http
+              httpHeaders:
+                - name: My-Header
+                  value: Foo
+
+  - it: should enable streams
+    set:
+      deployment:
+        rolloutConfigMap: false
+      streams:
+        enabled: true
+        streamsConfigMap: "my-config-map"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].args
+          value:
+            - -c
+            - /redpanda-connect.yaml
+            - streams
+            - /streams/*.yaml
+      - equal:
+          path: spec.template.spec.containers[0].volumeMounts
+          value:
+            - mountPath: /redpanda-connect.yaml
+              name: config
+              readOnly: true
+              subPath: redpanda-connect.yaml
+            - mountPath: /streams
+              name: streams
+              readOnly: true
+      - equal:
+          path: spec.template.spec.volumes
+          value:
+            - configMap:
+                name: RELEASE-NAME-redpanda-connect-config
+              name: config
+            - configMap:
+                name: my-config-map
+              name: streams
+
+  - it: should enable streams no api
+    set:
+      deployment:
+        rolloutConfigMap: false
+      streams:
+        enabled: true
+        api:
+          enable: false
+        streamsConfigMap: "my-config-map"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].args
+          value:
+            - -c
+            - /redpanda-connect.yaml
+            - streams
+            - --no-api
+            - /streams/*.yaml
+      - equal:
+          path: spec.template.spec.containers[0].volumeMounts
+          value:
+            - mountPath: /redpanda-connect.yaml
+              name: config
+              readOnly: true
+              subPath: redpanda-connect.yaml
+            - mountPath: /streams
+              name: streams
+              readOnly: true
+      - equal:
+          path: spec.template.spec.volumes
+          value:
+            - configMap:
+                name: RELEASE-NAME-redpanda-connect-config
+              name: config
+            - configMap:
+                name: my-config-map
+              name: streams
+
+  - it: should allow custom volume mounts
+    set:
+      deployment:
+        rolloutConfigMap: false
+      streams:
+        enabled: true
+        api:
+          enable: false
+        streamsConfigMap: "my-config-map"
+      extraVolumeMounts:
+        - mountPath: /testing
+          name: test
+          readOnly: true
+          subPath: testPath
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].args
+          value:
+            - -c
+            - /redpanda-connect.yaml
+            - streams
+            - --no-api
+            - /streams/*.yaml
+      - equal:
+          path: spec.template.spec.containers[0].volumeMounts
+          value:
+            - mountPath: /redpanda-connect.yaml
+              name: config
+              readOnly: true
+              subPath: redpanda-connect.yaml
+            - mountPath: /testing
+              name: test
+              readOnly: true
+              subPath: testPath
+            - mountPath: /streams
+              name: streams
+              readOnly: true
+      - equal:
+          path: spec.template.spec.volumes
+          value:
+            - configMap:
+                name: RELEASE-NAME-redpanda-connect-config
+              name: config
+            - configMap:
+                name: my-config-map
+              name: streams

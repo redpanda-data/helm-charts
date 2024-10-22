@@ -1,0 +1,26 @@
+should enable service custom:
+  1: |
+    ports:
+      - name: http
+        port: 8080
+        protocol: TCP
+        targetPort: http
+      - name: extraPort
+        port: 9999
+        protocol: UDP
+        targetPort: 9999
+    selector:
+      app.kubernetes.io/instance: RELEASE-NAME
+      app.kubernetes.io/name: redpanda-connect
+    type: LoadBalancer
+should enable service default:
+  1: |
+    ports:
+      - name: http
+        port: 80
+        protocol: TCP
+        targetPort: http
+    selector:
+      app.kubernetes.io/instance: RELEASE-NAME
+      app.kubernetes.io/name: redpanda-connect
+    type: ClusterIP

@@ -1,0 +1,140 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "redpanda-connect.fullname" . }}
+  labels:
+    {{- include "redpanda-connect.labels" . | nindent 4 }}
+  annotations:
+    {{- toYaml .Values.deployment.annotations | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.deployment.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "redpanda-connect.selectorLabels" . | nindent 6 }}
+  {{- with .Values.updateStrategy }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  template:
+    metadata:
+      annotations:
+        {{- if .Values.deployment.rolloutConfigMap }}
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- end}}
+      {{- with .Values.deployment.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "redpanda-connect.selectorLabels" . | nindent 8 }}
+        {{- with .Values.deployment.podLabels }}
+            {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "redpanda-connect.serviceAccountName" . }}
+      restartPolicy: {{ .Values.deployment.restartPolicy }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      terminationGracePeriodSeconds: {{ default 60 .Values.deployment.terminationGracePeriodSeconds }}
+      {{- with .Values.initContainers }}
+      initContainers:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- with .Values.command }}
+          command:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- if .Values.args }}
+          args:
+            {{- toYaml .Values.args | nindent 12 }}
+          {{- else }}
+          args:
+            - "-c"
+            - "/redpanda-connect.yaml"
+            {{- if eq .Values.watch true}}
+            - -w
+            {{- end }}
+            {{- if and .Values.streams.enabled .Values.streams.streamsConfigMap }}
+            - "streams"
+            {{- if eq .Values.streams.api.enable false }}
+            - "--no-api"
+            {{- end }}
+            - /streams/*.yaml
+            {{- end }}
+          {{- end }}
+          ports:
+            - name: http
+              {{- if .Values.http.address}}
+              containerPort: {{ (split ":" .Values.http.address)._1 }}
+              {{- else }}
+              containerPort: 4195
+              {{- end }}
+              protocol: TCP
+          {{- if .Values.http.enabled }}
+          livenessProbe:
+            {{- toYaml .Values.deployment.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.deployment.readinessProbe | nindent 12 }}
+          {{- end }}
+          env:
+            {{- toYaml .Values.env | nindent 12 }}
+          {{- if .Values.envFrom }}
+          {{- with .Values.envFrom }}
+          envFrom:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: config
+              mountPath: "/redpanda-connect.yaml"
+              subPath: "redpanda-connect.yaml"
+              readOnly: true
+            {{- if .Values.extraVolumeMounts }}
+              {{- toYaml .Values.extraVolumeMounts | nindent 12 }}
+            {{- end }}
+            {{- if and .Values.streams.enabled .Values.streams.streamsConfigMap }}
+            - name: streams
+              mountPath: "/streams"
+              readOnly: true
+            {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with  .Values.topologySpreadConstraints }}
+      topologySpreadConstraints:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ template "redpanda-connect.fullname" . }}-config
+        {{- if .Values.extraVolumes }}
+          {{- toYaml .Values.extraVolumes | nindent 8 }}
+        {{- end }}
+        {{- if and .Values.streams.enabled .Values.streams.streamsConfigMap }}
+        - name: streams
+          configMap:
+            name: {{ .Values.streams.streamsConfigMap }}
+        {{- end }}
