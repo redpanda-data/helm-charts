@@ -152,6 +152,11 @@ tasks:
       - task: create-test-mv-files
       - task: create-test-metallb-resources
 
+  chart:test:connect:
+    desc: unit test Redpanda Connect
+    cmds:
+      - helm unittest ./charts/connect
+
   up:
     cmds:
       - task: kind-create
