@@ -4,7 +4,10 @@
 
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-FILLMEIN) - YYYY-MM-DD
 #### Added
+* Strategic merge of Pod volumes and Container volumeMounts
 #### Changed
+* By default auto mount is disabled in ServiceAccount and Statefulset PodSpec
+* Mount volume similar to auto mount functionality for ServiceAccount token when sidecar controllers are enabled
 #### Fixed
 #### Removed
 

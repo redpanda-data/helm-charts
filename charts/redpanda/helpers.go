@@ -458,10 +458,35 @@ func StrategicMergePatch(overrides PodTemplate, original corev1.PodTemplateSpec)
 		)
 	}
 
+	if overrides.Spec.AutomountServiceAccountToken != nil {
+		original.Spec.AutomountServiceAccountToken = overrides.Spec.AutomountServiceAccountToken
+	}
+
 	overrideContainers := map[string]*Container{}
 	for i := range overrides.Spec.Containers {
 		container := &overrides.Spec.Containers[i]
 		overrideContainers[string(container.Name)] = container
+	}
+
+	if overrides.Spec.Volumes != nil && len(overrides.Spec.Volumes) > 0 {
+		newVolumes := []corev1.Volume{}
+		overrideVolumes := map[string]corev1.Volume{}
+		for i := range overrides.Spec.Volumes {
+			vol := overrides.Spec.Volumes[i]
+			overrideVolumes[vol.Name] = vol
+		}
+		for _, vol := range original.Spec.Volumes {
+			if overrideVol, ok := overrideVolumes[vol.Name]; ok {
+				newVolumes = append(newVolumes, overrideVol)
+				delete(overrideVolumes, vol.Name)
+				continue
+			}
+			newVolumes = append(newVolumes, vol)
+		}
+		for _, vol := range overrideVolumes {
+			newVolumes = append(newVolumes, vol)
+		}
+		original.Spec.Volumes = newVolumes
 	}
 
 	var merged []corev1.Container
