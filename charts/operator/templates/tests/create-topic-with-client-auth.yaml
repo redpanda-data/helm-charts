@@ -17,6 +17,7 @@ metadata:
     helm.sh/hook-weight: "2"
 spec:
   serviceAccount: {{ include "redpanda-operator.serviceAccountName" . }}
+  automountServiceAccountToken: false
   containers:
     - name: rpk
       image: docker.redpanda.com/redpandadata/redpanda:latest
@@ -76,4 +77,28 @@ spec:
 {{- .Files.Get $file | nindent 10 }}
           EOF
           $KUBECTL -n {{ .Release.Namespace }} delete pvc --all
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access
+        readOnly: true
+
   restartPolicy: Never
+  volumes:
+  - name: kube-api-access
+    projected:
+      defaultMode: 420
+      sources:
+        - serviceAccountToken:
+            expirationSeconds: 3607
+            path: token
+        - configMap:
+            items:
+              - key: ca.crt
+                path: ca.crt
+            name: kube-root-ca.crt
+        - downwardAPI:
+            items:
+              - fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+                path: namespace

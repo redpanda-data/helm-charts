@@ -18,6 +18,7 @@ package operator
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	appsv1 "k8s.io/api/apps/v1"
@@ -25,6 +26,24 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/utils/ptr"
+)
+
+const (
+	// Injected bound service account token expiration which triggers monitoring of its time-bound feature.
+	// Reference
+	// https://github.com/kubernetes/kubernetes/blob/ae53151cb4e6fbba8bb78a2ef0b48a7c32a0a067/pkg/serviceaccount/claims.go#L38-L39
+	tokenExpirationSeconds = 60*60 + 7
+
+	// ServiceAccountVolumeName is the prefix name that will be added to volumes that mount ServiceAccount secrets
+	// Reference
+	// https://github.com/kubernetes/kubernetes/blob/c6669ea7d61af98da3a2aa8c1d2cdc9c2c57080a/plugin/pkg/admission/serviceaccount/admission.go#L52-L53
+	ServiceAccountVolumeName = "kube-api-access"
+
+	// DefaultAPITokenMountPath is the path that ServiceAccountToken secrets are automounted to.
+	// The token file would then be accessible at /var/run/secrets/kubernetes.io/serviceaccount
+	// Reference
+	// https://github.com/kubernetes/kubernetes/blob/c6669ea7d61af98da3a2aa8c1d2cdc9c2c57080a/plugin/pkg/admission/serviceaccount/admission.go#L55-L57
+	DefaultAPITokenMountPath = "/var/run/secrets/kubernetes.io/serviceaccount"
 )
 
 func Deployment(dot *helmette.Dot) *appsv1.Deployment {
@@ -60,6 +79,7 @@ func Deployment(dot *helmette.Dot) *appsv1.Deployment {
 						Labels:      helmette.Merge(SelectorLabels(dot), values.PodLabels),
 					},
 					Spec: corev1.PodSpec{
+						AutomountServiceAccountToken:  ptr.To(false),
 						TerminationGracePeriodSeconds: ptr.To(int64(10)),
 						ImagePullSecrets:              values.ImagePullSecrets,
 						ServiceAccountName:            ServiceAccountName(dot),
@@ -119,8 +139,30 @@ func operatorContainers(dot *helmette.Dot, podTerminationGracePeriodSeconds *int
 					Name:          "https",
 				},
 			},
+			VolumeMounts: kubeRBACProxyVolumeMounts(dot),
 		},
 	}
+}
+
+func kubeRBACProxyVolumeMounts(dot *helmette.Dot) []corev1.VolumeMount {
+	values := helmette.Unwrap[Values](dot.Values)
+
+	if !(values.ServiceAccount.Create && !ptr.Deref(values.ServiceAccount.AutomountServiceAccountToken, false)) {
+		return nil
+	}
+
+	mountName := ServiceAccountVolumeName
+	for _, vol := range operatorPodVolumes(dot) {
+		if strings.HasPrefix(ServiceAccountVolumeName+"-", vol.Name) {
+			mountName = vol.Name
+		}
+	}
+
+	return []corev1.VolumeMount{{
+		Name:      mountName,
+		ReadOnly:  true,
+		MountPath: DefaultAPITokenMountPath,
+	}}
 }
 
 func livenessProbe(dot *helmette.Dot, podTerminationGracePeriodSeconds *int64) *corev1.Probe {
@@ -215,17 +257,73 @@ func isWebhookEnabled(dot *helmette.Dot) bool {
 func operatorPodVolumes(dot *helmette.Dot) []corev1.Volume {
 	values := helmette.Unwrap[Values](dot.Values)
 
-	if !values.Webhook.Enabled {
-		return []corev1.Volume{}
+	vol := []corev1.Volume{}
+
+	if values.ServiceAccount.Create && !ptr.Deref(values.ServiceAccount.AutomountServiceAccountToken, false) {
+		vol = append(vol, kubeTokenAPIVolume(ServiceAccountVolumeName))
 	}
 
-	return []corev1.Volume{
-		{
-			Name: "cert",
-			VolumeSource: corev1.VolumeSource{
-				Secret: &corev1.SecretVolumeSource{
-					DefaultMode: ptr.To(int32(420)),
-					SecretName:  values.WebhookSecretName,
+	if !values.Webhook.Enabled {
+		return vol
+	}
+
+	vol = append(vol, corev1.Volume{
+		Name: "cert",
+		VolumeSource: corev1.VolumeSource{
+			Secret: &corev1.SecretVolumeSource{
+				DefaultMode: ptr.To(int32(420)),
+				SecretName:  values.WebhookSecretName,
+			},
+		},
+	})
+
+	return vol
+}
+
+// kubeTokenAPIVolume is a slightly changed variant of
+// https://github.com/kubernetes/kubernetes/blob/c6669ea7d61af98da3a2aa8c1d2cdc9c2c57080a/plugin/pkg/admission/serviceaccount/admission.go#L484-L524
+// Upstream creates Projected Volume Source, but this function returns Volume with provided name.
+// Also const are renamed.
+func kubeTokenAPIVolume(name string) corev1.Volume {
+	return corev1.Volume{
+		Name: name,
+		VolumeSource: corev1.VolumeSource{
+			Projected: &corev1.ProjectedVolumeSource{
+				// explicitly set default value, see https://github.com/kubernetes/kubernetes/issues/104464
+				DefaultMode: ptr.To(corev1.ProjectedVolumeSourceDefaultMode),
+				Sources: []corev1.VolumeProjection{
+					{
+						ServiceAccountToken: &corev1.ServiceAccountTokenProjection{
+							Path:              "token",
+							ExpirationSeconds: ptr.To(int64(tokenExpirationSeconds)),
+						},
+					},
+					{
+						ConfigMap: &corev1.ConfigMapProjection{
+							LocalObjectReference: corev1.LocalObjectReference{
+								Name: "kube-root-ca.crt",
+							},
+							Items: []corev1.KeyToPath{
+								{
+									Key:  "ca.crt",
+									Path: "ca.crt",
+								},
+							},
+						},
+					},
+					{
+						DownwardAPI: &corev1.DownwardAPIProjection{
+							Items: []corev1.DownwardAPIVolumeFile{
+								{
+									Path: "namespace",
+									FieldRef: &corev1.ObjectFieldSelector{
+										APIVersion: "v1",
+										FieldPath:  "metadata.namespace",
+									},
+								},
+							},
+						},
+					},
 				},
 			},
 		},
@@ -235,17 +333,34 @@ func operatorPodVolumes(dot *helmette.Dot) []corev1.Volume {
 func operatorPodVolumesMounts(dot *helmette.Dot) []corev1.VolumeMount {
 	values := helmette.Unwrap[Values](dot.Values)
 
-	if !values.Webhook.Enabled {
-		return []corev1.VolumeMount{}
+	volMount := []corev1.VolumeMount{}
+
+	if values.ServiceAccount.Create && !ptr.Deref(values.ServiceAccount.AutomountServiceAccountToken, false) {
+		mountName := ServiceAccountVolumeName
+		for _, vol := range operatorPodVolumes(dot) {
+			if strings.HasPrefix(ServiceAccountVolumeName+"-", vol.Name) {
+				mountName = vol.Name
+			}
+		}
+
+		volMount = append(volMount, corev1.VolumeMount{
+			Name:      mountName,
+			ReadOnly:  true,
+			MountPath: DefaultAPITokenMountPath,
+		})
 	}
 
-	return []corev1.VolumeMount{
-		{
-			Name:      "cert",
-			MountPath: "/tmp/k8s-webhook-server/serving-certs",
-			ReadOnly:  true,
-		},
+	if !values.Webhook.Enabled {
+		return volMount
 	}
+
+	volMount = append(volMount, corev1.VolumeMount{
+		Name:      "cert",
+		MountPath: "/tmp/k8s-webhook-server/serving-certs",
+		ReadOnly:  true,
+	})
+
+	return volMount
 }
 
 func operatorArguments(dot *helmette.Dot) []string {

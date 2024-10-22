@@ -98,8 +98,8 @@ webhook:
 serviceAccount:
   # -- Specifies whether a service account should be created.
   create: true
-  # -- Specifies whether a service account should automount API-Credentials
-  # automountServiceAccountToken: true
+  # -- Specifies whether a service account should automount API-Credentials. The token is used in sidecars.controllers
+  automountServiceAccountToken: false
   # -- The name of the service account to use.
   # If not set and `serviceAccount.create` is `true`,
   # a name is generated using the `redpanda-operator.fullname` template.
