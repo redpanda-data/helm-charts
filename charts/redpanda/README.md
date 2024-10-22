@@ -670,7 +670,7 @@ Service account management.
 **Default:**
 
 ```
-{"annotations":{},"create":false,"name":""}
+{"annotations":{},"automountServiceAccountToken":false,"create":false,"name":""}
 ```
 
 ### [serviceAccount.annotations](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=serviceAccount.annotations)
@@ -678,6 +678,12 @@ Service account management.
 Annotations to add to the service account.
 
 **Default:** `{}`
+
+### [serviceAccount.automountServiceAccountToken](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=serviceAccount.automountServiceAccountToken)
+
+Specifies whether a service account should automount API-Credentials. The token is used in sidecars.controllers
+
+**Default:** `false`
 
 ### [serviceAccount.create](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=serviceAccount.create)
 

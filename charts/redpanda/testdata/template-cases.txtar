@@ -371,6 +371,8 @@ connectors:
 # ASSERT-FIELD-EQUALS ["v1/ServiceAccount", "default/redpanda-console", "{.automountServiceAccountToken}", false]
 # ASSERT-FIELD-EQUALS ["v1/ServiceAccount", "default/redpanda", "{.automountServiceAccountToken}", false]
 # ASSERT-FIELD-EQUALS ["apps/v1/Deployment", "default/redpanda-console", "{.spec.template.spec.automountServiceAccountToken}", false]
+# ASSERT-STATEFULSET-ALL-VOLUMES-ARE-USED
+# ASSERT-STATEFULSET-VOLUME-MOUNTS-VERIFICATION
 serviceAccount:
   create: true
   automountServiceAccountToken: false
@@ -381,6 +383,15 @@ console:
   serviceAccount:
     automountServiceAccountToken: false
 
+rbac:
+  enabled: true
+
+statefulset:
+  sideCars:
+    controllers:
+      enabled: true
+
+
 -- enabled-service-account-automount-token-in-service-account-resource --
 # By default Admin API listeners has enabled TLS but this explicitly enable this
 # ASSERT-NO-ERROR
@@ -388,6 +399,8 @@ console:
 # ASSERT-FIELD-EQUALS ["v1/ServiceAccount", "default/redpanda-console", "{.automountServiceAccountToken}", false]
 # ASSERT-FIELD-EQUALS ["v1/ServiceAccount", "default/redpanda", "{.automountServiceAccountToken}", true]
 # ASSERT-FIELD-EQUALS ["apps/v1/Deployment", "default/redpanda-console", "{.spec.template.spec.automountServiceAccountToken}", false]
+# ASSERT-STATEFULSET-ALL-VOLUMES-ARE-USED
+# ASSERT-STATEFULSET-VOLUME-MOUNTS-VERIFICATION
 serviceAccount:
   create: true
   automountServiceAccountToken: true
@@ -397,3 +410,67 @@ console:
   automountServiceAccountToken: false
   serviceAccount:
     automountServiceAccountToken: false
+
+rbac:
+  enabled: true
+
+statefulset:
+  sideCars:
+    controllers:
+      enabled: true
+
+-- enabled-service-account-automount-token-with-volume-overwrite --
+# By default Admin API listeners has enabled TLS but this explicitly enable this
+# ASSERT-NO-ERROR
+# ASSERT-GOLDEN
+# ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.volumes[8].name}", "kube-api-access-overwrite"]
+# ASSERT-FIELD-EQUALS ["v1/ServiceAccount", "default/redpanda-console", "{.automountServiceAccountToken}", false]
+# ASSERT-FIELD-EQUALS ["v1/ServiceAccount", "default/redpanda", "{.automountServiceAccountToken}", true]
+# ASSERT-FIELD-EQUALS ["apps/v1/Deployment", "default/redpanda-console", "{.spec.template.spec.automountServiceAccountToken}", false]
+# ASSERT-STATEFULSET-ALL-VOLUMES-ARE-USED
+# ASSERT-STATEFULSET-VOLUME-MOUNTS-VERIFICATION
+serviceAccount:
+  create: true
+  automountServiceAccountToken: true
+
+# Console example from within Redpanda chart
+console:
+  automountServiceAccountToken: false
+  serviceAccount:
+    automountServiceAccountToken: false
+
+rbac:
+  enabled: true
+
+statefulset:
+  sideCars:
+    controllers:
+      enabled: true
+  podTemplate:
+    spec:
+      containers:
+      - name: redpanda-controllers
+        env: []
+        volumeMounts:
+        - name: kube-api-access-overwrite
+          # Default path for kubernetes token where client go is checking
+          mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      volumes:
+      - name: kube-api-access-overwrite
+        projected:
+          defaultMode: 420
+          sources:
+          - serviceAccountToken:
+              expirationSeconds: 666
+              path: token
+          - configMap:
+              items:
+              - key: ca.crt
+                path: ca.crt
+              name: some-kube-root-ca-config-map.crt
+          - downwardAPI:
+              items:
+              - fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+                path: namespace
