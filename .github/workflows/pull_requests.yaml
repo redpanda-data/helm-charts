@@ -77,6 +77,11 @@ jobs:
               - 'charts/operator/files/*'
               - 'charts/operator/templates/**'
               - 'charts/operator/(.helmignore|values.schema.json|Chart.yaml)'
+            charts-connect:
+              - 'charts/operator/ci/*'
+              - 'charts/operator/files/*'
+              - 'charts/operator/templates/**'
+              - 'charts/operator/(.helmignore|values.schema.json|Chart.yaml)'
             go-code:
               - '.github/workflows/pull_requests.yaml'
               - '**/testdata/**'

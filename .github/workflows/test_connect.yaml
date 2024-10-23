@@ -1,0 +1,58 @@
+---
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Test Connect Chart
+on:
+  workflow_call:
+    inputs: {}
+    secrets: {}
+defaults:
+  run:
+    shell: nix develop --impure --command bash {0}
+jobs:
+  test:
+    name: Run ct tests for connect chart
+    strategy:
+      fail-fast: true
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: cachix/install-nix-action@v30
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+      # Cache the nix store.
+      - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Create kind cluster
+        uses: helm/kind-action@0025e74a8c7512023d06dc019c617aa3cf561fde  # v1.10.0
+        with:
+          config: .github/kind.yaml
+      - name: Check kind config worked
+        run: kubectl get nodes
+      # Chart-testing requires there to be a branch on the local repository
+      # for diffing. This will create such a branch without performing a
+      # checkout.
+      - name: Fetch origin/main
+        run: git fetch origin ${{ github.event.repository.default_branch }}:${{ github.event.repository.default_branch }}
+      - name: Run chart-testing (install and upgrade)
+        run: |
+          ct install \
+            --github-groups \
+            --upgrade \
+            --config .github/ct-connect.yaml \
+            --skip-missing-values \
+            --target-branch ${{ github.event.repository.default_branch }}
