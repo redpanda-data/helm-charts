@@ -5,6 +5,12 @@
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-FILLMEIN) - YYYY-MM-DD
 #### Added
 #### Changed
+#### Fixed
+#### Removed
+
+### [5.9.8](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.8) - 2024-10-23
+#### Added
+#### Changed
 * Bump Redpanda app version
 #### Fixed
 * Increased the memory limits of `bootstrap-yaml-envsubst` to prevent hangs on aarch64 [#1564](https://github.com/redpanda-data/helm-charts/issues/1564).
