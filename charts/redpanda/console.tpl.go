@@ -94,7 +94,6 @@ func consoleChartIntegration(dot *helmette.Dot) []kube.Object {
 			consoleValue.PodAnnotations = map[string]string{}
 		}
 		consoleValue.PodAnnotations["checksum-redpanda-chart/config"] = helmette.Sha256Sum(helmette.ToYaml(cfg))
-
 	}
 
 	consoleDot.Values = helmette.UnmarshalInto[helmette.Values](consoleValue)
@@ -151,7 +150,7 @@ func consoleTLSVolumesMounts(dot *helmette.Dot) []corev1.VolumeMount {
 		})
 	}
 
-	return mounts
+	return append(mounts, values.Console.ExtraVolumeMounts...)
 }
 
 func consoleTLSVolumes(dot *helmette.Dot) []corev1.Volume {
@@ -197,7 +196,7 @@ func consoleTLSVolumes(dot *helmette.Dot) []corev1.Volume {
 		})
 	}
 
-	return volumes
+	return append(volumes, values.Console.ExtraVolumes...)
 }
 
 func ConsoleConfig(dot *helmette.Dot) map[string]any {

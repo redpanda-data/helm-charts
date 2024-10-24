@@ -4,11 +4,20 @@
 
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-FILLMEIN) - YYYY-MM-DD
 #### Added
+#### Changed
+#### Fixed
+#### Removed
+
+### [5.9.9](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.9) - 2024-10-24
+#### Added
 * Strategic merge of Pod volumes and Container volumeMounts
 #### Changed
 * By default auto mount is disabled in ServiceAccount and Statefulset PodSpec
 * Mount volume similar to auto mount functionality for ServiceAccount token when sidecar controllers are enabled
 #### Fixed
+* Passing console extra volume and volume mount in Redpanda chart
+* implements `time.ParseDuration` in gotohelm (with limitations)
+* updates the transpilation of `MustParseDuration` to properly re-serialize the provided duration
 #### Removed
 
 ### [5.9.8](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.8) - 2024-10-23

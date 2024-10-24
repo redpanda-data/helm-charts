@@ -474,3 +474,19 @@ statefulset:
                   apiVersion: v1
                   fieldPath: metadata.namespace
                 path: namespace
+
+-- console-with-extra-volumes --
+# ASSERT-NO-ERROR
+# ASSERT-GOLDEN
+# ASSERT-FIELD-EQUALS ["apps/v1/Deployment", "default/redpanda-console", "{.spec.template.spec.volumes[2].name}", "role-bindings-volume"]
+# ASSERT-FIELD-EQUALS ["apps/v1/Deployment", "default/redpanda-console", "{.spec.template.spec.volumes[2].configMap.name}", "role-bindings-configmap"]
+console:
+  extraVolumes:
+    - name: role-bindings-volume
+      configMap:
+        name: role-bindings-configmap
+  extraVolumeMounts:
+    - name: role-bindings-volume
+      mountPath: /tmp/role-bindings.yml
+      subPath: role-bindings.yml
+      readOnly: true
