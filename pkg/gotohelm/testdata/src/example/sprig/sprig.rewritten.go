@@ -31,11 +31,18 @@ func Sprig(dot *helmette.Dot) map[string]any {
 		"regex":           regex(),
 		"strings":         stringsFunctions(),
 		"toString":        toString(),
+		"hasPrefix":       hasPrefix(),
 		"trim":            trim(),
 		"unset":           unset(),
 		"yaml":            yaml(),
 		"tpl":             tpl(),
 		"regexReplaceAll": regexReplaceAll(),
+	}
+}
+
+func hasPrefix() any {
+	return []bool{
+		strings.HasPrefix("abcd", "ab"),
 	}
 }
 

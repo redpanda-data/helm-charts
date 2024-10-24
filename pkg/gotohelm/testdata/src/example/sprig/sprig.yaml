@@ -5,7 +5,16 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $_is_returning = true -}}
-{{- (dict "r" (dict "asIntegral" (get (fromJson (include "sprig.asIntegral" (dict "a" (list $dot) ))) "r") "asNumeric" (get (fromJson (include "sprig.asNumeric" (dict "a" (list $dot) ))) "r") "atoi" (get (fromJson (include "sprig.atoi" (dict "a" (list ) ))) "r") "concat" (get (fromJson (include "sprig.concat" (dict "a" (list ) ))) "r") "default" (get (fromJson (include "sprig.default_" (dict "a" (list ) ))) "r") "empty" (get (fromJson (include "sprig.empty" (dict "a" (list ) ))) "r") "errTypes" (get (fromJson (include "sprig.errTypes" (dict "a" (list ) ))) "r") "first" (get (fromJson (include "sprig.first" (dict "a" (list ) ))) "r") "float" (get (fromJson (include "sprig.float" (dict "a" (list ) ))) "r") "keys" (get (fromJson (include "sprig.keys" (dict "a" (list ) ))) "r") "len" (get (fromJson (include "sprig.lenTest" (dict "a" (list ) ))) "r") "min" (get (fromJson (include "sprig.minFunc" (dict "a" (list ) ))) "r") "regex" (get (fromJson (include "sprig.regex" (dict "a" (list ) ))) "r") "strings" (get (fromJson (include "sprig.stringsFunctions" (dict "a" (list ) ))) "r") "toString" (get (fromJson (include "sprig.toString" (dict "a" (list ) ))) "r") "trim" (get (fromJson (include "sprig.trim" (dict "a" (list ) ))) "r") "unset" (get (fromJson (include "sprig.unset" (dict "a" (list ) ))) "r") "yaml" (get (fromJson (include "sprig.yaml" (dict "a" (list ) ))) "r") "tpl" (get (fromJson (include "sprig.tpl" (dict "a" (list ) ))) "r") "regexReplaceAll" (get (fromJson (include "sprig.regexReplaceAll" (dict "a" (list ) ))) "r") )) | toJson -}}
+{{- (dict "r" (dict "asIntegral" (get (fromJson (include "sprig.asIntegral" (dict "a" (list $dot) ))) "r") "asNumeric" (get (fromJson (include "sprig.asNumeric" (dict "a" (list $dot) ))) "r") "atoi" (get (fromJson (include "sprig.atoi" (dict "a" (list ) ))) "r") "concat" (get (fromJson (include "sprig.concat" (dict "a" (list ) ))) "r") "default" (get (fromJson (include "sprig.default_" (dict "a" (list ) ))) "r") "empty" (get (fromJson (include "sprig.empty" (dict "a" (list ) ))) "r") "errTypes" (get (fromJson (include "sprig.errTypes" (dict "a" (list ) ))) "r") "first" (get (fromJson (include "sprig.first" (dict "a" (list ) ))) "r") "float" (get (fromJson (include "sprig.float" (dict "a" (list ) ))) "r") "keys" (get (fromJson (include "sprig.keys" (dict "a" (list ) ))) "r") "len" (get (fromJson (include "sprig.lenTest" (dict "a" (list ) ))) "r") "min" (get (fromJson (include "sprig.minFunc" (dict "a" (list ) ))) "r") "regex" (get (fromJson (include "sprig.regex" (dict "a" (list ) ))) "r") "strings" (get (fromJson (include "sprig.stringsFunctions" (dict "a" (list ) ))) "r") "toString" (get (fromJson (include "sprig.toString" (dict "a" (list ) ))) "r") "hasPrefix" (get (fromJson (include "sprig.hasPrefix" (dict "a" (list ) ))) "r") "trim" (get (fromJson (include "sprig.trim" (dict "a" (list ) ))) "r") "unset" (get (fromJson (include "sprig.unset" (dict "a" (list ) ))) "r") "yaml" (get (fromJson (include "sprig.yaml" (dict "a" (list ) ))) "r") "tpl" (get (fromJson (include "sprig.tpl" (dict "a" (list ) ))) "r") "regexReplaceAll" (get (fromJson (include "sprig.regexReplaceAll" (dict "a" (list ) ))) "r") )) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "sprig.hasPrefix" -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (list (hasPrefix "ab" "abcd"))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

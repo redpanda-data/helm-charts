@@ -42,14 +42,16 @@ nameOverride: ""
 # -- Override `console.fullname` template.
 fullnameOverride: ""
 
-# -- Automount API credentials for the Service Account into the pod.
-automountServiceAccountToken: true
+# -- Automount API credentials for the Service Account into the pod. Console does not communicate with
+# Kubernetes API.
+automountServiceAccountToken: false
 
 serviceAccount:
   # -- Specifies whether a service account should be created.
   create: true
-  # -- Specifies whether a service account should automount API-Credentials
-  automountServiceAccountToken: true
+  # -- Specifies whether a service account should automount API-Credentials. Console does not
+  # communicate with Kubernetes API. The ServiceAccount could be used for workload identity.
+  automountServiceAccountToken: false
   # -- Annotations to add to the service account.
   annotations: {}
   # -- The name of the service account to use.

@@ -8,6 +8,16 @@
 #### Fixed
 #### Removed
 
+### [5.9.9](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.9) - 2024-10-24
+#### Added
+* Strategic merge of Pod volumes and Container volumeMounts
+#### Changed
+* By default auto mount is disabled in ServiceAccount and Statefulset PodSpec
+* Mount volume similar to auto mount functionality for ServiceAccount token when sidecar controllers are enabled
+#### Fixed
+* Passing console extra volume and volume mount in Redpanda chart
+#### Removed
+
 ### [5.9.8](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.8) - 2024-10-23
 #### Added
 #### Changed
@@ -207,9 +217,12 @@
 ## Redpanda Operator Chart
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/operator-FILLMEIN) - YYYY-MM-DD
 #### Added
+* Strategic merge of Pod volumes
 #### Changed
 * The minimum Kubernetes version has been bumped to `1.25.0`
 * Bump operator version [v2.2.5-24.2.7](https://github.com/redpanda-data/redpanda-operator/releases/tag/v2.2.5-24.2.7)
+* By default auto mount is disabled in ServiceAccount and Deployment PodSpec
+* Mount volume similar to auto mount functionality for ServiceAccount token
 #### Fixed
 * `--configurator-tag` now correctly falls back to `.appVersion`
 #### Removed
@@ -272,6 +285,7 @@
 #### Added
 #### Changed
 * The minimum Kubernetes version has been bumped to `1.25.0`
+* By default auto mount is disabled in ServiceAccount and Deployment PodSpec
 #### Fixed
 #### Removed
 
@@ -294,6 +308,7 @@
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/console-FILLMEIN) - YYYY-MM-DD
 #### Added
 #### Changed
+* By default auto mount is disabled in ServiceAccount and Deployment PodSpec
 #### Fixed
 #### Removed
 

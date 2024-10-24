@@ -115,6 +115,11 @@ func Deployment(dot *helmette.Dot) *appsv1.Deployment {
 					Labels:      PodLabels(dot),
 				},
 				Spec: corev1.PodSpec{
+					// Users will not be able to set auto mount ServiceAccount token to `true` in PodSpec.
+					// If user would like to mount token, then ServiceAccount should be used to allow auto
+					// mounting of the ServiceAccount token (`serviceAccount.automountServiceAccountToken`
+					// in the input values of connectors chart).
+					AutomountServiceAccountToken:  ptr.To(false),
 					TerminationGracePeriodSeconds: values.Deployment.TerminationGracePeriodSeconds,
 					Affinity: &corev1.Affinity{
 						NodeAffinity:    values.Deployment.NodeAffinity,

@@ -30,10 +30,42 @@ podTemplate:
         allowPrivilegeEscalation: false
         runAsNonRoot: true
 
--- disabled-service-account-automount-token-in-service-account-resource --
+-- disabled-service-account-automount-token-with-volume-overwrite --
 serviceAccount:
   automountServiceAccountToken: false
+
+podTemplate:
+  spec:
+    containers:
+    - name: manager
+      volumeMounts:
+      - name: kube-api-access-overwrite
+        # Default path for kubernetes token where client go is checking
+        mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+    volumes:
+    - name: kube-api-access-overwrite
+      projected:
+        defaultMode: 420
+        sources:
+        - serviceAccountToken:
+            expirationSeconds: 666
+            path: token
+        - configMap:
+            items:
+            - key: ca.crt
+              path: ca.crt
+            name: some-kube-root-ca-config-map.crt
+        - downwardAPI:
+            items:
+            - fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+              path: namespace
 
 -- enabled-service-account-automount-token-in-service-account-resource --
 serviceAccount:
   automountServiceAccountToken: true
+
+podTemplate:
+  spec:
+    automountServiceAccountToken: true

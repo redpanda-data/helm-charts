@@ -77,7 +77,7 @@
 {{- break -}}
 {{- end -}}
 {{- $_is_returning = true -}}
-{{- (dict "r" $mounts) | toJson -}}
+{{- (dict "r" (concat (default (list ) $mounts) (default (list ) $values.console.extraVolumeMounts))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -110,7 +110,7 @@
 {{- break -}}
 {{- end -}}
 {{- $_is_returning = true -}}
-{{- (dict "r" $volumes) | toJson -}}
+{{- (dict "r" (concat (default (list ) $volumes) (default (list ) $values.console.extraVolumes))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

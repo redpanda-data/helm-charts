@@ -500,6 +500,9 @@
 {{- if (ne (toJson $overrides.spec.securityContext) "null") -}}
 {{- $_ := (set $original.spec "securityContext" (merge (dict ) $overrides.spec.securityContext (default (mustMergeOverwrite (dict ) (dict )) $original.spec.securityContext))) -}}
 {{- end -}}
+{{- if (ne (toJson $overrides.spec.automountServiceAccountToken) "null") -}}
+{{- $_ := (set $original.spec "automountServiceAccountToken" $overrides.spec.automountServiceAccountToken) -}}
+{{- end -}}
 {{- $overrideContainers := (dict ) -}}
 {{- range $i, $_ := $overrides.spec.containers -}}
 {{- $container := (index $overrides.spec.containers $i) -}}
@@ -508,14 +511,46 @@
 {{- if $_is_returning -}}
 {{- break -}}
 {{- end -}}
+{{- if (and (ne (toJson $overrides.spec.volumes) "null") (gt ((get (fromJson (include "_shims.len" (dict "a" (list $overrides.spec.volumes) ))) "r") | int) (0 | int))) -}}
+{{- $newVolumes := (list ) -}}
+{{- $overrideVolumes := (dict ) -}}
+{{- range $i, $_ := $overrides.spec.volumes -}}
+{{- $vol := (index $overrides.spec.volumes $i) -}}
+{{- $_ := (set $overrideVolumes $vol.name $vol) -}}
+{{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- range $_, $vol := $original.spec.volumes -}}
+{{- $tmp_tuple_4 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $overrideVolumes $vol.name (coalesce nil)) ))) "r")) ))) "r") -}}
+{{- $ok_8 := $tmp_tuple_4.T2 -}}
+{{- $overrideVol_7 := $tmp_tuple_4.T1 -}}
+{{- if $ok_8 -}}
+{{- $newVolumes = (concat (default (list ) $newVolumes) (list $overrideVol_7)) -}}
+{{- $_ := (unset $overrideVolumes $vol.name) -}}
+{{- continue -}}
+{{- end -}}
+{{- $newVolumes = (concat (default (list ) $newVolumes) (list $vol)) -}}
+{{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- range $_, $vol := $overrideVolumes -}}
+{{- $newVolumes = (concat (default (list ) $newVolumes) (list $vol)) -}}
+{{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_ := (set $original.spec "volumes" $newVolumes) -}}
+{{- end -}}
 {{- $merged := (coalesce nil) -}}
 {{- range $_, $container := $original.spec.containers -}}
-{{- $tmp_tuple_4 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $overrideContainers $container.name (coalesce nil)) ))) "r")) ))) "r") -}}
-{{- $ok_8 := $tmp_tuple_4.T2 -}}
-{{- $override_7 := $tmp_tuple_4.T1 -}}
-{{- if $ok_8 -}}
-{{- $env := (concat (default (list ) $container.env) (default (list ) $override_7.env)) -}}
-{{- $container = (merge (dict ) $override_7 $container) -}}
+{{- $tmp_tuple_5 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $overrideContainers $container.name (coalesce nil)) ))) "r")) ))) "r") -}}
+{{- $ok_10 := $tmp_tuple_5.T2 -}}
+{{- $override_9 := $tmp_tuple_5.T1 -}}
+{{- if $ok_10 -}}
+{{- $env := (concat (default (list ) $container.env) (default (list ) $override_9.env)) -}}
+{{- $container = (merge (dict ) $override_9 $container) -}}
 {{- $_ := (set $container "env" $env) -}}
 {{- end -}}
 {{- if (eq (toJson $container.env) "null") -}}

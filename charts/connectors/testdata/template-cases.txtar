@@ -30,10 +30,47 @@ deployment:
             matchLabels:
               foo: bar
 
--- disabled-service-account-automount-token-in-service-account-resource --
+-- disabled-service-account-automount-token-with-volume --
 serviceAccount:
   create: true
   automountServiceAccountToken: false
+
+# Connectors does not uses Kuberentes API, so mounting any service account token is pointless
+# The default service account is not bound to any role nor cluster role.
+storage:
+  volume:
+  # As the golden test-cases is harder to review the emptyDir is copied from default values.
+  # The storage.volume overwrite all Pod Volumes without strategic merge.
+  - emptyDir:
+      medium: Memory
+      sizeLimit: 5Mi
+    name: rp-connect-tmp
+  - name: kube-api-access-overwrite
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 666
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: some-kube-root-ca-config-map.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace
+  volumeMounts:
+  # As the golden test-cases is harder to review the /tmp volumeMount is copied from default values.
+  # The storage.volume overwrite all Pod Volumes without strategic merge.
+  - mountPath: /tmp
+    name: rp-connect-tmp
+  - name: kube-api-token
+    # Default path for kubernetes token where client go is checking
+    mountPath: /var/run/secrets/kubernetes.io/serviceaccount
 
 -- enabled-service-account-automount-token-in-service-account-resource --
 serviceAccount:

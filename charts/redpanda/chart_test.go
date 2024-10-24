@@ -866,6 +866,12 @@ func TestGoHelmEquivalence(t *testing.T) {
 			},
 		},
 		Tests: &console.PartialEnableable{Enabled: ptr.To(false)},
+		// ServiceAccount and AutomountServiceAccountToken could be removed after Console helm chart release
+		// Currently there is difference between dependency Console Deployment and ServiceAccount
+		ServiceAccount: &console.PartialServiceAccountConfig{
+			AutomountServiceAccountToken: ptr.To(false),
+		},
+		AutomountServiceAccountToken: ptr.To(false),
 	}
 	values.Connectors = &redpanda.PartialConnectors{Enabled: ptr.To(false)}
 

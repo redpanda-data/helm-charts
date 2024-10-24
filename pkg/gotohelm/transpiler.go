@@ -1054,6 +1054,8 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 		return &BuiltInCall{FuncName: "trimSuffix", Arguments: []Node{args[1], args[0]}}
 	case "strings.TrimPrefix":
 		return &BuiltInCall{FuncName: "trimPrefix", Arguments: []Node{args[1], args[0]}}
+	case "strings.HasPrefix":
+		return &BuiltInCall{FuncName: "hasPrefix", Arguments: []Node{args[1], args[0]}}
 	case "strings.ReplaceAll":
 		return &BuiltInCall{FuncName: "replace", Arguments: []Node{args[1], args[2], args[0]}}
 	case "k8s.io/apimachinery/pkg/util/intstr.FromInt32", "k8s.io/apimachinery/pkg/util/intstr.FromInt", "k8s.io/apimachinery/pkg/util/intstr.FromString":

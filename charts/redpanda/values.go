@@ -31,6 +31,9 @@ const (
 	// PostUpgradeContainerName is the user facing name of the post-upgrade
 	// job's container.
 	PostUpgradeContainerName = "post-upgrade"
+	// RedpandaControllersContainerName is the container that can perform day
+	// 2 operation similarly to Redpanda operator.
+	RedpandaControllersContainerName = "redpanda-controllers"
 
 	// certificateMountPoint is a common mount point for any TLS certificate
 	// defined as external truststore or as certificate that would be
@@ -533,13 +536,14 @@ type ContainerName string
 
 // +gotohelm:ignore=true
 func (ContainerName) JSONSchemaExtend(s *jsonschema.Schema) {
-	s.Enum = append(s.Enum, RedpandaContainerName, PostInstallContainerName, PostUpgradeContainerName)
+	s.Enum = append(s.Enum, RedpandaContainerName, PostInstallContainerName, PostUpgradeContainerName, RedpandaControllersContainerName)
 }
 
 type Container struct {
 	Name            ContainerName           `json:"name" jsonschema:"required"`
 	SecurityContext *corev1.SecurityContext `json:"securityContext,omitempty"`
 	Env             []corev1.EnvVar         `json:"env" jsonschema:"required"`
+	VolumeMounts    []corev1.VolumeMount    `json:"volumeMounts,omitempty"`
 }
 
 // PodSpec is a subset of [corev1.PodSpec] that will be merged into the objects
@@ -548,8 +552,10 @@ type Container struct {
 // NOTE: At the time of writing, merging is manually implemented for each
 // field. Ideally, a more generally applicable solution should be used.
 type PodSpec struct {
-	Containers      []Container                `json:"containers,omitempty" jsonschema:"required"`
-	SecurityContext *corev1.PodSecurityContext `json:"securityContext,omitempty"`
+	Containers                   []Container                `json:"containers,omitempty" jsonschema:"required"`
+	SecurityContext              *corev1.PodSecurityContext `json:"securityContext,omitempty"`
+	Volumes                      []corev1.Volume            `json:"volumes,omitempty"`
+	AutomountServiceAccountToken *bool                      `json:"automountServiceAccountToken,omitempty"`
 }
 
 type PodTemplate struct {

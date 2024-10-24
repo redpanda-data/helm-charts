@@ -483,8 +483,10 @@ type PartialTieredStorageCredentials struct {
 }
 
 type PartialPodSpec struct {
-	Containers      []PartialContainer         "json:\"containers,omitempty\" jsonschema:\"required\""
-	SecurityContext *corev1.PodSecurityContext "json:\"securityContext,omitempty\""
+	Containers                   []PartialContainer         "json:\"containers,omitempty\" jsonschema:\"required\""
+	SecurityContext              *corev1.PodSecurityContext "json:\"securityContext,omitempty\""
+	Volumes                      []corev1.Volume            "json:\"volumes,omitempty\""
+	AutomountServiceAccountToken *bool                      "json:\"automountServiceAccountToken,omitempty\""
 }
 
 type PartialBootstrapUser struct {
@@ -554,6 +556,7 @@ type PartialContainer struct {
 	Name            *ContainerName          "json:\"name,omitempty\" jsonschema:\"required\""
 	SecurityContext *corev1.SecurityContext "json:\"securityContext,omitempty\""
 	Env             []corev1.EnvVar         "json:\"env,omitempty\" jsonschema:\"required\""
+	VolumeMounts    []corev1.VolumeMount    "json:\"volumeMounts,omitempty\""
 }
 
 type PartialExternalTLS struct {

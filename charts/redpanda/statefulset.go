@@ -20,11 +20,10 @@ import (
 	"fmt"
 	"strings"
 
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/utils/ptr"
 )
 
@@ -33,6 +32,22 @@ const (
 	// [corev1.VolumeProjection] of truststores will be mounted to the redpanda
 	// container. (Without a trailing slash)
 	TrustStoreMountPath = "/etc/truststores"
+
+	// Injected bound service account token expiration which triggers monitoring of its time-bound feature.
+	// Reference
+	// https://github.com/kubernetes/kubernetes/blob/ae53151cb4e6fbba8bb78a2ef0b48a7c32a0a067/pkg/serviceaccount/claims.go#L38-L39
+	tokenExpirationSeconds = 60*60 + 7
+
+	// ServiceAccountVolumeName is the prefix name that will be added to volumes that mount ServiceAccount secrets
+	// Reference
+	// https://github.com/kubernetes/kubernetes/blob/c6669ea7d61af98da3a2aa8c1d2cdc9c2c57080a/plugin/pkg/admission/serviceaccount/admission.go#L52-L53
+	ServiceAccountVolumeName = "kube-api-access"
+
+	// DefaultAPITokenMountPath is the path that ServiceAccountToken secrets are automounted to.
+	// The token file would then be accessible at /var/run/secrets/kubernetes.io/serviceaccount
+	// Reference
+	// https://github.com/kubernetes/kubernetes/blob/c6669ea7d61af98da3a2aa8c1d2cdc9c2c57080a/plugin/pkg/admission/serviceaccount/admission.go#L55-L57
+	DefaultAPITokenMountPath = "/var/run/secrets/kubernetes.io/serviceaccount"
 )
 
 // statefulSetRedpandaEnv returns the environment variables for the Redpanda
@@ -212,7 +227,79 @@ func StatefulSetVolumes(dot *helmette.Dot) []corev1.Volume {
 		volumes = append(volumes, *v)
 	}
 
+	// Volume is used when:
+	// * service account automount is set to false
+	// * one of the below condition:
+	//   * sidecars controllers are enabled (decommission, node-watcher) and rbac is enabled
+	//   * rack awareness is enabled
+	if !ptr.Deref(values.ServiceAccount.AutomountServiceAccountToken, false) &&
+		((values.RBAC.Enabled &&
+			values.Statefulset.SideCars.Controllers.Enabled &&
+			values.Statefulset.SideCars.Controllers.CreateRBAC) ||
+			values.RackAwareness.Enabled) {
+		foundK8STokenVolume := false
+		for _, v := range volumes {
+			if strings.HasPrefix(ServiceAccountVolumeName+"-", v.Name) {
+				foundK8STokenVolume = true
+			}
+		}
+
+		if !foundK8STokenVolume {
+			volumes = append(volumes, kubeTokenAPIVolume(ServiceAccountVolumeName))
+		}
+	}
+
 	return volumes
+}
+
+// kubeTokenAPIVolume is a slightly changed variant of
+// https://github.com/kubernetes/kubernetes/blob/c6669ea7d61af98da3a2aa8c1d2cdc9c2c57080a/plugin/pkg/admission/serviceaccount/admission.go#L484-L524
+// Upstream creates Projected Volume Source, but this function returns Volume with provided name.
+// Also const are renamed.
+func kubeTokenAPIVolume(name string) corev1.Volume {
+	return corev1.Volume{
+		Name: name,
+		VolumeSource: corev1.VolumeSource{
+			Projected: &corev1.ProjectedVolumeSource{
+				// explicitly set default value, see https://github.com/kubernetes/kubernetes/issues/104464
+				DefaultMode: ptr.To(corev1.ProjectedVolumeSourceDefaultMode),
+				Sources: []corev1.VolumeProjection{
+					{
+						ServiceAccountToken: &corev1.ServiceAccountTokenProjection{
+							Path:              "token",
+							ExpirationSeconds: ptr.To(int64(tokenExpirationSeconds)),
+						},
+					},
+					{
+						ConfigMap: &corev1.ConfigMapProjection{
+							LocalObjectReference: corev1.LocalObjectReference{
+								Name: "kube-root-ca.crt",
+							},
+							Items: []corev1.KeyToPath{
+								{
+									Key:  "ca.crt",
+									Path: "ca.crt",
+								},
+							},
+						},
+					},
+					{
+						DownwardAPI: &corev1.DownwardAPIProjection{
+							Items: []corev1.DownwardAPIVolumeFile{
+								{
+									Path: "namespace",
+									FieldRef: &corev1.ObjectFieldSelector{
+										APIVersion: "v1",
+										FieldPath:  "metadata.namespace",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
 }
 
 func statefulSetVolumeDataDir(dot *helmette.Dot) corev1.Volume {
@@ -481,6 +568,38 @@ func statefulSetInitContainerSetTieredStorageCacheDirOwnership(dot *helmette.Dot
 func statefulSetInitContainerConfigurator(dot *helmette.Dot) *corev1.Container {
 	values := helmette.Unwrap[Values](dot.Values)
 
+	volMounts := CommonMounts(dot)
+	volMounts = append(volMounts, templateToVolumeMounts(dot, values.Statefulset.InitContainers.Configurator.ExtraVolumeMounts)...)
+	volMounts = append(volMounts,
+		corev1.VolumeMount{
+			Name:      "config",
+			MountPath: "/etc/redpanda",
+		},
+		corev1.VolumeMount{
+			Name:      "base-config",
+			MountPath: "/tmp/base-config",
+		},
+		corev1.VolumeMount{
+			Name:      fmt.Sprintf(`%.51s-configurator`, Fullname(dot)),
+			MountPath: "/etc/secrets/configurator/scripts/",
+		},
+	)
+	if !ptr.Deref(values.ServiceAccount.AutomountServiceAccountToken, false) &&
+		values.RackAwareness.Enabled {
+		mountName := ServiceAccountVolumeName
+		for _, vol := range StatefulSetVolumes(dot) {
+			if strings.HasPrefix(ServiceAccountVolumeName+"-", vol.Name) {
+				mountName = vol.Name
+			}
+		}
+
+		volMounts = append(volMounts, corev1.VolumeMount{
+			Name:      mountName,
+			ReadOnly:  true,
+			MountPath: DefaultAPITokenMountPath,
+		})
+	}
+
 	return &corev1.Container{
 		Name:  fmt.Sprintf(`%.51s-configurator`, Name(dot)),
 		Image: fmt.Sprintf(`%s:%s`, values.Image.Repository, Tag(dot)),
@@ -524,22 +643,8 @@ func statefulSetInitContainerConfigurator(dot *helmette.Dot) *corev1.Container {
 			},
 		}),
 		SecurityContext: ptr.To(ContainerSecurityContext(dot)),
-		VolumeMounts: append(append(CommonMounts(dot),
-			templateToVolumeMounts(dot, values.Statefulset.InitContainers.Configurator.ExtraVolumeMounts)...),
-			corev1.VolumeMount{
-				Name:      "config",
-				MountPath: "/etc/redpanda",
-			},
-			corev1.VolumeMount{
-				Name:      "base-config",
-				MountPath: "/tmp/base-config",
-			},
-			corev1.VolumeMount{
-				Name:      fmt.Sprintf(`%.51s-configurator`, Fullname(dot)),
-				MountPath: "/etc/secrets/configurator/scripts/",
-			},
-		),
-		Resources: helmette.UnmarshalInto[corev1.ResourceRequirements](values.Statefulset.InitContainers.Configurator.Resources),
+		VolumeMounts:    volMounts,
+		Resources:       helmette.UnmarshalInto[corev1.ResourceRequirements](values.Statefulset.InitContainers.Configurator.Resources),
 	}
 }
 
@@ -825,8 +930,27 @@ func statefulSetContainerControllers(dot *helmette.Dot) *corev1.Container {
 		return nil
 	}
 
+	volumeMounts := []corev1.VolumeMount{}
+	if values.RBAC.Enabled &&
+		values.Statefulset.SideCars.Controllers.Enabled &&
+		values.Statefulset.SideCars.Controllers.CreateRBAC &&
+		!ptr.Deref(values.ServiceAccount.AutomountServiceAccountToken, false) {
+		mountName := ServiceAccountVolumeName
+		for _, vol := range StatefulSetVolumes(dot) {
+			if strings.HasPrefix(ServiceAccountVolumeName+"-", vol.Name) {
+				mountName = vol.Name
+			}
+		}
+
+		volumeMounts = append(volumeMounts, corev1.VolumeMount{
+			Name:      mountName,
+			ReadOnly:  true,
+			MountPath: DefaultAPITokenMountPath,
+		})
+	}
+
 	return &corev1.Container{
-		Name: "redpanda-controllers",
+		Name: RedpandaControllersContainerName,
 		Image: fmt.Sprintf(`%s:%s`,
 			values.Statefulset.SideCars.Controllers.Image.Repository,
 			values.Statefulset.SideCars.Controllers.Image.Tag,
@@ -853,6 +977,7 @@ func statefulSetContainerControllers(dot *helmette.Dot) *corev1.Container {
 		},
 		Resources:       helmette.UnmarshalInto[corev1.ResourceRequirements](values.Statefulset.SideCars.Controllers.Resources),
 		SecurityContext: values.Statefulset.SideCars.Controllers.SecurityContext,
+		VolumeMounts:    volumeMounts,
 	}
 }
 
@@ -918,6 +1043,7 @@ func StatefulSet(dot *helmette.Dot) *appsv1.StatefulSet {
 					Annotations: StatefulSetPodAnnotations(dot, statefulSetChecksumAnnotation(dot)),
 				},
 				Spec: corev1.PodSpec{
+					AutomountServiceAccountToken:  ptr.To(false),
 					TerminationGracePeriodSeconds: ptr.To(values.Statefulset.TerminationGracePeriodSeconds),
 					SecurityContext:               PodSecurityContext(dot),
 					ServiceAccountName:            ServiceAccountName(dot),
