@@ -1,7 +1,7 @@
 ---
 # Source: operator/templates/service_account.yaml
 apiVersion: v1
-automountServiceAccountToken: null
+automountServiceAccountToken: false
 kind: ServiceAccount
 metadata:
   annotations: null
@@ -789,6 +789,7 @@ spec:
         app.kubernetes.io/instance: operator
         app.kubernetes.io/name: operator
     spec:
+      automountServiceAccountToken: false
       containers:
       - args:
         - --health-probe-bind-address=:8081
@@ -824,7 +825,10 @@ spec:
         resources: {}
         securityContext:
           allowPrivilegeEscalation: false
-        volumeMounts: []
+        volumeMounts:
+        - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+          name: kube-api-access
+          readOnly: true
       - args:
         - --secure-listen-address=0.0.0.0:8443
         - --upstream=http://127.0.0.1:8080/
@@ -838,6 +842,10 @@ spec:
         - containerPort: 8443
           name: https
         resources: {}
+        volumeMounts:
+        - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+          name: kube-api-access
+          readOnly: true
       ephemeralContainers: null
       imagePullSecrets: []
       initContainers: []
@@ -847,4 +855,22 @@ spec:
       serviceAccountName: operator
       terminationGracePeriodSeconds: 10
       tolerations: []
-      volumes: []
+      volumes:
+      - name: kube-api-access
+        projected:
+          defaultMode: 420
+          sources:
+          - serviceAccountToken:
+              expirationSeconds: 3607
+              path: token
+          - configMap:
+              items:
+              - key: ca.crt
+                path: ca.crt
+              name: kube-root-ca.crt
+          - downwardAPI:
+              items:
+              - fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+                path: namespace
