@@ -40,6 +40,9 @@ func DictTest[K comparable, V any](m map[K]V, key K) (V, bool) {
 }
 
 func MustDuration(duration string) *metav1.Duration {
+	// TODO make a bootstrap function to ensure the stringified version of this
+	// field is consistent with go.
+	// Update the validation?
 	d, err := time.ParseDuration(duration)
 	if err != nil {
 		panic(err)

@@ -42,6 +42,12 @@ func LoadPackages(cfg *packages.Config, patterns ...string) ([]*packages.Package
 		packages.NeedTypes | packages.NeedSyntax | packages.NeedTypesInfo |
 		packages.NeedDeps
 
+	// Add in the gotohelm build tag for any package that wants to either
+	// include or exclude specific files.
+	// internal/bootstrap uses this feature to speed up transpilation time as
+	// sprig's functions can be stubbed out.
+	cfg.BuildFlags = append(cfg.BuildFlags, "-tags=gotohelm")
+
 	pkgs, err := packages.Load(cfg, patterns...)
 	if err != nil {
 		return pkgs, err

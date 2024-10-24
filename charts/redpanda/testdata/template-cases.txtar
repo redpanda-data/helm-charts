@@ -397,3 +397,13 @@ console:
   automountServiceAccountToken: false
   serviceAccount:
     automountServiceAccountToken: false
+
+-- custom-cert-duration --
+# ASSERT-NO-ERROR
+# ASSERT-GOLDEN
+tls:
+  certs:
+    default:
+      duration: 2m1s
+    external:
+      duration: 123h
