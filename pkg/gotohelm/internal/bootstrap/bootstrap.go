@@ -20,6 +20,7 @@ package bootstrap
 
 import (
 	"fmt"
+	"time"
 )
 
 const (
@@ -230,4 +231,60 @@ func resource_Value(repr any) int64 {
 func resource_MilliValue(repr any) int64 {
 	numeric, scale := parseResource(repr)
 	return Int64(Ceil(numeric * 1000 * scale))
+}
+
+// time_ParseDuration re-implements [time.ParseDuration] but only down to
+// second precision. The returned value is represented as nano's.
+func time_ParseDuration(repr string) int64 {
+	// TODO: loading bootstrap might be faster if we could avoid importing
+	// time?
+	unitMap := map[string]int64{
+		"s": int64(time.Second),
+		"m": int64(time.Minute),
+		"h": int64(time.Hour),
+	}
+
+	original := repr
+	value := int64(0)
+
+	// Special cases to match time.ParseDuration.
+	if repr == "" {
+		panic(fmt.Sprintf("invalid Duration: %q", original))
+	}
+
+	if repr == "0" {
+		return 0
+	}
+
+	// This is written strangely as `for true` loops don't work in gotohelm.
+	// Realistically we won't need any more loops than len(unitMap).
+	for range []int{0, 0, 0} {
+		if repr == "" {
+			break
+		}
+
+		n := RegexFind(`^\d+`, repr)
+		if n == "" {
+			panic(fmt.Sprintf("invalid Duration: %q", original))
+		}
+
+		repr = repr[len(n):]
+
+		unit := RegexFind(`^(h|m|s)`, repr)
+		if unit == "" {
+			panic(fmt.Sprintf("invalid Duration: %q", original))
+		}
+
+		repr = repr[len(unit):]
+
+		value = value + (Int64(n) * unitMap[unit])
+	}
+
+	return value
+}
+
+// time_Duration_String re-implements [time.Duration.String] but only down to
+// second precision.
+func time_Duration_String(dur int64) string {
+	return Duration(dur / int64(time.Second))
 }
