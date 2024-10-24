@@ -1066,8 +1066,6 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 		return args[0]
 	case "k8s.io/utils/ptr.Equal":
 		return &Call{FuncName: "_shims.ptr_Equal", Arguments: args}
-	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.MustDuration":
-		return args[0]
 	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.Dig":
 		return &BuiltInCall{FuncName: "dig", Arguments: append(args[2:], args[1], args[0])}
 	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.Unwrap":
@@ -1137,6 +1135,20 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 			}
 		}
 		return &Call{FuncName: "_shims.typetest", Arguments: []Node{t.transpileTypeRepr(typ), args[0], t.zeroOf(typ)}}
+
+	case "time.ParseDuration":
+		return &Call{FuncName: "_shims.time_ParseDuration", Arguments: args}
+
+	case "time.(Duration).String":
+		return &Call{FuncName: "_shims.time_Duration_String", Arguments: args}
+
+	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.MustDuration":
+		return &Call{
+			FuncName: "_shims.time_Duration_String",
+			Arguments: []Node{
+				&Call{FuncName: "_shims.time_ParseDuration", Arguments: args},
+			},
+		}
 
 	// Support for resource.Quantity. In helm world, resource.Quantity is
 	// always represented as it's JSON representation of either a string or a
