@@ -1,0 +1,258 @@
+# Default values for Redpanda Connect.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+deployment:
+  replicaCount: 1
+  podAnnotations: {}
+  podLabels: {}
+  # annotations -- Set annotations on the Redpanda Connect Deployment
+  annotations: {}
+  # Default 60. ref: https://kubernetes.io/docs/concepts/containers/container-lifecycle-hooks/
+  terminationGracePeriodSeconds: 60
+  # Rollout the deployment on ConfigMap changes
+  rolloutConfigMap: true
+
+  readinessProbe:
+    failureThreshold: 1
+    periodSeconds: 5
+    successThreshold: 1
+    timeoutSeconds: 2
+    httpGet:
+      path: /ready
+      port: http
+      # scheme: HTTPS
+      # httpHeaders:
+      # - name: My-Header
+      #   value: Bar
+  livenessProbe:
+    failureThreshold: 3
+    periodSeconds: 5
+    successThreshold: 1
+    timeoutSeconds: 2
+    httpGet:
+      path: /ping
+      port: http
+      # scheme: HTTPS
+      # httpHeaders:
+      # - name: My-Header
+      #   value: Bar
+
+  # podRestartPolicy - Container restart policy. ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy
+  restartPolicy: Always
+
+# commonLabels -- Add additional labels to all created resources.
+commonLabels: {}
+
+image:
+  repository: "docker.redpanda.com/redpandadata/connect"
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podSecurityContext:
+  {}
+  # fsGroup: 2000
+
+securityContext:
+  {}
+  # capabilities:
+  #   drop:d
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  name: http
+  type: ClusterIP
+  port: 80
+  targetPort: http
+  protocol: TCP
+
+  extraPorts:
+    # - name: extraPort
+    #   port: 9999
+    #   targetPort: 9999
+    #   protocol: UDP
+
+ingress:
+  enabled: false
+  className: ""
+  annotations:
+    {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts: []
+  #  - host: chart-example.local
+  #    paths:
+  #      - path: /
+  #        pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+env: []
+#  - name: KAFKA_USER
+#    valueFrom:
+#      secretKeyRef:
+#        name: s-name
+#        key: KAFKA_USER
+
+# envFrom -- Define environment variables from Secrets or ConfigMaps. https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/#define-an-environment-variable-for-a-container
+envFrom:
+  []
+  # - secretRef:
+  #     name: redpanda
+
+resources:
+  {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 12
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 80
+#   - type: Resource
+#     resource:
+#       name: memory
+#       target:
+#         type: Utilization
+#         averageUtilization: 80
+#   behavior:
+#     scaleDown:
+#       stabilizationWindowSeconds: 300
+#       policies:
+#       - type: Pods
+#         value: 1
+#         periodSeconds: 60
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+podDisruptionBudget:
+  # podDisruptionBudget.enabled -- Enable a [PodDisruptionBudget](https://kubernetes.io/docs/tasks/run-application/configure-pdb/) for Redpanda Connect.
+  enabled: false
+  # podDisruptionBudget.minAvailable -- The number of Pods that must still be available after an eviction.
+  # minAvailable: 1
+  # podDisruptionBudget.maxUnavailable -- (int) The number of Pods that can be unavailable after an eviction.
+  # maxUnavailable: 1
+
+# initContainers -- Init Containers to be added to the Redpanda Connect Pods.
+initContainers: []
+
+# DeploymentStrategy: https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/deployment-v1/
+updateStrategy: {}
+#   type: RollingUpdate
+#   rollingUpdate:
+#     maxUnavailable: 1
+
+extraVolumes:
+  []
+  # - name: config-map
+  #   configMap:
+  #     name: cm-name
+  # - name: secret
+  #   secret:
+  #     secretName: s-name
+
+extraVolumeMounts:
+  []
+  # - name: config-map
+  #   mountPath: /mnt/configmap
+  #   readOnly: true
+  # - name: secret
+  #   mountPath: /mnt/secret
+  #   readOnly: true
+
+streams:
+  enabled: false
+  streamsConfigMap: ""
+  api:
+    enable: true
+
+  # /redpanda-connect.yaml HTTP configuration
+http:
+  # Disabling HTTP server will prevent service and ingress objects from being created.
+  enabled: true
+  address: "0.0.0.0:4195"
+  root_path: "/redpanda-connect"
+  debug_endpoints: false
+  cors:
+    enabled: false
+    # Uncomment and provide list when .Values.http.cors.enabled is true
+    # allowedOrigins: []
+
+serviceMonitor:
+  enabled: false
+  interval: "10s"
+  scheme: http
+  # basicAuth:
+  #   username: foo
+  #   password: bar
+  # tlsConfig:
+  #   ca: my-ca
+  #   cert: my-cert
+  #   keySecret: secret
+
+# metrics:
+#   prometheus: {}
+
+# tracing:
+#   openTelemetry:
+#     http: []
+#     grpc: []
+#     tags: {}
+
+# logger:
+#   level: INFO
+#   static_fields:
+#     '@service': redpanda-connect
+
+# command -- Command replaces the entrypoint command of the docker
+command: []
+
+# args -- Override Redpanda Connect's default arguments passed with command.
+args: []
+
+# EXPERIMENTAL: watch config files for changes and automatically apply them
+watch: false
+
+# Spread  incoming Pod in relation to the existing Pods across your cluster. https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/#topologyspreadconstraints-field
+topologySpreadConstraints: []
+
+# /redpanda-connect.yaml configuration
+config: {}

@@ -1,0 +1,22 @@
+suite: service tests
+templates:
+  - service.yaml
+tests:
+  - it: should enable service default
+    asserts:
+      - matchSnapshot:
+          path: spec
+
+  - it: should enable service custom
+    set:
+      service:
+        type: LoadBalancer
+        port: 8080
+        extraPorts:
+          - name: extraPort
+            port: 9999
+            targetPort: 9999
+            protocol: UDP
+    asserts:
+      - matchSnapshot:
+          path: spec

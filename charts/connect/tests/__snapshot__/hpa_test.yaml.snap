@@ -1,0 +1,43 @@
+should configure autoscaler custom:
+  1: |
+    behavior:
+      scaleDown:
+        policies:
+          - periodSeconds: 40
+            type: Pods
+            value: 3
+        stabilizationWindowSeconds: 200
+    maxReplicas: 28
+    metrics:
+      - resource:
+          name: cpu
+          target:
+            averageUtilization: 20
+            type: Utilization
+        type: Resource
+      - resource:
+          name: memory
+          target:
+            averageUtilization: 20
+            type: Utilization
+        type: Resource
+    minReplicas: 2
+    scaleTargetRef:
+      apiVersion: apps/v1
+      kind: Deployment
+      name: RELEASE-NAME-redpanda-connect
+should enable autoscaler default:
+  1: |
+    maxReplicas: 12
+    metrics:
+      - resource:
+          name: cpu
+          target:
+            averageUtilization: 80
+            type: Utilization
+        type: Resource
+    minReplicas: 1
+    scaleTargetRef:
+      apiVersion: apps/v1
+      kind: Deployment
+      name: RELEASE-NAME-redpanda-connect

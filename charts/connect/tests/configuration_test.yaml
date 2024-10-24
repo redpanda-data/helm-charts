@@ -1,0 +1,173 @@
+suite: configuration tests
+templates:
+  - configmap.yaml
+tests:
+  - it: should set default configuration
+    asserts:
+      - matchSnapshot:
+          path: data
+
+  - it: should set http options
+    set:
+      http:
+        address: 127.0.0.0:4095
+        cert_file: "/my/cert"
+        key_file: "/my/cert.key"
+        cors:
+          enabled: true
+          allowed_origins: []
+        basic_auth:
+          enabled: true
+          username: "test"
+          password_hash: "test"
+          algorithm: "sha256"
+          salt: "test"
+    asserts:
+      - matchSnapshot:
+          path: data
+
+  - it: should set logging options
+    set:
+      logger:
+        level: INFO
+        format: logfmt
+        add_timestamp: false
+        static_fields:
+          "@service": redpanda-connect
+    asserts:
+      - matchSnapshot:
+          path: data
+
+  - it: should set tracing options
+    set:
+      tracing:
+        jaeger:
+          agent_address: localhost:6831
+          sampler_type: const
+          sampler_param: 1
+    asserts:
+      - matchSnapshot:
+          path: data
+
+  - it: should set metrics options
+    set:
+      metrics:
+        statsd:
+          address: localhost:8125
+          flush_period: 100ms
+    asserts:
+      - matchSnapshot:
+          path: data
+
+  - it: can set global options with streams mode
+    set:
+      streams:
+        enabled: true
+        streamsConfigMap: my-config-map
+      http:
+        address: 127.0.0.0:4095
+        cert_file: "/my/cert"
+        key_file: "/my/cert.key"
+        cors:
+          enabled: true
+          allowed_origins: []
+        basic_auth:
+          enabled: true
+          username: "test"
+          password_hash: "test"
+          algorithm: "sha256"
+          salt: "test"
+      logger:
+        level: INFO
+        format: logfmt
+        add_timestamp: false
+        static_fields:
+          "@service": redpanda-connect
+      tracing:
+        jaeger:
+          agent_address: localhost:6831
+          sampler_type: const
+          sampler_param: 1
+      metrics:
+        statsd:
+          address: localhost:8125
+          flush_period: 100ms
+    asserts:
+      - matchSnapshot:
+          path: data
+
+  - it: should set config from string
+    set:
+      config: |
+        input:
+          nats_jetstream:
+            urls: [ nats://TODO:4222 ]
+            queue: myqueue
+            subject: traffic.light.events
+            deliver: all
+
+        buffer:
+          system_window:
+            timestamp_mapping: root = this.created_at
+            size: 1h
+
+        pipeline:
+          processors:
+            - group_by_value:
+                value: '${! json("traffic_light_id") }'
+            - mapping: |
+                root = if batch_index() == 0 {
+                  {
+                    "traffic_light_id": this.traffic_light_id,
+                    "created_at": @window_end_timestamp,
+                    "total_cars": json("registration_plate").from_all().unique().length(),
+                    "passengers": json("passengers").from_all().sum(),
+                  }
+                } else { deleted() }
+
+        output:
+          http_client:
+            url: https://example.com/traffic_data
+            verb: POST
+            max_in_flight: 64
+    asserts:
+      - matchSnapshot:
+          path: data
+
+  - it: should set config from yaml
+    set:
+      config:
+        input:
+          nats_jetstream:
+            urls: [nats://TODO:4222]
+            queue: myqueue
+            subject: traffic.light.events
+            deliver: all
+
+        buffer:
+          system_window:
+            timestamp_mapping: root = this.created_at
+            size: 1h
+
+        pipeline:
+          processors:
+            - group_by_value:
+                value: '${! json("traffic_light_id") }'
+            - mapping: |
+                root = if batch_index() == 0 {
+                  {
+                    "traffic_light_id": this.traffic_light_id,
+                    "created_at": @window_end_timestamp,
+                    "total_cars": json("registration_plate").from_all().unique().length(),
+                    "passengers": json("passengers").from_all().sum(),
+                  }
+                } else { deleted() }
+
+        output:
+          http_client:
+            url: https://example.com/traffic_data
+            verb: POST
+            max_in_flight: 64
+    asserts:
+      - matchSnapshot:
+          path: data

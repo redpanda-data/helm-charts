@@ -1,0 +1,16 @@
+should enable ingress default:
+  1: |
+    rules:
+      - host: test.local
+        http:
+          paths:
+            - backend:
+                service:
+                  name: RELEASE-NAME-redpanda-connect
+                  port:
+                    number: 80
+              path: /
+    tls:
+      - hosts:
+          - test.local
+        secretName: test-tls

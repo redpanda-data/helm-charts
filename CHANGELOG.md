@@ -354,3 +354,8 @@
 #### Changed
 #### Fixed
 #### Removed
+
+## Connect Chart
+### [3.0.0](https://github.com/redpanda-data/helm-charts/releases/tag/connect-3.0.0)
+#### Added
+* Refreshed chart and migrated from [the old standalone repo](https://github.com/redpanda-data/redpanda-connect-helm-chart)
