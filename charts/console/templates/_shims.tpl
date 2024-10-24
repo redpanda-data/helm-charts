@@ -273,6 +273,56 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "_shims.time_ParseDuration" -}}
+{{- $repr := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $unitMap := (dict "s" (1000000000 | int64) "m" (60000000000 | int64) "h" (3600000000000 | int64) ) -}}
+{{- $original := $repr -}}
+{{- $value := ((0 | int64) | int64) -}}
+{{- if (eq $repr "") -}}
+{{- $_ := (fail (printf "invalid Duration: %q" $original)) -}}
+{{- end -}}
+{{- if (eq $repr "0") -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (0 | int64)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- range $_, $_ := (list (0 | int) (0 | int) (0 | int)) -}}
+{{- if (eq $repr "") -}}
+{{- break -}}
+{{- end -}}
+{{- $n := (regexFind `^\d+` $repr) -}}
+{{- if (eq $n "") -}}
+{{- $_ := (fail (printf "invalid Duration: %q" $original)) -}}
+{{- end -}}
+{{- $repr = (substr ((get (fromJson (include "_shims.len" (dict "a" (list $n) ))) "r") | int) -1 $repr) -}}
+{{- $unit := (regexFind `^(h|m|s)` $repr) -}}
+{{- if (eq $unit "") -}}
+{{- $_ := (fail (printf "invalid Duration: %q" $original)) -}}
+{{- end -}}
+{{- $repr = (substr ((get (fromJson (include "_shims.len" (dict "a" (list $unit) ))) "r") | int) -1 $repr) -}}
+{{- $value = ((add $value (((mul (int64 $n) (index $unitMap $unit)) | int64))) | int64) -}}
+{{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" $value) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "_shims.time_Duration_String" -}}
+{{- $dur := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (duration ((div $dur (1000000000 | int64)) | int64))) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "_shims.render-manifest" -}}
 {{- $tpl := (index . 0) -}}
 {{- $dot := (index . 1) -}}
