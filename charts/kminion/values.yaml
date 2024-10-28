@@ -205,6 +205,17 @@ deployment:
   # Add additional init containers, e. g. for oauth2-proxy
   initContainers: {}
 
+# Create dynamic manifests via values:
+extraObjects: []
+  # - apiVersion: v1
+  #   kind: Secret
+  #   metadata:
+  #     name: kafka-credentials-team-xy
+  #   type Opaque
+  #   data:
+  #     username: kafka_user_name
+  #     password: kafka_user_password
+
 kminion:
   # KMinion can be configured using environment variables and/or a YAML config. The yaml contents under config will
   # end up in a YAML file which will be mounted into the kminion container.
