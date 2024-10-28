@@ -26,6 +26,13 @@ import (
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm"
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	"github.com/redpanda-data/helm-charts/pkg/kube"
+	appsv1 "k8s.io/api/apps/v1"
+	autoscalingv2 "k8s.io/api/autoscaling/v2"
+	batchv1 "k8s.io/api/batch/v1"
+	corev1 "k8s.io/api/core/v1"
+	networkingv1 "k8s.io/api/networking/v1"
+	policyv1 "k8s.io/api/policy/v1"
+	rbacv1 "k8s.io/api/rbac/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/kubernetes/scheme"
 )
@@ -44,6 +51,32 @@ var (
 	// Chart is the go version of the redpanda helm chart.
 	Chart = gotohelm.MustLoad(chartYAML, defaultValuesYAML, render, console.Chart, connectors.Chart)
 )
+
+// Types returns a slice containing the set of all [kube.Object] types that
+// could be returned by the redpanda chart.
+// +gotohelm:ignore=true
+func Types() []kube.Object {
+	return []kube.Object{
+		&appsv1.Deployment{},
+		&appsv1.StatefulSet{},
+		&autoscalingv2.HorizontalPodAutoscaler{},
+		&batchv1.Job{},
+		&certmanagerv1.Certificate{},
+		&certmanagerv1.Issuer{},
+		&corev1.ConfigMap{},
+		&corev1.Secret{},
+		&corev1.ServiceAccount{},
+		&corev1.Service{},
+		&monitoringv1.PodMonitor{},
+		&monitoringv1.ServiceMonitor{},
+		&networkingv1.Ingress{},
+		&policyv1.PodDisruptionBudget{},
+		&rbacv1.ClusterRoleBinding{},
+		&rbacv1.ClusterRole{},
+		&rbacv1.RoleBinding{},
+		&rbacv1.Role{},
+	}
+}
 
 // +gotohelm:ignore=true
 func init() {
