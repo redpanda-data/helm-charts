@@ -490,3 +490,22 @@ console:
       mountPath: /tmp/role-bindings.yml
       subPath: role-bindings.yml
       readOnly: true
+
+-- all-possible-objects --
+# Enable's all features across redpanda and its subcharts to ensure that every
+# object type possible is present in this test's output for the purpose of
+# keeping redpanda.Types() up to date.
+#
+# ASSERT-NO-ERROR
+# ASSERT-GOLDEN
+console:
+  enabled: true
+  autoscaling:
+    enabled: true
+  ingress:
+    enabled: true
+
+connectors:
+  enabled: true
+  monitoring:
+    enabled: true

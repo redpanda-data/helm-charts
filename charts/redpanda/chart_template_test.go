@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"reflect"
 	"regexp"
 	"strings"
 	"testing"
@@ -25,6 +26,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/util/jsonpath"
 	"k8s.io/utils/ptr"
+	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
 	"sigs.k8s.io/yaml"
 )
 
@@ -93,7 +95,7 @@ func TestTemplate(t *testing.T) {
 			var values map[string]any
 			require.NoError(t, yaml.Unmarshal(tc.Data, &values), "input values are invalid YAML")
 
-			out, err := client.Template(ctx, ".", helm.TemplateOptions{
+			out, renderErr := client.Template(ctx, ".", helm.TemplateOptions{
 				Name:   "redpanda",
 				Values: values,
 				Set: []string{
@@ -109,6 +111,8 @@ func TestTemplate(t *testing.T) {
 				},
 			})
 
+			objs, decodeErr := kube.DecodeYAML(out, redpanda.Scheme)
+
 			for _, assertion := range assertions {
 				name := string(assertion[1])
 
@@ -117,60 +121,60 @@ func TestTemplate(t *testing.T) {
 					require.NoError(t, json.Unmarshal(assertion[2], &params))
 				}
 
+				// All assertions, with the exception of a few, imply
+				// "ASSERT-NO-ERROR" as they need to operate on valid output.
+				switch name {
+				case `ASSERT-ERROR-CONTAINS`, `ASSERT-GOLDEN`:
+				default:
+					require.NoError(t, decodeErr)
+					require.NoError(t, renderErr)
+				}
+
 				switch name {
 				case `ASSERT-NO-ERROR`:
-					require.NoError(t, err)
+					AssertValidTypes(t, objs)
 
 				case `ASSERT-ERROR-CONTAINS`:
 					var errFragment string
 					require.NoError(t, json.Unmarshal(params[0], &errFragment))
-					require.ErrorContains(t, err, errFragment)
+					require.ErrorContains(t, renderErr, errFragment)
 
 				case `ASSERT-GOLDEN`:
-					if err == nil {
+					if renderErr == nil {
 						goldens.AssertGolden(t, testutil.YAML, fmt.Sprintf("testdata/%s.yaml.golden", t.Name()), out)
 					} else {
 						// Trailing new lines are added by the txtar format if
 						// they're not already present. Add one here otherwise
 						// we'll see failures.
-						goldens.AssertGolden(t, testutil.Text, fmt.Sprintf("testdata/%s.yaml.golden", t.Name()), []byte(err.Error()+"\n"))
+						goldens.AssertGolden(t, testutil.Text, fmt.Sprintf("testdata/%s.yaml.golden", t.Name()), []byte(renderErr.Error()+"\n"))
 					}
 
 				case `ASSERT-TRUST-STORES`:
-					require.NoError(t, err)
 					AssertTrustStores(t, out, params)
 
 				case `ASSERT-NO-CERTIFICATES`:
-					require.NoError(t, err)
-					AssertNoCertficates(t, out)
+					AssertNoCertficates(t, objs, out)
 
 				case `ASSERT-FIELD-EQUALS`:
-					require.NoError(t, err)
-					AssertFieldEquals(t, params, out)
+					AssertFieldEquals(t, params, objs)
 
 				case `ASSERT-FIELD-CONTAINS`:
-					require.NoError(t, err)
-					AssertFieldContains(t, params, out)
+					AssertFieldContains(t, params, objs)
 
 				case `ASSERT-FIELD-NOT-CONTAINS`:
-					require.NoError(t, err)
-					AssertFieldNotContains(t, params, out)
+					AssertFieldNotContains(t, params, objs)
 
 				case `ASSERT-VALID-RPK-CONFIGURATION`:
-					require.NoError(t, err)
-					AssertValidRPKConfiguration(t, out)
+					AssertValidRPKConfiguration(t, objs)
 
 				case `ASSERT-STATEFULSET-VOLUME-MOUNTS-VERIFICATION`:
-					require.NoError(t, err)
-					AssertStatefulSetVolumeMountsVerification(t, out)
+					AssertStatefulSetVolumeMountsVerification(t, objs)
 
 				case `ASSERT-STATEFULSET-ALL-VOLUMES-ARE-USED`:
-					require.NoError(t, err)
-					AssertStatefulsetAllVolumesAreUsed(t, out)
+					AssertStatefulsetAllVolumesAreUsed(t, objs)
 
 				case `ASSERT-SUPER-USERS-ARE-VALID`:
-					require.NoError(t, err)
-					AssertSuperUsersAreValid(t, out)
+					AssertSuperUsersAreValid(t, objs)
 
 				default:
 					t.Fatalf("unknown assertion marker: %q\nFull Line: %s", name, assertion[0])
@@ -180,10 +184,7 @@ func TestTemplate(t *testing.T) {
 	}
 }
 
-func AssertSuperUsersAreValid(t *testing.T, manifests []byte) {
-	objs, err := kube.DecodeYAML(manifests, redpanda.Scheme)
-	require.NoError(t, err)
-
+func AssertSuperUsersAreValid(t *testing.T, objs []kube.Object) {
 	for _, obj := range objs {
 		secret, ok := obj.(*corev1.Secret)
 		if !ok || !strings.Contains(secret.Name, "users") {
@@ -213,10 +214,7 @@ func AssertSuperUsersAreValid(t *testing.T, manifests []byte) {
 	}
 }
 
-func AssertStatefulSetVolumeMountsVerification(t *testing.T, manifests []byte) {
-	objs, err := kube.DecodeYAML(manifests, redpanda.Scheme)
-	require.NoError(t, err)
-
+func AssertStatefulSetVolumeMountsVerification(t *testing.T, objs []kube.Object) {
 	for _, obj := range objs {
 		sts, ok := obj.(*appsv1.StatefulSet)
 		if !ok {
@@ -243,10 +241,7 @@ func AssertStatefulSetVolumeMountsVerification(t *testing.T, manifests []byte) {
 	}
 }
 
-func AssertStatefulsetAllVolumesAreUsed(t *testing.T, manifests []byte) {
-	objs, err := kube.DecodeYAML(manifests, redpanda.Scheme)
-	require.NoError(t, err)
-
+func AssertStatefulsetAllVolumesAreUsed(t *testing.T, objs []kube.Object) {
 	for _, obj := range objs {
 		sts, ok := obj.(*appsv1.StatefulSet)
 		if !ok {
@@ -429,13 +424,7 @@ func AssertTrustStores(t *testing.T, manifests []byte, params []json.RawMessage)
 	assert.Equal(t, expected, actual[listener])
 }
 
-func AssertNoCertficates(t *testing.T, manifests []byte) {
-	// Assert that no Certificate objects are in the resultant
-	// objects when SecretRef is specified AND RequireClientAuth is
-	// false.
-	objs, err := kube.DecodeYAML(manifests, redpanda.Scheme)
-	require.NoError(t, err)
-
+func AssertNoCertficates(t *testing.T, objs []kube.Object, manifests []byte) {
 	for _, obj := range objs {
 		_, ok := obj.(*certmanagerv1.Certificate)
 		// The -root-certificate is always created right now, ignore that
@@ -449,10 +438,7 @@ func AssertNoCertficates(t *testing.T, manifests []byte) {
 	require.NotContains(t, manifests, []byte(certmanagerv1.CertificateKind))
 }
 
-func AssertValidRPKConfiguration(t *testing.T, manifests []byte) {
-	objs, err := kube.DecodeYAML(manifests, redpanda.Scheme)
-	require.NoError(t, err)
-
+func AssertValidRPKConfiguration(t *testing.T, objs []kube.Object) {
 	for _, obj := range objs {
 		cm, ok := obj.(*corev1.ConfigMap)
 		if !(ok && obj.GetName() == "redpanda") {
@@ -466,7 +452,34 @@ func AssertValidRPKConfiguration(t *testing.T, manifests []byte) {
 	}
 }
 
-func AssertFieldEquals(t *testing.T, params []json.RawMessage, manifests []byte) {
+func AssertValidTypes(t *testing.T, objs []kube.Object) {
+	allowableTypes := map[reflect.Type]struct{}{}
+	for _, t := range redpanda.Types() {
+		allowableTypes[reflect.TypeOf(t)] = struct{}{}
+	}
+
+	for _, obj := range objs {
+		annos := obj.GetAnnotations()
+		if annos == nil {
+			annos = map[string]string{}
+		}
+
+		// Skip over tests.
+		if annos["helm.sh/hook"] == "test" {
+			continue
+		}
+
+		_, ok := allowableTypes[reflect.TypeOf(obj)]
+		require.True(t, ok, "%T is not an allowable type. Did you forget to update `redpanda.Types`?", obj)
+
+		gvk, err := apiutil.GVKForObject(obj, redpanda.Scheme)
+		require.NoError(t, err)
+
+		require.Equal(t, gvk, obj.GetObjectKind().GroupVersionKind())
+	}
+}
+
+func AssertFieldEquals(t *testing.T, params []json.RawMessage, objs []kube.Object) {
 	var gvk string
 	var key string
 	var fieldPath string
@@ -476,7 +489,7 @@ func AssertFieldEquals(t *testing.T, params []json.RawMessage, manifests []byte)
 	require.NoError(t, json.Unmarshal(params[1], &key))
 	require.NoError(t, json.Unmarshal(params[2], &fieldPath))
 
-	execJSONPath(t, manifests, gvk, key, fieldPath, func(result any) {
+	execJSONPath(t, objs, gvk, key, fieldPath, func(result any) {
 		actual, err := json.Marshal(result)
 		require.NoError(t, err)
 
@@ -484,7 +497,7 @@ func AssertFieldEquals(t *testing.T, params []json.RawMessage, manifests []byte)
 	})
 }
 
-func AssertFieldContains(t *testing.T, params []json.RawMessage, manifests []byte) {
+func AssertFieldContains(t *testing.T, params []json.RawMessage, objs []kube.Object) {
 	var gvk string
 	var key string
 	var fieldPath string
@@ -495,12 +508,12 @@ func AssertFieldContains(t *testing.T, params []json.RawMessage, manifests []byt
 	require.NoError(t, json.Unmarshal(params[2], &fieldPath))
 	require.NoError(t, json.Unmarshal(params[3], &contained))
 
-	execJSONPath(t, manifests, gvk, key, fieldPath, func(result any) {
+	execJSONPath(t, objs, gvk, key, fieldPath, func(result any) {
 		assert.Contains(t, result, contained)
 	})
 }
 
-func AssertFieldNotContains(t *testing.T, params []json.RawMessage, manifests []byte) {
+func AssertFieldNotContains(t *testing.T, params []json.RawMessage, objs []kube.Object) {
 	var gvk string
 	var key string
 	var fieldPath string
@@ -511,15 +524,12 @@ func AssertFieldNotContains(t *testing.T, params []json.RawMessage, manifests []
 	require.NoError(t, json.Unmarshal(params[2], &fieldPath))
 	require.NoError(t, json.Unmarshal(params[3], &contained))
 
-	execJSONPath(t, manifests, gvk, key, fieldPath, func(result any) {
+	execJSONPath(t, objs, gvk, key, fieldPath, func(result any) {
 		assert.NotContains(t, result, contained)
 	})
 }
 
-func execJSONPath(t *testing.T, manifests []byte, gvk, key, jsonPath string, fn func(any)) {
-	objs, err := kube.DecodeYAML(manifests, redpanda.Scheme)
-	require.NoError(t, err)
-
+func execJSONPath(t *testing.T, objs []kube.Object, gvk, key, jsonPath string, fn func(any)) {
 	for _, obj := range objs {
 		kind := obj.GetObjectKind().GroupVersionKind().Kind
 		groupVersion := obj.GetObjectKind().GroupVersionKind().GroupVersion().String()
