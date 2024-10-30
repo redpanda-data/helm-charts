@@ -48,7 +48,7 @@ func ClientCerts(dot *helmette.Dot) []*certmanagerv1.Certificate {
 
 		if values.External.Domain != nil {
 			names = append(names, helmette.Tpl(*values.External.Domain, dot))
-			names = append(names, helmette.Tpl(fmt.Sprintf("*.%s", *values.External.Domain), dot))
+			names = append(names, fmt.Sprintf("*.%s", helmette.Tpl(*values.External.Domain, dot)))
 		}
 
 		duration := helmette.Default("43800h", data.Duration)

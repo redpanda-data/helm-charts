@@ -5,6 +5,7 @@ import (
 	"context"
 	"text/template"
 
+	"github.com/Masterminds/sprig/v3"
 	"github.com/redpanda-data/helm-charts/pkg/kube"
 	"helm.sh/helm/v3/pkg/chartutil"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -48,7 +49,32 @@ type Values = chartutil.Values
 // +gotohelm:builtin=tpl
 func Tpl(tpl string, context any) string {
 	var b bytes.Buffer
-	tmpl := template.Must(template.New("").Parse(tpl))
+
+	f := sprig.TxtFuncMap()
+	extra := template.FuncMap{
+		// Not yet implemented in sprig.go
+		//"toToml":        toTOML,
+		//"fromYamlArray": fromYAMLArray,
+		//"fromJsonArray": fromJSONArray,
+
+		"toYaml":   ToYaml,
+		"fromYaml": FromYaml,
+		"toJson":   ToJSON,
+		"fromJson": FromJSON,
+
+		// Not yet implemented in gotohelm
+		"include":  func(string, interface{}) string { return "not implemented" },
+		"tpl":      func(string, interface{}) interface{} { return "not implemented" },
+		"required": func(string, interface{}) (interface{}, error) { return "not implemented", nil },
+
+		"lookup": func(string, interface{}) string { return "not implemented" },
+	}
+
+	for k, v := range extra {
+		f[k] = v
+	}
+
+	tmpl := template.Must(template.New("").Funcs(f).Parse(tpl))
 	if err := tmpl.Execute(&b, context); err != nil {
 		panic(err)
 	}

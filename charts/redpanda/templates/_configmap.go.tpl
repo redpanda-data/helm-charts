@@ -204,7 +204,7 @@
 {{- $address = (index $values.external.addresses $i) -}}
 {{- end -}}
 {{- if (ne (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $values.external.domain "") ))) "r") "") -}}
-{{- $address = (printf "%s.%s" $address $values.external.domain) -}}
+{{- $address = (printf "%s.%s" $address (tpl $values.external.domain $dot)) -}}
 {{- end -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $address) | toJson -}}

@@ -32,8 +32,12 @@
 {{- end -}}
 {{- if $externalDNS.enabled -}}
 {{- $prefix := $podname -}}
-{{- if (gt ((get (fromJson (include "_shims.len" (dict "a" (list $values.external.addresses) ))) "r") | int) ($i | int)) -}}
+{{- if (gt ((get (fromJson (include "_shims.len" (dict "a" (list $values.external.addresses) ))) "r") | int) (0 | int)) -}}
+{{- if (eq ((get (fromJson (include "_shims.len" (dict "a" (list $values.external.addresses) ))) "r") | int) (1 | int)) -}}
+{{- $prefix = (index $values.external.addresses (0 | int)) -}}
+{{- else -}}
 {{- $prefix = (index $values.external.addresses $i) -}}
+{{- end -}}
 {{- end -}}
 {{- $address := (printf "%s.%s" $prefix (tpl $values.external.domain $dot)) -}}
 {{- $_ := (set $annotations "external-dns.alpha.kubernetes.io/hostname" $address) -}}
