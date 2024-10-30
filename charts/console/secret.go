@@ -41,8 +41,9 @@ func Secret(dot *helmette.Dot) *corev1.Secret {
 			Kind:       "Secret",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:   Fullname(dot),
-			Labels: Labels(dot),
+			Name:      Fullname(dot),
+			Labels:    Labels(dot),
+			Namespace: dot.Release.Namespace,
 		},
 		Type: corev1.SecretTypeOpaque,
 		StringData: map[string]string{

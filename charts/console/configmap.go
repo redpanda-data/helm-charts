@@ -53,8 +53,9 @@ func ConfigMap(dot *helmette.Dot) *corev1.ConfigMap {
 			Kind:       "ConfigMap",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:   Fullname(dot),
-			Labels: Labels(dot),
+			Labels:    Labels(dot),
+			Name:      Fullname(dot),
+			Namespace: dot.Release.Namespace,
 		},
 		Data: data,
 	}
