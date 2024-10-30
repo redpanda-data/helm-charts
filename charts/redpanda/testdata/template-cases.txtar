@@ -509,3 +509,140 @@ connectors:
   enabled: true
   monitoring:
     enabled: true
+
+-- fix-tpl-generation --
+# ASSERT-NO-ERROR
+# ASSERT-GOLDEN
+# ASSERT-FIELD-EQUALS ["v1/Service", "default/lb-redpanda-0", "{.metadata.annotations.external-dns\\.alpha\\.kubernetes\\.io/hostname}", "$PREFIX_TEMPLATE.REDPANDAREDPANDAREDPANDA-testing"]
+# ASSERT-FIELD-EQUALS ["v1/Service", "default/lb-redpanda-1", "{.metadata.annotations.external-dns\\.alpha\\.kubernetes\\.io/hostname}", "$PREFIX_TEMPLATE.REDPANDAREDPANDAREDPANDA-testing"]
+# ASSERT-FIELD-EQUALS ["v1/Service", "default/lb-redpanda-2", "{.metadata.annotations.external-dns\\.alpha\\.kubernetes\\.io/hostname}", "$PREFIX_TEMPLATE.REDPANDAREDPANDAREDPANDA-testing"]
+# ASSERT-FIELD-EQUALS ["cert-manager.io/v1/Certificate", "default/redpanda-default-cert", "{.spec.dnsNames[12]}", "REDPANDAREDPANDAREDPANDA-testing"]
+# ASSERT-FIELD-EQUALS ["cert-manager.io/v1/Certificate", "default/redpanda-default-cert", "{.spec.dnsNames[13]}", "*.REDPANDAREDPANDAREDPANDA-testing"]
+# ASSERT-FIELD-EQUALS ["cert-manager.io/v1/Certificate", "default/redpanda-external-cert", "{.spec.dnsNames[12]}", "REDPANDAREDPANDAREDPANDA-testing"]
+# ASSERT-FIELD-EQUALS ["cert-manager.io/v1/Certificate", "default/redpanda-external-cert", "{.spec.dnsNames[13]}", "*.REDPANDAREDPANDAREDPANDA-testing"]
+external:
+  domain: "{{ (get (fromJson (include \"redpanda.Name\" (dict \"a\" (list $) ))) \"r\") | upper | repeat 3 }}-testing"
+  type: LoadBalancer
+  addresses:
+    - $PREFIX_TEMPLATE
+  prefixTemplate: $POD_ORDINAL-XYZ-$(echo -n $HOST_IP_ADDRESS | sha256sum
+    | head -c 7)
+  externalDns:
+    enabled: true
+
+-- fix-tpl-generation-multiple-addresses --
+# ASSERT-NO-ERROR
+# ASSERT-GOLDEN
+# ASSERT-FIELD-EQUALS ["v1/Service", "default/lb-redpanda-0", "{.metadata.annotations.external-dns\\.alpha\\.kubernetes\\.io/hostname}", "rp0.REDPANDAREDPANDAREDPANDA-testing"]
+# ASSERT-FIELD-EQUALS ["v1/Service", "default/lb-redpanda-1", "{.metadata.annotations.external-dns\\.alpha\\.kubernetes\\.io/hostname}", "rp1.REDPANDAREDPANDAREDPANDA-testing"]
+# ASSERT-FIELD-EQUALS ["v1/Service", "default/lb-redpanda-2", "{.metadata.annotations.external-dns\\.alpha\\.kubernetes\\.io/hostname}", "rp2.REDPANDAREDPANDAREDPANDA-testing"]
+# ASSERT-FIELD-EQUALS ["cert-manager.io/v1/Certificate", "default/redpanda-default-cert", "{.spec.dnsNames[12]}", "REDPANDAREDPANDAREDPANDA-testing"]
+# ASSERT-FIELD-EQUALS ["cert-manager.io/v1/Certificate", "default/redpanda-default-cert", "{.spec.dnsNames[13]}", "*.REDPANDAREDPANDAREDPANDA-testing"]
+# ASSERT-FIELD-EQUALS ["cert-manager.io/v1/Certificate", "default/redpanda-external-cert", "{.spec.dnsNames[12]}", "REDPANDAREDPANDAREDPANDA-testing"]
+# ASSERT-FIELD-EQUALS ["cert-manager.io/v1/Certificate", "default/redpanda-external-cert", "{.spec.dnsNames[13]}", "*.REDPANDAREDPANDAREDPANDA-testing"]
+external:
+  domain: "{{ (get (fromJson (include \"redpanda.Name\" (dict \"a\" (list $) ))) \"r\") | upper | repeat 3 }}-testing"
+  type: LoadBalancer
+  addresses:
+    - rp0
+    - rp1
+    - rp2
+  prefixTemplate: $POD_ORDINAL-XYZ-$(echo -n $HOST_IP_ADDRESS | sha256sum
+    | head -c 7)
+  externalDns:
+    enabled: true
+
+-- extra-volumes-and-volumesmounts --
+# ASSERT-NO-ERROR
+# ASSERT-GOLDEN
+# ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.volumes[8].name}", "test-extra-volume"]
+# ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.containers[?(@.name==\"redpanda\")].volumeMounts[?(@.name==\"test-extra-volume\")].mountPath}", "/fake/lifecycle"]
+# ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.containers[?(@.name==\"config-watcher\")].volumeMounts[?(@.name==\"test-extra-volume\")].mountPath}", "/fake/config-watcher"]
+# ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.initContainers[?(@.name==\"tuning\")].volumeMounts[?(@.name==\"test-extra-volume\")].mountPath}", "/fake/tuning"]
+# ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.initContainers[?(@.name==\"set-datadir-ownership\")].volumeMounts[?(@.name==\"test-extra-volume\")].mountPath}", "/fake/setDataDirOwnership"]
+# ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.initContainers[?(@.name==\"fs-validator\")].volumeMounts[?(@.name==\"test-extra-volume\")].mountPath}", "/fake/fsValidator"]
+# ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.initContainers[?(@.name==\"redpanda-configurator\")].volumeMounts[?(@.name==\"test-extra-volume\")].mountPath}", "/fake/configurator"]
+# ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.initContainers[?(@.name==\"test-init-container\")].image}", "mintel/docker-alpine-bash-curl-jq:latest"]
+# ASSERT-STATEFULSET-ALL-VOLUMES-ARE-USED
+# ASSERT-STATEFULSET-VOLUME-MOUNTS-VERIFICATION
+statefulset:
+  extraVolumeMounts: |-
+    - name: test-extra-volume
+      mountPath: /fake/lifecycle
+  extraVolumes: |-
+    - name: test-extra-volume
+      secret:
+        secretName: {{ (include "redpanda.fullname" . | trunc 50 ) }}-sts-lifecycle
+        defaultMode: 0774
+  sideCars:
+    configWatcher:
+      extraVolumeMounts: |-
+        - name: test-extra-volume
+          mountPath: /fake/config-watcher
+  initContainers:
+    fsValidator:
+      enabled: true
+      extraVolumeMounts: |-
+        - name: test-extra-volume
+          mountPath: /fake/fsValidator
+    configurator:
+      extraVolumeMounts: |-
+        - name: test-extra-volume
+          mountPath: /fake/configurator
+    tuning:
+      extraVolumeMounts: |-
+        - name: test-extra-volume
+          mountPath: /fake/tuning
+    setDataDirOwnership:
+      enabled: true
+      extraVolumeMounts: |-
+        - name: test-extra-volume
+          mountPath: /fake/setDataDirOwnership
+    extraInitContainers: |-
+      - name: "test-init-container"
+        image: "mintel/docker-alpine-bash-curl-jq:latest"
+        command: [ "/bin/bash", "-c" ]
+        args:
+          - |
+            set -xe
+            echo "Hello World!"
+
+-- template-console-examples --
+# ASSERT-NO-ERROR
+# ASSERT-GOLDEN
+# ASSERT-FIELD-EQUALS ["apps/v1/Deployment", "default/redpanda-console", "{.spec.template.spec.initContainers[?(@.name==\"test-init-container\")].image}", "mintel/docker-alpine-bash-curl-jq:latest"]
+# ASSERT-FIELD-EQUALS ["apps/v1/Deployment", "default/redpanda-console", "{.spec.template.spec.initContainers[?(@.name==\"test-init-container\")].args[0]}", "echo \"Hello World! Hello World! \""]
+# The namespace is not set in Ingress and ConfigMap resource
+# ASSERT-FIELD-EQUALS ["networking.k8s.io/v1/Ingress", "/redpanda-console", "{.spec.rules[0].host}", "redpanda-console-first-rule-host"]
+# ASSERT-FIELD-EQUALS ["networking.k8s.io/v1/Ingress", "/redpanda-console", "{.spec.rules[1].host}", "redpanda-console-second-rule-host"]
+# ASSERT-FIELD-EQUALS ["networking.k8s.io/v1/Ingress", "/redpanda-console", "{.spec.tls[0].hosts[0]}", "redpanda-console-tls-first-host"]
+# ASSERT-FIELD-EQUALS ["networking.k8s.io/v1/Ingress", "/redpanda-console", "{.spec.tls[0].hosts[1]}", "redpanda-console-tls-second-host"]
+# ASSERT-FIELD-CONTAINS ["v1/ConfigMap", "/redpanda-console", "{.data.role-bindings\\.yaml}", "kind: 'USERUSER'"]
+console:
+  console:
+    roleBindings:
+    - roleName: admin
+      metadata:
+        name: Developers
+        creator: John Doe
+      subjects:
+        - kind: "{{ print \"user\" | upper | repeat 2 }}"
+          provider: Google
+          name: john.doe@redpanda.com
+  initContainers:
+    extraInitContainers: |-
+      - name: "test-init-container"
+        image: "mintel/docker-alpine-bash-curl-jq:latest"
+        command: [ "/bin/bash", "-c" ]
+        args:
+          - echo "{{ print "Hello World! " | repeat 2 }}"
+  ingress:
+    enabled: true
+    tls:
+      - hosts:
+        - "{{ (get (fromJson (include \"console.Fullname\" (dict \"a\" (list $) ))) \"r\") | trunc 50 }}-tls-first-host"
+        - "{{ (get (fromJson (include \"console.Fullname\" (dict \"a\" (list $) ))) \"r\") | trunc 50 }}-tls-second-host"
+        secretName: test
+    hosts:
+    - host: "{{ (get (fromJson (include \"console.Fullname\" (dict \"a\" (list $) ))) \"r\") | trunc 50 }}-first-rule-host"
+    - host: "{{ (get (fromJson (include \"console.Fullname\" (dict \"a\" (list $) ))) \"r\") | trunc 50 }}-second-rule-host"

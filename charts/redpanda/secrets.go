@@ -726,7 +726,7 @@ func advertisedHostJSON(dot *helmette.Dot, externalName string, port int32, repl
 		if domain := ptr.Deref(values.External.Domain, ""); domain != "" {
 			host = map[string]any{
 				"name":    externalName,
-				"address": fmt.Sprintf("%s.%s", address, domain),
+				"address": fmt.Sprintf("%s.%s", address, helmette.Tpl(domain, dot)),
 				"port":    port,
 			}
 		} else {

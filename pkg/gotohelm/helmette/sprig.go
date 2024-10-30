@@ -327,6 +327,18 @@ func FromJSON(data string) any {
 	return out
 }
 
+// FromYaml is the go equivalent of sprig's `fromYaml`.
+// +gotohelm:builtin=fromYaml
+func FromYaml(input string) any {
+	var out []byte
+	out, err := yaml.Marshal(input)
+	if err != nil {
+		// Swallow errors inside of a template.
+		return ""
+	}
+	return strings.TrimSuffix(string(out), "\n")
+}
+
 // MustFromJSON is the go equivalent of sprig's `mustFromJson`.
 // +gotohelm:builtin=mustFromJson
 func MustFromJSON(data string) any {

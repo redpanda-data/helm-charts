@@ -6,6 +6,8 @@
 #### Added
 #### Changed
 #### Fixed
+* All occurrence of External Domain execution via tpl function
+* Calculating Service typed LoadBalancer annotation based on external addresses (even single one)
 #### Removed
 
 ### [5.9.9](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.9) - 2024-10-24

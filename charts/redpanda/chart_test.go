@@ -845,6 +845,22 @@ func TestGoHelmEquivalence(t *testing.T) {
 	// generally results in invalid inputs.
 	values := redpanda.PartialValues{
 		Enterprise: &redpanda.PartialEnterprise{License: ptr.To("LICENSE_PLACEHOLDER")},
+		External: &redpanda.PartialExternalConfig{
+			// include, required and tpl are not yet implemented in gotohelm package
+			Domain:         ptr.To("{{ trunc 4 .Values.external.prefixTemplate | lower | repeat 3 }}-testing "),
+			Type:           ptr.To(corev1.ServiceTypeLoadBalancer),
+			PrefixTemplate: ptr.To("$POD_ORDINAL-XYZ-$(echo -n $HOST_IP_ADDRESS | sha256sum | head -c 7)"),
+			ExternalDNS:    &redpanda.PartialEnableable{Enabled: ptr.To(true)},
+		},
+		Statefulset: &redpanda.PartialStatefulset{
+			ExtraVolumeMounts: ptr.To(`- name: test-extra-volume
+  mountPath: {{ upper "/fake/lifecycle" }}`),
+			ExtraVolumes: ptr.To(`- name: test-extra-volume
+  secret:
+    secretName: {{ trunc 5 .Values.enterprise.license }}-sts-lifecycle
+    defaultMode: 0774`),
+			InitContainers: GetInitContainer(),
+		},
 	}
 
 	// We're not interested in tests, console, or connectors so always disable
@@ -904,7 +920,7 @@ func TestGoHelmEquivalence(t *testing.T) {
 		return strings.Compare(aStr, bStr)
 	})
 
-	const stsIdx = 12
+	const stsIdx = 14
 
 	// resource.Quantity is a special object. To Ensure they compare correctly,
 	// we'll round trip it through JSON so the internal representations will
@@ -922,5 +938,67 @@ func TestGoHelmEquivalence(t *testing.T) {
 	// report which element(s) aren't equal.
 	for i := range helmObjs {
 		assert.Equal(t, helmObjs[i], goObjs[i])
+	}
+}
+
+func GetInitContainer() *struct {
+	Configurator *struct {
+		ExtraVolumeMounts *string        "json:\"extraVolumeMounts,omitempty\""
+		Resources         map[string]any "json:\"resources,omitempty\""
+	} "json:\"configurator,omitempty\""
+	FSValidator *struct {
+		Enabled           *bool          "json:\"enabled,omitempty\""
+		Resources         map[string]any "json:\"resources,omitempty\""
+		ExtraVolumeMounts *string        "json:\"extraVolumeMounts,omitempty\""
+		ExpectedFS        *string        "json:\"expectedFS,omitempty\""
+	} "json:\"fsValidator,omitempty\""
+	SetDataDirOwnership *struct {
+		Enabled           *bool          "json:\"enabled,omitempty\""
+		Resources         map[string]any "json:\"resources,omitempty\""
+		ExtraVolumeMounts *string        "json:\"extraVolumeMounts,omitempty\""
+	} "json:\"setDataDirOwnership,omitempty\""
+	SetTieredStorageCacheDirOwnership *struct {
+		Resources         map[string]any "json:\"resources,omitempty\""
+		ExtraVolumeMounts *string        "json:\"extraVolumeMounts,omitempty\""
+	} "json:\"setTieredStorageCacheDirOwnership,omitempty\""
+	Tuning *struct {
+		Resources         map[string]any "json:\"resources,omitempty\""
+		ExtraVolumeMounts *string        "json:\"extraVolumeMounts,omitempty\""
+	} "json:\"tuning,omitempty\""
+	ExtraInitContainers *string "json:\"extraInitContainers,omitempty\""
+} {
+	return &struct {
+		Configurator *struct {
+			ExtraVolumeMounts *string        "json:\"extraVolumeMounts,omitempty\""
+			Resources         map[string]any "json:\"resources,omitempty\""
+		} "json:\"configurator,omitempty\""
+		FSValidator *struct {
+			Enabled           *bool          "json:\"enabled,omitempty\""
+			Resources         map[string]any "json:\"resources,omitempty\""
+			ExtraVolumeMounts *string        "json:\"extraVolumeMounts,omitempty\""
+			ExpectedFS        *string        "json:\"expectedFS,omitempty\""
+		} "json:\"fsValidator,omitempty\""
+		SetDataDirOwnership *struct {
+			Enabled           *bool          "json:\"enabled,omitempty\""
+			Resources         map[string]any "json:\"resources,omitempty\""
+			ExtraVolumeMounts *string        "json:\"extraVolumeMounts,omitempty\""
+		} "json:\"setDataDirOwnership,omitempty\""
+		SetTieredStorageCacheDirOwnership *struct {
+			Resources         map[string]any "json:\"resources,omitempty\""
+			ExtraVolumeMounts *string        "json:\"extraVolumeMounts,omitempty\""
+		} "json:\"setTieredStorageCacheDirOwnership,omitempty\""
+		Tuning *struct {
+			Resources         map[string]any "json:\"resources,omitempty\""
+			ExtraVolumeMounts *string        "json:\"extraVolumeMounts,omitempty\""
+		} "json:\"tuning,omitempty\""
+		ExtraInitContainers *string "json:\"extraInitContainers,omitempty\""
+	}{
+		ExtraInitContainers: ptr.To(`- name: "test-init-container"
+  image: "mintel/docker-alpine-bash-curl-jq:latest"
+  command: [ "/bin/bash", "-c" ]
+  args:
+    - |
+      set -xe
+      echo "Hello World!"`),
 	}
 }

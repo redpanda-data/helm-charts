@@ -63,8 +63,12 @@ func LoadBalancerServices(dot *helmette.Dot) []*corev1.Service {
 
 		if externalDNS.Enabled {
 			prefix := podname
-			if len(values.External.Addresses) > int(i) {
-				prefix = values.External.Addresses[i]
+			if len(values.External.Addresses) > 0 {
+				if len(values.External.Addresses) == 1 {
+					prefix = values.External.Addresses[0]
+				} else {
+					prefix = values.External.Addresses[i]
+				}
 			}
 
 			address := fmt.Sprintf("%s.%s", prefix, helmette.Tpl(*values.External.Domain, dot))

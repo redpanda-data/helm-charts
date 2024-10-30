@@ -379,7 +379,7 @@ echo "passed"`) -}}
 {{- end -}}
 {{- $domain_7 := (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $values.external.domain "") ))) "r") -}}
 {{- if (ne $domain_7 "") -}}
-{{- $host = (dict "name" $externalName "address" (printf "%s.%s" $address $domain_7) "port" $port ) -}}
+{{- $host = (dict "name" $externalName "address" (printf "%s.%s" $address (tpl $domain_7 $dot)) "port" $port ) -}}
 {{- else -}}
 {{- $host = (dict "name" $externalName "address" $address "port" $port ) -}}
 {{- end -}}
