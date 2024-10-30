@@ -314,16 +314,21 @@ func firstUser(data []byte) (user string, password string, mechanism string) {
 
 	for _, line := range strings.Split(file, "\n") {
 		tokens := strings.Split(line, ":")
-		if len(tokens) != 3 {
+
+		switch len(tokens) {
+		case 2:
+			return tokens[0], tokens[1], redpanda.DefaultSASLMechanism
+
+		case 3:
+			if !slices.Contains(supportedSASLMechanisms, tokens[2]) {
+				continue
+			}
+
+			return tokens[0], tokens[1], tokens[2]
+
+		default:
 			continue
 		}
-
-		if !slices.Contains(supportedSASLMechanisms, tokens[2]) {
-			continue
-		}
-
-		user, password, mechanism = tokens[0], tokens[1], tokens[2]
-		return
 	}
 
 	return
