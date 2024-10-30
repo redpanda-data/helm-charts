@@ -65,8 +65,9 @@ func TestTemplate(t *testing.T) {
 			require.NoError(t, yaml.Unmarshal(tc.Data, &values))
 
 			out, err := client.Template(ctx, ".", helm.TemplateOptions{
-				Name:   "console",
-				Values: values,
+				Name:      "console",
+				Namespace: "test-namespace",
+				Values:    values,
 				Set: []string{
 					// jwtSecret defaults to a random string. Can't have that
 					// in snapshot testing so set it to a static value.
@@ -74,6 +75,14 @@ func TestTemplate(t *testing.T) {
 				},
 			})
 			require.NoError(t, err)
+
+			objs, err := kube.DecodeYAML(out, Scheme)
+			require.NoError(t, err)
+
+			for _, obj := range objs {
+				assert.Equalf(t, "test-namespace", obj.GetNamespace(), "%T %q did not have namespace correctly set", obj, obj.GetName())
+			}
+
 			goldens.AssertGolden(t, testutil.YAML, fmt.Sprintf("testdata/%s.yaml.golden", tc.Name), out)
 		})
 	}

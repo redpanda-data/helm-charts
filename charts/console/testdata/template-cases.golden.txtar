@@ -14,7 +14,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -28,6 +28,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -70,6 +71,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -84,7 +86,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -109,7 +111,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: null
   selector:
@@ -120,7 +122,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 037907032a1e3adc0d149b8e3d29b0cbf312ed922c36117634bf5230b2bf3c30
+        checksum/config: f2ddaf38e076ace697bf986c2a7269cc97400e6e8b65d31c9b613ccbdf4b13bb
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -204,6 +206,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 spec:
   maxReplicas: 100
   metrics:
@@ -230,7 +233,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "console-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -246,7 +249,7 @@ spec:
       command: ['wget']
       args: ['console:8080']
   restartPolicy: Never
-  priorityClassName:
+  priorityClassName: ""
 -- testdata/autoscaling-memory.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -263,7 +266,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -277,6 +280,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -319,6 +323,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -333,7 +338,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -358,7 +363,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: null
   selector:
@@ -369,7 +374,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 037907032a1e3adc0d149b8e3d29b0cbf312ed922c36117634bf5230b2bf3c30
+        checksum/config: f2ddaf38e076ace697bf986c2a7269cc97400e6e8b65d31c9b613ccbdf4b13bb
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -453,6 +458,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 spec:
   maxReplicas: 100
   metrics:
@@ -473,7 +479,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "console-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -489,7 +495,7 @@ spec:
       command: ['wget']
       args: ['console:8080']
   restartPolicy: Never
-  priorityClassName:
+  priorityClassName: ""
 -- testdata/autoscaling-nulls.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -506,7 +512,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -520,6 +526,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -562,6 +569,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -576,7 +584,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -601,7 +609,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: null
   selector:
@@ -612,7 +620,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 037907032a1e3adc0d149b8e3d29b0cbf312ed922c36117634bf5230b2bf3c30
+        checksum/config: f2ddaf38e076ace697bf986c2a7269cc97400e6e8b65d31c9b613ccbdf4b13bb
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -696,6 +704,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 spec:
   maxReplicas: 100
   metrics:
@@ -716,7 +725,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "console-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -732,7 +741,7 @@ spec:
       command: ['wget']
       args: ['console:8080']
   restartPolicy: Never
-  priorityClassName:
+  priorityClassName: ""
 -- testdata/case-000.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -750,7 +759,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: HRoLg
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -765,6 +774,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: hvGoJL
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -808,6 +818,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: hvGoJL
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -823,7 +834,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: hvGoJL
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -850,7 +861,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: hvGoJL
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 387
   selector:
@@ -862,7 +873,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 0e1ed3ca6bc0b35ba69cea5ea960bd022b356e3e668d875f88a11b5dd3a62d90
+        checksum/config: f2ddaf38e076ace697bf986c2a7269cc97400e6e8b65d31c9b613ccbdf4b13bb
         lyW: mn
         pjq6fDr: YA2w301
         uXvFB: VQ5gP9
@@ -949,7 +960,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "hvGoJL-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     "": 31q1Pbz
     app.kubernetes.io/instance: console
@@ -966,7 +977,7 @@ spec:
       command: ['wget']
       args: ['hvGoJL:8080']
   restartPolicy: Never
-  priorityClassName: vQhDS
+  priorityClassName: "vQhDS"
 -- testdata/case-001.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -983,7 +994,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: T50cZi
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -997,6 +1008,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: T50cZi
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -1039,6 +1051,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: T50cZi
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -1053,7 +1066,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: T50cZi
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -1078,7 +1091,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: T50cZi
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 414
   selector:
@@ -1089,7 +1102,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: f8d20fcebc64d28f8abb32938c998c611b7e24d313d417dd0d083283fdfc3e3d
+        checksum/config: f2ddaf38e076ace697bf986c2a7269cc97400e6e8b65d31c9b613ccbdf4b13bb
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -1180,9 +1193,7 @@ spec:
         tty: true
         workingDir: ixD7Jq
       imagePullSecrets: []
-      initContainers:
-      - 'error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string
-        into Go value of type []interface {}'
+      initContainers: null
       nodeSelector: {}
       priorityClassName: NyOpfr
       securityContext:
@@ -1217,7 +1228,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "T50cZi-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -1233,7 +1244,7 @@ spec:
       command: ['wget']
       args: ['T50cZi:8080']
   restartPolicy: Never
-  priorityClassName: NyOpfr
+  priorityClassName: "NyOpfr"
 -- testdata/case-002.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -1250,7 +1261,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: R1Yar8
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -1264,6 +1275,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: xZty
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -1306,6 +1318,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: xZty
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -1320,7 +1333,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: xZty
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -1345,7 +1358,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: xZty
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 417
   selector:
@@ -1358,7 +1371,7 @@ spec:
       annotations:
         8vRMfVroYC2: QXbUbLea
         VV4w: s4sL
-        checksum/config: 88fd9875820446226e54b20919e658f224f0bee284fa8d185b9847afb1b0ff7c
+        checksum/config: f2ddaf38e076ace697bf986c2a7269cc97400e6e8b65d31c9b613ccbdf4b13bb
         upwTMuIqflmD: 9J0H45zXX
       creationTimestamp: null
       labels:
@@ -1464,7 +1477,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "xZty-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -1483,7 +1496,7 @@ spec:
       command: ['wget']
       args: ['xZty:413']
   restartPolicy: Never
-  priorityClassName: TeCy
+  priorityClassName: "TeCy"
 -- testdata/case-003.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -1500,7 +1513,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: 8nE
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -1514,6 +1527,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: 8nE
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: Fb
@@ -1553,7 +1567,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: 8nE
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -1578,6 +1592,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: 8nE
+  namespace: test-namespace
 spec:
   ingressClassName: EqUYi
   rules:
@@ -1606,7 +1621,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "8nE-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -1622,7 +1637,7 @@ spec:
       command: ['wget']
       args: ['8nE:8080']
   restartPolicy: Never
-  priorityClassName: HNqN9h2
+  priorityClassName: "HNqN9h2"
 -- testdata/case-004.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -1640,7 +1655,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console-YMl
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -1655,6 +1670,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console-YMl
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -1698,6 +1714,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console-YMl
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -1713,7 +1730,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console-YMl
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -1739,7 +1756,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console-YMl
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 261
   selector:
@@ -1754,7 +1771,7 @@ spec:
         1iK8Ic: Qo3FCg9qi
         63SsVxDT: v
         A1Q4J4: U9jygY2t1F
-        checksum/config: 5bff2896dabc8c88c0f2114a95d70baa52b7d42e9114eed8995aa38576e5c3b9
+        checksum/config: f2ddaf38e076ace697bf986c2a7269cc97400e6e8b65d31c9b613ccbdf4b13bb
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -1845,7 +1862,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "console-YMl-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     "": PtQ7JxIAdPjt
     app.kubernetes.io/instance: console
@@ -1862,7 +1879,7 @@ spec:
       command: ['wget']
       args: ['console-YMl:112']
   restartPolicy: Never
-  priorityClassName: JT0MK
+  priorityClassName: "JT0MK"
 -- testdata/case-005.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -1879,7 +1896,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: pN
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -1893,6 +1910,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: pN
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -1932,7 +1950,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: pN
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -1957,7 +1975,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: pN
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 396
   selector:
@@ -2048,9 +2066,7 @@ spec:
       imagePullSecrets:
       - name: ATcT6Hd
       - name: l15Hhw
-      initContainers:
-      - 'error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string
-        into Go value of type []interface {}'
+      initContainers: null
       nodeSelector: {}
       priorityClassName: KnLhcy2cw
       securityContext:
@@ -2072,7 +2088,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "pN-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -2091,7 +2107,7 @@ spec:
       command: ['wget']
       args: ['pN:8080']
   restartPolicy: Never
-  priorityClassName: KnLhcy2cw
+  priorityClassName: "KnLhcy2cw"
 -- testdata/case-006.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -2108,7 +2124,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: nd7TSb2mNTS
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -2122,6 +2138,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: rzd
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: G
@@ -2164,6 +2181,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: rzd
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -2178,7 +2196,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: rzd
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -2203,7 +2221,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: rzd
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 176
   selector:
@@ -2214,7 +2232,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: e306750b642a7f0e8951763dd2d294f257add49a88a0903fa94acc9de68c2429
+        checksum/config: f2ddaf38e076ace697bf986c2a7269cc97400e6e8b65d31c9b613ccbdf4b13bb
         s2D: DMU7
       creationTimestamp: null
       labels:
@@ -2314,9 +2332,7 @@ spec:
           subPath: Nrqx
           subPathExpr: Q4ChfT
       imagePullSecrets: []
-      initContainers:
-      - 'error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string
-        into Go value of type []interface {}'
+      initContainers: null
       nodeSelector: {}
       priorityClassName: 1x11c0q
       securityContext:
@@ -2350,7 +2366,7 @@ metadata:
     h: 1Y7dqm4wZL
     helm.sh/chart: console-0.7.31
   name: RFjc7
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -2366,6 +2382,7 @@ metadata:
     h: 1Y7dqm4wZL
     helm.sh/chart: console-0.7.31
   name: "y"
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -2414,6 +2431,7 @@ metadata:
     h: 1Y7dqm4wZL
     helm.sh/chart: console-0.7.31
   name: "y"
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -2430,7 +2448,7 @@ metadata:
     h: 1Y7dqm4wZL
     helm.sh/chart: console-0.7.31
   name: "y"
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -2457,7 +2475,7 @@ metadata:
     h: 1Y7dqm4wZL
     helm.sh/chart: console-0.7.31
   name: "y"
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 103
   selector:
@@ -2468,7 +2486,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: a183995d5cf2816ed3b4a6f6e6b2c55fd19ebcba36d6c30ab178215a655ec225
+        checksum/config: fd0b4768cdf8d73efbd8e98938257edeaf4abe3f4412394569991d427fb1637a
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -2565,9 +2583,7 @@ spec:
           name: secrets
           readOnly: true
       imagePullSecrets: []
-      initContainers:
-      - 'error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string
-        into Go value of type []interface {}'
+      initContainers: null
       nodeSelector:
         CAy: 19kW
         R2z: OpcDywz9x
@@ -2601,7 +2617,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "y-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -2619,7 +2635,7 @@ spec:
       command: ['wget']
       args: ['y:286']
   restartPolicy: Never
-  priorityClassName: rs
+  priorityClassName: "rs"
 -- testdata/case-008.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -2636,7 +2652,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: YcV5zP8
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -2654,6 +2670,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: GbgHqD
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -2668,7 +2685,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: GbgHqD
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -2694,7 +2711,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: GbgHqD
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 475
   selector:
@@ -2709,7 +2726,7 @@ spec:
       annotations:
         BTlN: z8t
         a: Pqjhw
-        checksum/config: c9fb1df78347a96b923df4a6a9f220cc44360771c3a419a77a5bccaae8ea41e3
+        checksum/config: f2ddaf38e076ace697bf986c2a7269cc97400e6e8b65d31c9b613ccbdf4b13bb
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -2808,7 +2825,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "GbgHqD-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -2824,7 +2841,7 @@ spec:
       command: ['wget']
       args: ['GbgHqD:8080']
   restartPolicy: Never
-  priorityClassName: 0fXQqWA96
+  priorityClassName: "0fXQqWA96"
 -- testdata/case-009.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -2841,7 +2858,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: l1Bnpx
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -2855,6 +2872,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: l1Bnpx
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -2895,7 +2913,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: l1Bnpx
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -2920,7 +2938,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: l1Bnpx
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 315
   selector:
@@ -3046,7 +3064,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "l1Bnpx-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -3064,7 +3082,7 @@ spec:
       command: ['wget']
       args: ['l1Bnpx:229']
   restartPolicy: Never
-  priorityClassName: p0ShP6Yru
+  priorityClassName: "p0ShP6Yru"
 -- testdata/case-010.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -3083,7 +3101,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: kIzbDF
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -3098,7 +3116,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: ivK
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -3123,7 +3141,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: ivK
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 250
   selector:
@@ -3353,7 +3371,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "ivK-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -3369,7 +3387,7 @@ spec:
       command: ['wget']
       args: ['ivK:8080']
   restartPolicy: Never
-  priorityClassName: x0ISc2
+  priorityClassName: "x0ISc2"
 -- testdata/case-011.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -3388,7 +3406,7 @@ metadata:
     helm.sh/chart: console-0.7.31
     v7E: 1g6JB
   name: hbe
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -3404,6 +3422,7 @@ metadata:
     helm.sh/chart: console-0.7.31
     v7E: 1g6JB
   name: hbe
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -3448,6 +3467,7 @@ metadata:
     helm.sh/chart: console-0.7.31
     v7E: 1g6JB
   name: hbe
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -3467,7 +3487,7 @@ metadata:
     helm.sh/chart: console-0.7.31
     v7E: 1g6JB
   name: hbe
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -3495,7 +3515,7 @@ metadata:
     helm.sh/chart: console-0.7.31
     v7E: 1g6JB
   name: hbe
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 65
   selector:
@@ -3506,7 +3526,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 59bde8aa157ee0479383817b8194d00a706b1a69fd102fa9a02bcfdd139097ff
+        checksum/config: f2ddaf38e076ace697bf986c2a7269cc97400e6e8b65d31c9b613ccbdf4b13bb
       creationTimestamp: null
       labels:
         "2": RgUAFm
@@ -3669,9 +3689,7 @@ spec:
           subPath: qBOd
           subPathExpr: kN3Uujt
       imagePullSecrets: []
-      initContainers:
-      - 'error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string
-        into Go value of type []interface {}'
+      initContainers: null
       nodeSelector:
         HC7: EI8
       priorityClassName: sJXoA3V
@@ -3704,7 +3722,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "hbe-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     JwK5MKTa: WW
     app.kubernetes.io/instance: console
@@ -3722,7 +3740,7 @@ spec:
       command: ['wget']
       args: ['hbe:478']
   restartPolicy: Never
-  priorityClassName: sJXoA3V
+  priorityClassName: "sJXoA3V"
 -- testdata/case-012.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -3739,7 +3757,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: tmn2Kt
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -3753,6 +3771,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: tmn2Kt
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -3795,6 +3814,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: tmn2Kt
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -3809,7 +3829,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: tmn2Kt
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -3835,7 +3855,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: tmn2Kt
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 407
   selector:
@@ -3848,7 +3868,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 0db3d97f5614c0d4d83586aa4d2f3936d09000dfe6c30d907fc7e887b11f1c91
+        checksum/config: f2ddaf38e076ace697bf986c2a7269cc97400e6e8b65d31c9b613ccbdf4b13bb
       creationTimestamp: null
       labels:
         "": S7BNyT
@@ -4051,9 +4071,7 @@ spec:
           name: S9Sy
         workingDir: Z
       imagePullSecrets: []
-      initContainers:
-      - 'error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string
-        into Go value of type []interface {}'
+      initContainers: null
       nodeSelector: {}
       priorityClassName: vMcB
       securityContext:
@@ -4075,7 +4093,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "tmn2Kt-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -4091,7 +4109,7 @@ spec:
       command: ['wget']
       args: ['tmn2Kt:8080']
   restartPolicy: Never
-  priorityClassName: vMcB
+  priorityClassName: "vMcB"
 -- testdata/case-013.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -4108,7 +4126,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: RttlJN
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -4122,6 +4140,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: RttlJN
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -4164,6 +4183,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: RttlJN
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -4178,7 +4198,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: RttlJN
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -4203,7 +4223,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: RttlJN
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 412
   selector:
@@ -4214,7 +4234,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: b1a9927cded1d048612c9dcd794ce0d052366031bd8a6e2ab45847e74114dc02
+        checksum/config: f2ddaf38e076ace697bf986c2a7269cc97400e6e8b65d31c9b613ccbdf4b13bb
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -4348,9 +4368,7 @@ spec:
           subPathExpr: 7UjF6H
         workingDir: yPE
       imagePullSecrets: []
-      initContainers:
-      - 'error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string
-        into Go value of type []interface {}'
+      initContainers: null
       nodeSelector: {}
       priorityClassName: BDUfm1wSRDI
       securityContext:
@@ -4380,7 +4398,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "RttlJN-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -4396,7 +4414,7 @@ spec:
       command: ['wget']
       args: ['RttlJN:8080']
   restartPolicy: Never
-  priorityClassName: BDUfm1wSRDI
+  priorityClassName: "BDUfm1wSRDI"
 -- testdata/case-014.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -4413,7 +4431,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: h6eHrUr
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -4427,6 +4445,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: htymHJ
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -4472,6 +4491,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: htymHJ
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -4486,7 +4506,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: htymHJ
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -4503,7 +4523,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "htymHJ-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -4519,7 +4539,7 @@ spec:
       command: ['wget']
       args: ['htymHJ:41']
   restartPolicy: Never
-  priorityClassName: rcxHoi
+  priorityClassName: "rcxHoi"
 -- testdata/case-015.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -4542,7 +4562,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: zmr
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -4559,6 +4579,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: 9RweMGWqBs
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -4604,6 +4625,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: 9RweMGWqBs
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -4621,7 +4643,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: 9RweMGWqBs
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -4651,7 +4673,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: 9RweMGWqBs
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 128
   selector:
@@ -4662,7 +4684,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 997d7585e08025bb52d9c9ecb50fe17e3b72349e3eb789fced5c79a69d41b4d1
+        checksum/config: f2ddaf38e076ace697bf986c2a7269cc97400e6e8b65d31c9b613ccbdf4b13bb
       creationTimestamp: null
       labels:
         FlwBgvWNMrbg5: YKgnz8q
@@ -4809,9 +4831,7 @@ spec:
           readOnly: true
           subPathExpr: 3vKqLj2
       imagePullSecrets: []
-      initContainers:
-      - 'error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string
-        into Go value of type []interface {}'
+      initContainers: null
       nodeSelector:
         vy4h: rk
       priorityClassName: "68"
@@ -4900,6 +4920,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: 9RweMGWqBs
+  namespace: test-namespace
 spec:
   ingressClassName: x7Um
   rules:
@@ -4927,7 +4948,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "9RweMGWqBs-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     B0Pmybnj: gh8
     MdyMnFBP0Cd1: UUVRKbjhv
@@ -4946,7 +4967,7 @@ spec:
       command: ['wget']
       args: ['9RweMGWqBs:8080']
   restartPolicy: Never
-  priorityClassName: 68
+  priorityClassName: "68"
 -- testdata/case-016.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -4963,7 +4984,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: DdF7ALq
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -4977,6 +4998,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: 6maz
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -5023,6 +5045,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: 6maz
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -5037,7 +5060,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: 6maz
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -5062,7 +5085,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: 6maz
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 331
   selector:
@@ -5076,7 +5099,7 @@ spec:
     metadata:
       annotations:
         JYLUc483y: gTnWiG
-        checksum/config: b1963552d2bbbfbf7c22aacd315830edefcc0ca55266c961b2c50ce120a21c52
+        checksum/config: fc5948eab336c7e0cb34fc89697db65f963dd787dc3cbe9ea1d9218f823710cc
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -5338,7 +5361,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "6maz-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -5354,7 +5377,7 @@ spec:
       command: ['wget']
       args: ['6maz:8080']
   restartPolicy: Never
-  priorityClassName: XtKq
+  priorityClassName: "XtKq"
 -- testdata/case-017.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -5371,7 +5394,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: 9XG3SZW
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -5385,6 +5408,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: 9XG3SZW
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -5434,6 +5458,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: 9XG3SZW
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -5448,7 +5473,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: 9XG3SZW
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -5476,7 +5501,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: 9XG3SZW
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 173
   selector:
@@ -5487,7 +5512,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: e40a5855f3b15f7a262dfb29429d335b684821870b23053ca657b072befd29e7
+        checksum/config: f0f5f5192858351740f4623b1c262c0939143727438a7992d0c09ca34da8b2d9
       creationTimestamp: null
       labels:
         LBQpbD: AHB4hNVL
@@ -5921,7 +5946,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: uAvlOXf
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -5935,6 +5960,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: ExFU3
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: IsvQ9
@@ -5974,7 +6000,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: ExFU3
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -6000,7 +6026,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: ExFU3
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 297
   selector:
@@ -6316,7 +6342,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "ExFU3-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -6334,7 +6360,7 @@ spec:
       command: ['wget']
       args: ['ExFU3:415']
   restartPolicy: Never
-  priorityClassName: 6jxv
+  priorityClassName: "6jxv"
 -- testdata/case-019.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -6351,7 +6377,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: NZ7h9
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -6365,6 +6391,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: NZ7h9
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -6407,6 +6434,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: NZ7h9
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -6421,7 +6449,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: NZ7h9
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -6448,7 +6476,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: NZ7h9
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 79
   selector:
@@ -6460,7 +6488,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 14ae7816c8f5e4b00ee20e7beb598ad8873714d19122f7594f0055bbc64b0e4c
+        checksum/config: f2ddaf38e076ace697bf986c2a7269cc97400e6e8b65d31c9b613ccbdf4b13bb
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -6582,7 +6610,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "NZ7h9-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -6598,7 +6626,7 @@ spec:
       command: ['wget']
       args: ['NZ7h9:8080']
   restartPolicy: Never
-  priorityClassName: FERw
+  priorityClassName: "FERw"
 -- testdata/case-020.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -6618,7 +6646,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: HMpc
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -6632,6 +6660,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: Om7
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -6674,6 +6703,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: Om7
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -6688,7 +6718,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: Om7
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -6716,7 +6746,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: Om7
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 344
   selector:
@@ -6729,7 +6759,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 4779c9346287a4eb3eda7c8ebe002b5827952b65d5b44d2209283f75f48d7582
+        checksum/config: f2ddaf38e076ace697bf986c2a7269cc97400e6e8b65d31c9b613ccbdf4b13bb
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -7047,9 +7077,7 @@ spec:
       - name: Z
       - name: wqV1R7s4
       - name: pnyCO7u
-      initContainers:
-      - 'error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string
-        into Go value of type []interface {}'
+      initContainers: null
       nodeSelector:
         5VaT22S: hfJ4CDWn
         d: ""
@@ -7101,7 +7129,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "Om7-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -7121,7 +7149,7 @@ spec:
       command: ['wget']
       args: ['Om7:310']
   restartPolicy: Never
-  priorityClassName: nIBhqM
+  priorityClassName: "nIBhqM"
 -- testdata/case-021.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -7140,7 +7168,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: tW
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -7156,6 +7184,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: PhRk
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -7200,6 +7229,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: PhRk
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -7219,7 +7249,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: PhRk
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -7245,6 +7275,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: PhRk
+  namespace: test-namespace
 spec:
   maxReplicas: 421
   metrics:
@@ -7271,7 +7302,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "PhRk-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     0pITqVWuPVXcDF: jm5Ve54
     8iyjfh0: Igz
@@ -7289,7 +7320,7 @@ spec:
       command: ['wget']
       args: ['PhRk:278']
   restartPolicy: Never
-  priorityClassName: wrfvYOB1yg
+  priorityClassName: "wrfvYOB1yg"
 -- testdata/case-022.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -7306,7 +7337,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: GVjeLRc
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -7320,6 +7351,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: GVjeLRc
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ZEdvyAX0
@@ -7362,6 +7394,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: GVjeLRc
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -7376,7 +7409,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: GVjeLRc
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -7402,7 +7435,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: GVjeLRc
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 42
   selector:
@@ -7413,7 +7446,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: bcc8c9ad3c47b4b3a4d817dd00a730f7b8118889c85de9faacd51db7c77e2fa5
+        checksum/config: f2ddaf38e076ace697bf986c2a7269cc97400e6e8b65d31c9b613ccbdf4b13bb
       creationTimestamp: null
       labels:
         "": thv6Fja
@@ -7915,9 +7948,7 @@ spec:
       - name: Cflx8CG
       - name: Vu
       - name: tqaiFmL
-      initContainers:
-      - 'error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string
-        into Go value of type []interface {}'
+      initContainers: null
       nodeSelector: {}
       priorityClassName: tAfrctQhZnbu
       securityContext:
@@ -7942,7 +7973,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "GVjeLRc-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -7962,7 +7993,7 @@ spec:
       command: ['wget']
       args: ['GVjeLRc:8080']
   restartPolicy: Never
-  priorityClassName: tAfrctQhZnbu
+  priorityClassName: "tAfrctQhZnbu"
 -- testdata/case-023.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -7979,7 +8010,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: Pga
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -7993,6 +8024,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: fXCb
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -8035,7 +8067,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: fXCb
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -8060,7 +8092,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: fXCb
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 236
   selector:
@@ -8281,9 +8313,7 @@ spec:
           subPathExpr: SGEIl
         workingDir: Una
       imagePullSecrets: []
-      initContainers:
-      - 'error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string
-        into Go value of type []interface {}'
+      initContainers: null
       nodeSelector:
         DhX: lB
       priorityClassName: S2v
@@ -8338,6 +8368,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: fXCb
+  namespace: test-namespace
 spec:
   ingressClassName: r3Vd
   rules:
@@ -8358,7 +8389,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "fXCb-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -8374,7 +8405,7 @@ spec:
       command: ['wget']
       args: ['fXCb:182']
   restartPolicy: Never
-  priorityClassName: S2v
+  priorityClassName: "S2v"
 -- testdata/case-024.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -8391,7 +8422,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: Wpq
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -8417,6 +8448,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: Wpq
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -8431,7 +8463,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: Wpq
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -8448,7 +8480,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "Wpq-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -8466,7 +8498,7 @@ spec:
       command: ['wget']
       args: ['Wpq:310']
   restartPolicy: Never
-  priorityClassName: 2v89v
+  priorityClassName: "2v89v"
 -- testdata/case-025.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -8483,7 +8515,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: H5TDAALUdD
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -8498,7 +8530,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: Uo
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -8525,7 +8557,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: Uo
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 345
   selector:
@@ -8997,9 +9029,7 @@ spec:
       - name: iA1C
       - name: ZOdo
       - name: qTOK0W
-      initContainers:
-      - 'error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string
-        into Go value of type []interface {}'
+      initContainers: null
       nodeSelector: {}
       priorityClassName: 0bGHQk7gL
       securityContext:
@@ -9036,7 +9066,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "Uo-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -9056,7 +9086,7 @@ spec:
       command: ['wget']
       args: ['Uo:8080']
   restartPolicy: Never
-  priorityClassName: 0bGHQk7gL
+  priorityClassName: "0bGHQk7gL"
 -- testdata/case-026.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -9078,7 +9108,7 @@ metadata:
     helm.sh/chart: console-0.7.31
     kuKPk7: ""
   name: Utu8ZHG2
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -9095,7 +9125,7 @@ metadata:
     helm.sh/chart: console-0.7.31
     kuKPk7: ""
   name: qhaD
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -9122,7 +9152,7 @@ metadata:
     helm.sh/chart: console-0.7.31
     kuKPk7: ""
   name: qhaD
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 78
   selector:
@@ -9271,9 +9301,7 @@ spec:
           subPath: u5fY
           subPathExpr: TRymQ
       imagePullSecrets: []
-      initContainers:
-      - 'error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string
-        into Go value of type []interface {}'
+      initContainers: null
       nodeSelector:
         ggwC: SQ
         rIwToCbB: tUBM5
@@ -9332,6 +9360,7 @@ metadata:
     helm.sh/chart: console-0.7.31
     kuKPk7: ""
   name: qhaD
+  namespace: test-namespace
 spec:
   ingressClassName: cAir
   rules:
@@ -9395,7 +9424,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: 55C9f3
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -9415,7 +9444,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: 61hunk
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -9444,6 +9473,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: 61hunk
+  namespace: test-namespace
 spec:
   ingressClassName: Ijdd3
   rules:
@@ -9468,7 +9498,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "61hunk-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     Q0: ""
     T4ZmAFi: nfIb0b
@@ -9488,7 +9518,7 @@ spec:
       command: ['wget']
       args: ['61hunk:376']
   restartPolicy: Never
-  priorityClassName: bpi
+  priorityClassName: "bpi"
 -- testdata/case-028.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -9504,6 +9534,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: odFI2M4
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: aM
@@ -9547,6 +9578,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: odFI2M4
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -9562,7 +9594,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: odFI2M4
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -9589,7 +9621,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: odFI2M4
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 278
   selector:
@@ -9603,7 +9635,7 @@ spec:
     metadata:
       annotations:
         YefFO9J: uVUZra
-        checksum/config: 63cd72b3c751f0cd661dd504284b6e68012e4ecd69d60b70ffeca8279357c61b
+        checksum/config: f2ddaf38e076ace697bf986c2a7269cc97400e6e8b65d31c9b613ccbdf4b13bb
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -9840,9 +9872,7 @@ spec:
       imagePullSecrets:
       - name: Nu2
       - name: j0
-      initContainers:
-      - 'error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string
-        into Go value of type []interface {}'
+      initContainers: null
       nodeSelector:
         fD: q5Hun
       priorityClassName: u8cTjKLB
@@ -9885,7 +9915,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "odFI2M4-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     BKrxjHNg8: qlqPhj
     app.kubernetes.io/instance: console
@@ -9905,7 +9935,7 @@ spec:
       command: ['wget']
       args: ['odFI2M4:8080']
   restartPolicy: Never
-  priorityClassName: u8cTjKLB
+  priorityClassName: "u8cTjKLB"
 -- testdata/case-029.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -9922,6 +9952,7 @@ metadata:
     helm.sh/chart: console-0.7.31
     xi7L: ibI45
   name: HK
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -9970,6 +10001,7 @@ metadata:
     helm.sh/chart: console-0.7.31
     xi7L: ibI45
   name: HK
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -9987,7 +10019,7 @@ metadata:
     helm.sh/chart: console-0.7.31
     xi7L: ibI45
   name: HK
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -10017,7 +10049,7 @@ metadata:
     helm.sh/chart: console-0.7.31
     xi7L: ibI45
   name: HK
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 385
   selector:
@@ -10030,7 +10062,7 @@ spec:
     metadata:
       annotations:
         IVy: ho3qpcI
-        checksum/config: 5e772c9040baee9540a191e854d3bea5591632485e3dfe0fce73db1c0212179a
+        checksum/config: f1eb84260adfcbd13f58fa9ea35352f85292a4b8397688a06cc5a419d18f065b
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -10477,9 +10509,7 @@ spec:
           subPathExpr: mm773yL
         workingDir: o
       imagePullSecrets: []
-      initContainers:
-      - 'error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string
-        into Go value of type []interface {}'
+      initContainers: null
       nodeSelector:
         Jy9: v
         VcMeUW2U: xOwcDQYY
@@ -10516,7 +10546,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "HK-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     HzuQ: mCfbHBQ
     app.kubernetes.io/instance: console
@@ -10534,7 +10564,7 @@ spec:
       command: ['wget']
       args: ['HK:389']
   restartPolicy: Never
-  priorityClassName: sLkcwZ
+  priorityClassName: "sLkcwZ"
 -- testdata/case-030.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -10552,6 +10582,7 @@ metadata:
     jwrBMvwfg: K6I5HsI5
     nk8eJc: nS
   name: G9
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: DtIy
@@ -10594,7 +10625,7 @@ metadata:
     jwrBMvwfg: K6I5HsI5
     nk8eJc: nS
   name: G9
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -10621,6 +10652,7 @@ metadata:
     jwrBMvwfg: K6I5HsI5
     nk8eJc: nS
   name: G9
+  namespace: test-namespace
 spec:
   maxReplicas: 10
   metrics:
@@ -10647,7 +10679,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "G9-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     T: f0
     app.kubernetes.io/instance: console
@@ -10668,7 +10700,7 @@ spec:
       command: ['wget']
       args: ['G9:250']
   restartPolicy: Never
-  priorityClassName: KuRS
+  priorityClassName: "KuRS"
 -- testdata/case-031.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -10696,6 +10728,7 @@ metadata:
     q4ZdG9q: IJWaYu9mhun
     sFTTcyl: qVyaa0ULC
   name: 59cQ0qKLI
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -10712,7 +10745,7 @@ metadata:
     q4ZdG9q: IJWaYu9mhun
     sFTTcyl: qVyaa0ULC
   name: 59cQ0qKLI
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -10738,6 +10771,7 @@ metadata:
     q4ZdG9q: IJWaYu9mhun
     sFTTcyl: qVyaa0ULC
   name: 59cQ0qKLI
+  namespace: test-namespace
 spec:
   maxReplicas: 25
   metrics:
@@ -10777,6 +10811,7 @@ metadata:
     q4ZdG9q: IJWaYu9mhun
     sFTTcyl: qVyaa0ULC
   name: 59cQ0qKLI
+  namespace: test-namespace
 spec:
   ingressClassName: GuB1VTCp
   rules:
@@ -10821,7 +10856,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "59cQ0qKLI-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -10843,7 +10878,7 @@ spec:
       command: ['wget']
       args: ['59cQ0qKLI:112']
   restartPolicy: Never
-  priorityClassName: mFg
+  priorityClassName: "mFg"
 -- testdata/case-032.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -10880,6 +10915,7 @@ metadata:
     e3Cx: MIAO
     helm.sh/chart: console-0.7.31
   name: llK4G
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -10897,7 +10933,7 @@ metadata:
     e3Cx: MIAO
     helm.sh/chart: console-0.7.31
   name: llK4G
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -10926,7 +10962,7 @@ metadata:
     e3Cx: MIAO
     helm.sh/chart: console-0.7.31
   name: llK4G
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: null
   selector:
@@ -10939,7 +10975,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: b3040c2275364e70cb7f7833c14ad45bda04c1dc556081c8161ba176f1474cd2
+        checksum/config: b62d7887cac1eaba6468e9a1d3f37f2fee28e4761b1a5925b91c95efa2078001
       creationTimestamp: null
       labels:
         So: waKMMvnY
@@ -11522,9 +11558,7 @@ spec:
           subPathExpr: CK2FmmyYThL
         workingDir: NCvZAa
       imagePullSecrets: []
-      initContainers:
-      - 'error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string
-        into Go value of type []interface {}'
+      initContainers: null
       nodeSelector:
         ih: xT3Dk3PXT
         xhq: vu
@@ -11568,6 +11602,7 @@ metadata:
     e3Cx: MIAO
     helm.sh/chart: console-0.7.31
   name: llK4G
+  namespace: test-namespace
 spec:
   maxReplicas: 459
   metrics:
@@ -11607,6 +11642,7 @@ metadata:
     e3Cx: MIAO
     helm.sh/chart: console-0.7.31
   name: llK4G
+  namespace: test-namespace
 spec:
   ingressClassName: EXqR
   rules:
@@ -11637,7 +11673,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "llK4G-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     B19ue: 8W
     Kxm5R1: R
@@ -11656,7 +11692,7 @@ spec:
       command: ['wget']
       args: ['llK4G:418']
   restartPolicy: Never
-  priorityClassName: WeB9y8
+  priorityClassName: "WeB9y8"
 -- testdata/case-033.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -11687,6 +11723,7 @@ metadata:
     helm.sh/chart: console-0.7.31
     qO: F4dqLo67vKYZ
   name: foGC
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -11704,7 +11741,7 @@ metadata:
     helm.sh/chart: console-0.7.31
     qO: F4dqLo67vKYZ
   name: foGC
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -11731,7 +11768,7 @@ metadata:
     helm.sh/chart: console-0.7.31
     qO: F4dqLo67vKYZ
   name: foGC
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 390
   selector:
@@ -11744,7 +11781,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 678f52f16b4ef1b2ff027bf658b26e2bae41e0a1e9143d778dde7e1163a7eb96
+        checksum/config: 887106c9a3366f0d993eef71283c94649cd72ed12b0fdb2072c19ce223da31c6
       creationTimestamp: null
       labels:
         1bb6: ""
@@ -12619,9 +12656,7 @@ spec:
       imagePullSecrets:
       - name: s1B
       - name: R54rm
-      initContainers:
-      - 'error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string
-        into Go value of type []interface {}'
+      initContainers: null
       nodeSelector:
         TDma3: eGasO
         cs6G: CyEFp0L
@@ -12734,7 +12769,7 @@ metadata:
     blGSa: Hnim0SflkfpF
     helm.sh/chart: console-0.7.31
   name: QxrM
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -12768,6 +12803,7 @@ metadata:
     blGSa: Hnim0SflkfpF
     helm.sh/chart: console-0.7.31
   name: l
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -12786,7 +12822,7 @@ metadata:
     blGSa: Hnim0SflkfpF
     helm.sh/chart: console-0.7.31
   name: l
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -12803,7 +12839,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "l-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     0fz: qRhpB
     app.kubernetes.io/instance: console
@@ -12823,7 +12859,7 @@ spec:
       command: ['wget']
       args: ['l:421']
   restartPolicy: Never
-  priorityClassName: ER4
+  priorityClassName: "ER4"
 -- testdata/case-035.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -12846,7 +12882,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: HMyYp
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -12872,6 +12908,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: Bv0I
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -12890,7 +12927,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: Bv0I
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -12918,7 +12955,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: Bv0I
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 464
   selector:
@@ -12931,7 +12968,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: b475bdb9d4242ebc7f652ccf0f408541ca67797be0f2e2ff95ead3797d37331b
+        checksum/config: 35a0e64cf6fc03a6207bf6a2ed1e328a24eefadd8c99178337466f43bb2b75c9
       creationTimestamp: null
       labels:
         Klzm: we
@@ -13755,9 +13792,7 @@ spec:
       imagePullSecrets:
       - name: ygWNP7C0W9
       - name: lo0PU
-      initContainers:
-      - 'error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string
-        into Go value of type []interface {}'
+      initContainers: null
       nodeSelector:
         LAqpO: N7lh0C2
         RqG8qj: ltTa5
@@ -13844,6 +13879,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: Bv0I
+  namespace: test-namespace
 spec:
   ingressClassName: vg
   rules:
@@ -13907,7 +13943,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "Bv0I-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     5NU: UG7t
     6NmZI: QxuTdplvdDdc
@@ -13929,7 +13965,7 @@ spec:
       command: ['wget']
       args: ['Bv0I:51']
   restartPolicy: Never
-  priorityClassName: F
+  priorityClassName: "F"
 -- testdata/case-036.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -13947,6 +13983,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: AumW
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: EfQbyB
@@ -13989,7 +14026,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: AumW
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -14020,7 +14057,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: AumW
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 24
   selector:
@@ -14887,9 +14924,7 @@ spec:
       imagePullSecrets:
       - name: bbjdn
       - name: VI
-      initContainers:
-      - 'error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string
-        into Go value of type []interface {}'
+      initContainers: null
       nodeSelector:
         U3Rfg9: WSTvjvP
         hODw: LSv
@@ -14941,7 +14976,7 @@ metadata:
     helm.sh/chart: console-0.7.31
     uEVMkDkYRvnn: zvptNai
   name: ItYso
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -14974,6 +15009,7 @@ metadata:
     helm.sh/chart: console-0.7.31
     uEVMkDkYRvnn: zvptNai
   name: ADIhC
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -14991,7 +15027,7 @@ metadata:
     helm.sh/chart: console-0.7.31
     uEVMkDkYRvnn: zvptNai
   name: ADIhC
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -15020,6 +15056,7 @@ metadata:
     helm.sh/chart: console-0.7.31
     uEVMkDkYRvnn: zvptNai
   name: ADIhC
+  namespace: test-namespace
 spec:
   ingressClassName: PHr
   rules:
@@ -15074,7 +15111,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "ADIhC-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     BJ: Gq0Rw
     FPcPYvmbB7dAZe: Cy7WaeI
@@ -15097,7 +15134,7 @@ spec:
       command: ['wget']
       args: ['ADIhC:226']
   restartPolicy: Never
-  priorityClassName: U7wS
+  priorityClassName: "U7wS"
 -- testdata/case-038.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -15114,7 +15151,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: fP77cJ3T
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -15140,6 +15177,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: j1dUk8TGy8Np
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -15154,7 +15192,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: j1dUk8TGy8Np
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -15171,7 +15209,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "j1dUk8TGy8Np-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -15191,7 +15229,7 @@ spec:
       command: ['wget']
       args: ['j1dUk8TGy8Np:46']
   restartPolicy: Never
-  priorityClassName: 89gnK9rXyDXui
+  priorityClassName: "89gnK9rXyDXui"
 -- testdata/case-039.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -15209,7 +15247,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: 8s2qVhKEW
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -15232,6 +15270,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: bbshm
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -15249,7 +15288,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: bbshm
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -15274,6 +15313,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: bbshm
+  namespace: test-namespace
 spec:
   ingressClassName: qyKUEOUT4u
   rules:
@@ -15312,6 +15352,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: KchYZFsbB3
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -15328,7 +15369,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: KchYZFsbB3
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -15355,7 +15396,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: KchYZFsbB3
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 291
   selector:
@@ -15368,7 +15409,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 195a047f1fe4de31510dad1137ce7110a32056ff3a1dc0fe8ac8aa6ed204ffbb
+        checksum/config: f2ddaf38e076ace697bf986c2a7269cc97400e6e8b65d31c9b613ccbdf4b13bb
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -16329,9 +16370,7 @@ spec:
       - name: V1
       - name: AyLzRkaGE
       - name: 3pZ8
-      initContainers:
-      - 'error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string
-        into Go value of type []interface {}'
+      initContainers: null
       nodeSelector:
         y63G: wNiNvOMv
       priorityClassName: 3A
@@ -16391,7 +16430,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "KchYZFsbB3-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     X: zjmrl
     "Y": yG0
@@ -16413,7 +16452,7 @@ spec:
       command: ['wget']
       args: ['KchYZFsbB3:424']
   restartPolicy: Never
-  priorityClassName: 3A
+  priorityClassName: "3A"
 -- testdata/case-041.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -16435,7 +16474,7 @@ metadata:
     cxAL7zvwvb: tmEjSXwTK6
     helm.sh/chart: console-0.7.31
   name: 0Z71mJNQUx
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -16451,6 +16490,7 @@ metadata:
     cxAL7zvwvb: tmEjSXwTK6
     helm.sh/chart: console-0.7.31
   name: Wq
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: 4uTKbvRNSh
@@ -16502,6 +16542,7 @@ metadata:
     cxAL7zvwvb: tmEjSXwTK6
     helm.sh/chart: console-0.7.31
   name: Wq
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -16519,7 +16560,7 @@ metadata:
     cxAL7zvwvb: tmEjSXwTK6
     helm.sh/chart: console-0.7.31
   name: Wq
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -16547,7 +16588,7 @@ metadata:
     cxAL7zvwvb: tmEjSXwTK6
     helm.sh/chart: console-0.7.31
   name: Wq
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: null
   selector:
@@ -16560,7 +16601,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 50c2b9ae90b32001a066ae58a7d66a78f3e5bbee5945b527cb4390fb19bae790
+        checksum/config: 7d19f67e477783614baf6f5e8e10e9217d80c5df35edf4e89e44e2944cca90dd
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -17031,9 +17072,7 @@ spec:
       imagePullSecrets:
       - name: pYNs
       - name: I0h
-      initContainers:
-      - 'error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string
-        into Go value of type []interface {}'
+      initContainers: null
       nodeSelector:
         tBg: i2GTQt2
       priorityClassName: tQe
@@ -17130,6 +17169,7 @@ metadata:
     cxAL7zvwvb: tmEjSXwTK6
     helm.sh/chart: console-0.7.31
   name: Wq
+  namespace: test-namespace
 spec:
   maxReplicas: 309
   metrics:
@@ -17168,6 +17208,7 @@ metadata:
     cxAL7zvwvb: tmEjSXwTK6
     helm.sh/chart: console-0.7.31
   name: Wq
+  namespace: test-namespace
 spec:
   ingressClassName: 9Kl
   rules:
@@ -17216,6 +17257,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: eHZ
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -17232,7 +17274,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: eHZ
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -17262,7 +17304,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: eHZ
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: null
   selector:
@@ -17276,7 +17318,7 @@ spec:
     metadata:
       annotations:
         JkW1: feghYA7
-        checksum/config: 382c0ac7ea4b66643a2029f062ffb5f434938ec49b471f70b9b3fdd77b5058d1
+        checksum/config: d72030c40b9fe1f474fe5f9c6741b57723340ea83b7a96ff5d5a2ea24808a76c
         okSVM8H: 7Pau
         yYrmYn: uT
       creationTimestamp: null
@@ -18140,9 +18182,7 @@ spec:
           subPathExpr: H
         workingDir: IEObw8N
       imagePullSecrets: []
-      initContainers:
-      - 'error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string
-        into Go value of type []interface {}'
+      initContainers: null
       nodeSelector:
         JDRn7n: tOGfx
         lKq0V88a: uR3S
@@ -18198,6 +18238,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: eHZ
+  namespace: test-namespace
 spec:
   maxReplicas: 165
   metrics:
@@ -18224,7 +18265,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "eHZ-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     "": vWjW
     G: qF
@@ -18242,7 +18283,7 @@ spec:
       command: ['wget']
       args: ['eHZ:190']
   restartPolicy: Never
-  priorityClassName: 6ZbHC
+  priorityClassName: "6ZbHC"
 -- testdata/case-043.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -18259,7 +18300,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: Gma
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -18274,7 +18315,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: y0pa6pm83
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -18302,6 +18343,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: y0pa6pm83
+  namespace: test-namespace
 spec:
   ingressClassName: 4Z1r6JSTY
   rules:
@@ -18345,7 +18387,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: W9k
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -18380,6 +18422,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: resP
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -18396,7 +18439,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: resP
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -18425,7 +18468,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: resP
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 410
   selector:
@@ -18439,7 +18482,7 @@ spec:
     metadata:
       annotations:
         N0F: vSjZxkjW
-        checksum/config: ad0f4885a741b227d71f300d6a8aa5fa871bfe77e12fa8236ba6167259bb463e
+        checksum/config: 644c7e54ac6361486cd9d986c3c6a638de57a485fbb29702c6d81c09e01ebfdd
       creationTimestamp: null
       labels:
         K1uahi: UMygEU2O2
@@ -19029,9 +19072,7 @@ spec:
           subPathExpr: eU
         workingDir: odPxO
       imagePullSecrets: []
-      initContainers:
-      - 'error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string
-        into Go value of type []interface {}'
+      initContainers: null
       nodeSelector:
         2i: dRi6btw6
         R4: UsW
@@ -19076,7 +19117,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "resP-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     BvJq2xZ: jY6O0
     app.kubernetes.io/instance: console
@@ -19093,7 +19134,7 @@ spec:
       command: ['wget']
       args: ['resP:103']
   restartPolicy: Never
-  priorityClassName: 8KMLup9vb
+  priorityClassName: "8KMLup9vb"
 -- testdata/case-045.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -19113,7 +19154,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: nX5G
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -19128,6 +19169,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: 9gCm5xz
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: naFpMBw
@@ -19168,7 +19210,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: 9gCm5xz
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -19193,6 +19235,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: 9gCm5xz
+  namespace: test-namespace
 spec:
   maxReplicas: 305
   metrics:
@@ -19228,6 +19271,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: 9gCm5xz
+  namespace: test-namespace
 spec:
   ingressClassName: y6u9o
   rules:
@@ -19265,7 +19309,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "9gCm5xz-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     M1diW: PVb
     app.kubernetes.io/instance: console
@@ -19285,7 +19329,7 @@ spec:
       command: ['wget']
       args: ['9gCm5xz:314']
   restartPolicy: Never
-  priorityClassName: Op
+  priorityClassName: "Op"
 -- testdata/case-046.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -19302,6 +19346,7 @@ metadata:
     helm.sh/chart: console-0.7.31
     rHtDM6k: ZY6Kw
   name: fB6TF
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: BKbdr
@@ -19344,7 +19389,7 @@ metadata:
     helm.sh/chart: console-0.7.31
     rHtDM6k: ZY6Kw
   name: fB6TF
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -19374,6 +19419,7 @@ metadata:
     helm.sh/chart: console-0.7.31
     rHtDM6k: ZY6Kw
   name: fB6TF
+  namespace: test-namespace
 spec:
   ingressClassName: aU0xOzsFN
   rules:
@@ -19415,7 +19461,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: DSw7
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -19433,7 +19479,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: YUi5JpG
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -19460,7 +19506,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: YUi5JpG
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: null
   selector:
@@ -20053,9 +20099,7 @@ spec:
           name: RJf
         workingDir: ZoDFb
       imagePullSecrets: []
-      initContainers:
-      - 'error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string
-        into Go value of type []interface {}'
+      initContainers: null
       nodeSelector: {}
       priorityClassName: 0P6RnoBeb5
       securityContext:
@@ -20095,6 +20139,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: YUi5JpG
+  namespace: test-namespace
 spec:
   maxReplicas: 122
   metrics:
@@ -20134,7 +20179,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: sKa
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -20162,6 +20207,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: 3um
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -20181,7 +20227,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: 3um
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -20210,7 +20256,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: 3um
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: null
   selector:
@@ -20223,7 +20269,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 257772503ebcddac31ba256eeb13a5814f26925da39548bebb93ba3098e472ef
+        checksum/config: b7a53f702c00ff1bbfa0a0c1c44e35a6a607f41f99e8c6bc408a2e4768f8816c
         eG: vxInc0
         g: BI6yk
         xCtSP: rQ
@@ -20986,9 +21032,7 @@ spec:
           subPathExpr: MSs
         workingDir: OE
       imagePullSecrets: []
-      initContainers:
-      - 'error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string
-        into Go value of type []interface {}'
+      initContainers: null
       nodeSelector:
         Bm9U: oTYglG6dh
       priorityClassName: l4Mowg
@@ -21037,6 +21081,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: 3um
+  namespace: test-namespace
 spec:
   maxReplicas: 1
   metrics:
@@ -21079,7 +21124,7 @@ metadata:
     helm.sh/chart: console-0.7.31
     ztm: qegfb80
   name: z12W
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -21096,6 +21141,7 @@ metadata:
     helm.sh/chart: console-0.7.31
     ztm: qegfb80
   name: 0BIfuN
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: SBJl
@@ -21141,7 +21187,7 @@ metadata:
     helm.sh/chart: console-0.7.31
     ztm: qegfb80
   name: 0BIfuN
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -21170,7 +21216,7 @@ metadata:
     helm.sh/chart: console-0.7.31
     ztm: qegfb80
   name: 0BIfuN
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: null
   selector:
@@ -21897,9 +21943,7 @@ spec:
         workingDir: 1IOT
       imagePullSecrets:
       - name: h5x
-      initContainers:
-      - 'error unmarshaling JSON: while decoding JSON: json: cannot unmarshal string
-        into Go value of type []interface {}'
+      initContainers: null
       nodeSelector:
         ra78: fJ
       priorityClassName: JhGfjGXQ
@@ -21978,6 +22022,7 @@ metadata:
     helm.sh/chart: console-0.7.31
     ztm: qegfb80
   name: 0BIfuN
+  namespace: test-namespace
 spec:
   maxReplicas: 292
   metrics:
@@ -22004,7 +22049,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "0BIfuN-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     0HYkOrz: JCwpSW
     0TgDztQSY: P
@@ -22025,7 +22070,7 @@ spec:
       command: ['wget']
       args: ['0BIfuN:269']
   restartPolicy: Never
-  priorityClassName: JhGfjGXQ
+  priorityClassName: "JhGfjGXQ"
 -- testdata/console-config-listen-and-target-port.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -22042,7 +22087,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -22056,6 +22101,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -22099,6 +22145,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -22113,7 +22160,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -22138,7 +22185,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 1
   selector:
@@ -22149,7 +22196,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 78f496a6e203ef5f16ed69b34a31c479b5579f79d7a0114250121708e4f7b6b4
+        checksum/config: 19f0aa9d36e4b1f8937ed4454716abb2dcb97a78823335757b204bb00c778108
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -22226,7 +22273,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "console-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -22242,7 +22289,7 @@ spec:
       command: ['wget']
       args: ['console:8080']
   restartPolicy: Never
-  priorityClassName:
+  priorityClassName: ""
 -- testdata/console-config-listen-port.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -22259,7 +22306,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -22273,6 +22320,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -22316,6 +22364,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -22330,7 +22379,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -22355,7 +22404,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 1
   selector:
@@ -22366,7 +22415,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 78f496a6e203ef5f16ed69b34a31c479b5579f79d7a0114250121708e4f7b6b4
+        checksum/config: 19f0aa9d36e4b1f8937ed4454716abb2dcb97a78823335757b204bb00c778108
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -22443,7 +22492,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "console-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -22459,7 +22508,7 @@ spec:
       command: ['wget']
       args: ['console:8080']
   restartPolicy: Never
-  priorityClassName:
+  priorityClassName: ""
 -- testdata/console-with-oidc-conf.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -22476,7 +22525,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -22490,6 +22539,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -22546,6 +22596,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -22560,7 +22611,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -22585,7 +22636,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 1
   selector:
@@ -22596,7 +22647,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 2ba308c599628c3d62a25ab8a460ea1332502b6418c3395b72d200b8fe133eda
+        checksum/config: f5fef22d8917de5a033cbf75219af79810c9a70b3b5c8dc2ce82088206f25855
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -22681,7 +22732,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "console-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -22697,7 +22748,7 @@ spec:
       command: ['wget']
       args: ['console:8080']
   restartPolicy: Never
-  priorityClassName:
+  priorityClassName: ""
 -- testdata/console-with-role-bindings.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -22714,7 +22765,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -22728,6 +22779,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -22779,6 +22831,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -22793,7 +22846,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -22818,7 +22871,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 1
   selector:
@@ -22829,7 +22882,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: ed62fe76f5fb1d7144f325776217d0c2690a9afbccbb4a10f22e1180c1f80103
+        checksum/config: 90b40e5edea598c51182d61f6660c5eeefbc2b5fb777481efc29e5c1ef76cf42
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -22906,7 +22959,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "console-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -22922,7 +22975,7 @@ spec:
       command: ['wget']
       args: ['console:8080']
   restartPolicy: Never
-  priorityClassName:
+  priorityClassName: ""
 -- testdata/console-with-roles-and-bindings.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -22939,7 +22992,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -22953,6 +23006,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -23015,6 +23069,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -23029,7 +23084,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -23054,7 +23109,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 1
   selector:
@@ -23065,7 +23120,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 8ad1390b92d3580401b1607318b2ad47b46a96c3fec6f9d1c55ea30337177e3d
+        checksum/config: 3223063297892d0459c3d884c2857ec37714a8b6b0b7b7dd0528c728e563ee08
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -23142,7 +23197,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "console-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -23158,7 +23213,7 @@ spec:
       command: ['wget']
       args: ['console:8080']
   restartPolicy: Never
-  priorityClassName:
+  priorityClassName: ""
 -- testdata/console-with-roles.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -23175,7 +23230,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -23189,6 +23244,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -23242,6 +23298,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -23256,7 +23313,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -23281,7 +23338,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 1
   selector:
@@ -23292,7 +23349,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: f7750cac90f12b5ff1cb69910fef8afd8906332f831799cb4dccc019cfdc31a0
+        checksum/config: 8d227bbcda2a98df9ee267796c47024baa458d3ea370c8f139e33dfef27b4bc6
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -23369,7 +23426,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "console-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -23385,7 +23442,7 @@ spec:
       command: ['wget']
       args: ['console:8080']
   restartPolicy: Never
-  priorityClassName:
+  priorityClassName: ""
 -- testdata/custom-tag-no-registry.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -23402,7 +23459,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -23416,6 +23473,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -23458,6 +23516,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -23472,7 +23531,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -23497,7 +23556,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 1
   selector:
@@ -23508,7 +23567,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 037907032a1e3adc0d149b8e3d29b0cbf312ed922c36117634bf5230b2bf3c30
+        checksum/config: f2ddaf38e076ace697bf986c2a7269cc97400e6e8b65d31c9b613ccbdf4b13bb
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -23585,7 +23644,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "console-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -23601,7 +23660,7 @@ spec:
       command: ['wget']
       args: ['console:8080']
   restartPolicy: Never
-  priorityClassName:
+  priorityClassName: ""
 -- testdata/default-values.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -23618,7 +23677,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -23632,6 +23691,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -23674,6 +23734,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -23688,7 +23749,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -23713,7 +23774,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 1
   selector:
@@ -23724,7 +23785,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 037907032a1e3adc0d149b8e3d29b0cbf312ed922c36117634bf5230b2bf3c30
+        checksum/config: f2ddaf38e076ace697bf986c2a7269cc97400e6e8b65d31c9b613ccbdf4b13bb
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -23801,7 +23862,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "console-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -23817,7 +23878,7 @@ spec:
       command: ['wget']
       args: ['console:8080']
   restartPolicy: Never
-  priorityClassName:
+  priorityClassName: ""
 -- testdata/extra-init-containers.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -23834,7 +23895,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -23848,6 +23909,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -23890,6 +23952,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -23904,7 +23967,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -23929,7 +23992,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 1
   selector:
@@ -23940,7 +24003,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 037907032a1e3adc0d149b8e3d29b0cbf312ed922c36117634bf5230b2bf3c30
+        checksum/config: f2ddaf38e076ace697bf986c2a7269cc97400e6e8b65d31c9b613ccbdf4b13bb
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -24026,7 +24089,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "console-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -24042,7 +24105,7 @@ spec:
       command: ['wget']
       args: ['console:8080']
   restartPolicy: Never
-  priorityClassName:
+  priorityClassName: ""
 -- testdata/ingress-templating.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -24059,7 +24122,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -24073,6 +24136,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -24115,6 +24179,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -24129,7 +24194,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -24154,7 +24219,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 1
   selector:
@@ -24165,7 +24230,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 037907032a1e3adc0d149b8e3d29b0cbf312ed922c36117634bf5230b2bf3c30
+        checksum/config: f2ddaf38e076ace697bf986c2a7269cc97400e6e8b65d31c9b613ccbdf4b13bb
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -24251,6 +24316,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 spec:
   ingressClassName: null
   rules:
@@ -24274,7 +24340,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "console-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -24290,7 +24356,7 @@ spec:
       command: ['wget']
       args: ['console:8080']
   restartPolicy: Never
-  priorityClassName:
+  priorityClassName: ""
 -- testdata/no-registry.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -24307,7 +24373,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -24321,6 +24387,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -24363,6 +24430,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -24377,7 +24445,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -24402,7 +24470,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 1
   selector:
@@ -24413,7 +24481,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 037907032a1e3adc0d149b8e3d29b0cbf312ed922c36117634bf5230b2bf3c30
+        checksum/config: f2ddaf38e076ace697bf986c2a7269cc97400e6e8b65d31c9b613ccbdf4b13bb
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -24490,7 +24558,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "console-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -24506,7 +24574,7 @@ spec:
       command: ['wget']
       args: ['console:8080']
   restartPolicy: Never
-  priorityClassName:
+  priorityClassName: ""
 -- testdata/service-account-automount-token-in-deployment-resource.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -24523,7 +24591,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -24537,6 +24605,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -24579,6 +24648,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -24593,7 +24663,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -24618,7 +24688,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 1
   selector:
@@ -24629,7 +24699,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 037907032a1e3adc0d149b8e3d29b0cbf312ed922c36117634bf5230b2bf3c30
+        checksum/config: f2ddaf38e076ace697bf986c2a7269cc97400e6e8b65d31c9b613ccbdf4b13bb
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -24726,7 +24796,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "console-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -24742,7 +24812,7 @@ spec:
       command: ['wget']
       args: ['console:8080']
   restartPolicy: Never
-  priorityClassName:
+  priorityClassName: ""
 -- testdata/service-account-automount-token-in-pod-resource.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -24975,7 +25045,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -24989,6 +25059,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -25031,6 +25102,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -25045,7 +25117,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -25070,7 +25142,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 1
   selector:
@@ -25081,7 +25153,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 037907032a1e3adc0d149b8e3d29b0cbf312ed922c36117634bf5230b2bf3c30
+        checksum/config: f2ddaf38e076ace697bf986c2a7269cc97400e6e8b65d31c9b613ccbdf4b13bb
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -25178,7 +25250,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "console-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -25194,7 +25266,7 @@ spec:
       command: ['wget']
       args: ['console:8080']
   restartPolicy: Never
-  priorityClassName:
+  priorityClassName: ""
 -- testdata/service-nodeport.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -25211,7 +25283,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -25225,6 +25297,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -25267,6 +25340,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -25281,7 +25355,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -25306,7 +25380,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 1
   selector:
@@ -25317,7 +25391,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 037907032a1e3adc0d149b8e3d29b0cbf312ed922c36117634bf5230b2bf3c30
+        checksum/config: f2ddaf38e076ace697bf986c2a7269cc97400e6e8b65d31c9b613ccbdf4b13bb
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -25394,7 +25468,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "console-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -25410,7 +25484,7 @@ spec:
       command: ['wget']
       args: ['console:8080']
   restartPolicy: Never
-  priorityClassName:
+  priorityClassName: ""
 -- testdata/service-with-nodeport.yaml.golden --
 ---
 # Source: console/templates/entry-point.yaml
@@ -25427,7 +25501,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -25441,6 +25515,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 stringData:
   enterprise-license: ""
   kafka-protobuf-git-basicauth-password: ""
@@ -25483,6 +25558,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
+  namespace: test-namespace
 ---
 # Source: console/templates/entry-point.yaml
 apiVersion: v1
@@ -25498,7 +25574,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   ports:
   - name: http
@@ -25524,7 +25600,7 @@ metadata:
     app.kubernetes.io/version: v2.8.0
     helm.sh/chart: console-0.7.31
   name: console
-  namespace: default
+  namespace: test-namespace
 spec:
   replicas: 1
   selector:
@@ -25535,7 +25611,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 037907032a1e3adc0d149b8e3d29b0cbf312ed922c36117634bf5230b2bf3c30
+        checksum/config: f2ddaf38e076ace697bf986c2a7269cc97400e6e8b65d31c9b613ccbdf4b13bb
       creationTimestamp: null
       labels:
         app.kubernetes.io/instance: console
@@ -25612,7 +25688,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "console-test-connection"
-  namespace: "default"
+  namespace: "test-namespace"
   labels:
     app.kubernetes.io/instance: console
     app.kubernetes.io/managed-by: Helm
@@ -25628,4 +25704,4 @@ spec:
       command: ['wget']
       args: ['console:8080']
   restartPolicy: Never
-  priorityClassName:
+  priorityClassName: ""
