@@ -26,6 +26,8 @@ import (
 	"k8s.io/utils/ptr"
 )
 
+const DefaultSASLMechanism = "SCRAM-SHA-512"
+
 func Secrets(dot *helmette.Dot) []*corev1.Secret {
 	var secrets []*corev1.Secret
 	secrets = append(secrets, SecretSTSLifecycle(dot))
@@ -314,7 +316,7 @@ func SecretConfigWatcher(dot *helmette.Dot) *corev1.Secret {
 			`        continue`,
 			`      fi`,
 			`      echo "Creating user ${USER_NAME}..."`,
-			fmt.Sprintf(`      MECHANISM=${MECHANISM:-%s}`, helmette.Dig(dot.Values.AsMap(), "SCRAM-SHA-512", "auth", "sasl", "mechanism")),
+			fmt.Sprintf(`      MECHANISM=${MECHANISM:-%s}`, helmette.Dig(dot.Values.AsMap(), DefaultSASLMechanism, "auth", "sasl", "mechanism")),
 			`      creation_result=$(rpk acl user create ${USER_NAME} -p ${PASSWORD} --mechanism ${MECHANISM} 2>&1) && creation_result_exit_code=$? || creation_result_exit_code=$?  # On a non-success exit code`,
 			`      if [[ $creation_result_exit_code -ne 0 ]]; then`,
 			`        # Check if the stderr contains "User already exists"`,
