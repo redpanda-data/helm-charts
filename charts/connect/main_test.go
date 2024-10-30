@@ -1,16 +1,13 @@
-package main
+package connect
 
 import (
-	"os"
 	"os/exec"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestHelmUnitTest(t *testing.T) {
-	cmd := exec.Command("helm", "unittest", ".")
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	if err := cmd.Run(); err != nil {
-		t.Fatalf("failed to run helm unittest: %s", err)
-	}
+	out, err := exec.Command("helm", "unittest", ".").CombinedOutput()
+	require.NoError(t, err, "failed to run helm unittest: %s", out)
 }

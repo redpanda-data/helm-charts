@@ -32,6 +32,7 @@ jobs:
     runs-on: ubuntu-22.04
     outputs:
       charts-connectors: ${{ steps.chart-changes.outputs.charts-connectors }}
+      charts-connect: ${{ steps.chart-changes.outputs.charts-connect }}
       charts-console: ${{ steps.chart-changes.outputs.charts-console }}
       charts-kminion: ${{ steps.chart-changes.outputs.charts-kminion }}
       charts-operator: ${{ steps.chart-changes.outputs.charts-operator }}
@@ -78,10 +79,10 @@ jobs:
               - 'charts/operator/templates/**'
               - 'charts/operator/(.helmignore|values.schema.json|Chart.yaml)'
             charts-connect:
-              - 'charts/operator/ci/*'
-              - 'charts/operator/files/*'
-              - 'charts/operator/templates/**'
-              - 'charts/operator/(.helmignore|values.schema.json|Chart.yaml)'
+              - 'charts/connect/ci/*'
+              - 'charts/connect/files/*'
+              - 'charts/connect/templates/**'
+              - 'charts/connect/(.helmignore|values.schema.json|Chart.yaml)'
             go-code:
               - '.github/workflows/pull_requests.yaml'
               - '**/testdata/**'
@@ -135,11 +136,17 @@ jobs:
     if: ${{ needs.changes.outputs.charts-operator == 'true' }}
     uses: ./.github/workflows/test_operator.yaml
     secrets: inherit
+  test-charts-connect:
+    needs: [changes, lint]
+    if: ${{ needs.changes.outputs.charts-connect == 'true' }}
+    uses: ./.github/workflows/test_connect.yaml
+    secrets: inherit
   summary:
     if: always()
     needs:
       - lint
       - test-charts-connectors
+      - test-charts-connect
       - test-charts-kminion
       - test-charts-operator
       - test-charts-redpanda
@@ -150,5 +157,5 @@ jobs:
       - name: Summarize the results of the test matrix pass/fail
         uses: re-actors/alls-green@release/v1
         with:
-          allowed-skips: test-go, test-charts-connectors, test-charts-kminion, test-charts-operator, test-charts-redpanda, test-charts-redpanda-integration
+          allowed-skips: test-go, test-charts-connectors, test-charts-kminion, test-charts-operator, test-charts-redpanda, test-charts-redpanda-integration, test-charts-connect
           jobs: ${{ toJSON(needs)}}
