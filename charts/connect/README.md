@@ -13,6 +13,10 @@ This page describes the official Redpanda Connect Helm Chart. In particular, thi
 
 For instructions on how to install and use the chart, including how to override and customize the chart’s values, refer to the [deployment documentation](https://docs.redpanda.com/docs/deploy/deployment-option/self-hosted/kubernetes/kubernetes-deploy/).
 
+### Migration from Benthos
+
+If you are coming here from [the old Benthos based chart](https://github.com/redpanda-data/redpanda-connect-helm-chart), please see the [migration guide in this repo](https://github.com/redpanda-data/helm-charts/blob/main/charts/connect/MIGRATION_FROM_BENTHOS.md).
+
 ### Streams mode
 
 When running Redpanda Connect in [streams mode](https://docs.redpanda.com/redpanda-connect/guides/streams_mode/about/), all individual stream configuration files should be combined and placed in a single Kubernetes `ConfigMap`, like so:
