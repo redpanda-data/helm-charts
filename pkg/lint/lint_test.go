@@ -78,6 +78,23 @@ func TestOperatorArtifactHubImages(t *testing.T) {
 	)
 }
 
+func TestConnectArtifactHubImages(t *testing.T) {
+	const connectRepo = "docker.redpanda.com/redpandadata/connect"
+
+	chartBytes, err := os.ReadFile("../../charts/connect/Chart.yaml")
+	require.NoError(t, err)
+
+	var chart ChartYAML
+	require.NoError(t, yaml.Unmarshal(chartBytes, &chart))
+
+	assert.Contains(
+		t,
+		chart.Annotations["artifacthub.io/images"],
+		fmt.Sprintf("%s:%s", connectRepo, chart.AppVersion),
+		"artifacthub.io/images should be in sync with .appVersion",
+	)
+}
+
 func TestRedpandaControllersTag(t *testing.T) {
 	chartBytes, err := os.ReadFile("../../charts/operator/Chart.yaml")
 	require.NoError(t, err)

@@ -1,0 +1,41 @@
+suite: hpa tests
+templates:
+  - hpa.yaml
+tests:
+  - it: should enable autoscaler default
+    set:
+      autoscaling:
+        enabled: true
+    asserts:
+      - matchSnapshot:
+          path: spec
+
+  - it: should configure autoscaler custom
+    set:
+      autoscaling:
+        enabled: true
+        minReplicas: 2
+        maxReplicas: 28
+        metrics:
+          - type: Resource
+            resource:
+              name: cpu
+              target:
+                type: Utilization
+                averageUtilization: 20
+          - type: Resource
+            resource:
+              name: memory
+              target:
+                type: Utilization
+                averageUtilization: 20
+        behavior:
+          scaleDown:
+            stabilizationWindowSeconds: 200
+            policies:
+              - type: Pods
+                value: 3
+                periodSeconds: 40
+    asserts:
+      - matchSnapshot:
+          path: spec

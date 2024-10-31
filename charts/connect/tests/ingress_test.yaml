@@ -1,0 +1,21 @@
+suite: ingress tests
+templates:
+  - ingress.yaml
+tests:
+  - it: should enable ingress default
+    set:
+      ingress:
+        enabled: true
+        annotations:
+          test: test
+        hosts:
+          - host: test.local
+            paths:
+              - path: /
+        tls:
+          - secretName: test-tls
+            hosts:
+              - test.local
+    asserts:
+      - matchSnapshot:
+          path: spec

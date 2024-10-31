@@ -25,6 +25,9 @@
                 docker-tag-list = pkgs.callPackage ./.github/docker-tag-list.nix { };
                 helm-3-10-3 = pkgs.callPackage ./.github/helm.nix { };
                 setup-envtest = pkgs.callPackage ./.github/setup-envtest.nix { };
+                kubernetes-helm = prev.wrapHelm prev.kubernetes-helm {
+                  plugins = [ prev.kubernetes-helmPlugins.helm-unittest ];
+                };
               })
             ];
           };
