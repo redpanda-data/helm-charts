@@ -221,7 +221,14 @@
 ## Redpanda Operator Chart
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/operator-FILLMEIN) - YYYY-MM-DD
 #### Added
+#### Changed
+#### Fixed
+#### Removed
+
+### [0.4.32](https://github.com/redpanda-data/helm-charts/releases/tag/operator-0.4.32) - 2024-10-31
+#### Added
 * Strategic merge of Pod volumes
+* Add new Schema custom resource RBAC rules
 #### Changed
 * The minimum Kubernetes version has been bumped to `1.25.0`
 * Bump operator version [v2.2.5-24.2.7](https://github.com/redpanda-data/redpanda-operator/releases/tag/v2.2.5-24.2.7)
