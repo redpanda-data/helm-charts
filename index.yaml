@@ -2122,6 +2122,52 @@ entries:
           description: Define a Redpanda cluster
       artifacthub.io/images: |
         - name: redpanda-operator
+          image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        - name: configurator
+          image: docker.redpanda.com/redpandadata/configurator:v2.2.5-24.2.7
+        - name: redpanda
+          image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
+        - name: kube-rbac-proxy
+          image: gcr.io/kubebuilder/kube-rbac-proxy:v0.14.0
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://docs.redpanda.com
+        - name: "Helm (>= 3.6.0)"
+          url: https://helm.sh/docs/intro/install/
+      artifacthub.io/operator: "true"
+      artifacthub.io/operatorCapabilities: Seamless Upgrades
+    apiVersion: v2
+    appVersion: v2.2.5-24.2.7
+    created: "2024-11-01T14:13:35.23136808Z"
+    dependencies:
+    - condition: monitoring.deployPrometheusKubeStack
+      name: kube-prometheus-stack
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 51.2.0
+    description: Redpanda operator helm chart
+    digest: f5a981d4cb521daa2055f31c57c434f94eb4b2920698d4cb1a9e31509ff3583e
+    icon: https://go.redpanda.com/hubfs/Redpandas/operator-panda.png
+    kubeVersion: '>= 1.25.0-0'
+    maintainers:
+    - name: redpanda-data
+      url: https://github.com/orgs/redpanda-data/people
+    name: operator
+    sources:
+    - https://github.com/redpanda-data/helm-charts
+    type: application
+    urls:
+    - https://github.com/redpanda-data/helm-charts/releases/download/operator-0.4.32/operator-0.4.32.tgz
+    version: 0.4.32
+  - annotations:
+      artifacthub.io/crds: |
+        - kind: Redpanda
+          version: v1alpha1
+          name: redpanda
+          displayName: Redpanda
+          description: Define a Redpanda cluster
+      artifacthub.io/images: |
+        - name: redpanda-operator
           image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.4-24.2.5
         - name: configurator
           image: docker.redpanda.com/redpandadata/configurator:v2.2.4-24.2.5
@@ -16762,4 +16808,4 @@ entries:
     urls:
     - https://charts.redpanda.com/redpanda-0.1.0.tgz
     version: 0.1.0
-generated: "2024-10-31T17:03:48.932552443Z"
+generated: "2024-11-01T14:13:35.325701066Z"
