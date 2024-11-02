@@ -4,7 +4,7 @@ The options accepted by this chart in version `3.0.0` are backwards compatible w
 
 ## Major Differences
 
-- The default docker image has changed from `jeffail/benthos` to `docker.redpanda.com/redpandadata/connect`
+- The default docker image has changed from `jeffail/benthos` to `redpandadata/connect`
 - The `name` of every resource has changed. Specifically, occurrences of `benthos` have been replaced with `redpanda-connect`
 - The following labels on all resources will have new values:
 	- `helm.sh/chart`
@@ -22,7 +22,7 @@ The best way to switch to the new helm chart is to deploy a new release of the n
 ```
 $ helm list -q
 benthos-1730406308
-$ helm repo add https://charts.redpanda.com/
+$ helm repo add redpanda https://charts.redpanda.com/
 $ helm install --generate-name -f values.yml redpanda/connect
 ... (verify that the new pods are working)
 $ helm uninstall benthos-1730406308
