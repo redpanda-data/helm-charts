@@ -22,7 +22,7 @@ The best way to switch to the new helm chart is to deploy a new release of the n
 ```
 $ helm list -q
 benthos-1730406308
-$ helm repo add https://charts.redpanda.com/
+$ helm repo add redpanda https://charts.redpanda.com/
 $ helm install --generate-name -f values.yml redpanda/connect
 ... (verify that the new pods are working)
 $ helm uninstall benthos-1730406308
