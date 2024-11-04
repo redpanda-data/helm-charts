@@ -4,7 +4,7 @@ The options accepted by this chart in version `3.0.0` are backwards compatible w
 
 ## Major Differences
 
-- The default docker image has changed from `jeffail/benthos` to `redpandadata/connect`
+- The default docker image has changed from `jeffail/benthos` to `docker.redpanda.com/redpandadata/connect`
 - The `name` of every resource has changed. Specifically, occurrences of `benthos` have been replaced with `redpanda-connect`
 - The following labels on all resources will have new values:
 	- `helm.sh/chart`
