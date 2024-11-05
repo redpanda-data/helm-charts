@@ -313,6 +313,11 @@ func rpkNodeConfig(dot *helmette.Dot) map[string]any {
 		brokerTLS = tls
 	}
 
+	var schemaRegistryTLS map[string]any
+	if tls := rpkSchemaRegistryClientTLSConfiguration(dot); len(tls) > 0 {
+		schemaRegistryTLS = tls
+	}
+
 	result := map[string]any{
 		"overprovisioned":        values.Resources.GetOverProvisionValue(),
 		"enable_memory_locking":  ptr.Deref(values.Resources.Memory.EnableMemoryLocking, false),
@@ -324,6 +329,10 @@ func rpkNodeConfig(dot *helmette.Dot) map[string]any {
 		"admin_api": map[string]any{
 			"addresses": values.Listeners.AdminList(values.Statefulset.Replicas, Fullname(dot), InternalDomain(dot)),
 			"tls":       adminTLS,
+		},
+		"schema_registry": map[string]any{
+			"addresses": values.Listeners.SchemaRegistryList(values.Statefulset.Replicas, Fullname(dot), InternalDomain(dot)),
+			"tls":       schemaRegistryTLS,
 		},
 	}
 
@@ -364,6 +373,30 @@ func rpkAdminAPIClientTLSConfiguration(dot *helmette.Dot) map[string]any {
 	values := helmette.Unwrap[Values](dot.Values)
 
 	tls := values.Listeners.Admin.TLS
+
+	if !tls.IsEnabled(&values.TLS) {
+		return map[string]any{}
+	}
+
+	result := map[string]any{
+		"ca_file": tls.ServerCAPath(&values.TLS),
+	}
+
+	if tls.RequireClientAuth {
+		result["cert_file"] = fmt.Sprintf("%s/%s-client/tls.crt", certificateMountPoint, Fullname(dot))
+		result["key_file"] = fmt.Sprintf("%s/%s-client/tls.key", certificateMountPoint, Fullname(dot))
+	}
+
+	return result
+}
+
+// rpkSchemaRegistryClientTLSConfiguration returns a value suitable for use as RPK's
+// "TLS" type.
+// https://github.com/redpanda-data/redpanda/blob/817450a480f4f2cadf66de1adc301cfaf6ccde46/src/go/rpk/pkg/config/redpanda_yaml.go#L184
+func rpkSchemaRegistryClientTLSConfiguration(dot *helmette.Dot) map[string]any {
+	values := helmette.Unwrap[Values](dot.Values)
+
+	tls := values.Listeners.SchemaRegistry.TLS
 
 	if !tls.IsEnabled(&values.TLS) {
 		return map[string]any{}

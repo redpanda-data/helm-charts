@@ -366,6 +366,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -728,7 +735,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -1657,6 +1664,10 @@ data:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
         tls: null
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        tls: null
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -1988,7 +1999,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: ef402e2646f70c856376462b249f68e0b0d0ff303e4a5e6c52906b2acda5e2fe
+        config.redpanda.com/checksum: 6e5b1f11d8fb052222d9f4301284b0e91935dbf73c874ee624183b5a04cb9823
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -2733,6 +2744,11 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -3083,7 +3099,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 9722826df7d0ffe86a7ba81f6c68ad8f9817c1e88fd617ce690e839e89681a0b
+        config.redpanda.com/checksum: 6fd0ffd56475954e062f04d4d1c9393e016e8b66bfba64f6419c794861d1b9b2
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -4147,6 +4163,10 @@ data:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
         tls: null
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        tls: null
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -4490,7 +4510,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 46ffec0fb126d4d2bd104b083f32f6143af3a416899c2932b1d9aa90c89f0841
+        config.redpanda.com/checksum: 5265a0c42c9888cd69e394a959677e44c5909408f1c85c570bb56e6262285b1a
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -5437,6 +5457,11 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -5804,7 +5829,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 7aad9372f61b2d9f1e70eb48af0f60a75f58778b600b29b763fc3c98a1a1f85e
+        config.redpanda.com/checksum: fc10e3af9a4f7ff7f2e7f76110e0ad824999092e8012a745bc1168ead31e43ad
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -6885,6 +6910,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -7345,7 +7377,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -8423,6 +8455,12 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls: null
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls: null
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -8816,7 +8854,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 7f7625ee743c9f46a4319d58cb5d327f3fd39f7942c6d2f0b709efee768ca947
+        config.redpanda.com/checksum: 6efc2c489543f3f84c0105524bea43a1fb61e5a3925046cb0a60551f23959964
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -9941,6 +9979,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -10303,7 +10348,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -11355,6 +11400,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -11717,7 +11769,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -12799,6 +12851,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -13161,7 +13220,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 931878c927fe58f1eae93f3a3993095378a5b203e73f18af1eaaad6ec1ef6811
+        config.redpanda.com/checksum: fc549ca23d4e1dff27e530265d59be059368cd4866ee0ca938c73ceff6815b57
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -14310,6 +14369,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -14689,7 +14755,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 28635308956eb868571a78176e97bf20e3aea3e52b96a6db473701f567a1229a
+        config.redpanda.com/checksum: ddcf6376732939f810acb684cafac205507b50b966e5714f128ed87a56fb10f6
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -15748,6 +15814,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -16110,7 +16183,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: cef2714156066f0d1bf287949062ae8c31c43de9784edfa93a21a753d6637fac
+        config.redpanda.com/checksum: 48ad7b247c147d3bd7bcbc3357d831d21016fbd8ca0022343a14dbb23c15a9ae
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -17013,6 +17086,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -17462,7 +17542,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: cef2714156066f0d1bf287949062ae8c31c43de9784edfa93a21a753d6637fac
+        config.redpanda.com/checksum: 48ad7b247c147d3bd7bcbc3357d831d21016fbd8ca0022343a14dbb23c15a9ae
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -18317,6 +18397,12 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls: null
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls: null
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -18655,7 +18741,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 713c75d8c1b0478dbfabf0679f4ec323157ea9a352c3b49c50b2824869a9f6b5
+        config.redpanda.com/checksum: 148733ee0ada31cbc1a8fda54191ad29425f8b3dea458814fac1938671843141
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -19450,6 +19536,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -19812,7 +19905,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -20842,6 +20935,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -21434,7 +21534,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -22469,6 +22569,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -22831,7 +22938,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 6d16fb5d08c983678d92c9172709ba475eeee0a6741debf299e102213f69413a
+        config.redpanda.com/checksum: f20d341fb81aa7ed6ced1fad2af7b611113cb255d137392a3d2485781a045a19
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -23832,6 +23939,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -24194,7 +24308,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d51fbbf3bd613148c6f2f9f770534944b398683a2a8ad750562f172db95776c9
+        config.redpanda.com/checksum: 9802162e4b8b9aaf699d67337e3ee45299ff93beb822d0842765ce1c5a4c911b
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -25240,6 +25354,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -25618,7 +25739,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -26684,6 +26805,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: true
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -27062,7 +27190,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: a936339b049421146a68a944247abca8d6701ae9d54f53f680d7f3f3bc0b4fdf
+        config.redpanda.com/checksum: 6e125110db4b6706f6338010ad36c50316395111aea32b3a9d4f4984a32501f9
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -28126,6 +28254,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: true
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -28504,7 +28639,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: a936339b049421146a68a944247abca8d6701ae9d54f53f680d7f3f3bc0b4fdf
+        config.redpanda.com/checksum: 6e125110db4b6706f6338010ad36c50316395111aea32b3a9d4f4984a32501f9
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -29531,6 +29666,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: true
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -29893,7 +30035,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: a936339b049421146a68a944247abca8d6701ae9d54f53f680d7f3f3bc0b4fdf
+        config.redpanda.com/checksum: 6e125110db4b6706f6338010ad36c50316395111aea32b3a9d4f4984a32501f9
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -30957,6 +31099,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -31335,7 +31484,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -32413,6 +32562,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: true
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -32791,7 +32947,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: a936339b049421146a68a944247abca8d6701ae9d54f53f680d7f3f3bc0b4fdf
+        config.redpanda.com/checksum: 6e125110db4b6706f6338010ad36c50316395111aea32b3a9d4f4984a32501f9
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -33867,6 +34023,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: true
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -34245,7 +34408,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: a936339b049421146a68a944247abca8d6701ae9d54f53f680d7f3f3bc0b4fdf
+        config.redpanda.com/checksum: 6e125110db4b6706f6338010ad36c50316395111aea32b3a9d4f4984a32501f9
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -35285,6 +35448,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: true
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -35647,7 +35817,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: a936339b049421146a68a944247abca8d6701ae9d54f53f680d7f3f3bc0b4fdf
+        config.redpanda.com/checksum: 6e125110db4b6706f6338010ad36c50316395111aea32b3a9d4f4984a32501f9
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -36724,6 +36894,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -37102,7 +37279,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -38180,6 +38357,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: true
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -38558,7 +38742,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: a936339b049421146a68a944247abca8d6701ae9d54f53f680d7f3f3bc0b4fdf
+        config.redpanda.com/checksum: 6e125110db4b6706f6338010ad36c50316395111aea32b3a9d4f4984a32501f9
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -39634,6 +39818,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: true
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -40012,7 +40203,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: a936339b049421146a68a944247abca8d6701ae9d54f53f680d7f3f3bc0b4fdf
+        config.redpanda.com/checksum: 6e125110db4b6706f6338010ad36c50316395111aea32b3a9d4f4984a32501f9
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -41052,6 +41243,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: true
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -41414,7 +41612,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: a936339b049421146a68a944247abca8d6701ae9d54f53f680d7f3f3bc0b4fdf
+        config.redpanda.com/checksum: 6e125110db4b6706f6338010ad36c50316395111aea32b3a9d4f4984a32501f9
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -42447,6 +42645,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -42809,7 +43014,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 4725b0577bc9449cd4e6b7bb0d0132e5bcd6666949c700e21549cd43bdd094cd
+        config.redpanda.com/checksum: 154bbf670b25a84e084af1f1a6777450206fdb2f3014a881f8350fe0371cdc54
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -43807,6 +44012,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -44169,7 +44381,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -45168,6 +45380,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -45530,7 +45749,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -46594,6 +46813,14 @@ data:
         - redpanda-3.redpanda.default.svc.cluster.local.:9093
         tls: null
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        - redpanda-3.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -46977,7 +47204,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 953d849ab8efccc6b80185b849f3f89e59c9c67272720ba3eb84248d0be348d1
+        config.redpanda.com/checksum: 52c4224ef1d61d20c262460abf0216fe9307e5d6a7f850500acf83a9fae73176
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -47986,6 +48213,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -48357,7 +48591,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -49364,6 +49598,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -49956,7 +50197,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -51058,6 +51299,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -51552,7 +51800,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -52591,6 +52839,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -53166,7 +53421,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -54297,6 +54552,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -54659,7 +54921,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 8a071be3bb8ba18f61cddbee0860c7626f94ef0b565f4903e8e43b71f66fe8da
+        config.redpanda.com/checksum: 4dd7f27eb2c63130aae3cb9fb56e906fe64581f6bf10fbfd9cbd78af4538ad4f
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -55662,6 +55924,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.change-name.default.svc.cluster.local.:8081
+        - redpanda-1.change-name.default.svc.cluster.local.:8081
+        - redpanda-2.change-name.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -56028,7 +56297,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 74897fe98938f7e3c3b0f56587a2886d3c40d29465b63f3b6749e8140e76cadb
+        config.redpanda.com/checksum: d36e92a8c61e842dcb008c69f388e92e82e8bac4773ca194fac0b13ab573a5d7
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -57060,6 +57329,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -57422,7 +57698,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -58454,6 +58730,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -58816,7 +59099,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -59850,6 +60133,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -60212,7 +60502,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -61178,6 +61468,13 @@ data:
           cert_file: /etc/tls/certs/redpanda-client/tls.crt
           key_file: /etc/tls/certs/redpanda-client/tls.key
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -61374,7 +61671,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 6eaedb1adcde57ccc0c782d6ee07a9ef5318a4ae5881dc754a1ac1610a56b975
+        config.redpanda.com/checksum: e4a33e06a3a848411b8c96665793b25fe19f6633e1dba4696815c7c709e55670
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -62491,6 +62788,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -62853,7 +63157,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -63986,6 +64290,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -64381,7 +64692,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 23396392115ac9f85ee171a7c191b95ee843787398666715e9cc58156c290ce4
+        config.redpanda.com/checksum: bd246fb96aa20556886caa8b87c2670c88c07301ead21f08a9686f6516d3e550
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -65480,6 +65791,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -65858,7 +66176,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -66858,6 +67176,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -67225,7 +67550,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -68228,6 +68553,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -68830,7 +69162,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -70011,6 +70343,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -70373,7 +70712,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -71373,6 +71712,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -71735,7 +72081,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -72735,6 +73081,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -73097,7 +73450,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -74095,6 +74448,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -74464,7 +74824,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -76966,6 +77326,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -77345,7 +77712,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 28635308956eb868571a78176e97bf20e3aea3e52b96a6db473701f567a1229a
+        config.redpanda.com/checksum: ddcf6376732939f810acb684cafac205507b50b966e5714f128ed87a56fb10f6
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -78428,6 +78795,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -78790,7 +79164,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -79825,6 +80199,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -80203,7 +80584,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -81208,6 +81589,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -81570,7 +81958,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -82601,6 +82989,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -82963,7 +83358,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -83998,6 +84393,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -84376,7 +84778,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -85381,6 +85783,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -85743,7 +86152,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -86762,6 +87171,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -87124,7 +87540,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -88159,6 +88575,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -88537,7 +88960,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -89542,6 +89965,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -89904,7 +90334,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -90923,6 +91353,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -91285,7 +91722,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -92320,6 +92757,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -92698,7 +93142,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -93703,6 +94147,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -94065,7 +94516,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -95085,6 +95536,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -95447,7 +95905,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -96483,6 +96941,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -96861,7 +97326,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -97867,6 +98332,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -98229,7 +98701,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -99249,6 +99721,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -99611,7 +100090,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -100647,6 +101126,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -101025,7 +101511,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -102031,6 +102517,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -102393,7 +102886,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -103412,6 +103905,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -103774,7 +104274,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -104578,6 +105078,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/for-internal/tls.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/for-internal/tls.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -104946,7 +105453,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 8d5422857b81b1a6b6bed0dc6796ac593722e5ecfc73083e75ca7998f0f48e99
+        config.redpanda.com/checksum: fd140d05574a4b21ce6b2a6395458401c1e6186bf8e96c7af882169f664768f8
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -105766,6 +106273,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -106358,7 +106872,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -107393,6 +107907,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -107968,7 +108489,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -109115,6 +109636,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -109707,7 +110235,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -110737,6 +111265,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -111329,7 +111864,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -112420,6 +112955,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -112782,7 +113324,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -113846,6 +114388,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -114298,7 +114847,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 090034074b45af73c9b95f9c243880db98fe53908a7fa0f6bcbde07c4720e6c6
+        config.redpanda.com/checksum: c78188d8cc1a290ac7796eded5f3a49988f7a44a5971aad33fe89b9b32293cfa
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -115300,6 +115849,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -115752,7 +116308,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 141c978e2a38f46a9239d40d229f627aeaba45271e6b9bc4645c87745dcbe985
+        config.redpanda.com/checksum: 40b1555a526efc78caf3107b6358b05773b82d09ed9b9671ad6524e40176955a
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -116807,6 +117363,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -117235,7 +117798,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 6e0f606e90b04d9f98c75e7002b85b4c2b7f7bc728975da00c2b5716ba12c24e
+        config.redpanda.com/checksum: 94c9073f00666e990b3c71fa079076ea050fb87cd0cc32f503bbe21fb198294e
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -118283,6 +118846,13 @@ data:
           cert_file: /etc/tls/certs/redpanda-client/tls.crt
           key_file: /etc/tls/certs/redpanda-client/tls.key
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -118655,7 +119225,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 1bc3c10e6eec6e9d1f1fb78aec94ef2781c5bb6aa6d9579c07e7c4573b2e1876
+        config.redpanda.com/checksum: 321ff8691ac4f68ffb27c9740544981cf2a289b856d21a3d3eb6b8bab9fe4d05
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -119793,6 +120363,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -120155,7 +120732,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 4d35b6ed55cc90695020a6726b0acbbe12aaa534620aa9cab133e129160e2257
+        config.redpanda.com/checksum: b5b5d0fb08868933f0fea06ea634d950c13380b1e9ca7d5f944b9591eeeb2e41
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -121153,6 +121730,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -121515,7 +122099,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -122531,6 +123115,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -122892,7 +123483,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: c6f48c8739b514c4b7fd7d39760fe94bd5a669efa9a7812124dd4c9bc9d712ec
+        config.redpanda.com/checksum: b8e0da1a021479fef4009079ccab692b64a4149233b6a0852c151097c6926cd8
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -123916,6 +124507,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -124278,7 +124876,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -125313,6 +125911,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -125691,7 +126296,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -126696,6 +127301,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -127058,7 +127670,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -128078,6 +128690,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -128440,7 +129059,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -129476,6 +130095,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -129854,7 +130480,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -130860,6 +131486,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -131222,7 +131855,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -132241,6 +132874,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -132620,7 +133260,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -133646,6 +134286,13 @@ data:
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
       overprovisioned: false
+      schema_registry:
+        addresses:
+        - redpanda-0.redpanda.default.svc.cluster.local.:8081
+        - redpanda-1.redpanda.default.svc.cluster.local.:8081
+        - redpanda-2.redpanda.default.svc.cluster.local.:8081
+        tls:
+          ca_file: /etc/tls/certs/default/ca.crt
       tune_aio_events: true
     schema_registry:
       schema_registry_api:
@@ -134008,7 +134655,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d696a04723a2d2ab62276a5d6a0edc91462858e405794bedd5051e062efea3c4
+        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
