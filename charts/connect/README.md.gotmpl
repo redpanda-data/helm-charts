@@ -8,77 +8,13 @@ description: Find the default values and descriptions of settings in the Redpand
 {{ define "chart.description" -}}
 Redpanda Connect is a high performance and resilient stream processor, able to connect various sources and sinks in a range of brokering patterns and perform hydration, enrichments, transformations and filters on payloads.
 
-This Helm Chart deploys a single Redpanda Connect instance in either streams mode or standalone.
+This Helm chart deploys a Redpanda Connect instance in either streams mode or standalone.
 
-This page describes the official Redpanda Connect Helm Chart. In particular, this page describes the contents of the chart’s [`values.yaml` file](https://github.com/redpanda-data/helm-charts/blob/main/charts/connect/values.yaml). Each of the settings is listed and described on this page, along with any default values.
+This page describes the contents of the chart's [`values.yaml` file](https://github.com/redpanda-data/helm-charts/blob/main/charts/connect/values.yaml). Each of the settings is listed and described on this page, along with any default values.
 
-For instructions on how to install and use the chart, including how to override and customize the chart’s values, refer to the [deployment documentation](https://docs.redpanda.com/docs/deploy/deployment-option/self-hosted/kubernetes/kubernetes-deploy/).
+For instructions on how to install and use the chart, including how to override and customize the chart's values, refer to the [deployment documentation](https://docs.redpanda.com/redpanda-connect/get-started/helm-chart/).
 
-### Migration from Benthos
-
-If you are coming here from [the old Benthos based chart](https://github.com/redpanda-data/redpanda-connect-helm-chart), please see the [migration guide in this repo](https://github.com/redpanda-data/helm-charts/blob/main/charts/connect/MIGRATION_FROM_BENTHOS.md).
-
-### Streams mode
-
-When running Redpanda Connect in [streams mode](https://docs.redpanda.com/redpanda-connect/guides/streams_mode/about/), all individual stream configuration files should be combined and placed in a single Kubernetes `ConfigMap`, like so:
-
-```yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: connect-streams
-data:
-  hello.yaml: |
-    input:
-      generate:
-        mapping: root = "woof"
-        interval: 5s
-        count: 0
-    output:
-      stdout:
-        codec: lines
-  aaaaa.yaml: |
-    input:
-      generate:
-        mapping: root = "meow"
-        interval: 2s
-        count: 0
-    output:
-      stdout:
-        codec: lines
-```
-
-Then you can simply reference your `ConfigMap` and enable streams mode in your `values.yaml` file.
-```yaml
-# values.yaml
-streams:
-  enabled: true
-  streamsConfigMap: "connect-streams"
-```
-
-Currently the streams mode `ConfigMap` should be applied **separately from and before installation of** the helm chart; support for deploying additional `ConfigMap`'s within the chart may be implemented later.
-
-### Global Configuration
-
-When deploying Redpanda Connect in streams mode, you may want to configure global tracing, logging and http configuration which is shared across all of your pipelines.
-
-This can be done by specifying configuration under the `metrics`, `logger` and `tracing` configuration sections in your `values.yaml` file. These all use their respective upstream Redpanda Connect configuration syntax.
-
-```yaml
-metrics:
-  prometheus: {}
-
-tracing:
-  openTelemetry:
-    http: []
-    grpc: []
-    tags: {}
-
-logger:
-  level: INFO
-  static_fields:
-    '@service': redpanda-connect
-```
+NOTE: To migrate to this chart from the [Benthos Helm chart](https://github.com/redpanda-data/redpanda-connect-helm-chart), see the [migration guide in this GitHub repository](https://github.com/redpanda-data/helm-charts/blob/main/charts/connect/MIGRATION_FROM_BENTHOS.md).
 {{ end -}}
 
 {{ define "chart.valuesTable" }}
@@ -87,7 +23,7 @@ logger:
 
 {{- range .Values }}
 
-### [{{ .Key }}](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path={{ .Key }})
+### [{{ .Key }}](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path={{ .Key }})
 
 {{ if .Description }}{{ .Description }}{{ else }}{{ .AutoDescription }}{{ end }}
 
