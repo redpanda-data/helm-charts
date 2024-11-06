@@ -508,6 +508,11 @@
 #### Removed
 
 ## Connect Chart
+
+### [3.0.3](https://github.com/redpanda-data/helm-charts/releases/tag/connect-3.0.3)
+#### Changed
+* Added complete descriptions for all options in the `values.yaml`.
+
 ### [3.0.2](https://github.com/redpanda-data/helm-charts/releases/tag/connect-3.0.2)
 #### Changed
 * Bump Connect app version to 4.42.0
