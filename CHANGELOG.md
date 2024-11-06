@@ -225,6 +225,13 @@
 #### Fixed
 #### Removed
 
+### [0.4.33](https://github.com/redpanda-data/helm-charts/releases/tag/operator-0.4.33) - 2024-11-6
+#### Added
+* Missing permissions for Horizontal Pod Autoscaler, cert-manager Certificate and Issuer
+#### Changed
+#### Fixed
+#### Removed
+
 ### [0.4.32](https://github.com/redpanda-data/helm-charts/releases/tag/operator-0.4.32) - 2024-10-31
 #### Added
 * Strategic merge of Pod volumes
