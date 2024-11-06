@@ -968,7 +968,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -1309,7 +1309,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -1333,7 +1333,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -2220,7 +2220,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -2362,7 +2362,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -2382,7 +2382,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -3341,7 +3341,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -3682,7 +3682,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -3706,7 +3706,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -4780,7 +4780,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -4933,7 +4933,7 @@ spec:
           value: SCRAM-SHA-256
         - name: RP_BOOTSTRAP_USER
           value: $(RPK_USER):$(RPK_PASS):$(RPK_SASL_MECHANISM)
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -4956,7 +4956,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -6121,7 +6121,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -6476,7 +6476,7 @@ spec:
           value: SCRAM-SHA-256
         - name: RP_BOOTSTRAP_USER
           value: $(RPK_USER):$(RPK_PASS):$(RPK_SASL_MECHANISM)
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -6503,7 +6503,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -7638,7 +7638,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -7997,7 +7997,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -8021,7 +8021,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -9138,7 +9138,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -9580,7 +9580,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -9606,7 +9606,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -10618,7 +10618,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -10959,7 +10959,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -10983,7 +10983,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -12114,7 +12114,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -12472,7 +12472,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -12496,7 +12496,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -13505,7 +13505,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -13850,7 +13850,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -13874,7 +13874,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -15088,7 +15088,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -15443,7 +15443,7 @@ spec:
           value: SCRAM-SHA-256
         - name: RP_BOOTSTRAP_USER
           value: $(RPK_USER):$(RPK_PASS):$(RPK_SASL_MECHANISM)
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -15470,7 +15470,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -16482,7 +16482,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -16728,7 +16728,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -16752,7 +16752,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -17848,7 +17848,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -18094,7 +18094,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -18118,7 +18118,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -19036,7 +19036,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -19203,7 +19203,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -19223,7 +19223,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -20224,7 +20224,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -20597,7 +20597,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -20621,7 +20621,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -21798,7 +21798,7 @@ spec:
         env:
         - name: REDPANDA_HELM_RELEASE_NAME
           value: redpanda
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: redpanda-controllers
         resources: {}
         securityContext: {}
@@ -21879,7 +21879,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -22238,7 +22238,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -22262,7 +22262,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -23274,7 +23274,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -23615,7 +23615,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -23639,7 +23639,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -24648,7 +24648,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -24993,7 +24993,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -25017,7 +25017,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -26104,7 +26104,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -26450,7 +26450,7 @@ spec:
         env:
         - name: REDPANDA_LICENSE
           value: ${REDPANDA_SAMPLE_LICENSE}
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -26474,7 +26474,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -27562,7 +27562,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -27908,7 +27908,7 @@ spec:
         env:
         - name: REDPANDA_LICENSE
           value: ${REDPANDA_SAMPLE_LICENSE}
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -27932,7 +27932,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -29018,7 +29018,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -29365,7 +29365,7 @@ spec:
         env:
         - name: REDPANDA_LICENSE
           value: ${REDPANDA_SAMPLE_LICENSE}
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -29389,7 +29389,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -30421,7 +30421,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -30766,7 +30766,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -30790,7 +30790,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -31877,7 +31877,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -32235,7 +32235,7 @@ spec:
         env:
         - name: REDPANDA_LICENSE
           value: ${REDPANDA_SAMPLE_LICENSE}
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -32259,7 +32259,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -33347,7 +33347,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -33705,7 +33705,7 @@ spec:
         env:
         - name: REDPANDA_LICENSE
           value: ${REDPANDA_SAMPLE_LICENSE}
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -33729,7 +33729,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -34815,7 +34815,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -35175,7 +35175,7 @@ spec:
         env:
         - name: REDPANDA_LICENSE
           value: ${REDPANDA_SAMPLE_LICENSE}
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -35199,7 +35199,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -36231,7 +36231,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -36589,7 +36589,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -36613,7 +36613,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -37700,7 +37700,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -38058,7 +38058,7 @@ spec:
         env:
         - name: REDPANDA_LICENSE
           value: ${REDPANDA_SAMPLE_LICENSE}
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -38082,7 +38082,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -39170,7 +39170,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -39528,7 +39528,7 @@ spec:
         env:
         - name: REDPANDA_LICENSE
           value: ${REDPANDA_SAMPLE_LICENSE}
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -39552,7 +39552,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -40638,7 +40638,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -40998,7 +40998,7 @@ spec:
         env:
         - name: REDPANDA_LICENSE
           value: ${REDPANDA_SAMPLE_LICENSE}
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -41022,7 +41022,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -42054,7 +42054,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -42412,7 +42412,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -42436,7 +42436,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -43445,7 +43445,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -43786,7 +43786,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -43810,7 +43810,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -44820,7 +44820,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -45161,7 +45161,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -45185,7 +45185,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -46200,7 +46200,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -46541,7 +46541,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -46565,7 +46565,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -47665,7 +47665,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -48006,7 +48006,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -48030,7 +48030,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -49057,7 +49057,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -49401,7 +49401,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -49425,7 +49425,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -50608,7 +50608,7 @@ spec:
         env:
         - name: REDPANDA_HELM_RELEASE_NAME
           value: redpanda
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: redpanda-controllers
         resources: {}
         securityContext:
@@ -50695,7 +50695,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -51054,7 +51054,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -51078,7 +51078,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -52311,7 +52311,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -52656,7 +52656,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -52680,7 +52680,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -53903,7 +53903,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -54244,7 +54244,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -54268,7 +54268,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -55277,7 +55277,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -55622,7 +55622,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -55646,7 +55646,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -56662,7 +56662,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -57035,7 +57035,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -57059,7 +57059,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -58077,7 +58077,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -58433,7 +58433,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources:
           limits:
@@ -58461,7 +58461,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -59485,7 +59485,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -59841,7 +59841,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources:
           limits:
@@ -59871,7 +59871,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -60888,7 +60888,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -61229,7 +61229,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -61255,7 +61255,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -62072,7 +62072,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -62516,7 +62516,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -62542,7 +62542,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -63555,7 +63555,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -63840,7 +63840,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -63864,7 +63864,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -65138,7 +65138,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -65495,7 +65495,7 @@ spec:
           value: SCRAM-SHA-256
         - name: RP_BOOTSTRAP_USER
           value: $(RPK_USER):$(RPK_PASS):$(RPK_SASL_MECHANISM)
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -65522,7 +65522,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -66588,7 +66588,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -66931,7 +66931,7 @@ spec:
         env:
         - name: REDPANDA_LICENSE
           value: ${REDPANDA_LICENSE}
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -66955,7 +66955,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -67969,7 +67969,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -68315,7 +68315,7 @@ spec:
             secretKeyRef:
               key: license-key
               name: redpanda-license
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -68339,7 +68339,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -69589,7 +69589,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -69980,7 +69980,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -70004,7 +70004,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -71014,7 +71014,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -71355,7 +71355,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -71380,7 +71380,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -72390,7 +72390,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -72731,7 +72731,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -72756,7 +72756,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -73765,7 +73765,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -74106,7 +74106,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -74130,7 +74130,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -75146,7 +75146,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -75487,7 +75487,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -75511,7 +75511,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -78082,7 +78082,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -78437,7 +78437,7 @@ spec:
           value: SCRAM-SHA-256
         - name: RP_BOOTSTRAP_USER
           value: $(RPK_USER):$(RPK_PASS):$(RPK_SASL_MECHANISM)
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -78464,7 +78464,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -79500,7 +79500,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -79841,7 +79841,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -79865,7 +79865,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -80927,7 +80927,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -81270,7 +81270,7 @@ spec:
         env:
         - name: REDPANDA_LICENSE
           value: ATOTALLYVALIDLICENSE
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -81294,7 +81294,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -82311,7 +82311,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -82670,7 +82670,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -82694,7 +82694,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -83715,7 +83715,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -84056,7 +84056,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -84080,7 +84080,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -85142,7 +85142,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -85485,7 +85485,7 @@ spec:
         env:
         - name: REDPANDA_LICENSE
           value: ATOTALLYVALIDLICENSE
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -85509,7 +85509,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -86526,7 +86526,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -86885,7 +86885,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -86909,7 +86909,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -87918,7 +87918,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -88259,7 +88259,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -88283,7 +88283,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -89345,7 +89345,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -89688,7 +89688,7 @@ spec:
         env:
         - name: REDPANDA_LICENSE
           value: ATOTALLYVALIDLICENSE
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -89712,7 +89712,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -90729,7 +90729,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -91088,7 +91088,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -91112,7 +91112,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -92121,7 +92121,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -92462,7 +92462,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -92486,7 +92486,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -93548,7 +93548,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -93891,7 +93891,7 @@ spec:
         env:
         - name: REDPANDA_LICENSE
           value: ATOTALLYVALIDLICENSE
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -93915,7 +93915,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -94932,7 +94932,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -95291,7 +95291,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -95315,7 +95315,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -96325,7 +96325,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -96666,7 +96666,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -96690,7 +96690,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -97753,7 +97753,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -98096,7 +98096,7 @@ spec:
         env:
         - name: REDPANDA_LICENSE
           value: ATOTALLYVALIDLICENSE
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -98120,7 +98120,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -99138,7 +99138,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -99497,7 +99497,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -99521,7 +99521,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -100531,7 +100531,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -100872,7 +100872,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -100896,7 +100896,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -101959,7 +101959,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -102302,7 +102302,7 @@ spec:
         env:
         - name: REDPANDA_LICENSE
           value: ATOTALLYVALIDLICENSE
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -102326,7 +102326,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -103344,7 +103344,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -103703,7 +103703,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -103727,7 +103727,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -104736,7 +104736,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -104883,7 +104883,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -104907,7 +104907,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -105922,7 +105922,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -106069,7 +106069,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -106093,7 +106093,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -107286,7 +107286,7 @@ spec:
         env:
         - name: REDPANDA_HELM_RELEASE_NAME
           value: redpanda
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: redpanda-controllers
         resources: {}
         securityContext: {}
@@ -107367,7 +107367,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -107726,7 +107726,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -107750,7 +107750,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -108973,7 +108973,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -109314,7 +109314,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -109338,7 +109338,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -110531,7 +110531,7 @@ spec:
         env:
         - name: REDPANDA_HELM_RELEASE_NAME
           value: redpanda
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: redpanda-controllers
         resources: {}
         securityContext: {}
@@ -110609,7 +110609,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -110950,7 +110950,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -110974,7 +110974,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -112169,7 +112169,7 @@ spec:
         env:
         - name: REDPANDA_HELM_RELEASE_NAME
           value: redpanda
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: redpanda-controllers
         resources: {}
         securityContext: {}
@@ -112249,7 +112249,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -112608,7 +112608,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -112632,7 +112632,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -113745,7 +113745,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -114103,7 +114103,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -114127,7 +114127,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -115226,7 +115226,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -115571,7 +115571,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -115595,7 +115595,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -116694,7 +116694,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -117039,7 +117039,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -117063,7 +117063,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -118202,7 +118202,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -118577,7 +118577,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -118601,7 +118601,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -119633,7 +119633,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -120100,7 +120100,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -120126,7 +120126,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -121139,7 +121139,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -121480,7 +121480,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -121504,7 +121504,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -122513,7 +122513,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -122885,7 +122885,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -122909,7 +122909,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -123903,7 +123903,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -124271,7 +124271,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -124295,7 +124295,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -125304,7 +125304,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -125645,7 +125645,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -125669,7 +125669,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -126731,7 +126731,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -127074,7 +127074,7 @@ spec:
         env:
         - name: REDPANDA_LICENSE
           value: ATOTALLYVALIDLICENSE
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -127098,7 +127098,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -128115,7 +128115,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -128474,7 +128474,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -128498,7 +128498,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -129508,7 +129508,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -129849,7 +129849,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -129873,7 +129873,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -130936,7 +130936,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -131279,7 +131279,7 @@ spec:
         env:
         - name: REDPANDA_LICENSE
           value: ATOTALLYVALIDLICENSE
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -131303,7 +131303,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -132321,7 +132321,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -132680,7 +132680,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -132704,7 +132704,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -133730,7 +133730,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -134099,7 +134099,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -134123,7 +134123,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -135132,7 +135132,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:
@@ -135473,7 +135473,7 @@ spec:
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: post-install
         resources: {}
         securityContext:
@@ -135497,7 +135497,7 @@ spec:
         - --output
         - /tmp/config/.bootstrap.yaml
         env: null
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.2.5-24.2.7
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.2.10
         name: bootstrap-yaml-envsubst
         resources:
           limits:

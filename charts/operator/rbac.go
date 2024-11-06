@@ -84,7 +84,12 @@ func ClusterRole(dot *helmette.Dot) []rbacv1.ClusterRole {
 					Labels:      Labels(dot),
 					Annotations: values.Annotations,
 				},
-				Rules: []rbacv1.PolicyRule{
+				Rules: append([]rbacv1.PolicyRule{
+					{
+						Verbs:     []string{"create", "delete", "get", "list", "patch", "update", "watch"},
+						APIGroups: []string{"autoscaling"},
+						Resources: []string{"horizontalpodautoscalers"},
+					},
 					{
 						Verbs:     []string{"delete", "get", "list", "patch", "update", "watch"},
 						APIGroups: []string{""},
@@ -205,22 +210,7 @@ func ClusterRole(dot *helmette.Dot) []rbacv1.ClusterRole {
 						APIGroups: []string{"redpanda.vectorized.io"},
 						Resources: []string{"consoles/status"},
 					},
-					{
-						Verbs:     []string{"get", "list", "patch", "update", "watch"},
-						APIGroups: []string{"cluster.redpanda.com"},
-						Resources: []string{"topics"},
-					},
-					{
-						Verbs:     []string{"update"},
-						APIGroups: []string{"cluster.redpanda.com"},
-						Resources: []string{"topics/finalizers"},
-					},
-					{
-						Verbs:     []string{"get", "patch", "update"},
-						APIGroups: []string{"cluster.redpanda.com"},
-						Resources: []string{"topics/status"},
-					},
-				},
+				}, v2CRDRules()...),
 			},
 		}...)
 	}
@@ -298,7 +288,22 @@ func ClusterRole(dot *helmette.Dot) []rbacv1.ClusterRole {
 		}...)
 	}
 
-	return clusterRoles
+	return append(clusterRoles, rbacv1.ClusterRole{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "rbac.authorization.k8s.io/v1",
+			Kind:       "ClusterRole",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:        Fullname(dot),
+			Labels:      Labels(dot),
+			Annotations: values.Annotations,
+		},
+		Rules: append(v2CRDRules(), rbacv1.PolicyRule{
+			Verbs:     []string{"create", "get", "delete", "list", "patch", "update", "watch"},
+			APIGroups: []string{"rbac.authorization.k8s.io"},
+			Resources: []string{"clusterrolebindings", "clusterroles"},
+		}),
+	})
 }
 
 func ClusterRoleBindings(dot *helmette.Dot) []rbacv1.ClusterRoleBinding {
@@ -335,7 +340,7 @@ func ClusterRoleBindings(dot *helmette.Dot) []rbacv1.ClusterRoleBinding {
 	}
 
 	if values.Scope == Cluster {
-		binding = append(binding, rbacv1.ClusterRoleBinding{
+		return append(binding, rbacv1.ClusterRoleBinding{
 			TypeMeta: metav1.TypeMeta{
 				APIVersion: "rbac.authorization.k8s.io/v1",
 				Kind:       "ClusterRoleBinding",
@@ -412,7 +417,29 @@ func ClusterRoleBindings(dot *helmette.Dot) []rbacv1.ClusterRoleBinding {
 		})
 	}
 
-	return binding
+	return append(binding, rbacv1.ClusterRoleBinding{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "rbac.authorization.k8s.io/v1",
+			Kind:       "ClusterRoleBinding",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:        Fullname(dot),
+			Labels:      Labels(dot),
+			Annotations: values.Annotations,
+		},
+		RoleRef: rbacv1.RoleRef{
+			APIGroup: "rbac.authorization.k8s.io",
+			Kind:     "ClusterRole",
+			Name:     Fullname(dot),
+		},
+		Subjects: []rbacv1.Subject{
+			{
+				Kind:      "ServiceAccount",
+				Name:      ServiceAccountName(dot),
+				Namespace: dot.Release.Namespace,
+			},
+		},
+	})
 }
 
 func Roles(dot *helmette.Dot) []rbacv1.Role {
@@ -437,7 +464,7 @@ func Roles(dot *helmette.Dot) []rbacv1.Role {
 			Rules: []rbacv1.PolicyRule{
 				{
 					Verbs:     []string{"get", "list", "watch", "create", "update", "patch", "delete"},
-					APIGroups: []string{"", "coordination.k8s.io"},
+					APIGroups: []string{"coordination.k8s.io"},
 					Resources: []string{"leases"},
 				},
 			},
@@ -477,6 +504,11 @@ func Roles(dot *helmette.Dot) []rbacv1.Role {
 			},
 			Rules: []rbacv1.PolicyRule{
 				{
+					Verbs:     []string{"create", "delete", "get", "list", "patch", "update", "watch"},
+					APIGroups: []string{"autoscaling"},
+					Resources: []string{"horizontalpodautoscalers"},
+				},
+				{
 					Verbs:     []string{"delete", "get", "list", "patch", "update", "watch"},
 					APIGroups: []string{""},
 					Resources: []string{"persistentvolumeclaims"},
@@ -512,29 +544,14 @@ func Roles(dot *helmette.Dot) []rbacv1.Role {
 					Resources: []string{"jobs"},
 				},
 				{
-					Verbs:     []string{"create", "delete", "get", "patch", "update"},
+					Verbs:     []string{"create", "delete", "get", "patch", "update", "list", "watch"},
 					APIGroups: []string{"cert-manager.io"},
 					Resources: []string{"certificates"},
 				},
 				{
-					Verbs:     []string{"create", "delete", "get", "patch", "update"},
+					Verbs:     []string{"create", "delete", "get", "patch", "update", "list", "watch"},
 					APIGroups: []string{"cert-manager.io"},
 					Resources: []string{"issuers"},
-				},
-				{
-					Verbs:     []string{"create", "delete", "get", "list", "patch", "update", "watch"},
-					APIGroups: []string{"cluster.redpanda.com"},
-					Resources: []string{"redpandas"},
-				},
-				{
-					Verbs:     []string{"update"},
-					APIGroups: []string{"cluster.redpanda.com"},
-					Resources: []string{"redpandas/finalizers"},
-				},
-				{
-					Verbs:     []string{"get", "patch", "update"},
-					APIGroups: []string{"cluster.redpanda.com"},
-					Resources: []string{"redpandas/status"},
 				},
 				{
 					Verbs:     []string{"create", "delete", "get", "list", "patch", "update", "watch"},
@@ -594,12 +611,7 @@ func Roles(dot *helmette.Dot) []rbacv1.Role {
 				{
 					Verbs:     []string{"create", "delete", "get", "list", "patch", "update", "watch"},
 					APIGroups: []string{"monitoring.coreos.com"},
-					Resources: []string{"podmonitors"},
-				},
-				{
-					Verbs:     []string{"create", "delete", "get", "list", "patch", "update", "watch"},
-					APIGroups: []string{"monitoring.coreos.com"},
-					Resources: []string{"servicemonitors"},
+					Resources: []string{"servicemonitors", "podmonitors"},
 				},
 				{
 					Verbs:     []string{"create", "delete", "get", "list", "patch", "update", "watch"},
@@ -620,16 +632,6 @@ func Roles(dot *helmette.Dot) []rbacv1.Role {
 					Verbs:     []string{"create", "delete", "get", "list", "patch", "update", "watch"},
 					APIGroups: []string{"rbac.authorization.k8s.io"},
 					Resources: []string{"roles"},
-				},
-				{
-					Verbs:     []string{"get", "list", "patch", "update", "watch"},
-					APIGroups: []string{"redpanda.vectorized.io"},
-					Resources: []string{"clusters"},
-				},
-				{
-					Verbs:     []string{"get", "list", "patch", "update", "watch"},
-					APIGroups: []string{"redpanda.vectorized.io"},
-					Resources: []string{"consoles"},
 				},
 				{
 					Verbs:     []string{"create", "delete", "get", "list", "patch", "update", "watch"},
@@ -685,51 +687,6 @@ func Roles(dot *helmette.Dot) []rbacv1.Role {
 					Verbs:     []string{"get", "patch", "update"},
 					APIGroups: []string{"source.toolkit.fluxcd.io"},
 					Resources: []string{"helmrepositories/status"},
-				},
-				{
-					Verbs:     []string{"get", "list", "patch", "update", "watch"},
-					APIGroups: []string{"cluster.redpanda.com"},
-					Resources: []string{"topics"},
-				},
-				{
-					Verbs:     []string{"update"},
-					APIGroups: []string{"cluster.redpanda.com"},
-					Resources: []string{"topics/finalizers"},
-				},
-				{
-					Verbs:     []string{"get", "patch", "update"},
-					APIGroups: []string{"cluster.redpanda.com"},
-					Resources: []string{"topics/status"},
-				},
-				{
-					Verbs:     []string{"get", "list", "patch", "update", "watch"},
-					APIGroups: []string{"cluster.redpanda.com"},
-					Resources: []string{"users"},
-				},
-				{
-					Verbs:     []string{"update"},
-					APIGroups: []string{"cluster.redpanda.com"},
-					Resources: []string{"users/finalizers"},
-				},
-				{
-					Verbs:     []string{"get", "patch", "update"},
-					APIGroups: []string{"cluster.redpanda.com"},
-					Resources: []string{"users/status"},
-				},
-				{
-					Verbs:     []string{"get", "list", "patch", "update", "watch"},
-					APIGroups: []string{"cluster.redpanda.com"},
-					Resources: []string{"schemas"},
-				},
-				{
-					Verbs:     []string{"update"},
-					APIGroups: []string{"cluster.redpanda.com"},
-					Resources: []string{"schemas/finalizers"},
-				},
-				{
-					Verbs:     []string{"get", "patch", "update"},
-					APIGroups: []string{"cluster.redpanda.com"},
-					Resources: []string{"schemas/status"},
 				},
 			},
 		})
@@ -824,4 +781,39 @@ func RoleBindings(dot *helmette.Dot) []rbacv1.RoleBinding {
 	}
 
 	return binding
+}
+
+func v2CRDRules() []rbacv1.PolicyRule {
+	return []rbacv1.PolicyRule{
+		{
+			Verbs:     []string{"create", "delete", "get", "list", "patch", "update", "watch"},
+			APIGroups: []string{"cluster.redpanda.com"},
+			Resources: []string{"redpandas"},
+		},
+		{
+			Verbs:     []string{"update"},
+			APIGroups: []string{"cluster.redpanda.com"},
+			Resources: []string{"redpandas/finalizers"},
+		},
+		{
+			Verbs:     []string{"get", "patch", "update"},
+			APIGroups: []string{"cluster.redpanda.com"},
+			Resources: []string{"redpandas/status"},
+		},
+		{
+			Verbs:     []string{"get", "list", "patch", "update", "watch"},
+			APIGroups: []string{"cluster.redpanda.com"},
+			Resources: []string{"schemas", "topics", "users"},
+		},
+		{
+			Verbs:     []string{"update"},
+			APIGroups: []string{"cluster.redpanda.com"},
+			Resources: []string{"schemas/finalizers", "topics/finalizers", "users/finalizers"},
+		},
+		{
+			Verbs:     []string{"get", "patch", "update"},
+			APIGroups: []string{"cluster.redpanda.com"},
+			Resources: []string{"schemas/status", "topics/status", "users/status"},
+		},
+	}
 }
