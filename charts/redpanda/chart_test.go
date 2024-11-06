@@ -848,7 +848,7 @@ func TestGoHelmEquivalence(t *testing.T) {
 		Enterprise: &redpanda.PartialEnterprise{License: ptr.To("LICENSE_PLACEHOLDER")},
 		External: &redpanda.PartialExternalConfig{
 			// include, required and tpl are not yet implemented in gotohelm package
-			Domain:         ptr.To("{{ trunc 4 .Values.external.prefixTemplate | lower | repeat 3 }}-testing "),
+			Domain:         ptr.To("{{ trunc 4 .Values.external.prefixTemplate | lower | repeat 3 }}-testing"),
 			Type:           ptr.To(corev1.ServiceTypeLoadBalancer),
 			PrefixTemplate: ptr.To("$POD_ORDINAL-XYZ-$(echo -n $HOST_IP_ADDRESS | sha256sum | head -c 7)"),
 			ExternalDNS:    &redpanda.PartialEnableable{Enabled: ptr.To(true)},

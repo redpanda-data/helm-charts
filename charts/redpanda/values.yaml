@@ -695,7 +695,7 @@ statefulset:
     # an existing node is removed.
     controllers:
       image:
-        tag: v2.2.5-24.2.7
+        tag: v2.3.0-24.2.10
         repository: docker.redpanda.com/redpandadata/redpanda-operator
       # You must also enable RBAC, `rbac.enabled=true`, to deploy this sidecar
       enabled: false
