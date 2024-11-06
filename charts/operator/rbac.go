@@ -86,6 +86,11 @@ func ClusterRole(dot *helmette.Dot) []rbacv1.ClusterRole {
 				},
 				Rules: []rbacv1.PolicyRule{
 					{
+						Verbs:     []string{"create", "delete", "get", "list", "patch", "update", "watch"},
+						APIGroups: []string{"autoscaling"},
+						Resources: []string{"horizontalpodautoscalers"},
+					},
+					{
 						Verbs:     []string{"delete", "get", "list", "patch", "update", "watch"},
 						APIGroups: []string{""},
 						Resources: []string{"persistentvolumes"},
@@ -476,6 +481,11 @@ func Roles(dot *helmette.Dot) []rbacv1.Role {
 				Annotations: values.Annotations,
 			},
 			Rules: []rbacv1.PolicyRule{
+				{
+					Verbs:     []string{"create", "delete", "get", "list", "patch", "update", "watch"},
+					APIGroups: []string{"autoscaling"},
+					Resources: []string{"horizontalpodautoscalers"},
+				},
 				{
 					Verbs:     []string{"delete", "get", "list", "patch", "update", "watch"},
 					APIGroups: []string{""},
