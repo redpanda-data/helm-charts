@@ -522,7 +522,7 @@ func Roles(dot *helmette.Dot) []rbacv1.Role {
 					Resources: []string{"jobs"},
 				},
 				{
-					Verbs:     []string{"create", "delete", "get", "patch", "update"},
+					Verbs:     []string{"create", "delete", "get", "patch", "update", "list", "watch"},
 					APIGroups: []string{"cert-manager.io"},
 					Resources: []string{"certificates"},
 				},
