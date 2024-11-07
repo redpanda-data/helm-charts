@@ -1,9 +1,12 @@
 package operator
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
+	"os/exec"
 	"regexp"
 	"slices"
 	"strconv"
@@ -11,17 +14,95 @@ import (
 
 	fuzz "github.com/google/gofuzz"
 	"github.com/redpanda-data/helm-charts/pkg/helm"
+	"github.com/redpanda-data/helm-charts/pkg/kube"
 	"github.com/redpanda-data/helm-charts/pkg/testutil"
 	"github.com/santhosh-tekuri/jsonschema/v5"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/tools/txtar"
 	corev1 "k8s.io/api/core/v1"
+	rbacv1 "k8s.io/api/rbac/v1"
+	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/utils/ptr"
+	"sigs.k8s.io/kustomize/api/konfig"
+	"sigs.k8s.io/kustomize/kustomize/v5/commands/build"
+	"sigs.k8s.io/kustomize/kyaml/filesys"
 	"sigs.k8s.io/yaml"
 )
+
+func TestMain(m *testing.M) {
+	// Chart deps are kept within ./charts as a tgz archive, which is git
+	// ignored. Helm dep build will ensure that ./charts is in sync with
+	// Chart.lock, which is tracked by git.
+	// This is performed in TestMain as there may be many tests that run the
+	// redpanda helm chart.
+	out, err := exec.Command("helm", "repo", "add", "prometheus", "https://prometheus-community.github.io/helm-charts").CombinedOutput()
+	if err != nil {
+		log.Fatalf("failed to run helm repo add: %s", out)
+	}
+
+	out, err = exec.Command("helm", "dep", "build", ".").CombinedOutput()
+	if err != nil {
+		log.Fatalf("failed to run helm dep build: %s", out)
+	}
+
+	os.Exit(m.Run())
+}
+
+func TestHelmKustomizeEquivalence(t *testing.T) {
+	ctx := testutil.Context(t)
+	client, err := helm.New(helm.Options{ConfigHome: testutil.TempDir(t)})
+	require.NoError(t, err)
+
+	values := PartialValues{FullnameOverride: ptr.To("redpanda"), RBAC: &PartialRBAC{CreateAdditionalControllerCRs: ptr.To(true)}}
+
+	rendered, err := client.Template(ctx, ".", helm.TemplateOptions{
+		Name:      "redpanda",
+		Namespace: "",
+		Values:    values,
+	})
+	require.NoError(t, err)
+
+	fSys := filesys.MakeFsOnDisk()
+	buffy := new(bytes.Buffer)
+	cmd := build.NewCmdBuild(
+		fSys, build.MakeHelp(konfig.ProgramName, "build"), buffy)
+	require.NoError(t, cmd.RunE(cmd, []string{"testdata"}))
+
+	helmObjs, err := kube.DecodeYAML(rendered, Scheme)
+	require.NoError(t, err)
+
+	require.NoError(t, apiextensionsv1.AddToScheme(Scheme))
+	kustomizeObjs, err := kube.DecodeYAML(buffy.Bytes(), Scheme)
+	require.NoError(t, err)
+
+	helmClusterRoleRules, helmRoleRules := ExtractRules(helmObjs)
+	kClusterRoleRules, kRoleRules := ExtractRules(kustomizeObjs)
+
+	for k := range helmRoleRules {
+		helmChart := helmRoleRules[k]
+		slices.Sort(helmChart)
+		kustomize := kRoleRules[k]
+		slices.Sort(kustomize)
+		assert.Equal(t, helmChart, kustomize, "for the api#resource %q", k)
+		delete(kRoleRules, k)
+	}
+	assert.Len(t, kRoleRules, 0)
+
+	for k := range kClusterRoleRules {
+		helmChart := helmClusterRoleRules[k]
+		slices.Sort(helmChart)
+		kustomize := kClusterRoleRules[k]
+		slices.Sort(kustomize)
+		assert.Equal(t, helmChart, kustomize, "for the api#resource %q", k)
+
+		delete(kClusterRoleRules, k)
+	}
+	assert.Len(t, kClusterRoleRules, 0)
+}
 
 // TestValues asserts that the chart's values.yaml file can be losslessly
 // loaded into our type [Values] struct.
@@ -47,12 +128,6 @@ func TestTemplate(t *testing.T) {
 	ctx := testutil.Context(t)
 	client, err := helm.New(helm.Options{ConfigHome: testutil.TempDir(t)})
 	require.NoError(t, err)
-
-	// Chart deps are kept within ./charts as a tgz archive, which is git
-	// ignored. Helm dep build will ensure that ./charts is in sync with
-	// Chart.lock, which is tracked by git.
-	require.NoError(t, client.RepoAdd(ctx, "prometheus", "https://prometheus-community.github.io/helm-charts"))
-	require.NoError(t, client.DependencyBuild(ctx, "."), "failed to refresh helm dependencies")
 
 	casesArchive, err := txtar.ParseFile("testdata/template-cases.txtar")
 	require.NoError(t, err)
@@ -221,4 +296,42 @@ func makeSureTagIsNotEmptyString(values PartialValues, fuzzer *fuzz.Fuzzer) {
 			fuzzer.Fuzz(t)
 		}
 	}
+}
+
+func CalculateRoleRules(rules []rbacv1.PolicyRule, computedRules map[string][]string) {
+	for _, rule := range rules {
+		for _, api := range rule.APIGroups {
+			for _, res := range rule.Resources {
+				key := fmt.Sprintf("%s#%s", api, res)
+
+				verbs, exists := computedRules[key]
+				if !exists {
+					computedRules[key] = rule.Verbs
+					continue
+				}
+				for _, verb := range rule.Verbs {
+					if !slices.Contains(verbs, verb) {
+						verbs = append(verbs, verb)
+					}
+				}
+				computedRules[key] = verbs
+			}
+		}
+	}
+}
+
+func ExtractRules(objs []kube.Object) (map[string][]string, map[string][]string) {
+	clusterRoles := map[string][]string{}
+	roles := map[string][]string{}
+	for _, o := range objs {
+		switch o.GetObjectKind().GroupVersionKind().String() {
+		case "rbac.authorization.k8s.io/v1, Kind=ClusterRole":
+			cr := o.(*rbacv1.ClusterRole)
+			CalculateRoleRules(cr.Rules, clusterRoles)
+		case "rbac.authorization.k8s.io/v1, Kind=Role":
+			r := o.(*rbacv1.Role)
+			CalculateRoleRules(r.Rules, roles)
+		}
+	}
+	return clusterRoles, roles
 }
