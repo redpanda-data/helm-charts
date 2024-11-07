@@ -442,7 +442,7 @@ func Roles(dot *helmette.Dot) []rbacv1.Role {
 			Rules: []rbacv1.PolicyRule{
 				{
 					Verbs:     []string{"get", "list", "watch", "create", "update", "patch", "delete"},
-					APIGroups: []string{"", "coordination.k8s.io"},
+					APIGroups: []string{"coordination.k8s.io"},
 					Resources: []string{"leases"},
 				},
 			},
