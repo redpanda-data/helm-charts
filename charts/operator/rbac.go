@@ -318,7 +318,64 @@ func ClusterRole(dot *helmette.Dot) []rbacv1.ClusterRole {
 		}...)
 	}
 
-	return clusterRoles
+	return append(clusterRoles, rbacv1.ClusterRole{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "rbac.authorization.k8s.io/v1",
+			Kind:       "ClusterRole",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:        Fullname(dot),
+			Labels:      Labels(dot),
+			Annotations: values.Annotations,
+		},
+		Rules: []rbacv1.PolicyRule{
+			{
+				Verbs:     []string{"get", "list", "patch", "update", "watch"},
+				APIGroups: []string{"cluster.redpanda.com"},
+				Resources: []string{"topics"},
+			},
+			{
+				Verbs:     []string{"update"},
+				APIGroups: []string{"cluster.redpanda.com"},
+				Resources: []string{"topics/finalizers"},
+			},
+			{
+				Verbs:     []string{"get", "patch", "update"},
+				APIGroups: []string{"cluster.redpanda.com"},
+				Resources: []string{"topics/status"},
+			},
+			{
+				Verbs:     []string{"get", "list", "patch", "update", "watch"},
+				APIGroups: []string{"cluster.redpanda.com"},
+				Resources: []string{"users"},
+			},
+			{
+				Verbs:     []string{"update"},
+				APIGroups: []string{"cluster.redpanda.com"},
+				Resources: []string{"users/finalizers"},
+			},
+			{
+				Verbs:     []string{"get", "patch", "update"},
+				APIGroups: []string{"cluster.redpanda.com"},
+				Resources: []string{"users/status"},
+			},
+			{
+				Verbs:     []string{"get", "list", "patch", "update", "watch"},
+				APIGroups: []string{"cluster.redpanda.com"},
+				Resources: []string{"schemas"},
+			},
+			{
+				Verbs:     []string{"update"},
+				APIGroups: []string{"cluster.redpanda.com"},
+				Resources: []string{"schemas/finalizers"},
+			},
+			{
+				Verbs:     []string{"get", "patch", "update"},
+				APIGroups: []string{"cluster.redpanda.com"},
+				Resources: []string{"schemas/status"},
+			},
+		},
+	})
 }
 
 func ClusterRoleBindings(dot *helmette.Dot) []rbacv1.ClusterRoleBinding {
@@ -355,7 +412,7 @@ func ClusterRoleBindings(dot *helmette.Dot) []rbacv1.ClusterRoleBinding {
 	}
 
 	if values.Scope == Cluster {
-		binding = append(binding, rbacv1.ClusterRoleBinding{
+		return append(binding, rbacv1.ClusterRoleBinding{
 			TypeMeta: metav1.TypeMeta{
 				APIVersion: "rbac.authorization.k8s.io/v1",
 				Kind:       "ClusterRoleBinding",
@@ -432,7 +489,29 @@ func ClusterRoleBindings(dot *helmette.Dot) []rbacv1.ClusterRoleBinding {
 		})
 	}
 
-	return binding
+	return append(binding, rbacv1.ClusterRoleBinding{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: "rbac.authorization.k8s.io/v1",
+			Kind:       "ClusterRoleBinding",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:        Fullname(dot),
+			Labels:      Labels(dot),
+			Annotations: values.Annotations,
+		},
+		RoleRef: rbacv1.RoleRef{
+			APIGroup: "rbac.authorization.k8s.io",
+			Kind:     "ClusterRole",
+			Name:     Fullname(dot),
+		},
+		Subjects: []rbacv1.Subject{
+			{
+				Kind:      "ServiceAccount",
+				Name:      ServiceAccountName(dot),
+				Namespace: dot.Release.Namespace,
+			},
+		},
+	})
 }
 
 func Roles(dot *helmette.Dot) []rbacv1.Role {
