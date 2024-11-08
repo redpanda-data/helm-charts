@@ -632,16 +632,6 @@ func Roles(dot *helmette.Dot) []rbacv1.Role {
 					Resources: []string{"roles"},
 				},
 				{
-					Verbs:     []string{"get", "list", "patch", "update", "watch"},
-					APIGroups: []string{"redpanda.vectorized.io"},
-					Resources: []string{"clusters"},
-				},
-				{
-					Verbs:     []string{"get", "list", "patch", "update", "watch"},
-					APIGroups: []string{"redpanda.vectorized.io"},
-					Resources: []string{"consoles"},
-				},
-				{
 					Verbs:     []string{"create", "delete", "get", "list", "patch", "update", "watch"},
 					APIGroups: []string{"source.toolkit.fluxcd.io"},
 					Resources: []string{"buckets"},
