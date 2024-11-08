@@ -604,11 +604,6 @@ func Roles(dot *helmette.Dot) []rbacv1.Role {
 				{
 					Verbs:     []string{"create", "delete", "get", "list", "patch", "update", "watch"},
 					APIGroups: []string{"monitoring.coreos.com"},
-					Resources: []string{"podmonitors"},
-				},
-				{
-					Verbs:     []string{"create", "delete", "get", "list", "patch", "update", "watch"},
-					APIGroups: []string{"monitoring.coreos.com"},
 					Resources: []string{"servicemonitors"},
 				},
 				{
