@@ -333,6 +333,19 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "redpanda.Listeners.SchemaRegistryList" -}}
+{{- $l := (index .a 0) -}}
+{{- $replicas := (index .a 1) -}}
+{{- $fullname := (index .a 2) -}}
+{{- $internalDomain := (index .a 3) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (get (fromJson (include "redpanda.ServerList" (dict "a" (list $replicas "" $fullname $internalDomain ($l.schemaRegistry.port | int)) ))) "r")) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "redpanda.ServerList" -}}
 {{- $replicas := (index .a 0) -}}
 {{- $prefix := (index .a 1) -}}
