@@ -4,7 +4,8 @@ metadata:
   name: cluster-tls
 spec:
   chartRef:
-    chartVersion: ">4.0.0"
+    chartVersion: "5.9.9"
+    useFlux: false
   clusterSpec:
     console:
       enabled: false
