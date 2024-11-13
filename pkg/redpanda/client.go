@@ -237,14 +237,43 @@ func authFromDot(dot *helmette.Dot) (username string, password string, mechanism
 	return
 }
 
-func tlsConfigFromDot(dot *helmette.Dot, listener redpanda.InternalTLS) (*tls.Config, error) {
-	cert := listener.Cert
+func certificatesFor(dot *helmette.Dot, cert string) (certSecret, certKey, clientSecret string) {
+	values := helmette.Unwrap[redpanda.Values](dot.Values)
+
 	name := redpanda.Fullname(dot)
+
+	// default to cert manager issued names and tls.crt which is
+	// where cert-manager outputs the root CA
+	certKey = corev1.TLSCertKey
+	certSecret = fmt.Sprintf("%s-%s-root-certificate", name, cert)
+	clientSecret = fmt.Sprintf("%s-client", name)
+
+	if certificate, ok := values.TLS.Certs[cert]; ok {
+		// if this references a non-enabled certificate, just return
+		// the default cert-manager issued names
+		if certificate.Enabled != nil && !*certificate.Enabled {
+			return certSecret, certKey, clientSecret
+		}
+
+		if certificate.ClientSecretRef != nil {
+			clientSecret = certificate.ClientSecretRef.Name
+		}
+		if certificate.SecretRef != nil {
+			certSecret = certificate.SecretRef.Name
+			if certificate.CAEnabled {
+				certKey = "ca.crt"
+			}
+		}
+	}
+	return certSecret, certKey, clientSecret
+}
+
+func tlsConfigFromDot(dot *helmette.Dot, listener redpanda.InternalTLS) (*tls.Config, error) {
 	namespace := dot.Release.Namespace
 	serviceName := redpanda.ServiceName(dot)
-	clientCertName := fmt.Sprintf("%s-client", name)
-	rootCertName := fmt.Sprintf("%s-%s-root-certificate", name, cert)
 	serverName := fmt.Sprintf("%s.%s.svc", serviceName, namespace)
+
+	rootCertName, rootCertKey, clientCertName := certificatesFor(dot, listener.Cert)
 
 	serverTLSError := func(err error) error {
 		return fmt.Errorf("error fetching server root CA %s/%s: %w", namespace, rootCertName, err)
@@ -264,7 +293,7 @@ func tlsConfigFromDot(dot *helmette.Dot, listener redpanda.InternalTLS) (*tls.Co
 		return nil, serverTLSError(ErrServerCertificateNotFound)
 	}
 
-	serverPublicKey, found := serverCert.Data[corev1.TLSCertKey]
+	serverPublicKey, found := serverCert.Data[rootCertKey]
 	if !found {
 		return nil, serverTLSError(ErrServerCertificatePublicKeyNotFound)
 	}
@@ -289,6 +318,7 @@ func tlsConfigFromDot(dot *helmette.Dot, listener redpanda.InternalTLS) (*tls.Co
 			return nil, clientTLSError(ErrServerCertificateNotFound)
 		}
 
+		// we always use tls.crt for client certs
 		clientPublicKey, found := clientCert.Data[corev1.TLSCertKey]
 		if !found {
 			return nil, clientTLSError(ErrClientCertificatePublicKeyNotFound)
