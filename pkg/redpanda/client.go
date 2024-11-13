@@ -56,10 +56,10 @@ func AdminClient(dot *helmette.Dot, dialer DialContextFunc) (*rpadmin.AdminAPI, 
 	var tlsConfig *tls.Config
 	var err error
 
-	if redpanda.TLSEnabled(dot) {
+	if values.Listeners.Admin.TLS.IsEnabled(&values.TLS) {
 		prefix = "https://"
 
-		tlsConfig, err = tlsConfigFromDot(dot, values.Listeners.Admin.TLS.Cert)
+		tlsConfig, err = tlsConfigFromDot(dot, values.Listeners.Admin.TLS)
 		if err != nil {
 			return nil, err
 		}
@@ -113,10 +113,10 @@ func SchemaRegistryClient(dot *helmette.Dot, dialer DialContextFunc, opts ...sr.
 		}).DialContext
 	}
 
-	if redpanda.TLSEnabled(dot) {
+	if values.Listeners.SchemaRegistry.TLS.IsEnabled(&values.TLS) {
 		prefix = "https://"
 
-		tlsConfig, err := tlsConfigFromDot(dot, values.Listeners.SchemaRegistry.TLS.Cert)
+		tlsConfig, err := tlsConfigFromDot(dot, values.Listeners.SchemaRegistry.TLS)
 		if err != nil {
 			return nil, err
 		}
@@ -156,8 +156,8 @@ func KafkaClient(dot *helmette.Dot, dialer DialContextFunc, opts ...kgo.Opt) (*k
 
 	opts = append(opts, kgo.SeedBrokers(brokers...))
 
-	if redpanda.TLSEnabled(dot) {
-		tlsConfig, err := tlsConfigFromDot(dot, values.Listeners.Kafka.TLS.Cert)
+	if values.Listeners.Kafka.TLS.IsEnabled(&values.TLS) {
+		tlsConfig, err := tlsConfigFromDot(dot, values.Listeners.Kafka.TLS)
 		if err != nil {
 			return nil, err
 		}
@@ -237,7 +237,8 @@ func authFromDot(dot *helmette.Dot) (username string, password string, mechanism
 	return
 }
 
-func tlsConfigFromDot(dot *helmette.Dot, cert string) (*tls.Config, error) {
+func tlsConfigFromDot(dot *helmette.Dot, listener redpanda.InternalTLS) (*tls.Config, error) {
+	cert := listener.Cert
 	name := redpanda.Fullname(dot)
 	namespace := dot.Release.Namespace
 	serviceName := redpanda.ServiceName(dot)
@@ -278,7 +279,7 @@ func tlsConfigFromDot(dot *helmette.Dot, cert string) (*tls.Config, error) {
 
 	tlsConfig.RootCAs = pool
 
-	if redpanda.ClientAuthRequired(dot) {
+	if listener.RequireClientAuth {
 		clientCert, found, lookupErr := helmette.SafeLookup[corev1.Secret](dot, namespace, clientCertName)
 		if lookupErr != nil {
 			return nil, clientTLSError(lookupErr)
