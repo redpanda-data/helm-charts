@@ -6,8 +6,15 @@
 #### Added
 #### Changed
 #### Fixed
+#### Removed
+
+### [5.9.10](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.10) - 2024-11-14
+#### Added
+#### Changed
+#### Fixed
 * All occurrence of External Domain execution via tpl function
 * Calculating Service typed LoadBalancer annotation based on external addresses (even single one)
+* Fix connecting to the schema registry via rpk on nodes for versions of rpk that support a node-level rpk stanza.
 #### Removed
 
 ### [5.9.9](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.9) - 2024-10-24
