@@ -167,6 +167,11 @@ func rpkProfile(dot *helmette.Dot) map[string]any {
 		adminAdvertisedList = append(adminAdvertisedList, fmt.Sprintf("%s:%d", advertisedHost(dot, i), int(advertisedAdminPort(dot, i))))
 	}
 
+	schemaAdvertisedList := []string{}
+	for i := int32(0); i < values.Statefulset.Replicas; i++ {
+		schemaAdvertisedList = append(schemaAdvertisedList, fmt.Sprintf("%s:%d", advertisedHost(dot, i), int(advertisedSchemaPort(dot, i))))
+	}
+
 	kafkaTLS := rpkKafkaClientTLSConfiguration(dot)
 	if _, ok := kafkaTLS["ca_file"]; ok {
 		kafkaTLS["ca_file"] = "ca.crt"
@@ -175,6 +180,11 @@ func rpkProfile(dot *helmette.Dot) map[string]any {
 	adminTLS := rpkAdminAPIClientTLSConfiguration(dot)
 	if _, ok := adminTLS["ca_file"]; ok {
 		adminTLS["ca_file"] = "ca.crt"
+	}
+
+	schemaTLS := rpkSchemaRegistryClientTLSConfiguration(dot)
+	if _, ok := schemaTLS["ca_file"]; ok {
+		schemaTLS["ca_file"] = "ca.crt"
 	}
 
 	ka := map[string]any{
@@ -195,10 +205,20 @@ func rpkProfile(dot *helmette.Dot) map[string]any {
 		aa["tls"] = adminTLS
 	}
 
+	sa := map[string]any{
+		"addresses": schemaAdvertisedList,
+		"tls":       nil,
+	}
+
+	if len(schemaTLS) > 0 {
+		sa["tls"] = schemaTLS
+	}
+
 	result := map[string]any{
-		"name":      getFirstExternalKafkaListener(dot),
-		"kafka_api": ka,
-		"admin_api": aa,
+		"name":            getFirstExternalKafkaListener(dot),
+		"kafka_api":       ka,
+		"admin_api":       aa,
+		"schema_registry": sa,
 	}
 
 	return result
@@ -238,6 +258,32 @@ func advertisedAdminPort(dot *helmette.Dot, i int32) int {
 	listener := values.Listeners.Admin.External[externalAdminListenerName.(string)]
 
 	port := int(values.Listeners.Admin.Port)
+
+	if int(listener.Port) > 1 {
+		port = int(listener.Port)
+	}
+
+	if len(listener.AdvertisedPorts) > 1 {
+		port = int(listener.AdvertisedPorts[i])
+	} else if len(listener.AdvertisedPorts) == 1 {
+		port = int(listener.AdvertisedPorts[0])
+	}
+
+	return port
+}
+
+func advertisedSchemaPort(dot *helmette.Dot, i int32) int {
+	values := helmette.Unwrap[Values](dot.Values)
+
+	keys := helmette.Keys(values.Listeners.SchemaRegistry.External)
+
+	helmette.SortAlpha(keys)
+
+	externalSchemaListenerName := helmette.First(keys)
+
+	listener := values.Listeners.SchemaRegistry.External[externalSchemaListenerName.(string)]
+
+	port := int(values.Listeners.SchemaRegistry.Port)
 
 	if int(listener.Port) > 1 {
 		port = int(listener.Port)
