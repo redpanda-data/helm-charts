@@ -438,6 +438,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -1708,6 +1715,10 @@ data:
       - redpanda-0:31092
       tls: null
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      tls: null
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -2806,6 +2817,11 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -4208,6 +4224,10 @@ data:
       - redpanda-0:31092
       tls: null
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      tls: null
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -5521,6 +5541,11 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -6982,6 +7007,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -8527,6 +8559,12 @@ data:
       - redpanda-2:31092
       tls: null
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls: null
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -10051,6 +10089,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -11472,6 +11517,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -12923,6 +12975,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-1.my-domain:30081
+      - 127.0.0.1.my-domain:30081
+      - 192.168.0.1.my-domain:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -14443,6 +14502,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -15886,6 +15952,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0.random-domain:30080
+      - redpanda-1.random-domain:30080
+      - redpanda-2.random-domain:30080
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -17158,6 +17231,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0.random-domain:30081
+      - redpanda-1.random-domain:30081
+      - redpanda-2.random-domain:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -18450,6 +18530,12 @@ data:
       - redpanda-2:31092
       tls: null
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls: null
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -19608,6 +19694,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -21007,6 +21100,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -22641,6 +22741,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -24011,6 +24118,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - $PREFIX_TEMPLATE.my-domain:30081
+      - $PREFIX_TEMPLATE.my-domain:30081
+      - $PREFIX_TEMPLATE.my-domain:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -25426,6 +25540,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -26877,6 +26998,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -28326,6 +28454,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -29738,6 +29873,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -31171,6 +31313,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -32634,6 +32783,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -34095,6 +34251,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -35520,6 +35683,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -36966,6 +37136,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -38429,6 +38606,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -39890,6 +40074,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -41315,6 +41506,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -42717,6 +42915,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -44084,6 +44289,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -45452,6 +45664,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -46885,6 +47104,14 @@ data:
       - redpanda-3:31092
       tls: null
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      - redpanda-3:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -48285,6 +48512,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -49670,6 +49904,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -51371,6 +51612,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -52911,6 +53159,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -54624,6 +54879,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0.REDPANDAREDPANDAREDPANDA-testing:30081
+      - redpanda-1.REDPANDAREDPANDAREDPANDA-testing:30081
+      - redpanda-2.REDPANDAREDPANDAREDPANDA-testing:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -55996,6 +56258,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -57401,6 +57670,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -58802,6 +59078,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -60205,6 +60488,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -61543,6 +61833,13 @@ data:
         cert_file: /etc/tls/certs/redpanda-client/tls.crt
         key_file: /etc/tls/certs/redpanda-client/tls.key
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -62860,6 +63157,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -64364,6 +64668,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -65863,6 +66174,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -67248,6 +67566,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -68625,6 +68950,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -70415,6 +70747,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -71784,6 +72123,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -73153,6 +73499,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -74520,6 +74873,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -77400,6 +77760,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -78867,6 +79234,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -80271,6 +80645,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -81661,6 +82042,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -83061,6 +83449,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -84465,6 +84860,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -85855,6 +86257,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -87243,6 +87652,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -88647,6 +89063,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -90037,6 +90460,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -91425,6 +91855,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -92829,6 +93266,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -94219,6 +94663,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -95608,6 +96059,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -97013,6 +97471,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -98404,6 +98869,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -99793,6 +100265,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -101198,6 +101677,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -102589,6 +103075,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -103977,6 +104470,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -105150,6 +105650,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -106345,6 +106852,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -107979,6 +108493,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -109708,6 +110229,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -111337,6 +111865,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -113027,6 +113562,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -114460,6 +115002,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - rp0.REDPANDAREDPANDAREDPANDA-testing:30081
+      - rp1.REDPANDAREDPANDAREDPANDA-testing:30081
+      - rp2.REDPANDAREDPANDAREDPANDA-testing:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -115921,6 +116470,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - $PREFIX_TEMPLATE.REDPANDAREDPANDAREDPANDA-testing:30081
+      - $PREFIX_TEMPLATE.REDPANDAREDPANDAREDPANDA-testing:30081
+      - $PREFIX_TEMPLATE.REDPANDAREDPANDAREDPANDA-testing:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -117444,6 +118000,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -118922,6 +119485,13 @@ data:
         cert_file: /etc/tls/certs/redpanda-client/tls.crt
         key_file: /etc/tls/certs/redpanda-client/tls.key
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -120435,6 +121005,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -121802,6 +122379,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -123186,6 +123770,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -124579,6 +125170,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -125983,6 +126581,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -127373,6 +127978,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -128762,6 +129374,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -130167,6 +130786,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -131558,6 +132184,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -132946,6 +133579,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
@@ -134358,6 +134998,13 @@ data:
       tls:
         ca_file: ca.crt
     name: default
+    schema_registry:
+      addresses:
+      - redpanda-0:30081
+      - redpanda-1:30081
+      - redpanda-2:30081
+      tls:
+        ca_file: ca.crt
 kind: ConfigMap
 metadata:
   creationTimestamp: null
