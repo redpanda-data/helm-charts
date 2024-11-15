@@ -3,7 +3,7 @@
 description: Find the default values and descriptions of settings in the Redpanda Helm chart.
 ---
 
-![Version: 5.9.10](https://img.shields.io/badge/Version-5.9.10-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v24.2.7](https://img.shields.io/badge/AppVersion-v24.2.7-informational?style=flat-square)
+![Version: 5.9.11](https://img.shields.io/badge/Version-5.9.11-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v24.2.7](https://img.shields.io/badge/AppVersion-v24.2.7-informational?style=flat-square)
 
 This page describes the official Redpanda Helm Chart. In particular, this page describes the contents of the chart’s [`values.yaml` file](https://github.com/redpanda-data/helm-charts/blob/main/charts/redpanda/values.yaml). Each of the settings is listed and described on this page, along with any default values.
 
@@ -637,7 +637,7 @@ CPU resources. For details, see the [Pod resources documentation](https://docs.r
 
 ### [resources.cpu.cores](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=resources.cpu.cores)
 
-Redpanda makes use of a thread per core model. For details, see this [blog](https://redpanda.com/blog/tpc-buffers). For this reason, Redpanda should only be given full cores.  Note: You can increase cores, but decreasing cores is not currently supported. See the [GitHub issue](https://github.com/redpanda-data/redpanda/issues/350).  This setting is equivalent to `--smp`, `resources.requests.cpu`, and `resources.limits.cpu`. For production, use `4` or greater.  To maximize efficiency, use the `static` CPU manager policy by specifying an even integer for CPU resource requests and limits. This policy gives the Pods running Redpanda brokers access to exclusive CPUs on the node. See https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/#static-policy.
+Redpanda makes use of a thread per core model. For details, see this [blog](https://redpanda.com/blog/tpc-buffers). For this reason, Redpanda should only be given full cores.  This setting is equivalent to `--smp`, `resources.requests.cpu`, and `resources.limits.cpu`. For production, use `4` or greater.  To maximize efficiency, use the `static` CPU manager policy by specifying an even integer for CPU resource requests and limits. This policy gives the Pods running Redpanda brokers access to exclusive CPUs on the node. See https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/#static-policy.
 
 **Default:** `1`
 

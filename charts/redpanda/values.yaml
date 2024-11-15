@@ -365,9 +365,6 @@ resources:
     # For details, see this [blog](https://redpanda.com/blog/tpc-buffers).
     # For this reason, Redpanda should only be given full cores.
     #
-    # Note: You can increase cores, but decreasing cores is not currently supported.
-    # See the [GitHub issue](https://github.com/redpanda-data/redpanda/issues/350).
-    #
     # This setting is equivalent to `--smp`, `resources.requests.cpu`, and `resources.limits.cpu`.
     # For production, use `4` or greater.
     #
