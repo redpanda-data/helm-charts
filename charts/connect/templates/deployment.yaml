@@ -65,6 +65,9 @@ spec:
             {{- if eq .Values.watch true}}
             - -w
             {{- end }}
+            {{- if eq .Values.telemetry false}}
+            - --disable-telemetry
+            {{- end }}
             {{- if and .Values.streams.enabled .Values.streams.streamsConfigMap }}
             - "streams"
             {{- if eq .Values.streams.api.enable false }}
