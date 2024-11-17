@@ -392,6 +392,10 @@ Enable a [PodDisruptionBudget](https://kubernetes.io/docs/tasks/run-application/
 
 **Default:** `""`
 
+### [telemetry](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=telemetry)
+
+**Default:** `true`
+
 ### [tolerations](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=tolerations)
 
 **Default:** `[]`
@@ -407,7 +411,3 @@ Enable a [PodDisruptionBudget](https://kubernetes.io/docs/tasks/run-application/
 ### [watch](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=watch)
 
 **Default:** `false`
-
-### [telemetry](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=telemetry)
-
-**Default:** `true`
