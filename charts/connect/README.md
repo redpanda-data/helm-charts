@@ -411,3 +411,4 @@ Enable a [PodDisruptionBudget](https://kubernetes.io/docs/tasks/run-application/
 ### [watch](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=watch)
 
 **Default:** `false`
+
