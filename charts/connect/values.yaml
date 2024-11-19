@@ -251,7 +251,10 @@ args: []
 # EXPERIMENTAL: watch config files for changes and automatically apply them
 watch: false
 
-# Spread  incoming Pod in relation to the existing Pods across your cluster. https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/#topologyspreadconstraints-field
+# Allow submitting anonymous telemetry data
+telemetry: true
+
+# Spread incoming Pod in relation to the existing Pods across your cluster. https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/#topologyspreadconstraints-field
 topologySpreadConstraints: []
 
 # /redpanda-connect.yaml configuration
