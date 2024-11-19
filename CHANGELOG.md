@@ -8,6 +8,14 @@
 #### Fixed
 #### Removed
 
+
+### [5.9.12](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.12) - 2024-11-22
+#### Added
+#### Changed
+* Chart version to update operator side-car container tag
+#### Fixed
+#### Removed
+
 ### [5.9.11](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.11) - 2024-11-21
 #### Added
 * Ability to generate Redpanda with Connector resources from go code
@@ -240,11 +248,12 @@
 #### Fixed
 #### Removed
 
-### [0.4.33](https://github.com/redpanda-data/helm-charts/releases/tag/operator-0.4.33) - 2024-11-6
+### [0.4.33](https://github.com/redpanda-data/helm-charts/releases/tag/operator-0.4.33) - 2024-11-22
 #### Added
 * Missing permissions for ClusterRoles, ClusterRoleBindings, Horizontal Pod Autoscaler, cert-manager/Certificate,
   cert-manager/Issuer, redpanda/Users, and redpanda/Schemas.
 #### Changed
+* Application version for newly operator release v2.3.0-24.3.1
 #### Fixed
 #### Removed
 
