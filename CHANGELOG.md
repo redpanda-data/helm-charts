@@ -5,6 +5,7 @@
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-FILLMEIN) - YYYY-MM-DD
 #### Added
 #### Changed
+* Include all Connectors chart values in Redpanda chart values
 #### Fixed
 #### Removed
 

@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+	"github.com/redpanda-data/helm-charts/charts/connectors"
 	"github.com/redpanda-data/helm-charts/charts/console"
 	"github.com/redpanda-data/helm-charts/charts/redpanda"
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
@@ -792,7 +793,7 @@ func TestLabels(t *testing.T) {
 			// This guarantee does not currently extend to console.
 			Console: &console.PartialValues{Enabled: ptr.To(false)},
 			// Nor connectors.
-			Connectors: &redpanda.PartialConnectors{Enabled: ptr.To(false)},
+			Connectors: &connectors.PartialValues{Enabled: ptr.To(false)},
 		}
 
 		helmValues, err := redpanda.Chart.LoadValues(values)
@@ -889,7 +890,7 @@ func TestGoHelmEquivalence(t *testing.T) {
 		},
 		AutomountServiceAccountToken: ptr.To(false),
 	}
-	values.Connectors = &redpanda.PartialConnectors{Enabled: ptr.To(false)}
+	values.Connectors = &connectors.PartialValues{Enabled: ptr.To(false), Test: &connectors.PartialCreatable{Create: ptr.To(false)}}
 
 	goObjs, err := redpanda.Chart.Render(kube.Config{}, helmette.Release{
 		Name:      "gotohelm",

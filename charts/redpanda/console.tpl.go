@@ -20,6 +20,7 @@ import (
 	"fmt"
 
 	"github.com/redpanda-data/console/backend/pkg/config"
+	"github.com/redpanda-data/helm-charts/charts/connectors"
 	"github.com/redpanda-data/helm-charts/charts/console"
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	"github.com/redpanda-data/helm-charts/pkg/kube"
@@ -243,7 +244,7 @@ func ConsoleConfig(dot *helmette.Dot) map[string]any {
 		},
 	}
 
-	if values.Connectors.Enabled {
+	if ptr.Deref(values.Connectors.Enabled, false) {
 		// TODO Do not cal Dig with dot.Values as restPort that is defined in connectors helm chart is not
 		// available in this function.
 		// TODO Find a way to call `(include "connectors.serviceName" $connectorsValues)` template defined
@@ -255,14 +256,16 @@ func ConsoleConfig(dot *helmette.Dot) map[string]any {
 			return c
 		}
 
+		connectorsDot := dot.Subcharts["connectors"]
+
 		connectorsURL := fmt.Sprintf("http://%s.%s.svc.%s:%d",
-			ConnectorsFullName(dot),
+			connectors.Fullname(connectorsDot),
 			dot.Release.Namespace,
 			helmette.TrimSuffix(".", values.ClusterDomain),
 			p)
 
 		c["connect"] = config.Connect{
-			Enabled: values.Connectors.Enabled,
+			Enabled: ptr.Deref(values.Connectors.Enabled, false),
 			Clusters: []config.ConnectCluster{
 				{
 					Name: "connectors",
@@ -289,14 +292,4 @@ func ConsoleConfig(dot *helmette.Dot) map[string]any {
 	}
 
 	return helmette.Merge(values.Console.Console.Config, c)
-}
-
-func ConnectorsFullName(dot *helmette.Dot) string {
-	values := helmette.Unwrap[Values](dot.Values)
-
-	if helmette.Dig(dot.Values.AsMap(), "", "connectors", "connectors", "fullnameOverwrite") != "" {
-		return cleanForK8s(values.Connectors.Connectors.FullnameOverwrite)
-	}
-
-	return cleanForK8s(fmt.Sprintf("%s-connectors", dot.Release.Name))
 }
