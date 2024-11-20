@@ -24,7 +24,6 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 //go:embed values.yaml
@@ -138,7 +137,7 @@ type Logging struct {
 
 type MonitoringConfig struct {
 	Enabled           bool                           `json:"enabled"`
-	ScrapeInterval    metav1.Duration                `json:"scrapeInterval"`
+	ScrapeInterval    monitoringv1.Duration          `json:"scrapeInterval"`
 	Labels            map[string]string              `json:"labels"`
 	Annotations       map[string]string              `json:"annotations"`
 	NamespaceSelector monitoringv1.NamespaceSelector `json:"namespaceSelector"`
