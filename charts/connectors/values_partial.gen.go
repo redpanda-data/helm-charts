@@ -10,7 +10,6 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 type PartialValues struct {
@@ -70,7 +69,7 @@ type PartialLogging struct {
 
 type PartialMonitoringConfig struct {
 	Enabled           *bool                           "json:\"enabled,omitempty\""
-	ScrapeInterval    *metav1.Duration                "json:\"scrapeInterval,omitempty\""
+	ScrapeInterval    *monitoringv1.Duration          "json:\"scrapeInterval,omitempty\""
 	Labels            map[string]string               "json:\"labels,omitempty\""
 	Annotations       map[string]string               "json:\"annotations,omitempty\""
 	NamespaceSelector *monitoringv1.NamespaceSelector "json:\"namespaceSelector,omitempty\""
