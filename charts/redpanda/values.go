@@ -7,6 +7,7 @@ import (
 	cmmeta "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
 	"github.com/invopop/jsonschema"
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
+	"github.com/redpanda-data/helm-charts/charts/connectors"
 	"github.com/redpanda-data/helm-charts/charts/console"
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	orderedmap "github.com/wk8/go-ordered-map/v2"
@@ -68,7 +69,7 @@ type Values struct {
 	Enterprise       Enterprise                    `json:"enterprise"`
 	RackAwareness    RackAwareness                 `json:"rackAwareness"`
 	Console          console.PartialValues         `json:"console,omitempty"`
-	Connectors       Connectors                    `json:"connectors"`
+	Connectors       connectors.PartialValues      `json:"connectors"`
 	Auth             Auth                          `json:"auth"`
 	TLS              TLS                           `json:"tls"`
 	External         ExternalConfig                `json:"external"`
@@ -88,16 +89,6 @@ type Values struct {
 		Enabled bool `json:"enabled"`
 	} `json:"tests"`
 	Force bool `json:"force"`
-}
-
-type Connectors struct {
-	Enabled    bool                  `json:"enabled"`
-	Connectors ConnectorsChartValues `json:"connectors"`
-}
-
-type ConnectorsChartValues struct {
-	RestPort          int    `json:"restPort"`
-	FullnameOverwrite string `json:"fullnameOverwrite"`
 }
 
 // +gotohelm:ignore=true

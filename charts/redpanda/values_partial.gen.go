@@ -8,6 +8,7 @@ package redpanda
 import (
 	cmmeta "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
+	"github.com/redpanda-data/helm-charts/charts/connectors"
 	"github.com/redpanda-data/helm-charts/charts/console"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -30,7 +31,7 @@ type PartialValues struct {
 	Enterprise       *PartialEnterprise            "json:\"enterprise,omitempty\""
 	RackAwareness    *PartialRackAwareness         "json:\"rackAwareness,omitempty\""
 	Console          *console.PartialValues        "json:\"console,omitempty\""
-	Connectors       *PartialConnectors            "json:\"connectors,omitempty\""
+	Connectors       *connectors.PartialValues     "json:\"connectors,omitempty\""
 	Auth             *PartialAuth                  "json:\"auth,omitempty\""
 	TLS              *PartialTLS                   "json:\"tls,omitempty\""
 	External         *PartialExternalConfig        "json:\"external,omitempty\""
@@ -82,11 +83,6 @@ type PartialEnterprise struct {
 type PartialRackAwareness struct {
 	Enabled        *bool   "json:\"enabled,omitempty\" jsonschema:\"required\""
 	NodeAnnotation *string "json:\"nodeAnnotation,omitempty\" jsonschema:\"required\""
-}
-
-type PartialConnectors struct {
-	Enabled    *bool                         "json:\"enabled,omitempty\""
-	Connectors *PartialConnectorsChartValues "json:\"connectors,omitempty\""
 }
 
 type PartialAuth struct {
@@ -342,11 +338,6 @@ type PartialService struct {
 type PartialLicenseSecretRef struct {
 	SecretName *string "json:\"secret_name,omitempty\""
 	SecretKey  *string "json:\"secret_key,omitempty\""
-}
-
-type PartialConnectorsChartValues struct {
-	RestPort          *int    "json:\"restPort,omitempty\""
-	FullnameOverwrite *string "json:\"fullnameOverwrite,omitempty\""
 }
 
 type PartialTLSCertMap map[string]PartialTLSCert
