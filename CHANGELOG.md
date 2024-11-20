@@ -301,6 +301,7 @@
 ## Connectors Chart
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/connectors-FILLMEIN) - YYYY-MM-DD
 #### Added
+* Enabled flag that would be only used by Redpanda chart when partial values will be embedded into Redpanda values struct
 #### Changed
 * The minimum Kubernetes version has been bumped to `1.25.0`
 * By default auto mount is disabled in ServiceAccount and Deployment PodSpec
