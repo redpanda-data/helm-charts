@@ -301,6 +301,12 @@
 ## Connectors Chart
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/connectors-FILLMEIN) - YYYY-MM-DD
 #### Added
+#### Changed
+#### Fixed
+#### Removed
+
+### [0.1.14](https://github.com/redpanda-data/helm-charts/releases/tag/connectors-0.1.14) - 2024-11-20
+#### Added
 * Enabled flag that would be only used by Redpanda chart when partial values will be embedded into Redpanda values struct
 #### Changed
 * The minimum Kubernetes version has been bumped to `1.25.0`
