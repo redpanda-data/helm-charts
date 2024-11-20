@@ -29,6 +29,7 @@ type PartialValues struct {
 	Storage          *PartialStorage               "json:\"storage,omitempty\""
 	ServiceAccount   *PartialServiceAccountConfig  "json:\"serviceAccount,omitempty\""
 	Service          *PartialServiceConfig         "json:\"service,omitempty\""
+	Enabled          *bool                         "json:\"enabled,omitempty\""
 }
 
 type PartialImage struct {

@@ -46,6 +46,7 @@ type Values struct {
 	Storage          Storage                       `json:"storage"`
 	ServiceAccount   ServiceAccountConfig          `json:"serviceAccount"`
 	Service          ServiceConfig                 `json:"service"`
+	Enabled          *bool                         `json:"enabled,omitempty"`
 }
 
 type Image struct {
