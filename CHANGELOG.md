@@ -374,6 +374,13 @@
 #### Fixed
 #### Removed
 
+### [0.14.1](https://github.com/redpanda-data/helm-charts/releases/tag/kminion-0.14.1)
+#### Added
+#### Changed
+#### Fixed
+* Add serviceMonitor targetLabels parameter in Values.yaml
+#### Removed
+
 ### [0.14.0](https://github.com/redpanda-data/helm-charts/releases/tag/kminion-0.14.0)
 #### Added
 #### Changed
