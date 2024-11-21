@@ -53247,7 +53247,7 @@ metadata:
     helm.sh/chart: console-0.7.30
   name: redpanda-console
 ---
-# Source: redpanda/charts/connectors/templates/service.yaml
+# Source: redpanda/charts/connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -53257,7 +53257,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: connectors
-    helm.sh/chart: connectors-0.1.13
+    helm.sh/chart: connectors-0.1.14
   name: redpanda-connectors
 spec:
   ipFamilies:
@@ -53405,7 +53405,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: connectors
-    helm.sh/chart: connectors-0.1.13
+    helm.sh/chart: connectors-0.1.14
   name: redpanda-connectors
 spec:
   progressDeadlineSeconds: 600
@@ -53440,6 +53440,7 @@ spec:
             namespaces:
             - default
             topologyKey: kubernetes.io/hostname
+      automountServiceAccountToken: false
       containers:
       - command: null
         env:
@@ -69038,7 +69039,7 @@ metadata:
     helm.sh/chart: console-0.7.30
   name: redpanda-console
 ---
-# Source: redpanda/charts/connectors/templates/service.yaml
+# Source: redpanda/charts/connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -69048,7 +69049,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: connectors
-    helm.sh/chart: connectors-0.1.13
+    helm.sh/chart: connectors-0.1.14
   name: redpanda-connectors
 spec:
   ipFamilies:
@@ -69196,7 +69197,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: connectors
-    helm.sh/chart: connectors-0.1.13
+    helm.sh/chart: connectors-0.1.14
   name: redpanda-connectors
 spec:
   progressDeadlineSeconds: 600
@@ -69231,6 +69232,7 @@ spec:
             namespaces:
             - default
             topologyKey: kubernetes.io/hostname
+      automountServiceAccountToken: false
       containers:
       - command: null
         env:
@@ -70025,7 +70027,7 @@ spec:
   ca:
     secretName: redpanda-external-root-certificate
 ---
-# Source: redpanda/charts/connectors/templates/pod-monitor.yaml
+# Source: redpanda/charts/connectors/templates/entry-point.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
@@ -108581,7 +108583,7 @@ metadata:
     helm.sh/chart: console-0.7.30
   name: redpanda-console
 ---
-# Source: redpanda/charts/connectors/templates/service.yaml
+# Source: redpanda/charts/connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -108591,7 +108593,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: connectors
-    helm.sh/chart: connectors-0.1.13
+    helm.sh/chart: connectors-0.1.14
   name: redpanda-connectors
 spec:
   ipFamilies:
@@ -108739,7 +108741,7 @@ metadata:
     app.kubernetes.io/instance: redpanda
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: connectors
-    helm.sh/chart: connectors-0.1.13
+    helm.sh/chart: connectors-0.1.14
   name: redpanda-connectors
 spec:
   progressDeadlineSeconds: 600
@@ -108774,6 +108776,7 @@ spec:
             namespaces:
             - default
             topologyKey: kubernetes.io/hostname
+      automountServiceAccountToken: false
       containers:
       - command: null
         env:
