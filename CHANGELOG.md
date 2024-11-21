@@ -5,6 +5,13 @@
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-FILLMEIN) - YYYY-MM-DD
 #### Added
 #### Changed
+#### Fixed
+#### Removed
+
+### [5.9.11](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.11) - 2024-11-21
+#### Added
+* Ability to generate Redpanda with Connector resources from go code
+#### Changed
 * Include all Connectors chart values in Redpanda chart values
 #### Fixed
 #### Removed
