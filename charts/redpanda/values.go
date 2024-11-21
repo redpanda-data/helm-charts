@@ -1508,6 +1508,20 @@ func (k *KafkaListeners) ConsoleTLS(tls *TLS) ConsoleTLS {
 	return t
 }
 
+func (k *KafkaListeners) ConnectorsTLS(tls *TLS, fullName string) connectors.TLS {
+	t := connectors.TLS{Enabled: k.TLS.IsEnabled(tls)}
+	if !t.Enabled {
+		return t
+	}
+
+	t.CA = struct {
+		SecretRef           string `json:"secretRef"`
+		SecretNameOverwrite string `json:"secretNameOverwrite"`
+	}{SecretRef: fmt.Sprintf("%s-default-cert", fullName)}
+
+	return t
+}
+
 type KafkaExternal struct {
 	// Enabled indicates if this listener is enabled. If not specified,
 	// defaults to the value of [ExternalConfig.Enabled].

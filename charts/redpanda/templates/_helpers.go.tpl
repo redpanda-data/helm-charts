@@ -449,6 +449,21 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "redpanda.cleanForK8sWithSuffix" -}}
+{{- $s := (index .a 0) -}}
+{{- $suffix := (index .a 1) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $lengthToTruncate := ((sub (((add ((get (fromJson (include "_shims.len" (dict "a" (list $s) ))) "r") | int) ((get (fromJson (include "_shims.len" (dict "a" (list $suffix) ))) "r") | int)) | int)) (63 | int)) | int) -}}
+{{- if (gt $lengthToTruncate (0 | int)) -}}
+{{- $s = (trunc $lengthToTruncate $s) -}}
+{{- end -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (printf "%s-%s" $s $suffix)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "redpanda.RedpandaSMP" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}

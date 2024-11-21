@@ -395,6 +395,14 @@ func cleanForK8s(in string) string {
 	return strings.TrimSuffix(helmette.Trunc(63, in), "-")
 }
 
+func cleanForK8sWithSuffix(s, suffix string) string {
+	lengthToTruncate := (len(s) + len(suffix)) - 63
+	if lengthToTruncate > 0 {
+		s = helmette.Trunc(lengthToTruncate, s)
+	}
+	return fmt.Sprintf("%s-%s", s, suffix)
+}
+
 func RedpandaSMP(dot *helmette.Dot) int64 {
 	values := helmette.Unwrap[Values](dot.Values)
 

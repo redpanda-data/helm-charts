@@ -151,6 +151,8 @@ func render(dot *helmette.Dot) []kube.Object {
 
 	manifests = append(manifests, consoleChartIntegration(dot)...)
 
+	manifests = append(manifests, connectorsChartIntegration(dot)...)
+
 	// NB: This slice may contain nil interfaces!
 	// Filtering happens elsewhere, don't call this function directly if you
 	// can avoid it.

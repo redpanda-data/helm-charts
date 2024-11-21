@@ -150,7 +150,7 @@
 {{- end -}}
 {{- $connectorsDot := (index $dot.Subcharts "connectors") -}}
 {{- $connectorsURL := (printf "http://%s.%s.svc.%s:%d" (get (fromJson (include "connectors.Fullname" (dict "a" (list $connectorsDot) ))) "r") $dot.Release.Namespace (trimSuffix "." $values.clusterDomain) $p) -}}
-{{- $_ := (set $c "connect" (mustMergeOverwrite (dict "enabled" false "clusters" (coalesce nil) "connectTimeout" 0 "readTimeout" 0 "requestTimeout" 0 ) (dict "enabled" (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $values.connectors.enabled false) ))) "r") "clusters" (list (mustMergeOverwrite (dict "name" "" "url" "" "tls" (dict "enabled" false "caFilepath" "" "certFilepath" "" "keyFilepath" "" "insecureSkipTlsVerify" false ) "username" "" "password" "" "token" "" ) (dict "name" "connectors" "url" $connectorsURL "tls" (mustMergeOverwrite (dict "enabled" false "caFilepath" "" "certFilepath" "" "keyFilepath" "" "insecureSkipTlsVerify" false ) (dict "enabled" false "caFilepath" "" "certFilepath" "" "keyFilepath" "" "insecureSkipTlsVerify" false )) "username" "" "password" "" "token" "" ))) ))) -}}
+{{- $_ := (set $c "connect" (dict "enabled" (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $values.connectors.enabled false) ))) "r") "clusters" (list (dict "name" "connectors" "url" $connectorsURL "tls" (dict "enabled" false "caFilepath" "" "certFilepath" "" "keyFilepath" "" "insecureSkipTlsVerify" false ) "username" "" "password" "" "token" "" )) "connectTimeout" (0 | int) "readTimeout" (0 | int) "requestTimeout" (0 | int) )) -}}
 {{- end -}}
 {{- if (eq (toJson $values.console.console) "null") -}}
 {{- $_ := (set $values.console "console" (mustMergeOverwrite (dict ) (dict "config" (dict ) ))) -}}

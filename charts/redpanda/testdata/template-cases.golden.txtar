@@ -53395,7 +53395,99 @@ spec:
     app.kubernetes.io/name: redpanda
   type: ClusterIP
 ---
-# Source: redpanda/templates/connectors/connectors.yaml
+# Source: redpanda/templates/entry-point.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations: {}
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/instance: redpanda
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.7.2
+    helm.sh/chart: console-0.7.30
+  name: redpanda-console
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: redpanda
+      app.kubernetes.io/name: console
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        checksum-redpanda-chart/config: 71a88dc7a5147c97b5b7f51931035e1aa62cdceb27860879d1681e5b80d057fe
+        checksum/config: 71a88dc7a5147c97b5b7f51931035e1aa62cdceb27860879d1681e5b80d057fe
+      creationTimestamp: null
+      labels:
+        app.kubernetes.io/instance: redpanda
+        app.kubernetes.io/name: console
+    spec:
+      affinity: {}
+      automountServiceAccountToken: true
+      containers:
+      - args:
+        - --config.filepath=/etc/console/configs/config.yaml
+        command: null
+        env: []
+        envFrom: []
+        image: docker.redpanda.com/redpandadata/console:v2.7.2
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /admin/health
+            port: http
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: console
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /admin/health
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources: {}
+        securityContext:
+          runAsNonRoot: true
+        volumeMounts:
+        - mountPath: /etc/console/configs
+          name: configs
+          readOnly: true
+        - mountPath: /etc/tls/certs/default
+          name: redpanda-default-cert
+      imagePullSecrets: []
+      initContainers: null
+      nodeSelector: {}
+      priorityClassName: ""
+      securityContext:
+        fsGroup: 99
+        runAsUser: 99
+      serviceAccountName: redpanda-console
+      tolerations: []
+      topologySpreadConstraints: []
+      volumes:
+      - configMap:
+          name: redpanda-console
+        name: configs
+      - name: redpanda-default-cert
+        secret:
+          defaultMode: 272
+          secretName: redpanda-default-cert
+---
+# Source: redpanda/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -53559,98 +53651,6 @@ spec:
           medium: Memory
           sizeLimit: 5Mi
         name: rp-connect-tmp
----
-# Source: redpanda/templates/entry-point.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  annotations: {}
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/instance: redpanda
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: console
-    app.kubernetes.io/version: v2.7.2
-    helm.sh/chart: console-0.7.30
-  name: redpanda-console
-  namespace: default
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app.kubernetes.io/instance: redpanda
-      app.kubernetes.io/name: console
-  strategy: {}
-  template:
-    metadata:
-      annotations:
-        checksum-redpanda-chart/config: 71a88dc7a5147c97b5b7f51931035e1aa62cdceb27860879d1681e5b80d057fe
-        checksum/config: 71a88dc7a5147c97b5b7f51931035e1aa62cdceb27860879d1681e5b80d057fe
-      creationTimestamp: null
-      labels:
-        app.kubernetes.io/instance: redpanda
-        app.kubernetes.io/name: console
-    spec:
-      affinity: {}
-      automountServiceAccountToken: true
-      containers:
-      - args:
-        - --config.filepath=/etc/console/configs/config.yaml
-        command: null
-        env: []
-        envFrom: []
-        image: docker.redpanda.com/redpandadata/console:v2.7.2
-        imagePullPolicy: IfNotPresent
-        livenessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /admin/health
-            port: http
-          initialDelaySeconds: 0
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 1
-        name: console
-        ports:
-        - containerPort: 8080
-          name: http
-          protocol: TCP
-        readinessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /admin/health
-            port: http
-          initialDelaySeconds: 10
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 1
-        resources: {}
-        securityContext:
-          runAsNonRoot: true
-        volumeMounts:
-        - mountPath: /etc/console/configs
-          name: configs
-          readOnly: true
-        - mountPath: /etc/tls/certs/default
-          name: redpanda-default-cert
-      imagePullSecrets: []
-      initContainers: null
-      nodeSelector: {}
-      priorityClassName: ""
-      securityContext:
-        fsGroup: 99
-        runAsUser: 99
-      serviceAccountName: redpanda-console
-      tolerations: []
-      topologySpreadConstraints: []
-      volumes:
-      - configMap:
-          name: redpanda-console
-        name: configs
-      - name: redpanda-default-cert
-        secret:
-          defaultMode: 272
-          secretName: redpanda-default-cert
 ---
 # Source: redpanda/templates/entry-point.yaml
 apiVersion: apps/v1
@@ -54202,139 +54202,6 @@ spec:
       args: ['redpanda-console:8080']
   restartPolicy: Never
   priorityClassName:
----
-# Source: redpanda/templates/connectors/connectors.yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: redpanda-connectors-mm2-test
-  namespace: "default"
-  labels:
-    app.kubernetes.io/component: connectors
-    app.kubernetes.io/instance: redpanda
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: connectors
-    helm.sh/chart: connectors-0.1.13
-  annotations:
-    "helm.sh/hook": test
-    "helm.sh/hook-delete-policy": before-hook-creation
-spec:
-  restartPolicy: Never
-  containers:
-    - name: create-mm2
-      image: docker.redpanda.com/redpandadata/redpanda:latest
-      command:
-        - /bin/bash
-        - -c
-        - |
-          set -xe
-
-          trap connectorsState ERR
-
-          connectorsState () {
-            echo check connectors expand status
-            curl  -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors -o - -w "\nstatus=%{http_code} %{redirect_url} size=%{size_download} time=%{time_total} content-type=\"%{content_type}\"\n"  http://redpanda-connectors:8083/connectors?expand=status
-            echo check connectors expand info
-            curl  -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors -o - -w "\nstatus=%{http_code} %{redirect_url} size=%{size_download} time=%{time_total} content-type=\"%{content_type}\"\n"  http://redpanda-connectors:8083/connectors?expand=info
-            echo check connector configuration
-            curl  -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors -o - -w "\nstatus=%{http_code} %{redirect_url} size=%{size_download} time=%{time_total} content-type=\"%{content_type}\"\n"  http://redpanda-connectors:8083/connectors/$CONNECTOR_NAME
-            echo check connector topics
-            curl  -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors -o - -w "\nstatus=%{http_code} %{redirect_url} size=%{size_download} time=%{time_total} content-type=\"%{content_type}\"\n"  http://redpanda-connectors:8083/connectors/$CONNECTOR_NAME/topics
-          }
-
-          curl  -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors -o - -w "\nstatus=%{http_code} %{redirect_url} size=%{size_download} time=%{time_total} content-type=\"%{content_type}\"\n"  http://redpanda-connectors:8083/connectors
-
-          SASL_MECHANISM="PLAIN"
-
-          rpk profile create test
-          rpk profile set tls.enabled=true brokers=redpanda-0.redpanda.default.svc.cluster.local.:9093,redpanda-1.redpanda.default.svc.cluster.local.:9093,redpanda-2.redpanda.default.svc.cluster.local.:9093
-          rpk profile set tls.ca=/redpanda-certs/ca.crt
-          CONNECT_TLS_ENABLED=true
-          SECURITY_PROTOCOL=PLAINTEXT
-          if [[ -n "$CONNECT_SASL_MECHANISM" && $CONNECT_TLS_ENABLED == "true" ]]; then
-            SECURITY_PROTOCOL="SASL_SSL"
-          elif [[ -n "$CONNECT_SASL_MECHANISM" ]]; then
-            SECURITY_PROTOCOL="SASL_PLAINTEXT"
-          elif [[ $CONNECT_TLS_ENABLED == "true" ]]; then
-            SECURITY_PROTOCOL="SSL"
-          fi
-
-          rpk topic list
-          rpk topic create test-topic
-          rpk topic list
-          echo "Test message!" | rpk topic produce test-topic
-
-          CONNECTOR_NAME=mm2-$RANDOM
-          cat << 'EOF' > /tmp/mm2-conf.json
-          {
-            "name": "CONNECTOR_NAME",
-            "config": {
-              "connector.class": "org.apache.kafka.connect.mirror.MirrorSourceConnector",
-              "topics": "test-topic",
-              "replication.factor": "1",
-              "tasks.max": "1",
-              "source.cluster.bootstrap.servers": "redpanda-0.redpanda.default.svc.cluster.local.:9093,redpanda-1.redpanda.default.svc.cluster.local.:9093,redpanda-2.redpanda.default.svc.cluster.local.:9093",
-              "target.cluster.bootstrap.servers": "redpanda-0.redpanda.default.svc.cluster.local.:9093,redpanda-1.redpanda.default.svc.cluster.local.:9093,redpanda-2.redpanda.default.svc.cluster.local.:9093",
-              "target.cluster.alias": "test-only",
-              "source.cluster.alias": "source",
-              "key.converter": "org.apache.kafka.connect.converters.ByteArrayConverter",
-              "value.converter": "org.apache.kafka.connect.converters.ByteArrayConverter",
-              "source->target.enabled": "true",
-              "target->source.enabled": "false",
-              "sync.topic.configs.interval.seconds": "5",
-              "sync.topics.configs.enabled": "true",
-              "source.cluster.ssl.truststore.type": "PEM",
-              "target.cluster.ssl.truststore.type": "PEM",
-              "source.cluster.ssl.truststore.location": "/opt/kafka/connect-certs/ca/ca.crt",
-              "target.cluster.ssl.truststore.location": "/opt/kafka/connect-certs/ca/ca.crt",
-              JAAS_CONFIG_SOURCE
-              JAAS_CONFIG_TARGET
-              "source.cluster.security.protocol": "SECURITY_PROTOCOL",
-              "target.cluster.security.protocol": "SECURITY_PROTOCOL",
-              "source.cluster.sasl.mechanism": "SASL_MECHANISM",
-              "target.cluster.sasl.mechanism": "SASL_MECHANISM",
-              "offset-syncs.topic.replication.factor": 1
-            }
-          }
-          EOF
-
-          sed -i "s/CONNECTOR_NAME/$CONNECTOR_NAME/g" /tmp/mm2-conf.json
-          sed -i "s/SASL_MECHANISM/$SASL_MECHANISM/g" /tmp/mm2-conf.json
-          sed -i "s/SECURITY_PROTOCOL/$SECURITY_PROTOCOL/g" /tmp/mm2-conf.json
-          set +x
-          sed -i "s/JAAS_CONFIG_SOURCE/$JAAS_CONFIG_SOURCE/g" /tmp/mm2-conf.json
-          sed -i "s/JAAS_CONFIG_TARGET/$JAAS_CONFIG_TARGET/g" /tmp/mm2-conf.json
-          set -x
-
-          curl  -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors -o - -w "\nstatus=%{http_code} %{redirect_url} size=%{size_download} time=%{time_total} content-type=\"%{content_type}\"\n"  -H 'Content-Type: application/json' http://redpanda-connectors:8083/connectors -d @/tmp/mm2-conf.json
-
-          # The rpk topic consume could fail for the first few times as kafka connect needs
-          # to spawn the task and copy one message from the source topic. To solve this race condition
-          # the retry should be implemented in bash for rpk topic consume or other mechanism that
-          # can confirm source connectors started its execution. As a fast fix fixed 30 second fix is added.
-          sleep 30
-
-          rpk topic consume source.test-topic -n 1 | grep "Test message!"
-
-          curl  -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors -o - -w "\nstatus=%{http_code} %{redirect_url} size=%{size_download} time=%{time_total} content-type=\"%{content_type}\"\n"  -X DELETE http://redpanda-connectors:8083/connectors/$CONNECTOR_NAME
-
-          curl  -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors -o - -w "\nstatus=%{http_code} %{redirect_url} size=%{size_download} time=%{time_total} content-type=\"%{content_type}\"\n"  http://redpanda-connectors:8083/connectors
-
-          rpk topic delete test-topic source.test-topic mm2-offset-syncs.test-only.internal
-      volumeMounts:
-        - mountPath: /redpanda-certs
-          name: redpanda-ca
-        - mountPath: /tmp
-          name: rp-connect-tmp
-  volumes:
-    - name: redpanda-ca
-      secret:
-        defaultMode: 0444
-        secretName: redpanda-default-cert
-    - emptyDir:
-        medium: Memory
-        sizeLimit: 5Mi
-      name: rp-connect-tmp
 ---
 # Source: redpanda/templates/entry-point.yaml
 apiVersion: batch/v1
@@ -69187,7 +69054,99 @@ spec:
     app.kubernetes.io/name: redpanda
   type: ClusterIP
 ---
-# Source: redpanda/templates/connectors/connectors.yaml
+# Source: redpanda/templates/entry-point.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations: {}
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/instance: redpanda
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.7.2
+    helm.sh/chart: console-0.7.30
+  name: redpanda-console
+  namespace: default
+spec:
+  replicas: null
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: redpanda
+      app.kubernetes.io/name: console
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        checksum-redpanda-chart/config: 71a88dc7a5147c97b5b7f51931035e1aa62cdceb27860879d1681e5b80d057fe
+        checksum/config: 71a88dc7a5147c97b5b7f51931035e1aa62cdceb27860879d1681e5b80d057fe
+      creationTimestamp: null
+      labels:
+        app.kubernetes.io/instance: redpanda
+        app.kubernetes.io/name: console
+    spec:
+      affinity: {}
+      automountServiceAccountToken: true
+      containers:
+      - args:
+        - --config.filepath=/etc/console/configs/config.yaml
+        command: null
+        env: []
+        envFrom: []
+        image: docker.redpanda.com/redpandadata/console:v2.7.2
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /admin/health
+            port: http
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: console
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /admin/health
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources: {}
+        securityContext:
+          runAsNonRoot: true
+        volumeMounts:
+        - mountPath: /etc/console/configs
+          name: configs
+          readOnly: true
+        - mountPath: /etc/tls/certs/default
+          name: redpanda-default-cert
+      imagePullSecrets: []
+      initContainers: null
+      nodeSelector: {}
+      priorityClassName: ""
+      securityContext:
+        fsGroup: 99
+        runAsUser: 99
+      serviceAccountName: redpanda-console
+      tolerations: []
+      topologySpreadConstraints: []
+      volumes:
+      - configMap:
+          name: redpanda-console
+        name: configs
+      - name: redpanda-default-cert
+        secret:
+          defaultMode: 272
+          secretName: redpanda-default-cert
+---
+# Source: redpanda/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -69351,98 +69310,6 @@ spec:
           medium: Memory
           sizeLimit: 5Mi
         name: rp-connect-tmp
----
-# Source: redpanda/templates/entry-point.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  annotations: {}
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/instance: redpanda
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: console
-    app.kubernetes.io/version: v2.7.2
-    helm.sh/chart: console-0.7.30
-  name: redpanda-console
-  namespace: default
-spec:
-  replicas: null
-  selector:
-    matchLabels:
-      app.kubernetes.io/instance: redpanda
-      app.kubernetes.io/name: console
-  strategy: {}
-  template:
-    metadata:
-      annotations:
-        checksum-redpanda-chart/config: 71a88dc7a5147c97b5b7f51931035e1aa62cdceb27860879d1681e5b80d057fe
-        checksum/config: 71a88dc7a5147c97b5b7f51931035e1aa62cdceb27860879d1681e5b80d057fe
-      creationTimestamp: null
-      labels:
-        app.kubernetes.io/instance: redpanda
-        app.kubernetes.io/name: console
-    spec:
-      affinity: {}
-      automountServiceAccountToken: true
-      containers:
-      - args:
-        - --config.filepath=/etc/console/configs/config.yaml
-        command: null
-        env: []
-        envFrom: []
-        image: docker.redpanda.com/redpandadata/console:v2.7.2
-        imagePullPolicy: IfNotPresent
-        livenessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /admin/health
-            port: http
-          initialDelaySeconds: 0
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 1
-        name: console
-        ports:
-        - containerPort: 8080
-          name: http
-          protocol: TCP
-        readinessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /admin/health
-            port: http
-          initialDelaySeconds: 10
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 1
-        resources: {}
-        securityContext:
-          runAsNonRoot: true
-        volumeMounts:
-        - mountPath: /etc/console/configs
-          name: configs
-          readOnly: true
-        - mountPath: /etc/tls/certs/default
-          name: redpanda-default-cert
-      imagePullSecrets: []
-      initContainers: null
-      nodeSelector: {}
-      priorityClassName: ""
-      securityContext:
-        fsGroup: 99
-        runAsUser: 99
-      serviceAccountName: redpanda-console
-      tolerations: []
-      topologySpreadConstraints: []
-      volumes:
-      - configMap:
-          name: redpanda-console
-        name: configs
-      - name: redpanda-default-cert
-        secret:
-          defaultMode: 272
-          secretName: redpanda-default-cert
 ---
 # Source: redpanda/charts/console/templates/entry-point.yaml
 apiVersion: autoscaling/v2
@@ -70071,139 +69938,6 @@ spec:
       args: ['redpanda-console:8080']
   restartPolicy: Never
   priorityClassName:
----
-# Source: redpanda/templates/connectors/connectors.yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: redpanda-connectors-mm2-test
-  namespace: "default"
-  labels:
-    app.kubernetes.io/component: connectors
-    app.kubernetes.io/instance: redpanda
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: connectors
-    helm.sh/chart: connectors-0.1.13
-  annotations:
-    "helm.sh/hook": test
-    "helm.sh/hook-delete-policy": before-hook-creation
-spec:
-  restartPolicy: Never
-  containers:
-    - name: create-mm2
-      image: docker.redpanda.com/redpandadata/redpanda:latest
-      command:
-        - /bin/bash
-        - -c
-        - |
-          set -xe
-
-          trap connectorsState ERR
-
-          connectorsState () {
-            echo check connectors expand status
-            curl  -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors -o - -w "\nstatus=%{http_code} %{redirect_url} size=%{size_download} time=%{time_total} content-type=\"%{content_type}\"\n"  http://redpanda-connectors:8083/connectors?expand=status
-            echo check connectors expand info
-            curl  -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors -o - -w "\nstatus=%{http_code} %{redirect_url} size=%{size_download} time=%{time_total} content-type=\"%{content_type}\"\n"  http://redpanda-connectors:8083/connectors?expand=info
-            echo check connector configuration
-            curl  -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors -o - -w "\nstatus=%{http_code} %{redirect_url} size=%{size_download} time=%{time_total} content-type=\"%{content_type}\"\n"  http://redpanda-connectors:8083/connectors/$CONNECTOR_NAME
-            echo check connector topics
-            curl  -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors -o - -w "\nstatus=%{http_code} %{redirect_url} size=%{size_download} time=%{time_total} content-type=\"%{content_type}\"\n"  http://redpanda-connectors:8083/connectors/$CONNECTOR_NAME/topics
-          }
-
-          curl  -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors -o - -w "\nstatus=%{http_code} %{redirect_url} size=%{size_download} time=%{time_total} content-type=\"%{content_type}\"\n"  http://redpanda-connectors:8083/connectors
-
-          SASL_MECHANISM="PLAIN"
-
-          rpk profile create test
-          rpk profile set tls.enabled=true brokers=redpanda-0.redpanda.default.svc.cluster.local.:9093,redpanda-1.redpanda.default.svc.cluster.local.:9093,redpanda-2.redpanda.default.svc.cluster.local.:9093
-          rpk profile set tls.ca=/redpanda-certs/ca.crt
-          CONNECT_TLS_ENABLED=true
-          SECURITY_PROTOCOL=PLAINTEXT
-          if [[ -n "$CONNECT_SASL_MECHANISM" && $CONNECT_TLS_ENABLED == "true" ]]; then
-            SECURITY_PROTOCOL="SASL_SSL"
-          elif [[ -n "$CONNECT_SASL_MECHANISM" ]]; then
-            SECURITY_PROTOCOL="SASL_PLAINTEXT"
-          elif [[ $CONNECT_TLS_ENABLED == "true" ]]; then
-            SECURITY_PROTOCOL="SSL"
-          fi
-
-          rpk topic list
-          rpk topic create test-topic
-          rpk topic list
-          echo "Test message!" | rpk topic produce test-topic
-
-          CONNECTOR_NAME=mm2-$RANDOM
-          cat << 'EOF' > /tmp/mm2-conf.json
-          {
-            "name": "CONNECTOR_NAME",
-            "config": {
-              "connector.class": "org.apache.kafka.connect.mirror.MirrorSourceConnector",
-              "topics": "test-topic",
-              "replication.factor": "1",
-              "tasks.max": "1",
-              "source.cluster.bootstrap.servers": "redpanda-0.redpanda.default.svc.cluster.local.:9093,redpanda-1.redpanda.default.svc.cluster.local.:9093,redpanda-2.redpanda.default.svc.cluster.local.:9093",
-              "target.cluster.bootstrap.servers": "redpanda-0.redpanda.default.svc.cluster.local.:9093,redpanda-1.redpanda.default.svc.cluster.local.:9093,redpanda-2.redpanda.default.svc.cluster.local.:9093",
-              "target.cluster.alias": "test-only",
-              "source.cluster.alias": "source",
-              "key.converter": "org.apache.kafka.connect.converters.ByteArrayConverter",
-              "value.converter": "org.apache.kafka.connect.converters.ByteArrayConverter",
-              "source->target.enabled": "true",
-              "target->source.enabled": "false",
-              "sync.topic.configs.interval.seconds": "5",
-              "sync.topics.configs.enabled": "true",
-              "source.cluster.ssl.truststore.type": "PEM",
-              "target.cluster.ssl.truststore.type": "PEM",
-              "source.cluster.ssl.truststore.location": "/opt/kafka/connect-certs/ca/ca.crt",
-              "target.cluster.ssl.truststore.location": "/opt/kafka/connect-certs/ca/ca.crt",
-              JAAS_CONFIG_SOURCE
-              JAAS_CONFIG_TARGET
-              "source.cluster.security.protocol": "SECURITY_PROTOCOL",
-              "target.cluster.security.protocol": "SECURITY_PROTOCOL",
-              "source.cluster.sasl.mechanism": "SASL_MECHANISM",
-              "target.cluster.sasl.mechanism": "SASL_MECHANISM",
-              "offset-syncs.topic.replication.factor": 1
-            }
-          }
-          EOF
-
-          sed -i "s/CONNECTOR_NAME/$CONNECTOR_NAME/g" /tmp/mm2-conf.json
-          sed -i "s/SASL_MECHANISM/$SASL_MECHANISM/g" /tmp/mm2-conf.json
-          sed -i "s/SECURITY_PROTOCOL/$SECURITY_PROTOCOL/g" /tmp/mm2-conf.json
-          set +x
-          sed -i "s/JAAS_CONFIG_SOURCE/$JAAS_CONFIG_SOURCE/g" /tmp/mm2-conf.json
-          sed -i "s/JAAS_CONFIG_TARGET/$JAAS_CONFIG_TARGET/g" /tmp/mm2-conf.json
-          set -x
-
-          curl  -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors -o - -w "\nstatus=%{http_code} %{redirect_url} size=%{size_download} time=%{time_total} content-type=\"%{content_type}\"\n"  -H 'Content-Type: application/json' http://redpanda-connectors:8083/connectors -d @/tmp/mm2-conf.json
-
-          # The rpk topic consume could fail for the first few times as kafka connect needs
-          # to spawn the task and copy one message from the source topic. To solve this race condition
-          # the retry should be implemented in bash for rpk topic consume or other mechanism that
-          # can confirm source connectors started its execution. As a fast fix fixed 30 second fix is added.
-          sleep 30
-
-          rpk topic consume source.test-topic -n 1 | grep "Test message!"
-
-          curl  -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors -o - -w "\nstatus=%{http_code} %{redirect_url} size=%{size_download} time=%{time_total} content-type=\"%{content_type}\"\n"  -X DELETE http://redpanda-connectors:8083/connectors/$CONNECTOR_NAME
-
-          curl  -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors -o - -w "\nstatus=%{http_code} %{redirect_url} size=%{size_download} time=%{time_total} content-type=\"%{content_type}\"\n"  http://redpanda-connectors:8083/connectors
-
-          rpk topic delete test-topic source.test-topic mm2-offset-syncs.test-only.internal
-      volumeMounts:
-        - mountPath: /redpanda-certs
-          name: redpanda-ca
-        - mountPath: /tmp
-          name: rp-connect-tmp
-  volumes:
-    - name: redpanda-ca
-      secret:
-        defaultMode: 0444
-        secretName: redpanda-default-cert
-    - emptyDir:
-        medium: Memory
-        sizeLimit: 5Mi
-      name: rp-connect-tmp
 ---
 # Source: redpanda/templates/entry-point.yaml
 apiVersion: batch/v1
@@ -108731,7 +108465,99 @@ spec:
     app.kubernetes.io/name: redpanda
   type: ClusterIP
 ---
-# Source: redpanda/templates/connectors/connectors.yaml
+# Source: redpanda/templates/entry-point.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations: {}
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/instance: redpanda
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: console
+    app.kubernetes.io/version: v2.7.2
+    helm.sh/chart: console-0.7.30
+  name: redpanda-console
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: redpanda
+      app.kubernetes.io/name: console
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        checksum-redpanda-chart/config: 71a88dc7a5147c97b5b7f51931035e1aa62cdceb27860879d1681e5b80d057fe
+        checksum/config: 71a88dc7a5147c97b5b7f51931035e1aa62cdceb27860879d1681e5b80d057fe
+      creationTimestamp: null
+      labels:
+        app.kubernetes.io/instance: redpanda
+        app.kubernetes.io/name: console
+    spec:
+      affinity: {}
+      automountServiceAccountToken: true
+      containers:
+      - args:
+        - --config.filepath=/etc/console/configs/config.yaml
+        command: null
+        env: []
+        envFrom: []
+        image: docker.redpanda.com/redpandadata/console:v2.7.2
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /admin/health
+            port: http
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: console
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /admin/health
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources: {}
+        securityContext:
+          runAsNonRoot: true
+        volumeMounts:
+        - mountPath: /etc/console/configs
+          name: configs
+          readOnly: true
+        - mountPath: /etc/tls/certs/default
+          name: redpanda-default-cert
+      imagePullSecrets: []
+      initContainers: null
+      nodeSelector: {}
+      priorityClassName: ""
+      securityContext:
+        fsGroup: 99
+        runAsUser: 99
+      serviceAccountName: redpanda-console
+      tolerations: []
+      topologySpreadConstraints: []
+      volumes:
+      - configMap:
+          name: redpanda-console
+        name: configs
+      - name: redpanda-default-cert
+        secret:
+          defaultMode: 272
+          secretName: redpanda-default-cert
+---
+# Source: redpanda/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -108895,98 +108721,6 @@ spec:
           medium: Memory
           sizeLimit: 5Mi
         name: rp-connect-tmp
----
-# Source: redpanda/templates/entry-point.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  annotations: {}
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/instance: redpanda
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: console
-    app.kubernetes.io/version: v2.7.2
-    helm.sh/chart: console-0.7.30
-  name: redpanda-console
-  namespace: default
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app.kubernetes.io/instance: redpanda
-      app.kubernetes.io/name: console
-  strategy: {}
-  template:
-    metadata:
-      annotations:
-        checksum-redpanda-chart/config: 71a88dc7a5147c97b5b7f51931035e1aa62cdceb27860879d1681e5b80d057fe
-        checksum/config: 71a88dc7a5147c97b5b7f51931035e1aa62cdceb27860879d1681e5b80d057fe
-      creationTimestamp: null
-      labels:
-        app.kubernetes.io/instance: redpanda
-        app.kubernetes.io/name: console
-    spec:
-      affinity: {}
-      automountServiceAccountToken: true
-      containers:
-      - args:
-        - --config.filepath=/etc/console/configs/config.yaml
-        command: null
-        env: []
-        envFrom: []
-        image: docker.redpanda.com/redpandadata/console:v2.7.2
-        imagePullPolicy: IfNotPresent
-        livenessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /admin/health
-            port: http
-          initialDelaySeconds: 0
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 1
-        name: console
-        ports:
-        - containerPort: 8080
-          name: http
-          protocol: TCP
-        readinessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /admin/health
-            port: http
-          initialDelaySeconds: 10
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 1
-        resources: {}
-        securityContext:
-          runAsNonRoot: true
-        volumeMounts:
-        - mountPath: /etc/console/configs
-          name: configs
-          readOnly: true
-        - mountPath: /etc/tls/certs/default
-          name: redpanda-default-cert
-      imagePullSecrets: []
-      initContainers: null
-      nodeSelector: {}
-      priorityClassName: ""
-      securityContext:
-        fsGroup: 99
-        runAsUser: 99
-      serviceAccountName: redpanda-console
-      tolerations: []
-      topologySpreadConstraints: []
-      volumes:
-      - configMap:
-          name: redpanda-console
-        name: configs
-      - name: redpanda-default-cert
-        secret:
-          defaultMode: 272
-          secretName: redpanda-default-cert
 ---
 # Source: redpanda/templates/entry-point.yaml
 apiVersion: apps/v1
@@ -109538,139 +109272,6 @@ spec:
       args: ['redpanda-console:8080']
   restartPolicy: Never
   priorityClassName:
----
-# Source: redpanda/templates/connectors/connectors.yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: redpanda-connectors-mm2-test
-  namespace: "default"
-  labels:
-    app.kubernetes.io/component: connectors
-    app.kubernetes.io/instance: redpanda
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: connectors
-    helm.sh/chart: connectors-0.1.13
-  annotations:
-    "helm.sh/hook": test
-    "helm.sh/hook-delete-policy": before-hook-creation
-spec:
-  restartPolicy: Never
-  containers:
-    - name: create-mm2
-      image: docker.redpanda.com/redpandadata/redpanda:latest
-      command:
-        - /bin/bash
-        - -c
-        - |
-          set -xe
-
-          trap connectorsState ERR
-
-          connectorsState () {
-            echo check connectors expand status
-            curl  -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors -o - -w "\nstatus=%{http_code} %{redirect_url} size=%{size_download} time=%{time_total} content-type=\"%{content_type}\"\n"  http://redpanda-connectors:8083/connectors?expand=status
-            echo check connectors expand info
-            curl  -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors -o - -w "\nstatus=%{http_code} %{redirect_url} size=%{size_download} time=%{time_total} content-type=\"%{content_type}\"\n"  http://redpanda-connectors:8083/connectors?expand=info
-            echo check connector configuration
-            curl  -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors -o - -w "\nstatus=%{http_code} %{redirect_url} size=%{size_download} time=%{time_total} content-type=\"%{content_type}\"\n"  http://redpanda-connectors:8083/connectors/$CONNECTOR_NAME
-            echo check connector topics
-            curl  -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors -o - -w "\nstatus=%{http_code} %{redirect_url} size=%{size_download} time=%{time_total} content-type=\"%{content_type}\"\n"  http://redpanda-connectors:8083/connectors/$CONNECTOR_NAME/topics
-          }
-
-          curl  -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors -o - -w "\nstatus=%{http_code} %{redirect_url} size=%{size_download} time=%{time_total} content-type=\"%{content_type}\"\n"  http://redpanda-connectors:8083/connectors
-
-          SASL_MECHANISM="PLAIN"
-
-          rpk profile create test
-          rpk profile set tls.enabled=true brokers=redpanda-0.redpanda.default.svc.cluster.local.:9093,redpanda-1.redpanda.default.svc.cluster.local.:9093,redpanda-2.redpanda.default.svc.cluster.local.:9093
-          rpk profile set tls.ca=/redpanda-certs/ca.crt
-          CONNECT_TLS_ENABLED=true
-          SECURITY_PROTOCOL=PLAINTEXT
-          if [[ -n "$CONNECT_SASL_MECHANISM" && $CONNECT_TLS_ENABLED == "true" ]]; then
-            SECURITY_PROTOCOL="SASL_SSL"
-          elif [[ -n "$CONNECT_SASL_MECHANISM" ]]; then
-            SECURITY_PROTOCOL="SASL_PLAINTEXT"
-          elif [[ $CONNECT_TLS_ENABLED == "true" ]]; then
-            SECURITY_PROTOCOL="SSL"
-          fi
-
-          rpk topic list
-          rpk topic create test-topic
-          rpk topic list
-          echo "Test message!" | rpk topic produce test-topic
-
-          CONNECTOR_NAME=mm2-$RANDOM
-          cat << 'EOF' > /tmp/mm2-conf.json
-          {
-            "name": "CONNECTOR_NAME",
-            "config": {
-              "connector.class": "org.apache.kafka.connect.mirror.MirrorSourceConnector",
-              "topics": "test-topic",
-              "replication.factor": "1",
-              "tasks.max": "1",
-              "source.cluster.bootstrap.servers": "redpanda-0.redpanda.default.svc.cluster.local.:9093,redpanda-1.redpanda.default.svc.cluster.local.:9093,redpanda-2.redpanda.default.svc.cluster.local.:9093",
-              "target.cluster.bootstrap.servers": "redpanda-0.redpanda.default.svc.cluster.local.:9093,redpanda-1.redpanda.default.svc.cluster.local.:9093,redpanda-2.redpanda.default.svc.cluster.local.:9093",
-              "target.cluster.alias": "test-only",
-              "source.cluster.alias": "source",
-              "key.converter": "org.apache.kafka.connect.converters.ByteArrayConverter",
-              "value.converter": "org.apache.kafka.connect.converters.ByteArrayConverter",
-              "source->target.enabled": "true",
-              "target->source.enabled": "false",
-              "sync.topic.configs.interval.seconds": "5",
-              "sync.topics.configs.enabled": "true",
-              "source.cluster.ssl.truststore.type": "PEM",
-              "target.cluster.ssl.truststore.type": "PEM",
-              "source.cluster.ssl.truststore.location": "/opt/kafka/connect-certs/ca/ca.crt",
-              "target.cluster.ssl.truststore.location": "/opt/kafka/connect-certs/ca/ca.crt",
-              JAAS_CONFIG_SOURCE
-              JAAS_CONFIG_TARGET
-              "source.cluster.security.protocol": "SECURITY_PROTOCOL",
-              "target.cluster.security.protocol": "SECURITY_PROTOCOL",
-              "source.cluster.sasl.mechanism": "SASL_MECHANISM",
-              "target.cluster.sasl.mechanism": "SASL_MECHANISM",
-              "offset-syncs.topic.replication.factor": 1
-            }
-          }
-          EOF
-
-          sed -i "s/CONNECTOR_NAME/$CONNECTOR_NAME/g" /tmp/mm2-conf.json
-          sed -i "s/SASL_MECHANISM/$SASL_MECHANISM/g" /tmp/mm2-conf.json
-          sed -i "s/SECURITY_PROTOCOL/$SECURITY_PROTOCOL/g" /tmp/mm2-conf.json
-          set +x
-          sed -i "s/JAAS_CONFIG_SOURCE/$JAAS_CONFIG_SOURCE/g" /tmp/mm2-conf.json
-          sed -i "s/JAAS_CONFIG_TARGET/$JAAS_CONFIG_TARGET/g" /tmp/mm2-conf.json
-          set -x
-
-          curl  -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors -o - -w "\nstatus=%{http_code} %{redirect_url} size=%{size_download} time=%{time_total} content-type=\"%{content_type}\"\n"  -H 'Content-Type: application/json' http://redpanda-connectors:8083/connectors -d @/tmp/mm2-conf.json
-
-          # The rpk topic consume could fail for the first few times as kafka connect needs
-          # to spawn the task and copy one message from the source topic. To solve this race condition
-          # the retry should be implemented in bash for rpk topic consume or other mechanism that
-          # can confirm source connectors started its execution. As a fast fix fixed 30 second fix is added.
-          sleep 30
-
-          rpk topic consume source.test-topic -n 1 | grep "Test message!"
-
-          curl  -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors -o - -w "\nstatus=%{http_code} %{redirect_url} size=%{size_download} time=%{time_total} content-type=\"%{content_type}\"\n"  -X DELETE http://redpanda-connectors:8083/connectors/$CONNECTOR_NAME
-
-          curl  -svm3 --fail --retry "120" --retry-max-time "120" --retry-all-errors -o - -w "\nstatus=%{http_code} %{redirect_url} size=%{size_download} time=%{time_total} content-type=\"%{content_type}\"\n"  http://redpanda-connectors:8083/connectors
-
-          rpk topic delete test-topic source.test-topic mm2-offset-syncs.test-only.internal
-      volumeMounts:
-        - mountPath: /redpanda-certs
-          name: redpanda-ca
-        - mountPath: /tmp
-          name: rp-connect-tmp
-  volumes:
-    - name: redpanda-ca
-      secret:
-        defaultMode: 0444
-        secretName: redpanda-default-cert
-    - emptyDir:
-        medium: Memory
-        sizeLimit: 5Mi
-      name: rp-connect-tmp
 ---
 # Source: redpanda/templates/entry-point.yaml
 apiVersion: batch/v1
