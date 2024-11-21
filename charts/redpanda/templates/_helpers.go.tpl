@@ -506,79 +506,136 @@
 {{- $original := (index .a 1) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
-{{- if (ne (toJson $overrides.labels) "null") -}}
-{{- $_ := (set $original.metadata "labels" (merge (dict ) $overrides.labels (default (dict ) $original.metadata.labels))) -}}
+{{- $overrideSpec := $overrides.spec -}}
+{{- if (eq (toJson $overrideSpec) "null") -}}
+{{- $overrideSpec = (mustMergeOverwrite (dict ) (dict )) -}}
 {{- end -}}
-{{- if (ne (toJson $overrides.annotations) "null") -}}
-{{- $_ := (set $original.metadata "annotations" (merge (dict ) $overrides.annotations (default (dict ) $original.metadata.annotations))) -}}
+{{- $merged := (merge (dict ) (mustMergeOverwrite (dict ) (dict "metadata" (mustMergeOverwrite (dict ) (dict "labels" $overrides.labels "annotations" $overrides.annotations )) "spec" $overrideSpec )) $original) -}}
+{{- $_ := (set $merged.spec "initContainers" (get (fromJson (include "redpanda.mergeSliceBy" (dict "a" (list $original.spec.initContainers $overrideSpec.initContainers "name" "redpanda.mergeContainer") ))) "r")) -}}
+{{- $_ := (set $merged.spec "containers" (get (fromJson (include "redpanda.mergeSliceBy" (dict "a" (list $original.spec.containers $overrideSpec.containers "name" "redpanda.mergeContainer") ))) "r")) -}}
+{{- $_ := (set $merged.spec "volumes" (get (fromJson (include "redpanda.mergeSliceBy" (dict "a" (list $original.spec.volumes $overrideSpec.volumes "name" "redpanda.mergeVolume") ))) "r")) -}}
+{{- if (eq (toJson $merged.metadata.labels) "null") -}}
+{{- $_ := (set $merged.metadata "labels" (dict )) -}}
 {{- end -}}
-{{- if (ne (toJson $overrides.spec.securityContext) "null") -}}
-{{- $_ := (set $original.spec "securityContext" (merge (dict ) $overrides.spec.securityContext (default (mustMergeOverwrite (dict ) (dict )) $original.spec.securityContext))) -}}
+{{- if (eq (toJson $merged.metadata.annotations) "null") -}}
+{{- $_ := (set $merged.metadata "annotations" (dict )) -}}
 {{- end -}}
-{{- if (ne (toJson $overrides.spec.automountServiceAccountToken) "null") -}}
-{{- $_ := (set $original.spec "automountServiceAccountToken" $overrides.spec.automountServiceAccountToken) -}}
+{{- if (eq (toJson $merged.spec.nodeSelector) "null") -}}
+{{- $_ := (set $merged.spec "nodeSelector" (dict )) -}}
 {{- end -}}
-{{- $overrideContainers := (dict ) -}}
-{{- range $i, $_ := $overrides.spec.containers -}}
-{{- $container := (index $overrides.spec.containers $i) -}}
-{{- $_ := (set $overrideContainers (toString $container.name) $container) -}}
+{{- if (eq (toJson $merged.spec.tolerations) "null") -}}
+{{- $_ := (set $merged.spec "tolerations" (list )) -}}
 {{- end -}}
-{{- if $_is_returning -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" $merged) | toJson -}}
 {{- break -}}
 {{- end -}}
-{{- if (and (ne (toJson $overrides.spec.volumes) "null") (gt ((get (fromJson (include "_shims.len" (dict "a" (list $overrides.spec.volumes) ))) "r") | int) (0 | int))) -}}
-{{- $newVolumes := (list ) -}}
-{{- $overrideVolumes := (dict ) -}}
-{{- range $i, $_ := $overrides.spec.volumes -}}
-{{- $vol := (index $overrides.spec.volumes $i) -}}
-{{- $_ := (set $overrideVolumes $vol.name $vol) -}}
 {{- end -}}
-{{- if $_is_returning -}}
-{{- break -}}
-{{- end -}}
-{{- range $_, $vol := $original.spec.volumes -}}
-{{- $tmp_tuple_4 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $overrideVolumes $vol.name (coalesce nil)) ))) "r")) ))) "r") -}}
-{{- $ok_8 := $tmp_tuple_4.T2 -}}
-{{- $overrideVol_7 := $tmp_tuple_4.T1 -}}
-{{- if $ok_8 -}}
-{{- $newVolumes = (concat (default (list ) $newVolumes) (list $overrideVol_7)) -}}
-{{- $_ := (unset $overrideVolumes $vol.name) -}}
+
+{{- define "redpanda.mergeSliceBy" -}}
+{{- $original := (index .a 0) -}}
+{{- $override := (index .a 1) -}}
+{{- $mergeKey := (index .a 2) -}}
+{{- $mergeFunc := (index .a 3) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $originalKeys := (dict ) -}}
+{{- $overrideByKey := (dict ) -}}
+{{- range $_, $el := $override -}}
+{{- $tmp_tuple_4 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.get" (dict "a" (list $el $mergeKey) ))) "r")) ))) "r") -}}
+{{- $ok := $tmp_tuple_4.T2 -}}
+{{- $key := $tmp_tuple_4.T1 -}}
+{{- if (not $ok) -}}
 {{- continue -}}
 {{- end -}}
-{{- $newVolumes = (concat (default (list ) $newVolumes) (list $vol)) -}}
+{{- $_ := (set $overrideByKey $key $el) -}}
 {{- end -}}
 {{- if $_is_returning -}}
 {{- break -}}
-{{- end -}}
-{{- range $_, $vol := $overrideVolumes -}}
-{{- $newVolumes = (concat (default (list ) $newVolumes) (list $vol)) -}}
-{{- end -}}
-{{- if $_is_returning -}}
-{{- break -}}
-{{- end -}}
-{{- $_ := (set $original.spec "volumes" $newVolumes) -}}
 {{- end -}}
 {{- $merged := (coalesce nil) -}}
-{{- range $_, $container := $original.spec.containers -}}
-{{- $tmp_tuple_5 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $overrideContainers $container.name (coalesce nil)) ))) "r")) ))) "r") -}}
-{{- $ok_10 := $tmp_tuple_5.T2 -}}
-{{- $override_9 := $tmp_tuple_5.T1 -}}
-{{- if $ok_10 -}}
-{{- $env := (concat (default (list ) $container.env) (default (list ) $override_9.env)) -}}
-{{- $container = (merge (dict ) $override_9 $container) -}}
-{{- $_ := (set $container "env" $env) -}}
+{{- range $_, $el := $original -}}
+{{- $tmp_tuple_5 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.get" (dict "a" (list $el $mergeKey) ))) "r")) ))) "r") -}}
+{{- $key := $tmp_tuple_5.T1 -}}
+{{- $_ := (set $originalKeys $key true) -}}
+{{- $tmp_tuple_6 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $overrideByKey $key (coalesce nil)) ))) "r")) ))) "r") -}}
+{{- $ok_8 := $tmp_tuple_6.T2 -}}
+{{- $elOverride_7 := $tmp_tuple_6.T1 -}}
+{{- if $ok_8 -}}
+{{- $merged = (concat (default (list ) $merged) (list (get (fromJson (include $mergeFunc (dict "a" (list $el $elOverride_7) ))) "r"))) -}}
+{{- else -}}
+{{- $merged = (concat (default (list ) $merged) (list $el)) -}}
 {{- end -}}
-{{- if (eq (toJson $container.env) "null") -}}
-{{- $_ := (set $container "env" (list )) -}}
-{{- end -}}
-{{- $merged = (concat (default (list ) $merged) (list $container)) -}}
 {{- end -}}
 {{- if $_is_returning -}}
 {{- break -}}
 {{- end -}}
-{{- $_ := (set $original.spec "containers" $merged) -}}
+{{- range $_, $el := $override -}}
+{{- $tmp_tuple_7 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.get" (dict "a" (list $el $mergeKey) ))) "r")) ))) "r") -}}
+{{- $ok := $tmp_tuple_7.T2 -}}
+{{- $key := $tmp_tuple_7.T1 -}}
+{{- if (not $ok) -}}
+{{- continue -}}
+{{- end -}}
+{{- $tmp_tuple_8 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $originalKeys $key (coalesce nil)) ))) "r")) ))) "r") -}}
+{{- $ok_9 := $tmp_tuple_8.T2 -}}
+{{- if $ok_9 -}}
+{{- continue -}}
+{{- end -}}
+{{- $merged = (concat (default (list ) $merged) (list (merge (dict ) $el))) -}}
+{{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
 {{- $_is_returning = true -}}
-{{- (dict "r" $original) | toJson -}}
+{{- (dict "r" $merged) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.mergeEnvVar" -}}
+{{- $original := (index .a 0) -}}
+{{- $overrides := (index .a 1) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (merge (dict ) $overrides)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.mergeVolume" -}}
+{{- $original := (index .a 0) -}}
+{{- $override := (index .a 1) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (merge (dict ) $override $original)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.mergeVolumeMount" -}}
+{{- $original := (index .a 0) -}}
+{{- $override := (index .a 1) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (merge (dict ) $override $original)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.mergeContainer" -}}
+{{- $original := (index .a 0) -}}
+{{- $override := (index .a 1) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $merged := (merge (dict ) $override $original) -}}
+{{- $_ := (set $merged "env" (get (fromJson (include "redpanda.mergeSliceBy" (dict "a" (list $original.env $override.env "name" "redpanda.mergeEnvVar") ))) "r")) -}}
+{{- $_ := (set $merged "volumeMounts" (get (fromJson (include "redpanda.mergeSliceBy" (dict "a" (list $original.volumeMounts $override.volumeMounts "name" "redpanda.mergeVolumeMount") ))) "r")) -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" $merged) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

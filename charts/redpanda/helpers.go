@@ -22,6 +22,8 @@ import (
 
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	corev1 "k8s.io/api/core/v1"
+	applycorev1 "k8s.io/client-go/applyconfigurations/core/v1"
+	applymetav1 "k8s.io/client-go/applyconfigurations/meta/v1"
 	"k8s.io/utils/ptr"
 )
 
@@ -432,94 +434,138 @@ func coalesce[T any](values []*T) *T {
 // merge patch. It's closer to a merge patch with smart handling of lists
 // that's tailored to the values permitted by [PodTemplate].
 func StrategicMergePatch(overrides PodTemplate, original corev1.PodTemplateSpec) corev1.PodTemplateSpec {
-	// TODO(chrisseto): I'd like to march this towards being a more general
-	// solution but getting go & helm to work correctly is going to take some
-	// critical thinking.
-	// - Pushing everything into a single MergeTo call won't work without VERY
-	// careful handling as `merge` is quite sensitive to the inclusion of `nil`
-	// values.
-	// - Full support of SMP (e.i. directive keys) would require a custom data
-	// type or just accepting JSON/YAML strings.
-	// - Potentially some careful handling of generics and `get` could be used
-	// to make a mostly generic SMP implementation.
-	// - Or just use real SMP in go and inject static metadata into helm to
-	// have a minimal recursive solution.
+	// Divergences from an actual SMP:
+	// - No support for Directives
+	// - List merging by key is handled on a case by case basis.
+	// - Can't "unset" optional values in the original due to there being no
+	//   difference between *T being explicitly nil or not yet.
 
-	if overrides.Labels != nil {
-		original.ObjectMeta.Labels = helmette.MergeTo[map[string]string](
-			overrides.Labels,
-			helmette.Default(map[string]string{}, original.ObjectMeta.Labels),
-		)
+	overrideSpec := overrides.Spec
+	if overrideSpec == nil {
+		overrideSpec = &applycorev1.PodSpecApplyConfiguration{}
 	}
 
-	if overrides.Annotations != nil {
-		original.ObjectMeta.Annotations = helmette.MergeTo[map[string]string](
-			overrides.Annotations,
-			helmette.Default(map[string]string{}, original.ObjectMeta.Annotations),
-		)
+	merged := helmette.MergeTo[corev1.PodTemplateSpec](
+		applycorev1.PodTemplateSpecApplyConfiguration{
+			ObjectMetaApplyConfiguration: &applymetav1.ObjectMetaApplyConfiguration{
+				Labels:      overrides.Labels,
+				Annotations: overrides.Annotations,
+			},
+			Spec: overrideSpec,
+		},
+		original,
+	)
+
+	merged.Spec.InitContainers = mergeSliceBy(
+		original.Spec.InitContainers,
+		overrideSpec.InitContainers,
+		"name",
+		mergeContainer,
+	)
+
+	merged.Spec.Containers = mergeSliceBy(
+		original.Spec.Containers,
+		overrideSpec.Containers,
+		"name",
+		mergeContainer,
+	)
+
+	merged.Spec.Volumes = mergeSliceBy(
+		original.Spec.Volumes,
+		overrideSpec.Volumes,
+		"name",
+		mergeVolume,
+	)
+
+	// Due to quirks in go's JSON marshalling and some default values in the
+	// chart, GoHelmEquivalence can fail with meaningless diffs of null vs
+	// empty slice/map. This defaulting ensures we are in fact equivalent at
+	// all times but a functionally not required.
+	if merged.ObjectMeta.Labels == nil {
+		merged.ObjectMeta.Labels = map[string]string{}
 	}
 
-	if overrides.Spec.SecurityContext != nil {
-		original.Spec.SecurityContext = helmette.MergeTo[*corev1.PodSecurityContext](
-			overrides.Spec.SecurityContext,
-			helmette.Default(&corev1.PodSecurityContext{}, original.Spec.SecurityContext),
-		)
+	if merged.ObjectMeta.Annotations == nil {
+		merged.ObjectMeta.Annotations = map[string]string{}
 	}
 
-	if overrides.Spec.AutomountServiceAccountToken != nil {
-		original.Spec.AutomountServiceAccountToken = overrides.Spec.AutomountServiceAccountToken
+	if merged.Spec.NodeSelector == nil {
+		merged.Spec.NodeSelector = map[string]string{}
 	}
 
-	overrideContainers := map[string]*Container{}
-	for i := range overrides.Spec.Containers {
-		container := &overrides.Spec.Containers[i]
-		overrideContainers[string(container.Name)] = container
+	if merged.Spec.Tolerations == nil {
+		merged.Spec.Tolerations = []corev1.Toleration{}
 	}
 
-	if overrides.Spec.Volumes != nil && len(overrides.Spec.Volumes) > 0 {
-		newVolumes := []corev1.Volume{}
-		overrideVolumes := map[string]corev1.Volume{}
-		for i := range overrides.Spec.Volumes {
-			vol := overrides.Spec.Volumes[i]
-			overrideVolumes[vol.Name] = vol
+	return merged
+}
+
+func mergeSliceBy[Original any, Overrides any](
+	original []Original,
+	override []Overrides,
+	mergeKey string,
+	mergeFunc func(Original, Overrides) Original,
+) []Original {
+	originalKeys := map[string]bool{}
+	overrideByKey := map[string]Overrides{}
+
+	for _, el := range override {
+		key, ok := helmette.Get[string](el, mergeKey)
+		if !ok {
+			continue
 		}
-		for _, vol := range original.Spec.Volumes {
-			if overrideVol, ok := overrideVolumes[vol.Name]; ok {
-				newVolumes = append(newVolumes, overrideVol)
-				delete(overrideVolumes, vol.Name)
-				continue
-			}
-			newVolumes = append(newVolumes, vol)
-		}
-		for _, vol := range overrideVolumes {
-			newVolumes = append(newVolumes, vol)
-		}
-		original.Spec.Volumes = newVolumes
+		overrideByKey[key] = el
 	}
 
-	var merged []corev1.Container
-	for _, container := range original.Spec.Containers {
-		if override, ok := overrideContainers[container.Name]; ok {
-			// TODO(chrisseto): Actually implement this as a strategic merge patch.
-			// EnvVar's are "last in wins" so there's not too much of a need to fully
-			// implement a patch for this usecase.
-			env := append(container.Env, override.Env...)
-			container = helmette.MergeTo[corev1.Container](override, container)
-			container.Env = env
-		}
+	// Follow the ordering of original, merging in overrides as needed.
+	var merged []Original
+	for _, el := range original {
+		// Cheating a bit here. We know that "original" types will always have
+		// the key we're looking for.
+		key, _ := helmette.Get[string](el, mergeKey)
+		originalKeys[key] = true
 
-		// TODO(chrisseto): There's a minor divergence in gotohelm that'll be tedious to fix.
-		// In go: append(nil, nil) -> nil
-		// In helm: append(nil, nil) -> []T{}
-		// Work around for now by setting Env to []T{} if it's nil.
-		if container.Env == nil {
-			container.Env = []corev1.EnvVar{}
+		if elOverride, ok := overrideByKey[key]; ok {
+			merged = append(merged, mergeFunc(el, elOverride))
+		} else {
+			merged = append(merged, el)
 		}
-
-		merged = append(merged, container)
 	}
 
-	original.Spec.Containers = merged
+	// Append any non-merged overrides.
+	for _, el := range override {
+		key, ok := helmette.Get[string](el, mergeKey)
+		if !ok {
+			continue
+		}
 
-	return original
+		if _, ok := originalKeys[key]; ok {
+			continue
+		}
+
+		merged = append(merged, helmette.MergeTo[Original](el))
+	}
+
+	return merged
+}
+
+func mergeEnvVar(original corev1.EnvVar, overrides applycorev1.EnvVarApplyConfiguration) corev1.EnvVar {
+	// If there's a case of having an env overridden, don't merge. Just accept
+	// the override as merging could generate an env with multiple sources.
+	return helmette.MergeTo[corev1.EnvVar](overrides)
+}
+
+func mergeVolume(original corev1.Volume, override applycorev1.VolumeApplyConfiguration) corev1.Volume {
+	return helmette.MergeTo[corev1.Volume](override, original)
+}
+
+func mergeVolumeMount(original corev1.VolumeMount, override applycorev1.VolumeMountApplyConfiguration) corev1.VolumeMount {
+	return helmette.MergeTo[corev1.VolumeMount](override, original)
+}
+
+func mergeContainer(original corev1.Container, override applycorev1.ContainerApplyConfiguration) corev1.Container {
+	merged := helmette.MergeTo[corev1.Container](override, original)
+	merged.Env = mergeSliceBy(original.Env, override.Env, "name", mergeEnvVar)
+	merged.VolumeMounts = mergeSliceBy(original.VolumeMounts, override.VolumeMounts, "name", mergeVolumeMount)
+	return merged
 }

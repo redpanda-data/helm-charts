@@ -881,7 +881,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -895,12 +895,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -1308,7 +1308,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -1324,7 +1324,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -1357,7 +1356,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -2145,7 +2144,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -2155,12 +2154,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -2361,7 +2360,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -2373,7 +2372,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -2406,7 +2404,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - configMap:
           name: redpanda
@@ -3254,7 +3252,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -3268,12 +3266,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -3681,7 +3679,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -3697,7 +3695,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -3730,7 +3727,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -4700,12 +4697,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -4947,7 +4944,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -4980,7 +4976,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: users
         secret:
@@ -6033,12 +6029,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -6494,7 +6490,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -6527,7 +6522,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -7548,7 +7543,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -7562,12 +7557,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -7996,7 +7991,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -8012,7 +8007,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -8045,7 +8039,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: redpanda
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -9045,7 +9039,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -9061,12 +9055,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -9579,7 +9573,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -9597,7 +9591,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -9630,7 +9623,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-cert2-cert
         secret:
@@ -10531,7 +10524,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -10545,12 +10538,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -10958,7 +10951,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -10974,7 +10967,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -11007,7 +10999,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -11962,7 +11954,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -11978,12 +11970,12 @@ spec:
           name: redpanda-config-watcher
         - mountPath: /fake/lifecycle
           name: test-extra-volume
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -12007,6 +11999,7 @@ spec:
         - /bin/sh
         - -c
         - chown 101:101 -R /var/lib/redpanda/data
+        env: null
         image: busybox:latest
         name: set-datadir-ownership
         resources:
@@ -12031,6 +12024,7 @@ spec:
           ext4 & wait $!
         command:
         - /bin/sh
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: fs-validator
         resources:
@@ -12139,8 +12133,10 @@ spec:
         command:
         - /bin/bash
         - -c
+        env: null
         image: mintel/docker-alpine-bash-curl-jq:latest
         name: test-init-container
+        volumeMounts: null
       nodeSelector: {}
       priorityClassName: ""
       securityContext:
@@ -12471,7 +12467,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -12487,7 +12483,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -12520,7 +12515,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -13418,7 +13413,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -13432,12 +13427,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -13849,7 +13844,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -13865,7 +13860,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -13898,7 +13892,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -15000,12 +14994,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -15461,7 +15455,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -15494,7 +15487,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -16395,7 +16388,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -16409,12 +16402,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -16727,7 +16720,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -16743,7 +16736,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -16776,7 +16768,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -17761,7 +17753,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -17775,12 +17767,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -18093,7 +18085,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -18109,7 +18101,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -18142,7 +18133,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -18961,7 +18952,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -18971,12 +18962,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -19202,7 +19193,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -19214,7 +19205,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -19247,7 +19237,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - configMap:
           name: redpanda
@@ -20137,7 +20127,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -20151,12 +20141,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -20596,7 +20586,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -20612,7 +20602,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -20645,7 +20634,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -21773,7 +21762,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -21806,12 +21795,12 @@ spec:
         - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
           name: kube-api-access
           readOnly: true
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -22237,7 +22226,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -22253,7 +22242,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -22286,7 +22274,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -23187,7 +23175,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -23201,12 +23189,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -23614,7 +23602,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -23630,7 +23618,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -23663,7 +23650,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -24561,7 +24548,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -24575,12 +24562,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -24992,7 +24979,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -25008,7 +24995,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -25041,7 +25027,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -26001,7 +25987,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -26015,12 +26001,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -26042,6 +26028,7 @@ spec:
         - /bin/sh
         - -c
         - mkdir -p /var/lib/redpanda/data/cloud_storage_cache; chown 101:101 -R /var/lib/redpanda/data/cloud_storage_cache
+        env: null
         image: busybox:latest
         name: set-tiered-storage-cache-dir-ownership
         resources: {}
@@ -26465,7 +26452,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -26498,7 +26484,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -27459,7 +27445,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -27473,12 +27459,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -27500,6 +27486,7 @@ spec:
         - /bin/sh
         - -c
         - mkdir -p /var/lib/redpanda/data/cloud_storage_cache; chown 101:101 -R /var/lib/redpanda/data/cloud_storage_cache
+        env: null
         image: busybox:latest
         name: set-tiered-storage-cache-dir-ownership
         resources: {}
@@ -27923,7 +27910,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -27956,7 +27942,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -28915,7 +28901,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -28929,12 +28915,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -28956,6 +28942,7 @@ spec:
         - /bin/sh
         - -c
         - mkdir -p /var/lib/redpanda/data/cloud_storage_cache; chown 101:101 -R /var/lib/redpanda/data/cloud_storage_cache
+        env: null
         image: busybox:latest
         name: set-tiered-storage-cache-dir-ownership
         resources: {}
@@ -29380,7 +29367,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -29413,7 +29399,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -30318,7 +30304,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -30332,12 +30318,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -30359,6 +30345,7 @@ spec:
         - /bin/sh
         - -c
         - mkdir -p /var/lib/redpanda/data/cloud_storage_cache; chown 101:101 -R /var/lib/redpanda/data/cloud_storage_cache
+        env: null
         image: busybox:latest
         name: set-tiered-storage-cache-dir-ownership
         resources: {}
@@ -30765,7 +30752,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -30781,7 +30768,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -30814,7 +30800,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -31774,7 +31760,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -31788,12 +31774,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -31815,6 +31801,7 @@ spec:
         - /bin/sh
         - -c
         - mkdir -p /var/lib/redpanda/data/cloud_storage_cache; chown 101:101 -R /var/lib/redpanda/data/cloud_storage_cache
+        env: null
         image: busybox:latest
         name: set-tiered-storage-cache-dir-ownership
         resources: {}
@@ -32250,7 +32237,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -32283,7 +32269,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -33244,7 +33230,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -33258,12 +33244,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -33285,6 +33271,7 @@ spec:
         - /bin/sh
         - -c
         - mkdir -p /var/lib/redpanda/data/cloud_storage_cache; chown 101:101 -R /var/lib/redpanda/data/cloud_storage_cache
+        env: null
         image: busybox:latest
         name: set-tiered-storage-cache-dir-ownership
         resources: {}
@@ -33720,7 +33707,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -33753,7 +33739,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -34712,7 +34698,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -34726,12 +34712,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -34753,6 +34739,7 @@ spec:
         - /bin/sh
         - -c
         - mkdir -p /var/lib/redpanda/data/cloud_storage_cache; chown 101:101 -R /var/lib/redpanda/data/cloud_storage_cache
+        env: null
         image: busybox:latest
         name: set-tiered-storage-cache-dir-ownership
         resources: {}
@@ -35190,7 +35177,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -35223,7 +35209,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -36128,7 +36114,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -36142,12 +36128,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -36169,6 +36155,7 @@ spec:
         - /bin/sh
         - -c
         - mkdir -p /var/lib/redpanda/data/cloud_storage_cache; chown 101:101 -R /var/lib/redpanda/data/cloud_storage_cache
+        env: null
         image: busybox:latest
         name: set-tiered-storage-cache-dir-ownership
         resources: {}
@@ -36588,7 +36575,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -36604,7 +36591,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -36637,7 +36623,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -37597,7 +37583,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -37611,12 +37597,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -37638,6 +37624,7 @@ spec:
         - /bin/sh
         - -c
         - mkdir -p /var/lib/redpanda/data/cloud_storage_cache; chown 101:101 -R /var/lib/redpanda/data/cloud_storage_cache
+        env: null
         image: busybox:latest
         name: set-tiered-storage-cache-dir-ownership
         resources: {}
@@ -38073,7 +38060,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -38106,7 +38092,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -39067,7 +39053,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -39081,12 +39067,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -39108,6 +39094,7 @@ spec:
         - /bin/sh
         - -c
         - mkdir -p /var/lib/redpanda/data/cloud_storage_cache; chown 101:101 -R /var/lib/redpanda/data/cloud_storage_cache
+        env: null
         image: busybox:latest
         name: set-tiered-storage-cache-dir-ownership
         resources: {}
@@ -39543,7 +39530,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -39576,7 +39562,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -40535,7 +40521,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -40549,12 +40535,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -40576,6 +40562,7 @@ spec:
         - /bin/sh
         - -c
         - mkdir -p /var/lib/redpanda/data/cloud_storage_cache; chown 101:101 -R /var/lib/redpanda/data/cloud_storage_cache
+        env: null
         image: busybox:latest
         name: set-tiered-storage-cache-dir-ownership
         resources: {}
@@ -41013,7 +41000,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -41046,7 +41032,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -41951,7 +41937,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -41965,12 +41951,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -41992,6 +41978,7 @@ spec:
         - /bin/sh
         - -c
         - mkdir -p /var/lib/redpanda/data/cloud_storage_cache; chown 101:101 -R /var/lib/redpanda/data/cloud_storage_cache
+        env: null
         image: busybox:latest
         name: set-tiered-storage-cache-dir-ownership
         resources: {}
@@ -42411,7 +42398,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -42427,7 +42414,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -42460,7 +42446,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -43358,7 +43344,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -43372,12 +43358,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -43785,7 +43771,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -43801,7 +43787,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -43834,7 +43819,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -44733,7 +44718,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -44747,12 +44732,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -45160,7 +45145,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -45176,7 +45161,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -45209,7 +45193,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -46000,17 +45984,13 @@ spec:
             fieldRef:
               fieldPath: metadata.name
         - name: POD_IP
-          valueFrom:
-            fieldRef:
-              fieldPath: status.podIP
+          value: This is an override and will break the deployment
         - name: HOST_IP
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
         - name: EXTRA_ENV_VAR
           value: THIS_IS_AN_EXAMPLE
-        - name: POD_IP
-          value: This is an override and will break the deployment
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         lifecycle:
           postStart:
@@ -46113,7 +46093,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -46127,12 +46107,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -46540,7 +46520,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -46556,7 +46536,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -46589,7 +46568,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -47578,7 +47557,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -47592,12 +47571,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -48005,7 +47984,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -48021,7 +48000,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -48054,7 +48032,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -48970,7 +48948,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -48984,12 +48962,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -49400,7 +49378,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -49416,7 +49394,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -49449,7 +49426,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -50577,7 +50554,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -50622,12 +50599,12 @@ spec:
         - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
           name: kube-api-access
           readOnly: true
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -51053,7 +51030,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -51069,7 +51046,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -51102,7 +51078,7 @@ spec:
         fsGroup: 3333
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -52187,7 +52163,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -52201,12 +52177,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -52228,6 +52204,7 @@ spec:
         - /bin/sh
         - -c
         - chown 101:101 -R /var/lib/redpanda/data
+        env: null
         image: busybox:latest
         name: set-datadir-ownership
         resources: {}
@@ -52244,6 +52221,7 @@ spec:
           xfs & wait $!
         command:
         - /bin/sh
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: fs-validator
         resources: {}
@@ -52655,7 +52633,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -52671,7 +52649,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -52704,7 +52681,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -53816,7 +53793,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -53830,12 +53807,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -54243,7 +54220,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -54259,7 +54236,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -54292,7 +54268,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -55190,7 +55166,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -55204,12 +55180,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -55621,7 +55597,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -55637,7 +55613,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -55670,7 +55645,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -56575,7 +56550,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -56589,12 +56564,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -57034,7 +57009,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -57050,7 +57025,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -57083,7 +57057,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -57990,7 +57964,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -58004,12 +57978,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -58432,7 +58406,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources:
@@ -58452,7 +58426,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -59398,7 +59371,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -59412,12 +59385,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -59840,7 +59813,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources:
@@ -59862,7 +59835,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -60799,7 +60771,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -60821,6 +60793,7 @@ spec:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -61228,7 +61201,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -61279,7 +61252,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -61979,7 +61952,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v23.2.2
         name: config-watcher
         resources: {}
@@ -61995,12 +61968,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v23.2.2
         name: tuning
         resources: {}
@@ -62515,7 +62488,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -62533,7 +62506,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -62566,7 +62538,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -63468,7 +63440,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -63482,12 +63454,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -63839,7 +63811,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -63855,7 +63827,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -63888,7 +63859,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -65050,12 +65021,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -65513,7 +65484,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -65546,7 +65516,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -66501,7 +66471,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -66515,12 +66485,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -66946,7 +66916,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -66979,7 +66948,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -67882,7 +67851,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -67896,12 +67865,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -68330,7 +68299,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -68363,7 +68331,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -69502,7 +69470,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -69516,12 +69484,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -69979,7 +69947,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -69995,7 +69963,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -70028,7 +69995,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -70927,7 +70894,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -70941,12 +70908,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -71354,7 +71321,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -71371,7 +71338,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -71404,7 +71370,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -72303,7 +72269,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -72317,12 +72283,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -72730,7 +72696,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -72747,7 +72713,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -72780,7 +72745,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -73678,7 +73643,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -73692,12 +73657,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -74105,7 +74070,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -74121,7 +74086,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -74154,7 +74118,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -75059,7 +75023,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -75073,12 +75037,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -75486,7 +75450,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -75502,7 +75466,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -75535,7 +75498,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -77994,12 +77957,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -78455,7 +78418,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -78488,7 +78450,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -79413,7 +79375,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v22.3.14
         name: config-watcher
         resources: {}
@@ -79427,12 +79389,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v22.3.14
         name: tuning
         resources: {}
@@ -79840,7 +79802,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -79856,7 +79818,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -79889,7 +79850,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -80840,7 +80801,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v22.3.14
         name: config-watcher
         resources: {}
@@ -80854,12 +80815,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v22.3.14
         name: tuning
         resources: {}
@@ -81285,7 +81246,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -81318,7 +81278,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -82221,7 +82181,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v22.3.14
         name: config-watcher
         resources: {}
@@ -82235,12 +82195,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v22.3.14
         name: tuning
         resources: {}
@@ -82669,7 +82629,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -82685,7 +82645,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -82718,7 +82677,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -83628,7 +83587,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v23.1.2
         name: config-watcher
         resources: {}
@@ -83642,12 +83601,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v23.1.2
         name: tuning
         resources: {}
@@ -84055,7 +84014,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -84071,7 +84030,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -84104,7 +84062,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -85055,7 +85013,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v23.1.2
         name: config-watcher
         resources: {}
@@ -85069,12 +85027,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v23.1.2
         name: tuning
         resources: {}
@@ -85500,7 +85458,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -85533,7 +85490,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -86436,7 +86393,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v23.1.2
         name: config-watcher
         resources: {}
@@ -86450,12 +86407,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v23.1.2
         name: tuning
         resources: {}
@@ -86884,7 +86841,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -86900,7 +86857,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -86933,7 +86889,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -87831,7 +87787,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v23.1.3
         name: config-watcher
         resources: {}
@@ -87845,12 +87801,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v23.1.3
         name: tuning
         resources: {}
@@ -88258,7 +88214,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -88274,7 +88230,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -88307,7 +88262,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -89258,7 +89213,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v23.1.3
         name: config-watcher
         resources: {}
@@ -89272,12 +89227,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v23.1.3
         name: tuning
         resources: {}
@@ -89703,7 +89658,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -89736,7 +89690,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -90639,7 +90593,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v23.1.3
         name: config-watcher
         resources: {}
@@ -90653,12 +90607,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v23.1.3
         name: tuning
         resources: {}
@@ -91087,7 +91041,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -91103,7 +91057,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -91136,7 +91089,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -92034,7 +91987,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v23.2.1
         name: config-watcher
         resources: {}
@@ -92048,12 +92001,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v23.2.1
         name: tuning
         resources: {}
@@ -92461,7 +92414,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -92477,7 +92430,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -92510,7 +92462,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -93461,7 +93413,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v23.2.1
         name: config-watcher
         resources: {}
@@ -93475,12 +93427,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v23.2.1
         name: tuning
         resources: {}
@@ -93906,7 +93858,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -93939,7 +93890,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -94842,7 +94793,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v23.2.1
         name: config-watcher
         resources: {}
@@ -94856,12 +94807,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v23.2.1
         name: tuning
         resources: {}
@@ -95290,7 +95241,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -95306,7 +95257,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -95339,7 +95289,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -96238,7 +96188,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v23.3.0
         name: config-watcher
         resources: {}
@@ -96252,12 +96202,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v23.3.0
         name: tuning
         resources: {}
@@ -96665,7 +96615,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -96681,7 +96631,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -96714,7 +96663,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -97666,7 +97615,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v23.3.0
         name: config-watcher
         resources: {}
@@ -97680,12 +97629,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v23.3.0
         name: tuning
         resources: {}
@@ -98111,7 +98060,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -98144,7 +98092,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -99048,7 +98996,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v23.3.0
         name: config-watcher
         resources: {}
@@ -99062,12 +99010,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v23.3.0
         name: tuning
         resources: {}
@@ -99496,7 +99444,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -99512,7 +99460,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -99545,7 +99492,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -100444,7 +100391,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.1.0
         name: config-watcher
         resources: {}
@@ -100458,12 +100405,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.1.0
         name: tuning
         resources: {}
@@ -100871,7 +100818,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -100887,7 +100834,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -100920,7 +100866,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -101872,7 +101818,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.1.0
         name: config-watcher
         resources: {}
@@ -101886,12 +101832,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.1.0
         name: tuning
         resources: {}
@@ -102317,7 +102263,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -102350,7 +102295,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -103254,7 +103199,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.1.0
         name: config-watcher
         resources: {}
@@ -103268,12 +103213,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.1.0
         name: tuning
         resources: {}
@@ -103702,7 +103647,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -103718,7 +103663,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -103751,7 +103695,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -104649,7 +104593,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -104663,12 +104607,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -104882,7 +104826,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -104898,7 +104842,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -104931,7 +104874,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -105835,7 +105778,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -105849,12 +105792,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -106068,7 +106011,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -106084,7 +106027,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -106117,7 +106059,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-for-external-cert
         secret:
@@ -107261,7 +107203,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -107294,12 +107236,12 @@ spec:
         - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
           name: kube-api-access
           readOnly: true
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -107725,7 +107667,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -107741,7 +107683,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -107774,7 +107715,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: redpanda
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -108886,7 +108827,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -108900,12 +108841,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -109313,7 +109254,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -109329,7 +109270,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -109362,7 +109302,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -110506,7 +110446,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -110536,12 +110476,12 @@ spec:
         resources: {}
         securityContext: {}
         volumeMounts: []
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -110949,7 +110889,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -110965,7 +110905,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -110998,7 +110937,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: redpanda
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -112144,7 +112083,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -112176,12 +112115,12 @@ spec:
         volumeMounts:
         - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
           name: kube-api-access-overwrite
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -112607,7 +112546,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -112623,7 +112562,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -112656,7 +112594,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: redpanda
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -113611,7 +113549,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -113627,12 +113565,12 @@ spec:
           name: redpanda-config-watcher
         - mountPath: /fake/config-watcher
           name: test-extra-volume
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -113656,6 +113594,7 @@ spec:
         - /bin/sh
         - -c
         - chown 101:101 -R /var/lib/redpanda/data
+        env: null
         image: busybox:latest
         name: set-datadir-ownership
         resources: {}
@@ -113674,6 +113613,7 @@ spec:
           xfs & wait $!
         command:
         - /bin/sh
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: fs-validator
         resources: {}
@@ -113770,8 +113710,10 @@ spec:
         command:
         - /bin/bash
         - -c
+        env: null
         image: mintel/docker-alpine-bash-curl-jq:latest
         name: test-init-container
+        volumeMounts: null
       nodeSelector: {}
       priorityClassName: ""
       securityContext:
@@ -114102,7 +114044,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -114118,7 +114060,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -114151,7 +114092,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -115139,7 +115080,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -115153,12 +115094,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -115570,7 +115511,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -115586,7 +115527,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -115619,7 +115559,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -116607,7 +116547,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -116621,12 +116561,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -117038,7 +116978,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -117054,7 +116994,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -117087,7 +117026,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -118115,7 +118054,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -118129,12 +118068,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -118576,7 +118515,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -118592,7 +118531,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -118625,7 +118563,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -119540,7 +119478,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -119556,12 +119494,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -120099,7 +120037,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -120117,7 +120055,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -120150,7 +120087,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -121052,7 +120989,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -121066,12 +121003,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -121479,7 +121416,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -121495,7 +121432,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -121528,7 +121464,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -122426,7 +122362,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -122440,12 +122376,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -122884,7 +122820,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -122900,7 +122836,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -122933,7 +122868,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -123816,7 +123751,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -123830,12 +123765,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -124270,7 +124205,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -124286,7 +124221,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -124319,7 +124253,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -125217,7 +125151,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: somecustomrepo:v23.2.8
         name: config-watcher
         resources: {}
@@ -125231,12 +125165,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: somecustomrepo:v23.2.8
         name: tuning
         resources: {}
@@ -125644,7 +125578,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -125660,7 +125594,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -125693,7 +125626,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -126644,7 +126577,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: somecustomrepo:v23.2.8
         name: config-watcher
         resources: {}
@@ -126658,12 +126591,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: somecustomrepo:v23.2.8
         name: tuning
         resources: {}
@@ -127089,7 +127022,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -127122,7 +127054,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -128025,7 +127957,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: somecustomrepo:v23.2.8
         name: config-watcher
         resources: {}
@@ -128039,12 +127971,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: somecustomrepo:v23.2.8
         name: tuning
         resources: {}
@@ -128473,7 +128405,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -128489,7 +128421,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -128522,7 +128453,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -129421,7 +129352,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: somecustomrepo:v24.1.0
         name: config-watcher
         resources: {}
@@ -129435,12 +129366,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: somecustomrepo:v24.1.0
         name: tuning
         resources: {}
@@ -129848,7 +129779,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -129864,7 +129795,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -129897,7 +129827,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -130849,7 +130779,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: somecustomrepo:v24.1.0
         name: config-watcher
         resources: {}
@@ -130863,12 +130793,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: somecustomrepo:v24.1.0
         name: tuning
         resources: {}
@@ -131294,7 +131224,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -131327,7 +131256,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -132231,7 +132160,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: somecustomrepo:v24.1.0
         name: config-watcher
         resources: {}
@@ -132245,12 +132174,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: somecustomrepo:v24.1.0
         name: tuning
         resources: {}
@@ -132679,7 +132608,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -132695,7 +132624,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -132728,7 +132656,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -133643,7 +133571,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -133657,12 +133585,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -134098,7 +134026,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -134114,7 +134042,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -134147,7 +134074,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:
@@ -135045,7 +134972,7 @@ spec:
           & wait $!
         command:
         - /bin/sh
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: config-watcher
         resources: {}
@@ -135059,12 +134986,12 @@ spec:
           name: config
         - mountPath: /etc/secrets/config-watcher/scripts
           name: redpanda-config-watcher
-      imagePullSecrets: null
       initContainers:
       - command:
         - /bin/bash
         - -c
         - rpk redpanda tune all
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda:v24.2.7
         name: tuning
         resources: {}
@@ -135472,7 +135399,7 @@ spec:
         - /tmp/base-config/redpanda.yaml
         - --bootstrap-yaml
         - /tmp/config/.bootstrap.yaml
-        env: []
+        env: null
         image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.0-24.3.1
         name: post-install
         resources: {}
@@ -135488,7 +135415,6 @@ spec:
           name: config
         - mountPath: /tmp/base-config
           name: base-config
-      imagePullSecrets: null
       initContainers:
       - command:
         - /redpanda-operator
@@ -135521,7 +135447,7 @@ spec:
         fsGroup: 101
         fsGroupChangePolicy: OnRootMismatch
       serviceAccountName: default
-      tolerations: null
+      tolerations: []
       volumes:
       - name: redpanda-default-cert
         secret:

@@ -12,6 +12,7 @@ import (
 	"github.com/redpanda-data/helm-charts/charts/console"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
+	applycorev1 "k8s.io/client-go/applyconfigurations/core/v1"
 )
 
 type PartialValues struct {
@@ -364,9 +365,9 @@ type PartialTiered struct {
 type PartialTieredStorageConfig map[string]any
 
 type PartialPodTemplate struct {
-	Labels      map[string]string "json:\"labels,omitempty\" jsonschema:\"required\""
-	Annotations map[string]string "json:\"annotations,omitempty\" jsonschema:\"required\""
-	Spec        *PartialPodSpec   "json:\"spec,omitempty\" jsonschema:\"required\""
+	Labels      map[string]string                      "json:\"labels,omitempty\" jsonschema:\"required\""
+	Annotations map[string]string                      "json:\"annotations,omitempty\" jsonschema:\"required\""
+	Spec        *applycorev1.PodSpecApplyConfiguration "json:\"spec,omitempty\""
 }
 
 type PartialSecurityContext struct {
@@ -473,13 +474,6 @@ type PartialTieredStorageCredentials struct {
 	SecretKey *PartialSecretRef "json:\"secretKey,omitempty\""
 }
 
-type PartialPodSpec struct {
-	Containers                   []PartialContainer         "json:\"containers,omitempty\" jsonschema:\"required\""
-	SecurityContext              *corev1.PodSecurityContext "json:\"securityContext,omitempty\""
-	Volumes                      []corev1.Volume            "json:\"volumes,omitempty\""
-	AutomountServiceAccountToken *bool                      "json:\"automountServiceAccountToken,omitempty\""
-}
-
 type PartialBootstrapUser struct {
 	Name         *string                   "json:\"name,omitempty\""
 	SecretKeyRef *corev1.SecretKeySelector "json:\"secretKeyRef,omitempty\""
@@ -541,13 +535,6 @@ type PartialSecretRef struct {
 	ConfigurationKey *string "json:\"configurationKey,omitempty\""
 	Key              *string "json:\"key,omitempty\""
 	Name             *string "json:\"name,omitempty\""
-}
-
-type PartialContainer struct {
-	Name            *ContainerName          "json:\"name,omitempty\" jsonschema:\"required\""
-	SecurityContext *corev1.SecurityContext "json:\"securityContext,omitempty\""
-	Env             []corev1.EnvVar         "json:\"env,omitempty\" jsonschema:\"required\""
-	VolumeMounts    []corev1.VolumeMount    "json:\"volumeMounts,omitempty\""
 }
 
 type PartialExternalTLS struct {
