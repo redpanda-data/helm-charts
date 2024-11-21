@@ -1,20 +1,26 @@
 package connectors
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
 	"regexp"
 	"slices"
+	"strings"
 	"testing"
 
 	fuzz "github.com/google/gofuzz"
+	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	"github.com/redpanda-data/helm-charts/pkg/helm"
+	"github.com/redpanda-data/helm-charts/pkg/kube"
 	"github.com/redpanda-data/helm-charts/pkg/testutil"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"golang.org/x/tools/txtar"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/utils/ptr"
 	"sigs.k8s.io/yaml"
 )
 
@@ -141,4 +147,62 @@ func TestGenerateCases(t *testing.T) {
 	})
 
 	require.NoError(t, os.WriteFile("testdata/template-cases-generated.txtar", archive, 0o644))
+}
+
+func TestGoHelmEquivalence(t *testing.T) {
+	client, err := helm.New(helm.Options{ConfigHome: testutil.TempDir(t)})
+	require.NoError(t, err)
+
+	values := PartialValues{
+		Test: &PartialCreatable{
+			Create: ptr.To(false),
+		},
+		Monitoring: &PartialMonitoringConfig{
+			Enabled: ptr.To(true),
+		},
+		ServiceAccount: &PartialServiceAccountConfig{
+			Create: ptr.To(true),
+		},
+	}
+
+	goObjs, err := Chart.Render(kube.Config{}, helmette.Release{
+		Name:      "gotohelm",
+		Namespace: "mynamespace",
+		Service:   "Helm",
+	}, values)
+	require.NoError(t, err)
+
+	rendered, err := client.Template(context.Background(), ".", helm.TemplateOptions{
+		Name:      "gotohelm",
+		Namespace: "mynamespace",
+		Values:    values,
+	})
+	require.NoError(t, err)
+
+	helmObjs, err := kube.DecodeYAML(rendered, Scheme)
+	require.NoError(t, err)
+
+	slices.SortStableFunc(helmObjs, func(a, b kube.Object) int {
+		aStr := fmt.Sprintf("%s/%s/%s", a.GetObjectKind().GroupVersionKind().String(), a.GetNamespace(), a.GetName())
+		bStr := fmt.Sprintf("%s/%s/%s", b.GetObjectKind().GroupVersionKind().String(), b.GetNamespace(), b.GetName())
+		return strings.Compare(aStr, bStr)
+	})
+
+	slices.SortStableFunc(goObjs, func(a, b kube.Object) int {
+		aStr := fmt.Sprintf("%s/%s/%s", a.GetObjectKind().GroupVersionKind().String(), a.GetNamespace(), a.GetName())
+		bStr := fmt.Sprintf("%s/%s/%s", b.GetObjectKind().GroupVersionKind().String(), b.GetNamespace(), b.GetName())
+		return strings.Compare(aStr, bStr)
+	})
+
+	// resource.Quantity is a special object. To Ensure they compare correctly,
+	// we'll round trip it through JSON so the internal representations will
+	// match (assuming the values are actually equal).
+	assert.Equal(t, len(helmObjs), len(goObjs))
+
+	// Iterate and compare instead of a single comparison for better error
+	// messages. Some divergences will fail an Equal check on slices but not
+	// report which element(s) aren't equal.
+	for i := range helmObjs {
+		assert.Equal(t, helmObjs[i], goObjs[i])
+	}
 }

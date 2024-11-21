@@ -19,6 +19,7 @@ package connectors
 import (
 	_ "embed"
 
+	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm"
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
 	"github.com/redpanda-data/helm-charts/pkg/kube"
@@ -44,6 +45,7 @@ var (
 // +gotohelm:ignore=true
 func init() {
 	must(scheme.AddToScheme(Scheme))
+	must(monitoringv1.AddToScheme(Scheme))
 }
 
 // +gotohelm:ignore=true
@@ -60,8 +62,12 @@ func must(err error) {
 // In go, this function should be call by executing [ChartLabel.Render], which will
 // handle construction of [helmette.Dot], subcharting, and output filtering.
 func render(dot *helmette.Dot) []kube.Object {
-	manifests := []kube.Object{}
-	// TODO
+	manifests := []kube.Object{
+		Deployment(dot),
+		PodMonitor(dot),
+		Service(dot),
+		ServiceAccount(dot),
+	}
 
 	// NB: This slice may contain nil interfaces!
 	// Filtering happens elsewhere, don't call this function directly if you
