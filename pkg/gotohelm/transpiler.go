@@ -633,6 +633,18 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 		case *types.Var:
 			return &Ident{Name: obj.Name()}
 
+		case *types.Func:
+			if _, ok := t.dependencies[obj.Pkg().Path()]; !ok {
+				panic(&Unsupported{
+					Node: n,
+					Msg:  fmt.Sprintf("function %q is not present in the dependencies list and therefore cannot be referenced", obj.FullName()),
+					Fset: t.Fset,
+				})
+			}
+			return NewLiteral(
+				fmt.Sprintf("%s.%s", t.namespaceFor(obj.Pkg()), t.funcNameFor(obj)),
+			)
+
 		// Unclear how often this check is correct. true, false, and _ won't
 		// have an Obj. AST rewriting can also result in .Obj being nil.
 		case nil:
@@ -850,13 +862,11 @@ func (t *Transpiler) transpileExpr(n ast.Expr) Node {
 			})
 		}
 
-		return &Call{
-			FuncName: "_shims.typeassertion",
-			Arguments: []Node{
-				t.transpileTypeRepr(typ),
-				t.transpileExpr(n.X),
-			},
-		}
+		return litCall(
+			"_shims.typeassertion",
+			t.transpileTypeRepr(typ),
+			t.transpileExpr(n.X),
+		)
 	}
 
 	var b bytes.Buffer
@@ -961,7 +971,7 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 			}
 			return &BuiltInCall{FuncName: "toString", Arguments: args}
 		case "len":
-			return t.maybeCast(&Call{FuncName: "_shims.len", Arguments: args}, types.Typ[types.Int])
+			return t.maybeCast(litCall("_shims.len", args...), types.Typ[types.Int])
 		case "delete":
 			return &BuiltInCall{FuncName: "unset", Arguments: args}
 		default:
@@ -1061,11 +1071,11 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 	case "k8s.io/apimachinery/pkg/util/intstr.FromInt32", "k8s.io/apimachinery/pkg/util/intstr.FromInt", "k8s.io/apimachinery/pkg/util/intstr.FromString":
 		return args[0]
 	case "k8s.io/utils/ptr.Deref":
-		return t.maybeCast(&Call{FuncName: "_shims.ptr_Deref", Arguments: args}, signature.Results().At(0).Type())
+		return t.maybeCast(litCall("_shims.ptr_Deref", args...), signature.Results().At(0).Type())
 	case "k8s.io/utils/ptr.To":
 		return args[0]
 	case "k8s.io/utils/ptr.Equal":
-		return &Call{FuncName: "_shims.ptr_Equal", Arguments: args}
+		return litCall("_shims.ptr_Equal", args...)
 	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.Dig":
 		return &BuiltInCall{FuncName: "dig", Arguments: append(args[2:], args[1], args[0])}
 	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.Unwrap":
@@ -1073,14 +1083,14 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.UnmarshalInto":
 		return args[0]
 	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.Compact2", "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.Compact3":
-		return &Call{FuncName: "_shims.compact", Arguments: args}
+		return litCall("_shims.compact", args...)
 	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.AsIntegral":
-		return &Call{FuncName: "_shims.asintegral", Arguments: args}
+		return litCall("_shims.asintegral", args...)
 	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.AsNumeric":
-		return &Call{FuncName: "_shims.asnumeric", Arguments: args}
+		return litCall("_shims.asnumeric", args...)
 	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.DictTest":
 		valueType := callee.(*types.Func).Type().(*types.Signature).TypeParams().At(1)
-		return &Call{FuncName: "_shims.dicttest", Arguments: append(args, t.zeroOf(valueType))}
+		return litCall("_shims.dicttest", append(args, t.zeroOf(valueType))...)
 	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.Merge":
 		dict := DictLiteral{}
 		return &BuiltInCall{FuncName: "merge", Arguments: append([]Node{&dict}, args...)}
@@ -1113,7 +1123,7 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 				// from the arguments list.
 				args := append([]Node{NewLiteral(apiVersion), NewLiteral(kind)}, args[1:]...)
 
-				return &Call{FuncName: "_shims.lookup", Arguments: args}
+				return litCall("_shims.lookup", args...)
 			}
 		}
 
@@ -1134,21 +1144,19 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 				})
 			}
 		}
-		return &Call{FuncName: "_shims.typetest", Arguments: []Node{t.transpileTypeRepr(typ), args[0], t.zeroOf(typ)}}
+		return litCall("_shims.typetest", t.transpileTypeRepr(typ), args[0], t.zeroOf(typ))
 
 	case "time.ParseDuration":
-		return &Call{FuncName: "_shims.time_ParseDuration", Arguments: args}
+		return litCall("_shims.time_ParseDuration", args...)
 
 	case "time.(Duration).String":
-		return &Call{FuncName: "_shims.time_Duration_String", Arguments: args}
+		return litCall("_shims.time_Duration_String", args...)
 
 	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.MustDuration":
-		return &Call{
-			FuncName: "_shims.time_Duration_String",
-			Arguments: []Node{
-				&Call{FuncName: "_shims.time_ParseDuration", Arguments: args},
-			},
-		}
+		return litCall(
+			"_shims.time_Duration_String",
+			litCall("_shims.time_ParseDuration", args...),
+		)
 
 	// Support for resource.Quantity. In helm world, resource.Quantity is
 	// always represented as it's JSON representation of either a string or a
@@ -1156,23 +1164,23 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 	// methods.
 	// WARNING: There is not 100% compatibility and this is on purpose.
 	case "k8s.io/apimachinery/pkg/api/resource.MustParse":
-		return &Call{FuncName: "_shims.resource_MustParse", Arguments: args}
+		return litCall("_shims.resource_MustParse", args...)
 	case "k8s.io/apimachinery/pkg/api/resource.(*Quantity).Value":
-		return &Cast{To: "int64", X: &Call{FuncName: "_shims.resource_Value", Arguments: append([]Node{reciever}, args...)}}
+		return &Cast{To: "int64", X: litCall("_shims.resource_Value", append([]Node{reciever}, args...)...)}
 	case "k8s.io/apimachinery/pkg/api/resource.(*Quantity).MilliValue":
-		return &Cast{To: "int64", X: &Call{FuncName: "_shims.resource_MilliValue", Arguments: append([]Node{reciever}, args...)}}
+		return &Cast{To: "int64", X: litCall("_shims.resource_MilliValue", append([]Node{reciever}, args...)...)}
 	case "k8s.io/apimachinery/pkg/api/resource.(*Quantity).String":
 		// Similarly to DeepCopy, we're exploit the JSON representation of
 		// resource.Quantity here and rely on MustParse to simply normalize the
 		// representation.
-		return &Call{FuncName: "_shims.resource_MustParse", Arguments: []Node{reciever}}
+		return litCall("_shims.resource_MustParse", reciever)
 	case "k8s.io/apimachinery/pkg/api/resource.(Quantity).DeepCopy":
 		// DeepCopy is supported in a bit of a hacky way. We call "MustParse"
 		// which takes the JSON (string) representation of a resource.Quantity
 		// and parses it returning a new resource.Quantity, which is
 		// functionally equivalent. It has the added benefit of normalizing the
 		// string form of the Quantity.
-		return &Call{FuncName: "_shims.resource_MustParse", Arguments: []Node{reciever}}
+		return litCall("_shims.resource_MustParse", reciever)
 	}
 
 	// Final stop, all our special cases have been handled. Either this call is
@@ -1191,8 +1199,19 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 
 	// Method call.
 	if r := callee.Type().(*types.Signature).Recv(); r == nil {
-		// Easy case: if there's no receiver, this is just a function call.
-		call = &Call{FuncName: fmt.Sprintf("%s.%s", t.namespaceFor(callee.Pkg()), t.funcNameFor(callee.(*types.Func))), Arguments: args}
+		switch callee := callee.(type) {
+		case *types.Func:
+			// Easy case: if there's no receiver, this is just a function call.
+			call = litCall(fmt.Sprintf("%s.%s", t.namespaceFor(callee.Pkg()), t.funcNameFor(callee)), args...)
+		case *types.Var:
+			call = &Call{FuncName: &Ident{Name: callee.Name()}, Arguments: args}
+		default:
+			panic(&Unsupported{
+				Node: n,
+				Msg:  fmt.Sprintf("callee of type %T: %v", callee, callee),
+				Fset: t.Fset,
+			})
+		}
 	} else {
 		// Otherwise, if there is a receiver, we need to emulate a method call.
 		typ := r.Type()
@@ -1216,14 +1235,14 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 			receiverArg = t.transpileExpr(n.Fun.(*ast.SelectorExpr).X)
 		}
 
-		call = &Call{
-			FuncName: fmt.Sprintf("%s.%s", t.namespaceFor(callee.Pkg()), t.funcNameFor(callee.(*types.Func))),
+		call = litCall(
+			fmt.Sprintf("%s.%s", t.namespaceFor(callee.Pkg()), t.funcNameFor(callee.(*types.Func))),
 			// Method calls come in as a "top level" CallExpr where .Fun is the
 			// selector up to that call. e.g. `Foo.Bar.Baz()` will be a `CallExpr`.
 			// It's `.Fun` is a `SelectorExpr` where `.X` is `Foo.Bar`, the receiver,
 			// and `.Sel` is `Baz`, the method name.
-			Arguments: append([]Node{receiverArg}, args...),
-		}
+			append([]Node{receiverArg}, args...)...,
+		)
 	}
 
 	// If there's only a single return value, we'll possibly want to wrap

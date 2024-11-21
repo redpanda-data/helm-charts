@@ -25,7 +25,7 @@
 {{- $_ = (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list (printf "[]%s" "string") $x (coalesce nil)) ))) "r")) ))) "r") -}}
 {{- $_ = (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list (printf "map[%s]%s" "string" "interface {}") $x (coalesce nil)) ))) "r")) ))) "r") -}}
 {{- $_is_returning = true -}}
-{{- (dict "r" (dict "sliceExpr" $slice "negativeNumbers" (list -2 -4) "forExpr" (get (fromJson (include "syntax.forExpr" (dict "a" (list (10 | int) (mustMergeOverwrite (dict "Iterations" 0 ) (dict "Iterations" (5 | int) ))) ))) "r") "binaryExprs" (get (fromJson (include "syntax.binaryExprs" (dict "a" (list ) ))) "r") "instance-method" (get (fromJson (include "syntax.instanceMethod" (dict "a" (list ) ))) "r") "append" (get (fromJson (include "syntax.appends" (dict "a" (list ) ))) "r") "nested-for-and-return" (get (fromJson (include "syntax.nestedFor" (dict "a" (list ) ))) "r") "import" (get (fromJson (include "aaacommon.SharedConstant" (dict "a" (list ) ))) "r") )) | toJson -}}
+{{- (dict "r" (dict "sliceExpr" $slice "negativeNumbers" (list -2 -4) "forExpr" (get (fromJson (include "syntax.forExpr" (dict "a" (list (10 | int) (mustMergeOverwrite (dict "Iterations" 0 ) (dict "Iterations" (5 | int) ))) ))) "r") "binaryExprs" (get (fromJson (include "syntax.binaryExprs" (dict "a" (list ) ))) "r") "instance-method" (get (fromJson (include "syntax.instanceMethod" (dict "a" (list ) ))) "r") "append" (get (fromJson (include "syntax.appends" (dict "a" (list ) ))) "r") "nested-for-and-return" (get (fromJson (include "syntax.nestedFor" (dict "a" (list ) ))) "r") "import" (get (fromJson (include "aaacommon.SharedConstant" (dict "a" (list ) ))) "r") "funArgs" (get (fromJson (include "syntax.funcArgs" (dict "a" (list ) ))) "r") )) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -302,6 +302,53 @@
 {{- $y := (list (1 | int) (2 | int) (3 | int)) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" (list (concat (default (list ) $x) (list )) (concat (default (list ) $x) (list (4 | int))) (concat (default (list ) $x) (default (list ) $y)) (concat (default (list ) $y) (default (list ) $x)) (concat (default (list ) $y) (list (1 | int) (2 | int) (3 | int) (4 | int))))) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "syntax.funcArgs" -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (list (get (fromJson (include "syntax.sliceOf" (dict "a" (list (5 | int) "syntax.ident") ))) "r") (get (fromJson (include "syntax.sliceOf" (dict "a" (list (10 | int) "syntax.hello") ))) "r"))) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "syntax.sliceOf" -}}
+{{- $l := (index .a 0) -}}
+{{- $fn := (index .a 1) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $r := (coalesce nil) -}}
+{{- range $_, $i := untilStep ((0 | int)|int) ($l|int) (1|int) -}}
+{{- $r = (concat (default (list ) $r) (list (get (fromJson (include $fn (dict "a" (list $i) ))) "r"))) -}}
+{{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" $r) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "syntax.hello" -}}
+{{- $i := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (printf "hello %d" $i)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "syntax.ident" -}}
+{{- $i := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" $i) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
