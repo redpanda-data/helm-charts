@@ -66,6 +66,7 @@ func Syntax() map[string]any {
 		"append":                appends(),
 		"nested-for-and-return": nestedFor(),
 		"import":                aaacommon.SharedConstant(),
+		"funArgs":               funcArgs(),
 	}
 }
 
@@ -316,4 +317,30 @@ func appends() [][]int {
 		append(y, x...),
 		append(y, 1, 2, 3, 4),
 	}
+}
+
+func funcArgs() []any {
+	// Showcase support for first class functions!
+	// NOTE: Closures are NOT supported.
+	return []any{
+		sliceOf(5, ident),
+		sliceOf(10, hello),
+	}
+
+}
+
+func sliceOf[T any](l int, fn func(int) T) []T {
+	var r []T
+	for i := 0; i < l; i++ {
+		r = append(r, fn(i))
+	}
+	return r
+}
+
+func hello(i int) string {
+	return fmt.Sprintf("hello %d", i)
+}
+
+func ident(i int) int {
+	return i
 }

@@ -141,8 +141,12 @@ func (c *Cast) Write(w io.Writer) {
 }
 
 type Call struct {
-	FuncName  string
+	FuncName  Node
 	Arguments []Node
+}
+
+func litCall(funcName string, args ...Node) *Call {
+	return &Call{FuncName: NewLiteral(funcName), Arguments: args}
 }
 
 func (c *Call) Write(w io.Writer) {
@@ -158,7 +162,9 @@ func (c *Call) Write(w io.Writer) {
 		},
 	}
 
-	fmt.Fprintf(w, `(get (fromJson (include %q `, c.FuncName)
+	fmt.Fprintf(w, `(get (fromJson (include `)
+	c.FuncName.Write(w)
+	fmt.Fprintf(w, ` `)
 	args.Write(w)
 	fmt.Fprintf(w, `)) %q)`, "r")
 }
