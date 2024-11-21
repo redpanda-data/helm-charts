@@ -19,7 +19,6 @@ package redpanda
 import (
 	"fmt"
 
-	"github.com/redpanda-data/console/backend/pkg/config"
 	"github.com/redpanda-data/helm-charts/charts/connectors"
 	"github.com/redpanda-data/helm-charts/charts/console"
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
@@ -264,24 +263,29 @@ func ConsoleConfig(dot *helmette.Dot) map[string]any {
 			helmette.TrimSuffix(".", values.ClusterDomain),
 			p)
 
-		c["connect"] = config.Connect{
-			Enabled: ptr.Deref(values.Connectors.Enabled, false),
-			Clusters: []config.ConnectCluster{
+		// Due to console not having json go tags the Connect, ConnectCluster and ConnectClusterTLS
+		// are handwritten in the map[string]any form.
+		c["connect"] = map[string]any{
+			"enabled": ptr.Deref(values.Connectors.Enabled, false),
+			"clusters": []map[string]any{
 				{
-					Name: "connectors",
-					URL:  connectorsURL,
-					TLS: config.ConnectClusterTLS{
-						Enabled:               false,
-						CaFilepath:            "",
-						CertFilepath:          "",
-						KeyFilepath:           "",
-						InsecureSkipTLSVerify: false,
+					"name": "connectors",
+					"url":  connectorsURL,
+					"tls": map[string]any{
+						"enabled":               false,
+						"caFilepath":            "",
+						"certFilepath":          "",
+						"keyFilepath":           "",
+						"insecureSkipTlsVerify": false,
 					},
-					Username: "",
-					Password: "",
-					Token:    "",
+					"username": "",
+					"password": "",
+					"token":    "",
 				},
 			},
+			"connectTimeout": 0,
+			"readTimeout":    0,
+			"requestTimeout": 0,
 		}
 	}
 

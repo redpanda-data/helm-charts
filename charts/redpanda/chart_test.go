@@ -890,7 +890,18 @@ func TestGoHelmEquivalence(t *testing.T) {
 		},
 		AutomountServiceAccountToken: ptr.To(false),
 	}
-	values.Connectors = &connectors.PartialValues{Enabled: ptr.To(false), Test: &connectors.PartialCreatable{Create: ptr.To(false)}}
+	values.Connectors = &connectors.PartialValues{
+		Enabled: ptr.To(true),
+		Test: &connectors.PartialCreatable{
+			Create: ptr.To(false),
+		},
+		Monitoring: &connectors.PartialMonitoringConfig{
+			Enabled: ptr.To(true),
+		},
+		ServiceAccount: &connectors.PartialServiceAccountConfig{
+			Create: ptr.To(true),
+		},
+	}
 
 	goObjs, err := redpanda.Chart.Render(kube.Config{}, helmette.Release{
 		Name:      "gotohelm",
@@ -921,7 +932,7 @@ func TestGoHelmEquivalence(t *testing.T) {
 		return strings.Compare(aStr, bStr)
 	})
 
-	const stsIdx = 14
+	const stsIdx = 17
 
 	// resource.Quantity is a special object. To Ensure they compare correctly,
 	// we'll round trip it through JSON so the internal representations will
