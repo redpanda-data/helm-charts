@@ -171,7 +171,11 @@ func MergeTo[T any](sources ...any) T {
 	dst := map[string]any{}
 	for _, src := range sources {
 		// Turn it into something json-like
-		roundTrip := FromJSON(ToJSON(src))
+		roundTrip, err := valuesutil.RoundTripThrough[any](src)
+		if err != nil {
+			panic(fmt.Errorf("cannot round trip element: %w", err))
+		}
+
 		if err := mergo.Merge(&dst, roundTrip); err != nil {
 			panic(fmt.Errorf("cannot merge roundtripped element: %w", err))
 		}
@@ -482,4 +486,48 @@ func Replace(old, new, s string) string {
 func SortedKeys[T any](m map[string]T) []string {
 	keys := Keys(m)
 	return SortAlpha(keys)
+}
+
+// Get is a wrapper around sprig's `get` function that returns (nil, false)
+// instead of an empty string when the key is missing.
+func Get[T any](value any, key string) (T, bool) {
+	var zero T // Helper for ok == false
+	v := reflect.ValueOf(value)
+
+	if v.Type().Kind() == reflect.Map {
+		item := v.MapIndex(reflect.ValueOf(key))
+		if item.IsZero() {
+			return zero, false
+		}
+		return item.Interface().(T), true
+	}
+
+	for i := 0; i < v.NumField(); i++ {
+		field := v.Type().Field(i)
+
+		fieldName := field.Name
+		if jsonTag, ok := field.Tag.Lookup("json"); ok {
+			fieldName = strings.Split(jsonTag, ",")[0]
+		}
+
+		if fieldName != key {
+			continue
+		}
+
+		fieldValue := v.Field(i)
+
+		switch value := fieldValue.Interface().(type) {
+		case *T:
+			if value == nil {
+				return zero, false
+			}
+			return *value, true
+		case T:
+			return value, true
+		default:
+			return zero, false
+		}
+	}
+
+	return zero, false
 }

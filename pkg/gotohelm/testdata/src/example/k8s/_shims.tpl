@@ -125,6 +125,22 @@
 {{- end -}}
 {{- end -}}
 
+{{- define "_shims.get" -}}
+{{- $dict := (index .a 0) -}}
+{{- $key := (index .a 1) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- if (not (hasKey $dict $key)) -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (list (coalesce nil) false)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (list (get $dict $key) true)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
 {{- define "_shims.lookup" -}}
 {{- $apiVersion := (index .a 0) -}}
 {{- $kind := (index .a 1) -}}

@@ -226,6 +226,8 @@ auth:
 # ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.securityContext.runAsGroup}", 8989]
 # ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.securityContext.runAsUser}", 9090]
 # ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.securityContext.runAsNonRoot}", true]
+# ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.priority}", 9001]
+# ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.priorityClassName}", "over-9-thousand"]
 # ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.containers[0].securityContext.allowPrivilegeEscalation}", false]
 # ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.containers[0].securityContext.privileged}", false]
 # ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.containers[0].securityContext.runAsGroup}", 6767]
@@ -240,6 +242,9 @@ statefulset:
     annotations:
       anno: rp-sts
     spec:
+      priority: 9001
+      priorityClassName: "over-9-thousand"
+      preemptionPolicy: Never # You probably don't want to set this
       securityContext:
         fsGroup: 7878
         runAsGroup: 8989

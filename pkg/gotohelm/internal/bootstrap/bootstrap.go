@@ -106,6 +106,14 @@ func ptr_Equal(a, b any) bool {
 	return a == b
 }
 
+// wrapper around sprig's get
+func get(dict map[string]any, key string) (any, bool) {
+	if !HasKey(dict, key) {
+		return nil, false
+	}
+	return Get(dict, key), true
+}
+
 // wrapper around helm's lookup.
 func lookup(apiVersion, kind, namespace, name string) (map[string]any, bool) {
 	result := Lookup(apiVersion, kind, namespace, name)

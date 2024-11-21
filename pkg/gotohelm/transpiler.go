@@ -1102,6 +1102,8 @@ func (t *Transpiler) transpileCallExpr(n *ast.CallExpr) Node {
 		return &BuiltInCall{FuncName: "merge", Arguments: append([]Node{&dict}, args...)}
 	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.SortedKeys":
 		return &BuiltInCall{FuncName: "sortAlpha", Arguments: []Node{&BuiltInCall{FuncName: "keys", Arguments: args}}}
+	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.Get":
+		return litCall("_shims.get", args...)
 
 	case "github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette.Lookup":
 		// Super ugly but it's fairly safe to assume that the return type of

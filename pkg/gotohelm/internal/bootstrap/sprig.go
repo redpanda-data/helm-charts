@@ -16,6 +16,10 @@ func HasKey(map[string]any, string) bool {
 	panic("not implemented")
 }
 
+func Get(map[string]any, string) any {
+	panic("not implemented")
+}
+
 func Len(any) int {
 	panic("not implemented")
 }

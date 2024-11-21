@@ -13,6 +13,7 @@ import (
 	orderedmap "github.com/wk8/go-ordered-map/v2"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
+	applycorev1 "k8s.io/client-go/applyconfigurations/core/v1"
 	"k8s.io/utils/ptr"
 )
 
@@ -523,36 +524,10 @@ type PostUpgradeJob struct {
 	PodTemplate     PodTemplate             `json:"podTemplate"`
 }
 
-type ContainerName string
-
-// +gotohelm:ignore=true
-func (ContainerName) JSONSchemaExtend(s *jsonschema.Schema) {
-	s.Enum = append(s.Enum, RedpandaContainerName, PostInstallContainerName, PostUpgradeContainerName, RedpandaControllersContainerName)
-}
-
-type Container struct {
-	Name            ContainerName           `json:"name" jsonschema:"required"`
-	SecurityContext *corev1.SecurityContext `json:"securityContext,omitempty"`
-	Env             []corev1.EnvVar         `json:"env" jsonschema:"required"`
-	VolumeMounts    []corev1.VolumeMount    `json:"volumeMounts,omitempty"`
-}
-
-// PodSpec is a subset of [corev1.PodSpec] that will be merged into the objects
-// constructed by this helm chart via means of a [strategic merge
-// patch](https://kubernetes.io/docs/tasks/manage-kubernetes-objects/update-api-object-kubectl-patch/#use-a-strategic-merge-patch-to-update-a-deployment).
-// NOTE: At the time of writing, merging is manually implemented for each
-// field. Ideally, a more generally applicable solution should be used.
-type PodSpec struct {
-	Containers                   []Container                `json:"containers,omitempty" jsonschema:"required"`
-	SecurityContext              *corev1.PodSecurityContext `json:"securityContext,omitempty"`
-	Volumes                      []corev1.Volume            `json:"volumes,omitempty"`
-	AutomountServiceAccountToken *bool                      `json:"automountServiceAccountToken,omitempty"`
-}
-
 type PodTemplate struct {
-	Labels      map[string]string `json:"labels,omitempty" jsonschema:"required"`
-	Annotations map[string]string `json:"annotations,omitempty" jsonschema:"required"`
-	Spec        PodSpec           `json:"spec,omitempty" jsonschema:"required"`
+	Labels      map[string]string                      `json:"labels,omitempty" jsonschema:"required"`
+	Annotations map[string]string                      `json:"annotations,omitempty" jsonschema:"required"`
+	Spec        *applycorev1.PodSpecApplyConfiguration `json:"spec,omitempty"`
 }
 
 type Statefulset struct {
