@@ -1,6 +1,6 @@
 -- testdata/case-000.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -32,7 +32,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -192,7 +192,7 @@ spec:
           sizeLimit: 5Mi
         name: rp-connect-tmp
 ---
-# Source: connectors/templates/pod-monitor.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
@@ -218,7 +218,7 @@ spec:
       app.kubernetes.io/name: pO5m
 -- testdata/case-001.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -250,7 +250,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -408,7 +408,7 @@ spec:
         name: rp-connect-tmp
 -- testdata/case-002.yaml.golden --
 ---
-# Source: connectors/templates/serviceaccount.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
@@ -425,7 +425,7 @@ metadata:
   name: AN
   namespace: default
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -457,7 +457,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -627,7 +627,7 @@ spec:
       - name: AhJ
 -- testdata/case-003.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -659,7 +659,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -820,7 +820,7 @@ spec:
         name: rp-connect-tmp
 -- testdata/case-004.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -852,7 +852,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1011,7 +1011,7 @@ spec:
         name: rp-connect-tmp
 -- testdata/case-005.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -1043,7 +1043,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1215,7 +1215,7 @@ spec:
         name: rp-connect-tmp
 -- testdata/case-006.yaml.golden --
 ---
-# Source: connectors/templates/serviceaccount.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
@@ -1236,7 +1236,7 @@ metadata:
   name: "7"
   namespace: default
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -1274,7 +1274,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1447,7 +1447,7 @@ spec:
         name: rp-connect-tmp
 -- testdata/case-007.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -1479,7 +1479,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1639,7 +1639,7 @@ spec:
         name: rp-connect-tmp
 -- testdata/case-008.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -1671,7 +1671,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1826,7 +1826,7 @@ spec:
         name: rp-connect-tmp
 -- testdata/case-009.yaml.golden --
 ---
-# Source: connectors/templates/serviceaccount.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
@@ -1844,7 +1844,7 @@ metadata:
   name: eyeD
   namespace: default
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -1877,7 +1877,7 @@ spec:
   type: ClusterIP
 -- testdata/case-010.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -1915,7 +1915,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -2087,7 +2087,7 @@ spec:
           sizeLimit: 5Mi
         name: rp-connect-tmp
 ---
-# Source: connectors/templates/pod-monitor.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
@@ -2114,7 +2114,7 @@ spec:
       h4yNA: fJL
 -- testdata/case-011.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -2150,7 +2150,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -2368,7 +2368,7 @@ spec:
         name: rp-connect-tmp
 -- testdata/case-012.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -2401,7 +2401,7 @@ spec:
   type: ClusterIP
 -- testdata/case-013.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -2433,7 +2433,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/pod-monitor.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
@@ -2456,7 +2456,7 @@ spec:
       app.kubernetes.io/name: w8tCi3K
 -- testdata/case-014.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -2488,7 +2488,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -2647,7 +2647,7 @@ spec:
           sizeLimit: 5Mi
         name: rp-connect-tmp
 ---
-# Source: connectors/templates/pod-monitor.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
@@ -2675,7 +2675,7 @@ spec:
       app.kubernetes.io/name: dA1zsc
 -- testdata/case-015.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -2714,7 +2714,7 @@ spec:
   type: ClusterIP
 -- testdata/case-016.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -2752,7 +2752,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -2912,7 +2912,7 @@ spec:
       - name: Btxy
 -- testdata/case-017.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -2946,7 +2946,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -3160,7 +3160,7 @@ spec:
         name: rp-connect-tmp
 -- testdata/case-018.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -3192,7 +3192,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -3376,7 +3376,7 @@ spec:
         name: rp-connect-tmp
 -- testdata/case-019.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -3412,7 +3412,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -3606,7 +3606,7 @@ spec:
         name: rp-connect-tmp
 -- testdata/case-020.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -3639,7 +3639,7 @@ spec:
   type: ClusterIP
 -- testdata/case-021.yaml.golden --
 ---
-# Source: connectors/templates/serviceaccount.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
@@ -3658,7 +3658,7 @@ metadata:
   name: ABdKo
   namespace: default
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -3700,7 +3700,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -3970,7 +3970,7 @@ spec:
         name: rp-connect-tmp
 -- testdata/case-022.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -4008,7 +4008,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -4269,7 +4269,7 @@ spec:
           sizeLimit: 5Mi
         name: rp-connect-tmp
 ---
-# Source: connectors/templates/pod-monitor.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
@@ -4296,7 +4296,7 @@ spec:
       app.kubernetes.io/name: 6MJPA
 -- testdata/case-023.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -4328,7 +4328,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -4489,7 +4489,7 @@ spec:
       - name: naPNMJ
 -- testdata/case-024.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -4521,7 +4521,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -4699,7 +4699,7 @@ spec:
         name: rp-connect-tmp
 -- testdata/case-025.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -4733,7 +4733,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -4964,7 +4964,7 @@ spec:
           sizeLimit: 5Mi
         name: rp-connect-tmp
 ---
-# Source: connectors/templates/pod-monitor.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
@@ -4998,7 +4998,7 @@ spec:
       app.kubernetes.io/name: z3C
 -- testdata/case-026.yaml.golden --
 ---
-# Source: connectors/templates/serviceaccount.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
@@ -5015,7 +5015,7 @@ metadata:
   name: jmzfCmHq
   namespace: default
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -5050,7 +5050,7 @@ spec:
   type: ClusterIP
 -- testdata/case-027.yaml.golden --
 ---
-# Source: connectors/templates/serviceaccount.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
@@ -5069,7 +5069,7 @@ metadata:
   name: maeWLc
   namespace: default
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -5105,7 +5105,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -5277,7 +5277,7 @@ spec:
         name: rp-connect-tmp
 -- testdata/case-028.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -5312,7 +5312,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -5525,7 +5525,7 @@ spec:
           sizeLimit: 5Mi
         name: rp-connect-tmp
 ---
-# Source: connectors/templates/pod-monitor.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
@@ -5548,7 +5548,7 @@ spec:
       app.kubernetes.io/name: "3"
 -- testdata/case-029.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -5589,7 +5589,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -5867,7 +5867,7 @@ spec:
         name: rp-connect-tmp
 -- testdata/case-030.yaml.golden --
 ---
-# Source: connectors/templates/serviceaccount.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
@@ -5884,7 +5884,7 @@ metadata:
   name: UQ27oL
   namespace: default
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -5919,7 +5919,7 @@ spec:
   type: ClusterIP
 -- testdata/case-031.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -5956,7 +5956,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6158,7 +6158,7 @@ spec:
       - name: EO
 -- testdata/case-032.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -6191,7 +6191,7 @@ spec:
   type: ClusterIP
 -- testdata/case-033.yaml.golden --
 ---
-# Source: connectors/templates/serviceaccount.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
@@ -6210,7 +6210,7 @@ metadata:
   name: LVtVe0en
   namespace: default
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -6256,7 +6256,7 @@ spec:
   type: ClusterIP
 -- testdata/case-034.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -6300,7 +6300,7 @@ spec:
   type: ClusterIP
 -- testdata/case-035.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -6340,7 +6340,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/pod-monitor.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
@@ -6369,7 +6369,7 @@ spec:
       wle: mprjb
 -- testdata/case-036.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -6404,7 +6404,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6711,7 +6711,7 @@ spec:
       - name: XeUJ
 -- testdata/case-037.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -6752,7 +6752,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -7071,7 +7071,7 @@ spec:
       - name: 5p
 -- testdata/case-038.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -7106,7 +7106,7 @@ spec:
   type: ClusterIP
 -- testdata/case-039.yaml.golden --
 ---
-# Source: connectors/templates/serviceaccount.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
@@ -7125,7 +7125,7 @@ metadata:
   name: ZkHM
   namespace: default
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -7161,7 +7161,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -7422,7 +7422,7 @@ spec:
       - name: ""
 -- testdata/case-040.yaml.golden --
 ---
-# Source: connectors/templates/serviceaccount.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
@@ -7443,7 +7443,7 @@ metadata:
   name: FKhGHe3aO
   namespace: default
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -7489,7 +7489,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -7752,7 +7752,7 @@ spec:
           secretName: M4pqhD32D
       - name: kXFFnM
 ---
-# Source: connectors/templates/pod-monitor.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
@@ -7779,7 +7779,7 @@ spec:
       "n": ""
 -- testdata/case-041.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -7822,7 +7822,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -8135,7 +8135,7 @@ spec:
       - name: 4s31
 -- testdata/case-042.yaml.golden --
 ---
-# Source: connectors/templates/serviceaccount.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
@@ -8154,7 +8154,7 @@ metadata:
   name: w
   namespace: default
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -8195,7 +8195,7 @@ spec:
   type: ClusterIP
 -- testdata/case-043.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -8236,7 +8236,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/pod-monitor.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
@@ -8264,7 +8264,7 @@ spec:
       xYCcuP: zC
 -- testdata/case-044.yaml.golden --
 ---
-# Source: connectors/templates/serviceaccount.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
@@ -8280,7 +8280,7 @@ metadata:
   name: c
   namespace: default
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -8317,7 +8317,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -8635,7 +8635,7 @@ spec:
       - name: RXJ
       - name: JJ
 ---
-# Source: connectors/templates/pod-monitor.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
@@ -8661,7 +8661,7 @@ spec:
       app.kubernetes.io/name: R64C
 -- testdata/case-045.yaml.golden --
 ---
-# Source: connectors/templates/serviceaccount.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
@@ -8679,7 +8679,7 @@ metadata:
   name: Vk
   namespace: default
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -8720,7 +8720,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/pod-monitor.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
@@ -8750,7 +8750,7 @@ spec:
       h52qwPFCCL1xE: q
 -- testdata/case-046.yaml.golden --
 ---
-# Source: connectors/templates/serviceaccount.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
@@ -8766,7 +8766,7 @@ metadata:
   name: cl
   namespace: default
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -8799,7 +8799,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/pod-monitor.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
@@ -8827,7 +8827,7 @@ spec:
       app.kubernetes.io/name: fa1XvkvO
 -- testdata/case-047.yaml.golden --
 ---
-# Source: connectors/templates/serviceaccount.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
@@ -8846,7 +8846,7 @@ metadata:
   name: 3m
   namespace: default
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -8883,7 +8883,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -9136,7 +9136,7 @@ spec:
       - name: eHp5
       - name: r1T
 ---
-# Source: connectors/templates/pod-monitor.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
@@ -9168,7 +9168,7 @@ spec:
       ytV2tl: icxW
 -- testdata/case-048.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -9202,7 +9202,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -9528,7 +9528,7 @@ spec:
       - name: I0
 -- testdata/case-049.yaml.golden --
 ---
-# Source: connectors/templates/serviceaccount.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
@@ -9549,7 +9549,7 @@ metadata:
   name: zr1OY
   namespace: default
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -9589,7 +9589,7 @@ spec:
   type: ClusterIP
 -- testdata/custom-anti-affinity.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -9621,7 +9621,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -9782,7 +9782,7 @@ spec:
         name: rp-connect-tmp
 -- testdata/defaults.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -9814,7 +9814,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -9972,7 +9972,7 @@ spec:
         name: rp-connect-tmp
 -- testdata/disabled-service-account-automount-token-with-volume.yaml.golden --
 ---
-# Source: connectors/templates/serviceaccount.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
@@ -9988,7 +9988,7 @@ metadata:
   name: console-connectors
   namespace: default
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -10020,7 +10020,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -10198,7 +10198,7 @@ spec:
                 path: namespace
 -- testdata/enabled-service-account-automount-token-in-service-account-resource.yaml.golden --
 ---
-# Source: connectors/templates/serviceaccount.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
@@ -10214,7 +10214,7 @@ metadata:
   name: console-connectors
   namespace: default
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -10246,7 +10246,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -10404,7 +10404,7 @@ spec:
         name: rp-connect-tmp
 -- testdata/hard-anti-affinity.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -10436,7 +10436,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -10594,7 +10594,7 @@ spec:
         name: rp-connect-tmp
 -- testdata/soft-anti-affinity.yaml.golden --
 ---
-# Source: connectors/templates/service.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -10626,7 +10626,7 @@ spec:
   sessionAffinity: None
   type: ClusterIP
 ---
-# Source: connectors/templates/deployment.yaml
+# Source: connectors/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:

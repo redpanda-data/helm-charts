@@ -305,6 +305,7 @@
 #### Changed
 * The minimum Kubernetes version has been bumped to `1.25.0`
 * By default auto mount is disabled in ServiceAccount and Deployment PodSpec
+* Use render function to generate all resources
 #### Fixed
 #### Removed
 
