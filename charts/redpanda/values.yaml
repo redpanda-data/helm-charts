@@ -396,7 +396,7 @@ resources:
     # It is recommended to have at least 2Gi of memory per core for the Redpanda binary.
     # This memory is taken from the total memory given to each container.
     # The Helm chart allocates 80% of the container's memory to Redpanda, leaving the rest for
-    # the Seastar subsystem (reserveMemory) and other container processes.
+    # other container processes.
     # So at least 2.5Gi per core is recommended in order to ensure Redpanda has a full 2Gi.
     #
     # These values affect `--memory` and `--reserve-memory` flags passed to Redpanda and the memory
@@ -421,18 +421,17 @@ resources:
       max: 2.5Gi
     #
     # This optional `redpanda` object allows you to specify the memory size for both the Redpanda
-    # process and the underlying reserved memory used by Seastar.
+    # process and the Seastar subsystem.
     # This section is omitted by default, and memory sizes are calculated automatically
     # based on container memory.
     # Uncommenting this section and setting memory and reserveMemory values will disable
     # automatic calculation.
     #
-    # If you are setting the following values manually, keep in mind the following guidelines.
-    # Getting this wrong may lead to performance issues, instability, and loss of data:
-    # The amount of memory to allocate to a container is determined by the sum of three values:
-    # 1. Redpanda (at least 2Gi per core, ~80% of the container's total memory)
-    # 2. Seastar subsystem (200Mi * 0.2% of the container's total memory, 200Mi < x < 1Gi)
-    # 3. Other container processes (whatever small amount remains)
+    # If you are setting these values manually, follow these guidelines carefully. Incorrect settings can lead to performance degradation, instability, or even data loss. The total memory allocated to a container is determined as the sum of the following two areas:
+    #
+    #- Redpanda (including Seastar): Defined by the `--memory` parameter. Includes the memory used by the Redpanda process and the reserved memory allocated for Seastar. A minimum of 2Gi per core is required, and this value typically accounts for ~80% of the container’s total memory. For production, allocate at least 8Gi.
+    #
+    # - Operating system (OS): Defined by the `--reserve-memory` parameter. Represents the memory available for the operating system and other processes within the container.
     # redpanda:
       # Memory for the Redpanda process.
       # This must be lower than the container's memory (resources.memory.container.min if provided, otherwise
@@ -441,10 +440,8 @@ resources:
       # For production, use 8Gi or greater.
       # memory: 2Gi
       #
-      # Memory reserved for the Seastar subsystem.
-      # Any value above 1Gi will provide diminishing performance benefits.
+      # Memory reserved for the OS.
       # Equivalent to --reserve-memory.
-      # For production, use 1Gi.
       # reserveMemory: 200Mi
 
 # -- Persistence settings.
