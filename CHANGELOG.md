@@ -8,6 +8,13 @@
 #### Fixed
 #### Removed
 
+### [5.9.14](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.14) - 2024-11-28
+#### Added
+#### Changed
+#### Fixed
+* Fixed the description of `-memory` and `--reserve-memory` in docs.
+#### Removed
+
 ### [5.9.13](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.13) - 2024-11-27
 #### Added
 * overriding any PodSpec fields from `PodTemplate`
