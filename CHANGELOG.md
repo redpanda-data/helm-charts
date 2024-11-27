@@ -12,7 +12,7 @@
 #### Added
 * overriding any PodSpec fields from `PodTemplate`
 #### Changed
-* Bump Redpanda operator side car container tag
+* Bump Redpanda operator side car container tag to v2.3.1-24.3.1
 #### Fixed
 #### Removed
 
@@ -259,7 +259,7 @@
 #### Added
 * overriding any PodSpec fields from `PodTemplate`
 #### Changed
-* Bump Redpanda Operator app version to latest release v2.3.1-24.3.1
+* Bump Redpanda Operator app version to latest release v2.3.2-24.3.1
 #### Fixed
 #### Removed
 
