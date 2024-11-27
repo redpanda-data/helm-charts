@@ -115,3 +115,26 @@ func TestRedpandaControllersTag(t *testing.T) {
 		"the redpanda chart's values.yaml's controllers tag should be equal to the operator chart's appVersion",
 	)
 }
+
+func TestOperatorKustomizationTag(t *testing.T) {
+	chartBytes, err := os.ReadFile("../../charts/operator/Chart.yaml")
+	require.NoError(t, err)
+
+	var chart map[string]any
+	require.NoError(t, yaml.Unmarshal(chartBytes, &chart))
+
+	kustomizationBytes, err := os.ReadFile("../../charts/operator/testdata/kustomization.yaml")
+	require.NoError(t, err)
+
+	var kustomization map[string]any
+	require.NoError(t, yaml.Unmarshal(kustomizationBytes, &kustomization))
+
+	for _, addr := range kustomization["resources"].([]any) {
+		require.Contains(
+			t,
+			addr,
+			chart["appVersion"].(string),
+			"testdata kustomization address tag should be equal to the operator chart's appVersion",
+		)
+	}
+}

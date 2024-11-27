@@ -8,6 +8,13 @@
 #### Fixed
 #### Removed
 
+### [5.9.13](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.13) - 2024-11-27
+#### Added
+* overriding any PodSpec fields from `PodTemplate`
+#### Changed
+* Bump Redpanda operator side car container tag
+#### Fixed
+#### Removed
 
 ### [5.9.12](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.12) - 2024-11-22
 #### Added
@@ -245,6 +252,14 @@
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/operator-FILLMEIN) - YYYY-MM-DD
 #### Added
 #### Changed
+#### Fixed
+#### Removed
+
+### [0.4.34](https://github.com/redpanda-data/helm-charts/releases/tag/operator-0.4.34) - 2024-11-27
+#### Added
+* overriding any PodSpec fields from `PodTemplate`
+#### Changed
+* Bump Redpanda Operator app version to latest release v2.3.1-24.3.1
 #### Fixed
 #### Removed
 

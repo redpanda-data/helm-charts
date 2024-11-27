@@ -1,9 +1,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - https://raw.githubusercontent.com/redpanda-data/redpanda-operator/v2.3.0-24.3.1/operator/config/rbac/leader-election-role/role.yaml
-  - https://raw.githubusercontent.com/redpanda-data/redpanda-operator/v2.3.0-24.3.1/operator/config/rbac/v2-manager-role/role.yaml
-  - https://raw.githubusercontent.com/redpanda-data/redpanda-operator/v2.3.0-24.3.1/operator/config/rbac/bases/auth_proxy/auth_proxy_role.yaml
+  - https://raw.githubusercontent.com/redpanda-data/redpanda-operator/v2.3.1-24.3.1/operator/config/rbac/leader-election-role/role.yaml
+  - https://raw.githubusercontent.com/redpanda-data/redpanda-operator/v2.3.1-24.3.1/operator/config/rbac/v2-manager-role/role.yaml
+  - https://raw.githubusercontent.com/redpanda-data/redpanda-operator/v2.3.1-24.3.1/operator/config/rbac/bases/auth_proxy/auth_proxy_role.yaml
 generatorOptions:
   disableNameSuffixHash: true
 namePrefix: redpanda-
