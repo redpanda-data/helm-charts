@@ -41,7 +41,6 @@ type PartialValues struct {
 	Resources        *PartialRedpandaResources     "json:\"resources,omitempty\""
 	Storage          *PartialStorage               "json:\"storage,omitempty\""
 	PostInstallJob   *PartialPostInstallJob        "json:\"post_install_job,omitempty\""
-	PostUpgradeJob   *PartialPostUpgradeJob        "json:\"post_upgrade_job,omitempty\""
 	Statefulset      *PartialStatefulset           "json:\"statefulset,omitempty\""
 	ServiceAccount   *PartialServiceAccountCfg     "json:\"serviceAccount,omitempty\""
 	RBAC             *PartialRBAC                  "json:\"rbac,omitempty\""
@@ -168,19 +167,6 @@ type PartialPostInstallJob struct {
 	Enabled         *bool                        "json:\"enabled,omitempty\""
 	Labels          map[string]string            "json:\"labels,omitempty\""
 	Annotations     map[string]string            "json:\"annotations,omitempty\""
-	SecurityContext *corev1.SecurityContext      "json:\"securityContext,omitempty\""
-	PodTemplate     *PartialPodTemplate          "json:\"podTemplate,omitempty\""
-}
-
-type PartialPostUpgradeJob struct {
-	Resources       *corev1.ResourceRequirements "json:\"resources,omitempty\""
-	Affinity        *corev1.Affinity             "json:\"affinity,omitempty\""
-	Enabled         *bool                        "json:\"enabled,omitempty\""
-	Labels          map[string]string            "json:\"labels,omitempty\""
-	Annotations     map[string]string            "json:\"annotations,omitempty\""
-	BackoffLimit    *int32                       "json:\"backoffLimit,omitempty\""
-	ExtraEnv        []corev1.EnvVar              "json:\"extraEnv,omitempty\""
-	ExtraEnvFrom    []corev1.EnvFromSource       "json:\"extraEnvFrom,omitempty\""
 	SecurityContext *corev1.SecurityContext      "json:\"securityContext,omitempty\""
 	PodTemplate     *PartialPodTemplate          "json:\"podTemplate,omitempty\""
 }
