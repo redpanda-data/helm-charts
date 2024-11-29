@@ -65,8 +65,9 @@ func HorizontalPodAutoscaler(dot *helmette.Dot) *autoscalingv2.HorizontalPodAuto
 			Kind:       "HorizontalPodAutoscaler",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:   Fullname(dot),
-			Labels: Labels(dot),
+			Labels:    Labels(dot),
+			Name:      Fullname(dot),
+			Namespace: dot.Release.Namespace,
 		},
 		Spec: autoscalingv2.HorizontalPodAutoscalerSpec{
 			ScaleTargetRef: autoscalingv2.CrossVersionObjectReference{

@@ -18,7 +18,7 @@
 {{- $_ := (set $data "role-bindings.yaml" (tpl (toYaml (dict "roleBindings" $values.console.roleBindings )) $dot)) -}}
 {{- end -}}
 {{- $_is_returning = true -}}
-{{- (dict "r" (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) ) (mustMergeOverwrite (dict ) (dict "apiVersion" "v1" "kind" "ConfigMap" )) (dict "metadata" (mustMergeOverwrite (dict "creationTimestamp" (coalesce nil) ) (dict "name" (get (fromJson (include "console.Fullname" (dict "a" (list $dot) ))) "r") "labels" (get (fromJson (include "console.Labels" (dict "a" (list $dot) ))) "r") )) "data" $data ))) | toJson -}}
+{{- (dict "r" (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) ) (mustMergeOverwrite (dict ) (dict "apiVersion" "v1" "kind" "ConfigMap" )) (dict "metadata" (mustMergeOverwrite (dict "creationTimestamp" (coalesce nil) ) (dict "labels" (get (fromJson (include "console.Labels" (dict "a" (list $dot) ))) "r") "name" (get (fromJson (include "console.Fullname" (dict "a" (list $dot) ))) "r") "namespace" $dot.Release.Namespace )) "data" $data ))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

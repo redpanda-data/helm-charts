@@ -18,5 +18,5 @@ spec:
       command: ['wget']
       args: ['{{ include "console.fullname" . }}:{{ .Values.service.port }}']
   restartPolicy: Never
-  priorityClassName: {{ .Values.priorityClassName }}
+  priorityClassName: {{ .Values.priorityClassName | quote }}
 {{- end }}

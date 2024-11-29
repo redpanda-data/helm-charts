@@ -109,7 +109,7 @@ func Deployment(dot *helmette.Dot) *appsv1.Deployment {
 			Template: corev1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
 					Annotations: helmette.Merge(map[string]string{
-						"checksum/config": helmette.Sha256Sum(helmette.ToYaml(ConfigMap(dot))),
+						"checksum/config": helmette.Sha256Sum(helmette.ToYaml(ConfigMap(dot).Data)),
 					}, values.PodAnnotations),
 					Labels: helmette.Merge(SelectorLabels(dot), values.PodLabels),
 				},
