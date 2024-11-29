@@ -6,8 +6,10 @@ import (
 	"testing"
 
 	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
+	"github.com/redpanda-data/helm-charts/pkg/helm"
 	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
+	"sigs.k8s.io/yaml"
 )
 
 func TestPostInstallUpgradeEnvironmentVariables(t *testing.T) {
@@ -116,4 +118,41 @@ func compareEnvVars(a, b corev1.EnvVar) int {
 	} else {
 		return 1
 	}
+}
+
+func TestAnnotationsOverwrite(t *testing.T) {
+	v := Values{
+		PostInstallJob: PostInstallJob{
+			Enabled: true,
+			Annotations: map[string]string{
+				"helm.sh/hook-delete-policy": "before-hook-creation,hook-succeeded",
+			},
+			Labels: map[string]string{
+				"app.kubernetes.io/name": "overwrite-name",
+			},
+			PodTemplate: PodTemplate{
+				Labels: map[string]string{
+					"app.kubernetes.io/name": "overwrite-pod-template-name",
+				},
+				Annotations: map[string]string{
+					"some-annotation": "some-annotation-value",
+				},
+			},
+		},
+	}
+
+	b, err := yaml.Marshal(v)
+	require.NoError(t, err)
+
+	dot := helmette.Dot{
+		Chart: helmette.Chart{Name: "XYZ-to-change"},
+	}
+	dot.Values, err = helm.MergeYAMLValues("", b, defaultValuesYAML)
+	require.NoError(t, err)
+
+	job := PostInstallUpgradeJob(&dot)
+	require.Equal(t, job.Annotations["helm.sh/hook-delete-policy"], "before-hook-creation,hook-succeeded")
+	require.Equal(t, job.Labels["app.kubernetes.io/name"], "overwrite-name")
+	require.Equal(t, job.Spec.Template.Annotations["some-annotation"], "some-annotation-value")
+	require.Equal(t, job.Spec.Template.Labels["app.kubernetes.io/name"], "overwrite-pod-template-name")
 }
