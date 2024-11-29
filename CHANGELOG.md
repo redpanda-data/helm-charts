@@ -11,6 +11,7 @@
 ### [5.9.14](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.14) - 2024-11-28
 #### Added
 #### Changed
+* note to indicate Core count decreasing will be possible starting from 24.3 Redpanda version
 #### Fixed
 * Fixed the description of `-memory` and `--reserve-memory` in docs.
 #### Removed
