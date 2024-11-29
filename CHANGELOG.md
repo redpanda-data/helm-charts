@@ -14,6 +14,7 @@
 #### Fixed
 * ability to overwrite annotation and labels in Job metadata
 #### Removed
+* non-existent post-upgrade-job values of the non-existent resource (removed in 5.9.6)
 
 ### [5.9.14](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.14) - 2024-11-28
 #### Added

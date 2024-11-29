@@ -79,7 +79,6 @@ type Values struct {
 	Resources        RedpandaResources             `json:"resources"`
 	Storage          Storage                       `json:"storage"`
 	PostInstallJob   PostInstallJob                `json:"post_install_job"`
-	PostUpgradeJob   PostUpgradeJob                `json:"post_upgrade_job"`
 	Statefulset      Statefulset                   `json:"statefulset"`
 	ServiceAccount   ServiceAccountCfg             `json:"serviceAccount"`
 	RBAC             RBAC                          `json:"rbac"`
@@ -504,21 +503,6 @@ type PostInstallJob struct {
 	Enabled     bool                         `json:"enabled"`
 	Labels      map[string]string            `json:"labels"`
 	Annotations map[string]string            `json:"annotations"`
-	// Deprecated. Prefer [PodTemplate.Spec.SecurityContext].
-	SecurityContext *corev1.SecurityContext `json:"securityContext"`
-	PodTemplate     PodTemplate             `json:"podTemplate"`
-}
-
-type PostUpgradeJob struct {
-	Resources    corev1.ResourceRequirements `json:"resources"`
-	Affinity     corev1.Affinity             `json:"affinity"`
-	Enabled      bool                        `json:"enabled"`
-	Labels       map[string]string           `json:"labels"`
-	Annotations  map[string]string           `json:"annotations"`
-	BackoffLimit *int32                      `json:"backoffLimit"`
-	// Deprecated. Prefer [PodTemplate.Spec.Containers.Env].
-	ExtraEnv     []corev1.EnvVar        `json:"extraEnv"`
-	ExtraEnvFrom []corev1.EnvFromSource `json:"extraEnvFrom"`
 	// Deprecated. Prefer [PodTemplate.Spec.SecurityContext].
 	SecurityContext *corev1.SecurityContext `json:"securityContext"`
 	PodTemplate     PodTemplate             `json:"podTemplate"`
