@@ -97,10 +97,11 @@ func PostInstallUpgradeJob(dot *helmette.Dot) *batchv1.Job {
 			Name:      fmt.Sprintf("%s-configuration", Fullname(dot)),
 			Namespace: dot.Release.Namespace,
 			Labels: helmette.Merge(
-				FullLabels(dot),
 				helmette.Default(map[string]string{}, values.PostInstallJob.Labels),
+				FullLabels(dot),
 			),
 			Annotations: helmette.Merge(
+				helmette.Default(map[string]string{}, values.PostInstallJob.Annotations),
 				// This is what defines this resource as a hook. Without this line, the
 				// job is considered part of the release.
 				map[string]string{
@@ -108,7 +109,6 @@ func PostInstallUpgradeJob(dot *helmette.Dot) *batchv1.Job {
 					"helm.sh/hook-delete-policy": "before-hook-creation",
 					"helm.sh/hook-weight":        "-5",
 				},
-				helmette.Default(map[string]string{}, values.PostInstallJob.Annotations),
 			),
 		},
 		Spec: batchv1.JobSpec{

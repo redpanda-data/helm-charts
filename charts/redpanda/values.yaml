@@ -552,9 +552,9 @@ post_install_job:
   affinity: {}
 
   podTemplate:
-    # -- Additional labels to apply to the Pods of this Job.
+    # -- Labels to apply (or overwrite the default) to the Pods of this Job.
     labels: {}
-    # -- Additional annotations to apply to the Pods of this Job.
+    # -- Annotations to apply (or overwrite the default) to the Pods of this Job.
     annotations: {}
     # -- A subset of Kubernetes' PodSpec type that will be merged into the
     # final PodSpec. See [Merge Semantics](#merging-semantics) for details.
