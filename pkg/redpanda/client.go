@@ -270,8 +270,7 @@ func certificatesFor(dot *helmette.Dot, cert string) (certSecret, certKey, clien
 
 func tlsConfigFromDot(dot *helmette.Dot, listener redpanda.InternalTLS) (*tls.Config, error) {
 	namespace := dot.Release.Namespace
-	serviceName := redpanda.ServiceName(dot)
-	serverName := fmt.Sprintf("%s.%s.svc", serviceName, namespace)
+	serverName := redpanda.InternalDomain(dot)
 
 	rootCertName, rootCertKey, clientCertName := certificatesFor(dot, listener.Cert)
 
