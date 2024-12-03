@@ -40,8 +40,8 @@ helm.sh/chart: {{ include "redpanda-connect.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{ with .Values.commonLabels }}
-{{- toYaml . -}}
+{{- if .Values.commonLabels }}
+{{ tpl (toYaml .Values.commonLabels) . }}
 {{- end }}
 {{- end }}
 
