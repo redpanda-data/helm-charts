@@ -6,6 +6,8 @@
 #### Added
 #### Changed
 #### Fixed
+* Fixed empty lines after labels when .Values.commonLabels is empty
+* Fixed opentelemetry tracer configuration example, should be open_telemetry_collector
 #### Removed
 
 ### [5.9.15](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.15) - 2024-11-29
