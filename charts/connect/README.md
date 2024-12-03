@@ -3,7 +3,7 @@
 description: Find the default values and descriptions of settings in the Redpanda Connect Helm chart.
 ---
 
-![Version: 3.0.1](https://img.shields.io/badge/Version-3.0.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.39.0](https://img.shields.io/badge/AppVersion-4.39.0-informational?style=flat-square)
+![Version: 3.0.2](https://img.shields.io/badge/Version-3.0.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.42.0](https://img.shields.io/badge/AppVersion-4.42.0-informational?style=flat-square)
 
 Redpanda Connect is a high performance and resilient stream processor, able to connect various sources and sinks in a range of brokering patterns and perform hydration, enrichments, transformations and filters on payloads.
 

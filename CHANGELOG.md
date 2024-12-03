@@ -452,7 +452,9 @@
 #### Removed
 
 ## Connect Chart
-### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/connect-FILLMEIN) - YYYY-MM-DD
+### [3.0.2](https://github.com/redpanda-data/helm-charts/releases/tag/connect-3.0.2)
+#### Changed
+* Bump Connect app version to 4.42.0
 #### Fixed
 * Fixed empty lines after labels when .Values.commonLabels is empty
 * Fixed opentelemetry tracer configuration example, should be open_telemetry_collector
