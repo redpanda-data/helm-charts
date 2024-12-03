@@ -452,6 +452,10 @@
 #### Removed
 
 ## Connect Chart
+### [3.0.2](https://github.com/redpanda-data/helm-charts/releases/tag/connect-3.0.2)
+#### Changed
+* Bump Connect app version to 4.42.0
+
 ### [3.0.1](https://github.com/redpanda-data/helm-charts/releases/tag/connect-3.0.1)
 #### Added
 * Parameter to configure submitting anonymous telemetry data
