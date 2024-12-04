@@ -271,6 +271,13 @@
 #### Fixed
 #### Removed
 
+### [0.4.35](https://github.com/redpanda-data/helm-charts/releases/tag/operator-0.4.35) - 2024-12-04
+#### Added
+#### Changed
+* to always mounting service account token regardless of auto mount property
+#### Fixed
+#### Removed
+
 ### [0.4.34](https://github.com/redpanda-data/helm-charts/releases/tag/operator-0.4.34) - 2024-11-27
 #### Added
 * overriding any PodSpec fields from `PodTemplate`

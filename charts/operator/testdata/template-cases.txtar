@@ -69,3 +69,7 @@ serviceAccount:
 podTemplate:
   spec:
     automountServiceAccountToken: true
+
+-- enabled-service-account-automount-token-in-only-service-account-resource --
+serviceAccount:
+  automountServiceAccountToken: true
