@@ -32,7 +32,7 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
-{{- if (not ((and $values.serviceAccount.create (not (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $values.serviceAccount.automountServiceAccountToken false) ))) "r"))))) -}}
+{{- if (not $values.serviceAccount.create) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" (coalesce nil)) | toJson -}}
 {{- break -}}
@@ -134,7 +134,7 @@
 {{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $vol := (list ) -}}
-{{- if (and $values.serviceAccount.create (not (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $values.serviceAccount.automountServiceAccountToken false) ))) "r"))) -}}
+{{- if $values.serviceAccount.create -}}
 {{- $vol = (concat (default (list ) $vol) (list (get (fromJson (include "operator.kubeTokenAPIVolume" (dict "a" (list "kube-api-access") ))) "r"))) -}}
 {{- end -}}
 {{- if (not $values.webhook.enabled) -}}
@@ -165,7 +165,7 @@
 {{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $volMount := (list ) -}}
-{{- if (and $values.serviceAccount.create (not (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $values.serviceAccount.automountServiceAccountToken false) ))) "r"))) -}}
+{{- if $values.serviceAccount.create -}}
 {{- $mountName := "kube-api-access" -}}
 {{- range $_, $vol := (get (fromJson (include "operator.operatorPodVolumes" (dict "a" (list $dot) ))) "r") -}}
 {{- if (hasPrefix $vol.name (printf "%s%s" "kube-api-access" "-")) -}}
