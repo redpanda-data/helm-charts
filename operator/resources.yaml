@@ -11,7 +11,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
     app.kubernetes.io/version: v2.3.2-24.3.1
-    helm.sh/chart: operator-0.4.34
+    helm.sh/chart: operator-0.4.35
   name: operator
   namespace: redpanda
 ---
@@ -39,7 +39,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
     app.kubernetes.io/version: v2.3.2-24.3.1
-    helm.sh/chart: operator-0.4.34
+    helm.sh/chart: operator-0.4.35
   name: operator-config
   namespace: redpanda
 ---
@@ -54,7 +54,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
     app.kubernetes.io/version: v2.3.2-24.3.1
-    helm.sh/chart: operator-0.4.34
+    helm.sh/chart: operator-0.4.35
   name: operator-metrics-reader
 rules:
 - nonResourceURLs:
@@ -73,7 +73,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
     app.kubernetes.io/version: v2.3.2-24.3.1
-    helm.sh/chart: operator-0.4.34
+    helm.sh/chart: operator-0.4.35
   name: operator-proxy-role
 rules:
 - apiGroups:
@@ -100,7 +100,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
     app.kubernetes.io/version: v2.3.2-24.3.1
-    helm.sh/chart: operator-0.4.34
+    helm.sh/chart: operator-0.4.35
   name: operator
 rules:
 - apiGroups:
@@ -184,7 +184,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
     app.kubernetes.io/version: v2.3.2-24.3.1
-    helm.sh/chart: operator-0.4.34
+    helm.sh/chart: operator-0.4.35
   name: operator-proxy-role
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -206,7 +206,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
     app.kubernetes.io/version: v2.3.2-24.3.1
-    helm.sh/chart: operator-0.4.34
+    helm.sh/chart: operator-0.4.35
   name: operator
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -228,7 +228,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
     app.kubernetes.io/version: v2.3.2-24.3.1
-    helm.sh/chart: operator-0.4.34
+    helm.sh/chart: operator-0.4.35
   name: operator-election-role
   namespace: redpanda
 rules:
@@ -256,7 +256,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
     app.kubernetes.io/version: v2.3.2-24.3.1
-    helm.sh/chart: operator-0.4.34
+    helm.sh/chart: operator-0.4.35
   name: operator-pvc
   namespace: redpanda
 rules:
@@ -279,7 +279,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
     app.kubernetes.io/version: v2.3.2-24.3.1
-    helm.sh/chart: operator-0.4.34
+    helm.sh/chart: operator-0.4.35
   name: operator
   namespace: redpanda
 rules:
@@ -695,7 +695,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
     app.kubernetes.io/version: v2.3.2-24.3.1
-    helm.sh/chart: operator-0.4.34
+    helm.sh/chart: operator-0.4.35
   name: operator-election-rolebinding
   namespace: redpanda
 roleRef:
@@ -718,7 +718,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
     app.kubernetes.io/version: v2.3.2-24.3.1
-    helm.sh/chart: operator-0.4.34
+    helm.sh/chart: operator-0.4.35
   name: operator-pvc
   namespace: redpanda
 roleRef:
@@ -741,7 +741,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
     app.kubernetes.io/version: v2.3.2-24.3.1
-    helm.sh/chart: operator-0.4.34
+    helm.sh/chart: operator-0.4.35
   name: operator
   namespace: redpanda
 roleRef:
@@ -764,7 +764,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
     app.kubernetes.io/version: v2.3.2-24.3.1
-    helm.sh/chart: operator-0.4.34
+    helm.sh/chart: operator-0.4.35
   name: operator-metrics-service
   namespace: redpanda
 spec:
@@ -787,7 +787,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
     app.kubernetes.io/version: v2.3.2-24.3.1
-    helm.sh/chart: operator-0.4.34
+    helm.sh/chart: operator-0.4.35
   name: operator
   namespace: redpanda
 spec:
