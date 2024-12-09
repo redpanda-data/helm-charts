@@ -8,6 +8,13 @@
 #### Fixed
 #### Removed
 
+### [5.9.16](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.16) - 2024-12-09
+#### Added
+#### Changed
+* Update sidecar container redpanda-operator container tag
+#### Fixed
+#### Removed
+
 ### [5.9.15](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.15) - 2024-11-29
 #### Added
 #### Changed
@@ -268,6 +275,13 @@
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/operator-FILLMEIN) - YYYY-MM-DD
 #### Added
 #### Changed
+#### Fixed
+#### Removed
+
+### [0.4.36](https://github.com/redpanda-data/helm-charts/releases/tag/operator-0.4.36) - 2024-12-09
+#### Added
+#### Changed
+* App version to match latest redpanda-operator release
 #### Fixed
 #### Removed
 
