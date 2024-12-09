@@ -41,7 +41,7 @@ kubeRbacProxy:
 # -- Configuration for the Redpanda configurator, a component for managing Redpanda configuration.
 configurator:
   # -- Sets the repository in which the Redpanda configurator image is available.
-  repository: docker.redpanda.com/redpandadata/configurator
+  repository: docker.redpanda.com/redpandadata/redpanda-operator
   # -- Sets the Redpanda configurator image tag. Uncomment and set a value to use a specific version.
   # tag:
   # -- Sets the `pullPolicy` for the Redpanda configurator image.
