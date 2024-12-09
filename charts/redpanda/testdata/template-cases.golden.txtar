@@ -21781,6 +21781,7 @@ spec:
         - --namespace=default
         - --health-probe-bind-address=:8085
         - --metrics-bind-address=:9082
+        - --pprof-bind-address=:9083
         - --additional-controllers=all
         command:
         - /manager
@@ -50579,6 +50580,7 @@ spec:
         - --namespace=default
         - --health-probe-bind-address=:8085
         - --metrics-bind-address=:9082
+        - --pprof-bind-address=:9083
         - --additional-controllers=all
         command:
         - /manager
@@ -107222,6 +107224,7 @@ spec:
         - --namespace=default
         - --health-probe-bind-address=:8085
         - --metrics-bind-address=:9082
+        - --pprof-bind-address=:9083
         - --additional-controllers=all
         command:
         - /manager
@@ -110465,6 +110468,7 @@ spec:
         - --namespace=default
         - --health-probe-bind-address=:8085
         - --metrics-bind-address=:9082
+        - --pprof-bind-address=:9083
         - --additional-controllers=all
         command:
         - /manager
@@ -112102,6 +112106,7 @@ spec:
         - --namespace=default
         - --health-probe-bind-address=:8085
         - --metrics-bind-address=:9082
+        - --pprof-bind-address=:9083
         - --additional-controllers=all
         command:
         - /manager

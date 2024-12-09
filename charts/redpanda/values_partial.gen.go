@@ -237,6 +237,7 @@ type PartialStatefulset struct {
 			SecurityContext    *corev1.SecurityContext "json:\"securityContext,omitempty\""
 			HealthProbeAddress *string                 "json:\"healthProbeAddress,omitempty\""
 			MetricsAddress     *string                 "json:\"metricsAddress,omitempty\""
+			PprofAddress       *string                 "json:\"pprofAddress,omitempty\""
 			Run                []string                "json:\"run,omitempty\""
 		} "json:\"controllers,omitempty\""
 	} "json:\"sideCars,omitempty\" jsonschema:\"required\""
