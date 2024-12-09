@@ -712,6 +712,7 @@ statefulset:
       securityContext: {}
       healthProbeAddress: ":8085"
       metricsAddress: ":9082"
+      pprofAddress: ":9083"
       run:
         - all
       createRBAC: true

@@ -584,6 +584,7 @@ type Statefulset struct {
 			SecurityContext    *corev1.SecurityContext `json:"securityContext"`
 			HealthProbeAddress string                  `json:"healthProbeAddress"`
 			MetricsAddress     string                  `json:"metricsAddress"`
+			PprofAddress       string                  `json:"pprofAddress"`
 			Run                []string                `json:"run"`
 		} `json:"controllers"`
 	} `json:"sideCars" jsonschema:"required"`
