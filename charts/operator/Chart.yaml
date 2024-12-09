@@ -6,11 +6,11 @@ type: application
 # The chart version and the app version are not the same and will not track
 # together. The chart version is a semver representation of changes to this
 # chart.
-version: 0.4.35
+version: 0.4.36
 
 # This is the default version of the operator being deployed.
 # ** NOTE for maintainers: please enssure the artifacthub image annotation is updated before merging
-appVersion: v2.3.2-24.3.1
+appVersion: v2.3.3-24.3.1
 
 kubeVersion: ">= 1.25.0-0"
 
@@ -36,11 +36,11 @@ annotations:
       url: https://helm.sh/docs/intro/install/
   artifacthub.io/images: |
     - name: redpanda-operator
-      image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.2-24.3.1
+      image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.3-24.3.1
     - name: configurator
-      image: docker.redpanda.com/redpandadata/configurator:v2.3.2-24.3.1
+      image: docker.redpanda.com/redpandadata/configurator:v2.3.3-24.3.1
     - name: redpanda
-      image: docker.redpanda.com/redpandadata/redpanda:v24.2.10
+      image: docker.redpanda.com/redpandadata/redpanda:v24.3.1
     - name: kube-rbac-proxy
       image: gcr.io/kubebuilder/kube-rbac-proxy:v0.14.0
   artifacthub.io/crds: |
