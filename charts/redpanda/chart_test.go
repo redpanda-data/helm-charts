@@ -5,9 +5,12 @@ import (
 	"crypto/rand"
 	"encoding/json"
 	"fmt"
+	"io"
+	"io/fs"
 	"maps"
 	"math/big"
 	"os"
+	"path/filepath"
 	"slices"
 	"strings"
 	"testing"
@@ -33,6 +36,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/utils/ptr"
+	"sigs.k8s.io/yaml"
 )
 
 func TestChart(t *testing.T) {
@@ -839,8 +843,38 @@ func TestLabels(t *testing.T) {
 }
 
 func TestGoHelmEquivalence(t *testing.T) {
-	client, err := helm.New(helm.Options{ConfigHome: testutil.TempDir(t)})
+	tmp := testutil.TempDir(t)
+
+	pwd, err := os.Getwd()
 	require.NoError(t, err)
+
+	err = CopyFS(tmp, os.DirFS(pwd), "charts")
+	require.NoError(t, err)
+
+	require.NoError(t, os.Remove(filepath.Join(tmp, "Chart.lock")))
+
+	client, err := helm.New(helm.Options{ConfigHome: tmp})
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Minute)
+	defer cancel()
+
+	// As go based resource rendering is hooked with the unreleased console version
+	// any change to the console would end up be blocked by this test. The helm template
+	// would pick the latest console release, so that any change in console would not be
+	// available in `template` function. Just for
+	metadata := redpanda.Chart.Metadata()
+	for _, d := range metadata.Dependencies {
+		d.Repository = fmt.Sprintf("file://%s", filepath.Join(pwd, fmt.Sprintf("../%s", d.Name)))
+	}
+
+	b, err := yaml.Marshal(metadata)
+	require.NoError(t, err)
+
+	err = os.WriteFile(filepath.Join(tmp, "Chart.yaml"), b, os.ModePerm)
+	require.NoError(t, err)
+
+	require.NoError(t, client.DependencyBuild(ctx, tmp))
 
 	// TODO: Add additional cases for better coverage. Generating random inputs
 	// generally results in invalid inputs.
@@ -910,7 +944,7 @@ func TestGoHelmEquivalence(t *testing.T) {
 	}, values)
 	require.NoError(t, err)
 
-	rendered, err := client.Template(context.Background(), ".", helm.TemplateOptions{
+	rendered, err := client.Template(context.Background(), tmp, helm.TemplateOptions{
 		Name:      "gotohelm",
 		Namespace: "mynamespace",
 		Values:    values,
@@ -951,6 +985,56 @@ func TestGoHelmEquivalence(t *testing.T) {
 	for i := range helmObjs {
 		assert.Equal(t, helmObjs[i], goObjs[i])
 	}
+}
+
+// CopyFs is a direct copy of function from standard library in go 1.23
+// https://github.com/golang/go/blob/c8fb6ae617d65b42089202040d8fbd309d1a0fe4/src/os/dir.go#L132-L191
+func CopyFS(dir string, fsys fs.FS, skip ...string) error {
+	return fs.WalkDir(fsys, ".", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if !fs.ValidPath(path) {
+			return fmt.Errorf("invalid path: %s", path)
+		}
+		for _, s := range skip {
+			if strings.Contains(path, s) {
+				return nil
+			}
+		}
+		newPath := filepath.Join(dir, path)
+		if d.IsDir() {
+			return os.MkdirAll(newPath, 0o777)
+		}
+
+		// TODO(panjf2000): handle symlinks with the help of fs.ReadLinkFS
+		// 		once https://go.dev/issue/49580 is done.
+		//		we also need filepathlite.IsLocal from https://go.dev/cl/564295.
+		if !d.Type().IsRegular() {
+			return &os.PathError{Op: "CopyFS", Path: path, Err: os.ErrInvalid}
+		}
+
+		r, err := fsys.Open(path)
+		if err != nil {
+			return err
+		}
+		defer r.Close()
+		info, err := r.Stat()
+		if err != nil {
+			return err
+		}
+		w, err := os.OpenFile(newPath, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0o666|info.Mode()&0o777)
+		if err != nil {
+			return err
+		}
+
+		if _, err := io.Copy(w, r); err != nil {
+			w.Close()
+			return &os.PathError{Op: "Copy", Path: newPath, Err: err}
+		}
+		return w.Close()
+	})
 }
 
 func GetInitContainer() *struct {
