@@ -367,7 +367,7 @@ func rpkNodeConfig(dot *helmette.Dot) map[string]any {
 	result := map[string]any{
 		"overprovisioned":        values.Resources.GetOverProvisionValue(),
 		"enable_memory_locking":  ptr.Deref(values.Resources.Memory.EnableMemoryLocking, false),
-		"additional_start_flags": RedpandaAdditionalStartFlags(dot, RedpandaSMP(dot)),
+		"additional_start_flags": RedpandaAdditionalStartFlags(dot),
 		"kafka_api": map[string]any{
 			"brokers": brokerList,
 			"tls":     brokerTLS,
@@ -618,22 +618,12 @@ func createInternalListenerCfg(port int32) map[string]any {
 // RedpandaAdditionalStartFlags returns a string list of flags suitable for use
 // as `additional_start_flags`. User provided flags will override any of those
 // set by default.
-func RedpandaAdditionalStartFlags(dot *helmette.Dot, smp int64) []string {
+func RedpandaAdditionalStartFlags(dot *helmette.Dot) []string {
 	values := helmette.Unwrap[Values](dot.Values)
 
 	// All `additional_start_flags` that are set by the chart.
-	chartFlags := map[string]string{
-		"smp": fmt.Sprintf("%d", int(smp)),
-		// TODO: The transpiled go template will return float64 from both RedpandaMemory and RedpandaReserveMemory
-		// By wrapping return value from that function the sprintf will work as expected
-		// https://github.com/redpanda-data/helm-charts/issues/1249
-		"memory": fmt.Sprintf("%dM", int(RedpandaMemory(dot))),
-		// TODO: The transpiled go template will return float64 from both RedpandaMemory and RedpandaReserveMemory
-		// By wrapping return value from that function the sprintf will work as expected
-		// https://github.com/redpanda-data/helm-charts/issues/1249
-		"reserve-memory":    fmt.Sprintf("%dM", int(RedpandaReserveMemory(dot))),
-		"default-log-level": values.Logging.LogLevel,
-	}
+	chartFlags := values.Resources.GetRedpandaStartFlags()
+	chartFlags["default-log-level"] = values.Logging.LogLevel
 
 	// If in developer_mode, don't set reserve-memory.
 	if values.Config.Node["developer_mode"] == true {

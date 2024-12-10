@@ -43,6 +43,8 @@ const (
 	certificateMountPoint = "/etc/tls/certs"
 )
 
+type MebiBytes = int64
+
 // values.go contains a collection of go structs that (loosely) map to
 // values.yaml and are used for generating values.schema.json. Commented out
 // struct fields are fields that are valid in the eyes of values.yaml but are
@@ -360,12 +362,117 @@ type RedpandaResources struct {
 	} `json:"memory" jsonschema:"required"`
 }
 
+func (rr *RedpandaResources) GetResourceRequirements() corev1.ResourceRequirements {
+	// Otherwise fallback to the historical behavior.
+	reqs := corev1.ResourceRequirements{
+		Limits: corev1.ResourceList{
+			"cpu":    rr.CPU.Cores,
+			"memory": rr.Memory.Container.Max,
+		},
+	}
+
+	if rr.Memory.Container.Min != nil {
+		reqs.Requests = corev1.ResourceList{
+			"cpu":    rr.CPU.Cores,
+			"memory": *rr.Memory.Container.Min,
+		}
+	}
+
+	return reqs
+}
+
+func (rr *RedpandaResources) GetRedpandaStartFlags() map[string]string {
+	flags := map[string]string{}
+
+	if coresInMillies := rr.CPU.Cores.MilliValue(); coresInMillies < 1000 {
+		flags["smp"] = fmt.Sprintf("%d", 1)
+	} else {
+		flags["smp"] = fmt.Sprintf("%d", rr.CPU.Cores.Value())
+	}
+
+	flags["memory"] = fmt.Sprintf("%dM", rr.memory())
+	flags["reserve-memory"] = fmt.Sprintf("%dM", rr.reserveMemory())
+
+	return flags
+}
+
 func (rr *RedpandaResources) GetOverProvisionValue() bool {
 	if rr.CPU.Cores.MilliValue() < 1000 {
 		return true
 	}
 
 	return ptr.Deref(rr.CPU.Overprovisioned, false)
+}
+
+// memory returns the amount of memory for Redpanda process. It should be
+// passed to the `--memory` argument of the Redpanda process, see
+// RedpandaAdditionalStartFlags and rpk redpanda start documentation.
+//
+// https://docs.redpanda.com/current/reference/rpk/rpk-redpanda/rpk-redpanda-start/
+func (rr *RedpandaResources) memory() int64 {
+	memory := int64(0)
+	containerMemory := rr.containerMemory()
+
+	// This optional `redpanda` object allows you to specify the memory size for both the Redpanda
+	// process and the underlying reserved memory used by Seastar.
+	//
+	// The amount of memory to allocate to a container is determined by the sum of three values:
+	// 1. Redpanda (at least 2Gi per core, ~80% of the container's total memory)
+	// 2. Seastar subsystem (200Mi * 0.2% of the container's total memory, 200Mi < x < 1Gi)
+	// 3. Other container processes (whatever small amount remains)
+	if rpMem := rr.Memory.Redpanda; rpMem != nil && rpMem.Memory != nil {
+		memory = rpMem.Memory.Value() / (1024 * 1024)
+	} else {
+		memory = int64(float64(containerMemory) * 0.8)
+	}
+
+	if memory == 0 {
+		panic("unable to get memory value redpanda-memory")
+	}
+
+	if memory < 256 {
+		panic(fmt.Sprintf("%d is below the minimum value for Redpanda", memory))
+	}
+
+	if memory+rr.reserveMemory() > containerMemory {
+		panic(fmt.Sprintf("Not enough container memory for Redpanda memory values where Redpanda: %d, reserve: %d, container: %d", memory, rr.reserveMemory(), containerMemory))
+	}
+
+	return memory
+}
+
+//	reserveMemory returns the amount of memory that the Redpanda process will
+//	not use from the provided value in `--memory` or from the internal Redpanda
+//	discovery process. It should be passed to the `--reserve-memory` argument
+//	of the Redpanda process, see RedpandaAdditionalStartFlags and rpk redpanda
+//	start documentation.
+//
+// https://docs.redpanda.com/current/reference/rpk/rpk-redpanda/rpk-redpanda-start/
+func (rr *RedpandaResources) reserveMemory() int64 {
+	// This optional `redpanda` object allows you to specify the memory size for both the Redpanda
+	// process and the underlying reserved memory used by Seastar.
+	//
+	// The amount of memory to allocate to a container is determined by the sum of three values:
+	// 1. Redpanda (at least 2Gi per core, ~80% of the container's total memory)
+	// 2. Seastar subsystem (200Mi * 0.2% of the container's total memory, 200Mi < x < 1Gi)
+	// 3. Other container processes (whatever small amount remains)
+	if rpMem := rr.Memory.Redpanda; rpMem != nil && rpMem.ReserveMemory != nil {
+		return rpMem.ReserveMemory.Value() / (1024 * 1024)
+	}
+
+	// If Redpanda is omitted (default behavior), memory sizes are calculated automatically
+	// based on 0.2% of container memory plus 200 Mi.
+	return int64(float64(rr.containerMemory())*0.002) + 200
+}
+
+// containerMemory returns either the min or max container memory values as an
+// integer value of MembiBytes.
+func (rr *RedpandaResources) containerMemory() MebiBytes {
+	if rr.Memory.Container.Min != nil {
+		return rr.Memory.Container.Min.Value() / (1024 * 1024)
+	}
+
+	return rr.Memory.Container.Max.Value() / (1024 * 1024)
 }
 
 type Storage struct {

@@ -405,18 +405,6 @@ func cleanForK8sWithSuffix(s, suffix string) string {
 	return fmt.Sprintf("%s-%s", s, suffix)
 }
 
-func RedpandaSMP(dot *helmette.Dot) int64 {
-	values := helmette.Unwrap[Values](dot.Values)
-
-	coresInMillies := values.Resources.CPU.Cores.MilliValue()
-
-	if coresInMillies < 1000 {
-		return 1
-	}
-
-	return values.Resources.CPU.Cores.Value()
-}
-
 // coalesce returns the first non-nil pointer. This is distinct from helmette's
 // Coalesce which returns the first non-EMPTY pointer.
 // It accepts a slice as variadic methods are not currently supported in
