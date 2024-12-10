@@ -295,7 +295,31 @@ type Monitoring struct {
 	EnableHttp2    *bool                   `json:"enableHttp2"`
 }
 
+// RedpandaResources encapsulates the calculation of the redpanda container's
+// [corev1.ResourceRequirements] and parameters such as `--memory`,
+// `--reserve-memory`, and `--smp`.
+// This calculation supports two modes:
+//
+//   - Explicit mode (recommended):  Activated when `Limits` and `Requests` are
+//     set. In this mode, the CLI flags are calculated directly based on the
+//     provided `Limits` and `Requests`. This mode ensures predictable resource
+//     allocation and is recommended for production environments. If additional
+//     tuning is required, the CLI flags can be manually overridden using
+//     `statefulset.additionalRedpandaCmdFlags`.
+//
+//   - Legacy mode (default): Used when `Limits` and `Requests` are not set.
+//     In this mode, the container resources and CLI flags are calculated using
+//     built-in default logic, where 80% of the container's memory is allocated
+//     to Redpanda and the rest is reserved for system overhead. Legacy mode is
+//     intended for backward compatibility and less controlled environments.
+//
+// Explicit mode offers better control and aligns with Kubernetes best
+// practices. Legacy mode is a fallback for users who have not defined `Limits`
+// and `Requests`.
 type RedpandaResources struct {
+	Limits   *corev1.ResourceList `json:"limits,omitempty"`
+	Requests *corev1.ResourceList `json:"requests,omitempty"`
+
 	CPU struct {
 		Cores           resource.Quantity `json:"cores" jsonschema:"required"`
 		Overprovisioned *bool             `json:"overprovisioned"`
@@ -339,13 +363,6 @@ type RedpandaResources struct {
 		// based on container memory.
 		// Uncommenting this section and setting memory and reserveMemory values will disable
 		// automatic calculation.
-		//
-		// If you are setting the following values manually, keep in mind the following guidelines.
-		// Getting this wrong may lead to performance issues, instability, and loss of data:
-		// The amount of memory to allocate to a container is determined by the sum of three values:
-		// 1. Redpanda (at least 2Gi per core, ~80% of the container's total memory)
-		// 2. Seastar subsystem (200Mi * 0.2% of the container's total memory, 200Mi < x < 1Gi)
-		// 3. Other container processes (whatever small amount remains)
 		Redpanda *struct {
 			// Memory for the Redpanda process.
 			// This must be lower than the container's memory (resources.memory.container.min if provided, otherwise
@@ -363,6 +380,14 @@ type RedpandaResources struct {
 }
 
 func (rr *RedpandaResources) GetResourceRequirements() corev1.ResourceRequirements {
+	// If Limits and Requests are specified, use them as is.
+	if rr.Limits != nil && rr.Requests != nil {
+		return corev1.ResourceRequirements{
+			Limits:   *rr.Limits,
+			Requests: *rr.Requests,
+		}
+	}
+
 	// Otherwise fallback to the historical behavior.
 	reqs := corev1.ResourceRequirements{
 		Limits: corev1.ResourceList{
@@ -381,22 +406,49 @@ func (rr *RedpandaResources) GetResourceRequirements() corev1.ResourceRequiremen
 	return reqs
 }
 
-func (rr *RedpandaResources) GetRedpandaStartFlags() map[string]string {
-	flags := map[string]string{}
-
-	if coresInMillies := rr.CPU.Cores.MilliValue(); coresInMillies < 1000 {
-		flags["smp"] = fmt.Sprintf("%d", 1)
-	} else {
-		flags["smp"] = fmt.Sprintf("%d", rr.CPU.Cores.Value())
+func (rr *RedpandaResources) GetRedpandaFlags() map[string]string {
+	flags := map[string]string{
+		"reserve-memory": fmt.Sprintf("%dM", rr.reserveMemory()),
 	}
 
-	flags["memory"] = fmt.Sprintf("%dM", rr.memory())
-	flags["reserve-memory"] = fmt.Sprintf("%dM", rr.reserveMemory())
+	if smp := rr.smp(); smp != nil {
+		flags["smp"] = fmt.Sprintf("%d", int64(*smp))
+	}
+
+	if memory := rr.memory(); memory != nil {
+		flags["memory"] = fmt.Sprintf("%dM", int64(*memory))
+	}
+
+	// Only set lock-memory if Limits and Requests are NOT specified. It should
+	// otherwise be set through additionalRedpandaCmdFlags.
+	if rr.Limits == nil && rr.Requests == nil {
+		flags["lock-memory"] = fmt.Sprintf("%v", ptr.Deref(rr.Memory.EnableMemoryLocking, false))
+	}
+
+	if rr.GetOverProvisionValue() {
+		flags["overprovisioned"] = ""
+	}
 
 	return flags
 }
 
 func (rr *RedpandaResources) GetOverProvisionValue() bool {
+	if rr.Limits != nil && rr.Requests != nil {
+		// Get CPU prioritizing requests, falling back to limits if not
+		// specified as kube-scheduler does.
+		cpuReq, ok := (*rr.Requests)[corev1.ResourceCPU]
+		if !ok {
+			cpuReq, ok = (*rr.Limits)[corev1.ResourceCPU]
+		}
+
+		// If redpanda has been allocated less than 1 full CPU, set
+		// overprovisioned to true.
+		if ok && cpuReq.MilliValue() < 1000 {
+			return true
+		}
+		return false
+	}
+
 	if rr.CPU.Cores.MilliValue() < 1000 {
 		return true
 	}
@@ -404,22 +456,113 @@ func (rr *RedpandaResources) GetOverProvisionValue() bool {
 	return ptr.Deref(rr.CPU.Overprovisioned, false)
 }
 
+func (rr *RedpandaResources) smp() *int64 {
+	if rr.Limits != nil && rr.Requests != nil {
+		// Get CPU prioritizing requests, falling back to limits if not
+		// specified as kube-scheduler does. This ordering also forces --smp to
+		// be <= the containers CPU limits. The other way around (limits
+		// fallback to requests; therefore --smp >= CPU limits) isn't useful.
+		cpuReq, ok := (*rr.Requests)[corev1.ResourceCPU]
+		if !ok {
+			cpuReq, ok = (*rr.Limits)[corev1.ResourceCPU]
+		}
+
+		// If neither requests nor limits are set, don't set --smp.
+		if !ok {
+			return nil
+		}
+
+		// If CPU limits/requests are defined, set --smp to max(1, floor(cpu)).
+		//
+		// Due to redpanda/seastar's per core model, we can't do much with
+		// fractional CPU values we need to round either up or down. Rounding
+		// up would result in utilizing too much CPU from the CRI perspective
+		// and cause throttling, so we round down and potentially waste some
+		// quota.
+		smp := cpuReq.MilliValue() / 1000
+		if smp < 1 {
+			smp = 1
+		}
+		return ptr.To(smp)
+	}
+
+	if coresInMillies := rr.CPU.Cores.MilliValue(); coresInMillies < 1000 {
+		return ptr.To(int64(1))
+	}
+	return ptr.To(int64(rr.CPU.Cores.Value()))
+}
+
 // memory returns the amount of memory for Redpanda process. It should be
 // passed to the `--memory` argument of the Redpanda process, see
 // RedpandaAdditionalStartFlags and rpk redpanda start documentation.
 //
 // https://docs.redpanda.com/current/reference/rpk/rpk-redpanda/rpk-redpanda-start/
-func (rr *RedpandaResources) memory() int64 {
+func (rr *RedpandaResources) memory() *MebiBytes {
+	if rr.Limits != nil && rr.Requests != nil {
+		// `--memory` will be set to something < the container's
+		// resources.memory.limits value.
+		// We want to allocate seastar < memory than our limit for several reasons:
+		// 1. Seastar may slightly exceed this limit due to page tables and
+		//    non-heap memory that's still accounted by cgroups.
+		// 2. resources.limits.memory applies to the entire container. We want
+		//    to keep headroom to allow exec'ing into the container and for any
+		//    exec probes.
+		// 3. emptyDir's storage is counted against the container's memory
+		//    limits. We use these to store rendered versions of config files
+		//    and therefore need to account for them.
+		//    https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#memory-backed-emptydir
+		// The memory reservation is done by subtracting from `--memory` and
+		// always setting `--reserve-memory` to 0 rather than setting
+		// `--reserve-memory`. This is an easier mental model to follow as the
+		// `--reserve-memory` flag is exceptionally nuanced in practice and is
+		// meant to aid seastar running on an entire VM rather than in a
+		// container.
+
+		// If either memory limit or requests are set, we take the minimum of
+		// the two (relying on the invariant enforced by Kubernetes that
+		// requests must be <= limits).
+		memReq, ok := (*rr.Requests)[corev1.ResourceMemory]
+		if !ok {
+			memReq, ok = (*rr.Limits)[corev1.ResourceMemory]
+		}
+
+		// If neither requests nor limits are set, don't set --memory.
+		if !ok {
+			return nil
+		}
+
+		// Here we perform our memory reservation. Historically, 80% of
+		// container memory was provided to Redpanda and some additional amount
+		// was removed due to the usage of `--reserve-memory`. We're largely
+		// blind to the lower limit of what's tolerated.
+		// This calculation, therefore, is a complete split ball. We expect
+		// this to change over time; ideally trending towards providing
+		// redpanda more memory.
+		// We intentionally err on the conservative side as we'd prefer to
+		// "waste" a few megs of memory rather than risking OOM kills.
+		// For simplicity, we're using a % as a static reservation would need
+		// to handle weird edge cases.
+		//
+		// redpanda get's 90% of the container limit. (It's better than the
+		// historic 80%).
+		memory := int64(float64(memReq.Value()) * 0.90)
+
+		// Cast to Membibytes.
+		return ptr.To(memory / (1024 * 1024))
+	}
+
+	// Below we perform the calculations for the legacy resource mode. This
+	// calculation appears to be based on an incorrect understanding of the
+	// (admittedly convoluted) `--reserve-memory` seastar flag and is preserved
+	// solely for backwards compatibility.
+	//
+	// It segments out memory for:
+	// * Seastar/Redpanda (`--memory`) - .Memory.Redpanda OR 80% of memory
+	// * Seastar's "subsystem" (`--reserve-memory`) - .Memory.Reserve OR 200Mi + 0.2% of memory
+	// * Container processes (execing, hooks, probes, etc) - The leftovers from the above (if any)
 	memory := int64(0)
 	containerMemory := rr.containerMemory()
 
-	// This optional `redpanda` object allows you to specify the memory size for both the Redpanda
-	// process and the underlying reserved memory used by Seastar.
-	//
-	// The amount of memory to allocate to a container is determined by the sum of three values:
-	// 1. Redpanda (at least 2Gi per core, ~80% of the container's total memory)
-	// 2. Seastar subsystem (200Mi * 0.2% of the container's total memory, 200Mi < x < 1Gi)
-	// 3. Other container processes (whatever small amount remains)
 	if rpMem := rr.Memory.Redpanda; rpMem != nil && rpMem.Memory != nil {
 		memory = rpMem.Memory.Value() / (1024 * 1024)
 	} else {
@@ -434,11 +577,13 @@ func (rr *RedpandaResources) memory() int64 {
 		panic(fmt.Sprintf("%d is below the minimum value for Redpanda", memory))
 	}
 
-	if memory+rr.reserveMemory() > containerMemory {
+	// NB: int64's are working around a bug in gotohelm's BinaryExpr detection
+	// with Alias types.
+	if memory+int64(rr.reserveMemory()) > containerMemory {
 		panic(fmt.Sprintf("Not enough container memory for Redpanda memory values where Redpanda: %d, reserve: %d, container: %d", memory, rr.reserveMemory(), containerMemory))
 	}
 
-	return memory
+	return ptr.To(memory)
 }
 
 //	reserveMemory returns the amount of memory that the Redpanda process will
@@ -448,20 +593,17 @@ func (rr *RedpandaResources) memory() int64 {
 //	start documentation.
 //
 // https://docs.redpanda.com/current/reference/rpk/rpk-redpanda/rpk-redpanda-start/
-func (rr *RedpandaResources) reserveMemory() int64 {
-	// This optional `redpanda` object allows you to specify the memory size for both the Redpanda
-	// process and the underlying reserved memory used by Seastar.
-	//
-	// The amount of memory to allocate to a container is determined by the sum of three values:
-	// 1. Redpanda (at least 2Gi per core, ~80% of the container's total memory)
-	// 2. Seastar subsystem (200Mi * 0.2% of the container's total memory, 200Mi < x < 1Gi)
-	// 3. Other container processes (whatever small amount remains)
+func (rr *RedpandaResources) reserveMemory() MebiBytes {
+	if rr.Limits != nil && rr.Requests != nil {
+		// See [RedpandaResources.memory] for details here.
+		return 0
+	}
+
+	// See [RedpandaResources.memory] for details here.
 	if rpMem := rr.Memory.Redpanda; rpMem != nil && rpMem.ReserveMemory != nil {
 		return rpMem.ReserveMemory.Value() / (1024 * 1024)
 	}
 
-	// If Redpanda is omitted (default behavior), memory sizes are calculated automatically
-	// based on 0.2% of container memory plus 200 Mi.
 	return int64(float64(rr.containerMemory())*0.002) + 200
 }
 

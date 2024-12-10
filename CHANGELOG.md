@@ -4,6 +4,25 @@
 
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-FILLMEIN) - YYYY-MM-DD
 #### Added
+* Added `resources.limits` and `resources.requests` as an alternative method of managing the redpanda container's resources.
+
+  When both `resources.limits` and `resources.requests` are specified, the
+  redpanda container's `resources` will be set to the provided values and all
+  other keys of `resources` will be ignored. Instead, all other values will be
+  inferred from the limits and requests.
+
+  This allows fine grain control of resources. i.e. It is now possible to set
+  CPU requests without setting limits:
+
+  ```yaml
+  resources:
+    limits: {} # Specified but not cpu or memory values provided
+    requests:
+      cpu: 5 # Only CPU requests
+  ```
+
+  For more details see [redpanda's values.yaml](./charts/redpanda/values.yaml).
+
 #### Changed
 #### Fixed
 #### Removed

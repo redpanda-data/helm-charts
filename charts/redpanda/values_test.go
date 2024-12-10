@@ -4,8 +4,10 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/utils/ptr"
 )
 
@@ -607,5 +609,89 @@ func TestTieredStorageConfigCreds(t *testing.T) {
 				require.Equal(t, "$"+envar.Name, clusterConfig[key])
 			}
 		})
+	}
+}
+
+func TestRedpandaResources_RedpandaFlags(t *testing.T) {
+	cases := []struct {
+		Resources RedpandaResources
+		Expected  map[string]string
+	}{
+		{
+			Resources: RedpandaResources{
+				Limits:   &corev1.ResourceList{},
+				Requests: &corev1.ResourceList{},
+			},
+			Expected: map[string]string{
+				"reserve-memory": "0M", // Always set when Limits && Requests != nil.
+				// No other flags set as there's nothing to base them off of (Not recommended).
+			},
+		},
+		{
+			// overprovisioned is only set if CPU < 1000m.
+			Resources: RedpandaResources{
+				Limits: &corev1.ResourceList{},
+				Requests: &corev1.ResourceList{
+					corev1.ResourceCPU: resource.MustParse("500m"),
+				},
+			},
+			Expected: map[string]string{
+				"reserve-memory":  "0M", // Always set when Limits && Requests != nil.
+				"smp":             "1",
+				"overprovisioned": "",
+			},
+		},
+		{
+			Resources: RedpandaResources{
+				Limits: &corev1.ResourceList{},
+				Requests: &corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse("2500m"),
+					corev1.ResourceMemory: resource.MustParse("10Gi"),
+				},
+			},
+			Expected: map[string]string{
+				"reserve-memory": "0M",
+				"smp":            "2",     // floor(CPU)
+				"memory":         "9216M", // memory * 90%
+			},
+		},
+		{
+			// Limits are taken if requests aren't specified.
+			Resources: RedpandaResources{
+				Limits: &corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse("3"),
+					corev1.ResourceMemory: resource.MustParse("20Gi"),
+				},
+				Requests: &corev1.ResourceList{},
+			},
+			Expected: map[string]string{
+				"reserve-memory": "0M",
+				"smp":            "3",      // floor(CPU)
+				"memory":         "18432M", // memory * 90%
+			},
+		},
+		{
+			// Showcase that Requests are taken for CLI params in favor of limits.
+			Resources: RedpandaResources{
+				Limits: &corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse("10"),
+					corev1.ResourceMemory: resource.MustParse("200Gi"),
+				},
+				Requests: &corev1.ResourceList{
+					corev1.ResourceCPU:    resource.MustParse("5"),
+					corev1.ResourceMemory: resource.MustParse("100Gi"),
+				},
+			},
+			Expected: map[string]string{
+				"reserve-memory": "0M",
+				"smp":            "5",      // floor(CPU)
+				"memory":         "92160M", // memory * 90%
+			},
+		},
+	}
+
+	for _, tc := range cases {
+		flags := tc.Resources.GetRedpandaFlags()
+		assert.Equal(t, tc.Expected, flags)
 	}
 }

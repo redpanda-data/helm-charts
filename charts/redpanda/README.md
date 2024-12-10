@@ -621,7 +621,42 @@ Enable for features that need extra privileges. If you use the Redpanda Operator
 
 ### [resources](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=resources)
 
-Pod resource management. This section simplifies resource allocation by providing a single location where resources are defined. Helm sets these resource values within the `statefulset.yaml` and `configmap.yaml` templates.  The default values are for a development environment. Production-level values and other considerations are documented, where those values are different from the default. For details, see the [Pod resources documentation](https://docs.redpanda.com/docs/manage/kubernetes/manage-resources/).
+Pod resource management.
+This section simplifies resource allocation for the redpanda container by
+providing a single location where resources are defined.
+
+Resources may be specified by either setting `resources.cpu` and
+`resources.memory` (the default) or by setting `resources.requests` and
+`resources.limits`.
+
+For details on `resources.cpu` and `resources.memory`, see their respective
+documentation below.
+
+When `resources.limits` and `resources.requests` are set, the redpanda
+container's resources will be set to exactly the provided values. This allows
+users to granularly control limits and requests to best suite their use case.
+For example: `resources.requests.cpu` may be set without setting
+`resources.limits.cpu` to avoid the potential of CPU throttling.
+
+Redpanda's resource related CLI flags will then be calculated as follows:
+* `--smp max(1, floor(coalesce(resources.requests.cpu, resources.limits.cpu)))`
+* `--memory coalesce(resources.requests.memory, resources.limits.memory) * 90%`
+* `--reserve-memory 0`
+* `--overprovisioned coalesce(resources.requests.cpu, resources.limits.cpu) < 1000m`
+
+If neither a request nor a limit is provided for cpu or memory, the
+corresponding flag will be omitted. As a result, setting `resources.limits`
+and `resources.requests` to `{}` will result in redpanda being run without
+`--smp` or `--memory`. (This is not recommended).
+
+If the computed CLI flags are undesirable, they may be overridden by
+specifying the desired value through `statefulset.additionalRedpandaCmdFlags`.
+
+The default values are for a development environment.
+Production-level values and other considerations are documented,
+where those values are different from the default.
+For details,
+see the [Pod resources documentation](https://docs.redpanda.com/docs/manage/kubernetes/manage-resources/).
 
 **Default:**
 

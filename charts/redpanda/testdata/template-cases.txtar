@@ -651,3 +651,27 @@ console:
     hosts:
     - host: "{{ (get (fromJson (include \"console.Fullname\" (dict \"a\" (list $) ))) \"r\") | trunc 50 }}-first-rule-host"
     - host: "{{ (get (fromJson (include \"console.Fullname\" (dict \"a\" (list $) ))) \"r\") | trunc 50 }}-second-rule-host"
+
+-- direct-resources-examples --
+# ASSERT-NO-ERROR
+# ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.containers[0].resources.limits}", {"memory": "10Gi"}]
+# ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.containers[0].resources.requests}", {"cpu": "5500m"}]
+# ASSERT-FIELD-CONTAINS ["v1/ConfigMap", "default/redpanda", "{.data.redpanda\\.yaml}", "--smp=5"]
+# ASSERT-FIELD-CONTAINS ["v1/ConfigMap", "default/redpanda", "{.data.redpanda\\.yaml}", "--memory=9216M"]
+# ASSERT-FIELD-CONTAINS ["v1/ConfigMap", "default/redpanda", "{.data.redpanda\\.yaml}", "--reserve-memory=0M"]
+resources:
+  limits:
+    memory: 10Gi
+  requests:
+    cpu: 5500m
+
+-- direct-resources-none-provided --
+# ASSERT-NO-ERROR
+# ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.containers[0].resources.limits}", {}]
+# ASSERT-FIELD-EQUALS ["apps/v1/StatefulSet", "default/redpanda", "{.spec.template.spec.containers[0].resources.requests}", {}]
+# ASSERT-FIELD-NOT-CONTAINS ["v1/ConfigMap", "default/redpanda", "{.data.redpanda\\.yaml}", "--smp"]
+# ASSERT-FIELD-NOT-CONTAINS ["v1/ConfigMap", "default/redpanda", "{.data.redpanda\\.yaml}", "--memory"]
+# ASSERT-FIELD-CONTAINS ["v1/ConfigMap", "default/redpanda", "{.data.redpanda\\.yaml}", "--reserve-memory=0M"]
+resources:
+  limits: {}
+  requests: {}

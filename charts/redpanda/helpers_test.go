@@ -200,3 +200,58 @@ func TestStrategicMergePatch_nopanic(t *testing.T) {
 		})
 	})
 }
+
+func TestParseCLIArgs(t *testing.T) {
+	testCases := []struct {
+		In  []string
+		Out map[string]string
+	}{
+		{
+			In:  []string{},
+			Out: map[string]string{},
+		},
+		{
+			In: []string{
+				"-foo=bar",
+				"-baz 1",
+				"--help", "topic",
+			},
+			Out: map[string]string{
+				"-foo":   "bar",
+				"-baz":   "1",
+				"--help": "topic",
+			},
+		},
+		{
+			In: []string{
+				"invalid",
+				"-valid=bar",
+				"--trailing spaces ",
+				"--bare=",
+				"ignored-perhaps-confusingly",
+				"--final",
+			},
+			Out: map[string]string{
+				"-valid":     "bar",
+				"--trailing": "spaces ",
+				"--bare":     "",
+				"--final":    "",
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		assert.Equal(t, tc.Out, redpanda.ParseCLIArgs(tc.In))
+	}
+
+	t.Run("NotPanics", rapid.MakeCheck(func(t *rapid.T) {
+		// We could certainly be more inventive with
+		// the inputs here but this is more of a
+		// fuzz test than a property test.
+		in := rapid.SliceOf(rapid.String()).Draw(t, "input")
+
+		assert.NotPanics(t, func() {
+			redpanda.ParseCLIArgs(in)
+		})
+	}))
+}

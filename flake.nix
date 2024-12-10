@@ -55,7 +55,7 @@
               pkgs.kubernetes-helm
               pkgs.kustomize
               pkgs.setup-envtest
-              pkgs.yq # jq but for YAML
+              pkgs.yq-go # jq but for YAML
             ];
           };
         };
