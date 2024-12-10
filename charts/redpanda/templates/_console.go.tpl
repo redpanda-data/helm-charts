@@ -65,8 +65,9 @@
 {{- end -}}
 {{- $visitedCert := (dict ) -}}
 {{- range $_, $tlsCfg := (list $values.listeners.kafka.tls $values.listeners.schemaRegistry.tls $values.listeners.admin.tls) -}}
-{{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $visitedCert $tlsCfg.cert (coalesce nil)) ))) "r")) ))) "r") -}}
-{{- $visited := $tmp_tuple_1.T2 -}}
+{{- $_142___visited := (get (fromJson (include "_shims.dicttest" (dict "a" (list $visitedCert $tlsCfg.cert false) ))) "r") -}}
+{{- $_ := (index $_142___visited 0) -}}
+{{- $visited := (index $_142___visited 1) -}}
 {{- if (or (not (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $tlsCfg $values.tls) ))) "r")) $visited) -}}
 {{- continue -}}
 {{- end -}}
@@ -98,8 +99,9 @@
 {{- end -}}
 {{- $visitedCert := (dict ) -}}
 {{- range $_, $tlsCfg := (list $values.listeners.kafka.tls $values.listeners.schemaRegistry.tls $values.listeners.admin.tls) -}}
-{{- $tmp_tuple_2 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $visitedCert $tlsCfg.cert (coalesce nil)) ))) "r")) ))) "r") -}}
-{{- $visited := $tmp_tuple_2.T2 -}}
+{{- $_183___visited := (get (fromJson (include "_shims.dicttest" (dict "a" (list $visitedCert $tlsCfg.cert false) ))) "r") -}}
+{{- $_ := (index $_183___visited 0) -}}
+{{- $visited := (index $_183___visited 1) -}}
 {{- if (or (not (get (fromJson (include "redpanda.InternalTLS.IsEnabled" (dict "a" (list $tlsCfg $values.tls) ))) "r")) $visited) -}}
 {{- continue -}}
 {{- end -}}
@@ -140,9 +142,9 @@
 {{- $c := (dict "kafka" (dict "brokers" (get (fromJson (include "redpanda.BrokerList" (dict "a" (list $dot ($values.statefulset.replicas | int) ($values.listeners.kafka.port | int)) ))) "r") "sasl" (dict "enabled" (get (fromJson (include "redpanda.Auth.IsSASLEnabled" (dict "a" (list $values.auth) ))) "r") ) "tls" (get (fromJson (include "redpanda.KafkaListeners.ConsoleTLS" (dict "a" (list $values.listeners.kafka $values.tls) ))) "r") "schemaRegistry" (dict "enabled" $values.listeners.schemaRegistry.enabled "urls" $schemaURLs "tls" (get (fromJson (include "redpanda.SchemaRegistryListeners.ConsoleTLS" (dict "a" (list $values.listeners.schemaRegistry $values.tls) ))) "r") ) ) "redpanda" (dict "adminApi" (dict "enabled" true "urls" (list (printf "%s://%s:%d" $schema (get (fromJson (include "redpanda.InternalDomain" (dict "a" (list $dot) ))) "r") ($values.listeners.admin.port | int))) "tls" (get (fromJson (include "redpanda.AdminListeners.ConsoleTLS" (dict "a" (list $values.listeners.admin $values.tls) ))) "r") ) ) ) -}}
 {{- if (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $values.connectors.enabled false) ))) "r") -}}
 {{- $port := (dig "connectors" "connectors" "restPort" (8083 | int) $dot.Values.AsMap) -}}
-{{- $tmp_tuple_3 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.asintegral" (dict "a" (list $port) ))) "r")) ))) "r") -}}
-{{- $ok := $tmp_tuple_3.T2 -}}
-{{- $p := ($tmp_tuple_3.T1 | int) -}}
+{{- $_254_p_ok := (get (fromJson (include "_shims.asintegral" (dict "a" (list $port) ))) "r") -}}
+{{- $p := ((index $_254_p_ok 0) | int) -}}
+{{- $ok := (index $_254_p_ok 1) -}}
 {{- if (not $ok) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $c) | toJson -}}

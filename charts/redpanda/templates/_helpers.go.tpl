@@ -14,9 +14,9 @@
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
-{{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "string" (index $dot.Values "nameOverride") "") ))) "r")) ))) "r") -}}
-{{- $ok_2 := $tmp_tuple_1.T2 -}}
-{{- $override_1 := $tmp_tuple_1.T1 -}}
+{{- $_48_override_1_ok_2 := (get (fromJson (include "_shims.typetest" (dict "a" (list "string" (index $dot.Values "nameOverride") "") ))) "r") -}}
+{{- $override_1 := (index $_48_override_1_ok_2 0) -}}
+{{- $ok_2 := (index $_48_override_1_ok_2 1) -}}
 {{- if (and $ok_2 (ne $override_1 "")) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" (get (fromJson (include "redpanda.cleanForK8s" (dict "a" (list $override_1) ))) "r")) | toJson -}}
@@ -32,9 +32,9 @@
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
-{{- $tmp_tuple_2 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.typetest" (dict "a" (list "string" (index $dot.Values "fullnameOverride") "") ))) "r")) ))) "r") -}}
-{{- $ok_4 := $tmp_tuple_2.T2 -}}
-{{- $override_3 := $tmp_tuple_2.T1 -}}
+{{- $_58_override_3_ok_4 := (get (fromJson (include "_shims.typetest" (dict "a" (list "string" (index $dot.Values "fullnameOverride") "") ))) "r") -}}
+{{- $override_3 := (index $_58_override_3_ok_4 0) -}}
+{{- $ok_4 := (index $_58_override_3_ok_4 1) -}}
 {{- if (and $ok_4 (ne $override_3 "")) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" (get (fromJson (include "redpanda.cleanForK8s" (dict "a" (list $override_3) ))) "r")) | toJson -}}
@@ -231,7 +231,7 @@
 {{- $certNames := (keys $values.tls.certs) -}}
 {{- $_ := (sortAlpha $certNames) -}}
 {{- range $_, $name := $certNames -}}
-{{- $cert := (index $values.tls.certs $name) -}}
+{{- $cert := (ternary (index $values.tls.certs $name) (dict "enabled" (coalesce nil) "caEnabled" false "applyInternalDNSNames" (coalesce nil) "duration" "" "issuerRef" (coalesce nil) "secretRef" (coalesce nil) "clientSecretRef" (coalesce nil) ) (hasKey $values.tls.certs $name)) -}}
 {{- if (not (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $cert.enabled true) ))) "r")) -}}
 {{- continue -}}
 {{- end -}}
@@ -271,7 +271,7 @@
 {{- $certNames := (keys $values.tls.certs) -}}
 {{- $_ := (sortAlpha $certNames) -}}
 {{- range $_, $name := $certNames -}}
-{{- $cert := (index $values.tls.certs $name) -}}
+{{- $cert := (ternary (index $values.tls.certs $name) (dict "enabled" (coalesce nil) "caEnabled" false "applyInternalDNSNames" (coalesce nil) "duration" "" "issuerRef" (coalesce nil) "secretRef" (coalesce nil) "clientSecretRef" (coalesce nil) ) (hasKey $values.tls.certs $name)) -}}
 {{- if (not (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $cert.enabled true) ))) "r")) -}}
 {{- continue -}}
 {{- end -}}
@@ -281,7 +281,7 @@
 {{- break -}}
 {{- end -}}
 {{- $adminTLS := $values.listeners.admin.tls -}}
-{{- $cert := (index $values.tls.certs $adminTLS.cert) -}}
+{{- $cert := (ternary (index $values.tls.certs $adminTLS.cert) (dict "enabled" (coalesce nil) "caEnabled" false "applyInternalDNSNames" (coalesce nil) "duration" "" "issuerRef" (coalesce nil) "secretRef" (coalesce nil) "clientSecretRef" (coalesce nil) ) (hasKey $values.tls.certs $adminTLS.cert)) -}}
 {{- if $adminTLS.requireClientAuth -}}
 {{- $secretName := (printf "%s-client" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r")) -}}
 {{- if (ne (toJson $cert.clientSecretRef) "null") -}}
@@ -427,9 +427,9 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $version := (trimPrefix "v" (get (fromJson (include "redpanda.Tag" (dict "a" (list $dot) ))) "r")) -}}
-{{- $tmp_tuple_3 := (get (fromJson (include "_shims.compact" (dict "a" (list (list (semverCompare $constraint $version) nil)) ))) "r") -}}
-{{- $err := $tmp_tuple_3.T2 -}}
-{{- $result := $tmp_tuple_3.T1 -}}
+{{- $_391_result_err := (list (semverCompare $constraint $version) nil) -}}
+{{- $result := (index $_391_result_err 0) -}}
+{{- $err := (index $_391_result_err 1) -}}
 {{- if (ne (toJson $err) "null") -}}
 {{- $_ := (fail $err) -}}
 {{- end -}}
@@ -542,9 +542,9 @@
 {{- $originalKeys := (dict ) -}}
 {{- $overrideByKey := (dict ) -}}
 {{- range $_, $el := $override -}}
-{{- $tmp_tuple_4 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.get" (dict "a" (list $el $mergeKey) ))) "r")) ))) "r") -}}
-{{- $ok := $tmp_tuple_4.T2 -}}
-{{- $key := $tmp_tuple_4.T1 -}}
+{{- $_515_key_ok := (get (fromJson (include "_shims.get" (dict "a" (list $el $mergeKey) ))) "r") -}}
+{{- $key := (index $_515_key_ok 0) -}}
+{{- $ok := (index $_515_key_ok 1) -}}
 {{- if (not $ok) -}}
 {{- continue -}}
 {{- end -}}
@@ -555,12 +555,13 @@
 {{- end -}}
 {{- $merged := (coalesce nil) -}}
 {{- range $_, $el := $original -}}
-{{- $tmp_tuple_5 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.get" (dict "a" (list $el $mergeKey) ))) "r")) ))) "r") -}}
-{{- $key := $tmp_tuple_5.T1 -}}
+{{- $_527_key__ := (get (fromJson (include "_shims.get" (dict "a" (list $el $mergeKey) ))) "r") -}}
+{{- $key := (index $_527_key__ 0) -}}
+{{- $_ := (index $_527_key__ 1) -}}
 {{- $_ := (set $originalKeys $key true) -}}
-{{- $tmp_tuple_6 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $overrideByKey $key (coalesce nil)) ))) "r")) ))) "r") -}}
-{{- $ok_8 := $tmp_tuple_6.T2 -}}
-{{- $elOverride_7 := $tmp_tuple_6.T1 -}}
+{{- $_529_elOverride_7_ok_8 := (get (fromJson (include "_shims.dicttest" (dict "a" (list $overrideByKey $key (coalesce nil)) ))) "r") -}}
+{{- $elOverride_7 := (index $_529_elOverride_7_ok_8 0) -}}
+{{- $ok_8 := (index $_529_elOverride_7_ok_8 1) -}}
 {{- if $ok_8 -}}
 {{- $merged = (concat (default (list ) $merged) (list (get (fromJson (include $mergeFunc (dict "a" (list $el $elOverride_7) ))) "r"))) -}}
 {{- else -}}
@@ -571,14 +572,15 @@
 {{- break -}}
 {{- end -}}
 {{- range $_, $el := $override -}}
-{{- $tmp_tuple_7 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.get" (dict "a" (list $el $mergeKey) ))) "r")) ))) "r") -}}
-{{- $ok := $tmp_tuple_7.T2 -}}
-{{- $key := $tmp_tuple_7.T1 -}}
+{{- $_539_key_ok := (get (fromJson (include "_shims.get" (dict "a" (list $el $mergeKey) ))) "r") -}}
+{{- $key := (index $_539_key_ok 0) -}}
+{{- $ok := (index $_539_key_ok 1) -}}
 {{- if (not $ok) -}}
 {{- continue -}}
 {{- end -}}
-{{- $tmp_tuple_8 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.dicttest" (dict "a" (list $originalKeys $key (coalesce nil)) ))) "r")) ))) "r") -}}
-{{- $ok_9 := $tmp_tuple_8.T2 -}}
+{{- $_544___ok_9 := (get (fromJson (include "_shims.dicttest" (dict "a" (list $originalKeys $key false) ))) "r") -}}
+{{- $_ := (index $_544___ok_9 0) -}}
+{{- $ok_9 := (index $_544___ok_9 1) -}}
 {{- if $ok_9 -}}
 {{- continue -}}
 {{- end -}}

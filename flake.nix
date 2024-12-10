@@ -1,14 +1,12 @@
 {
   inputs = {
-    nixpkgs.url = "nixpkgs";
-    nixpkgs-unstable.url = "nixpkgs/nixos-unstable";
+    nixpkgs.url = "nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
   };
 
   outputs =
     inputs@{ self
     , nixpkgs
-    , nixpkgs-unstable
     , flake-parts
     , ...
     }: flake-parts.lib.mkFlake { inherit inputs; } {

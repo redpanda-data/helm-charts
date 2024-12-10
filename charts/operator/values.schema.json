@@ -2037,6 +2037,17 @@
                           "allowPrivilegeEscalation": {
                             "type": "boolean"
                           },
+                          "appArmorProfile": {
+                            "properties": {
+                              "localhostProfile": {
+                                "type": "string"
+                              },
+                              "type": {
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
                           "capabilities": {
                             "properties": {
                               "add": {
@@ -2264,6 +2275,9 @@
                             },
                             "readOnly": {
                               "type": "boolean"
+                            },
+                            "recursiveReadOnly": {
+                              "type": "string"
                             },
                             "subPath": {
                               "type": "string"
@@ -2942,6 +2956,17 @@
                           "allowPrivilegeEscalation": {
                             "type": "boolean"
                           },
+                          "appArmorProfile": {
+                            "properties": {
+                              "localhostProfile": {
+                                "type": "string"
+                              },
+                              "type": {
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
                           "capabilities": {
                             "properties": {
                               "add": {
@@ -3172,6 +3197,9 @@
                             },
                             "readOnly": {
                               "type": "boolean"
+                            },
+                            "recursiveReadOnly": {
+                              "type": "string"
                             },
                             "subPath": {
                               "type": "string"
@@ -3849,6 +3877,17 @@
                           "allowPrivilegeEscalation": {
                             "type": "boolean"
                           },
+                          "appArmorProfile": {
+                            "properties": {
+                              "localhostProfile": {
+                                "type": "string"
+                              },
+                              "type": {
+                                "type": "string"
+                              }
+                            },
+                            "type": "object"
+                          },
                           "capabilities": {
                             "properties": {
                               "add": {
@@ -4077,6 +4116,9 @@
                             "readOnly": {
                               "type": "boolean"
                             },
+                            "recursiveReadOnly": {
+                              "type": "string"
+                            },
                             "subPath": {
                               "type": "string"
                             },
@@ -4217,6 +4259,17 @@
             },
             "securityContext": {
               "properties": {
+                "appArmorProfile": {
+                  "properties": {
+                    "localhostProfile": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string"
+                    }
+                  },
+                  "type": "object"
+                },
                 "fsGroup": {
                   "type": "integer"
                 },
