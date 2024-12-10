@@ -98,9 +98,9 @@
 {{- end -}}
 {{- $secretName := (printf "%s-bootstrap-user" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r")) -}}
 {{- if $dot.Release.IsUpgrade -}}
-{{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "_shims.lookup" (dict "a" (list "v1" "Secret" $dot.Release.Namespace $secretName) ))) "r")) ))) "r") -}}
-{{- $ok_6 := $tmp_tuple_1.T2 -}}
-{{- $existing_5 := $tmp_tuple_1.T1 -}}
+{{- $_214_existing_5_ok_6 := (get (fromJson (include "_shims.lookup" (dict "a" (list "v1" "Secret" $dot.Release.Namespace $secretName) ))) "r") -}}
+{{- $existing_5 := (index $_214_existing_5_ok_6 0) -}}
+{{- $ok_6 := (index $_214_existing_5_ok_6 1) -}}
 {{- if $ok_6 -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $existing_5) | toJson -}}

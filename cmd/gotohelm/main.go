@@ -8,7 +8,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/redpanda-data/helm-charts/pkg/gotohelm"
+	"github.com/redpanda-data/redpanda-operator/pkg/gotohelm"
 	"golang.org/x/tools/go/packages"
 )
 

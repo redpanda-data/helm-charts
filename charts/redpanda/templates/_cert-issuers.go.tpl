@@ -4,8 +4,9 @@
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
-{{- $tmp_tuple_1 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "redpanda.certIssuersAndCAs" (dict "a" (list $dot) ))) "r")) ))) "r") -}}
-{{- $issuers := $tmp_tuple_1.T1 -}}
+{{- $_30_issuers__ := (get (fromJson (include "redpanda.certIssuersAndCAs" (dict "a" (list $dot) ))) "r") -}}
+{{- $issuers := (index $_30_issuers__ 0) -}}
+{{- $_ := (index $_30_issuers__ 1) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $issuers) | toJson -}}
 {{- break -}}
@@ -16,8 +17,9 @@
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
-{{- $tmp_tuple_2 := (get (fromJson (include "_shims.compact" (dict "a" (list (get (fromJson (include "redpanda.certIssuersAndCAs" (dict "a" (list $dot) ))) "r")) ))) "r") -}}
-{{- $cas := $tmp_tuple_2.T2 -}}
+{{- $_35___cas := (get (fromJson (include "redpanda.certIssuersAndCAs" (dict "a" (list $dot) ))) "r") -}}
+{{- $_ := (index $_35___cas 0) -}}
+{{- $cas := (index $_35___cas 1) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $cas) | toJson -}}
 {{- break -}}

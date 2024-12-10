@@ -4,7 +4,7 @@ package redpanda
 import (
 	"fmt"
 
-	"github.com/redpanda-data/helm-charts/pkg/gotohelm/helmette"
+	"github.com/redpanda-data/redpanda-operator/pkg/gotohelm/helmette"
 )
 
 type MebiBytes = int64

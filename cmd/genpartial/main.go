@@ -162,6 +162,8 @@ func (g *Generator) partialize(t types.Type) types.Type {
 		return g.partializeNamed(t)
 	case *types.TypeParam:
 		return t // TODO this isn't super easy to fully support without a lot of additional information......
+	case *types.Alias:
+		return g.partialize(t.Rhs())
 	default:
 		panic(fmt.Sprintf("Unhandled: %T", t))
 	}
@@ -378,10 +380,16 @@ func FindAllNames(pkg *types.Package, root types.Type) []*types.Named {
 		case *types.Basic, *types.Interface, *types.TypeParam:
 			continue
 
+		case *types.Alias:
+			push(current.Rhs())
+
 		case *types.Pointer:
 			push(current.Elem())
 
 		case *types.Slice:
+			push(current.Elem())
+
+		case *types.Array:
 			push(current.Elem())
 
 		case *types.Map:
