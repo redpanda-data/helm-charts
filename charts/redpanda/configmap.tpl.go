@@ -365,8 +365,6 @@ func rpkNodeConfig(dot *helmette.Dot) map[string]any {
 	}
 
 	result := map[string]any{
-		"overprovisioned":        values.Resources.GetOverProvisionValue(),
-		"enable_memory_locking":  ptr.Deref(values.Resources.Memory.EnableMemoryLocking, false),
 		"additional_start_flags": RedpandaAdditionalStartFlags(dot),
 		"kafka_api": map[string]any{
 			"brokers": brokerList,
@@ -622,7 +620,7 @@ func RedpandaAdditionalStartFlags(dot *helmette.Dot) []string {
 	values := helmette.Unwrap[Values](dot.Values)
 
 	// All `additional_start_flags` that are set by the chart.
-	chartFlags := values.Resources.GetRedpandaStartFlags()
+	chartFlags := values.Resources.GetRedpandaFlags()
 	chartFlags["default-log-level"] = values.Logging.LogLevel
 
 	// If in developer_mode, don't set reserve-memory.
@@ -646,7 +644,14 @@ func RedpandaAdditionalStartFlags(dot *helmette.Dot) []string {
 
 	flags := []string{}
 	for _, key := range keys {
-		flags = append(flags, fmt.Sprintf("--%s=%s", key, chartFlags[key]))
+		value := chartFlags[key]
+		// Support flags that don't have values (`--overprovisioned`) by
+		// letting them be specified as key: ""
+		if value == "" {
+			flags = append(flags, fmt.Sprintf("--%s", key))
+		} else {
+			flags = append(flags, fmt.Sprintf("--%s=%s", key, value))
+		}
 	}
 
 	return append(flags, values.Statefulset.AdditionalRedpandaCmdFlags...)

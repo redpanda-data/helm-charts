@@ -313,7 +313,7 @@
 {{- if (gt ((get (fromJson (include "_shims.len" (dict "a" (list $tls_8) ))) "r") | int) (0 | int)) -}}
 {{- $schemaRegistryTLS = $tls_8 -}}
 {{- end -}}
-{{- $result := (dict "overprovisioned" (get (fromJson (include "redpanda.RedpandaResources.GetOverProvisionValue" (dict "a" (list $values.resources) ))) "r") "enable_memory_locking" (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $values.resources.memory.enable_memory_locking false) ))) "r") "additional_start_flags" (get (fromJson (include "redpanda.RedpandaAdditionalStartFlags" (dict "a" (list $dot) ))) "r") "kafka_api" (dict "brokers" $brokerList "tls" $brokerTLS ) "admin_api" (dict "addresses" (get (fromJson (include "redpanda.Listeners.AdminList" (dict "a" (list $values.listeners ($values.statefulset.replicas | int) (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r") (get (fromJson (include "redpanda.InternalDomain" (dict "a" (list $dot) ))) "r")) ))) "r") "tls" $adminTLS ) "schema_registry" (dict "addresses" (get (fromJson (include "redpanda.Listeners.SchemaRegistryList" (dict "a" (list $values.listeners ($values.statefulset.replicas | int) (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r") (get (fromJson (include "redpanda.InternalDomain" (dict "a" (list $dot) ))) "r")) ))) "r") "tls" $schemaRegistryTLS ) ) -}}
+{{- $result := (dict "additional_start_flags" (get (fromJson (include "redpanda.RedpandaAdditionalStartFlags" (dict "a" (list $dot) ))) "r") "kafka_api" (dict "brokers" $brokerList "tls" $brokerTLS ) "admin_api" (dict "addresses" (get (fromJson (include "redpanda.Listeners.AdminList" (dict "a" (list $values.listeners ($values.statefulset.replicas | int) (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r") (get (fromJson (include "redpanda.InternalDomain" (dict "a" (list $dot) ))) "r")) ))) "r") "tls" $adminTLS ) "schema_registry" (dict "addresses" (get (fromJson (include "redpanda.Listeners.SchemaRegistryList" (dict "a" (list $values.listeners ($values.statefulset.replicas | int) (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r") (get (fromJson (include "redpanda.InternalDomain" (dict "a" (list $dot) ))) "r")) ))) "r") "tls" $schemaRegistryTLS ) ) -}}
 {{- $result = (merge (dict ) $result (get (fromJson (include "redpanda.Tuning.Translate" (dict "a" (list $values.tuning) ))) "r")) -}}
 {{- $result = (merge (dict ) $result (get (fromJson (include "redpanda.Config.CreateRPKConfiguration" (dict "a" (list $values.config) ))) "r")) -}}
 {{- $_is_returning = true -}}
@@ -544,7 +544,7 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
-{{- $chartFlags := (get (fromJson (include "redpanda.RedpandaResources.GetRedpandaStartFlags" (dict "a" (list $values.resources) ))) "r") -}}
+{{- $chartFlags := (get (fromJson (include "redpanda.RedpandaResources.GetRedpandaFlags" (dict "a" (list $values.resources) ))) "r") -}}
 {{- $_ := (set $chartFlags "default-log-level" $values.logging.logLevel) -}}
 {{- if (eq (index $values.config.node "developer_mode") true) -}}
 {{- $_ := (unset $chartFlags "reserve-memory") -}}
@@ -566,7 +566,12 @@
 {{- $_ := (sortAlpha $keys) -}}
 {{- $flags := (list ) -}}
 {{- range $_, $key := $keys -}}
-{{- $flags = (concat (default (list ) $flags) (list (printf "--%s=%s" $key (ternary (index $chartFlags $key) "" (hasKey $chartFlags $key))))) -}}
+{{- $value := (ternary (index $chartFlags $key) "" (hasKey $chartFlags $key)) -}}
+{{- if (eq $value "") -}}
+{{- $flags = (concat (default (list ) $flags) (list (printf "--%s" $key))) -}}
+{{- else -}}
+{{- $flags = (concat (default (list ) $flags) (list (printf "--%s=%s" $key $value))) -}}
+{{- end -}}
 {{- end -}}
 {{- if $_is_returning -}}
 {{- break -}}
