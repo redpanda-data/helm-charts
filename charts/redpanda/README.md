@@ -1034,7 +1034,7 @@ Persistence settings. For details, see the [storage documentation](https://docs.
 **Default:**
 
 ```
-{"hostPath":"","persistentVolume":{"annotations":{},"enabled":true,"labels":{},"nameOverwrite":"","size":"20Gi","storageClass":""},"tiered":{"config":{"cloud_storage_cache_size":5368709120,"cloud_storage_enable_remote_read":true,"cloud_storage_enable_remote_write":true,"cloud_storage_enabled":false},"credentialsSecretRef":{"accessKey":{"configurationKey":"cloud_storage_access_key"},"secretKey":{"configurationKey":"cloud_storage_secret_key"}},"hostPath":"","mountType":"emptyDir","persistentVolume":{"annotations":{},"labels":{},"storageClass":""}}}
+{"hostPath":"","persistentVolume":{"annotations":{},"enabled":true,"labels":{},"nameOverwrite":"","size":"20Gi","storageClass":""},"tiered":{"config":{"cloud_storage_cache_size":5368709120,"cloud_storage_enable_remote_read":true,"cloud_storage_enable_remote_write":true,"cloud_storage_enabled":false},"credentialsSecretRef":{"accessKey":{"configurationKey":"cloud_storage_access_key"},"secretKey":{"configurationKey":"cloud_storage_secret_key"}},"hostPath":"","mountType":"none","persistentVolume":{"annotations":{},"labels":{},"storageClass":""}}}
 ```
 
 ### [storage.hostPath](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=storage.hostPath)
