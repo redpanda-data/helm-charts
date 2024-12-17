@@ -479,7 +479,7 @@ storage:
     # - hostPath: will allow you to chose a path on the Node the pod is running on
     # - emptyDir: will mount a fresh empty directory every time the pod starts
     # - persistentVolume: creates and mounts a PersistentVolumeClaim
-    mountType: emptyDir
+    mountType: none
 
     # For the maximum size of the disk cache, see `tieredConfig.cloud_storage_cache_size`.
     #

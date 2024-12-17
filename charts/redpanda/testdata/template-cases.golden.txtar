@@ -25980,8 +25980,6 @@ spec:
           name: lifecycle-scripts
         - mountPath: /var/lib/redpanda/data
           name: datadir
-        - mountPath: /var/lib/redpanda/data/cloud_storage_cache
-          name: tiered-storage-dir
       - args:
         - -c
         - trap "exit 0" TERM; exec /etc/secrets/config-watcher/scripts/sasl-user.sh
@@ -26040,8 +26038,6 @@ spec:
           name: redpanda-external-cert
         - mountPath: /var/lib/redpanda/data
           name: datadir
-        - mountPath: /var/lib/redpanda/data/cloud_storage_cache
-          name: tiered-storage-dir
       - command:
         - /bin/bash
         - -c
@@ -26156,9 +26152,6 @@ spec:
       - name: datadir
         persistentVolumeClaim:
           claimName: datadir
-      - emptyDir:
-          sizeLimit: 5368709120
-        name: tiered-storage-dir
   updateStrategy:
     type: RollingUpdate
   volumeClaimTemplates:
@@ -27438,8 +27431,6 @@ spec:
           name: lifecycle-scripts
         - mountPath: /var/lib/redpanda/data
           name: datadir
-        - mountPath: /var/lib/redpanda/data/cloud_storage_cache
-          name: tiered-storage-dir
       - args:
         - -c
         - trap "exit 0" TERM; exec /etc/secrets/config-watcher/scripts/sasl-user.sh
@@ -27498,8 +27489,6 @@ spec:
           name: redpanda-external-cert
         - mountPath: /var/lib/redpanda/data
           name: datadir
-        - mountPath: /var/lib/redpanda/data/cloud_storage_cache
-          name: tiered-storage-dir
       - command:
         - /bin/bash
         - -c
@@ -27614,9 +27603,6 @@ spec:
       - name: datadir
         persistentVolumeClaim:
           claimName: datadir
-      - emptyDir:
-          sizeLimit: 5368709120
-        name: tiered-storage-dir
   updateStrategy:
     type: RollingUpdate
   volumeClaimTemplates:
@@ -28894,8 +28880,6 @@ spec:
           name: lifecycle-scripts
         - mountPath: /var/lib/redpanda/data
           name: datadir
-        - mountPath: /var/lib/redpanda/data/cloud_storage_cache
-          name: tiered-storage-dir
       - args:
         - -c
         - trap "exit 0" TERM; exec /etc/secrets/config-watcher/scripts/sasl-user.sh
@@ -28954,8 +28938,6 @@ spec:
           name: redpanda-external-cert
         - mountPath: /var/lib/redpanda/data
           name: datadir
-        - mountPath: /var/lib/redpanda/data/cloud_storage_cache
-          name: tiered-storage-dir
       - command:
         - /bin/bash
         - -c
@@ -29070,9 +29052,6 @@ spec:
       - name: datadir
         persistentVolumeClaim:
           claimName: datadir
-      - emptyDir:
-          sizeLimit: 5368709120
-        name: tiered-storage-dir
   updateStrategy:
     type: RollingUpdate
   volumeClaimTemplates:
@@ -30297,8 +30276,6 @@ spec:
           name: lifecycle-scripts
         - mountPath: /var/lib/redpanda/data
           name: datadir
-        - mountPath: /var/lib/redpanda/data/cloud_storage_cache
-          name: tiered-storage-dir
       - args:
         - -c
         - trap "exit 0" TERM; exec /etc/secrets/config-watcher/scripts/sasl-user.sh
@@ -30357,8 +30334,6 @@ spec:
           name: redpanda-external-cert
         - mountPath: /var/lib/redpanda/data
           name: datadir
-        - mountPath: /var/lib/redpanda/data/cloud_storage_cache
-          name: tiered-storage-dir
       - command:
         - /bin/bash
         - -c
@@ -30473,9 +30448,6 @@ spec:
       - name: datadir
         persistentVolumeClaim:
           claimName: datadir
-      - emptyDir:
-          sizeLimit: 5368709120
-        name: tiered-storage-dir
   updateStrategy:
     type: RollingUpdate
   volumeClaimTemplates:
