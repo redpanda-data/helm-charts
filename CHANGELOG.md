@@ -8,6 +8,13 @@
 #### Fixed
 #### Removed
 
+### [5.9.17](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.17) - 2024-12-17
+#### Added
+#### Changed
+* Default for tiered storage cache to `none` which will defer tiered storage cache path to Redpanda process.
+#### Fixed
+#### Removed
+
 ### [5.9.16](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.16) - 2024-12-09
 #### Added
 #### Changed
