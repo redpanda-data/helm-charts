@@ -282,6 +282,7 @@
 ### [Unreleased](https://github.com/redpanda-data/helm-charts/releases/tag/operator-FILLMEIN) - YYYY-MM-DD
 #### Added
 #### Changed
+* configurator image to redpanda-operator container image
 #### Fixed
 #### Removed
 
