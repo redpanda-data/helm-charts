@@ -111,9 +111,7 @@ func connectorsChartIntegration(dot *helmette.Dot) []kube.Object {
 			{
 				Name: cleanForK8sWithSuffix(Fullname(dot), "user-password"),
 				VolumeSource: corev1.VolumeSource{
-					Secret: &corev1.SecretVolumeSource{
-						SecretName: values.Auth.SASL.SecretRef,
-					},
+					EmptyDir: &corev1.EmptyDirVolumeSource{},
 				},
 			},
 		}...)
