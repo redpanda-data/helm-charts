@@ -363,6 +363,15 @@ statefulset:
 statefulset:
   replicas: 1
 
+-- enable-connectors-sasl --
+# ASSERT-NO-ERROR
+# ASSERT-GOLDEN
+auth:
+  sasl:
+    enabled: true
+connectors:
+  enabled: true
+
 -- enable-connectors --
 # ASSERT-NO-ERROR
 # ASSERT-GOLDEN
