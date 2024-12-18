@@ -660,3 +660,316 @@ console:
     hosts:
     - host: "{{ (get (fromJson (include \"console.Fullname\" (dict \"a\" (list $) ))) \"r\") | trunc 50 }}-first-rule-host"
     - host: "{{ (get (fromJson (include \"console.Fullname\" (dict \"a\" (list $) ))) \"r\") | trunc 50 }}-second-rule-host"
+
+-- azure-values --
+# Example redacted values directly from cloud.
+# ASSERT-NO-ERROR
+# ASSERT-GOLDEN
+auditLogging:
+  enabled: true
+auth:
+  sasl:
+    enabled: true
+    mechanism: SCRAM-SHA-512
+    secretRef: redpanda-superusers
+    users: []
+clusterDomain: cluster.local
+config:
+  cluster:
+    cloud_storage_azure_container: somecontainer
+    cloud_storage_azure_hierarchical_namespace_enabled: "true"
+    cloud_storage_azure_storage_account: someaccount
+    cloud_storage_credentials_source: azure_aks_oidc_federation
+    cloud_storage_enabled: "true"
+    default_topic_replications: "3"
+  node:
+    crash_loop_limit: 9999
+  tunable:
+    aggregate_metrics: "true"
+    cloud_storage_cache_size_percent: "15"
+    cloud_storage_enable_remote_read: "true"
+    cloud_storage_enable_remote_write: "true"
+    cloud_storage_manifest_cache_size: "16777216"
+    cloud_storage_max_throughput_per_shard: "40000000"
+    cloud_storage_segment_max_upload_interval_sec: "3600"
+    cloud_storage_spillover_manifest_size: "65536"
+    compacted_log_segment_size: "14680064"
+    core_balancing_continuous: "true"
+    disk_reservation_percent: "0"
+    enable_controller_log_rate_limiting: "true"
+    enable_usage: "true"
+    fetch_reads_debounce_timeout: "5"
+    group_topic_partitions: "6"
+    initial_retention_local_target_ms_default: "3600000"
+    kafka_batch_max_bytes: "1048576"
+    kafka_connection_rate_limit: "1000"
+    kafka_connections_max: "3700"
+    kafka_enable_partition_reassignment: "false"
+    kafka_rpc_server_tcp_recv_buf: null
+    kafka_rpc_server_tcp_send_buf: null
+    kafka_throughput_limit_node_in_bps: "13333334"
+    kafka_throughput_limit_node_out_bps: "40000000"
+    log_segment_ms_min: "300000"
+    log_segment_size: "29360128"
+    log_segment_size_max: "29360128"
+    log_segment_size_min: "16777216"
+    max_compacted_log_segment_size: "58720256"
+    max_concurrent_producer_ids: "3700"
+    minimum_topic_replications: "3"
+    partition_autobalancing_mode: continuous
+    raft_learner_recovery_rate: "104857600"
+    retention_local_strict: "false"
+    retention_local_strict_override: "false"
+    retention_local_target_capacity_percent: "70"
+    retention_local_target_ms_default: "21600000"
+    rpc_client_connections_per_peer: "80"
+    rpc_server_listen_backlog: "1000"
+    rps_limit_acls_and_users_operations: "100"
+    rps_limit_configuration_operations: "10"
+    rps_limit_move_operations: "1000"
+    rps_limit_node_management_operations: "10"
+    rps_limit_topic_operations: "100"
+    space_management_enable: "true"
+    space_management_enable_override: "true"
+    topic_memory_per_partition: "3145728"
+    topic_partitions_per_shard: "1066"
+    transaction_coordinator_partitions: "6"
+    use_fetch_scheduler_group: "true"
+connectors:
+  enabled: false
+console:
+  enabled: false
+enterprise:
+  licenseSecretRef:
+    key: license
+    name: redpanda-license
+external:
+  addresses:
+    - $PREFIX_TEMPLATE
+  domain: some.local.dev.domain
+  enabled: false
+  externalDns:
+    enabled: true
+  prefixTemplate: ${POD_ORDINAL}-uniquevalue-$(echo -n $HOST_IP_ADDRESS | sha256sum | head -c 7)
+  service:
+    enabled: false
+  type: NodePort
+image:
+  repository: docker.io/redpandadata/redpanda
+  tag: v24.2.12
+listeners:
+  admin:
+    external:
+      admin-api:
+        advertisedPorts:
+          - 30644
+        authenticationMethod: http_basic
+        enabled: false
+        port: 30644
+        tls:
+          cert: letsencrypt
+          enabled: true
+    port: 9644
+    tls:
+      cert: selfsigned
+      enabled: true
+  http:
+    authenticationMethod: http_basic
+    external:
+      http-proxy:
+        advertisedPorts:
+          - 30082
+        authenticationMethod: http_basic
+        enabled: true
+        port: 30082
+        tls:
+          cert: letsencrypt
+          enabled: true
+    port: 8082
+    tls:
+      cert: selfsigned
+      enabled: true
+  kafka:
+    authenticationMethod: sasl
+    external:
+      kafka-api-0:
+        advertisedPorts:
+          - 30092
+        authenticationMethod: sasl
+        enabled: true
+        port: 30092
+        tls:
+          cert: letsencrypt
+    port: 9092
+    tls:
+      cert: selfsigned
+  rpc:
+    port: 33145
+    tls:
+      cert: selfsigned
+  schemaRegistry:
+    authenticationMethod: http_basic
+    external:
+      schema-registry:
+        advertisedPorts:
+          - 30081
+        authenticationMethod: http_basic
+        enabled: true
+        port: 30081
+        tls:
+          cert: letsencrypt
+    port: 8081
+    tls:
+      cert: selfsigned
+logging:
+  logLevel: info
+  usageStats:
+    clusterId: someclusterid
+    enabled: true
+monitoring:
+  enabled: true
+  scrapeInterval: 30s
+nodeSelector:
+  cloud.redpanda.com/role: redpanda
+post_install_job:
+  podTemplate:
+    spec:
+      containers:
+        - name: post-install
+          resources:
+            requests:
+              memory: 16Mi
+      initContainers:
+        - name: bootstrap-yaml-envsubst
+          resources:
+            requests:
+              memory: 16Mi
+rackAwareness:
+  enabled: false
+  nodeAnnotation: topology.kubernetes.io/zone
+rbac:
+  enabled: true
+resources:
+  cpu:
+    cores: 1
+  memory:
+    container:
+      max: 6554Mi
+      min: 6554Mi
+    enable_memory_locking: true
+serviceAccount:
+  annotations:
+    azure.workload.identity/client-id: someclientid
+  create: true
+  name: someaccountname
+statefulset:
+  additionalRedpandaCmdFlags:
+    - --memory=5G
+    - --reserve-memory=1G
+    - --abort-on-seastar-bad-alloc
+    - --dump-memory-diagnostics-on-alloc-failure-kind=all
+  budget:
+    maxUnavailable: 1
+  extraVolumeMounts: |-
+    - mountPath: /etc/ssl/certs/redpanda-truststore.crt
+      name: redpanda-truststore
+      subPath: redpanda-truststore.crt
+      readOnly: true
+  extraVolumes: |-
+    - name: redpanda-truststore
+      configMap:
+        name: redpanda-truststore.crt
+        defaultMode: 0644
+        optional: false
+        items:
+        - key: redpanda-truststore.pem
+          path: redpanda-truststore.crt
+  initContainers:
+    configurator:
+      resources:
+        limits:
+          cpu: 100m
+          memory: 256Mi
+        requests:
+          cpu: 100m
+          memory: 256Mi
+    fsValidator:
+      enabled: true
+      resources:
+        limits:
+          cpu: 100m
+          memory: 256Mi
+        requests:
+          cpu: 100m
+          memory: 256Mi
+    setDataDirOwnership:
+      enabled: false
+      resources:
+        limits:
+          cpu: 100m
+          memory: 128Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+  podTemplate:
+    labels:
+      azure.workload.identity/use: "true"
+      cloud.redpanda.com/network-loadbalancer-access: "true"
+  priorityClassName: system-node-critical
+  replicas: 3
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    privileged: false
+    runAsGroup: 65534
+    runAsNonRoot: true
+    runAsUser: 65534
+  sideCars:
+    configWatcher:
+      enabled: true
+      resources:
+        limits:
+          cpu: 256m
+          memory: 256Mi
+        requests:
+          cpu: 256m
+          memory: 256Mi
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+        privileged: false
+        runAsGroup: 65534
+        runAsNonRoot: true
+        runAsUser: 65534
+  terminationGracePeriodSeconds: 120
+storage:
+  persistentVolume:
+    enabled: true
+    size: 4096Gi
+    storageClass: local-path
+  tiered:
+    mountType: persistentVolume
+    persistentVolume:
+      storageClass: local-path
+tls:
+  certs:
+    letsencrypt:
+      caEnabled: false
+      secretRef:
+        name: letsencrypt-cert
+    selfsigned:
+      caEnabled: true
+      secretRef:
+        name: selfsigned-cert
+  enabled: true
+tolerations:
+  - effect: NoSchedule
+    key: cloud.redpanda.com/role
+    operator: Equal
+    value: redpanda
+tuning:
+  tune_aio_events: false
