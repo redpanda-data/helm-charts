@@ -410,7 +410,7 @@ func SecretFSValidator(dot *helmette.Dot) *corev1.Secret {
 			Kind:       "Secret",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      fmt.Sprintf("%s-fs-validator", Fullname(dot)[:49]),
+			Name:      fmt.Sprintf("%.49s-fs-validator", Fullname(dot)),
 			Namespace: dot.Release.Namespace,
 			Labels:    FullLabels(dot),
 		},
