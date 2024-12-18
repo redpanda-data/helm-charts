@@ -347,6 +347,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -357,7 +358,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -365,7 +365,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -742,7 +741,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -1657,6 +1656,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -1664,12 +1664,10 @@ data:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:9644
         tls: null
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
         tls: null
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -2009,7 +2007,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 6e5b1f11d8fb052222d9f4301284b0e91935dbf73c874ee624183b5a04cb9823
+        config.redpanda.com/checksum: a265839b4c5546a9e6399d39f04433512b0ee2acad0b1e1e2a097e87ca5fd603
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -2738,6 +2736,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -2746,13 +2745,11 @@ data:
         - redpanda-0.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -3113,7 +3110,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 6fd0ffd56475954e062f04d4d1c9393e016e8b66bfba64f6419c794861d1b9b2
+        config.redpanda.com/checksum: 74620a3f6d91ff97413100a29e39bce08f50acd5a3bbfc638fd14087ade2b54c
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -4163,6 +4160,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -4170,12 +4168,10 @@ data:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:9644
         tls: null
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
         tls: null
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -4527,7 +4523,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 5265a0c42c9888cd69e394a959677e44c5909408f1c85c570bb56e6262285b1a
+        config.redpanda.com/checksum: 5913ff02aabefa9545bbc723d39917da860ee9f1ff2b7c3c1e4f70d6243f3963
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -5458,6 +5454,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -5466,13 +5463,11 @@ data:
         - redpanda-0.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -5850,7 +5845,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: fc10e3af9a4f7ff7f2e7f76110e0ad824999092e8012a745bc1168ead31e43ad
+        config.redpanda.com/checksum: 48d16409fceabde111f2af78bca611b9bbd11cbdce513e899b3f7178131dff62
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -6911,6 +6906,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -6921,7 +6917,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -6929,7 +6924,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -7404,7 +7398,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -8463,6 +8457,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -8473,14 +8468,12 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
         - redpanda-1.redpanda.default.svc.cluster.local.:9093
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls: null
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -8886,7 +8879,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 6efc2c489543f3f84c0105524bea43a1fb61e5a3925046cb0a60551f23959964
+        config.redpanda.com/checksum: 6e14a70b85b3a2bcfc14b22c31e31755492e400db5f62bef96bc42308a1768bf
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -9991,6 +9984,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -10001,7 +9995,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -10009,7 +10002,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -10386,7 +10378,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -11418,6 +11410,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -11428,7 +11421,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -11436,7 +11428,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -11813,7 +11804,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -12879,6 +12870,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -12889,7 +12881,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -12897,7 +12888,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -13274,7 +13264,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: fc549ca23d4e1dff27e530265d59be059368cd4866ee0ca938c73ceff6815b57
+        config.redpanda.com/checksum: 061abbbf3bdfd6ba28ac9ae7c2094ec7a75626e554114bee11a8e7333fa96aeb
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -14403,6 +14393,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -14413,7 +14404,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -14421,7 +14411,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -14815,7 +14804,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: ddcf6376732939f810acb684cafac205507b50b966e5714f128ed87a56fb10f6
+        config.redpanda.com/checksum: 00507160e4b4ca314c06a001accee78727b56323183ecb2a32e69a57e95fee93
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -15854,6 +15843,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -15864,7 +15854,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -15872,7 +15861,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -16249,7 +16237,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 48ad7b247c147d3bd7bcbc3357d831d21016fbd8ca0022343a14dbb23c15a9ae
+        config.redpanda.com/checksum: 9ff1fda4d661bd1093d65622f946930548c0cd42d737cafde92efc0ca8891fa3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -17132,6 +17120,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -17142,7 +17131,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -17150,7 +17138,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -17614,7 +17601,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 48ad7b247c147d3bd7bcbc3357d831d21016fbd8ca0022343a14dbb23c15a9ae
+        config.redpanda.com/checksum: 9ff1fda4d661bd1093d65622f946930548c0cd42d737cafde92efc0ca8891fa3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -18451,6 +18438,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -18460,14 +18448,12 @@ data:
         - redpanda-1.redpanda.default.svc.cluster.local.:9644
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls: null
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
         - redpanda-1.redpanda.default.svc.cluster.local.:9093
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls: null
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -18818,7 +18804,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 148733ee0ada31cbc1a8fda54191ad29425f8b3dea458814fac1938671843141
+        config.redpanda.com/checksum: 72be562ddad0b3a179e1d6c2a29ab0dfb0da206ed6b9e53cc65d1c84bca3bfce
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -19593,6 +19579,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -19603,7 +19590,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -19611,7 +19597,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -19988,7 +19973,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -20998,6 +20983,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -21008,7 +20994,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -21016,7 +21001,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -21623,7 +21607,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -22639,6 +22623,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2000M
       - --reserve-memory=0M
       - --smp=1
@@ -22649,7 +22634,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -22657,7 +22641,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -23034,7 +23017,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: f20d341fb81aa7ed6ced1fad2af7b611113cb255d137392a3d2485781a045a19
+        config.redpanda.com/checksum: 275f58031cdbb49fddf7743139498e604607b540bdeb56968982510077a3841c
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -24015,6 +23998,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -24025,7 +24009,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -24033,7 +24016,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -24410,7 +24392,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 9802162e4b8b9aaf699d67337e3ee45299ff93beb822d0842765ce1c5a4c911b
+        config.redpanda.com/checksum: 4bb2c2ccf42bc04f55acd3a9897482976397c367ca875441b7c35a904f29cf9f
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -25436,6 +25418,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -25446,7 +25429,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -25454,7 +25436,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -25847,7 +25828,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -26887,7 +26868,9 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=1024M
+      - --overprovisioned
       - --reserve-memory=100M
       - --smp=1
       admin_api:
@@ -26897,7 +26880,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -26905,7 +26887,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: true
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -27298,7 +27279,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 6e125110db4b6706f6338010ad36c50316395111aea32b3a9d4f4984a32501f9
+        config.redpanda.com/checksum: c8ec7100f3ca0b33b749495c2a1c66f23b7e9eaa20ac00151b4daa96f7501fef
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -28336,7 +28317,9 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=1024M
+      - --overprovisioned
       - --reserve-memory=100M
       - --smp=1
       admin_api:
@@ -28346,7 +28329,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -28354,7 +28336,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: true
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -28747,7 +28728,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 6e125110db4b6706f6338010ad36c50316395111aea32b3a9d4f4984a32501f9
+        config.redpanda.com/checksum: c8ec7100f3ca0b33b749495c2a1c66f23b7e9eaa20ac00151b4daa96f7501fef
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -29748,7 +29729,9 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=1024M
+      - --overprovisioned
       - --reserve-memory=100M
       - --smp=1
       admin_api:
@@ -29758,7 +29741,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -29766,7 +29748,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: true
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -30143,7 +30124,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 6e125110db4b6706f6338010ad36c50316395111aea32b3a9d4f4984a32501f9
+        config.redpanda.com/checksum: c8ec7100f3ca0b33b749495c2a1c66f23b7e9eaa20ac00151b4daa96f7501fef
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -31181,6 +31162,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -31191,7 +31173,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -31199,7 +31180,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -31592,7 +31572,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -32651,7 +32631,9 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=1024M
+      - --overprovisioned
       - --reserve-memory=100M
       - --smp=1
       admin_api:
@@ -32661,7 +32643,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -32669,7 +32650,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: true
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -33062,7 +33042,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 6e125110db4b6706f6338010ad36c50316395111aea32b3a9d4f4984a32501f9
+        config.redpanda.com/checksum: c8ec7100f3ca0b33b749495c2a1c66f23b7e9eaa20ac00151b4daa96f7501fef
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -34119,7 +34099,9 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=1024M
+      - --overprovisioned
       - --reserve-memory=100M
       - --smp=1
       admin_api:
@@ -34129,7 +34111,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -34137,7 +34118,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: true
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -34530,7 +34510,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 6e125110db4b6706f6338010ad36c50316395111aea32b3a9d4f4984a32501f9
+        config.redpanda.com/checksum: c8ec7100f3ca0b33b749495c2a1c66f23b7e9eaa20ac00151b4daa96f7501fef
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -35551,7 +35531,9 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=1024M
+      - --overprovisioned
       - --reserve-memory=100M
       - --smp=1
       admin_api:
@@ -35561,7 +35543,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -35569,7 +35550,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: true
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -35946,7 +35926,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 6e125110db4b6706f6338010ad36c50316395111aea32b3a9d4f4984a32501f9
+        config.redpanda.com/checksum: c8ec7100f3ca0b33b749495c2a1c66f23b7e9eaa20ac00151b4daa96f7501fef
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -37004,6 +36984,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -37014,7 +36995,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -37022,7 +37002,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -37415,7 +37394,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -38474,7 +38453,9 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=1024M
+      - --overprovisioned
       - --reserve-memory=100M
       - --smp=1
       admin_api:
@@ -38484,7 +38465,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -38492,7 +38472,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: true
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -38885,7 +38864,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 6e125110db4b6706f6338010ad36c50316395111aea32b3a9d4f4984a32501f9
+        config.redpanda.com/checksum: c8ec7100f3ca0b33b749495c2a1c66f23b7e9eaa20ac00151b4daa96f7501fef
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -39942,7 +39921,9 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=1024M
+      - --overprovisioned
       - --reserve-memory=100M
       - --smp=1
       admin_api:
@@ -39952,7 +39933,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -39960,7 +39940,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: true
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -40353,7 +40332,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 6e125110db4b6706f6338010ad36c50316395111aea32b3a9d4f4984a32501f9
+        config.redpanda.com/checksum: c8ec7100f3ca0b33b749495c2a1c66f23b7e9eaa20ac00151b4daa96f7501fef
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -41374,7 +41353,9 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=1024M
+      - --overprovisioned
       - --reserve-memory=100M
       - --smp=1
       admin_api:
@@ -41384,7 +41365,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -41392,7 +41372,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: true
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -41769,7 +41748,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 6e125110db4b6706f6338010ad36c50316395111aea32b3a9d4f4984a32501f9
+        config.redpanda.com/checksum: c8ec7100f3ca0b33b749495c2a1c66f23b7e9eaa20ac00151b4daa96f7501fef
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -42783,6 +42762,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --smp=99
       - --reserve-memory=9999
@@ -42793,7 +42773,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -42801,7 +42780,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -43178,7 +43156,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 154bbf670b25a84e084af1f1a6777450206fdb2f3014a881f8350fe0371cdc54
+        config.redpanda.com/checksum: 5de4b61c8e144dd3613201d8213128ed707837199773b54a29a3b46209c58c06
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -44156,6 +44134,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -44166,7 +44145,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -44174,7 +44152,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -44551,7 +44528,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -45530,6 +45507,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -45540,7 +45518,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -45548,7 +45525,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -45925,7 +45901,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -46964,6 +46940,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -46975,7 +46952,6 @@ data:
         - redpanda-3.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -46983,7 +46959,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         - redpanda-3.redpanda.default.svc.cluster.local.:9093
         tls: null
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -47383,7 +47358,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 52c4224ef1d61d20c262460abf0216fe9307e5d6a7f850500acf83a9fae73176
+        config.redpanda.com/checksum: 0a2b697b93de53e4199b68827829981660a06b258348ed5d2398eb744f1cecd0
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -48372,6 +48347,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -48382,7 +48358,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -48390,7 +48365,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -48776,7 +48750,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -49763,6 +49737,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -49773,7 +49748,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -49781,7 +49755,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -50388,7 +50361,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -51471,6 +51444,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -51481,7 +51455,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -51489,7 +51462,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -51998,7 +51970,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -53019,6 +52991,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -53029,7 +53002,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -53037,7 +53009,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -53628,7 +53599,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -54606,6 +54577,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -54616,7 +54588,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -54624,7 +54595,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -55001,7 +54971,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 4dd7f27eb2c63130aae3cb9fb56e906fe64581f6bf10fbfd9cbd78af4538ad4f
+        config.redpanda.com/checksum: 6d8fa5c0205f20eae7e12dd72e3b66dd811093f4beb850eec009696a8e3ea4e6
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -55984,6 +55954,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -55994,7 +55965,6 @@ data:
         - redpanda-2.change-name.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.change-name.default.svc.cluster.local.:9093
@@ -56002,7 +55972,6 @@ data:
         - redpanda-2.change-name.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.change-name.default.svc.cluster.local.:8081
@@ -56383,7 +56352,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: d36e92a8c61e842dcb008c69f388e92e82e8bac4773ca194fac0b13ab573a5d7
+        config.redpanda.com/checksum: b265f0344d689561bd34ba51e98ca9b2bdc83b5766a6d9e24550f3e05ea1a0fa
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -57395,6 +57364,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -57405,7 +57375,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -57413,7 +57382,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -57790,7 +57758,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -58802,6 +58770,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -58812,7 +58781,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -58820,7 +58788,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -59197,7 +59164,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -60211,6 +60178,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -60221,7 +60189,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -60229,7 +60196,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -60606,7 +60572,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -61553,6 +61519,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=trace
+      - --lock-memory=false
       - --memory=1638M
       - --reserve-memory=204M
       - --smp=1
@@ -61562,7 +61529,6 @@ data:
         - redpanda-1.redpanda.default.svc.cluster.local.:9644
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls: null
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9092
@@ -61572,7 +61538,6 @@ data:
           ca_file: /etc/tls/certs/kafka-internal-0/ca.crt
           cert_file: /etc/tls/certs/redpanda-client/tls.crt
           key_file: /etc/tls/certs/redpanda-client/tls.key
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -61783,7 +61748,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: e4a33e06a3a848411b8c96665793b25fe19f6633e1dba4696815c7c709e55670
+        config.redpanda.com/checksum: 7596bd7ae626f74762ce26d7caec0bc1dd6f4be57558b8a1974a1a58f8a6c268
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -62880,6 +62845,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -62890,7 +62856,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -62898,7 +62863,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -63275,7 +63239,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -64388,6 +64352,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -64398,7 +64363,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -64406,7 +64370,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -64816,7 +64779,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: bd246fb96aa20556886caa8b87c2670c88c07301ead21f08a9686f6516d3e550
+        config.redpanda.com/checksum: 497c66cc5b940824c98efb2f96f1ef3b6092eace6464cac1f35f74b843befa25
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -65895,6 +65858,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -65905,7 +65869,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -65913,7 +65876,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -66306,7 +66268,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -67286,6 +67248,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -67296,7 +67259,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -67304,7 +67266,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -67686,7 +67647,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -68669,6 +68630,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -68679,7 +68641,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -68687,7 +68648,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -69305,7 +69265,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -70333,6 +70293,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -70343,7 +70304,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -70351,7 +70311,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -70728,7 +70687,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -71708,6 +71667,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -71718,7 +71678,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -71726,7 +71685,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -72103,7 +72061,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -73083,6 +73041,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -73093,7 +73052,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -73101,7 +73059,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -73478,7 +73435,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -74456,6 +74413,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -74466,7 +74424,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -74474,7 +74431,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -74858,7 +74814,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -77340,6 +77296,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -77350,7 +77307,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -77358,7 +77314,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -77752,7 +77707,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: ddcf6376732939f810acb684cafac205507b50b966e5714f128ed87a56fb10f6
+        config.redpanda.com/checksum: 00507160e4b4ca314c06a001accee78727b56323183ecb2a32e69a57e95fee93
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -78815,6 +78770,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -78825,7 +78781,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -78833,7 +78788,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -79210,7 +79164,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -80225,6 +80179,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -80235,7 +80190,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -80243,7 +80197,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -80636,7 +80589,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -81621,6 +81574,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -81631,7 +81585,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -81639,7 +81592,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -82016,7 +81968,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -83027,6 +82979,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -83037,7 +82990,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -83045,7 +82997,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -83422,7 +83373,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -84437,6 +84388,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -84447,7 +84399,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -84455,7 +84406,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -84848,7 +84798,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -85833,6 +85783,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -85843,7 +85794,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -85851,7 +85801,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -86228,7 +86177,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -87227,6 +87176,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -87237,7 +87187,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -87245,7 +87194,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -87622,7 +87570,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -88637,6 +88585,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -88647,7 +88596,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -88655,7 +88603,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -89048,7 +88995,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -90033,6 +89980,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -90043,7 +89991,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -90051,7 +89998,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -90428,7 +90374,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -91427,6 +91373,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -91437,7 +91384,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -91445,7 +91391,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -91822,7 +91767,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -92837,6 +92782,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -92847,7 +92793,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -92855,7 +92800,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -93248,7 +93192,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -94233,6 +94177,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -94243,7 +94188,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -94251,7 +94195,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -94628,7 +94571,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -95628,6 +95571,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -95638,7 +95582,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -95646,7 +95589,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -96023,7 +95965,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -97039,6 +96981,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -97049,7 +96992,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -97057,7 +96999,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -97450,7 +97391,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -98436,6 +98377,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -98446,7 +98388,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -98454,7 +98395,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -98831,7 +98771,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -99831,6 +99771,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -99841,7 +99782,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -99849,7 +99789,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -100226,7 +100165,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -101242,6 +101181,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -101252,7 +101192,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -101260,7 +101199,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -101653,7 +101591,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -102639,6 +102577,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -102649,7 +102588,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -102657,7 +102595,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -103034,7 +102971,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -104033,6 +103970,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -104043,7 +103981,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -104051,7 +103988,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -104428,7 +104364,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -105212,6 +105148,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -105222,7 +105159,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -105230,7 +105166,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/for-internal/tls.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -105613,7 +105548,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: fd140d05574a4b21ce6b2a6395458401c1e6186bf8e96c7af882169f664768f8
+        config.redpanda.com/checksum: 584a9f58fe8c97bf2883a04b37ea0ab2f87061a3df67aaa1494e0752d3e2249a
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -106413,6 +106348,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -106423,7 +106359,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -106431,7 +106366,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -107038,7 +106972,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -109862,6 +109796,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -109872,7 +109807,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -109880,7 +109814,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -110471,7 +110404,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -111465,6 +111398,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -111475,7 +111409,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -111483,7 +111416,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -112090,7 +112022,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -113101,6 +113033,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -113111,7 +113044,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -113119,7 +113051,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -113726,7 +113657,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -114798,6 +114729,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -114808,7 +114740,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -114816,7 +114747,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -115193,7 +115123,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -116241,6 +116171,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -116251,7 +116182,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -116259,7 +116189,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -116726,7 +116655,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: c78188d8cc1a290ac7796eded5f3a49988f7a44a5971aad33fe89b9b32293cfa
+        config.redpanda.com/checksum: 6db500caf5077bdd0339699eadabcb5d8cfcc097f0a602edbf5630df7bacb6c3
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -117708,6 +117637,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -117718,7 +117648,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -117726,7 +117655,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -118193,7 +118121,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 40b1555a526efc78caf3107b6358b05773b82d09ed9b9671ad6524e40176955a
+        config.redpanda.com/checksum: 4adcf759fd036185f4bebf9aa87c94074419ab1957be3fafacf28f408036dd5e
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -119228,6 +119156,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -119238,7 +119167,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -119246,7 +119174,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -119689,7 +119616,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 94c9073f00666e990b3c71fa079076ea050fb87cd0cc32f503bbe21fb198294e
+        config.redpanda.com/checksum: e2f2c8400bba7f7e8439e8652136aa5860133a84fc9bb2326dbbc9bb6a9f40ca
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -120715,6 +120642,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -120725,7 +120653,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -120735,7 +120662,6 @@ data:
           ca_file: /etc/tls/certs/kafka-internal-0/ca.crt
           cert_file: /etc/tls/certs/redpanda-client/tls.crt
           key_file: /etc/tls/certs/redpanda-client/tls.key
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -121122,7 +121048,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: 321ff8691ac4f68ffb27c9740544981cf2a289b856d21a3d3eb6b8bab9fe4d05
+        config.redpanda.com/checksum: eba255add08fc4b1e2527a90940a7dfda47feae79535ee1441af626571c288b8
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -122241,6 +122167,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --smp=1
       admin_api:
@@ -122250,7 +122177,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -122258,7 +122184,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -122635,7 +122560,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b5b5d0fb08868933f0fea06ea634d950c13380b1e9ca7d5f944b9591eeeb2e41
+        config.redpanda.com/checksum: 8226659a7f97293e14a4a81b1e7d618b8d56de954e8e7f72d566a7b3f562ae38
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -123613,6 +123538,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -123623,7 +123549,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -123631,7 +123556,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -124008,7 +123932,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -125005,6 +124929,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -125014,7 +124939,6 @@ data:
         - redpanda-1.redpanda.default.svc.cluster.local.:9644
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls: null
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -125022,7 +124946,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -125398,7 +125321,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b8e0da1a021479fef4009079ccab692b64a4149233b6a0852c151097c6926cd8
+        config.redpanda.com/checksum: a8f3aafc8e0ebe742e0d9440358c5fbb807de65e1310c941e381b1f188d03924
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -126402,6 +126325,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -126412,7 +126336,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -126420,7 +126343,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -126797,7 +126719,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -127812,6 +127734,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -127822,7 +127745,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -127830,7 +127752,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -128223,7 +128144,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -129208,6 +129129,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -129218,7 +129140,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -129226,7 +129147,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -129603,7 +129523,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -130603,6 +130523,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -130613,7 +130534,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -130621,7 +130541,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -130998,7 +130917,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -132014,6 +131933,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -132024,7 +131944,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -132032,7 +131951,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -132425,7 +132343,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -133411,6 +133329,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -133421,7 +133340,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -133429,7 +133347,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -133806,7 +133723,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -134805,6 +134722,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -134815,7 +134733,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -134823,7 +134740,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -135217,7 +135133,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
@@ -136223,6 +136139,7 @@ data:
     rpk:
       additional_start_flags:
       - --default-log-level=info
+      - --lock-memory=false
       - --memory=2048M
       - --reserve-memory=205M
       - --smp=1
@@ -136233,7 +136150,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9644
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      enable_memory_locking: false
       kafka_api:
         brokers:
         - redpanda-0.redpanda.default.svc.cluster.local.:9093
@@ -136241,7 +136157,6 @@ data:
         - redpanda-2.redpanda.default.svc.cluster.local.:9093
         tls:
           ca_file: /etc/tls/certs/default/ca.crt
-      overprovisioned: false
       schema_registry:
         addresses:
         - redpanda-0.redpanda.default.svc.cluster.local.:8081
@@ -136618,7 +136533,7 @@ spec:
   template:
     metadata:
       annotations:
-        config.redpanda.com/checksum: b689e1074337a6b597b8b9725e277cec5fd5a95b3031e546d96640232ca30ca3
+        config.redpanda.com/checksum: b926c1f6e2405f6fd37d32cc56bf3f7ceffc1069e713a3358fc6c2c64f3b9589
       creationTimestamp: null
       labels:
         app.kubernetes.io/component: redpanda-statefulset
