@@ -285,6 +285,13 @@
 #### Fixed
 #### Removed
 
+### [0.4.37](https://github.com/redpanda-data/helm-charts/releases/tag/operator-0.4.37) - 2024-12-18
+#### Added
+#### Changed
+* App version to match latest redpanda-operator release
+#### Fixed
+#### Removed
+
 ### [0.4.36](https://github.com/redpanda-data/helm-charts/releases/tag/operator-0.4.36) - 2024-12-09
 #### Added
 #### Changed
