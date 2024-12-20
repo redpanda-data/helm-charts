@@ -8,6 +8,13 @@
 #### Fixed
 #### Removed
 
+### [5.9.18](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.18) - 2024-12-20
+#### Added
+#### Changed
+#### Fixed
+* Fixed an issue with the helm chart when SASL and Connectors were enabled that caused a volume to be mounted incorrectly.
+#### Removed
+
 ### [5.9.17](https://github.com/redpanda-data/helm-charts/releases/tag/redpanda-5.9.17) - 2024-12-17
 #### Added
 #### Changed
