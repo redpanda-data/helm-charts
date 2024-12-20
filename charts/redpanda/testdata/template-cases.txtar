@@ -973,3 +973,154 @@ tolerations:
     value: redpanda
 tuning:
   tune_aio_events: false
+
+-- some-company-1 --
+# ASSERT-NO-ERROR
+# ASSERT-GOLDEN
+auth:
+  sasl:
+    enabled: true
+    mechanism: SCRAM-SHA-512
+    secretRef: kafka-credentials
+config:
+  cluster:
+    election_timeout_ms: 5000
+    enable_leader_balancer: true
+    partition_autobalancing_mode: continuous
+    raft_heartbeat_interval_ms: 500
+connectors:
+  deployment:
+    extraEnv:
+    - name: CONNECT_PLUGIN_PATH
+      value: /opt/kafka/connect-plugins
+    podAntiAffinity:
+      custom:
+        requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/component: redpanda-statefulset
+              app.kubernetes.io/instance: redpanda
+              app.kubernetes.io/name: redpanda
+          topologyKey: kubernetes.io/hostname
+    strategy:
+      type: Recreate
+  enabled: true
+  monitoring:
+    enabled: true
+  storage:
+    volume:
+    - name: plugins
+      persistentVolumeClaim:
+        claimName: plugins-redpanda-connectors-redpanda
+    volumeMounts:
+    - mountPath: /opt/kafka/connect-plugins
+      name: plugins
+      readOnly: false
+  test:
+    create: true
+console:
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchLabels:
+            app.kubernetes.io/component: redpanda-statefulset
+            app.kubernetes.io/instance: redpanda
+            app.kubernetes.io/name: redpanda
+        topologyKey: kubernetes.io/hostname
+  console:
+    config:
+      connect:
+        connectTimeout: 15s
+        readTimeout: 60s
+        requestTimeout: 6s
+  ingress:
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-production
+      nginx.ingress.kubernetes.io/auth-realm: '"Authentication required"'
+      nginx.ingress.kubernetes.io/auth-secret: ingress-basic-auth-credentials
+      nginx.ingress.kubernetes.io/auth-type: basic
+    className: nginx
+    enabled: true
+    hosts:
+    - host: console.redpanda.dev.somecustomer.net
+      paths:
+      - path: /
+        pathType: ImplementationSpecific
+    tls:
+    - hosts:
+      - console.redpanda.dev.somecustomer.net
+      secretName: redpanda-console-production-tls
+  tests:
+    enabled: true
+enterprise:
+  licenseSecretRef:
+    key: license
+    name: redpanda-enterprise-license
+external:
+  domain: redpanda.dev.somecustomer.net
+  enabled: true
+  externalDns:
+    enabled: true
+  type: LoadBalancer
+listeners:
+  admin:
+    external:
+      default:
+        enabled: false
+  http:
+    external:
+      default:
+        enabled: false
+  kafka:
+    external:
+      default:
+        enabled: true
+  rpc:
+    tls:
+      enabled: false
+  schemaRegistry:
+    external:
+      default:
+        enabled: false
+monitoring:
+  enabled: true
+resources:
+  cpu:
+    cores: "7"
+  memory:
+    container:
+      max: 25Gi
+      min: 20Gi
+    enable_memory_locking: true
+statefulset:
+  initContainers:
+    configurator:
+      resources:
+        limits:
+          cpu: "1"
+          memory: 1Gi
+    setDataDirOwnership:
+      enabled: true
+    tuning:
+      resources:
+        limits:
+          cpu: "1"
+          memory: 1Gi
+  replicas: 3
+storage:
+  hostPath: /redpanda-data
+  persistentVolume:
+    enabled: true
+    size: 500Gi
+    storageClass: ""
+tests:
+  enabled: true
+tls:
+  certs:
+    external:
+      caEnabled: false
+      issuerRef:
+        kind: ClusterIssuer
+        name: letsencrypt-production
+  enabled: true
