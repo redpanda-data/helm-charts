@@ -961,7 +961,7 @@ To create `Guaranteed` Pods for Redpanda brokers, provide both requests and limi
 
 ### [statefulset.sideCars.controllers.image.tag](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.sideCars.controllers.image.tag)
 
-**Default:** `"v2.3.4-24.3.2"`
+**Default:** `"v2.3.5-24.3.2"`
 
 ### [statefulset.sideCars.controllers.metricsAddress](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.sideCars.controllers.metricsAddress)
 
