@@ -1,3 +1,12 @@
+// Copyright 2025 Redpanda Data, Inc.
+//
+// Use of this software is governed by the Business Source License
+// included in the file licenses/BSL.md
+//
+// As of the Change Date specified in that file, in accordance with
+// the Business Source License, use of this software will be governed
+// by the Apache License, Version 2.0
+
 package redpanda
 
 import (
@@ -600,7 +609,7 @@ func TestTieredStorageConfigCreds(t *testing.T) {
 
 			require.EqualValues(t, tc.Expected, envvars)
 
-			// Assert that any envvars have corrosponding placeholders at the
+			// Assert that any envvars have corresponding placeholders at the
 			// expected keys in the config. See also: [BootstrapFile].
 			for _, envar := range envvars {
 				key := strings.ToLower(envar.Name[len("REDPANDA_"):])

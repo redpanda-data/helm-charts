@@ -1,18 +1,12 @@
-// Licensed to the Apache Software Foundation (ASF) under one or more
-// contributor license agreements.  See the NOTICE file distributed with
-// this work for additional information regarding copyright ownership.
-// The ASF licenses this file to You under the Apache License, Version 2.0
-// (the "License"); you may not use this file except in compliance with
-// the License.  You may obtain a copy of the License at
+// Copyright 2025 Redpanda Data, Inc.
 //
-//	http://www.apache.org/licenses/LICENSE-2.0
+// Use of this software is governed by the Business Source License
+// included in the file licenses/BSL.md
 //
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
+// As of the Change Date specified in that file, in accordance with
+// the Business Source License, use of this software will be governed
+// by the Apache License, Version 2.0
+
 // +gotohelm:filename=_statefulset.go.tpl
 package redpanda
 
@@ -20,11 +14,12 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/redpanda-data/redpanda-operator/pkg/gotohelm/helmette"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/utils/ptr"
+
+	"github.com/redpanda-data/redpanda-operator/pkg/gotohelm/helmette"
 )
 
 const (
@@ -47,6 +42,7 @@ const (
 	// The token file would then be accessible at /var/run/secrets/kubernetes.io/serviceaccount
 	// Reference
 	// https://github.com/kubernetes/kubernetes/blob/c6669ea7d61af98da3a2aa8c1d2cdc9c2c57080a/plugin/pkg/admission/serviceaccount/admission.go#L55-L57
+	//nolint:gosec
 	DefaultAPITokenMountPath = "/var/run/secrets/kubernetes.io/serviceaccount"
 )
 
@@ -468,6 +464,7 @@ func statefulSetInitContainerSetDataDirOwnership(dot *helmette.Dot) *corev1.Cont
 	}
 }
 
+//nolint:stylecheck
 func securityContextUidGid(dot *helmette.Dot, containerName string) (int64, int64) {
 	values := helmette.Unwrap[Values](dot.Values)
 
@@ -880,6 +877,8 @@ func statefulSetContainerRedpanda(dot *helmette.Dot) *corev1.Container {
 }
 
 // adminApiURLs was: admin-api-urls
+//
+//nolint:stylecheck
 func adminApiURLs(dot *helmette.Dot) string {
 	values := helmette.Unwrap[Values](dot.Values)
 

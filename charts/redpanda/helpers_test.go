@@ -1,16 +1,26 @@
+// Copyright 2025 Redpanda Data, Inc.
+//
+// Use of this software is governed by the Business Source License
+// included in the file licenses/BSL.md
+//
+// As of the Change Date specified in that file, in accordance with
+// the Business Source License, use of this software will be governed
+// by the Apache License, Version 2.0
+
 package redpanda_test
 
 import (
 	"testing"
 
-	"github.com/redpanda-data/helm-charts/charts/redpanda"
-	"github.com/redpanda-data/helm-charts/pkg/rapidutil"
 	"github.com/stretchr/testify/assert"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	applycorev1 "k8s.io/client-go/applyconfigurations/core/v1"
 	"k8s.io/utils/ptr"
 	"pgregory.net/rapid"
+
+	"github.com/redpanda-data/redpanda-operator/charts/redpanda"
+	"github.com/redpanda-data/redpanda-operator/pkg/rapidutil"
 )
 
 func TestStrategicMergePatch(t *testing.T) {

@@ -98,9 +98,9 @@
 {{- end -}}
 {{- $secretName := (printf "%s-bootstrap-user" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r")) -}}
 {{- if $dot.Release.IsUpgrade -}}
-{{- $_214_existing_5_ok_6 := (get (fromJson (include "_shims.lookup" (dict "a" (list "v1" "Secret" $dot.Release.Namespace $secretName) ))) "r") -}}
-{{- $existing_5 := (index $_214_existing_5_ok_6 0) -}}
-{{- $ok_6 := (index $_214_existing_5_ok_6 1) -}}
+{{- $_209_existing_5_ok_6 := (get (fromJson (include "_shims.lookup" (dict "a" (list "v1" "Secret" $dot.Release.Namespace $secretName) ))) "r") -}}
+{{- $existing_5 := (index $_209_existing_5_ok_6 0) -}}
+{{- $ok_6 := (index $_209_existing_5_ok_6 1) -}}
 {{- if $ok_6 -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $existing_5) | toJson -}}
@@ -155,7 +155,7 @@
 {{- (dict "r" (coalesce nil)) | toJson -}}
 {{- break -}}
 {{- end -}}
-{{- $secret := (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) ) (mustMergeOverwrite (dict ) (dict "apiVersion" "v1" "kind" "Secret" )) (dict "metadata" (mustMergeOverwrite (dict "creationTimestamp" (coalesce nil) ) (dict "name" (printf "%.49s-fs-validator" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r")) "namespace" $dot.Release.Namespace "labels" (get (fromJson (include "redpanda.FullLabels" (dict "a" (list $dot) ))) "r") )) "type" "Opaque" "stringData" (dict ) )) -}}
+{{- $secret := (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) ) (mustMergeOverwrite (dict ) (dict "apiVersion" "v1" "kind" "Secret" )) (dict "metadata" (mustMergeOverwrite (dict "creationTimestamp" (coalesce nil) ) (dict "name" (printf "%s-fs-validator" (substr 0 (49 | int) (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r"))) "namespace" $dot.Release.Namespace "labels" (get (fromJson (include "redpanda.FullLabels" (dict "a" (list $dot) ))) "r") )) "type" "Opaque" "stringData" (dict ) )) -}}
 {{- $_ := (set $secret.stringData "fsValidator.sh" `set -e
 EXPECTED_FS_TYPE=$1
 

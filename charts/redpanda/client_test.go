@@ -1,3 +1,12 @@
+// Copyright 2025 Redpanda Data, Inc.
+//
+// Use of this software is governed by the Business Source License
+// included in the file licenses/BSL.md
+//
+// As of the Change Date specified in that file, in accordance with
+// the Business Source License, use of this software will be governed
+// by the Apache License, Version 2.0
+
 package redpanda_test
 
 import (
@@ -14,14 +23,15 @@ import (
 	"time"
 
 	"github.com/cockroachdb/errors"
-	"github.com/redpanda-data/helm-charts/charts/redpanda"
-	"github.com/redpanda-data/helm-charts/pkg/helm"
-	"github.com/redpanda-data/helm-charts/pkg/kube"
-	"github.com/redpanda-data/redpanda-operator/pkg/gotohelm/helmette"
 	"github.com/redpanda-data/redpanda/src/go/rpk/pkg/config"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/tools/portforward"
 	"sigs.k8s.io/yaml"
+
+	"github.com/redpanda-data/redpanda-operator/charts/redpanda"
+	"github.com/redpanda-data/redpanda-operator/pkg/gotohelm/helmette"
+	"github.com/redpanda-data/redpanda-operator/pkg/helm"
+	"github.com/redpanda-data/redpanda-operator/pkg/kube"
 )
 
 type Client struct {
