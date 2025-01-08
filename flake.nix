@@ -54,6 +54,7 @@
               pkgs.kubectl
               pkgs.kubernetes-helm
               pkgs.kustomize
+              pkgs.rsync
               pkgs.setup-envtest
               pkgs.yq # jq but for YAML
             ];

@@ -201,3 +201,21 @@ tasks:
   kind-delete:
     cmds:
       - kind delete cluster --name {{.KIND_CLUSTERNAME}}
+
+  sync:charts:
+    vars:
+      OPERATOR_TMP_PATH:
+        sh: mktemp --directory --tmpdir "operator-XXXXXXXXXX"
+      OPERATOR_SHA: 7d0f73871aecce174b2fe42ee8c572ab374b68ae
+    cmds:
+      - defer: rm -r {{.OPERATOR_TMP_PATH}}
+      - curl -Lo {{.OPERATOR_TMP_PATH}}operator.zip https://github.com/redpanda-data/redpanda-operator/archive/{{.OPERATOR_SHA}}.zip
+      - unzip {{.OPERATOR_TMP_PATH}}operator.zip -d {{.OPERATOR_TMP_PATH}}
+      - rsync -avz
+        {{.OPERATOR_TMP_PATH}}/redpanda-operator-{{.OPERATOR_SHA}}/charts/connectors
+        {{.OPERATOR_TMP_PATH}}/redpanda-operator-{{.OPERATOR_SHA}}/charts/console
+        {{.OPERATOR_TMP_PATH}}/redpanda-operator-{{.OPERATOR_SHA}}/charts/operator
+        {{.OPERATOR_TMP_PATH}}/redpanda-operator-{{.OPERATOR_SHA}}/charts/redpanda
+        charts/
+
+
