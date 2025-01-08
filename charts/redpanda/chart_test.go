@@ -1,3 +1,12 @@
+// Copyright 2025 Redpanda Data, Inc.
+//
+// Use of this software is governed by the Business Source License
+// included in the file licenses/BSL.md
+//
+// As of the Change Date specified in that file, in accordance with
+// the Business Source License, use of this software will be governed
+// by the Apache License, Version 2.0
+
 package redpanda_test
 
 import (
@@ -17,16 +26,6 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/redpanda-data/helm-charts/charts/connectors"
-	"github.com/redpanda-data/helm-charts/charts/console"
-	"github.com/redpanda-data/helm-charts/charts/redpanda"
-	"github.com/redpanda-data/helm-charts/pkg/helm"
-	"github.com/redpanda-data/helm-charts/pkg/helm/helmtest"
-	"github.com/redpanda-data/helm-charts/pkg/kube"
-	"github.com/redpanda-data/helm-charts/pkg/testutil"
-	"github.com/redpanda-data/helm-charts/pkg/tlsgeneration"
-	"github.com/redpanda-data/helm-charts/pkg/valuesutil"
-	"github.com/redpanda-data/redpanda-operator/pkg/gotohelm/helmette"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap/zapcore"
@@ -37,6 +36,17 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/utils/ptr"
 	"sigs.k8s.io/yaml"
+
+	"github.com/redpanda-data/redpanda-operator/charts/connectors"
+	"github.com/redpanda-data/redpanda-operator/charts/console"
+	"github.com/redpanda-data/redpanda-operator/charts/redpanda"
+	"github.com/redpanda-data/redpanda-operator/pkg/gotohelm/helmette"
+	"github.com/redpanda-data/redpanda-operator/pkg/helm"
+	"github.com/redpanda-data/redpanda-operator/pkg/helm/helmtest"
+	"github.com/redpanda-data/redpanda-operator/pkg/kube"
+	"github.com/redpanda-data/redpanda-operator/pkg/testutil"
+	"github.com/redpanda-data/redpanda-operator/pkg/tlsgeneration"
+	"github.com/redpanda-data/redpanda-operator/pkg/valuesutil"
 )
 
 func TestChart(t *testing.T) {
@@ -223,7 +233,7 @@ func TestChart(t *testing.T) {
 
 		env := h.Namespaced(t)
 
-		env.Ctl().Create(ctx, &corev1.Secret{
+		err := env.Ctl().Create(ctx, &corev1.Secret{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      "my-secret",
 				Namespace: env.Namespace(),
@@ -232,6 +242,7 @@ func TestChart(t *testing.T) {
 				"users.txt": "superuser:superpassword:SCRAM-SHA-512",
 			},
 		})
+		require.NoError(t, err)
 
 		partial := redpanda.PartialValues{
 			External:      &redpanda.PartialExternalConfig{Enabled: ptr.To(false)},
@@ -842,6 +853,27 @@ func TestLabels(t *testing.T) {
 	}
 }
 
+func TestControllersTag(t *testing.T) {
+	chartBytes, err := os.ReadFile("../../charts/operator/Chart.yaml")
+	require.NoError(t, err)
+
+	valuesYAML, err := os.ReadFile("values.yaml")
+	require.NoError(t, err)
+
+	var chart map[string]any
+	require.NoError(t, yaml.Unmarshal(chartBytes, &chart))
+
+	var values redpanda.Values
+	require.NoError(t, yaml.Unmarshal(valuesYAML, &values))
+
+	require.Equal(
+		t,
+		chart["appVersion"].(string),
+		string(values.Statefulset.SideCars.Controllers.Image.Tag),
+		"the redpanda chart's values.yaml's controllers tag should be equal to the operator chart's appVersion",
+	)
+}
+
 func TestGoHelmEquivalence(t *testing.T) {
 	tmp := testutil.TempDir(t)
 
@@ -994,7 +1026,6 @@ func CopyFS(dir string, fsys fs.FS, skip ...string) error {
 		if err != nil {
 			return err
 		}
-
 		if !fs.ValidPath(path) {
 			return fmt.Errorf("invalid path: %s", path)
 		}
@@ -1007,14 +1038,12 @@ func CopyFS(dir string, fsys fs.FS, skip ...string) error {
 		if d.IsDir() {
 			return os.MkdirAll(newPath, 0o777)
 		}
-
 		// TODO(panjf2000): handle symlinks with the help of fs.ReadLinkFS
 		// 		once https://go.dev/issue/49580 is done.
 		//		we also need filepathlite.IsLocal from https://go.dev/cl/564295.
 		if !d.Type().IsRegular() {
 			return &os.PathError{Op: "CopyFS", Path: path, Err: os.ErrInvalid}
 		}
-
 		r, err := fsys.Open(path)
 		if err != nil {
 			return err
@@ -1028,7 +1057,6 @@ func CopyFS(dir string, fsys fs.FS, skip ...string) error {
 		if err != nil {
 			return err
 		}
-
 		if _, err := io.Copy(w, r); err != nil {
 			w.Close()
 			return &os.PathError{Op: "Copy", Path: newPath, Err: err}

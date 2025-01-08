@@ -1,3 +1,11 @@
+// Copyright 2025 Redpanda Data, Inc.
+//
+// Use of this software is governed by the Business Source License
+// included in the file licenses/BSL.md
+//
+// As of the Change Date specified in that file, in accordance with
+// the Business Source License, use of this software will be governed
+// by the Apache License, Version 2.0
 //go:build !generate
 
 // +gotohelm:ignore=true
@@ -8,8 +16,8 @@ package redpanda
 import (
 	cmmeta "github.com/cert-manager/cert-manager/pkg/apis/meta/v1"
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
-	"github.com/redpanda-data/helm-charts/charts/connectors"
-	"github.com/redpanda-data/helm-charts/charts/console"
+	"github.com/redpanda-data/redpanda-operator/charts/connectors"
+	"github.com/redpanda-data/redpanda-operator/charts/console"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	applycorev1 "k8s.io/client-go/applyconfigurations/core/v1"
