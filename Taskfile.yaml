@@ -68,51 +68,11 @@ tasks:
     cmds:
       # Generate chart README.md's
       - nix develop -c helm-docs -c ./charts/
-      - task: chart:generate:console
-      - task: chart:generate:operator
-      - task: chart:generate:redpanda
-      - task: chart:generate:connectors
       # Ensure go deps are up to date
       - go mod tidy
       - go work sync
       # Ensure flake.nix has been formatted.
       - nix fmt
-
-  chart:generate:console:
-    desc: "Generate files for the console Helm chart"
-    cmds:
-      # Generate a "partial" version of the Values struct.
-      - go run ./cmd/genpartial -out charts/console/values_partial.gen.go -struct Values ./charts/console
-      # Generate helm templates from Go definitions
-      - go run ./cmd/gotohelm -write ./charts/console/templates ./charts/console
-
-  chart:generate:operator:
-    desc: "Generate files for the operator Helm chart"
-    cmds:
-      # Generate a "partial" version of the Values struct.
-      - go run ./cmd/genpartial -out charts/operator/values_partial.gen.go -struct Values ./charts/operator
-      # Generate the values JSON schema from the Values struct
-      - go run ./cmd/genschema operator > charts/operator/values.schema.json
-      # Generate helm templates from Go definitions
-      - go run ./cmd/gotohelm -write ./charts/operator/templates ./charts/operator
-
-  chart:generate:redpanda:
-    desc: "Generate files for the redpanda Helm chart"
-    cmds:
-      # Generate a "partial" version of the Values struct.
-      - go run ./cmd/genpartial -out charts/redpanda/values_partial.gen.go -struct Values ./charts/redpanda
-      # Generate the values JSON schema from the Values struct
-      - go run ./cmd/genschema redpanda > charts/redpanda/values.schema.json
-      # Generate helm templates from Go definitions
-      - go run ./cmd/gotohelm -write ./charts/redpanda/templates ./charts/redpanda ./charts/...
-
-  chart:generate:connectors:
-    desc: "Generate files for the connectors Helm chart"
-    cmds:
-      # Generate a "partial" version of the Values struct.
-      - go run ./cmd/genpartial -out charts/connectors/values_partial.gen.go -struct Values ./charts/connectors
-      # Generate helm templates from Go definitions
-      - go run ./cmd/gotohelm -write ./charts/connectors/templates ./charts/connectors
 
   helm:add-repo:jetstack:
     aliases:
