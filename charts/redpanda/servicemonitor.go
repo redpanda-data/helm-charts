@@ -29,7 +29,7 @@ func ServiceMonitor(dot *helmette.Dot) *monitoringv1.ServiceMonitor {
 		Interval:    values.Monitoring.ScrapeInterval,
 		Path:        "/public_metrics",
 		Port:        "admin",
-		EnableHttp2: values.Monitoring.EnableHttp2,
+		EnableHttp2: values.Monitoring.EnableHTTP2,
 		Scheme:      "http",
 	}
 

@@ -101,22 +101,6 @@
 {{- end -}}
 {{- end -}}
 
-{{- define "operator.configuratorTag" -}}
-{{- $dot := (index .a 0) -}}
-{{- range $_ := (list 1) -}}
-{{- $_is_returning := false -}}
-{{- $values := $dot.Values.AsMap -}}
-{{- if (not (empty $values.configurator.tag)) -}}
-{{- $_is_returning = true -}}
-{{- (dict "r" $values.configurator.tag) | toJson -}}
-{{- break -}}
-{{- end -}}
-{{- $_is_returning = true -}}
-{{- (dict "r" $dot.Chart.AppVersion) | toJson -}}
-{{- break -}}
-{{- end -}}
-{{- end -}}
-
 {{- define "operator.isWebhookEnabled" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
@@ -194,7 +178,7 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
-{{- $args := (list "--health-probe-bind-address=:8081" "--metrics-bind-address=127.0.0.1:8080" "--leader-elect" (printf "--configurator-tag=%s" (get (fromJson (include "operator.configuratorTag" (dict "a" (list $dot) ))) "r")) (printf "--configurator-base-image=%s" $values.configurator.repository) (printf "--webhook-enabled=%t" (get (fromJson (include "operator.isWebhookEnabled" (dict "a" (list $dot) ))) "r"))) -}}
+{{- $args := (list "--health-probe-bind-address=:8081" "--metrics-bind-address=127.0.0.1:8080" "--leader-elect" (printf "--webhook-enabled=%t" (get (fromJson (include "operator.isWebhookEnabled" (dict "a" (list $dot) ))) "r"))) -}}
 {{- if (eq $values.scope "Namespace") -}}
 {{- $args = (concat (default (list ) $args) (list (printf "--namespace=%s" $dot.Release.Namespace) (printf "--log-level=%s" $values.logLevel))) -}}
 {{- end -}}

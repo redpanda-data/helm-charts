@@ -38,15 +38,6 @@ kubeRbacProxy:
     # -- Sets the `pullPolicy` for `kube-rbac-proxy` image
     pullPolicy: IfNotPresent
 
-# -- Configuration for the Redpanda configurator, a component for managing Redpanda configuration.
-configurator:
-  # -- Sets the repository in which the Redpanda configurator image is available.
-  repository: docker.redpanda.com/redpandadata/configurator
-  # -- Sets the Redpanda configurator image tag. Uncomment and set a value to use a specific version.
-  # tag:
-  # -- Sets the `pullPolicy` for the Redpanda configurator image.
-  pullPolicy: IfNotPresent
-
 # -- Configuration for the Kubernetes Controller Manager used by Redpanda Operator.
 # The Controller Manager is a component of the Kubernetes control plane that runs controller processes. These controllers are background threads that handle the orchestration and operational logic of Kubernetes, ensuring the desired state of the cluster matches the observed state.
 config:
@@ -144,7 +135,8 @@ podLabels: {}
 # Additional flags include:
 #
 # - `--additional-controllers`: Additional controllers to deploy. Valid values are nodeWatcher or decommission. For more information about the Nodewatcher controller, see [Install the Nodewatcher controller](https://docs.redpanda.com/current/manage/kubernetes/k-scale-redpanda/#node-pvc). For more information about the Decommission controller, see [Use the Decommission controller](https://docs.redpanda.com/current/manage/kubernetes/k-decommission-brokers/#Automated).
-additionalCmdFlags: []
+additionalCmdFlags:
+- --configurator-tag=v2.3.6-24.3.3
 # - --additional-controllers="<controller-name"
 
 # -- Additional labels to add to all Kubernetes objects.

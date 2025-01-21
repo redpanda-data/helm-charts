@@ -66,10 +66,9 @@ func Dot(release helmette.Release, values PartialValues, kubeConfig kube.Config)
 		return nil, err
 	}
 
-	// NB: err1 is working around an issue in gotohelm's ASTs rewrites
-	merged, err1 := helm.MergeYAMLValues("", defaultValuesYAML, valuesYaml)
-	if err1 != nil {
-		return nil, err1
+	merged, err := helm.MergeYAMLValues(defaultValuesYAML, valuesYaml)
+	if err != nil {
+		return nil, err
 	}
 
 	return &helmette.Dot{

@@ -127,11 +127,13 @@ type PartialMonitoring struct {
 	ScrapeInterval *monitoringv1.Duration  "json:\"scrapeInterval,omitempty\" jsonschema:\"required\""
 	Labels         map[string]string       "json:\"labels,omitempty\""
 	TLSConfig      *monitoringv1.TLSConfig "json:\"tlsConfig,omitempty\""
-	EnableHttp2    *bool                   "json:\"enableHttp2,omitempty\""
+	EnableHTTP2    *bool                   "json:\"enableHttp2,omitempty\""
 }
 
 type PartialRedpandaResources struct {
-	CPU *struct {
+	Limits   *corev1.ResourceList "json:\"limits,omitempty\""
+	Requests *corev1.ResourceList "json:\"requests,omitempty\""
+	CPU      *struct {
 		Cores           *resource.Quantity "json:\"cores,omitempty\" jsonschema:\"required\""
 		Overprovisioned *bool              "json:\"overprovisioned,omitempty\""
 	} "json:\"cpu,omitempty\" jsonschema:\"required\""

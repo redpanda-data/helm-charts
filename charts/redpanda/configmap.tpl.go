@@ -359,10 +359,12 @@ func rpkNodeConfig(dot *helmette.Dot) map[string]any {
 		schemaRegistryTLS = tls
 	}
 
+	lockMemory, overprovisioned, flags := RedpandaAdditionalStartFlags(&values)
+
 	result := map[string]any{
-		"overprovisioned":        values.Resources.GetOverProvisionValue(),
-		"enable_memory_locking":  ptr.Deref(values.Resources.Memory.EnableMemoryLocking, false),
-		"additional_start_flags": RedpandaAdditionalStartFlags(dot, RedpandaSMP(dot)),
+		"additional_start_flags": flags,
+		"enable_memory_locking":  lockMemory,
+		"overprovisioned":        overprovisioned,
 		"kafka_api": map[string]any{
 			"brokers": brokerList,
 			"tls":     brokerTLS,
@@ -610,49 +612,60 @@ func createInternalListenerCfg(port int32) map[string]any {
 	}
 }
 
-// RedpandaAdditionalStartFlags returns a string list of flags suitable for use
+// RedpandaAdditionalStartFlags returns a string slice of flags suitable for use
 // as `additional_start_flags`. User provided flags will override any of those
 // set by default.
-func RedpandaAdditionalStartFlags(dot *helmette.Dot, smp int64) []string {
-	values := helmette.Unwrap[Values](dot.Values)
-
+func RedpandaAdditionalStartFlags(values *Values) (bool, bool, []string) {
 	// All `additional_start_flags` that are set by the chart.
-	chartFlags := map[string]string{
-		"smp": fmt.Sprintf("%d", int(smp)),
-		// TODO: The transpiled go template will return float64 from both RedpandaMemory and RedpandaReserveMemory
-		// By wrapping return value from that function the sprintf will work as expected
-		// https://github.com/redpanda-data/helm-charts/issues/1249
-		"memory": fmt.Sprintf("%dM", int(RedpandaMemory(dot))),
-		// TODO: The transpiled go template will return float64 from both RedpandaMemory and RedpandaReserveMemory
-		// By wrapping return value from that function the sprintf will work as expected
-		// https://github.com/redpanda-data/helm-charts/issues/1249
-		"reserve-memory":    fmt.Sprintf("%dM", int(RedpandaReserveMemory(dot))),
-		"default-log-level": values.Logging.LogLevel,
-	}
+	flags := values.Resources.GetRedpandaFlags()
+	flags["--default-log-level"] = values.Logging.LogLevel
 
-	// If in developer_mode, don't set reserve-memory.
+	// Unclear why this is done aside from historical reasons.
+	// Legacy comment: If in developer_mode, don't set reserve-memory.
 	if values.Config.Node["developer_mode"] == true {
-		delete(chartFlags, "reserve-memory")
+		delete(flags, "--reserve-memory")
 	}
 
-	// Check to see if there are any flags overriding the defaults set by the
-	// chart.
-	for flag := range chartFlags {
-		for _, userFlag := range values.Statefulset.AdditionalRedpandaCmdFlags {
-			if helmette.RegexMatch(fmt.Sprintf("^--%s", flag), userFlag) {
-				delete(chartFlags, flag)
-			}
-		}
+	for key, value := range ParseCLIArgs(values.Statefulset.AdditionalRedpandaCmdFlags) {
+		flags[key] = value
+	}
+
+	enabledOptions := map[string]bool{
+		"true": true,
+		"1":    true,
+		"":     true,
+	}
+
+	// Due to a buglet in rpk, we need to set lock-memory and overprovisioned
+	// via their fields in redpanda.yaml instead of additional_start_flags.
+	// https://github.com/redpanda-data/helm-charts/pull/1622#issuecomment-2577922409
+	lockMemory := false
+	if value, ok := flags["--lock-memory"]; ok {
+		lockMemory = enabledOptions[value]
+		delete(flags, "--lock-memory")
+	}
+
+	overprovisioned := false
+	if value, ok := flags["--overprovisioned"]; ok {
+		overprovisioned = enabledOptions[value]
+		delete(flags, "--overprovisioned")
 	}
 
 	// Deterministically order out list and add in values supplied flags.
-	keys := helmette.Keys(chartFlags)
-	helmette.SortAlpha(keys)
+	keys := helmette.Keys(flags)
+	keys = helmette.SortAlpha(keys)
 
-	flags := []string{}
+	var rendered []string
 	for _, key := range keys {
-		flags = append(flags, fmt.Sprintf("--%s=%s", key, chartFlags[key]))
+		value := flags[key]
+		// Support flags that don't have values (`--overprovisioned`) by
+		// letting them be specified as key: ""
+		if value == "" {
+			rendered = append(rendered, key)
+		} else {
+			rendered = append(rendered, fmt.Sprintf("%s=%s", key, value))
+		}
 	}
 
-	return append(flags, values.Statefulset.AdditionalRedpandaCmdFlags...)
+	return lockMemory, overprovisioned, rendered
 }

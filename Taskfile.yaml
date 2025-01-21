@@ -166,7 +166,7 @@ tasks:
     vars:
       OPERATOR_TMP_PATH:
         sh: mktemp --directory --tmpdir "operator-XXXXXXXXXX"
-      OPERATOR_SHA: 7d0f73871aecce174b2fe42ee8c572ab374b68ae
+      OPERATOR_SHA: b1c79a60dca5c4860b674d29430fc9a0dd575334
     cmds:
       - defer: rm -r {{.OPERATOR_TMP_PATH}}
       - curl -Lo {{.OPERATOR_TMP_PATH}}operator.zip https://github.com/redpanda-data/redpanda-operator/archive/{{.OPERATOR_SHA}}.zip

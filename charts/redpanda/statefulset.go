@@ -647,7 +647,7 @@ func statefulSetInitContainerConfigurator(dot *helmette.Dot) *corev1.Container {
 
 func StatefulSetContainers(dot *helmette.Dot) []corev1.Container {
 	var containers []corev1.Container
-	containers = append(containers, *statefulSetContainerRedpanda(dot))
+	containers = append(containers, statefulSetContainerRedpanda(dot))
 	if c := statefulSetContainerConfigWatcher(dot); c != nil {
 		containers = append(containers, *c)
 	}
@@ -668,12 +668,12 @@ func wrapLifecycleHook(hook string, timeoutSeconds int64, cmd []string) []string
 	return []string{"bash", "-c", fmt.Sprintf("timeout -v %d %s 2>&1 | sed \"s/^/lifecycle-hook %s $(date): /\" | tee /proc/1/fd/1; true", timeoutSeconds, wrapped, hook)}
 }
 
-func statefulSetContainerRedpanda(dot *helmette.Dot) *corev1.Container {
+func statefulSetContainerRedpanda(dot *helmette.Dot) corev1.Container {
 	values := helmette.Unwrap[Values](dot.Values)
 
 	internalAdvertiseAddress := fmt.Sprintf("%s.%s", "$(SERVICE_NAME)", InternalDomain(dot))
 
-	container := &corev1.Container{
+	container := corev1.Container{
 		Name:  Name(dot),
 		Image: fmt.Sprintf(`%s:%s`, values.Image.Repository, Tag(dot)),
 		Env:   bootstrapEnvVars(dot, statefulSetRedpandaEnv()),
@@ -755,7 +755,7 @@ func statefulSetContainerRedpanda(dot *helmette.Dot) *corev1.Container {
 		VolumeMounts: append(StatefulSetVolumeMounts(dot),
 			templateToVolumeMounts(dot, values.Statefulset.ExtraVolumeMounts)...),
 		SecurityContext: ptr.To(ContainerSecurityContext(dot)),
-		Resources:       corev1.ResourceRequirements{},
+		Resources:       values.Resources.GetResourceRequirements(),
 	}
 
 	if !helmette.Dig(values.Config.Node, false, `recovery_mode_enabled`).(bool) {
@@ -859,18 +859,6 @@ func statefulSetContainerRedpanda(dot *helmette.Dot) *corev1.Container {
 				MountPath: values.Storage.TieredCacheDirectory(dot),
 			},
 		)
-	}
-
-	container.Resources.Limits = helmette.UnmarshalInto[corev1.ResourceList](map[string]any{
-		"cpu":    values.Resources.CPU.Cores,
-		"memory": values.Resources.Memory.Container.Max,
-	})
-
-	if values.Resources.Memory.Container.Min != nil {
-		container.Resources.Requests = helmette.UnmarshalInto[corev1.ResourceList](map[string]any{
-			"cpu":    values.Resources.CPU.Cores,
-			"memory": *values.Resources.Memory.Container.Min,
-		})
 	}
 
 	return container

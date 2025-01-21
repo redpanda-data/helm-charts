@@ -313,7 +313,11 @@
 {{- if (gt ((get (fromJson (include "_shims.len" (dict "a" (list $tls_8) ))) "r") | int) (0 | int)) -}}
 {{- $schemaRegistryTLS = $tls_8 -}}
 {{- end -}}
-{{- $result := (dict "overprovisioned" (get (fromJson (include "redpanda.RedpandaResources.GetOverProvisionValue" (dict "a" (list $values.resources) ))) "r") "enable_memory_locking" (get (fromJson (include "_shims.ptr_Deref" (dict "a" (list $values.resources.memory.enable_memory_locking false) ))) "r") "additional_start_flags" (get (fromJson (include "redpanda.RedpandaAdditionalStartFlags" (dict "a" (list $dot ((get (fromJson (include "redpanda.RedpandaSMP" (dict "a" (list $dot) ))) "r") | int64)) ))) "r") "kafka_api" (dict "brokers" $brokerList "tls" $brokerTLS ) "admin_api" (dict "addresses" (get (fromJson (include "redpanda.Listeners.AdminList" (dict "a" (list $values.listeners ($values.statefulset.replicas | int) (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r") (get (fromJson (include "redpanda.InternalDomain" (dict "a" (list $dot) ))) "r")) ))) "r") "tls" $adminTLS ) "schema_registry" (dict "addresses" (get (fromJson (include "redpanda.Listeners.SchemaRegistryList" (dict "a" (list $values.listeners ($values.statefulset.replicas | int) (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r") (get (fromJson (include "redpanda.InternalDomain" (dict "a" (list $dot) ))) "r")) ))) "r") "tls" $schemaRegistryTLS ) ) -}}
+{{- $_370_lockMemory_overprovisioned_flags := (get (fromJson (include "redpanda.RedpandaAdditionalStartFlags" (dict "a" (list $values) ))) "r") -}}
+{{- $lockMemory := (index $_370_lockMemory_overprovisioned_flags 0) -}}
+{{- $overprovisioned := (index $_370_lockMemory_overprovisioned_flags 1) -}}
+{{- $flags := (index $_370_lockMemory_overprovisioned_flags 2) -}}
+{{- $result := (dict "additional_start_flags" $flags "enable_memory_locking" $lockMemory "overprovisioned" $overprovisioned "kafka_api" (dict "brokers" $brokerList "tls" $brokerTLS ) "admin_api" (dict "addresses" (get (fromJson (include "redpanda.Listeners.AdminList" (dict "a" (list $values.listeners ($values.statefulset.replicas | int) (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r") (get (fromJson (include "redpanda.InternalDomain" (dict "a" (list $dot) ))) "r")) ))) "r") "tls" $adminTLS ) "schema_registry" (dict "addresses" (get (fromJson (include "redpanda.Listeners.SchemaRegistryList" (dict "a" (list $values.listeners ($values.statefulset.replicas | int) (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r") (get (fromJson (include "redpanda.InternalDomain" (dict "a" (list $dot) ))) "r")) ))) "r") "tls" $schemaRegistryTLS ) ) -}}
 {{- $result = (merge (dict ) $result (get (fromJson (include "redpanda.Tuning.Translate" (dict "a" (list $values.tuning) ))) "r")) -}}
 {{- $result = (merge (dict ) $result (get (fromJson (include "redpanda.Config.CreateRPKConfiguration" (dict "a" (list $values.config) ))) "r")) -}}
 {{- $_is_returning = true -}}
@@ -540,39 +544,53 @@
 {{- end -}}
 
 {{- define "redpanda.RedpandaAdditionalStartFlags" -}}
-{{- $dot := (index .a 0) -}}
-{{- $smp := (index .a 1) -}}
+{{- $values := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
-{{- $values := $dot.Values.AsMap -}}
-{{- $chartFlags := (dict "smp" (printf "%d" ($smp | int)) "memory" (printf "%dM" (((get (fromJson (include "redpanda.RedpandaMemory" (dict "a" (list $dot) ))) "r") | int64) | int)) "reserve-memory" (printf "%dM" (((get (fromJson (include "redpanda.RedpandaReserveMemory" (dict "a" (list $dot) ))) "r") | int64) | int)) "default-log-level" $values.logging.logLevel ) -}}
+{{- $flags := (get (fromJson (include "redpanda.RedpandaResources.GetRedpandaFlags" (dict "a" (list $values.resources) ))) "r") -}}
+{{- $_ := (set $flags "--default-log-level" $values.logging.logLevel) -}}
 {{- if (eq (index $values.config.node "developer_mode") true) -}}
-{{- $_ := (unset $chartFlags "reserve-memory") -}}
+{{- $_ := (unset $flags "--reserve-memory") -}}
 {{- end -}}
-{{- range $flag, $_ := $chartFlags -}}
-{{- range $_, $userFlag := $values.statefulset.additionalRedpandaCmdFlags -}}
-{{- if (regexMatch (printf "^--%s" $flag) $userFlag) -}}
-{{- $_ := (unset $chartFlags $flag) -}}
-{{- end -}}
+{{- range $key, $value := (get (fromJson (include "redpanda.ParseCLIArgs" (dict "a" (list $values.statefulset.additionalRedpandaCmdFlags) ))) "r") -}}
+{{- $_ := (set $flags $key $value) -}}
 {{- end -}}
 {{- if $_is_returning -}}
 {{- break -}}
 {{- end -}}
+{{- $enabledOptions := (dict "true" true "1" true "" true ) -}}
+{{- $lockMemory := false -}}
+{{- $_655_value_14_ok_15 := (get (fromJson (include "_shims.dicttest" (dict "a" (list $flags "--lock-memory" "") ))) "r") -}}
+{{- $value_14 := (index $_655_value_14_ok_15 0) -}}
+{{- $ok_15 := (index $_655_value_14_ok_15 1) -}}
+{{- if $ok_15 -}}
+{{- $lockMemory = (ternary (index $enabledOptions $value_14) false (hasKey $enabledOptions $value_14)) -}}
+{{- $_ := (unset $flags "--lock-memory") -}}
 {{- end -}}
-{{- if $_is_returning -}}
-{{- break -}}
+{{- $overprovisioned := false -}}
+{{- $_662_value_16_ok_17 := (get (fromJson (include "_shims.dicttest" (dict "a" (list $flags "--overprovisioned" "") ))) "r") -}}
+{{- $value_16 := (index $_662_value_16_ok_17 0) -}}
+{{- $ok_17 := (index $_662_value_16_ok_17 1) -}}
+{{- if $ok_17 -}}
+{{- $overprovisioned = (ternary (index $enabledOptions $value_16) false (hasKey $enabledOptions $value_16)) -}}
+{{- $_ := (unset $flags "--overprovisioned") -}}
 {{- end -}}
-{{- $keys := (keys $chartFlags) -}}
-{{- $_ := (sortAlpha $keys) -}}
-{{- $flags := (list ) -}}
+{{- $keys := (keys $flags) -}}
+{{- $keys = (sortAlpha $keys) -}}
+{{- $rendered := (coalesce nil) -}}
 {{- range $_, $key := $keys -}}
-{{- $flags = (concat (default (list ) $flags) (list (printf "--%s=%s" $key (ternary (index $chartFlags $key) "" (hasKey $chartFlags $key))))) -}}
+{{- $value := (ternary (index $flags $key) "" (hasKey $flags $key)) -}}
+{{- if (eq $value "") -}}
+{{- $rendered = (concat (default (list ) $rendered) (list $key)) -}}
+{{- else -}}
+{{- $rendered = (concat (default (list ) $rendered) (list (printf "%s=%s" $key $value))) -}}
+{{- end -}}
 {{- end -}}
 {{- if $_is_returning -}}
 {{- break -}}
 {{- end -}}
 {{- $_is_returning = true -}}
-{{- (dict "r" (concat (default (list ) $flags) (default (list ) $values.statefulset.additionalRedpandaCmdFlags))) | toJson -}}
+{{- (dict "r" (list $lockMemory $overprovisioned $rendered)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}

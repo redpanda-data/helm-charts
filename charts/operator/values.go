@@ -37,7 +37,6 @@ type Values struct {
 	ClusterDomain      string                        `json:"clusterDomain"`
 	Image              Image                         `json:"image"`
 	KubeRBACProxy      KubeRBACProxyConfig           `json:"kubeRbacProxy"`
-	Configurator       Image                         `json:"configurator"`
 	Config             Config                        `json:"config"`
 	ImagePullSecrets   []corev1.LocalObjectReference `json:"imagePullSecrets"`
 	LogLevel           string                        `json:"logLevel"`

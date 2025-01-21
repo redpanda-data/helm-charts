@@ -628,25 +628,6 @@
       },
       "type": "object"
     },
-    "configurator": {
-      "properties": {
-        "pullPolicy": {
-          "description": "The Kubernetes Pod image pull policy.",
-          "pattern": "^(Always|Never|IfNotPresent)$",
-          "type": "string"
-        },
-        "repository": {
-          "type": "string"
-        },
-        "tag": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "pullPolicy"
-      ],
-      "type": "object"
-    },
     "fullnameOverride": {
       "type": "string"
     },

@@ -25,7 +25,6 @@ type PartialValues struct {
 	ClusterDomain      *string                       "json:\"clusterDomain,omitempty\""
 	Image              *PartialImage                 "json:\"image,omitempty\""
 	KubeRBACProxy      *PartialKubeRBACProxyConfig   "json:\"kubeRbacProxy,omitempty\""
-	Configurator       *PartialImage                 "json:\"configurator,omitempty\""
 	Config             *PartialConfig                "json:\"config,omitempty\""
 	ImagePullSecrets   []corev1.LocalObjectReference "json:\"imagePullSecrets,omitempty\""
 	LogLevel           *string                       "json:\"logLevel,omitempty\""

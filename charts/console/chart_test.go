@@ -158,7 +158,7 @@ func TestGenerateCases(t *testing.T) {
 		out, err := yaml.Marshal(values)
 		require.NoError(t, err)
 
-		merged, err := helm.MergeYAMLValues(t.TempDir(), DefaultValuesYAML, out)
+		merged, err := helm.MergeYAMLValues(DefaultValuesYAML, out)
 		require.NoError(t, err)
 
 		// Ensure that our generated values comply with the schema set by the chart.

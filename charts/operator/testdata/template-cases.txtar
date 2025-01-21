@@ -73,3 +73,16 @@ podTemplate:
 -- enabled-service-account-automount-token-in-only-service-account-resource --
 serviceAccount:
   automountServiceAccountToken: true
+
+-- backward-compatible --
+# Following configurator will not be respected
+configurator:
+  repository: docker.redpanda.com/redpandadata/configurator
+  tag: ABC
+  pullPolicy: IfNotPresent
+
+# To change overwrite configurator options the `additionalCmdFlags` needs to be used
+additionalCmdFlags:
+- --configurator-base-image=my.repo.com/configurator
+- --configurator-tag=XYZ
+- --configurator-image-pull-policy=IfNotPresent

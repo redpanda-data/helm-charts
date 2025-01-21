@@ -10,15 +10,18 @@
 package redpanda_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"reflect"
 	"regexp"
 	"strings"
 	"testing"
+	"time"
 
 	certmanagerv1 "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
 	jsoniter "github.com/json-iterator/go"
@@ -79,8 +82,39 @@ func TestTemplateHelm310(t *testing.T) {
 
 func TestTemplate(t *testing.T) {
 	ctx := testutil.Context(t)
-	client, err := helm.New(helm.Options{ConfigHome: testutil.TempDir(t)})
+
+	tmp := testutil.TempDir(t)
+
+	pwd, err := os.Getwd()
 	require.NoError(t, err)
+
+	err = CopyFS(tmp, os.DirFS(pwd), "charts")
+	require.NoError(t, err)
+
+	require.NoError(t, os.Remove(filepath.Join(tmp, "Chart.lock")))
+
+	client, err := helm.New(helm.Options{ConfigHome: tmp})
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithTimeout(ctx, 1*time.Minute)
+	defer cancel()
+
+	// As go based resource rendering is hooked with the unreleased console version
+	// any change to the console would end up be blocked by this test. The helm template
+	// would pick the latest console release, so that any change in console would not be
+	// available in `template` function. Just for
+	metadata := redpanda.Chart.Metadata()
+	for _, d := range metadata.Dependencies {
+		d.Repository = fmt.Sprintf("file://%s", filepath.Join(pwd, fmt.Sprintf("../%s", d.Name)))
+	}
+
+	b, err := yaml.Marshal(metadata)
+	require.NoError(t, err)
+
+	err = os.WriteFile(filepath.Join(tmp, "Chart.yaml"), b, os.ModePerm)
+	require.NoError(t, err)
+
+	require.NoError(t, client.DependencyBuild(ctx, tmp))
 
 	archive, err := txtar.ParseFile("testdata/template-cases.txtar")
 	require.NoError(t, err)
@@ -105,7 +139,7 @@ func TestTemplate(t *testing.T) {
 			var values map[string]any
 			require.NoError(t, yaml.Unmarshal(tc.Data, &values), "input values are invalid YAML")
 
-			out, renderErr := client.Template(ctx, ".", helm.TemplateOptions{
+			out, renderErr := client.Template(ctx, tmp, helm.TemplateOptions{
 				Name:   "redpanda",
 				Values: values,
 				Set: []string{
@@ -559,8 +593,23 @@ func execJSONPath(t *testing.T, objs []kube.Object, gvk, key, jsonPath string, f
 		results, err := path.FindResults(obj)
 		require.NoError(t, err)
 
+		// If jsonPath contains a range loop or {range}{end} block, the result
+		// will be an array of values. If not, the results are still an array
+		// but test writers would expect it to be a single value.
+		resultIsArray := strings.Contains(jsonPath, "*") || strings.Contains(jsonPath, "{range")
+
 		for _, result := range results {
-			fn(result[0].Interface())
+			var unwrapped []any
+			for _, x := range result {
+				unwrapped = append(unwrapped, x.Interface())
+			}
+
+			if resultIsArray {
+				fn(unwrapped)
+			} else {
+				require.Len(t, unwrapped, 1, "non iterating JSON path found multiple results: %s", jsonPath)
+				fn(unwrapped[0])
+			}
 		}
 
 		return
