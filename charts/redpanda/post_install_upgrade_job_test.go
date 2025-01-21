@@ -157,7 +157,7 @@ func TestAnnotationsOverwrite(t *testing.T) {
 	dot := helmette.Dot{
 		Chart: helmette.Chart{Name: "XYZ-to-change"},
 	}
-	dot.Values, err = helm.MergeYAMLValues("", b, defaultValuesYAML)
+	dot.Values, err = helm.MergeYAMLValues(b, defaultValuesYAML)
 	require.NoError(t, err)
 
 	job := PostInstallUpgradeJob(&dot)

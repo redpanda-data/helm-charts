@@ -49,10 +49,8 @@ import (
 	"github.com/redpanda-data/redpanda-operator/pkg/valuesutil"
 )
 
-func TestChart(t *testing.T) {
-	if testing.Short() {
-		t.Skipf("Skipping log running test...")
-	}
+func TestIntegrationChart(t *testing.T) {
+	testutil.SkipIfNotIntegration(t)
 
 	log := zaptest.NewLogger(t)
 	w := &zapio.Writer{Log: log, Level: zapcore.InfoLevel}

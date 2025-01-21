@@ -14019,6 +14019,20 @@
           ],
           "type": "object"
         },
+        "limits": {
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "pattern": "^[0-9]+(\\.[0-9]){0,1}(m|k|M|G|T|P|Ki|Mi|Gi|Ti|Pi)?$",
+                "type": "string"
+              }
+            ]
+          },
+          "type": "object"
+        },
         "memory": {
           "properties": {
             "container": {
@@ -14085,6 +14099,20 @@
           "required": [
             "container"
           ],
+          "type": "object"
+        },
+        "requests": {
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "pattern": "^[0-9]+(\\.[0-9]){0,1}(m|k|M|G|T|P|Ki|Mi|Gi|Ti|Pi)?$",
+                "type": "string"
+              }
+            ]
+          },
           "type": "object"
         }
       },

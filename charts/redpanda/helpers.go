@@ -416,18 +416,6 @@ func cleanForK8sWithSuffix(s, suffix string) string {
 	return fmt.Sprintf("%s-%s", s, suffix)
 }
 
-func RedpandaSMP(dot *helmette.Dot) int64 {
-	values := helmette.Unwrap[Values](dot.Values)
-
-	coresInMillies := values.Resources.CPU.Cores.MilliValue()
-
-	if coresInMillies < 1000 {
-		return 1
-	}
-
-	return values.Resources.CPU.Cores.Value()
-}
-
 // coalesce returns the first non-nil pointer. This is distinct from helmette's
 // Coalesce which returns the first non-EMPTY pointer.
 // It accepts a slice as variadic methods are not currently supported in
@@ -579,4 +567,55 @@ func mergeContainer(original corev1.Container, override applycorev1.ContainerApp
 	merged.Env = mergeSliceBy(original.Env, override.Env, "name", mergeEnvVar)
 	merged.VolumeMounts = mergeSliceBy(original.VolumeMounts, override.VolumeMounts, "name", mergeVolumeMount)
 	return merged
+}
+
+// ParseCLIArgs parses a slice of strings intended for rpk's
+// `additional_start_flags` field into a map to allow merging slices of flags
+// or introspection thereof.
+// Flags without values are not differentiated between flags with values of an
+// empty string. e.g. --value and --value=” are represented the same way.
+func ParseCLIArgs(args []string) map[string]string {
+	parsed := map[string]string{}
+
+	// NB: templates/gotohelm don't supported c style for loops (or ++) which
+	// is the ideal for this situation. The janky code you see is a rough
+	// equivalent for the following:
+	// for i := 0; i < len(args); i++ {
+	i := -1          // Start at -1 so our increment can be at the start of the loop.
+	for range args { // Range needs to range over something and we'll always have < len(args) iterations.
+		i = i + 1
+		if i >= len(args) {
+			break
+		}
+
+		// All flags should start with - or --.
+		// If not present, skip this value.
+		if !strings.HasPrefix(args[i], "-") {
+			continue
+		}
+
+		flag := args[i]
+
+		// Handle values like: `--flag value` or `--flag=value`
+		// There's no strings.Index in sprig, so RegexSplit is the next best
+		// option.
+		spl := helmette.RegexSplit(" |=", flag, 2)
+		if len(spl) == 2 {
+			parsed[spl[0]] = spl[1]
+			continue
+		}
+
+		// If no ' ' or =, consume the next value if it's not formatted like a
+		// flag: `--flag`, `value`
+		if i+1 < len(args) && !strings.HasPrefix(args[i+1], "-") {
+			parsed[flag] = args[i+1]
+			i = i + 1
+			continue
+		}
+
+		// Otherwise, assume this is a bare flag and assign it an empty string.
+		parsed[flag] = ""
+	}
+
+	return parsed
 }

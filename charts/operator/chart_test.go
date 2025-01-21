@@ -251,7 +251,7 @@ func TestGenerateCases(t *testing.T) {
 			out, err := yaml.Marshal(values)
 			require.NoError(t, err)
 
-			merged, err := helm.MergeYAMLValues(t.TempDir(), DefaultValuesYAML, out)
+			merged, err := helm.MergeYAMLValues(DefaultValuesYAML, out)
 			require.NoError(t, err)
 
 			// Ensure that our generated values comply with the schema set by the chart.
@@ -290,12 +290,6 @@ func makeSureTagIsNotEmptyString(values PartialValues, fuzzer *fuzz.Fuzzer) {
 	}
 	if values.KubeRBACProxy != nil && values.KubeRBACProxy.Image != nil && values.KubeRBACProxy.Image.Tag != nil && len(*values.KubeRBACProxy.Image.Tag) == 0 {
 		t := values.KubeRBACProxy.Image.Tag
-		for len(*t) == 0 {
-			fuzzer.Fuzz(t)
-		}
-	}
-	if values.Configurator != nil && values.Configurator.Tag != nil && len(*values.Configurator.Tag) == 0 {
-		t := values.Configurator.Tag
 		for len(*t) == 0 {
 			fuzzer.Fuzz(t)
 		}
