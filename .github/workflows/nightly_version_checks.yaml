@@ -50,7 +50,7 @@ jobs:
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
       # Cache the nix store.
-      - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - uses: DeterminateSystems/magic-nix-cache-action@v9
       # Try to checkout a branch with the same name as provided in the dispatch
       - uses: actions/checkout@v4
         id: checkout
