@@ -33,7 +33,7 @@ jobs:
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
       # Cache the nix store.
-      - uses: DeterminateSystems/magic-nix-cache-action@v8
+      - uses: DeterminateSystems/magic-nix-cache-action@v9
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
