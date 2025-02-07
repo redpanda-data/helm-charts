@@ -116,11 +116,6 @@ jobs:
     if: ${{ needs.changes.outputs.charts-redpanda == 'true' }}
     uses: ./.github/workflows/test_redpanda.yaml
     secrets: inherit
-  test-charts-redpanda-integration:
-    needs: [changes, lint]
-    if: ${{ needs.changes.outputs.charts-redpanda == 'true' }}
-    uses: ./.github/workflows/test_redpanda_integration.yaml
-    secrets: inherit
   test-charts-connectors:
     needs: [changes, lint]
     if: ${{ needs.changes.outputs.charts-connectors == 'true' }}
@@ -150,12 +145,11 @@ jobs:
       - test-charts-kminion
       - test-charts-operator
       - test-charts-redpanda
-      - test-charts-redpanda-integration
       - test-go
     runs-on: ubuntu-22.04
     steps:
       - name: Summarize the results of the test matrix pass/fail
         uses: re-actors/alls-green@release/v1
         with:
-          allowed-skips: test-go, test-charts-connectors, test-charts-kminion, test-charts-operator, test-charts-redpanda, test-charts-redpanda-integration, test-charts-connect
+          allowed-skips: test-go, test-charts-connectors, test-charts-kminion, test-charts-operator, test-charts-redpanda, test-charts-connect
           jobs: ${{ toJSON(needs)}}

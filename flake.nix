@@ -44,7 +44,6 @@
               pkgs.git
               pkgs.go
               pkgs.go-task
-              pkgs.go-tools
               pkgs.gofumpt
               pkgs.helm-3-10-3
               pkgs.helm-docs
