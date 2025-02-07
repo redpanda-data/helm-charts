@@ -97,15 +97,13 @@
 {{- break -}}
 {{- end -}}
 {{- $secretName := (printf "%s-bootstrap-user" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r")) -}}
-{{- if $dot.Release.IsUpgrade -}}
-{{- $_209_existing_5_ok_6 := (get (fromJson (include "_shims.lookup" (dict "a" (list "v1" "Secret" $dot.Release.Namespace $secretName) ))) "r") -}}
-{{- $existing_5 := (index $_209_existing_5_ok_6 0) -}}
-{{- $ok_6 := (index $_209_existing_5_ok_6 1) -}}
+{{- $_207_existing_5_ok_6 := (get (fromJson (include "_shims.lookup" (dict "a" (list "v1" "Secret" $dot.Release.Namespace $secretName) ))) "r") -}}
+{{- $existing_5 := (index $_207_existing_5_ok_6 0) -}}
+{{- $ok_6 := (index $_207_existing_5_ok_6 1) -}}
 {{- if $ok_6 -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $existing_5) | toJson -}}
 {{- break -}}
-{{- end -}}
 {{- end -}}
 {{- $password := (randAlphaNum (32 | int)) -}}
 {{- $userPassword := $values.auth.sasl.bootstrapUser.password -}}
