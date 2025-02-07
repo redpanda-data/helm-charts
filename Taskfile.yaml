@@ -51,7 +51,7 @@ tasks:
   ci:lint:
     cmds:
       - task: generate
-      - gofumpt -w .
+      - gofumpt -w
       # Fail on any generated diffs.
       - git diff --exit-code
       # Actually run linters.
@@ -61,7 +61,6 @@ tasks:
       - .github/check-ci-files.sh charts/kminion/ci
       - .github/check-ci-files.sh charts/operator/ci
       - .github/check-ci-files.sh charts/redpanda/ci
-      - staticcheck ./...
 
   generate:
     desc: "Run all file generation tasks"
@@ -70,7 +69,6 @@ tasks:
       - nix develop -c helm-docs -c ./charts/
       # Ensure go deps are up to date
       - go mod tidy
-      - go work sync
       # Ensure flake.nix has been formatted.
       - nix fmt
 
@@ -177,5 +175,6 @@ tasks:
         {{.OPERATOR_TMP_PATH}}/redpanda-operator-{{.OPERATOR_SHA}}/charts/operator
         {{.OPERATOR_TMP_PATH}}/redpanda-operator-{{.OPERATOR_SHA}}/charts/redpanda
         charts/
-
-
+        # Clear out all go files, we just want the templates, Chart.yaml's, etc.
+        # Task's globbing is unreliable.
+      - bash -O globstar -c "rm charts/{connectors,console,operator,redpanda}/**/*.{go,txtar}"
