@@ -161,21 +161,41 @@ tasks:
       - kind delete cluster --name {{.KIND_CLUSTERNAME}}
 
   sync:charts:
+    - task: sync:operator:chart
+    - task: sync:redpanda:chart
+
+  sync:operator:chart:
     vars:
       OPERATOR_TMP_PATH:
         sh: mktemp --directory --tmpdir "operator-XXXXXXXXXX"
-      OPERATOR_SHA: 1388ec6c6b63ea2637b6c34c17d9e2c87d41e624 # redpanda v5.9.20
+      OPERATOR_SHA: 6c588ebe8dd6267fb1d45dbb0176f006c5731e1e # operator v0.4.40
     cmds:
       - defer: rm -r {{.OPERATOR_TMP_PATH}}
       - curl -Lo {{.OPERATOR_TMP_PATH}}operator.zip https://github.com/redpanda-data/redpanda-operator/archive/{{.OPERATOR_SHA}}.zip
       - unzip {{.OPERATOR_TMP_PATH}}operator.zip -d {{.OPERATOR_TMP_PATH}}
       - rsync -avz
+        {{.OPERATOR_TMP_PATH}}/redpanda-operator-{{.OPERATOR_SHA}}/charts/operator
         {{.OPERATOR_TMP_PATH}}/redpanda-operator-{{.OPERATOR_SHA}}/charts/connectors
         {{.OPERATOR_TMP_PATH}}/redpanda-operator-{{.OPERATOR_SHA}}/charts/console
-        {{.OPERATOR_TMP_PATH}}/redpanda-operator-{{.OPERATOR_SHA}}/charts/operator
-        {{.OPERATOR_TMP_PATH}}/redpanda-operator-{{.OPERATOR_SHA}}/charts/redpanda
         charts/
         # Clear out all go files, we just want the templates, Chart.yaml's, etc.
         # Task's globbing is unreliable.
-      - bash -O globstar -c "rm charts/{connectors,console,operator,redpanda}/**/*.{go,txtar}"
-      - bash -O globstar -c "rm charts/{connectors,console,operator,redpanda}/go.{mod,sum}"
+      - bash -O globstar -c "rm charts/{connectors,console,operator}/**/*.{go,txtar}"
+      - bash -O globstar -c "rm charts/{connectors,console,operator}/go.{mod,sum}"
+
+  sync:redpanda:chart:
+    vars:
+      REDPANDA_TMP_PATH:
+        sh: mktemp --directory --tmpdir "redpanda-XXXXXXXXXX"
+      REDPANDA_SHA: 1388ec6c6b63ea2637b6c34c17d9e2c87d41e624 # redpanda v5.9.20
+    cmds:
+      - defer: rm -r {{.OPERATOR_TMP_PATH}}
+      - curl -Lo {{.REDPANDA_TMP_PATH}}operator.zip https://github.com/redpanda-data/redpanda-operator/archive/{{.REDPANDA_SHA}}.zip
+      - unzip {{.REDPANDA_TMP_PATH}}operator.zip -d {{.REDPANDA_TMP_PATH}}
+      - rsync -avz
+        {{.REDPANDA_TMP_PATH}}/redpanda-operator-{{.REDPANDA_SHA}}/charts/redpanda
+        charts/
+        # Clear out all go files, we just want the templates, Chart.yaml's, etc.
+        # Task's globbing is unreliable.
+      - bash -O globstar -c "rm charts/redpanda/**/*.{go,txtar}"
+      - bash -O globstar -c "rm charts/redpanda/go.{mod,sum}"
