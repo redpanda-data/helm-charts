@@ -22,32 +22,7 @@
 {{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
 {{- $_is_returning = true -}}
-{{- (dict "r" (list (mustMergeOverwrite (dict "name" "" "resources" (dict ) ) (dict "name" "manager" "image" (get (fromJson (include "operator.containerImage" (dict "a" (list $dot) ))) "r") "imagePullPolicy" $values.image.pullPolicy "command" (list "/manager") "args" (get (fromJson (include "operator.operatorArguments" (dict "a" (list $dot) ))) "r") "securityContext" (mustMergeOverwrite (dict ) (dict "allowPrivilegeEscalation" false )) "ports" (list (mustMergeOverwrite (dict "containerPort" 0 ) (dict "name" "webhook-server" "containerPort" (9443 | int) "protocol" "TCP" ))) "volumeMounts" (get (fromJson (include "operator.operatorPodVolumesMounts" (dict "a" (list $dot) ))) "r") "livenessProbe" (get (fromJson (include "operator.livenessProbe" (dict "a" (list $dot $podTerminationGracePeriodSeconds) ))) "r") "readinessProbe" (get (fromJson (include "operator.readinessProbe" (dict "a" (list $dot $podTerminationGracePeriodSeconds) ))) "r") "resources" $values.resources )) (mustMergeOverwrite (dict "name" "" "resources" (dict ) ) (dict "name" "kube-rbac-proxy" "args" (list "--secure-listen-address=0.0.0.0:8443" "--upstream=http://127.0.0.1:8080/" "--logtostderr=true" (printf "--v=%d" ($values.kubeRbacProxy.logLevel | int))) "image" (printf "%s:%s" $values.kubeRbacProxy.image.repository $values.kubeRbacProxy.image.tag) "imagePullPolicy" $values.kubeRbacProxy.image.pullPolicy "ports" (list (mustMergeOverwrite (dict "containerPort" 0 ) (dict "containerPort" (8443 | int) "name" "https" ))) "volumeMounts" (get (fromJson (include "operator.kubeRBACProxyVolumeMounts" (dict "a" (list $dot) ))) "r") )))) | toJson -}}
-{{- break -}}
-{{- end -}}
-{{- end -}}
-
-{{- define "operator.kubeRBACProxyVolumeMounts" -}}
-{{- $dot := (index .a 0) -}}
-{{- range $_ := (list 1) -}}
-{{- $_is_returning := false -}}
-{{- $values := $dot.Values.AsMap -}}
-{{- if (not $values.serviceAccount.create) -}}
-{{- $_is_returning = true -}}
-{{- (dict "r" (coalesce nil)) | toJson -}}
-{{- break -}}
-{{- end -}}
-{{- $mountName := "kube-api-access" -}}
-{{- range $_, $vol := (get (fromJson (include "operator.operatorPodVolumes" (dict "a" (list $dot) ))) "r") -}}
-{{- if (hasPrefix $vol.name (printf "%s%s" "kube-api-access" "-")) -}}
-{{- $mountName = $vol.name -}}
-{{- end -}}
-{{- end -}}
-{{- if $_is_returning -}}
-{{- break -}}
-{{- end -}}
-{{- $_is_returning = true -}}
-{{- (dict "r" (list (mustMergeOverwrite (dict "name" "" "mountPath" "" ) (dict "name" $mountName "readOnly" true "mountPath" "/var/run/secrets/kubernetes.io/serviceaccount" )))) | toJson -}}
+{{- (dict "r" (list (mustMergeOverwrite (dict "name" "" "resources" (dict ) ) (dict "name" "manager" "image" (get (fromJson (include "operator.containerImage" (dict "a" (list $dot) ))) "r") "imagePullPolicy" $values.image.pullPolicy "command" (list "/manager") "args" (get (fromJson (include "operator.operatorArguments" (dict "a" (list $dot) ))) "r") "securityContext" (mustMergeOverwrite (dict ) (dict "allowPrivilegeEscalation" false )) "ports" (list (mustMergeOverwrite (dict "containerPort" 0 ) (dict "name" "webhook-server" "containerPort" (9443 | int) "protocol" "TCP" ))) "volumeMounts" (get (fromJson (include "operator.operatorPodVolumesMounts" (dict "a" (list $dot) ))) "r") "livenessProbe" (get (fromJson (include "operator.livenessProbe" (dict "a" (list $dot $podTerminationGracePeriodSeconds) ))) "r") "readinessProbe" (get (fromJson (include "operator.readinessProbe" (dict "a" (list $dot $podTerminationGracePeriodSeconds) ))) "r") "resources" $values.resources )))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -121,7 +96,7 @@
 {{- if $values.serviceAccount.create -}}
 {{- $vol = (concat (default (list ) $vol) (list (get (fromJson (include "operator.kubeTokenAPIVolume" (dict "a" (list "kube-api-access") ))) "r"))) -}}
 {{- end -}}
-{{- if (not $values.webhook.enabled) -}}
+{{- if (not (get (fromJson (include "operator.isWebhookEnabled" (dict "a" (list $dot) ))) "r")) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $vol) | toJson -}}
 {{- break -}}
@@ -161,7 +136,7 @@
 {{- end -}}
 {{- $volMount = (concat (default (list ) $volMount) (list (mustMergeOverwrite (dict "name" "" "mountPath" "" ) (dict "name" $mountName "readOnly" true "mountPath" "/var/run/secrets/kubernetes.io/serviceaccount" )))) -}}
 {{- end -}}
-{{- if (not $values.webhook.enabled) -}}
+{{- if (not (get (fromJson (include "operator.isWebhookEnabled" (dict "a" (list $dot) ))) "r")) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $volMount) | toJson -}}
 {{- break -}}
@@ -178,7 +153,10 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
-{{- $args := (list "--health-probe-bind-address=:8081" "--metrics-bind-address=127.0.0.1:8080" "--leader-elect" (printf "--webhook-enabled=%t" (get (fromJson (include "operator.isWebhookEnabled" (dict "a" (list $dot) ))) "r"))) -}}
+{{- $args := (list "--health-probe-bind-address=:8081" "--metrics-bind-address=:8443" "--leader-elect" (printf "--webhook-enabled=%t" (get (fromJson (include "operator.isWebhookEnabled" (dict "a" (list $dot) ))) "r"))) -}}
+{{- if (get (fromJson (include "operator.isWebhookEnabled" (dict "a" (list $dot) ))) "r") -}}
+{{- $args = (concat (default (list ) $args) (list "--webhook-enabled=true" (printf "--webhook-cert-path=%s" "/tmp/k8s-webhook-server/serving-certs"))) -}}
+{{- end -}}
 {{- if (eq $values.scope "Namespace") -}}
 {{- $args = (concat (default (list ) $args) (list (printf "--namespace=%s" $dot.Release.Namespace) (printf "--log-level=%s" $values.logLevel))) -}}
 {{- end -}}
