@@ -29,13 +29,13 @@
 {{- if $_is_returning -}}
 {{- break -}}
 {{- end -}}
-{{- range $_, $obj := (get (fromJson (include "redpanda.ClusterRoleBindings" (dict "a" (list $dot) ))) "r") -}}
+{{- range $_, $obj := (get (fromJson (include "redpanda.ClusterRoles" (dict "a" (list $dot) ))) "r") -}}
 {{- $manifests = (concat (default (list ) $manifests) (list $obj)) -}}
 {{- end -}}
 {{- if $_is_returning -}}
 {{- break -}}
 {{- end -}}
-{{- range $_, $obj := (get (fromJson (include "redpanda.ClusterRoles" (dict "a" (list $dot) ))) "r") -}}
+{{- range $_, $obj := (get (fromJson (include "redpanda.ClusterRoleBindings" (dict "a" (list $dot) ))) "r") -}}
 {{- $manifests = (concat (default (list ) $manifests) (list $obj)) -}}
 {{- end -}}
 {{- if $_is_returning -}}
