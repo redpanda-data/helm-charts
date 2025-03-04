@@ -10,8 +10,8 @@ metadata:
     app.kubernetes.io/instance: operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.3.6-24.3.3
-    helm.sh/chart: operator-0.4.39
+    app.kubernetes.io/version: v2.3.7-24.3.6
+    helm.sh/chart: operator-0.4.40
   name: operator
   namespace: redpanda
 ---
@@ -38,8 +38,8 @@ metadata:
     app.kubernetes.io/instance: operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.3.6-24.3.3
-    helm.sh/chart: operator-0.4.39
+    app.kubernetes.io/version: v2.3.7-24.3.6
+    helm.sh/chart: operator-0.4.40
   name: operator-config
   namespace: redpanda
 ---
@@ -53,8 +53,8 @@ metadata:
     app.kubernetes.io/instance: operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.3.6-24.3.3
-    helm.sh/chart: operator-0.4.39
+    app.kubernetes.io/version: v2.3.7-24.3.6
+    helm.sh/chart: operator-0.4.40
   name: operator-metrics-reader
 rules:
 - nonResourceURLs:
@@ -72,8 +72,8 @@ metadata:
     app.kubernetes.io/instance: operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.3.6-24.3.3
-    helm.sh/chart: operator-0.4.39
+    app.kubernetes.io/version: v2.3.7-24.3.6
+    helm.sh/chart: operator-0.4.40
   name: operator-proxy-role
 rules:
 - apiGroups:
@@ -99,8 +99,8 @@ metadata:
     app.kubernetes.io/instance: operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.3.6-24.3.3
-    helm.sh/chart: operator-0.4.39
+    app.kubernetes.io/version: v2.3.7-24.3.6
+    helm.sh/chart: operator-0.4.40
   name: operator
 rules:
 - apiGroups:
@@ -183,8 +183,8 @@ metadata:
     app.kubernetes.io/instance: operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.3.6-24.3.3
-    helm.sh/chart: operator-0.4.39
+    app.kubernetes.io/version: v2.3.7-24.3.6
+    helm.sh/chart: operator-0.4.40
   name: operator-proxy-role
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -205,8 +205,8 @@ metadata:
     app.kubernetes.io/instance: operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.3.6-24.3.3
-    helm.sh/chart: operator-0.4.39
+    app.kubernetes.io/version: v2.3.7-24.3.6
+    helm.sh/chart: operator-0.4.40
   name: operator
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -227,8 +227,8 @@ metadata:
     app.kubernetes.io/instance: operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.3.6-24.3.3
-    helm.sh/chart: operator-0.4.39
+    app.kubernetes.io/version: v2.3.7-24.3.6
+    helm.sh/chart: operator-0.4.40
   name: operator-election-role
   namespace: redpanda
 rules:
@@ -255,8 +255,8 @@ metadata:
     app.kubernetes.io/instance: operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.3.6-24.3.3
-    helm.sh/chart: operator-0.4.39
+    app.kubernetes.io/version: v2.3.7-24.3.6
+    helm.sh/chart: operator-0.4.40
   name: operator-pvc
   namespace: redpanda
 rules:
@@ -278,8 +278,8 @@ metadata:
     app.kubernetes.io/instance: operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.3.6-24.3.3
-    helm.sh/chart: operator-0.4.39
+    app.kubernetes.io/version: v2.3.7-24.3.6
+    helm.sh/chart: operator-0.4.40
   name: operator
   namespace: redpanda
 rules:
@@ -694,8 +694,8 @@ metadata:
     app.kubernetes.io/instance: operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.3.6-24.3.3
-    helm.sh/chart: operator-0.4.39
+    app.kubernetes.io/version: v2.3.7-24.3.6
+    helm.sh/chart: operator-0.4.40
   name: operator-election-rolebinding
   namespace: redpanda
 roleRef:
@@ -717,8 +717,8 @@ metadata:
     app.kubernetes.io/instance: operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.3.6-24.3.3
-    helm.sh/chart: operator-0.4.39
+    app.kubernetes.io/version: v2.3.7-24.3.6
+    helm.sh/chart: operator-0.4.40
   name: operator-pvc
   namespace: redpanda
 roleRef:
@@ -740,8 +740,8 @@ metadata:
     app.kubernetes.io/instance: operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.3.6-24.3.3
-    helm.sh/chart: operator-0.4.39
+    app.kubernetes.io/version: v2.3.7-24.3.6
+    helm.sh/chart: operator-0.4.40
   name: operator
   namespace: redpanda
 roleRef:
@@ -763,8 +763,8 @@ metadata:
     app.kubernetes.io/instance: operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.3.6-24.3.3
-    helm.sh/chart: operator-0.4.39
+    app.kubernetes.io/version: v2.3.7-24.3.6
+    helm.sh/chart: operator-0.4.40
   name: operator-metrics-service
   namespace: redpanda
 spec:
@@ -786,8 +786,8 @@ metadata:
     app.kubernetes.io/instance: operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.3.6-24.3.3
-    helm.sh/chart: operator-0.4.39
+    app.kubernetes.io/version: v2.3.7-24.3.6
+    helm.sh/chart: operator-0.4.40
   name: operator
   namespace: redpanda
 spec:
@@ -809,7 +809,7 @@ spec:
       containers:
       - args:
         - --health-probe-bind-address=:8081
-        - --metrics-bind-address=127.0.0.1:8080
+        - --metrics-bind-address=:8443
         - --leader-elect
         - --webhook-enabled=false
         - --namespace=redpanda
@@ -818,7 +818,7 @@ spec:
         command:
         - /manager
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.6-24.3.3
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.7-24.3.6
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
@@ -840,23 +840,6 @@ spec:
         resources: {}
         securityContext:
           allowPrivilegeEscalation: false
-        volumeMounts:
-        - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
-          name: kube-api-access
-          readOnly: true
-      - args:
-        - --secure-listen-address=0.0.0.0:8443
-        - --upstream=http://127.0.0.1:8080/
-        - --logtostderr=true
-        - --v=10
-        env: []
-        image: gcr.io/kubebuilder/kube-rbac-proxy:v0.14.0
-        imagePullPolicy: IfNotPresent
-        name: kube-rbac-proxy
-        ports:
-        - containerPort: 8443
-          name: https
-        resources: {}
         volumeMounts:
         - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
           name: kube-api-access
