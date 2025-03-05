@@ -706,7 +706,7 @@ statefulset:
     securityContext: {}
     extraVolumeMounts: ""
     image:
-      tag: v2.3.7-24.3.6-11-g7ceb0a26
+      tag: v2.3.6-24.3.3-66-gb5b12dfc
       repository: docker.redpanda.com/redpandadata/redpanda-operator-nightly
     # The PVCUnbinder helps keep redpanda operational in the event of a tolerable Node or Disk loss event when non-remountable storage,
     # such as `local` or `hostPath`, are used. It does so by monitoring redpanda Pods that are in a "Pending" state for at least the period

@@ -187,7 +187,7 @@ tasks:
     vars:
       REDPANDA_TMP_PATH:
         sh: mktemp --directory --tmpdir "redpanda-XXXXXXXXXX"
-      REDPANDA_SHA: 13e19f761faaa953a3b6e87b1d0de44c67f7b98c # redpanda v5.9.21
+      REDPANDA_SHA: 59d79d9e16805cd143b0feaa82cb1d5ffec27444 # redpanda v5.9.21
     cmds:
       - defer: rm -r {{.OPERATOR_TMP_PATH}}
       - curl -Lo {{.REDPANDA_TMP_PATH}}operator.zip https://github.com/redpanda-data/redpanda-operator/archive/{{.REDPANDA_SHA}}.zip
