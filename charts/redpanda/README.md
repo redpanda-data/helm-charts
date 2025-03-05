@@ -1015,12 +1015,12 @@ To create `Guaranteed` Pods for Redpanda brokers, provide both requests and limi
 **Default:**
 
 ```
-"docker.redpanda.com/redpandadata/redpanda-operator"
+"docker.redpanda.com/redpandadata/redpanda-operator-nightly"
 ```
 
 ### [statefulset.sideCars.image.tag](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.sideCars.image.tag)
 
-**Default:** `"v2.3.7-24.3.6"`
+**Default:** `"v2.3.7-24.3.6-11-g7ceb0a26"`
 
 ### [statefulset.sideCars.pvcUnbinder.enabled](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.sideCars.pvcUnbinder.enabled)
 
