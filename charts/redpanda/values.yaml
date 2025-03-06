@@ -29,7 +29,7 @@ nameOverride: ""
 # -- Override `redpanda.fullname` template.
 fullnameOverride: ""
 # -- Default Kubernetes cluster domain.
-clusterDomain: cluster.local
+clusterDomain: cluster.local.
 # -- Additional labels to add to all Kubernetes objects.
 # For example, `my.k8s.service: redpanda`.
 commonLabels: {}
@@ -691,34 +691,50 @@ statefulset:
     runAsUser: 101
     fsGroupChangePolicy: OnRootMismatch
   sideCars:
+    # -- To create `Guaranteed` Pods for Redpanda brokers, provide both requests and limits for CPU and memory. For details, see
+    # https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-guaranteed
+    # * Every container in the Pod must have a memory limit and a memory request.
+    # * For every container in the Pod, the memory limit must equal the memory request.
+    # * Every container in the Pod must have a CPU limit and a CPU request.
+    # * For every container in the Pod, the CPU limit must equal the CPU request.
+    #
+    # To maximize efficiency, use the `static` CPU manager policy by specifying an even integer for
+    # CPU resource requests and limits. This policy gives the Pods running Redpanda brokers
+    # access to exclusive CPUs on the node. For details, see
+    # https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/#static-policy
+    resources: {}
+    securityContext: {}
+    extraVolumeMounts: ""
+    image:
+      tag: v2.3.8-24.3.6
+      repository: docker.redpanda.com/redpandadata/redpanda-operator
+    # The PVCUnbinder helps keep redpanda operational in the event of a tolerable Node or Disk loss event when non-remountable storage,
+    # such as `local` or `hostPath`, are used. It does so by monitoring redpanda Pods that are in a "Pending" state for at least the period
+    # specified by `unbindAfter`. After this period it will delete the Pod's PVC to re-trigger volume provisioning.
+    pvcUnbinder:
+      enabled: false
+      unbindAfter: 60s
+    # The BrokerDecommissioner attempts to decommission brokers that have been non-gracefully terminated in a cluster due to something
+    # like a Node crash. When a broker is determined to no longer be valid (i.e. it has been replaced by a broker with a different id)
+    # the decommissioner reaches out to the deployed cluster and begins a decommission operation after detecting the broker as invalid
+    # multiple times across the `decommissionAfter` window. A `decommissionRequeueTimeout` values can be specified to override how
+    # often the decommissioner rechecks a cluster that has a broker which has been flagged as invalid. 
+    brokerDecommissioner:
+      enabled: false
+      decommissionAfter: 60s
+      decommissionRequeueTimeout: 10s
     configWatcher:
       enabled: true
-      # -- To create `Guaranteed` Pods for Redpanda brokers, provide both requests and limits for CPU and memory. For details, see
-      # https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-guaranteed
-      # * Every container in the Pod must have a memory limit and a memory request.
-      # * For every container in the Pod, the memory limit must equal the memory request.
-      # * Every container in the Pod must have a CPU limit and a CPU request.
-      # * For every container in the Pod, the CPU limit must equal the CPU request.
-      #
-      # To maximize efficiency, use the `static` CPU manager policy by specifying an even integer for
-      # CPU resource requests and limits. This policy gives the Pods running Redpanda brokers
-      # access to exclusive CPUs on the node. For details, see
-      # https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/#static-policy
+      # -- DEPRECATED: Please use statefulset.sideCars.resources
       resources: {}
+      # -- DEPRECATED: Please use statefulset.sideCars.securityContext
       securityContext: {}
+      # -- DEPRECATED: Please use statefulset.sideCars.extraVolumeMounts
       extraVolumeMounts: |-
-    # Configure extra controllers to run as sidecars inside the Pods running Redpanda brokers.
-    # Available controllers:
-    # - Decommission Controller: The Decommission Controller ensures smooth scaling down operations.
-    # This controller is responsible for monitoring changes in the number of StatefulSet replicas and orchestrating
-    # the decommissioning of brokers when necessary. It also sets the reclaim policy for the decommissioned
-    # broker's PersistentVolume to `Retain` and deletes the corresponding PersistentVolumeClaim.
-    # - Node-PVC Controller: The Node-PVC Controller handles the PVCs of deleted brokers.
-    # By setting the PV Retain policy to retain, it facilitates the rescheduling of brokers to new, healthy nodes when
-    # an existing node is removed.
+    # -- DEPRECATED: Please use statefulset.sideCars.brokerDecommissioner and statefulset.sideCars.pvcUnbinder
     controllers:
       image:
-        tag: v2.3.6-24.3.3
+        tag: v2.3.8-24.3.6
         repository: docker.redpanda.com/redpandadata/redpanda-operator
       # You must also enable RBAC, `rbac.enabled=true`, to deploy this sidecar
       enabled: false
