@@ -93,7 +93,7 @@ jobs:
   lint:
     runs-on: ubuntu-22.04
     steps:
-      - uses: cachix/install-nix-action@v30
+      - uses: cachix/install-nix-action@v31
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
       # Cache the nix store.
@@ -105,7 +105,7 @@ jobs:
     if: ${{ needs.changes.outputs.go-code == 'true' }}
     runs-on: ubuntu-22.04
     steps:
-      - uses: cachix/install-nix-action@v30
+      - uses: cachix/install-nix-action@v31
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
       - uses: DeterminateSystems/magic-nix-cache-action@v9
