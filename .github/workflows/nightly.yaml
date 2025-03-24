@@ -133,7 +133,7 @@ jobs:
         run: |
           helm repo add jetstack https://charts.jetstack.io &&
           helm install cert-manager --namespace cert-manager \
-            --create-namespace --version v1.11.0 jetstack/cert-manager \
+            --create-namespace --version v1.12.16 jetstack/cert-manager \
             --set installCRDs=true --wait --wait-for-jobs
       - name: Install prometheus-operator
         run: |
