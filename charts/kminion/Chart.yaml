@@ -25,11 +25,11 @@ type: application
 # The chart version and the app version are not the same and will not track
 # together. The chart version is a semver representation of changes to this
 # chart.
-version: 0.14.1
+version: 0.14.2
 
 # The app version is the default version of Kminion to install.
 # ** NOTE for maintainers: please ensure the artifacthub image annotation is updated before merging
-appVersion: v2.2.8
+appVersion: v2.2.12
 
 icon: https://images.ctfassets.net/paqvtpyf8rwu/3cYHw5UzhXCbKuR24GDFGO/73fb682e6157d11c10d5b2b5da1d5af0/skate-stand-panda.svg
 sources:
@@ -43,4 +43,4 @@ annotations:
       url: https://helm.sh/docs/intro/install/
   artifacthub.io/images: |
     - name: kminion
-      image: docker.redpanda.com/redpandadata/kminion:v2.2.5
+      image: docker.redpanda.com/redpandadata/kminion:v2.2.12
