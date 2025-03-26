@@ -508,6 +508,28 @@ HTTP Scheme to use for scraping.
 
 **Default:** `"http"`
 
+### [connectResources](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=connectResources)
+
+Configuration settings for the resources feature in Redpanda Connect.
+
+**Default:**
+
+```
+{"enabled":false,"resourcesConfigMap":""}
+```
+
+### [connectResources.enabled](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=connectResources.enabled)
+
+Enable resources.
+
+**Default:** `false`
+
+### [resources.resourcesConfigMap](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=connectResources.resourcesConfigMap)
+
+Name of the ConfigMap that contains resources configuration files.
+
+**Default:** `""`
+
 ### [streams](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=streams)
 
 Configuration settings for the streams mode feature in Redpanda Connect.
