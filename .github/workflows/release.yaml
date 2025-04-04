@@ -22,7 +22,7 @@
 name: Release
 on:
   push:
-    branches: [main]
+    branches: [release/v25.1]
 defaults:
   run:
     shell: nix develop --impure --command bash {0}
