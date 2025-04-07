@@ -42,6 +42,7 @@
               pkgs.dyff
               pkgs.gh # Github CLI
               pkgs.git
+              pkgs.gnutar
               pkgs.go
               pkgs.go-task
               pkgs.gofumpt
@@ -53,7 +54,6 @@
               pkgs.kubectl
               pkgs.kubernetes-helm
               pkgs.kustomize
-              pkgs.rsync
               pkgs.setup-envtest
               pkgs.yq # jq but for YAML
             ];
