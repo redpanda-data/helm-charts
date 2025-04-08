@@ -13,52 +13,58 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ---
+
+podTemplate:
+  spec:
+    tolerations:
+      - key: "example-key"
+        operator: "Exists"
+        effect: "NoSchedule"
+      - key: "example-key-2"
+        operator: "Exists"
+        effect: "NoExecute"
+
+    affinity:
+      # This is *ignored* because the PostInstallJob specifies an alternative
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: topology.kubernetes.io/zone
+                  operator: In
+                  values:
+                    - antarctica-east1
+                    - antarctica-west1
+
 statefulset:
-  securityContext:
-    runAsUser: 1000
-    runAsGroup: 1000
-
-tolerations:
-  - key: "example-key"
-    operator: "Exists"
-    effect: "NoSchedule"
-  - key: "example-key-2"
-    operator: "Exists"
-    effect: "NoExecute"
-
-affinity:
-  # This is *ignored* because the PostInstallJob specifies an alternative
-  nodeAffinity:
-    requiredDuringSchedulingIgnoredDuringExecution:
-      nodeSelectorTerms:
-        - matchExpressions:
-            - key: topology.kubernetes.io/zone
-              operator: In
-              values:
-                - antarctica-east1
-                - antarctica-west1
-
+  podTemplate:
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
 
 post_install_job:
-  securityContext:
-    # This should override the default above
-    runAsUser: 2000
-
-  resources:
-    limits:
-      cpu: 200m
-    requests:
-      cpu: 2
-
-  affinity:
-    # This completely replaces the global default
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-              - key: topology.kubernetes.io/zone
-                operator: In
-                values:
-                  - arctic-east1
-                  - arctic-west1
+  podTemplate:
+    spec:
+      securityContext:
+        # This should override the default above
+        runAsUser: 2000
+      affinity:
+        # This completely replaces the global default
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: topology.kubernetes.io/zone
+                    operator: In
+                    values:
+                      - arctic-east1
+                      - arctic-west1
+      containers:
+      - name: post-install
+        resources:
+          limits:
+            cpu: 200m
+          requests:
+            cpu: 2
 

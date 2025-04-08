@@ -80,12 +80,12 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $_is_returning = true -}}
-{{- (dict "r" (printf `rpk acl user create myuser --new-password changeme --mechanism %s` (get (fromJson (include "redpanda.SASLMechanism" (dict "a" (list $dot) ))) "r"))) | toJson -}}
+{{- (dict "r" (printf `rpk acl user create myuser --new-password changeme --mechanism %s` (get (fromJson (include "redpanda.GetSASLMechanism" (dict "a" (list $dot) ))) "r"))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
 
-{{- define "redpanda.SASLMechanism" -}}
+{{- define "redpanda.GetSASLMechanism" -}}
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}

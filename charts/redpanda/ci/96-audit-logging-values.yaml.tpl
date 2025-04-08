@@ -26,7 +26,6 @@ auth:
 
 auditLogging:
   enabled: true
-  listeners: default
 
 logging:
   usageStats:
