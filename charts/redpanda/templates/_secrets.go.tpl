@@ -57,12 +57,16 @@
 {{- if (and (and (ne $values.auth.sasl.secretRef "") $values.auth.sasl.enabled) (gt ((get (fromJson (include "_shims.len" (dict "a" (list $values.auth.sasl.users) ))) "r") | int) (0 | int))) -}}
 {{- $secret := (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil) ) ) (mustMergeOverwrite (dict ) (dict "apiVersion" "v1" "kind" "Secret" )) (dict "metadata" (mustMergeOverwrite (dict "creationTimestamp" (coalesce nil) ) (dict "name" $values.auth.sasl.secretRef "namespace" $dot.Release.Namespace "labels" (get (fromJson (include "redpanda.FullLabels" (dict "a" (list $dot) ))) "r") )) "type" "Opaque" "stringData" (dict ) )) -}}
 {{- $usersTxt := (list ) -}}
-{{- range $_, $user := $values.auth.sasl.users -}}
-{{- if (empty $user.mechanism) -}}
-{{- $usersTxt = (concat (default (list ) $usersTxt) (list (printf "%s:%s" $user.name $user.password))) -}}
-{{- else -}}
-{{- $usersTxt = (concat (default (list ) $usersTxt) (list (printf "%s:%s:%s" $user.name $user.password $user.mechanism))) -}}
+{{- $defaultMechanism := "SCRAM-SHA-512" -}}
+{{- if (ne $values.auth.sasl.mechanism "") -}}
+{{- $defaultMechanism = $values.auth.sasl.mechanism -}}
 {{- end -}}
+{{- range $_, $user := $values.auth.sasl.users -}}
+{{- $mechanism := $defaultMechanism -}}
+{{- if (not (empty $user.mechanism)) -}}
+{{- $mechanism = $user.mechanism -}}
+{{- end -}}
+{{- $usersTxt = (concat (default (list ) $usersTxt) (list (printf "%s:%s:%s" $user.name $user.password $mechanism))) -}}
 {{- end -}}
 {{- if $_is_returning -}}
 {{- break -}}
@@ -93,9 +97,9 @@
 {{- break -}}
 {{- end -}}
 {{- $secretName := (printf "%s-bootstrap-user" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot) ))) "r")) -}}
-{{- $_203_existing_4_ok_5 := (get (fromJson (include "_shims.lookup" (dict "a" (list "v1" "Secret" $dot.Release.Namespace $secretName) ))) "r") -}}
-{{- $existing_4 := (index $_203_existing_4_ok_5 0) -}}
-{{- $ok_5 := (index $_203_existing_4_ok_5 1) -}}
+{{- $_209_existing_4_ok_5 := (get (fromJson (include "_shims.lookup" (dict "a" (list "v1" "Secret" $dot.Release.Namespace $secretName) ))) "r") -}}
+{{- $existing_4 := (index $_209_existing_4_ok_5 0) -}}
+{{- $ok_5 := (index $_209_existing_4_ok_5 1) -}}
 {{- if $ok_5 -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $existing_4) | toJson -}}
