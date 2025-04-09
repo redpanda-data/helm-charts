@@ -3,14 +3,12 @@ kind: Redpanda
 metadata:
   name: cluster-tls
 spec:
-  chartRef:
-    chartVersion: ">4.0.0"
   clusterSpec:
     console:
       enabled: false
     image:
       repository: docker.redpanda.com/redpandadata/redpanda
-      tag: v24.2.1
+      tag: v25.1.1
     listeners:
       admin:
         external: {}

@@ -184,9 +184,9 @@ tasks:
   sync:operator:chart:
     - task: sync:chart
       vars:
-        REF: e92ffb8a05a6a35011a24bcda65c094cc6464187 # operator v0.4.41
+        REF: d22c033b9e7989ae471c052f1536b97242f8b539 # operator/v2.4.1 with chart specific fixes.
         LOCAL_DIR: charts/operator
-        REMOTE_DIR: charts/operator
+        REMOTE_DIR: operator/chart
 
   sync:console:chart:
     - task: sync:chart
@@ -208,6 +208,7 @@ tasks:
       - rm -rf '{{ .SRC_DIR }}/{{ .LOCAL_DIR }}'
       - mkdir -p '{{ .SRC_DIR }}/{{ .LOCAL_DIR }}'
       - |
+        cd {{ .LOCAL_DIR }} && \
         curl -Lo - 'https://github.com/redpanda-data/redpanda-operator/archive/{{ .REF }}.tar.gz' | \
         tar \
           --gunzip \
@@ -218,5 +219,5 @@ tasks:
           --exclude 'go.sum' \
           --exclude '*.txtar' \
           --exclude '.changes' \
-          --strip-components 1 \
+          --strip-components {{ (.REMOTE_DIR | split "/" | len) | add 1 }} \
           '*/{{ .REMOTE_DIR }}'
