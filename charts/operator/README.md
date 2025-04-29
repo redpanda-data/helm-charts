@@ -3,7 +3,7 @@
 description: Find the default values and descriptions of settings in the Redpanda Operator Helm chart.
 ---
 
-![Version: v25.1.1-beta1](https://img.shields.io/badge/Version-v25.1.1--beta1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v25.1.1-beta1](https://img.shields.io/badge/AppVersion-v25.1.1--beta1-informational?style=flat-square)
+![Version: v25.1.1-beta2](https://img.shields.io/badge/Version-v25.1.1--beta2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v25.1.1-beta2](https://img.shields.io/badge/AppVersion-v25.1.1--beta2-informational?style=flat-square)
 
 This page describes the official Redpanda Operator Helm Chart. In particular, this page describes the contents of the chart’s [`values.yaml` file](./values.yaml). Each of the settings is listed and described on this page, along with any default values.
 
@@ -273,7 +273,7 @@ Role-based Access Control (RBAC) configuration for the Redpanda Operator.
 **Default:**
 
 ```
-{"create":true,"createAdditionalControllerCRs":false,"createRPKBundleCRs":false}
+{"create":true,"createAdditionalControllerCRs":false,"createRPKBundleCRs":true}
 ```
 
 ### [rbac.create](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=rbac.create)
@@ -292,7 +292,7 @@ Creates additional RBAC cluster roles that are needed to run additional controll
 
 Create RBAC cluster roles needed for the Redpanda Helm chart's 'rbac.enabled' feature.
 
-**Default:** `false`
+**Default:** `true`
 
 ### [replicaCount](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=replicaCount)
 
