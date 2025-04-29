@@ -78,7 +78,7 @@ rbac:
   # needed to run additional controllers using `additionalCmdFlags`.
   createAdditionalControllerCRs: false
   # -- Create RBAC cluster roles needed for the Redpanda Helm chart's 'rbac.enabled' feature.
-  createRPKBundleCRs: false
+  createRPKBundleCRs: true
 
 # -- Specifies whether to create Webhook resources both to intercept and potentially modify or reject Kubernetes API requests as well as authenticate requests to the Kubernetes API. Only valid when `scope` is set to Cluster.
 webhook:
