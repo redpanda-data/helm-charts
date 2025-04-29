@@ -3,7 +3,7 @@
 description: Find the default values and descriptions of settings in the Redpanda Console Helm chart.
 ---
 
-![Version: 0.7.31](https://img.shields.io/badge/Version-0.7.31-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.8.0](https://img.shields.io/badge/AppVersion-v2.8.0-informational?style=flat-square)
+![Version: 3.0.0](https://img.shields.io/badge/Version-3.0.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v3.0.0](https://img.shields.io/badge/AppVersion-v3.0.0-informational?style=flat-square)
 
 This page describes the official Redpanda Console Helm Chart. In particular, this page describes the contents of the chart’s [`values.yaml` file](https://github.com/redpanda-data/helm-charts/blob/main/charts/console/values.yaml).
 Each of the settings is listed and described on this page, along with any default values.
@@ -61,29 +61,19 @@ Automount API credentials for the Service Account into the pod. Console does not
 
 **Default:** `{}`
 
-### [configmap.create](https://artifacthub.io/packages/helm/redpanda-data/console?modal=values&path=configmap.create)
-
-**Default:** `true`
-
-### [console.config](https://artifacthub.io/packages/helm/redpanda-data/console?modal=values&path=console.config)
+### [config](https://artifacthub.io/packages/helm/redpanda-data/console?modal=values&path=config)
 
 Settings for the `Config.yaml` (required). For a reference of configuration settings, see the [Redpanda Console documentation](https://docs.redpanda.com/docs/reference/console/config/).
 
 **Default:** `{}`
 
-### [deployment.create](https://artifacthub.io/packages/helm/redpanda-data/console?modal=values&path=deployment.create)
+### [configmap.create](https://artifacthub.io/packages/helm/redpanda-data/console?modal=values&path=configmap.create)
 
 **Default:** `true`
 
-### [enterprise](https://artifacthub.io/packages/helm/redpanda-data/console?modal=values&path=enterprise)
+### [deployment.create](https://artifacthub.io/packages/helm/redpanda-data/console?modal=values&path=deployment.create)
 
-Settings for license key, as an alternative to secret.enterprise when a license secret is available
-
-**Default:**
-
-```
-{"licenseSecretRef":{"key":"","name":""}}
-```
+**Default:** `true`
 
 ### [extraContainers](https://artifacthub.io/packages/helm/redpanda-data/console?modal=values&path=extraContainers)
 
@@ -159,10 +149,6 @@ Pull secrets may be used to provide credentials to image repositories See https:
 
 **Default:** `{}`
 
-### [ingress.className](https://artifacthub.io/packages/helm/redpanda-data/console?modal=values&path=ingress.className)
-
-**Default:** `nil`
-
 ### [ingress.enabled](https://artifacthub.io/packages/helm/redpanda-data/console?modal=values&path=ingress.enabled)
 
 **Default:** `false`
@@ -227,6 +213,10 @@ Override `console.name` template.
 
 **Default:** `99`
 
+### [podSecurityContext.fsGroupChangePolicy](https://artifacthub.io/packages/helm/redpanda-data/console?modal=values&path=podSecurityContext.fsGroupChangePolicy)
+
+**Default:** `"Always"`
+
 ### [podSecurityContext.runAsUser](https://artifacthub.io/packages/helm/redpanda-data/console?modal=values&path=podSecurityContext.runAsUser)
 
 **Default:** `99`
@@ -274,7 +264,7 @@ Create a new Kubernetes Secret for all sensitive configuration inputs. Each prov
 **Default:**
 
 ```
-{"create":true,"enterprise":{},"kafka":{},"login":{"github":{},"google":{},"jwtSecret":"","oidc":{},"okta":{}},"redpanda":{"adminApi":{}}}
+{"authentication":{"jwtSigningKey":"","oidc":{}},"create":true,"kafka":{},"license":"","redpanda":{"adminApi":{}},"schemaRegistry":{},"serde":{}}
 ```
 
 ### [secret.kafka](https://artifacthub.io/packages/helm/redpanda-data/console?modal=values&path=secret.kafka)
@@ -295,17 +285,13 @@ SecretMounts is an abstraction to make a Secret available in the container's fil
 
 ### [service.annotations](https://artifacthub.io/packages/helm/redpanda-data/console?modal=values&path=service.annotations)
 
+Override the value in `console.config.server.listenPort` if not `nil` targetPort:
+
 **Default:** `{}`
 
 ### [service.port](https://artifacthub.io/packages/helm/redpanda-data/console?modal=values&path=service.port)
 
 **Default:** `8080`
-
-### [service.targetPort](https://artifacthub.io/packages/helm/redpanda-data/console?modal=values&path=service.targetPort)
-
-Override the value in `console.config.server.listenPort` if not `nil`
-
-**Default:** `nil`
 
 ### [service.type](https://artifacthub.io/packages/helm/redpanda-data/console?modal=values&path=service.type)
 

@@ -25,11 +25,6 @@ auth:
 storage:
   persistentVolume:
     size: 3Gi
-# Removed until tests are working reliably
-# connectors:
-#  enabled: true
-#  logging:
-#    level: debug
 
 # tests to ensure this large int isn't converted to scientific notation for the rpk commands
 # in post-upgrade job.

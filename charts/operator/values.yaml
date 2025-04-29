@@ -124,7 +124,8 @@ affinity: {}
 # -- Sets deployment strategy.
 # For details,
 # see the [Kubernetes documentation](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#strategy).
-# strategy: ""
+strategy:
+  type: "RollingUpdate"
 
 # Sets additional annotations for Pods.
 podAnnotations: {}
@@ -135,8 +136,7 @@ podLabels: {}
 # Additional flags include:
 #
 # - `--additional-controllers`: Additional controllers to deploy. Valid values are nodeWatcher or decommission. For more information about the Nodewatcher controller, see [Install the Nodewatcher controller](https://docs.redpanda.com/current/manage/kubernetes/k-scale-redpanda/#node-pvc). For more information about the Decommission controller, see [Use the Decommission controller](https://docs.redpanda.com/current/manage/kubernetes/k-decommission-brokers/#Automated).
-additionalCmdFlags:
-- --configurator-tag=v2.3.6-24.3.3
+additionalCmdFlags: []
 # - --additional-controllers="<controller-name"
 
 # -- Additional labels to add to all Kubernetes objects.
@@ -147,8 +147,6 @@ commonLabels: {}
 monitoring:
   # -- Creates a ServiceMonitor that can be used by Prometheus-Operator or VictoriaMetrics-Operator to scrape the metrics.
   enabled: false
-  # -- Deploys the [Prometheus community Helm chart](https://prometheus-community.github.io/helm-charts/).
-  deployPrometheusKubeStack: false
 
 # Sets the name of the Secret in which to store the self-signed TLS certificate for the Webhooks when `webhook.enabled` is `true`.
 webhookSecretName: webhook-server-cert

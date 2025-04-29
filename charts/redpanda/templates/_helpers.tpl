@@ -167,14 +167,6 @@ Use AppVersion if image.tag is not set
 {{- toJson (dict "bool" $result) -}}
 {{- end -}}
 
-{{- define "pod-security-context" -}}
-{{- get ((include "redpanda.PodSecurityContext" (dict "a" (list .))) | fromJson) "r" | toYaml }}
-{{- end -}}
-
-{{- define "container-security-context" -}}
-{{- get ((include "redpanda.ContainerSecurityContext" (dict "a" (list .))) | fromJson) "r" | toYaml }}
-{{- end -}}
-
 {{- define "admin-tls-curl-flags" -}}
   {{- $result := "" -}}
   {{- if (include "admin-internal-tls-enabled" . | fromJson).bool -}}
@@ -251,47 +243,27 @@ advertised-host returns a json string with the data needed for configuring the a
   {{- toJson $brokers -}}
 {{- end -}}
 
-{{/*
-return license checks deprecated values if current values is empty
-*/}}
 {{- define "enterprise-license" -}}
 {{- if dig "license" dict .Values.enterprise -}}
   {{- .Values.enterprise.license -}}
-{{- else -}}
-  {{- .Values.license_key -}}
 {{- end -}}
 {{- end -}}
 
-{{/*
-return licenseSecretRef checks deprecated values entry if current values empty
-*/}}
 {{- define "enterprise-secret" -}}
 {{- if ( dig "licenseSecretRef" dict .Values.enterprise ) -}}
   {{- .Values.enterprise.licenseSecretRef -}}
-{{- else if not (empty .Values.license_secret_ref ) -}}
-  {{- .Values.license_secret_ref -}}
 {{- end -}}
 {{- end -}}
 
-{{/*
-return licenseSecretRef.name checks deprecated values entry if current values empty
-*/}}
 {{- define "enterprise-secret-name" -}}
 {{- if ( dig "licenseSecretRef" dict .Values.enterprise ) -}}
   {{- dig "name" "" .Values.enterprise.licenseSecretRef -}}
-{{- else if not (empty .Values.license_secret_ref ) -}}
-  {{- dig "secret_name" "" .Values.license_secret_ref -}}
 {{- end -}}
 {{- end -}}
 
-{{/*
-return licenseSecretRef.key checks deprecated values entry if current values empty
-*/}}
 {{- define "enterprise-secret-key" -}}
 {{- if ( dig "licenseSecretRef" dict .Values.enterprise ) -}}
   {{- dig "key" "" .Values.enterprise.licenseSecretRef -}}
-{{- else if not (empty .Values.license_secret_ref ) -}}
-  {{- dig "secret_key" "" .Values.license_secret_ref -}}
 {{- end -}}
 {{- end -}}
 
