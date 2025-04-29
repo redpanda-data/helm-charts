@@ -2313,6 +2313,43 @@ entries:
           description: Define a Redpanda cluster
       artifacthub.io/images: |
         - name: redpanda-operator
+          image: docker.redpanda.com/redpandadata/redpanda-operator:v25.1.1-beta2
+        - name: redpanda
+          image: docker.redpanda.com/redpandadata/redpanda:v25.1.1
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://docs.redpanda.com
+        - name: "Helm (>= 3.6.0)"
+          url: https://helm.sh/docs/intro/install/
+      artifacthub.io/operator: "true"
+      artifacthub.io/operatorCapabilities: Seamless Upgrades
+    apiVersion: v2
+    appVersion: v25.1.1-beta2
+    created: "2025-04-29T21:24:02.540579105Z"
+    description: Redpanda operator helm chart
+    digest: 233b270c78e48f0ddea88e85deb6fd8e0b4a221fd63d2170a53dcd06c449efc1
+    icon: https://go.redpanda.com/hubfs/Redpandas/operator-panda.png
+    kubeVersion: '>= 1.25.0-0'
+    maintainers:
+    - name: redpanda-data
+      url: https://github.com/orgs/redpanda-data/people
+    name: operator
+    sources:
+    - https://github.com/redpanda-data/redpanda-operator/tree/main/operator/chart
+    type: application
+    urls:
+    - https://github.com/redpanda-data/helm-charts/releases/download/operator-v25.1.1-beta2/operator-v25.1.1-beta2.tgz
+    version: v25.1.1-beta2
+  - annotations:
+      artifacthub.io/crds: |
+        - kind: Redpanda
+          version: v1alpha1
+          name: redpanda
+          displayName: Redpanda
+          description: Define a Redpanda cluster
+      artifacthub.io/images: |
+        - name: redpanda-operator
           image: docker.redpanda.com/redpandadata/redpanda-operator:v25.1.1-beta1
         - name: redpanda
           image: docker.redpanda.com/redpandadata/redpanda:v25.1.1
@@ -17965,4 +18002,4 @@ entries:
     urls:
     - https://charts.redpanda.com/redpanda-0.1.0.tgz
     version: 0.1.0
-generated: "2025-04-10T20:57:51.442558152Z"
+generated: "2025-04-29T21:24:02.541371515Z"
