@@ -3,7 +3,7 @@
 description: Find the default values and descriptions of settings in the Redpanda Helm chart.
 ---
 
-![Version: 5.10.1](https://img.shields.io/badge/Version-5.10.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v25.1.1](https://img.shields.io/badge/AppVersion-v25.1.1-informational?style=flat-square)
+![Version: 5.10.2](https://img.shields.io/badge/Version-5.10.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v25.1.2](https://img.shields.io/badge/AppVersion-v25.1.2-informational?style=flat-square)
 
 This page describes the official Redpanda Helm Chart. In particular, this page describes the contents of the chart’s [`values.yaml` file](https://github.com/redpanda-data/helm-charts/blob/main/charts/redpanda/values.yaml). Each of the settings is listed and described on this page, along with any default values.
 
@@ -322,14 +322,8 @@ Redpanda Docker image settings.
 **Default:**
 
 ```
-{"pullPolicy":"IfNotPresent","repository":"docker.redpanda.com/redpandadata/redpanda","tag":""}
+{"repository":"docker.redpanda.com/redpandadata/redpanda","tag":""}
 ```
-
-### [image.pullPolicy](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=image.pullPolicy)
-
-The imagePullPolicy. If `image.tag` is 'latest', the default is `Always`.
-
-**Default:** `"IfNotPresent"`
 
 ### [image.repository](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=image.repository)
 
@@ -604,7 +598,7 @@ Role Based Access Control.
 **Default:**
 
 ```
-{"annotations":{},"enabled":false}
+{"annotations":{},"enabled":true,"rpkDebugBundle":true}
 ```
 
 ### [rbac.annotations](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=rbac.annotations)
@@ -615,9 +609,15 @@ Annotations to add to the `rbac` resources.
 
 ### [rbac.enabled](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=rbac.enabled)
 
-Enable for features that need extra privileges. If you use the Redpanda Operator, you must deploy it with the `--set rbac.createRPKBundleCRs=true` flag to give it the required ClusterRoles.
+Controls whether or not Roles, ClusterRoles, and bindings thereof will be generated. Disabling this very likely result in a non-functional deployment. If you use the Redpanda Operator, you must deploy it with the `--set rbac.createRPKBundleCRs=true` flag to give it the required ClusterRoles.
 
-**Default:** `false`
+**Default:** `true`
+
+### [rbac.rpkDebugBundle](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=rbac.rpkDebugBundle)
+
+Controls whether or not a Role and RoleBinding will be generated for the permissions required by `rpk debug bundle`. Disabling will not affect the redpanda deployment itself but a bundle is required to engage with our support.
+
+**Default:** `true`
 
 ### [resources](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=resources)
 
@@ -705,7 +705,7 @@ Service account management.
 **Default:**
 
 ```
-{"annotations":{},"automountServiceAccountToken":false,"create":false,"name":""}
+{"annotations":{},"create":true,"name":""}
 ```
 
 ### [serviceAccount.annotations](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=serviceAccount.annotations)
@@ -714,17 +714,11 @@ Annotations to add to the service account.
 
 **Default:** `{}`
 
-### [serviceAccount.automountServiceAccountToken](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=serviceAccount.automountServiceAccountToken)
-
-Specifies whether a service account should automount API-Credentials. The token is used in sidecars.controllers
-
-**Default:** `false`
-
 ### [serviceAccount.create](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=serviceAccount.create)
 
 Specifies whether a service account should be created.
 
-**Default:** `false`
+**Default:** `true`
 
 ### [serviceAccount.name](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=serviceAccount.name)
 
@@ -997,7 +991,7 @@ DEPRECATED: Please use statefulset.sideCars.brokerDecommissioner and statefulset
 **Default:**
 
 ```
-{"createRBAC":true,"enabled":false,"healthProbeAddress":":8085","image":{"repository":"docker.redpanda.com/redpandadata/redpanda-operator","tag":"v2.3.8-24.3.6"},"metricsAddress":":9082","pprofAddress":":9083","resources":{},"run":["all"],"securityContext":{}}
+{"createRBAC":true,"enabled":false,"healthProbeAddress":":8085","image":{"repository":"docker.redpanda.com/redpandadata/redpanda-operator","tag":"v2.4.1"},"metricsAddress":":9082","pprofAddress":":9083","resources":{},"run":["all"],"securityContext":{}}
 ```
 
 ### [statefulset.sideCars.controllers.resources](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.sideCars.controllers.resources)
@@ -1020,7 +1014,7 @@ To create `Guaranteed` Pods for Redpanda brokers, provide both requests and limi
 
 ### [statefulset.sideCars.image.tag](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.sideCars.image.tag)
 
-**Default:** `"v2.3.8-24.3.6"`
+**Default:** `"v2.4.1"`
 
 ### [statefulset.sideCars.pvcUnbinder.enabled](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.sideCars.pvcUnbinder.enabled)
 

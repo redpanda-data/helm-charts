@@ -7570,26 +7570,18 @@
     "image": {
       "description": "Values used to define the container image to be used for Redpanda",
       "properties": {
-        "pullPolicy": {
-          "description": "The Kubernetes Pod image pull policy.",
-          "pattern": "^(Always|Never|IfNotPresent)$",
-          "type": "string"
-        },
         "repository": {
-          "default": "docker.redpanda.com/redpandadata/redpanda",
           "description": "container image repository",
           "type": "string"
         },
         "tag": {
-          "default": "Chart.appVersion",
           "description": "The container image tag. Use the Redpanda release version. Must be a valid semver prefixed with a 'v'.",
-          "pattern": "^v(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$|^$",
           "type": "string"
         }
       },
       "required": [
         "repository",
-        "pullPolicy"
+        "tag"
       ],
       "type": "object"
     },
@@ -13987,10 +13979,14 @@
         },
         "enabled": {
           "type": "boolean"
+        },
+        "rpkDebugBundle": {
+          "type": "boolean"
         }
       },
       "required": [
         "enabled",
+        "rpkDebugBundle",
         "annotations"
       ],
       "type": "object"
@@ -19267,18 +19263,17 @@
                 "image": {
                   "properties": {
                     "repository": {
-                      "default": "docker.redpanda.com/redpandadata/redpanda-operator",
+                      "description": "container image repository",
                       "type": "string"
                     },
                     "tag": {
-                      "default": "Chart.appVersion",
-                      "pattern": "^v(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$|^$",
+                      "description": "The container image tag. Use the Redpanda release version. Must be a valid semver prefixed with a 'v'.",
                       "type": "string"
                     }
                   },
                   "required": [
-                    "tag",
-                    "repository"
+                    "repository",
+                    "tag"
                   ],
                   "type": "object"
                 },
@@ -19424,18 +19419,17 @@
             "image": {
               "properties": {
                 "repository": {
-                  "default": "docker.redpanda.com/redpandadata/redpanda-operator",
+                  "description": "container image repository",
                   "type": "string"
                 },
                 "tag": {
-                  "default": "Chart.appVersion",
-                  "pattern": "^v(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$|^$",
+                  "description": "The container image tag. Use the Redpanda release version. Must be a valid semver prefixed with a 'v'.",
                   "type": "string"
                 }
               },
               "required": [
-                "tag",
-                "repository"
+                "repository",
+                "tag"
               ],
               "type": "object"
             },
