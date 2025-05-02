@@ -1,5 +1,5 @@
 ---
-# Source: operator/templates/service_account.yaml
+# Source: operator/templates/entry-point.yaml
 apiVersion: v1
 automountServiceAccountToken: false
 kind: ServiceAccount
@@ -10,12 +10,12 @@ metadata:
     app.kubernetes.io/instance: operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.3.8-24.3.6
-    helm.sh/chart: operator-0.4.40
+    app.kubernetes.io/version: v25.1.1-beta2
+    helm.sh/chart: operator-v25.1.1-beta2
   name: operator
   namespace: redpanda
 ---
-# Source: operator/templates/configmap.yaml
+# Source: operator/templates/entry-point.yaml
 apiVersion: v1
 data:
   controller_manager_config.yaml: |-
@@ -38,12 +38,12 @@ metadata:
     app.kubernetes.io/instance: operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.3.8-24.3.6
-    helm.sh/chart: operator-0.4.40
+    app.kubernetes.io/version: v25.1.1-beta2
+    helm.sh/chart: operator-v25.1.1-beta2
   name: operator-config
   namespace: redpanda
 ---
-# Source: operator/templates/clusterrole.yaml
+# Source: operator/templates/entry-point.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -53,8 +53,8 @@ metadata:
     app.kubernetes.io/instance: operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.3.8-24.3.6
-    helm.sh/chart: operator-0.4.40
+    app.kubernetes.io/version: v25.1.1-beta2
+    helm.sh/chart: operator-v25.1.1-beta2
   name: operator-metrics-reader
 rules:
 - nonResourceURLs:
@@ -62,7 +62,7 @@ rules:
   verbs:
   - get
 ---
-# Source: operator/templates/clusterrole.yaml
+# Source: operator/templates/entry-point.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -72,9 +72,9 @@ metadata:
     app.kubernetes.io/instance: operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.3.8-24.3.6
-    helm.sh/chart: operator-0.4.40
-  name: operator-proxy-role
+    app.kubernetes.io/version: v25.1.1-beta2
+    helm.sh/chart: operator-v25.1.1-beta2
+  name: operator
 rules:
 - apiGroups:
   - authentication.k8s.io
@@ -88,21 +88,6 @@ rules:
   - subjectaccessreviews
   verbs:
   - create
----
-# Source: operator/templates/clusterrole.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  annotations: null
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/instance: operator
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.3.8-24.3.6
-    helm.sh/chart: operator-0.4.40
-  name: operator
-rules:
 - apiGroups:
   - cluster.redpanda.com
   resources:
@@ -119,12 +104,18 @@ rules:
   - cluster.redpanda.com
   resources:
   - redpandas/finalizers
+  - schemas/finalizers
+  - topics/finalizers
+  - users/finalizers
   verbs:
   - update
 - apiGroups:
   - cluster.redpanda.com
   resources:
   - redpandas/status
+  - schemas/status
+  - topics/status
+  - users/status
   verbs:
   - get
   - patch
@@ -142,38 +133,20 @@ rules:
   - update
   - watch
 - apiGroups:
-  - cluster.redpanda.com
-  resources:
-  - schemas/finalizers
-  - topics/finalizers
-  - users/finalizers
-  verbs:
-  - update
-- apiGroups:
-  - cluster.redpanda.com
-  resources:
-  - schemas/status
-  - topics/status
-  - users/status
-  verbs:
-  - get
-  - patch
-  - update
-- apiGroups:
   - rbac.authorization.k8s.io
   resources:
   - clusterrolebindings
   - clusterroles
   verbs:
   - create
-  - get
   - delete
+  - get
   - list
   - patch
   - update
   - watch
 ---
-# Source: operator/templates/clusterrole_binding.yaml
+# Source: operator/templates/entry-point.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
@@ -183,30 +156,8 @@ metadata:
     app.kubernetes.io/instance: operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.3.8-24.3.6
-    helm.sh/chart: operator-0.4.40
-  name: operator-proxy-role
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: operator-proxy-role
-subjects:
-- kind: ServiceAccount
-  name: operator
-  namespace: redpanda
----
-# Source: operator/templates/clusterrole_binding.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  annotations: null
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/instance: operator
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.3.8-24.3.6
-    helm.sh/chart: operator-0.4.40
+    app.kubernetes.io/version: v25.1.1-beta2
+    helm.sh/chart: operator-v25.1.1-beta2
   name: operator
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -217,7 +168,7 @@ subjects:
   name: operator
   namespace: redpanda
 ---
-# Source: operator/templates/role.yaml
+# Source: operator/templates/entry-point.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -227,188 +178,11 @@ metadata:
     app.kubernetes.io/instance: operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.3.8-24.3.6
-    helm.sh/chart: operator-0.4.40
+    app.kubernetes.io/version: v25.1.1-beta2
+    helm.sh/chart: operator-v25.1.1-beta2
   name: operator-election-role
   namespace: redpanda
 rules:
-- apiGroups:
-  - coordination.k8s.io
-  resources:
-  - leases
-  verbs:
-  - get
-  - list
-  - watch
-  - create
-  - update
-  - patch
-  - delete
----
-# Source: operator/templates/role.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  annotations: null
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/instance: operator
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.3.8-24.3.6
-    helm.sh/chart: operator-0.4.40
-  name: operator-pvc
-  namespace: redpanda
-rules:
-- apiGroups:
-  - ""
-  resources:
-  - persistentvolumeclaims
-  verbs:
-  - list
-  - delete
----
-# Source: operator/templates/role.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  annotations: null
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/instance: operator
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.3.8-24.3.6
-    helm.sh/chart: operator-0.4.40
-  name: operator
-  namespace: redpanda
-rules:
-- apiGroups:
-  - autoscaling
-  resources:
-  - horizontalpodautoscalers
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - persistentvolumeclaims
-  verbs:
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - pods
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - apps
-  resources:
-  - deployments
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - apps
-  resources:
-  - replicasets
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - apps
-  resources:
-  - statefulsets
-  verbs:
-  - list
-  - watch
-  - create
-  - delete
-  - get
-  - patch
-  - update
-- apiGroups:
-  - apps
-  resources:
-  - statefulsets/status
-  verbs:
-  - patch
-  - update
-- apiGroups:
-  - batch
-  resources:
-  - jobs
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - cert-manager.io
-  resources:
-  - certificates
-  verbs:
-  - create
-  - delete
-  - get
-  - patch
-  - update
-  - list
-  - watch
-- apiGroups:
-  - cert-manager.io
-  resources:
-  - issuers
-  verbs:
-  - create
-  - delete
-  - get
-  - patch
-  - update
-  - list
-  - watch
-- apiGroups:
-  - coordination.k8s.io
-  resources:
-  - leases
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
 - apiGroups:
   - ""
   resources:
@@ -429,9 +203,37 @@ rules:
   - create
   - patch
 - apiGroups:
-  - ""
+  - coordination.k8s.io
   resources:
-  - secrets
+  - leases
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+---
+# Source: operator/templates/entry-point.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations: null
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/instance: operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: operator
+    app.kubernetes.io/version: v25.1.1-beta2
+    helm.sh/chart: operator-v25.1.1-beta2
+  name: operator
+  namespace: redpanda
+rules:
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
   verbs:
   - create
   - delete
@@ -443,36 +245,10 @@ rules:
 - apiGroups:
   - ""
   resources:
-  - serviceaccounts
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - ""
-  resources:
+  - configmaps
   - pods
-  verbs:
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - pods/status
-  verbs:
-  - patch
-  - update
-- apiGroups:
-  - ""
-  resources:
+  - secrets
+  - serviceaccounts
   - services
   verbs:
   - create
@@ -483,9 +259,17 @@ rules:
   - update
   - watch
 - apiGroups:
-  - helm.toolkit.fluxcd.io
+  - ""
   resources:
-  - helmreleases
+  - events
+  verbs:
+  - create
+  - patch
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  - statefulsets
   verbs:
   - create
   - delete
@@ -495,24 +279,59 @@ rules:
   - update
   - watch
 - apiGroups:
-  - helm.toolkit.fluxcd.io
+  - autoscaling
   resources:
-  - helmreleases/finalizers
+  - horizontalpodautoscalers
   verbs:
-  - update
-- apiGroups:
-  - helm.toolkit.fluxcd.io
-  resources:
-  - helmreleases/status
-  verbs:
+  - create
+  - delete
   - get
+  - list
   - patch
   - update
+  - watch
+- apiGroups:
+  - batch
+  resources:
+  - jobs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - cert-manager.io
+  resources:
+  - certificates
+  - issuers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - coordination.k8s.io
+  resources:
+  - leases
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
 - apiGroups:
   - monitoring.coreos.com
   resources:
-  - servicemonitors
   - podmonitors
+  - servicemonitors
   verbs:
   - create
   - delete
@@ -549,17 +368,6 @@ rules:
   - rbac.authorization.k8s.io
   resources:
   - rolebindings
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - rbac.authorization.k8s.io
-  resources:
   - roles
   verbs:
   - create
@@ -569,122 +377,41 @@ rules:
   - patch
   - update
   - watch
-- apiGroups:
-  - source.toolkit.fluxcd.io
-  resources:
-  - buckets
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - source.toolkit.fluxcd.io
-  resources:
-  - gitrepositories
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - source.toolkit.fluxcd.io
-  resources:
-  - gitrepository
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - source.toolkit.fluxcd.io
-  resources:
-  - gitrepository/finalizers
-  verbs:
-  - create
-  - delete
-  - get
-  - patch
-  - update
-- apiGroups:
-  - source.toolkit.fluxcd.io
-  resources:
-  - gitrepository/status
-  verbs:
-  - get
-  - patch
-  - update
-- apiGroups:
-  - source.toolkit.fluxcd.io
-  resources:
-  - helmcharts
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - source.toolkit.fluxcd.io
-  resources:
-  - helmcharts/finalizers
-  verbs:
-  - create
-  - delete
-  - get
-  - patch
-  - update
-- apiGroups:
-  - source.toolkit.fluxcd.io
-  resources:
-  - helmcharts/status
-  verbs:
-  - get
-  - patch
-  - update
-- apiGroups:
-  - source.toolkit.fluxcd.io
-  resources:
-  - helmrepositories
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - source.toolkit.fluxcd.io
-  resources:
-  - helmrepositories/finalizers
-  verbs:
-  - create
-  - delete
-  - get
-  - patch
-  - update
-- apiGroups:
-  - source.toolkit.fluxcd.io
-  resources:
-  - helmrepositories/status
-  verbs:
-  - get
-  - patch
-  - update
 ---
-# Source: operator/templates/role_binding.yaml
+# Source: operator/templates/entry-point.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations: null
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/instance: operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: operator
+    app.kubernetes.io/version: v25.1.1-beta2
+    helm.sh/chart: operator-v25.1.1-beta2
+  name: operator-rpk-bundle
+  namespace: redpanda
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  - endpoints
+  - events
+  - limitranges
+  - persistentvolumeclaims
+  - pods
+  - pods/log
+  - replicationcontrollers
+  - resourcequotas
+  - serviceaccounts
+  - services
+  verbs:
+  - get
+  - list
+---
+# Source: operator/templates/entry-point.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -694,9 +421,9 @@ metadata:
     app.kubernetes.io/instance: operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.3.8-24.3.6
-    helm.sh/chart: operator-0.4.40
-  name: operator-election-rolebinding
+    app.kubernetes.io/version: v25.1.1-beta2
+    helm.sh/chart: operator-v25.1.1-beta2
+  name: operator-election-role
   namespace: redpanda
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -707,7 +434,7 @@ subjects:
   name: operator
   namespace: redpanda
 ---
-# Source: operator/templates/role_binding.yaml
+# Source: operator/templates/entry-point.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -717,31 +444,8 @@ metadata:
     app.kubernetes.io/instance: operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.3.8-24.3.6
-    helm.sh/chart: operator-0.4.40
-  name: operator-pvc
-  namespace: redpanda
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: operator-pvc
-subjects:
-- kind: ServiceAccount
-  name: operator
-  namespace: redpanda
----
-# Source: operator/templates/role_binding.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  annotations: null
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/instance: operator
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.3.8-24.3.6
-    helm.sh/chart: operator-0.4.40
+    app.kubernetes.io/version: v25.1.1-beta2
+    helm.sh/chart: operator-v25.1.1-beta2
   name: operator
   namespace: redpanda
 roleRef:
@@ -753,7 +457,30 @@ subjects:
   name: operator
   namespace: redpanda
 ---
-# Source: operator/templates/service_metrics.yaml
+# Source: operator/templates/entry-point.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  annotations: null
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/instance: operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: operator
+    app.kubernetes.io/version: v25.1.1-beta2
+    helm.sh/chart: operator-v25.1.1-beta2
+  name: operator-rpk-bundle
+  namespace: redpanda
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: operator-rpk-bundle
+subjects:
+- kind: ServiceAccount
+  name: operator
+  namespace: redpanda
+---
+# Source: operator/templates/entry-point.yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -763,8 +490,8 @@ metadata:
     app.kubernetes.io/instance: operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.3.8-24.3.6
-    helm.sh/chart: operator-0.4.40
+    app.kubernetes.io/version: v25.1.1-beta2
+    helm.sh/chart: operator-v25.1.1-beta2
   name: operator-metrics-service
   namespace: redpanda
 spec:
@@ -776,7 +503,7 @@ spec:
     app.kubernetes.io/instance: operator
     app.kubernetes.io/name: operator
 ---
-# Source: operator/templates/deployment.yaml
+# Source: operator/templates/entry-point.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -786,8 +513,8 @@ metadata:
     app.kubernetes.io/instance: operator
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: operator
-    app.kubernetes.io/version: v2.3.8-24.3.6
-    helm.sh/chart: operator-0.4.40
+    app.kubernetes.io/version: v25.1.1-beta2
+    helm.sh/chart: operator-v25.1.1-beta2
   name: operator
   namespace: redpanda
 spec:
@@ -796,7 +523,8 @@ spec:
     matchLabels:
       app.kubernetes.io/instance: operator
       app.kubernetes.io/name: operator
-  strategy: null
+  strategy:
+    type: RollingUpdate
   template:
     metadata:
       annotations: {}
@@ -814,11 +542,12 @@ spec:
         - --webhook-enabled=false
         - --namespace=redpanda
         - --log-level=info
-        - --configurator-tag=v2.3.6-24.3.3
+        - --configurator-tag=v25.1.1-beta2
+        - --configurator-base-image=docker.redpanda.com/redpandadata/redpanda-operator
         command:
         - /manager
         env: []
-        image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.8-24.3.6
+        image: docker.redpanda.com/redpandadata/redpanda-operator:v25.1.1-beta2
         imagePullPolicy: IfNotPresent
         livenessProbe:
           httpGet:
