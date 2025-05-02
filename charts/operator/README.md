@@ -3,7 +3,7 @@
 description: Find the default values and descriptions of settings in the Redpanda Operator Helm chart.
 ---
 
-![Version: v2.4.1](https://img.shields.io/badge/Version-v2.4.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.4.1](https://img.shields.io/badge/AppVersion-v2.4.1-informational?style=flat-square)
+![Version: v2.4.2](https://img.shields.io/badge/Version-v2.4.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.4.2](https://img.shields.io/badge/AppVersion-v2.4.2-informational?style=flat-square)
 
 This page describes the official Redpanda Operator Helm Chart. In particular, this page describes the contents of the chart’s [`values.yaml` file](./values.yaml). Each of the settings is listed and described on this page, along with any default values.
 
@@ -273,7 +273,7 @@ Role-based Access Control (RBAC) configuration for the Redpanda Operator.
 **Default:**
 
 ```
-{"create":true,"createAdditionalControllerCRs":false,"createRPKBundleCRs":false}
+{"create":true,"createAdditionalControllerCRs":true,"createCompatCRs":true,"createRPKBundleCRs":true}
 ```
 
 ### [rbac.create](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=rbac.create)
@@ -284,15 +284,21 @@ Enables the creation of additional RBAC roles.
 
 ### [rbac.createAdditionalControllerCRs](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=rbac.createAdditionalControllerCRs)
 
-Creates additional RBAC cluster roles that are needed to run additional controllers using `additionalCmdFlags`.
+Creates additional RBAC cluster roles that are needed to run additional controllers using `additionalCmdFlags`. WARNING: Disabling this value may prevent the operator from deploying certain configurations of redpanda.
 
-**Default:** `false`
+**Default:** `true`
+
+### [rbac.createCompatCRs](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=rbac.createCompatCRs)
+
+Create ClusterRoles needed for compatibility with charts < v5.10.2 or < v5.9.22.
+
+**Default:** `true`
 
 ### [rbac.createRPKBundleCRs](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=rbac.createRPKBundleCRs)
 
-Create RBAC cluster roles needed for the Redpanda Helm chart's 'rbac.enabled' feature.
+Create ClusterRoles needed for the Redpanda Helm chart's 'rbac.rpkDebugBundle' feature.
 
-**Default:** `false`
+**Default:** `true`
 
 ### [replicaCount](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=replicaCount)
 
