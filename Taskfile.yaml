@@ -184,9 +184,9 @@ tasks:
   sync:operator:chart:
     - task: sync:chart
       vars:
-        REF: 6c588ebe8dd6267fb1d45dbb0176f006c5731e1e # operator/v0.4.40
+        REF: operator/v2.3.9-24.3.11
         LOCAL_DIR: charts/operator
-        REMOTE_DIR: charts/operator
+        REMOTE_DIR: operator/chart
 
   sync:console:chart:
     - task: sync:chart
