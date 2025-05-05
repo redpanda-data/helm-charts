@@ -2498,6 +2498,45 @@ entries:
           description: Define a Redpanda cluster
       artifacthub.io/images: |
         - name: redpanda-operator
+          image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.9-24.3.11
+        - name: configurator
+          image: docker.redpanda.com/redpandadata/configurator:v2.3.9-24.3.11
+        - name: redpanda
+          image: docker.redpanda.com/redpandadata/redpanda:v24.3.11
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://docs.redpanda.com
+        - name: "Helm (>= 3.6.0)"
+          url: https://helm.sh/docs/intro/install/
+      artifacthub.io/operator: "true"
+      artifacthub.io/operatorCapabilities: Seamless Upgrades
+    apiVersion: v2
+    appVersion: v2.3.9-24.3.11
+    created: "2025-05-05T20:19:19.321772626Z"
+    description: Redpanda operator helm chart
+    digest: a30663d84f90f1f41e2950012498926467c73e3ddf2532ead8433d629a26f851
+    icon: https://go.redpanda.com/hubfs/Redpandas/operator-panda.png
+    kubeVersion: '>= 1.25.0-0'
+    maintainers:
+    - name: redpanda-data
+      url: https://github.com/orgs/redpanda-data/people
+    name: operator
+    sources:
+    - https://github.com/redpanda-data/redpanda-operator/tree/main/operator/chart
+    type: application
+    urls:
+    - https://github.com/redpanda-data/helm-charts/releases/download/operator-v2.3.9-24.3.11/operator-v2.3.9-24.3.11.tgz
+    version: v2.3.9-24.3.11
+  - annotations:
+      artifacthub.io/crds: |
+        - kind: Redpanda
+          version: v1alpha1
+          name: redpanda
+          displayName: Redpanda
+          description: Define a Redpanda cluster
+      artifacthub.io/images: |
+        - name: redpanda-operator
           image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.7-24.3.6
         - name: redpanda
           image: docker.redpanda.com/redpandadata/redpanda:v24.3.6
@@ -18152,4 +18191,4 @@ entries:
     urls:
     - https://charts.redpanda.com/redpanda-0.1.0.tgz
     version: 0.1.0
-generated: "2025-05-05T16:40:01.470923992Z"
+generated: "2025-05-05T20:19:19.322503601Z"
