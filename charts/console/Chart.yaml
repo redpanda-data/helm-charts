@@ -27,10 +27,10 @@ type: application
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
 
 # Chart versions do not track appVersion
-version: 3.0.0
+version: 3.1.0
 
 # The app version is the version of the Chart application
-appVersion: v3.0.0
+appVersion: v3.1.0
 
 kubeVersion: ">= 1.25.0-0"
 
@@ -46,4 +46,4 @@ annotations:
       url: https://helm.sh/docs/intro/install/
   artifacthub.io/images: |
     - name: console
-      image: docker.redpanda.com/redpandadata/console:v3.0.0
+      image: docker.redpanda.com/redpandadata/console:v3.1.0
