@@ -3,7 +3,7 @@
 description: Find the default values and descriptions of settings in the Redpanda Helm chart.
 ---
 
-![Version: 25.1.1-beta1](https://img.shields.io/badge/Version-25.1.1--beta1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v25.1.1](https://img.shields.io/badge/AppVersion-v25.1.1-informational?style=flat-square)
+![Version: 25.1.1-beta3](https://img.shields.io/badge/Version-25.1.1--beta3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v25.1.2](https://img.shields.io/badge/AppVersion-v25.1.2-informational?style=flat-square)
 
 This page describes the official Redpanda Helm Chart. In particular, this page describes the contents of the chart’s [`values.yaml` file](https://github.com/redpanda-data/helm-charts/blob/main/charts/redpanda/values.yaml). Each of the settings is listed and described on this page, along with any default values.
 
@@ -22,7 +22,7 @@ Kubernetes: `>= 1.25.0-0`
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://charts.redpanda.com | console(console) | >=3.0.0-0 |
+| https://charts.redpanda.com | console(console) | >=3.1.0-0 |
 
 ## Settings
 
@@ -305,14 +305,8 @@ Redpanda Docker image settings.
 **Default:**
 
 ```
-{"pullPolicy":"IfNotPresent","repository":"docker.redpanda.com/redpandadata/redpanda","tag":""}
+{"repository":"docker.redpanda.com/redpandadata/redpanda","tag":""}
 ```
-
-### [image.pullPolicy](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=image.pullPolicy)
-
-The imagePullPolicy. If `image.tag` is 'latest', the default is `Always`.
-
-**Default:** `"IfNotPresent"`
 
 ### [image.repository](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=image.repository)
 
@@ -337,7 +331,7 @@ Listener settings.  Override global settings configured above for individual lis
 **Default:**
 
 ```
-{"admin":{"external":{"default":{"advertisedPorts":[31644],"port":9645,"tls":{"cert":"external"}}},"port":9644,"tls":{"cert":"default","requireClientAuth":false}},"http":{"authenticationMethod":null,"enabled":true,"external":{"default":{"advertisedPorts":[30082],"authenticationMethod":null,"port":8083,"tls":{"cert":"external","requireClientAuth":false}}},"kafkaEndpoint":"default","port":8082,"tls":{"cert":"default","requireClientAuth":false}},"kafka":{"authenticationMethod":null,"external":{"default":{"advertisedPorts":[31092],"authenticationMethod":null,"port":9094,"tls":{"cert":"external"}}},"port":9093,"tls":{"cert":"default","requireClientAuth":false}},"rpc":{"port":33145,"tls":{"cert":"default","requireClientAuth":false}},"schemaRegistry":{"authenticationMethod":null,"enabled":true,"external":{"default":{"advertisedPorts":[30081],"authenticationMethod":null,"port":8084,"tls":{"cert":"external","requireClientAuth":false}}},"kafkaEndpoint":"default","port":8081,"tls":{"cert":"default","requireClientAuth":false}}}
+{"admin":{"external":{"default":{"advertisedPorts":[31644],"port":9645,"tls":{"cert":"external"}}},"port":9644,"tls":{"cert":"default","requireClientAuth":false}},"http":{"authenticationMethod":null,"enabled":true,"external":{"default":{"advertisedPorts":[30082],"authenticationMethod":null,"port":8083,"tls":{"cert":"external","requireClientAuth":false}}},"port":8082,"tls":{"cert":"default","requireClientAuth":false}},"kafka":{"authenticationMethod":null,"external":{"default":{"advertisedPorts":[31092],"authenticationMethod":null,"port":9094,"tls":{"cert":"external"}}},"port":9093,"tls":{"cert":"default","requireClientAuth":false}},"rpc":{"port":33145,"tls":{"cert":"default","requireClientAuth":false}},"schemaRegistry":{"authenticationMethod":null,"enabled":true,"external":{"default":{"advertisedPorts":[30081],"authenticationMethod":null,"port":8084,"tls":{"cert":"external","requireClientAuth":false}}},"port":8081,"tls":{"cert":"default","requireClientAuth":false}}}
 ```
 
 ### [listeners.admin](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=listeners.admin)
@@ -411,7 +405,7 @@ HTTP API listeners (aka PandaProxy).
 **Default:**
 
 ```
-{"authenticationMethod":null,"enabled":true,"external":{"default":{"advertisedPorts":[30082],"authenticationMethod":null,"port":8083,"tls":{"cert":"external","requireClientAuth":false}}},"kafkaEndpoint":"default","port":8082,"tls":{"cert":"default","requireClientAuth":false}}
+{"authenticationMethod":null,"enabled":true,"external":{"default":{"advertisedPorts":[30082],"authenticationMethod":null,"port":8083,"tls":{"cert":"external","requireClientAuth":false}}},"port":8082,"tls":{"cert":"default","requireClientAuth":false}}
 ```
 
 ### [listeners.kafka](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=listeners.kafka)
@@ -459,7 +453,7 @@ Schema registry listeners.
 **Default:**
 
 ```
-{"authenticationMethod":null,"enabled":true,"external":{"default":{"advertisedPorts":[30081],"authenticationMethod":null,"port":8084,"tls":{"cert":"external","requireClientAuth":false}}},"kafkaEndpoint":"default","port":8081,"tls":{"cert":"default","requireClientAuth":false}}
+{"authenticationMethod":null,"enabled":true,"external":{"default":{"advertisedPorts":[30081],"authenticationMethod":null,"port":8084,"tls":{"cert":"external","requireClientAuth":false}}},"port":8081,"tls":{"cert":"default","requireClientAuth":false}}
 ```
 
 ### [logging](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=logging)
@@ -587,7 +581,7 @@ Role Based Access Control.
 **Default:**
 
 ```
-{"annotations":{},"enabled":false}
+{"annotations":{},"enabled":true,"rpkDebugBundle":true}
 ```
 
 ### [rbac.annotations](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=rbac.annotations)
@@ -598,9 +592,15 @@ Annotations to add to the `rbac` resources.
 
 ### [rbac.enabled](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=rbac.enabled)
 
-Enable for features that need extra privileges. If you use the Redpanda Operator, you must deploy it with the `--set rbac.createRPKBundleCRs=true` flag to give it the required ClusterRoles.
+Controls whether or not Roles, ClusterRoles, and bindings thereof will be generated. Disabling this very likely result in a non-functional deployment. If you use the Redpanda Operator, you must deploy it with the `--set rbac.createRPKBundleCRs=true` flag to give it the required ClusterRoles.
 
-**Default:** `false`
+**Default:** `true`
+
+### [rbac.rpkDebugBundle](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=rbac.rpkDebugBundle)
+
+Controls whether or not a Role and RoleBinding will be generated for the permissions required by `rpk debug bundle`. Disabling will not affect the redpanda deployment itself but a bundle is required to engage with our support.
+
+**Default:** `true`
 
 ### [resources](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=resources)
 
@@ -688,7 +688,7 @@ Service account management.
 **Default:**
 
 ```
-{"annotations":{},"automountServiceAccountToken":false,"create":false,"name":""}
+{"annotations":{},"create":true,"name":""}
 ```
 
 ### [serviceAccount.annotations](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=serviceAccount.annotations)
@@ -697,17 +697,11 @@ Annotations to add to the service account.
 
 **Default:** `{}`
 
-### [serviceAccount.automountServiceAccountToken](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=serviceAccount.automountServiceAccountToken)
-
-Specifies whether a service account should automount API-Credentials. The token is used in sidecars.controllers
-
-**Default:** `false`
-
 ### [serviceAccount.create](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=serviceAccount.create)
 
 Specifies whether a service account should be created.
 
-**Default:** `false`
+**Default:** `true`
 
 ### [serviceAccount.name](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=serviceAccount.name)
 
@@ -857,18 +851,6 @@ Number of Redpanda brokers (Redpanda Data recommends setting this to the number 
 
 **Default:** `":8085"`
 
-### [statefulset.sideCars.controllers.image.repository](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.sideCars.controllers.image.repository)
-
-**Default:**
-
-```
-"docker.redpanda.com/redpandadata/redpanda-operator"
-```
-
-### [statefulset.sideCars.controllers.image.tag](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.sideCars.controllers.image.tag)
-
-**Default:** `"v2.3.8-24.3.6"`
-
 ### [statefulset.sideCars.controllers.metricsAddress](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.sideCars.controllers.metricsAddress)
 
 **Default:** `":9082"`
@@ -891,7 +873,7 @@ Number of Redpanda brokers (Redpanda Data recommends setting this to the number 
 
 ### [statefulset.sideCars.image.tag](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.sideCars.image.tag)
 
-**Default:** `"v2.3.8-24.3.6"`
+**Default:** `"v25.1.1-beta2"`
 
 ### [statefulset.sideCars.pvcUnbinder.enabled](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.sideCars.pvcUnbinder.enabled)
 
