@@ -45,9 +45,6 @@ image:
   # and [all unstable versions](https://hub.docker.com/r/redpandadata/redpanda-unstable/tags).
   # @default -- `Chart.appVersion`.
   tag: ""
-  # -- The imagePullPolicy.
-  # If `image.tag` is 'latest', the default is `Always`.
-  pullPolicy: IfNotPresent
 
 podTemplate:
   # -- Labels to apply (or overwrite the default) to all Pods of this Chart.
@@ -670,7 +667,7 @@ statefulset:
     custom: {}
   sideCars:
     image:
-      tag: v2.3.8-24.3.6
+      tag: v25.1.1-beta2
       repository: docker.redpanda.com/redpandadata/redpanda-operator
     # The PVCUnbinder helps keep redpanda operational in the event of a tolerable Node or Disk loss event when non-remountable storage,
     # such as `local` or `hostPath`, are used. It does so by monitoring redpanda Pods that are in a "Pending" state for at least the period
@@ -690,9 +687,6 @@ statefulset:
     configWatcher:
       enabled: true
     controllers:
-      image:
-        tag: v2.3.8-24.3.6
-        repository: docker.redpanda.com/redpandadata/redpanda-operator
       # You must also enable RBAC, `rbac.enabled=true`, to deploy this sidecar
       enabled: false
       healthProbeAddress: ":8085"
@@ -719,9 +713,7 @@ statefulset:
 # -- Service account management.
 serviceAccount:
   # -- Specifies whether a service account should be created.
-  create: false
-  # -- Specifies whether a service account should automount API-Credentials. The token is used in sidecars.controllers
-  automountServiceAccountToken: false
+  create: true
   # -- Annotations to add to the service account.
   annotations: {}
   # -- The name of the service account to use.
@@ -731,11 +723,19 @@ serviceAccount:
 
 # -- Role Based Access Control.
 rbac:
-  # -- Enable for features that need extra privileges.
-  # If you use the Redpanda Operator,
-  # you must deploy it with the `--set rbac.createRPKBundleCRs=true` flag
-  # to give it the required ClusterRoles.
-  enabled: false
+  # -- Controls whether or not Roles, ClusterRoles, and bindings thereof will
+  # be generated. Disabling this very likely result in a non-functional
+  # deployment.
+  # If you use the Redpanda Operator, you must deploy it with the `--set
+  # rbac.createRPKBundleCRs=true` flag to give it the required ClusterRoles.
+  enabled: true
+
+  # -- Controls whether or not a Role and RoleBinding will be generated for the
+  # permissions required by `rpk debug bundle`. Disabling will not affect the
+  # redpanda deployment itself but a bundle is required to engage with our
+  # support.
+  rpkDebugBundle: true
+
   # -- Annotations to add to the `rbac` resources.
   annotations: {}
 
@@ -856,7 +856,6 @@ listeners:
   schemaRegistry:
     enabled: true
     port: 8081
-    kafkaEndpoint: default
     # default is "http_basic"
     authenticationMethod:
     tls:
@@ -880,7 +879,6 @@ listeners:
   http:
     enabled: true
     port: 8082
-    kafkaEndpoint: default
     # default is "http_basic"
     authenticationMethod:
     tls:
