@@ -545,6 +545,33 @@ entries:
   - annotations:
       artifacthub.io/images: |
         - name: console
+          image: docker.redpanda.com/redpandadata/console:v3.1.0
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://docs.redpanda.com
+        - name: "Helm (>= 3.6.0)"
+          url: https://helm.sh/docs/intro/install/
+    apiVersion: v2
+    appVersion: v3.1.0
+    created: "2025-05-08T08:10:49.479468857Z"
+    description: Helm chart to deploy Redpanda Console.
+    digest: 16aeb40456ded8b6ab41856b595396978dd17469176252012b11f8f1520307ac
+    icon: https://go.redpanda.com/hubfs/Redpandas/skate-stand-panda.svg
+    kubeVersion: '>= 1.25.0-0'
+    maintainers:
+    - name: redpanda-data
+      url: https://github.com/orgs/redpanda-data/people
+    name: console
+    sources:
+    - https://github.com/redpanda-data/redpanda-operator/tree/main/charts/console
+    type: application
+    urls:
+    - https://github.com/redpanda-data/helm-charts/releases/download/console-3.1.0/console-3.1.0.tgz
+    version: 3.1.0
+  - annotations:
+      artifacthub.io/images: |
+        - name: console
           image: docker.redpanda.com/redpandadata/console:v3.0.0
       artifacthub.io/license: Apache-2.0
       artifacthub.io/links: |
@@ -5538,6 +5565,41 @@ entries:
       version: '>=3.0.0-0'
     description: Redpanda is the real-time engine for modern apps.
     digest: 1c64d134a6112c43743fbfe416ccecf5f5f9016184fd083aac877a4c63def39a
+    icon: https://go.redpanda.com/hubfs/Redpandas/skate-stand-panda.svg
+    kubeVersion: '>= 1.25.0-0'
+    maintainers:
+    - name: redpanda-data
+      url: https://github.com/orgs/redpanda-data/people
+    name: redpanda
+    sources:
+    - https://github.com/redpanda-data/redpanda-operator/tree/main/charts/redpanda
+    type: application
+    urls:
+    - https://github.com/redpanda-data/helm-charts/releases/download/redpanda-25.1.1-beta1/redpanda-25.1.1-beta1.tgz
+    version: 25.1.1-beta1
+  - annotations:
+      artifacthub.io/images: |
+        - name: redpanda
+          image: docker.redpanda.com/redpandadata/redpanda:v25.1.1
+        - name: busybox
+          image: busybox:latest
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://docs.redpanda.com
+        - name: "Helm (>= 3.10.0)"
+          url: https://helm.sh/docs/intro/install/
+    apiVersion: v2
+    appVersion: v25.1.1
+    created: "2025-05-08T08:10:49.597443487Z"
+    dependencies:
+    - alias: console
+      condition: console.enabled
+      name: console
+      repository: https://charts.redpanda.com
+      version: '>=3.0.0-0'
+    description: Redpanda is the real-time engine for modern apps.
+    digest: aab2e2951bb7df7b0e06b0280d082c04ad9de39eaffcf380af3d0ae558dee7af
     icon: https://go.redpanda.com/hubfs/Redpandas/skate-stand-panda.svg
     kubeVersion: '>= 1.25.0-0'
     maintainers:
@@ -18226,4 +18288,4 @@ entries:
     urls:
     - https://charts.redpanda.com/redpanda-0.1.0.tgz
     version: 0.1.0
-generated: "2025-05-07T19:44:00.873886023Z"
+generated: "2025-05-08T08:10:49.598507048Z"
