@@ -68,6 +68,10 @@ spec:
             {{- if eq .Values.telemetry false}}
             - --disable-telemetry
             {{- end }}
+            {{- if and .Values.connectResources.enabled .Values.connectResources.resourcesConfigMap }}
+            - "--resources"
+            - /resources/*.yaml
+            {{- end }}
             {{- if and .Values.streams.enabled .Values.streams.streamsConfigMap }}
             - "streams"
             {{- if eq .Values.streams.api.enable false }}
@@ -108,6 +112,11 @@ spec:
             {{- if .Values.extraVolumeMounts }}
               {{- toYaml .Values.extraVolumeMounts | nindent 12 }}
             {{- end }}
+            {{- if and .Values.connectResources.enabled .Values.connectResources.resourcesConfigMap }}
+            - name: resources
+              mountPath: "/resources"
+              readOnly: true
+            {{- end }}
             {{- if and .Values.streams.enabled .Values.streams.streamsConfigMap }}
             - name: streams
               mountPath: "/streams"
@@ -135,6 +144,11 @@ spec:
             name: {{ template "redpanda-connect.fullname" . }}-config
         {{- if .Values.extraVolumes }}
           {{- toYaml .Values.extraVolumes | nindent 8 }}
+        {{- end }}
+        {{- if and .Values.connectResources.enabled .Values.connectResources.resourcesConfigMap }}
+        - name: resources
+          configMap:
+            name: {{ .Values.connectResources.resourcesConfigMap }}
         {{- end }}
         {{- if and .Values.streams.enabled .Values.streams.streamsConfigMap }}
         - name: streams
