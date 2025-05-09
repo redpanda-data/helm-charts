@@ -33,11 +33,14 @@ jobs:
       fail-fast: false
     runs-on: ubuntu-22.04
     steps:
-      - uses: cachix/install-nix-action@v31
+      - uses: nixbuild/nix-quick-install-action@v30
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
       # Cache the nix store.
-      - uses: DeterminateSystems/magic-nix-cache-action@v9
+      - uses: nix-community/cache-nix-action@v6
+        with:
+          primary-key: nix-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/*.nix', '**/flake.lock') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-${{ runner.arch }}
       # Cache helm repositories.
       - uses: actions/cache@v4
         with:
