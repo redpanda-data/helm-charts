@@ -132,6 +132,41 @@ tests:
                 - name: My-Header
                   value: Foo
 
+  - it: should enable resources
+    set:
+      deployment:
+        rolloutConfigMap: false
+      connectResources:
+        enabled: true
+        resourcesConfigMap: "my-config-map"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].args
+          value:
+            - -c
+            - /redpanda-connect.yaml
+            - --resources
+            - /resources/*.yaml
+      - equal:
+          path: spec.template.spec.containers[0].volumeMounts
+          value:
+            - mountPath: /redpanda-connect.yaml
+              name: config
+              readOnly: true
+              subPath: redpanda-connect.yaml
+            - mountPath: /resources
+              name: resources
+              readOnly: true
+      - equal:
+          path: spec.template.spec.volumes
+          value:
+            - configMap:
+                name: RELEASE-NAME-redpanda-connect-config
+              name: config
+            - configMap:
+                name: my-config-map
+              name: resources
+
   - it: should enable streams
     set:
       deployment:
