@@ -2562,6 +2562,45 @@ entries:
           description: Define a Redpanda cluster
       artifacthub.io/images: |
         - name: redpanda-operator
+          image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.10-24.3.14
+        - name: configurator
+          image: docker.redpanda.com/redpandadata/configurator:v2.3.10-24.3.14
+        - name: redpanda
+          image: docker.redpanda.com/redpandadata/redpanda:v24.3.14
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://docs.redpanda.com
+        - name: "Helm (>= 3.6.0)"
+          url: https://helm.sh/docs/intro/install/
+      artifacthub.io/operator: "true"
+      artifacthub.io/operatorCapabilities: Seamless Upgrades
+    apiVersion: v2
+    appVersion: v2.3.10-24.3.14
+    created: "2025-05-23T18:57:44.877555342Z"
+    description: Redpanda operator helm chart
+    digest: 99be46b64257b3e263b28997c1c3803882bd17ec7f16a9f9c3e90b455285fa0a
+    icon: https://go.redpanda.com/hubfs/Redpandas/operator-panda.png
+    kubeVersion: '>= 1.25.0-0'
+    maintainers:
+    - name: redpanda-data
+      url: https://github.com/orgs/redpanda-data/people
+    name: operator
+    sources:
+    - https://github.com/redpanda-data/redpanda-operator/tree/main/operator/chart
+    type: application
+    urls:
+    - https://github.com/redpanda-data/helm-charts/releases/download/operator-v2.3.10-24.3.14/operator-v2.3.10-24.3.14.tgz
+    version: v2.3.10-24.3.14
+  - annotations:
+      artifacthub.io/crds: |
+        - kind: Redpanda
+          version: v1alpha1
+          name: redpanda
+          displayName: Redpanda
+          description: Define a Redpanda cluster
+      artifacthub.io/images: |
+        - name: redpanda-operator
           image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.9-24.3.11
         - name: configurator
           image: docker.redpanda.com/redpandadata/configurator:v2.3.9-24.3.11
@@ -5760,6 +5799,44 @@ entries:
     urls:
     - https://github.com/redpanda-data/helm-charts/releases/download/redpanda-5.10.1/redpanda-5.10.1.tgz
     version: 5.10.1
+  - annotations:
+      artifacthub.io/images: |
+        - name: redpanda
+          image: docker.redpanda.com/redpandadata/redpanda:v24.3.14
+        - name: busybox
+          image: busybox:latest
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://docs.redpanda.com
+        - name: "Helm (>= 3.10.0)"
+          url: https://helm.sh/docs/intro/install/
+    apiVersion: v2
+    appVersion: v24.3.14
+    created: "2025-05-23T18:57:45.092304068Z"
+    dependencies:
+    - condition: console.enabled
+      name: console
+      repository: https://charts.redpanda.com
+      version: '>=0.5 <1.0'
+    - condition: connectors.enabled
+      name: connectors
+      repository: https://charts.redpanda.com
+      version: '>=0.1.2 <1.0'
+    description: Redpanda is the real-time engine for modern apps.
+    digest: 157a2d8c1869c2e8d592952c7575d9a7b6578418fec6b9aa1b2edec5736738a7
+    icon: https://go.redpanda.com/hubfs/Redpandas/skate-stand-panda.svg
+    kubeVersion: '>= 1.25.0-0'
+    maintainers:
+    - name: redpanda-data
+      url: https://github.com/orgs/redpanda-data/people
+    name: redpanda
+    sources:
+    - https://github.com/redpanda-data/redpanda-operator/tree/main/charts/redpanda
+    type: application
+    urls:
+    - https://github.com/redpanda-data/helm-charts/releases/download/redpanda-5.9.23/redpanda-5.9.23.tgz
+    version: 5.9.23
   - annotations:
       artifacthub.io/images: |
         - name: redpanda
@@ -18360,4 +18437,4 @@ entries:
     urls:
     - https://charts.redpanda.com/redpanda-0.1.0.tgz
     version: 0.1.0
-generated: "2025-05-08T13:25:40.622053908Z"
+generated: "2025-05-23T18:57:45.093281668Z"
