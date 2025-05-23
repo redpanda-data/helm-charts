@@ -719,6 +719,59 @@
         "cluster": {
           "type": "object"
         },
+        "extraClusterConfiguration": {
+          "additionalProperties": {
+            "properties": {
+              "configMapKeyRef": {
+                "properties": {
+                  "key": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "optional": {
+                    "type": "boolean"
+                  }
+                },
+                "type": "object"
+              },
+              "externalSecretRefSelector": {
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "optional": {
+                    "type": "boolean"
+                  }
+                },
+                "type": "object"
+              },
+              "repr": {
+                "type": "string"
+              },
+              "secretKeyRef": {
+                "properties": {
+                  "key": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "optional": {
+                    "type": "boolean"
+                  }
+                },
+                "type": "object"
+              },
+              "useRawValue": {
+                "type": "boolean"
+              }
+            },
+            "type": "object"
+          },
+          "type": "object"
+        },
         "node": {
           "type": "object"
         },
@@ -14229,6 +14282,19 @@
           "properties": {
             "configurator": {
               "properties": {
+                "additionalCLIArgs": {
+                  "oneOf": [
+                    {
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": "array"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
                 "extraVolumeMounts": {
                   "type": "string"
                 },
