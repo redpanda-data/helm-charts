@@ -3,7 +3,7 @@
 description: Find the default values and descriptions of settings in the Redpanda Helm chart.
 ---
 
-![Version: 5.9.22](https://img.shields.io/badge/Version-5.9.22-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v24.3.11](https://img.shields.io/badge/AppVersion-v24.3.11-informational?style=flat-square)
+![Version: 5.9.23](https://img.shields.io/badge/Version-5.9.23-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v24.3.14](https://img.shields.io/badge/AppVersion-v24.3.14-informational?style=flat-square)
 
 This page describes the official Redpanda Helm Chart. In particular, this page describes the contents of the chart’s [`values.yaml` file](https://github.com/redpanda-data/helm-charts/blob/main/charts/redpanda/values.yaml). Each of the settings is listed and described on this page, along with any default values.
 
@@ -172,7 +172,7 @@ This section contains various settings supported by Redpanda that may not work c
 **Default:**
 
 ```
-{"cluster":{},"node":{"crash_loop_limit":5},"pandaproxy_client":{},"rpk":{},"schema_registry_client":{},"tunable":{"compacted_log_segment_size":67108864,"kafka_connection_rate_limit":1000,"log_segment_size_max":268435456,"log_segment_size_min":16777216,"max_compacted_log_segment_size":536870912}}
+{"cluster":{},"extraClusterConfiguration":{},"node":{"crash_loop_limit":5},"pandaproxy_client":{},"rpk":{},"schema_registry_client":{},"tunable":{"compacted_log_segment_size":67108864,"kafka_connection_rate_limit":1000,"log_segment_size_max":268435456,"log_segment_size_min":16777216,"max_compacted_log_segment_size":536870912}}
 ```
 
 ### [config.cluster](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=config.cluster)
@@ -770,6 +770,10 @@ DEPRECATED Please use statefulset.podTemplate.annotations. Annotations are used 
 
 **Default:** `"latest"`
 
+### [statefulset.initContainers.configurator.additionalCLIArgs](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.configurator.additionalCLIArgs)
+
+**Default:** `[]`
+
 ### [statefulset.initContainers.configurator.extraVolumeMounts](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.initContainers.configurator.extraVolumeMounts)
 
 **Default:** `""`
@@ -997,7 +1001,7 @@ DEPRECATED: Please use statefulset.sideCars.brokerDecommissioner and statefulset
 **Default:**
 
 ```
-{"createRBAC":true,"enabled":false,"healthProbeAddress":":8085","image":{"repository":"docker.redpanda.com/redpandadata/redpanda-operator","tag":"v2.3.8-24.3.6"},"metricsAddress":":9082","pprofAddress":":9083","resources":{},"run":["all"],"securityContext":{}}
+{"createRBAC":true,"enabled":false,"healthProbeAddress":":8085","image":{"repository":"docker.redpanda.com/redpandadata/redpanda-operator","tag":"v2.3.10-24.3.14"},"metricsAddress":":9082","pprofAddress":":9083","resources":{},"run":["all"],"securityContext":{}}
 ```
 
 ### [statefulset.sideCars.controllers.resources](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.sideCars.controllers.resources)
@@ -1020,7 +1024,7 @@ To create `Guaranteed` Pods for Redpanda brokers, provide both requests and limi
 
 ### [statefulset.sideCars.image.tag](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.sideCars.image.tag)
 
-**Default:** `"v2.3.8-24.3.6"`
+**Default:** `"v2.3.10-24.3.14"`
 
 ### [statefulset.sideCars.pvcUnbinder.enabled](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=statefulset.sideCars.pvcUnbinder.enabled)
 

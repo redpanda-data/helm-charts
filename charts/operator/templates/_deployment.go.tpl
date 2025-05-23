@@ -92,10 +92,7 @@
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
-{{- $vol := (list) -}}
-{{- if $values.serviceAccount.create -}}
-{{- $vol = (concat (default (list) $vol) (list (get (fromJson (include "operator.kubeTokenAPIVolume" (dict "a" (list "kube-api-access")))) "r"))) -}}
-{{- end -}}
+{{- $vol := (list (get (fromJson (include "operator.kubeTokenAPIVolume" (dict "a" (list "kube-api-access")))) "r")) -}}
 {{- if (not (get (fromJson (include "operator.isWebhookEnabled" (dict "a" (list $dot)))) "r")) -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $vol) | toJson -}}

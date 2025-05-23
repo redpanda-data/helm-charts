@@ -15,8 +15,11 @@
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
+{{- $_29_bootstrap_fixups := (get (fromJson (include "redpanda.BootstrapFile" (dict "a" (list $dot)))) "r") -}}
+{{- $bootstrap := (index $_29_bootstrap_fixups 0) -}}
+{{- $fixups := (index $_29_bootstrap_fixups 1) -}}
 {{- $_is_returning = true -}}
-{{- (dict "r" (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil))) (mustMergeOverwrite (dict) (dict "kind" "ConfigMap" "apiVersion" "v1")) (dict "metadata" (mustMergeOverwrite (dict "creationTimestamp" (coalesce nil)) (dict "name" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot)))) "r") "namespace" $dot.Release.Namespace "labels" (get (fromJson (include "redpanda.FullLabels" (dict "a" (list $dot)))) "r"))) "data" (dict "bootstrap.yaml" (get (fromJson (include "redpanda.BootstrapFile" (dict "a" (list $dot)))) "r") "redpanda.yaml" (get (fromJson (include "redpanda.RedpandaConfigFile" (dict "a" (list $dot true)))) "r"))))) | toJson -}}
+{{- (dict "r" (mustMergeOverwrite (dict "metadata" (dict "creationTimestamp" (coalesce nil))) (mustMergeOverwrite (dict) (dict "kind" "ConfigMap" "apiVersion" "v1")) (dict "metadata" (mustMergeOverwrite (dict "creationTimestamp" (coalesce nil)) (dict "name" (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot)))) "r") "namespace" $dot.Release.Namespace "labels" (get (fromJson (include "redpanda.FullLabels" (dict "a" (list $dot)))) "r"))) "data" (dict ".bootstrap.json.in" $bootstrap "bootstrap.yaml.fixups" $fixups "redpanda.yaml" (get (fromJson (include "redpanda.RedpandaConfigFile" (dict "a" (list $dot true)))) "r"))))) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -25,28 +28,63 @@
 {{- $dot := (index .a 0) -}}
 {{- range $_ := (list 1) -}}
 {{- $_is_returning := false -}}
+{{- $_60_template_fixups := (get (fromJson (include "redpanda.BootstrapContents" (dict "a" (list $dot)))) "r") -}}
+{{- $template := (index $_60_template_fixups 0) -}}
+{{- $fixups := (index $_60_template_fixups 1) -}}
+{{- $fixupStr := (toJson $fixups) -}}
+{{- if (eq ((get (fromJson (include "_shims.len" (dict "a" (list $fixups)))) "r") | int) (0 | int)) -}}
+{{- $fixupStr = `[]` -}}
+{{- end -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (list (toJson $template) $fixupStr)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.BootstrapContents" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
 {{- $values := $dot.Values.AsMap -}}
+{{- $fixups := (list) -}}
 {{- $bootstrap := (dict "kafka_enable_authorization" (get (fromJson (include "redpanda.Auth.IsSASLEnabled" (dict "a" (list $values.auth)))) "r") "enable_sasl" (get (fromJson (include "redpanda.Auth.IsSASLEnabled" (dict "a" (list $values.auth)))) "r") "enable_rack_awareness" $values.rackAwareness.enabled "storage_min_free_bytes" ((get (fromJson (include "redpanda.Storage.StorageMinFreeBytes" (dict "a" (list $values.storage)))) "r") | int64)) -}}
 {{- $bootstrap = (merge (dict) $bootstrap (get (fromJson (include "redpanda.AuditLogging.Translate" (dict "a" (list $values.auditLogging $dot (get (fromJson (include "redpanda.Auth.IsSASLEnabled" (dict "a" (list $values.auth)))) "r"))))) "r")) -}}
 {{- $bootstrap = (merge (dict) $bootstrap (get (fromJson (include "redpanda.Logging.Translate" (dict "a" (list $values.logging)))) "r")) -}}
 {{- $bootstrap = (merge (dict) $bootstrap (get (fromJson (include "redpanda.TunableConfig.Translate" (dict "a" (list $values.config.tunable)))) "r")) -}}
 {{- $bootstrap = (merge (dict) $bootstrap (get (fromJson (include "redpanda.ClusterConfig.Translate" (dict "a" (list $values.config.cluster)))) "r")) -}}
 {{- $bootstrap = (merge (dict) $bootstrap (get (fromJson (include "redpanda.Auth.Translate" (dict "a" (list $values.auth (get (fromJson (include "redpanda.Auth.IsSASLEnabled" (dict "a" (list $values.auth)))) "r"))))) "r")) -}}
-{{- $bootstrap = (merge (dict) $bootstrap (get (fromJson (include "redpanda.TieredStorageConfig.Translate" (dict "a" (list (deepCopy (get (fromJson (include "redpanda.Storage.GetTieredStorageConfig" (dict "a" (list $values.storage)))) "r")) $values.storage.tiered.credentialsSecretRef)))) "r")) -}}
-{{- $_80___ok_1 := (get (fromJson (include "_shims.dicttest" (dict "a" (list $values.config.cluster "default_topic_replications" (coalesce nil))))) "r") -}}
-{{- $_ := (index $_80___ok_1 0) -}}
-{{- $ok_1 := (index $_80___ok_1 1) -}}
+{{- $_86_attrs_fixes := (get (fromJson (include "redpanda.TieredStorageConfig.Translate" (dict "a" (list (deepCopy (get (fromJson (include "redpanda.Storage.GetTieredStorageConfig" (dict "a" (list $values.storage)))) "r")) $values.storage.tiered.credentialsSecretRef)))) "r") -}}
+{{- $attrs := (index $_86_attrs_fixes 0) -}}
+{{- $fixes := (index $_86_attrs_fixes 1) -}}
+{{- $bootstrap = (merge (dict) $bootstrap $attrs) -}}
+{{- $fixups = (concat (default (list) $fixups) (default (list) $fixes)) -}}
+{{- $_96___ok_1 := (get (fromJson (include "_shims.dicttest" (dict "a" (list $values.config.cluster "default_topic_replications" (coalesce nil))))) "r") -}}
+{{- $_ := (index $_96___ok_1 0) -}}
+{{- $ok_1 := (index $_96___ok_1 1) -}}
 {{- if (and (not $ok_1) (ge ($values.statefulset.replicas | int) (3 | int))) -}}
 {{- $_ := (set $bootstrap "default_topic_replications" (3 | int)) -}}
 {{- end -}}
-{{- $_85___ok_2 := (get (fromJson (include "_shims.dicttest" (dict "a" (list $values.config.cluster "storage_min_free_bytes" (coalesce nil))))) "r") -}}
-{{- $_ := (index $_85___ok_2 0) -}}
-{{- $ok_2 := (index $_85___ok_2 1) -}}
+{{- $_101___ok_2 := (get (fromJson (include "_shims.dicttest" (dict "a" (list $values.config.cluster "storage_min_free_bytes" (coalesce nil))))) "r") -}}
+{{- $_ := (index $_101___ok_2 0) -}}
+{{- $ok_2 := (index $_101___ok_2 1) -}}
 {{- if (not $ok_2) -}}
 {{- $_ := (set $bootstrap "storage_min_free_bytes" ((get (fromJson (include "redpanda.Storage.StorageMinFreeBytes" (dict "a" (list $values.storage)))) "r") | int64)) -}}
 {{- end -}}
+{{- $template := (dict) -}}
+{{- range $k, $v := $bootstrap -}}
+{{- $_ := (set $template $k (toJson $v)) -}}
+{{- end -}}
+{{- if $_is_returning -}}
+{{- break -}}
+{{- end -}}
+{{- $_112_extra_fixes__ := (get (fromJson (include "redpanda.ClusterConfiguration.Translate" (dict "a" (list (deepCopy $values.config.extraClusterConfiguration))))) "r") -}}
+{{- $extra := (index $_112_extra_fixes__ 0) -}}
+{{- $fixes := (index $_112_extra_fixes__ 1) -}}
+{{- $_ := (index $_112_extra_fixes__ 2) -}}
+{{- $template = (merge (dict) $template $extra) -}}
+{{- $fixups = (concat (default (list) $fixups) (default (list) $fixes)) -}}
 {{- $_is_returning = true -}}
-{{- (dict "r" (toYaml $bootstrap)) | toJson -}}
+{{- (dict "r" (list $template $fixups)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
@@ -121,23 +159,23 @@
 {{- break -}}
 {{- end -}}
 {{- $kafkaTLS := (get (fromJson (include "redpanda.rpkKafkaClientTLSConfiguration" (dict "a" (list $dot)))) "r") -}}
-{{- $_175___ok_3 := (get (fromJson (include "_shims.dicttest" (dict "a" (list $kafkaTLS "ca_file" (coalesce nil))))) "r") -}}
-{{- $_ := (index $_175___ok_3 0) -}}
-{{- $ok_3 := (index $_175___ok_3 1) -}}
+{{- $_201___ok_3 := (get (fromJson (include "_shims.dicttest" (dict "a" (list $kafkaTLS "ca_file" (coalesce nil))))) "r") -}}
+{{- $_ := (index $_201___ok_3 0) -}}
+{{- $ok_3 := (index $_201___ok_3 1) -}}
 {{- if $ok_3 -}}
 {{- $_ := (set $kafkaTLS "ca_file" "ca.crt") -}}
 {{- end -}}
 {{- $adminTLS := (get (fromJson (include "redpanda.rpkAdminAPIClientTLSConfiguration" (dict "a" (list $dot)))) "r") -}}
-{{- $_181___ok_4 := (get (fromJson (include "_shims.dicttest" (dict "a" (list $adminTLS "ca_file" (coalesce nil))))) "r") -}}
-{{- $_ := (index $_181___ok_4 0) -}}
-{{- $ok_4 := (index $_181___ok_4 1) -}}
+{{- $_207___ok_4 := (get (fromJson (include "_shims.dicttest" (dict "a" (list $adminTLS "ca_file" (coalesce nil))))) "r") -}}
+{{- $_ := (index $_207___ok_4 0) -}}
+{{- $ok_4 := (index $_207___ok_4 1) -}}
 {{- if $ok_4 -}}
 {{- $_ := (set $adminTLS "ca_file" "ca.crt") -}}
 {{- end -}}
 {{- $schemaTLS := (get (fromJson (include "redpanda.rpkSchemaRegistryClientTLSConfiguration" (dict "a" (list $dot)))) "r") -}}
-{{- $_187___ok_5 := (get (fromJson (include "_shims.dicttest" (dict "a" (list $schemaTLS "ca_file" (coalesce nil))))) "r") -}}
-{{- $_ := (index $_187___ok_5 0) -}}
-{{- $ok_5 := (index $_187___ok_5 1) -}}
+{{- $_213___ok_5 := (get (fromJson (include "_shims.dicttest" (dict "a" (list $schemaTLS "ca_file" (coalesce nil))))) "r") -}}
+{{- $_ := (index $_213___ok_5 0) -}}
+{{- $ok_5 := (index $_213___ok_5 1) -}}
 {{- if $ok_5 -}}
 {{- $_ := (set $schemaTLS "ca_file" "ca.crt") -}}
 {{- end -}}
@@ -318,10 +356,10 @@
 {{- if (gt ((get (fromJson (include "_shims.len" (dict "a" (list $tls_8)))) "r") | int) (0 | int)) -}}
 {{- $schemaRegistryTLS = $tls_8 -}}
 {{- end -}}
-{{- $_372_lockMemory_overprovisioned_flags := (get (fromJson (include "redpanda.RedpandaAdditionalStartFlags" (dict "a" (list $values)))) "r") -}}
-{{- $lockMemory := (index $_372_lockMemory_overprovisioned_flags 0) -}}
-{{- $overprovisioned := (index $_372_lockMemory_overprovisioned_flags 1) -}}
-{{- $flags := (index $_372_lockMemory_overprovisioned_flags 2) -}}
+{{- $_398_lockMemory_overprovisioned_flags := (get (fromJson (include "redpanda.RedpandaAdditionalStartFlags" (dict "a" (list $values)))) "r") -}}
+{{- $lockMemory := (index $_398_lockMemory_overprovisioned_flags 0) -}}
+{{- $overprovisioned := (index $_398_lockMemory_overprovisioned_flags 1) -}}
+{{- $flags := (index $_398_lockMemory_overprovisioned_flags 2) -}}
 {{- $result := (dict "additional_start_flags" $flags "enable_memory_locking" $lockMemory "overprovisioned" $overprovisioned "kafka_api" (dict "brokers" $brokerList "tls" $brokerTLS) "admin_api" (dict "addresses" (get (fromJson (include "redpanda.Listeners.AdminList" (dict "a" (list $values.listeners ($values.statefulset.replicas | int) (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot)))) "r") (get (fromJson (include "redpanda.InternalDomain" (dict "a" (list $dot)))) "r"))))) "r") "tls" $adminTLS) "schema_registry" (dict "addresses" (get (fromJson (include "redpanda.Listeners.SchemaRegistryList" (dict "a" (list $values.listeners ($values.statefulset.replicas | int) (get (fromJson (include "redpanda.Fullname" (dict "a" (list $dot)))) "r") (get (fromJson (include "redpanda.InternalDomain" (dict "a" (list $dot)))) "r"))))) "r") "tls" $schemaRegistryTLS)) -}}
 {{- $result = (merge (dict) $result (get (fromJson (include "redpanda.Tuning.Translate" (dict "a" (list $values.tuning)))) "r")) -}}
 {{- $result = (merge (dict) $result (get (fromJson (include "redpanda.Config.CreateRPKConfiguration" (dict "a" (list $values.config)))) "r")) -}}
@@ -565,17 +603,17 @@
 {{- end -}}
 {{- $enabledOptions := (dict "true" true "1" true "" true) -}}
 {{- $lockMemory := false -}}
-{{- $_657_value_14_ok_15 := (get (fromJson (include "_shims.dicttest" (dict "a" (list $flags "--lock-memory" "")))) "r") -}}
-{{- $value_14 := (index $_657_value_14_ok_15 0) -}}
-{{- $ok_15 := (index $_657_value_14_ok_15 1) -}}
+{{- $_683_value_14_ok_15 := (get (fromJson (include "_shims.dicttest" (dict "a" (list $flags "--lock-memory" "")))) "r") -}}
+{{- $value_14 := (index $_683_value_14_ok_15 0) -}}
+{{- $ok_15 := (index $_683_value_14_ok_15 1) -}}
 {{- if $ok_15 -}}
 {{- $lockMemory = (ternary (index $enabledOptions $value_14) false (hasKey $enabledOptions $value_14)) -}}
 {{- $_ := (unset $flags "--lock-memory") -}}
 {{- end -}}
 {{- $overprovisioned := false -}}
-{{- $_664_value_16_ok_17 := (get (fromJson (include "_shims.dicttest" (dict "a" (list $flags "--overprovisioned" "")))) "r") -}}
-{{- $value_16 := (index $_664_value_16_ok_17 0) -}}
-{{- $ok_17 := (index $_664_value_16_ok_17 1) -}}
+{{- $_690_value_16_ok_17 := (get (fromJson (include "_shims.dicttest" (dict "a" (list $flags "--overprovisioned" "")))) "r") -}}
+{{- $value_16 := (index $_690_value_16_ok_17 0) -}}
+{{- $ok_17 := (index $_690_value_16_ok_17 1) -}}
 {{- if $ok_17 -}}
 {{- $overprovisioned = (ternary (index $enabledOptions $value_16) false (hasKey $enabledOptions $value_16)) -}}
 {{- $_ := (unset $flags "--overprovisioned") -}}

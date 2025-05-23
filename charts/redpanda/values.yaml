@@ -706,7 +706,7 @@ statefulset:
     securityContext: {}
     extraVolumeMounts: ""
     image:
-      tag: v2.3.8-24.3.6
+      tag: v2.3.10-24.3.14
       repository: docker.redpanda.com/redpandadata/redpanda-operator
     # The PVCUnbinder helps keep redpanda operational in the event of a tolerable Node or Disk loss event when non-remountable storage,
     # such as `local` or `hostPath`, are used. It does so by monitoring redpanda Pods that are in a "Pending" state for at least the period
@@ -734,7 +734,7 @@ statefulset:
     # -- DEPRECATED: Please use statefulset.sideCars.brokerDecommissioner and statefulset.sideCars.pvcUnbinder
     controllers:
       image:
-        tag: v2.3.8-24.3.6
+        tag: v2.3.10-24.3.14
         repository: docker.redpanda.com/redpandadata/redpanda-operator
       # You must also enable RBAC, `rbac.enabled=true`, to deploy this sidecar
       enabled: false
@@ -799,6 +799,7 @@ statefulset:
       # * For every container in the Pod, the CPU limit must equal the CPU request.
       resources: {}
       extraVolumeMounts: |-
+      additionalCLIArgs: []
     ## Additional init containers
     extraInitContainers: |-
 #      - name: "test-init-container"
@@ -1042,6 +1043,9 @@ config:
     # additional_start_flags:                                      # List of flags to pass to rpk, e.g., ` "--idle-poll-time-us=0"`
   # -- [Cluster Configuration Properties](https://docs.redpanda.com/current/reference/properties/cluster-properties/)
   cluster: {}
+  # Should extraClusterConfiguration contain references to Kubernetes ConfigMaps or Secrets, the bootstrap-templating
+  # initContainer on the cluster's statefulset(s) will reflect this with additional env definitions.
+  extraClusterConfiguration: {}
 
   # -- Tunable cluster properties.
   # Deprecated: all settings here may be specified via `config.cluster`.
