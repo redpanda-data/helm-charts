@@ -3,7 +3,7 @@
 description: Find the default values and descriptions of settings in the Redpanda Operator Helm chart.
 ---
 
-![Version: v25.1.1-beta1](https://img.shields.io/badge/Version-v25.1.1--beta1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v25.1.1-beta1](https://img.shields.io/badge/AppVersion-v25.1.1--beta1-informational?style=flat-square)
+![Version: v25.1.1-beta3](https://img.shields.io/badge/Version-v25.1.1--beta3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v25.1.1-beta3](https://img.shields.io/badge/AppVersion-v25.1.1--beta3-informational?style=flat-square)
 
 This page describes the official Redpanda Operator Helm Chart. In particular, this page describes the contents of the chart’s [`values.yaml` file](./values.yaml). Each of the settings is listed and described on this page, along with any default values.
 
@@ -160,54 +160,6 @@ Pull secrets may be used to provide credentials to image repositories See the [K
 
 **Default:** `[]`
 
-### [kubeRbacProxy](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=kubeRbacProxy)
-
-Configuration for the `kube-rbac-proxy`, a component that provides an HTTP proxy to perform authorization checks.
-
-**Default:**
-
-```
-{"image":{"pullPolicy":"IfNotPresent","repository":"gcr.io/kubebuilder/kube-rbac-proxy","tag":"v0.14.0"},"logLevel":10}
-```
-
-### [kubeRbacProxy.image](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=kubeRbacProxy.image)
-
-Sets settings for pulling the `kube-rbac-proxy` image.
-
-**Default:**
-
-```
-{"pullPolicy":"IfNotPresent","repository":"gcr.io/kubebuilder/kube-rbac-proxy","tag":"v0.14.0"}
-```
-
-### [kubeRbacProxy.image.pullPolicy](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=kubeRbacProxy.image.pullPolicy)
-
-Sets the `pullPolicy` for `kube-rbac-proxy` image
-
-**Default:** `"IfNotPresent"`
-
-### [kubeRbacProxy.image.repository](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=kubeRbacProxy.image.repository)
-
-Sets the repository in which the `kube-rbac-proxy` image is available.
-
-**Default:**
-
-```
-"gcr.io/kubebuilder/kube-rbac-proxy"
-```
-
-### [kubeRbacProxy.image.tag](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=kubeRbacProxy.image.tag)
-
-Sets the `kube-rbac-proxy` image tag.
-
-**Default:** `"v0.14.0"`
-
-### [kubeRbacProxy.logLevel](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=kubeRbacProxy.logLevel)
-
-Sets log level for kube rbac proxy
-
-**Default:** `10`
-
 ### [logLevel](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=logLevel)
 
 Log level Valid values (from least to most verbose) are: `warn`, `info`, `debug`, and `trace`.
@@ -273,7 +225,7 @@ Role-based Access Control (RBAC) configuration for the Redpanda Operator.
 **Default:**
 
 ```
-{"create":true,"createAdditionalControllerCRs":false,"createRPKBundleCRs":false}
+{"create":true,"createAdditionalControllerCRs":true,"createRPKBundleCRs":true}
 ```
 
 ### [rbac.create](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=rbac.create)
@@ -284,15 +236,15 @@ Enables the creation of additional RBAC roles.
 
 ### [rbac.createAdditionalControllerCRs](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=rbac.createAdditionalControllerCRs)
 
-Creates additional RBAC cluster roles that are needed to run additional controllers using `additionalCmdFlags`.
+Create RBAC cluster roles needed for the Redpanda Helm chart's 'rbac.enabled' feature. WARNING: Disabling this value may prevent the operator from deploying certain configurations of redpanda.
 
-**Default:** `false`
+**Default:** `true`
 
 ### [rbac.createRPKBundleCRs](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=rbac.createRPKBundleCRs)
 
-Create RBAC cluster roles needed for the Redpanda Helm chart's 'rbac.enabled' feature.
+Create ClusterRoles needed for the Redpanda Helm chart's 'rbac.rpkDebugBundle' feature.
 
-**Default:** `false`
+**Default:** `true`
 
 ### [replicaCount](https://artifacthub.io/packages/helm/redpanda-data/operator?modal=values&path=replicaCount)
 

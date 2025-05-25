@@ -170,7 +170,7 @@ tasks:
   sync:redpanda:chart:
     - task: sync:chart
       vars:
-        REF: charts/redpanda/v25.1.1-beta1
+        REF: charts/redpanda/v25.1.1-beta3
         LOCAL_DIR: charts/redpanda
         REMOTE_DIR: charts/redpanda
 
@@ -184,14 +184,14 @@ tasks:
   sync:operator:chart:
     - task: sync:chart
       vars:
-        REF: operator/v25.1.1-beta1
+        REF: operator/v25.1.1-beta3
         LOCAL_DIR: charts/operator
         REMOTE_DIR: operator/chart
 
   sync:console:chart:
     - task: sync:chart
       vars:
-        REF: 4ece701cb9a4c6d99f930e745476b1c2757e7165 # charts/console/v3.0.0 with a corrected version
+        REF: charts/console/v3.1.0
         LOCAL_DIR: charts/console
         REMOTE_DIR: charts/console
 

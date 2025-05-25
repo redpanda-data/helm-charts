@@ -713,35 +713,6 @@
         }
       ]
     },
-    "kubeRbacProxy": {
-      "additionalProperties": false,
-      "properties": {
-        "image": {
-          "additionalProperties": false,
-          "properties": {
-            "pullPolicy": {
-              "description": "The Kubernetes Pod image pull policy.",
-              "pattern": "^(Always|Never|IfNotPresent)$",
-              "type": "string"
-            },
-            "repository": {
-              "type": "string"
-            },
-            "tag": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "pullPolicy"
-          ],
-          "type": "object"
-        },
-        "logLevel": {
-          "type": "integer"
-        }
-      },
-      "type": "object"
-    },
     "livenessProbe": {
       "additionalProperties": false,
       "properties": {

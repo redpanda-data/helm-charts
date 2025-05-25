@@ -16,7 +16,7 @@ spec:
     - name: wget
       image: busybox
       command: ['wget']
-      args: ['{{ include "console.fullname" . }}:{{ .Values.service.port }}']
+      args: ['{{ include "console.fullname" . }}:{{ .Values.service.port }}', '--timeout=15', '-t 20']
   restartPolicy: Never
   priorityClassName: {{ .Values.priorityClassName | quote }}
 {{- end }}

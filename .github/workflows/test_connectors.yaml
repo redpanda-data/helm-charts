@@ -29,11 +29,14 @@ jobs:
       fail-fast: true
     runs-on: ubuntu-22.04
     steps:
-      - uses: cachix/install-nix-action@v31
+      - uses: nixbuild/nix-quick-install-action@v30
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
       # Cache the nix store.
-      - uses: DeterminateSystems/magic-nix-cache-action@v9
+      - uses: nix-community/cache-nix-action@v6
+        with:
+          primary-key: nix-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/*.nix', '**/flake.lock') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-${{ runner.arch }}
       # Cache helm repositories.
       - uses: actions/cache@v4
         with:
@@ -55,8 +58,7 @@ jobs:
         run: |
           helm repo add redpanda https://charts.redpanda.com
           helm dependency build charts/redpanda
-          helm install --namespace redpanda --create-namespace redpanda charts/redpanda --wait --wait-for-jobs \
-            --set connectors.enabled=false
+          helm install --namespace redpanda --create-namespace redpanda charts/redpanda --wait --wait-for-jobs
       - name: Copy Redpanda tls cert to connectors chart
         run: |
           kubectl -n redpanda wait --for=condition=Ready --timeout=10m certificates/redpanda-default-cert

@@ -5,8 +5,8 @@ type: application
 
 # The operator helm chart is considered part of the operator itself. Therefore
 # version == appVersion.
-version: v25.1.1-beta1
-appVersion: v25.1.1-beta1
+version: v25.1.1-beta3
+appVersion: v25.1.1-beta3
 kubeVersion: ">= 1.25.0-0"
 
 sources:
@@ -25,9 +25,9 @@ annotations:
       url: https://helm.sh/docs/intro/install/
   artifacthub.io/images: |
     - name: redpanda-operator
-      image: docker.redpanda.com/redpandadata/redpanda-operator:v25.1.1-beta1
+      image: docker.redpanda.com/redpandadata/redpanda-operator:v25.1.1-beta3
     - name: redpanda
-      image: docker.redpanda.com/redpandadata/redpanda:v25.1.1
+      image: docker.redpanda.com/redpandadata/redpanda:v25.1.2
   artifacthub.io/crds: |
     - kind: Redpanda
       version: v1alpha1
