@@ -64,6 +64,13 @@ Use AppVersion if image.tag is not set
 {{- get ((include "redpanda.Tag" (dict "a" (list .))) | fromJson) "r" }}
 {{- end -}}
 
+{{/*
+Generate full image reference (repository:tag or repository@digest)
+*/}}
+{{- define "redpanda.image" -}}
+{{- get ((include "redpanda.ImageReference" (dict "a" (list .))) | fromJson) "r" }}
+{{- end -}}
+
 {{/* Generate internal fqdn */}}
 {{- define "redpanda.internal.domain" -}}
 {{- get ((include "redpanda.InternalDomain" (dict "a" (list .))) | fromJson) "r" }}

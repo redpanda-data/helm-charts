@@ -305,7 +305,7 @@ Redpanda Docker image settings.
 **Default:**
 
 ```
-{"repository":"docker.redpanda.com/redpandadata/redpanda","tag":""}
+{"repository":"docker.redpanda.com/redpandadata/redpanda","tag":"","digest":""}
 ```
 
 ### [image.repository](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=image.repository)
@@ -320,9 +320,15 @@ Docker repository from which to pull the Redpanda Docker image.
 
 ### [image.tag](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=image.tag)
 
-The Redpanda version. See DockerHub for: [All stable versions](https://hub.docker.com/r/redpandadata/redpanda/tags) and [all unstable versions](https://hub.docker.com/r/redpandadata/redpanda-unstable/tags).
+The Redpanda version. See DockerHub for: [All stable versions](https://hub.docker.com/r/redpandadata/redpanda/tags) and [all unstable versions](https://hub.docker.com/r/redpandadata/redpanda-unstable/tags). Must be a valid semver with optional 'v' prefix.
 
 **Default:** `Chart.appVersion`.
+
+### [image.digest](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=image.digest)
+
+The image digest to use instead of tag. When specified, this takes precedence over tag. Example: "sha256:abcd1234..."
+
+**Default:** `""`.
 
 ### [listeners](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=listeners)
 

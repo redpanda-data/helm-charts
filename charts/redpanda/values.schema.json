@@ -4356,13 +4356,16 @@
           "type": "string"
         },
         "tag": {
-          "description": "The container image tag. Use the Redpanda release version. Must be a valid semver prefixed with a 'v'.",
+          "description": "The container image tag. Use the Redpanda release version. Must be a valid semver with optional 'v' prefix.",
+          "type": "string"
+        },
+        "digest": {
+          "description": "The image digest to use instead of tag. When specified, this takes precedence over tag.",
           "type": "string"
         }
       },
       "required": [
-        "repository",
-        "tag"
+        "repository"
       ],
       "type": "object"
     },

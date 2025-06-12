@@ -71,12 +71,30 @@
 {{- if (eq $tag "") -}}
 {{- $tag = $dot.Chart.AppVersion -}}
 {{- end -}}
-{{- $pattern := "^v(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$" -}}
+{{- $pattern := "^v?(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$" -}}
 {{- if (not (regexMatch $pattern $tag)) -}}
-{{- $_ := (fail "image.tag must start with a 'v' and be a valid semver") -}}
+{{- $_ := (fail "image.tag must be a valid semver (with optional 'v' prefix)") -}}
 {{- end -}}
 {{- $_is_returning = true -}}
 {{- (dict "r" $tag) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "redpanda.ImageReference" -}}
+{{- $dot := (index .a 0) -}}
+{{- range $_ := (list 1) -}}
+{{- $_is_returning := false -}}
+{{- $values := $dot.Values.AsMap -}}
+{{- $digest := (toString $values.image.digest) -}}
+{{- if (ne $digest "") -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (printf "%s@%s" $values.image.repository $digest)) | toJson -}}
+{{- break -}}
+{{- end -}}
+{{- $tag := (get (fromJson (include "redpanda.Tag" (dict "a" (list $dot)))) "r") -}}
+{{- $_is_returning = true -}}
+{{- (dict "r" (printf "%s:%s" $values.image.repository $tag)) | toJson -}}
 {{- break -}}
 {{- end -}}
 {{- end -}}
