@@ -11,7 +11,7 @@
 
 buildGoModule rec {
   pname = "chart-releaser";
-  version = "1.6.0";
+  version = "1.8.1";
 
   # Don't run tests.
   doCheck = false;
@@ -21,10 +21,10 @@ buildGoModule rec {
     owner = "helm";
     repo = pname;
     rev = "v${version}";
-    hash = "sha256-rPNGg4nrDFIa1PAw3efFU/pQub33+QD0vNFu8kiU2/E=";
+    hash = "sha256-h1czHb/xK+kOEK4TJhMnwnLeVmQm52C8dTUy+fahJ90=";
   };
 
-  vendorHash = "sha256-zBVAER1RJy449GUndvQkG8R84vOuL+IN4exjETVHp9k=";
+  vendorHash = "sha256-nUqUtm7SUKNEITzFJ4gozlegqGtyiRNGKDyOqteGYTw=";
 
   postPatch = ''
     substituteInPlace pkg/config/config.go \
