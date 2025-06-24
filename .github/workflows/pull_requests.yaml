@@ -33,10 +33,7 @@ jobs:
     outputs:
       charts-connectors: ${{ steps.chart-changes.outputs.charts-connectors }}
       charts-connect: ${{ steps.chart-changes.outputs.charts-connect }}
-      charts-console: ${{ steps.chart-changes.outputs.charts-console }}
       charts-kminion: ${{ steps.chart-changes.outputs.charts-kminion }}
-      charts-operator: ${{ steps.chart-changes.outputs.charts-operator }}
-      charts-redpanda: ${{ steps.chart-changes.outputs.charts-redpanda }}
       go-code: ${{ steps.chart-changes.outputs.go-code }}
     steps:
       - uses: actions/checkout@v4
@@ -49,17 +46,6 @@ jobs:
           # accidentally # break the other chart workflows right now. Please
           # ensure that you exercise changes to those files manually.
           filters: |
-            charts-redpanda:
-              - '.github/workflows/test_redpanda.yaml'
-              - 'charts/redpanda/ci/*'
-              - 'charts/redpanda/files/*'
-              - 'charts/redpanda/templates/**'
-              - 'charts/redpanda/(.helmignore|values.schema.json|Chart.yaml|values.yaml)'
-            charts-console:
-              - 'charts/console/ci/*'
-              - 'charts/console/files/*'
-              - 'charts/console/templates/**'
-              - 'charts/console/(.helmignore|values.schema.json|Chart.yaml|values.yaml)'
             charts-connectors:
               - '.github/workflows/test_connectors.yaml'
               - 'charts/connectors/ci/*'
@@ -72,12 +58,6 @@ jobs:
               - 'charts/kminion/files/*'
               - 'charts/kminion/templates/**'
               - 'charts/kminion/(.helmignore|values.schema.json|Chart.yaml|values.yaml)'
-            charts-operator:
-              - '.github/workflows/test_operator.yaml'
-              - 'charts/operator/ci/*'
-              - 'charts/operator/files/*'
-              - 'charts/operator/templates/**'
-              - 'charts/operator/(.helmignore|values.schema.json|Chart.yaml|values.yaml)'
             charts-connect:
               - 'charts/connect/ci/*'
               - 'charts/connect/files/*'
@@ -117,11 +97,6 @@ jobs:
           restore-prefixes-first-match: nix-${{ runner.os }}-${{ runner.arch }}
       - uses: actions/checkout@v4
       - run: go test ./... -short
-  test-charts-redpanda:
-    needs: [changes, lint]
-    if: ${{ needs.changes.outputs.charts-redpanda == 'true' }}
-    uses: ./.github/workflows/test_redpanda.yaml
-    secrets: inherit
   test-charts-connectors:
     needs: [changes, lint]
     if: ${{ needs.changes.outputs.charts-connectors == 'true' }}
@@ -131,11 +106,6 @@ jobs:
     needs: [changes, lint]
     if: ${{ needs.changes.outputs.charts-kminion == 'true' }}
     uses: ./.github/workflows/test_kminion.yaml
-    secrets: inherit
-  test-charts-operator:
-    needs: [changes, lint]
-    if: ${{ needs.changes.outputs.charts-operator == 'true' }}
-    uses: ./.github/workflows/test_operator.yaml
     secrets: inherit
   test-charts-connect:
     needs: [changes, lint]
@@ -149,13 +119,11 @@ jobs:
       - test-charts-connectors
       - test-charts-connect
       - test-charts-kminion
-      - test-charts-operator
-      - test-charts-redpanda
       - test-go
     runs-on: ubuntu-22.04
     steps:
       - name: Summarize the results of the test matrix pass/fail
         uses: re-actors/alls-green@release/v1
         with:
-          allowed-skips: test-go, test-charts-connectors, test-charts-kminion, test-charts-operator, test-charts-redpanda, test-charts-connect
+          allowed-skips: test-go, test-charts-connectors, test-charts-kminion, test-charts-connect
           jobs: ${{ toJSON(needs)}}
