@@ -1,0 +1,127 @@
+---
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# This workflow piggy backs on chart-releaser to release charts hosted in the
+# redpanda-operator repo. It's idempotent, processes the last 30 releases, and
+# may be triggered by a workflow in the operator or manually.
+name: Sync Operator Repo Releases
+on:
+  # For manually dispatching.
+  workflow_dispatch: {}
+  # For remote dispatching from other workflows via https://github.com/peter-evans/repository-dispatch
+  repository_dispatch:
+    types: [sync-operator-repo-releases]
+defaults:
+  run:
+    shell: nix develop --impure --command bash {0}
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    strategy:
+      max-parallel: 1 # Only permit a single job to run at a time.
+      matrix:
+        include:
+          # Because there's no way to handle both charts/ and operator/
+          # tags, we have to run chart-releaser twice for each tag prefix.
+          - release_prefix: charts
+            release_name_template: 'charts/{{ .Name }}/v{{.Version}}'
+          - release_prefix: operator
+            release_name_template: 'operator/v{{.Version}}'
+
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ vars.RP_AWS_CRED_REGION }}
+          role-to-assume: arn:aws:iam::${{ secrets.RP_AWS_CRED_ACCOUNT_ID }}:role/${{ vars.RP_AWS_CRED_BASE_ROLE_NAME }}${{ github.event.repository.name }}
+      - uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            ,sdlc/prod/github/actions_bot_token
+          parse-json-secrets: true
+      - uses: nixbuild/nix-quick-install-action@v32
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+      # Cache the nix store.
+      - uses: nix-community/cache-nix-action@v6
+        with:
+          primary-key: nix-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/*.nix', '**/flake.lock') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-${{ runner.arch }}
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          token: ${{ env.ACTIONS_BOT_TOKEN }}
+
+      # Chart releaser needs a git configuration to push charts.
+      - name: Configure git
+        run: |
+          git config --global user.name 'vbotbuildovich'
+          git config --global user.email 'vbotbuildovich@users.noreply.github.com'
+          git config --global --add --bool push.autoSetupRemote true
+
+      - name: Pull and Index Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -ex
+
+          mkdir -p ".cr-index"
+          mkdir -p ".cr-release-packages"
+
+          releases=$(gh release list \
+            --repo redpanda-data/redpanda-operator \
+            --limit 30 \
+            --order desc \
+            --json 'tagName' \
+            --jq '.[].tagName | select(startswith("${{ matrix.release_prefix }}/"))')
+
+          # For all found releases, download any assets ending in *.tgz. For
+          # some reason, chart-releaser uses the presence of the archives to
+          # use then search releases.
+          # https://github.com/helm/chart-releaser/blob/e9ec4ade041d933be7c204751d1101bf4a7dde96/pkg/releaser/releaser.go#L134-L139
+          for tag in $releases; do
+            # Some releases may not have a .tgz, so this command may fail.
+            gh release download "$tag" --repo redpanda-data/redpanda-operator --dir ".cr-release-packages" -p '*.tgz' || true
+          done
+
+          # gh release download tries to be cute with it's terminal output
+          # which makes debugging a bit difficult. List out any downloaded
+          # charts for better visibility.
+          ls -lah .cr-release-packages
+
+          # Instruct chart-releaser to update / rebuild the index file based on
+          # the releases we pulled. This operation is idempotent and no change
+          # will be pushed if no new releases are discovered.
+          cr index \
+            --push \
+            --owner redpanda-data \
+            --git-repo redpanda-operator \
+            --release-name-template '${{ matrix.release_name_template }}'
+
+          # Uncomment this block for debugging output. cr index makes changes
+          # to a worktree which makes it difficult to inspect index.yaml
+          # without pushing it to a PR commit directly.
+          # mv .cr-index/index.yaml index.yaml
+          # git add index.yaml
+          # git fetch origin
+          # git diff origin/gh-pages -- index.yaml
+
+          # Clear out any pulled releases.
+          rm -rf ".cr-index"
+          rm -rf ".cr-release-packages"

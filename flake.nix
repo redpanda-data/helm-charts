@@ -20,9 +20,7 @@
               (final: prev: {
                 chart-releaser = pkgs.callPackage ./.github/chart-releaser.nix { };
                 chart-testing = pkgs.callPackage ./.github/chart-testing.nix { };
-                docker-tag-list = pkgs.callPackage ./.github/docker-tag-list.nix { };
                 helm-3-10-3 = pkgs.callPackage ./.github/helm.nix { };
-                setup-envtest = pkgs.callPackage ./.github/setup-envtest.nix { };
                 kubernetes-helm = prev.wrapHelm prev.kubernetes-helm {
                   plugins = [ prev.kubernetes-helmPlugins.helm-unittest ];
                 };
@@ -38,7 +36,6 @@
               pkgs.actionlint # Github Workflow definition linter https://github.com/rhysd/actionlint
               pkgs.chart-releaser
               pkgs.chart-testing
-              pkgs.docker-tag-list # Utility to list out docker tags
               pkgs.dyff
               pkgs.gh # Github CLI
               pkgs.git
@@ -54,7 +51,6 @@
               pkgs.kubectl
               pkgs.kubernetes-helm
               pkgs.kustomize
-              pkgs.setup-envtest
               pkgs.yq # jq but for YAML
             ];
           };
