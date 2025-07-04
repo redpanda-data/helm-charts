@@ -4,7 +4,6 @@
 
 # Configuration settings for the Redpanda Connect Deployment.
 deployment:
-
   # -- Number of Replicas for the Redpanda Connect Deployment.
   replicaCount: 1
   # -- Annotations to add to Redpanda Connect Pods.
@@ -20,7 +19,6 @@ deployment:
 
   # -- Configuration for the readiness probe that checks if the container is ready to accept traffic.
   readinessProbe:
-
     # -- Number of consecutive failures before marking Pod as unhealthy.
     failureThreshold: 1
     # -- Frequency (in seconds) of readiness checks.
@@ -40,7 +38,6 @@ deployment:
 
   # -- Configuration for the liveness probe that checks if the container is running.
   livenessProbe:
-
     # -- Number of consecutive failures before Pod is restarted.
     failureThreshold: 3
     # -- Frequency (in seconds) of liveness checks.
@@ -66,7 +63,6 @@ commonLabels: {}
 
 # -- Configuration for the Redpanda Connect container image.
 image:
-
   # -- Docker repository for the Redpanda Connect image.
   repository: "docker.redpanda.com/redpandadata/connect"
   # -- Image pull policy, such as `IfNotPresent` or `Always`.
@@ -126,6 +122,9 @@ service:
     #   port: 9999
     #   targetPort: 9999
     #   protocol: UDP
+
+  # -- Set Annotations on the Redpanda Connect Service.
+  annotations: {}
 
 #  -- Configuration for Kubernetes Ingress to expose Redpanda Connect externally.
 ingress:
