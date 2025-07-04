@@ -452,6 +452,12 @@ Type of Kubernetes Service, for example ClusterIP, NodePort, or LoadBalancer.
 
 **Default:** `"ClusterIP"`
 
+### [service.annotations](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=service.annotations)
+
+Set Annotations on the Redpanda Connect Service.
+
+**Default:** `{}`
+
 ### [serviceAccount](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=serviceAccount)
 
 Configuration for the Kubernetes ServiceAccount associated with the Redpanda Connect Pods.
@@ -561,4 +567,3 @@ Update strategy for the Deployment, for example `RollingUpdate`.
 Experimental feature: Watch config files for changes and automatically apply them without needing to rollout the Deployment. Make sure that `deployment.rolloutConfigMap` is `false`.
 
 **Default:** `false`
-
