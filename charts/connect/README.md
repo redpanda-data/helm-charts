@@ -413,8 +413,14 @@ Configuration for the Kubernetes Service that exposes Redpanda Connect.
 **Default:**
 
 ```
-{"extraPorts":null,"name":"http","port":80,"protocol":"TCP","targetPort":"http","type":"ClusterIP"}
+{"annotations":{},"extraPorts":null,"name":"http","port":80,"protocol":"TCP","targetPort":"http","type":"ClusterIP"}
 ```
+
+### [service.annotations](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=service.annotations)
+
+Set Annotations on the Redpanda Connect Service.
+
+**Default:** `{}`
 
 ### [service.extraPorts](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=service.extraPorts)
 
@@ -451,12 +457,6 @@ Target port on the container.
 Type of Kubernetes Service, for example ClusterIP, NodePort, or LoadBalancer.
 
 **Default:** `"ClusterIP"`
-
-### [service.annotations](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=service.annotations)
-
-Set Annotations on the Redpanda Connect Service.
-
-**Default:** `{}`
 
 ### [serviceAccount](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=serviceAccount)
 
@@ -567,3 +567,4 @@ Update strategy for the Deployment, for example `RollingUpdate`.
 Experimental feature: Watch config files for changes and automatically apply them without needing to rollout the Deployment. Make sure that `deployment.rolloutConfigMap` is `false`.
 
 **Default:** `false`
+
