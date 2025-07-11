@@ -20,3 +20,24 @@ tests:
     asserts:
       - matchSnapshot:
           path: spec
+
+  - it: should contain empty annotations
+    values:
+      - ../values.yaml
+    asserts:
+      - equal:
+          path: metadata.annotations
+          value: {}
+
+  - it: should contain filled annotations
+    templates:
+      - service.yaml
+    set:
+      service:
+        annotations:
+          test: test
+    asserts:
+      - equal:
+          path: metadata.annotations
+          value:
+            test: test
