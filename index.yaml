@@ -2747,6 +2747,44 @@ entries:
           description: Define a Redpanda cluster
       artifacthub.io/images: |
         - name: redpanda-operator
+          image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.14-24.3.17
+        - name: configurator
+          image: docker.redpanda.com/redpandadata/configurator:v2.3.13-24.3.17
+        - name: redpanda
+          image: docker.redpanda.com/redpandadata/redpanda:v24.3.17
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://docs.redpanda.com
+        - name: "Helm (>= 3.6.0)"
+          url: https://helm.sh/docs/intro/install/
+      artifacthub.io/operator: "true"
+      artifacthub.io/operatorCapabilities: Seamless Upgrades
+    apiVersion: v2
+    appVersion: v2.3.14-24.3.17
+    created: "2025-07-16T10:43:20.387596022Z"
+    description: Redpanda operator helm chart
+    digest: 755ebac0acbd432dddfa580bc409c86b28c602263e45c69333857b22c8fcfbb2
+    icon: https://go.redpanda.com/hubfs/Redpandas/operator-panda.png
+    maintainers:
+    - name: redpanda-data
+      url: https://github.com/orgs/redpanda-data/people
+    name: operator
+    sources:
+    - https://github.com/redpanda-data/redpanda-operator/tree/main/operator/chart
+    type: application
+    urls:
+    - https://github.com/redpanda-data/redpanda-operator/releases/download/operator/v2.3.14-24.3.17/operator-2.3.14-24.3.17.tgz
+    version: 2.3.14-24.3.17
+  - annotations:
+      artifacthub.io/crds: |
+        - kind: Redpanda
+          version: v1alpha1
+          name: redpanda
+          displayName: Redpanda
+          description: Define a Redpanda cluster
+      artifacthub.io/images: |
+        - name: redpanda-operator
           image: docker.redpanda.com/redpandadata/redpanda-operator:v2.3.13-24.3.17
         - name: configurator
           image: docker.redpanda.com/redpandadata/configurator:v2.3.13-24.3.17
@@ -19031,4 +19069,4 @@ entries:
     urls:
     - https://charts.redpanda.com/redpanda-0.1.0.tgz
     version: 0.1.0
-generated: "2025-07-16T10:40:42.607494523Z"
+generated: "2025-07-16T10:43:20.604904045Z"
