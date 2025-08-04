@@ -413,8 +413,14 @@ Configuration for the Kubernetes Service that exposes Redpanda Connect.
 **Default:**
 
 ```
-{"extraPorts":null,"name":"http","port":80,"protocol":"TCP","targetPort":"http","type":"ClusterIP"}
+{"annotations":{},"extraPorts":null,"name":"http","port":80,"protocol":"TCP","targetPort":"http","type":"ClusterIP"}
 ```
+
+### [service.annotations](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=service.annotations)
+
+Set Annotations on the Redpanda Connect Service.
+
+**Default:** `{}`
 
 ### [service.extraPorts](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=service.extraPorts)
 

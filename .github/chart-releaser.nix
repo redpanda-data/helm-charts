@@ -11,20 +11,20 @@
 
 buildGoModule rec {
   pname = "chart-releaser";
-  version = "1.8.1";
+  version = "1.8.1-alpha1";
 
   # Don't run tests.
   doCheck = false;
   doInstallCheck = false;
 
   src = fetchFromGitHub {
-    owner = "helm";
+    owner = "chrisseto";
     repo = pname;
-    rev = "v${version}";
-    hash = "sha256-h1czHb/xK+kOEK4TJhMnwnLeVmQm52C8dTUy+fahJ90=";
+    rev = "8b0a936b3c16162b0bd806aaa41e959c00be27d6";
+    hash = "sha256-1z+mFcIM5Ika4n6/EU2Op4GSZHrgopBy7L1fPOlv+sE=";
   };
 
-  vendorHash = "sha256-nUqUtm7SUKNEITzFJ4gozlegqGtyiRNGKDyOqteGYTw=";
+  vendorHash = "sha256-GIqMMu+Zai9FkV3TZ3pYuaPJ2FC+paFlMSASO3V24S4=";
 
   postPatch = ''
     substituteInPlace pkg/config/config.go \
