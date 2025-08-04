@@ -252,6 +252,13 @@ extraVolumeMounts:
   # - name: secret
   #   mountPath: /mnt/secret
   #   readOnly: true
+# 
+# -- Configuration settings for resources in Redpanda Connect.
+connectResources:
+  # -- Enable resources.
+  enabled: false
+  # -- Name of the ConfigMap that contains resources configuration files.
+  resourcesConfigMap: ""
 
 # -- Configuration settings for the streams mode feature in Redpanda Connect.
 streams:
