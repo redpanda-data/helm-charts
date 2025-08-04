@@ -92,6 +92,28 @@ Configuration for `/redpanda-connect.yaml` file.
 
 **Default:** `{}`
 
+### [connectResources](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=connectResources)
+
+Configuration settings for resources in Redpanda Connect.
+
+**Default:**
+
+```
+{"enabled":false,"resourcesConfigMap":""}
+```
+
+### [connectResources.enabled](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=connectResources.enabled)
+
+Enable resources.
+
+**Default:** `false`
+
+### [connectResources.resourcesConfigMap](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=connectResources.resourcesConfigMap)
+
+Name of the ConfigMap that contains resources configuration files.
+
+**Default:** `""`
+
 ### [deployment.annotations](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=deployment.annotations)
 
 Set Annotations on the Redpanda Connect Deployment.
@@ -513,28 +535,6 @@ Scrape interval for Prometheus monitoring.
 HTTP Scheme to use for scraping.
 
 **Default:** `"http"`
-
-### [connectResources](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=connectResources)
-
-Configuration settings for the resources feature in Redpanda Connect.
-
-**Default:**
-
-```
-{"enabled":false,"resourcesConfigMap":""}
-```
-
-### [connectResources.enabled](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=connectResources.enabled)
-
-Enable resources.
-
-**Default:** `false`
-
-### [resources.resourcesConfigMap](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=connectResources.resourcesConfigMap)
-
-Name of the ConfigMap that contains resources configuration files.
-
-**Default:** `""`
 
 ### [streams](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=streams)
 
