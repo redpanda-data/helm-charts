@@ -241,6 +241,10 @@ The port for kminion metrics endpoint
 
 **Default:** `"15s"`
 
+### [serviceMonitor.metricRelabelings](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=serviceMonitor.metricRelabelings)
+
+**Default:** `[]`
+
 ### [serviceMonitor.relabelings](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=serviceMonitor.relabelings)
 
 **Default:** `[]`
