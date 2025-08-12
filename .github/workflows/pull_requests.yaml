@@ -36,7 +36,7 @@ jobs:
       charts-kminion: ${{ steps.chart-changes.outputs.charts-kminion }}
       go-code: ${{ steps.chart-changes.outputs.go-code }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: dorny/paths-filter@v3
         id: chart-changes
         with:
@@ -81,7 +81,7 @@ jobs:
         with:
           primary-key: nix-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/*.nix', '**/flake.lock') }}
           restore-prefixes-first-match: nix-${{ runner.os }}-${{ runner.arch }}
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: task ci:lint
   test-go:
     needs: [changes, lint]
@@ -95,7 +95,7 @@ jobs:
         with:
           primary-key: nix-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/*.nix', '**/flake.lock') }}
           restore-prefixes-first-match: nix-${{ runner.os }}-${{ runner.arch }}
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: go test ./... -short
   test-charts-connectors:
     needs: [changes, lint]
