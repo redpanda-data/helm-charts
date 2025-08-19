@@ -57,8 +57,7 @@ jobs:
       - name: Install Redpanda
         run: |
           helm repo add redpanda https://charts.redpanda.com
-          helm dependency build charts/redpanda
-          helm install --namespace redpanda --create-namespace redpanda charts/redpanda --wait --wait-for-jobs
+          helm install --namespace redpanda --create-namespace redpanda redpanda/redpanda --wait --wait-for-jobs
       - name: Copy Redpanda tls cert to kminion chart
         run: |
           kubectl -n redpanda wait --for=condition=Ready --timeout=10m certificates/redpanda-default-cert
