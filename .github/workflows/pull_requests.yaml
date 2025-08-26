@@ -73,7 +73,7 @@ jobs:
   lint:
     runs-on: ubuntu-22.04
     steps:
-      - uses: nixbuild/nix-quick-install-action@v32
+      - uses: nixbuild/nix-quick-install-action@v33
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
       # Cache the nix store.
@@ -88,7 +88,7 @@ jobs:
     if: ${{ needs.changes.outputs.go-code == 'true' }}
     runs-on: ubuntu-22.04
     steps:
-      - uses: nixbuild/nix-quick-install-action@v32
+      - uses: nixbuild/nix-quick-install-action@v33
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
       - uses: nix-community/cache-nix-action@v6
