@@ -25,6 +25,8 @@ defaults:
 jobs:
   test:
     name: Run ct tests for kminion chart
+    env:
+      KMINION_NAMESPACE: kminion-${{ github.run_id }}-${{ github.run_attempt }}
     strategy:
       fail-fast: true
     runs-on: ubuntu-22.04
@@ -58,13 +60,15 @@ jobs:
         run: |
           helm repo add redpanda https://charts.redpanda.com
           helm install --namespace redpanda --create-namespace redpanda redpanda/redpanda --wait --wait-for-jobs
-      - name: Copy Redpanda tls cert to kminion chart
+      - name: Copy Redpanda TLS cert to kminion namespace
         run: |
+          kubectl create namespace ${{ env.KMINION_NAMESPACE }} || true
           kubectl -n redpanda wait --for=condition=Ready --timeout=10m certificates/redpanda-default-cert
-          kubectl -n redpanda get secret -o yaml redpanda-default-cert | \
+          kubectl -n redpanda get secret redpanda-default-cert -o yaml | \
             sed -e '/namespace/d' | \
             sed -e '/resourceVersion/d' | \
-            sed -e '/uid/d'  > charts/kminion/templates/redpanda-tls.yaml
+            sed -e '/uid/d' | \
+            kubectl apply -n ${{ env.KMINION_NAMESPACE }} -f -
         # Chart-testing requires there to be a branch on the local repository
         # for diffing. This will create such a branch without performing a
         # checkout.
@@ -77,4 +81,5 @@ jobs:
             --upgrade \
             --config .github/ct-kminion.yaml \
             --skip-missing-values \
-            --target-branch ${{ github.event.repository.default_branch }}
+            --target-branch ${{ github.event.repository.default_branch }} \
+            --namespace ${{ env.KMINION_NAMESPACE }}
