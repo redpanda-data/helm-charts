@@ -28,7 +28,7 @@ jobs:
             ,sdlc/prod/github/jira
           parse-json-secrets: true
       - uses: actions/checkout@v5
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.9'
           cache: 'pip'
