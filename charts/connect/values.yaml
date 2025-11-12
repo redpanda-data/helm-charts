@@ -79,6 +79,9 @@ nameOverride: ""
 # -- Override for the full name template.
 fullnameOverride: ""
 
+# -- Namespace to deploy Redpanda Connect into. By default, uses the namespace of the Helm release.
+namespaceOverride: ""
+
 # -- Configuration for the Kubernetes ServiceAccount associated with the Redpanda Connect Pods.
 serviceAccount:
   # -- Specify whether a ServiceAccount should be created.
