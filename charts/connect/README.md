@@ -392,6 +392,12 @@ Additional init containers to add to the Deployment.
 
 **Default:** `""`
 
+### [namespaceOverride](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=namespaceOverride)
+
+Namespace to deploy Redpanda Connect into. By default, uses the namespace of the Helm release.
+
+**Default:** `""`
+
 ### [nodeSelector](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=nodeSelector)
 
 Node selector for scheduling Pods.
