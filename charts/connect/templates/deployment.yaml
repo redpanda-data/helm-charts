@@ -111,7 +111,7 @@ spec:
               subPath: "redpanda-connect.yaml"
               readOnly: true
             {{- if .Values.extraVolumeMounts }}
-              {{- toYaml .Values.extraVolumeMounts | nindent 12 }}
+              {{- tpl (toYaml .Values.extraVolumeMounts) . | nindent 12 }}
             {{- end }}
             {{- if and .Values.connectResources.enabled .Values.connectResources.resourcesConfigMap }}
             - name: resources
@@ -144,7 +144,7 @@ spec:
           configMap:
             name: {{ template "redpanda-connect.fullname" . }}-config
         {{- if .Values.extraVolumes }}
-          {{- toYaml .Values.extraVolumes | nindent 8 }}
+          {{- tpl (toYaml .Values.extraVolumes) . | nindent 8 }}
         {{- end }}
         {{- if and .Values.connectResources.enabled .Values.connectResources.resourcesConfigMap }}
         - name: resources

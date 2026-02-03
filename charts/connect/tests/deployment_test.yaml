@@ -286,3 +286,95 @@ tests:
             - configMap:
                 name: my-config-map
               name: streams
+
+  - it: should support template expressions in extraVolumeMounts
+    set:
+      deployment:
+        rolloutConfigMap: false
+      extraVolumeMounts:
+        - name: templated-mount
+          mountPath: "/config/{{ .Release.Name }}"
+          readOnly: true
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].volumeMounts
+          value:
+            - mountPath: /redpanda-connect.yaml
+              name: config
+              readOnly: true
+              subPath: redpanda-connect.yaml
+            - mountPath: /config/RELEASE-NAME
+              name: templated-mount
+              readOnly: true
+
+  - it: should support template expressions in extraVolumes
+    set:
+      deployment:
+        rolloutConfigMap: false
+      extraVolumes:
+        - name: templated-volume
+          configMap:
+            name: "{{ .Release.Name }}-custom-config"
+      extraVolumeMounts:
+        - name: templated-volume
+          mountPath: /custom-config
+    asserts:
+      - equal:
+          path: spec.template.spec.volumes
+          value:
+            - configMap:
+                name: RELEASE-NAME-redpanda-connect-config
+              name: config
+            - configMap:
+                name: RELEASE-NAME-custom-config
+              name: templated-volume
+      - equal:
+          path: spec.template.spec.containers[0].volumeMounts
+          value:
+            - mountPath: /redpanda-connect.yaml
+              name: config
+              readOnly: true
+              subPath: redpanda-connect.yaml
+            - mountPath: /custom-config
+              name: templated-volume
+
+  - it: should support multiple template expressions in extraVolumes and extraVolumeMounts
+    set:
+      deployment:
+        rolloutConfigMap: false
+      extraVolumes:
+        - name: release-volume
+          configMap:
+            name: "{{ .Release.Name }}-config"
+        - name: chart-volume
+          secret:
+            secretName: "{{ .Chart.Name }}-secret"
+      extraVolumeMounts:
+        - name: release-volume
+          mountPath: "/mnt/{{ .Release.Name }}"
+        - name: chart-volume
+          mountPath: "/secrets/{{ .Chart.Name }}"
+    asserts:
+      - equal:
+          path: spec.template.spec.volumes
+          value:
+            - configMap:
+                name: RELEASE-NAME-redpanda-connect-config
+              name: config
+            - configMap:
+                name: RELEASE-NAME-config
+              name: release-volume
+            - name: chart-volume
+              secret:
+                secretName: connect-secret
+      - equal:
+          path: spec.template.spec.containers[0].volumeMounts
+          value:
+            - mountPath: /redpanda-connect.yaml
+              name: config
+              readOnly: true
+              subPath: redpanda-connect.yaml
+            - mountPath: /mnt/RELEASE-NAME
+              name: release-volume
+            - mountPath: /secrets/connect
+              name: chart-volume
