@@ -236,7 +236,7 @@ updateStrategy: {}
 #   rollingUpdate:
 #     maxUnavailable: 1
 
-# -- Additional volumes to add to the Pod.
+# -- Additional volumes to add to the Pod. Helm template expressions are supported and will be evaluated before rendering.
 extraVolumes:
   []
   # - name: config-map
@@ -246,7 +246,7 @@ extraVolumes:
   #   secret:
   #     secretName: s-name
 
-# -- Additional volume mounts for the container.
+# -- Additional volume mounts for the container. Helm template expressions are supported and will be evaluated before rendering.
 extraVolumeMounts:
   []
   # - name: config-map

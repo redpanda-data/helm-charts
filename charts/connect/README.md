@@ -258,13 +258,13 @@ Names of Secrets or ConfigMaps that contain environment variables to pass to the
 
 ### [extraVolumeMounts](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=extraVolumeMounts)
 
-Additional volume mounts for the container.
+Additional volume mounts for the container. Helm template expressions are supported and will be evaluated before rendering.
 
 **Default:** `[]`
 
 ### [extraVolumes](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=extraVolumes)
 
-Additional volumes to add to the Pod.
+Additional volumes to add to the Pod. Helm template expressions are supported and will be evaluated before rendering.
 
 **Default:** `[]`
 
