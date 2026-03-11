@@ -51,6 +51,11 @@ kminion:
           # Rarely makes sense to change this, but maybe if you want some sort of cheap load test?
           # By default (1) every broker gets one partition
           partitionsPerBroker: 1
+          # Whether kminion should issue AlterPartitionAssignments requests to rebalance partition
+          # leaders across brokers. Disable this when running against Kafka-compatible clusters that
+          # reject AlterPartitionAssignments (e.g. Redpanda with autobalancer enabled, Confluent Cloud).
+          # Topic creation and partition count management remain active regardless of this setting.
+          rebalancePartitions: false
         producer:
           # This defines:
           # - Maximum time to wait for an ack response after producing a message
