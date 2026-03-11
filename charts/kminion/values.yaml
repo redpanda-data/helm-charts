@@ -221,6 +221,12 @@ kminion:
 #        caFilepath: ""
 #        certFilepath: ""
 #        keyFilepath: ""
+#        # base64 encoded tls CA, cannot be set if 'caFilepath' is set
+#        ca: ""
+#        # base64 encoded tls cert, cannot be set if 'certFilepath' is set
+#        cert: ""
+#        # base64 encoded tls key, cannot be set if 'keyFilepath' is set
+#        key: ""
 #        passphrase: ""
 #        insecureSkipTlsVerify: false
 #      sasl:
@@ -230,10 +236,11 @@ kminion:
 #        username: ""
 #        # Password to use for PLAIN or SCRAM mechanism
 #        password: ""
-#        # Mechanism to use for SASL Authentication. Valid values are PLAIN, SCRAM-SHA-256, SCRAM-SHA-512, GSSAPI
+#        # Mechanism to use for SASL Authentication. Valid values are PLAIN, SCRAM-SHA-256, SCRAM-SHA-512, GSSAPI, OAUTHBEARER
 #        mechanism: "PLAIN"
 #        # GSSAPI / Kerberos config properties
 #        gssapi:
+#          # Required. One of USER_AUTH or KEYTAB_AUTH
 #          authType: ""
 #          keyTabPath: ""
 #          kerberosConfigPath: ""
@@ -241,9 +248,13 @@ kminion:
 #          username: ""
 #          password: ""
 #          realm: ""
-#      # Whether to retry the initial test connection to Kafka. False will exit with code 1 on error,
-#      # while true will retry until success.
-#      retryInitConnection: false
+#          enableFast: true
+#        # OAUTHBEARER config properties
+#        oauth:
+#          tokenEndpoint: ""
+#          clientId: ""
+#          clientSecret: ""
+#          scope: ""
 #
 #    minion:
 #      consumerGroups:
@@ -259,19 +270,20 @@ kminion:
 #        # AllowedGroups are regex strings of group ids that shall be exported
 #        # You can specify allowed groups by providing literals like "my-consumergroup-name" or by providing regex expressions
 #        # like "/internal-.*/".
-#        allowedGroups: [ ]
+#        allowedGroups: [ ".*" ]
 #        # IgnoredGroups are regex strings of group ids that shall be ignored/skipped when exporting metrics. Ignored groups
 #        # take precedence over allowed groups.
 #        ignoredGroups: [ ]
 #      topics:
+#        # Enabled can be set to false in order to disable collecting any topic metrics.
+#        enabled: true
 #        # Granularity can be per topic or per partition. If you want to reduce the number of exported metric series and
 #        # you aren't interested in per partition metrics you could choose "topic".
 #        granularity: partition
 #        # AllowedTopics are regex strings of topic names whose topic metrics that shall be exported.
 #        # You can specify allowed topics by providing literals like "my-topic-name" or by providing regex expressions
 #        # like "/internal-.*/".
-#        allowedTopics: [ ]
-#
+#        allowedTopics: [ ".*" ]
 #        # IgnoredTopics are regex strings of topic names that shall be ignored/skipped when exporting metrics. Ignored topics
 #        # take precedence over allowed topics.
 #        ignoredTopics: [ ]
@@ -283,6 +295,43 @@ kminion:
 #        # Enabled specifies whether log dirs shall be scraped and exported or not. This should be disabled for clusters prior
 #        # to version 1.0.0 as describing log dirs was not supported back then.
 #        enabled: true
+#
+#      # EndToEnd Metrics
+#      # When enabled, kminion creates a topic which it produces to and consumes from, to measure various advanced metrics.
+#      endToEnd:
+#        enabled: false
+#        # How often to send end-to-end test messages
+#        probeInterval: 100ms
+#        topicManagement:
+#          # Controls whether kminion should create, validate, and alter the end-to-end topic.
+#          # When disabled, kminion will NOT create/alter the topic; use on managed Kafka platforms
+#          # that restrict partition reassignment operations.
+#          enabled: true
+#          # Name of the topic kminion uses to send its test messages
+#          name: kminion-end-to-end
+#          # How often kminion checks its topic to validate configuration, partition count, and partition assignments
+#          reconciliationInterval: 10m
+#          replicationFactor: 1
+#          # By default (1) every broker gets one partition
+#          partitionsPerBroker: 1
+#          # Whether kminion should issue AlterPartitionAssignments requests to rebalance partition leaders across brokers.
+#          # Disable when running against Kafka-compatible clusters that reject AlterPartitionAssignments
+#          # (e.g. Redpanda with autobalancer enabled, Confluent Cloud).
+#          rebalancePartitions: true
+#        producer:
+#          # Maximum time to wait for an ack response after producing a message
+#          ackSla: 5s
+#          # "all" requires message written to all in-sync replicas; "leader" only requires the partition leader.
+#          requiredAcks: all
+#        consumer:
+#          # Prefix kminion uses when creating its consumer groups. Current kminion instance id will be appended automatically.
+#          groupIdPrefix: kminion-end-to-end
+#          # Whether KMinion should try to delete empty consumer groups with the same prefix.
+#          deleteStaleConsumerGroups: false
+#          # Upper bound for histogram buckets in "roundtrip_latency" and time limit beyond which a message is considered "lost".
+#          roundtripSla: 20s
+#          # Upper bound for histogram buckets in "commit_latency_seconds" and maximum time an offset commit may take.
+#          commitSla: 10s
 #
 #    exporter:
 #      # Namespace is the prefix for all exported Prometheus metrics
