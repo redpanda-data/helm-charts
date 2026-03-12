@@ -123,6 +123,9 @@ spec:
               mountPath: "/streams"
               readOnly: true
             {{- end }}
+      {{- with .Values.deployment.priorityClassName }}
+      priorityClassName: {{ . }}
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

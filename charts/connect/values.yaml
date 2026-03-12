@@ -58,6 +58,12 @@ deployment:
   # -- Restart policy for containers in the Pod.
   restartPolicy: Always
 
+  # -- Kubernetes PriorityClass name to assign to Redpanda Connect Pods.
+  # The specified PriorityClass must already exist in the cluster before deployment.
+  # Leave empty (default) for standard scheduling priority.
+  # @default -- not set
+  priorityClassName: ""
+
 # -- Additional labels to apply to all resources created by this chart.
 commonLabels: {}
 
@@ -255,7 +261,7 @@ extraVolumeMounts:
   # - name: secret
   #   mountPath: /mnt/secret
   #   readOnly: true
-# 
+#
 # -- Configuration settings for resources in Redpanda Connect.
 connectResources:
   # -- Enable resources.
