@@ -96,6 +96,23 @@ tests:
       - matchSnapshot:
           path: data
 
+  - it: should apply commonAnnotations to configmap
+    set:
+      commonAnnotations:
+        example.com/team: platform
+    asserts:
+      - equal:
+          path: metadata.annotations
+          value:
+            example.com/team: platform
+
+  - it: should not have configmap annotations when commonAnnotations empty
+    set:
+      commonAnnotations: {}
+    asserts:
+      - isNull:
+          path: metadata.annotations
+
   - it: should set config from string
     set:
       config: |

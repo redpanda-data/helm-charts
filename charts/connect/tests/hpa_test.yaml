@@ -10,6 +10,27 @@ tests:
       - matchSnapshot:
           path: spec
 
+  - it: should apply commonAnnotations to hpa
+    set:
+      autoscaling:
+        enabled: true
+      commonAnnotations:
+        example.com/team: platform
+    asserts:
+      - equal:
+          path: metadata.annotations
+          value:
+            example.com/team: platform
+
+  - it: should not have hpa annotations when commonAnnotations empty
+    set:
+      autoscaling:
+        enabled: true
+      commonAnnotations: {}
+    asserts:
+      - isNull:
+          path: metadata.annotations
+
   - it: should configure autoscaler custom
     set:
       autoscaling:

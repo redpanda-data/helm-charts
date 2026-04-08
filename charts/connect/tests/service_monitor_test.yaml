@@ -12,6 +12,27 @@ tests:
           path: spec.endpoints[0].scheme
           value: https
 
+  - it: should apply commonAnnotations to service monitor
+    set:
+      serviceMonitor:
+        enabled: true
+      commonAnnotations:
+        example.com/team: platform
+    asserts:
+      - equal:
+          path: metadata.annotations
+          value:
+            example.com/team: platform
+
+  - it: should not have service monitor annotations when commonAnnotations empty
+    set:
+      serviceMonitor:
+        enabled: true
+      commonAnnotations: {}
+    asserts:
+      - isNull:
+          path: metadata.annotations
+
   - it: should set scheme default
     set:
       serviceMonitor:
