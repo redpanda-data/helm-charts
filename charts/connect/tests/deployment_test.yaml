@@ -338,6 +338,72 @@ tests:
             - mountPath: /custom-config
               name: templated-volume
 
+  - it: should apply commonAnnotations to deployment metadata
+    set:
+      deployment:
+        rolloutConfigMap: false
+      commonAnnotations:
+        example.com/team: platform
+        example.com/env: prod
+    asserts:
+      - equal:
+          path: metadata.annotations
+          value:
+            example.com/env: prod
+            example.com/team: platform
+
+  - it: should apply commonAnnotations to pod template
+    set:
+      deployment:
+        rolloutConfigMap: false
+      commonAnnotations:
+        example.com/team: platform
+    asserts:
+      - equal:
+          path: spec.template.metadata.annotations
+          value:
+            example.com/team: platform
+
+  - it: should merge commonAnnotations with deployment annotations
+    set:
+      deployment:
+        rolloutConfigMap: false
+        annotations:
+          deploy-key: deploy-value
+      commonAnnotations:
+        example.com/team: platform
+    asserts:
+      - equal:
+          path: metadata.annotations
+          value:
+            deploy-key: deploy-value
+            example.com/team: platform
+
+  - it: should merge commonAnnotations with pod annotations
+    set:
+      deployment:
+        rolloutConfigMap: false
+        podAnnotations:
+          pod-key: pod-value
+      commonAnnotations:
+        example.com/team: platform
+    asserts:
+      - equal:
+          path: spec.template.metadata.annotations
+          value:
+            example.com/team: platform
+            pod-key: pod-value
+
+  - it: should not have deployment annotations when all empty
+    set:
+      deployment:
+        rolloutConfigMap: false
+        annotations: {}
+      commonAnnotations: {}
+    asserts:
+      - isNull:
+          path: metadata.annotations
+
   - it: should support multiple template expressions in extraVolumes and extraVolumeMounts
     set:
       deployment:

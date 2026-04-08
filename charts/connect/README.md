@@ -3,7 +3,7 @@
 description: Find the default values and descriptions of settings in the Redpanda Connect Helm chart.
 ---
 
-![Version: 3.1.0](https://img.shields.io/badge/Version-3.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.68.0](https://img.shields.io/badge/AppVersion-4.68.0-informational?style=flat-square)
+![Version: 3.2.0](https://img.shields.io/badge/Version-3.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.86.0](https://img.shields.io/badge/AppVersion-4.86.0-informational?style=flat-square)
 
 Redpanda Connect is a high performance and resilient stream processor, able to connect various sources and sinks in a range of brokering patterns and perform hydration, enrichments, transformations and filters on payloads.
 
@@ -79,6 +79,12 @@ Minimum number of replicas if autoscaling is enabled.
 Override the default entrypoint command of the container.
 
 **Default:** `[]`
+
+### [commonAnnotations](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=commonAnnotations)
+
+Additional annotations to apply to all resources created by this chart.
+
+**Default:** `{}`
 
 ### [commonLabels](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=commonLabels)
 

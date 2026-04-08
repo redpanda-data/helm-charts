@@ -25,9 +25,8 @@ tests:
     values:
       - ../values.yaml
     asserts:
-      - equal:
+      - isNull:
           path: metadata.annotations
-          value: {}
 
   - it: should contain filled annotations
     templates:
@@ -41,3 +40,38 @@ tests:
           path: metadata.annotations
           value:
             test: test
+
+  - it: should apply commonAnnotations only
+    set:
+      commonAnnotations:
+        example.com/team: platform
+        example.com/env: prod
+    asserts:
+      - equal:
+          path: metadata.annotations
+          value:
+            example.com/env: prod
+            example.com/team: platform
+
+  - it: should merge commonAnnotations with service annotations
+    set:
+      commonAnnotations:
+        example.com/team: platform
+      service:
+        annotations:
+          svc-key: svc-value
+    asserts:
+      - equal:
+          path: metadata.annotations
+          value:
+            example.com/team: platform
+            svc-key: svc-value
+
+  - it: should not have annotations when commonAnnotations removed
+    set:
+      commonAnnotations: {}
+      service:
+        annotations: {}
+    asserts:
+      - isNull:
+          path: metadata.annotations
