@@ -25,9 +25,8 @@ tests:
     values:
       - ../values.yaml
     asserts:
-      - equal:
+      - isNull:
           path: metadata.annotations
-          value: {}
 
   - it: should contain filled annotations
     templates:
