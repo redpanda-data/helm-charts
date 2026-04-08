@@ -80,6 +80,12 @@ Override the default entrypoint command of the container.
 
 **Default:** `[]`
 
+### [commonAnnotations](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=commonAnnotations)
+
+Additional annotations to apply to all resources created by this chart.
+
+**Default:** `{}`
+
 ### [commonLabels](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=commonLabels)
 
 Additional labels to apply to all resources created by this chart.
