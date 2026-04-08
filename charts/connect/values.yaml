@@ -61,6 +61,9 @@ deployment:
 # -- Additional labels to apply to all resources created by this chart.
 commonLabels: {}
 
+# -- Additional annotations to apply to all resources created by this chart.
+commonAnnotations: {}
+
 # -- Configuration for the Redpanda Connect container image.
 image:
   # -- Docker repository for the Redpanda Connect image.

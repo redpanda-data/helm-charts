@@ -53,6 +53,15 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
 {{/*
+Common annotations
+*/}}
+{{- define "redpanda-connect.commonAnnotations" -}}
+{{- if .Values.commonAnnotations }}
+{{- tpl (toYaml .Values.commonAnnotations) . }}
+{{- end }}
+{{- end }}
+
+{{/*
 Selector labels
 */}}
 {{- define "redpanda-connect.selectorLabels" -}}
