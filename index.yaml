@@ -4,6 +4,33 @@ entries:
   - annotations:
       artifacthub.io/images: |
         - name: redpanda
+          image: docker.redpanda.com/redpandadata/connect:4.87.0
+        - name: busybox
+          image: busybox:latest
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://docs.redpanda.com
+        - name: "Helm (>= 3.10.0)"
+          url: https://helm.sh/docs/intro/install/
+    apiVersion: v2
+    appVersion: 4.87.0
+    created: "2026-04-09T19:41:16.058207098Z"
+    description: Redpanda Connect Helm chart for Kubernetes
+    digest: 62c4705767a3a55e477b02dd1a358ccbe9c3f08b2115ba555fb6043eca368759
+    maintainers:
+    - name: redpanda-data
+      url: https://github.com/orgs/redpanda-data/people
+    name: connect
+    sources:
+    - https://github.com/redpanda-data/helm-charts
+    type: application
+    urls:
+    - https://github.com/redpanda-data/helm-charts/releases/download/connect-3.2.1/connect-3.2.1.tgz
+    version: 3.2.1
+  - annotations:
+      artifacthub.io/images: |
+        - name: redpanda
           image: docker.redpanda.com/redpandadata/connect:4.86.0
         - name: busybox
           image: busybox:latest
@@ -20586,4 +20613,4 @@ entries:
     urls:
     - https://charts.redpanda.com/redpanda-0.1.0.tgz
     version: 0.1.0
-generated: "2026-04-08T22:01:07.814016978Z"
+generated: "2026-04-09T19:41:16.05907697Z"
