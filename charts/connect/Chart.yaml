@@ -20,16 +20,13 @@ maintainers:
   - name: redpanda-data
     url: https://github.com/orgs/redpanda-data/people
 type: application
-
 # The chart version and the app version are not the same and will not track
 # together. The chart version is a semver representation of changes to this
 # chart.
-version: 3.2.0
-
+version: 3.2.1
 # The app version is the default version of Redpanda to install.
 # ** NOTE for maintainers: please ensure the artifacthub image annotation is updated before merging
-appVersion: "4.86.0"
-
+appVersion: "4.87.0"
 sources:
   - https://github.com/redpanda-data/helm-charts
 annotations:
@@ -41,6 +38,6 @@ annotations:
       url: https://helm.sh/docs/intro/install/
   artifacthub.io/images: |
     - name: redpanda
-      image: docker.redpanda.com/redpandadata/connect:4.86.0
+      image: docker.redpanda.com/redpandadata/connect:4.87.0
     - name: busybox
       image: busybox:latest
