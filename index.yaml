@@ -2346,7 +2346,6 @@ entries:
     description: The most popular Open Source Kafka JMX to Prometheus tool by the
       creators of Redpanda Console and Redpanda
     digest: 5d599dd72c876d3e5d57b63811191e2e44572832bfa45724483e422a8b4abebe
-    icon: https://images.ctfassets.net/paqvtpyf8rwu/3cYHw5UzhXCbKuR24GDFGO/73fb682e6157d11c10d5b2b5da1d5af0/skate-stand-panda.svg
     maintainers:
     - name: redpanda-data
       url: https://github.com/orgs/redpanda-data/people
@@ -2373,7 +2372,6 @@ entries:
     description: The most popular Open Source Kafka JMX to Prometheus tool by the
       creators of Redpanda Console and Redpanda
     digest: 645ac81997ba727758d1f1db93516a2015ad16cb6dd906fdc4ba651ffaa6636b
-    icon: https://images.ctfassets.net/paqvtpyf8rwu/3cYHw5UzhXCbKuR24GDFGO/73fb682e6157d11c10d5b2b5da1d5af0/skate-stand-panda.svg
     maintainers:
     - name: redpanda-data
       url: https://github.com/orgs/redpanda-data/people
@@ -2400,7 +2398,6 @@ entries:
     description: The most popular Open Source Kafka JMX to Prometheus tool by the
       creators of Redpanda Console and Redpanda
     digest: 9192aa68fb30a3f84da97174afbc757b4b31912b39af06ed5f37deb3e21a3f45
-    icon: https://images.ctfassets.net/paqvtpyf8rwu/3cYHw5UzhXCbKuR24GDFGO/73fb682e6157d11c10d5b2b5da1d5af0/skate-stand-panda.svg
     maintainers:
     - name: redpanda-data
       url: https://github.com/orgs/redpanda-data/people
@@ -7002,47 +6999,6 @@ entries:
     urls:
     - https://github.com/redpanda-data/helm-charts/releases/download/operator-0.3.3/operator-0.3.3.tgz
     version: 0.3.3
-  - annotations:
-      artifacthub.io/crds: |
-        - kind: Redpanda
-          version: v1alpha1
-          name: redpanda
-          displayName: Redpanda
-          description: Define a Redpanda cluster
-      artifacthub.io/images: |
-        - name: redpanda-operator
-          image: docker.redpanda.com/redpandadata/redpanda-operator:v23.2.1
-        - name: redpanda
-          image: docker.redpanda.com/redpandadata/redpanda:v23.2.1
-      artifacthub.io/license: Apache-2.0
-      artifacthub.io/links: |
-        - name: Documentation
-          url: https://docs.redpanda.com
-        - name: "Helm (>= 3.6.0)"
-          url: https://helm.sh/docs/intro/install/
-      artifacthub.io/operator: "true"
-      artifacthub.io/operatorCapabilities: Basic Install
-    apiVersion: v2
-    appVersion: v23.2.2
-    created: "2023-07-22T14:05:35.792793004Z"
-    dependencies:
-    - condition: monitoring.enabled
-      name: kube-prometheus-stack
-      repository: https://prometheus-community.github.io/helm-charts
-      version: 13.13.1
-    description: Redpanda operator helm chart
-    digest: eb1909f5837beb2683e0202082d6e2446a47081f5ca83cc8ac0f4d24217b5026
-    home: https://vectorized.io
-    maintainers:
-    - email: support@vectorized.io
-      name: Vectorizedio
-    name: operator
-    sources:
-    - https://github.com/redpanda-data/helm-charts
-    type: application
-    urls:
-    - https://github.com/redpanda-data/helm-charts/releases/download/operator-0.3.2/operator-0.3.2.tgz
-    version: 0.3.2
   - apiVersion: v2
     appVersion: v23.2.1-rc9
     created: "2023-07-22T02:51:39.864547769Z"
@@ -7772,7 +7728,6 @@ entries:
       version: '>=3.0.0-0'
     description: Redpanda is the real-time engine for modern apps.
     digest: f30f5471338ac8820c7480f46536af98235f1fd8e8e8cd72a12e6da58c5a8ca7
-    icon: https://images.ctfassets.net/paqvtpyf8rwu/3cYHw5UzhXCbKuR24GDFGO/73fb682e6157d11c10d5b2b5da1d5af0/skate-stand-panda.svg
     kubeVersion: '>= 1.25.0-0'
     maintainers:
     - name: redpanda-data
@@ -7807,7 +7762,6 @@ entries:
       version: '>=3.0.0-0'
     description: Redpanda is the real-time engine for modern apps.
     digest: f30f5471338ac8820c7480f46536af98235f1fd8e8e8cd72a12e6da58c5a8ca7
-    icon: https://images.ctfassets.net/paqvtpyf8rwu/3cYHw5UzhXCbKuR24GDFGO/73fb682e6157d11c10d5b2b5da1d5af0/skate-stand-panda.svg
     kubeVersion: '>= 1.25.0-0'
     maintainers:
     - name: redpanda-data
@@ -7842,7 +7796,6 @@ entries:
       version: '>=3.0.0-0'
     description: Redpanda is the real-time engine for modern apps.
     digest: f30f5471338ac8820c7480f46536af98235f1fd8e8e8cd72a12e6da58c5a8ca7
-    icon: https://images.ctfassets.net/paqvtpyf8rwu/3cYHw5UzhXCbKuR24GDFGO/73fb682e6157d11c10d5b2b5da1d5af0/skate-stand-panda.svg
     kubeVersion: '>= 1.25.0-0'
     maintainers:
     - name: redpanda-data
