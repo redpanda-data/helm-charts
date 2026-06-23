@@ -144,6 +144,9 @@ hostAliases: []
 
 affinity: {}
 
+# Spread Pods across your cluster. https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/#topologyspreadconstraints-field
+topologySpreadConstraints: []
+
 customLabels: {}
 
 serviceMonitor:
