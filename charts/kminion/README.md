@@ -6,7 +6,7 @@ tags:
 description: The most popular Open Source Kafka JMX to Prometheus tool by the creators of [Redpanda Console](https://github.com/redpanda-data/console) and Redpanda
 ---
 
-![Version: 0.15.1](https://img.shields.io/badge/Version-0.15.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.3.0](https://img.shields.io/badge/AppVersion-v2.3.0-informational?style=flat-square)
+![Version: 0.15.2](https://img.shields.io/badge/Version-0.15.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.3.0](https://img.shields.io/badge/AppVersion-v2.3.0-informational?style=flat-square)
 
 This page describes the official Redpanda KMinion Helm Chart. In particular, this page describes the contents of the chart’s [`values.yaml` file](https://github.com/redpanda-data/helm-charts/blob/main/charts/kminion/values.yaml). Each of the settings is listed and described on this page, along with any default values.
 
@@ -262,6 +262,10 @@ The port for kminion metrics endpoint
 **Default:** `true`
 
 ### [tolerations](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=tolerations)
+
+**Default:** `[]`
+
+### [topologySpreadConstraints](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=topologySpreadConstraints)
 
 **Default:** `[]`
 
