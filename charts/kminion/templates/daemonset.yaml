@@ -99,6 +99,10 @@ spec:
                   name: {{.configMapName}}
                   key: {{.configMapKey}}
             {{- end}}
+          {{- with .Values.deployment.extraEnvFrom}}
+          envFrom:
+            {{- toYaml . | nindent 12}}
+          {{- end}}
           volumeMounts:
             - name: config
               mountPath: /etc/kminion

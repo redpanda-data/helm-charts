@@ -205,6 +205,13 @@ deployment:
     #   secretName: kafka-credentials-team-xy
     #   secretKey: password
 
+  # -- Configure extra environment variables from Secrets and ConfigMaps.
+  extraEnvFrom: []
+  # - secretRef:
+  #     name: my-secret
+  # - configMapRef:
+  #     name: my-configmap
+
   # Add additional containers, e. g. for oauth2-proxy
   extraContainers: {}
   # Add additional init containers, e. g. for oauth2-proxy
