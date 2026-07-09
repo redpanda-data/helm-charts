@@ -275,3 +275,6 @@ The port for kminion metrics endpoint
 
 **Default:** `[]`
 
+### [extraObjects](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=extraObjects)
+
+**Default:** `[]`

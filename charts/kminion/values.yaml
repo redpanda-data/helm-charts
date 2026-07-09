@@ -77,7 +77,6 @@ service:
     #   protocol: TCP
     #   name: expose-x509-for-ttl-checks
 
-
 ingress:
   enabled: false
   # For Kubernetes >= 1.18 you should specify the ingress-controller via the field ingressClassName
@@ -359,3 +358,12 @@ tests:
   enabled: true
 
 configAutoReload: false
+
+# Extra objects to deploy
+extraObjects: []
+  # - apiVersion: cert-manager.io/v1
+  #   kind: Certificate
+  #   metadata:
+  #     name: kminion-client-cert
+  #   spec:
+  #     commonName: kminion-client
