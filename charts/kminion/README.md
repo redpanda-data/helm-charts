@@ -97,6 +97,10 @@ Configure extra environment variables from Secrets and ConfigMaps.
 
 **Default:** `[]`
 
+### [extraObjects](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=extraObjects)
+
+**Default:** `[]`
+
 ### [fullnameOverride](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=fullnameOverride)
 
 **Default:** `""`
@@ -275,6 +279,3 @@ The port for kminion metrics endpoint
 
 **Default:** `[]`
 
-### [extraObjects](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=extraObjects)
-
-**Default:** `[]`
