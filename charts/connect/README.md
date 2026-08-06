@@ -182,6 +182,12 @@ Labels to add to Redpanda Connect Pods.
 
 **Default:** `{}`
 
+### [deployment.priorityClassName](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=deployment.priorityClassName)
+
+Kubernetes PriorityClass name to assign to Redpanda Connect Pods. The specified PriorityClass must already exist in the cluster before deployment. Leave empty (default) for standard scheduling priority.
+
+**Default:** not set
+
 ### [deployment.readinessProbe](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=deployment.readinessProbe)
 
 Configuration for the readiness probe that checks if the container is ready to accept traffic.
