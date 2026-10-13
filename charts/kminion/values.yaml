@@ -163,6 +163,9 @@ serviceMonitor:
   #   replacement: $1
   #   action: replace
   metricRelabelings: []
+  namespaceSelector: {}
+  #  matchNames:
+  #  - logging
 
 # For DaemonSet mode you may set daemonset to "true" and replicaCount to 0.
 daemonset:
