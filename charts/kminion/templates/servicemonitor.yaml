@@ -26,6 +26,9 @@ metadata:
     {{toYaml .Values.serviceMonitor.additionalLabels | nindent 4}}
     {{- end}}
 spec:
+  {{- if .Values.serviceMonitor.namespaceSelector }}
+  namespaceSelector: {{ toYaml .Values.serviceMonitor.namespaceSelector | nindent 4 }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "kminion.labels" . | nindent 6}}
