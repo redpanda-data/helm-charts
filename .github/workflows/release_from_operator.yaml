@@ -77,27 +77,73 @@ jobs:
 
       - name: Pull and Index Releases
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ env.ACTIONS_BOT_TOKEN }}
+          REPO_TOKEN: ${{ github.token }}
         run: |
           set -ex
 
           mkdir -p ".cr-index"
           mkdir -p ".cr-release-packages"
+          mkdir -p ".cr-pulled"
 
+          # Drafts are not released yet and must not reach the index.
           releases=$(gh release list \
             --repo redpanda-data/redpanda-operator \
             --limit 30 \
             --order desc \
+            --exclude-drafts \
             --json 'tagName' \
             --jq '.[].tagName | select(startswith("${{ matrix.release_prefix }}/"))')
+
+          # Store a pulled package as an asset of a release of this repository
+          # with the same name the operator repository used, so the index
+          # below points at assets this repository owns, like every other
+          # chart hosted here. The release is created on first sight and the
+          # asset is only uploaded when it is missing or its digest differs,
+          # so a run that stopped half way is completed by the next one and
+          # an untouched release costs a single API call. These releases are
+          # storage only: never this repository's "latest", and tagged on the
+          # pages branch so that release.yaml, which diffs charts/ against the
+          # newest tag reachable from main, never sees them. Writes to this
+          # repository use the job's own token, like release.yaml does.
+          mirror() {
+            local tag="$1" file="$2" name digest have
+            name=$(basename "$file")
+            digest="sha256:$(sha256sum "$file" | cut -d' ' -f1)"
+            if ! have=$(GH_TOKEN="$REPO_TOKEN" gh api "repos/redpanda-data/helm-charts/releases/tags/$tag" \
+                --jq ".assets[] | select(.name == \"$name\") | .digest"); then
+              local flags=()
+              case "$tag" in *-alpha*|*-beta*|*-rc*) flags+=(--prerelease) ;; esac
+              GH_TOKEN="$REPO_TOKEN" gh release create "$tag" \
+                --repo redpanda-data/helm-charts \
+                --target gh-pages \
+                --title "$tag" \
+                --notes "Chart package $name" \
+                --latest=false \
+                "${flags[@]}"
+              have=""
+            fi
+            if [ "$have" != "$digest" ]; then
+              GH_TOKEN="$REPO_TOKEN" gh release upload "$tag" "$file" \
+                --repo redpanda-data/helm-charts \
+                --clobber
+            fi
+          }
 
           # For all found releases, download any assets ending in *.tgz. For
           # some reason, chart-releaser uses the presence of the archives to
           # use then search releases.
           # https://github.com/helm/chart-releaser/blob/e9ec4ade041d933be7c204751d1101bf4a7dde96/pkg/releaser/releaser.go#L134-L139
           for tag in $releases; do
+            dir=".cr-pulled/$tag"
+            mkdir -p "$dir"
             # Some releases may not have a .tgz, so this command may fail.
-            gh release download "$tag" --repo redpanda-data/redpanda-operator --dir ".cr-release-packages" -p '*.tgz' || true
+            gh release download "$tag" --repo redpanda-data/redpanda-operator --dir "$dir" -p '*.tgz' || true
+            for file in "$dir"/*.tgz; do
+              [ -e "$file" ] || continue
+              mirror "$tag" "$file"
+              mv "$file" ".cr-release-packages/"
+            done
           done
 
           # gh release download tries to be cute with it's terminal output
@@ -107,11 +153,15 @@ jobs:
 
           # Instruct chart-releaser to update / rebuild the index file based on
           # the releases we pulled. This operation is idempotent and no change
-          # will be pushed if no new releases are discovered.
+          # will be pushed if no new releases are discovered. The token is the
+          # one the checkout already uses, so the gh-pages push identity does
+          # not change; without it the release lookups are anonymous and hit
+          # the 60 requests an hour limit.
           cr index \
             --push \
             --owner redpanda-data \
-            --git-repo redpanda-operator \
+            --git-repo helm-charts \
+            --token "$GH_TOKEN" \
             --release-name-template '${{ matrix.release_name_template }}'
 
           # Uncomment this block for debugging output. cr index makes changes
@@ -125,3 +175,4 @@ jobs:
           # Clear out any pulled releases.
           rm -rf ".cr-index"
           rm -rf ".cr-release-packages"
+          rm -rf ".cr-pulled"
