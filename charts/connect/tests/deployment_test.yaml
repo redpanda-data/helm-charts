@@ -240,6 +240,24 @@ tests:
                 name: my-config-map
               name: streams
 
+  - it: should not set priorityClassName by default
+    set:
+      deployment:
+        rolloutConfigMap: false
+    asserts:
+      - isNull:
+          path: spec.template.spec.priorityClassName
+
+  - it: should set priorityClassName when specified
+    set:
+      deployment:
+        rolloutConfigMap: false
+        priorityClassName: high-priority
+    asserts:
+      - equal:
+          path: spec.template.spec.priorityClassName
+          value: high-priority
+
   - it: should allow custom volume mounts
     set:
       deployment:
