@@ -273,8 +273,10 @@ streams:
   # -- Name of the ConfigMap that contains stream configuration files.
   streamsConfigMap: ""
   api:
-    # -- Enable the streams API.
-    enable: true
+    # -- Enable the streams API, which creates, updates, and removes streams over HTTP (`POST /streams/{id}` and so on).
+    # It accepts pipeline configuration, so secure the HTTP server with `http.address` or `http.basic_auth` before you enable it.
+    # On Redpanda Connect 4.111.0 and later the chart passes `--bind-http`. On earlier versions the API is on unless this is `false`.
+    enable: false
 
 # -- Configuration for the HTTP server used to expose Redpanda Connect endpoints.
 http:

@@ -3,7 +3,7 @@
 description: Find the default values and descriptions of settings in the Redpanda Connect Helm chart.
 ---
 
-![Version: 3.2.36](https://img.shields.io/badge/Version-3.2.36-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.115.1](https://img.shields.io/badge/AppVersion-4.115.1-informational?style=flat-square)
+![Version: 3.3.0](https://img.shields.io/badge/Version-3.3.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.115.1](https://img.shields.io/badge/AppVersion-4.115.1-informational?style=flat-square)
 
 Redpanda Connect is a high performance and resilient stream processor, able to connect various sources and sinks in a range of brokering patterns and perform hydration, enrichments, transformations and filters on payloads.
 
@@ -555,14 +555,14 @@ Configuration settings for the streams mode feature in Redpanda Connect.
 **Default:**
 
 ```
-{"api":{"enable":true},"enabled":false,"streamsConfigMap":""}
+{"api":{"enable":false},"enabled":false,"streamsConfigMap":""}
 ```
 
 ### [streams.api.enable](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=streams.api.enable)
 
-Enable the streams API.
+Enable the streams API, which creates, updates, and removes streams over HTTP (`POST /streams/{id}` and so on). It accepts pipeline configuration, so secure the HTTP server with `http.address` or `http.basic_auth` before you enable it. On Redpanda Connect 4.111.0 and later the chart passes `--bind-http`. On earlier versions the API is on unless this is `false`.
 
-**Default:** `true`
+**Default:** `false`
 
 ### [streams.enabled](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=streams.enabled)
 
