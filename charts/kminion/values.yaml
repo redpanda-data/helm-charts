@@ -170,6 +170,9 @@ serviceMonitor:
 # For DaemonSet mode you may set daemonset to "true" and replicaCount to 0.
 daemonset:
   enabled: false
+  # -- Update strategy of the DaemonSet. With `OnDelete`, pods change only after you delete them.
+  updateStrategy:
+    type: RollingUpdate
 
 deployment:
   readinessProbe:
