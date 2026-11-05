@@ -53,8 +53,7 @@ spec:
         {{- toYaml . | nindent 8}}
       {{- end}}
       serviceAccountName: {{include "kminion.serviceAccountName" .}}
-      # KMinion maps every env var to a config key, so the injected service env vars can override config values.
-      enableServiceLinks: false
+      enableServiceLinks: {{ .Values.enableServiceLinks }}
       {{- with .Values.priorityClassName }}
       priorityClassName: {{ . }}
       {{- end }}

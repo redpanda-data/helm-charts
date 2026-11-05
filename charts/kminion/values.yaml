@@ -38,6 +38,10 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
+# -- KMinion maps every env var to a config key, so Kubernetes service-link env vars can override config values.
+# Set to `true` only if something in the pod needs the service-link env vars.
+enableServiceLinks: false
+
 priorityClassName:
 
 podAnnotations: {}

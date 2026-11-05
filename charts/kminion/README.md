@@ -97,6 +97,12 @@ Configure extra environment variables from Secrets and ConfigMaps.
 
 **Default:** `[]`
 
+### [enableServiceLinks](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=enableServiceLinks)
+
+KMinion maps every env var to a config key, so Kubernetes service-link env vars can override config values. Set to `true` only if something in the pod needs the service-link env vars.
+
+**Default:** `false`
+
 ### [extraObjects](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=extraObjects)
 
 **Default:** `[]`
