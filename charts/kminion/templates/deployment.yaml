@@ -53,6 +53,7 @@ spec:
         {{- toYaml . | nindent 8}}
       {{- end}}
       serviceAccountName: {{include "kminion.serviceAccountName" .}}
+      enableServiceLinks: {{ .Values.enableServiceLinks }}
       {{- with .Values.priorityClassName }}
       priorityClassName: {{ . }}
       {{- end }}

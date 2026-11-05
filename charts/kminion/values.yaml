@@ -38,6 +38,10 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
+# -- KMinion maps every env var to a config key, so Kubernetes service-link env vars can override config values.
+# Set to `true` only if something in the pod needs the service-link env vars.
+enableServiceLinks: false
+
 priorityClassName:
 
 podAnnotations: {}
@@ -243,6 +247,10 @@ kminion:
 #        cert: ""
 #        # base64 encoded tls key, cannot be set if 'keyFilepath' is set
 #        key: ""
+#        # passphrase decrypts an encrypted tls key. Supported formats: PKCS#8 ("BEGIN ENCRYPTED PRIVATE KEY",
+#        # PBES2 encryption) and legacy PEM encryption ("Proc-Type: 4,ENCRYPTED"). Legacy PEM encryption is
+#        # insecure, so convert such keys to PKCS#8. For example, with OpenSSL:
+#        # openssl pkcs8 -topk8 -v2 aes-256-cbc -in <key> -out <new-key>
 #        passphrase: ""
 #        insecureSkipTlsVerify: false
 #
