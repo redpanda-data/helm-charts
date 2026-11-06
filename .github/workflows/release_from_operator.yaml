@@ -16,7 +16,9 @@
 
 # This workflow piggy backs on chart-releaser to release charts hosted in the
 # redpanda-operator repo. It's idempotent, processes the last 30 releases, and
-# may be triggered by a workflow in the operator or manually.
+# may be triggered by a workflow in the operator or manually. The repository
+# the releases are read from is the OPERATOR_RELEASES_REPO repository
+# variable and defaults to redpanda-data/redpanda-operator.
 name: Sync Operator Repo Releases
 on:
   # For manually dispatching.
@@ -85,6 +87,7 @@ jobs:
         env:
           GH_TOKEN: ${{ env.ACTIONS_BOT_TOKEN }}
           REPO_TOKEN: ${{ github.token }}
+          OPERATOR_REPO: ${{ vars.OPERATOR_RELEASES_REPO || 'redpanda-data/redpanda-operator' }}
         run: |
           set -ex
 
@@ -94,7 +97,7 @@ jobs:
 
           # Drafts are not released yet and must not reach the index.
           releases=$(gh release list \
-            --repo redpanda-data/redpanda-operator \
+            --repo "$OPERATOR_REPO" \
             --limit 30 \
             --order desc \
             --exclude-drafts \
@@ -149,7 +152,7 @@ jobs:
             # Some releases have no .tgz and a download cut off part way
             # leaves a truncated file behind; either way skip the tag so
             # nothing incomplete is uploaded or indexed.
-            gh release download "$tag" --repo redpanda-data/redpanda-operator --dir "$dir" -p '*.tgz' \
+            gh release download "$tag" --repo "$OPERATOR_REPO" --dir "$dir" -p '*.tgz' \
               || { rm -rf "$dir"; continue; }
             for file in "$dir"/*.tgz; do
               [ -e "$file" ] || continue
