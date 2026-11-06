@@ -6,7 +6,7 @@ tags:
 description: The most popular Open Source Kafka JMX to Prometheus tool by the creators of [Redpanda Console](https://github.com/redpanda-data/console) and Redpanda
 ---
 
-![Version: 0.17.0](https://img.shields.io/badge/Version-0.17.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.5.0](https://img.shields.io/badge/AppVersion-v2.5.0-informational?style=flat-square)
+![Version: 0.18.0](https://img.shields.io/badge/Version-0.18.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.5.0](https://img.shields.io/badge/AppVersion-v2.5.0-informational?style=flat-square)
 
 This page describes the official Redpanda KMinion Helm Chart. In particular, this page describes the contents of the chart’s [`values.yaml` file](https://github.com/redpanda-data/helm-charts/blob/main/charts/kminion/values.yaml). Each of the settings is listed and described on this page, along with any default values.
 
@@ -206,6 +206,22 @@ KMinion maps every env var to a config key, so Kubernetes service-link env vars 
 ### [securityContext.allowPrivilegeEscalation](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=securityContext.allowPrivilegeEscalation)
 
 **Default:** `false`
+
+### [securityContext.capabilities.drop[0]](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=securityContext.capabilities.drop[0])
+
+**Default:** `"ALL"`
+
+### [securityContext.readOnlyRootFilesystem](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=securityContext.readOnlyRootFilesystem)
+
+**Default:** `true`
+
+### [securityContext.runAsNonRoot](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=securityContext.runAsNonRoot)
+
+**Default:** `true`
+
+### [securityContext.seccompProfile.type](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=securityContext.seccompProfile.type)
+
+**Default:** `"RuntimeDefault"`
 
 ### [service.annotations](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=service.annotations)
 
