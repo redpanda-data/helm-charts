@@ -256,7 +256,6 @@ tests:
             - -c
             - /redpanda-connect.yaml
             - streams
-            - --no-api
             - /streams/*.yaml
       - equal:
           path: spec.template.spec.containers[0].volumeMounts
