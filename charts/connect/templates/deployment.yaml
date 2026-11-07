@@ -83,7 +83,14 @@ spec:
             {{- end }}
             {{- if and .Values.streams.enabled .Values.streams.streamsConfigMap }}
             - "streams"
-            {{- if eq .Values.streams.api.enable false }}
+            {{- /* Connect 4.111.0 made the streams API opt-in with --bind-http and turned --no-api into a no-op. Older images reject --bind-http. Non-semver tags such as latest are treated as new. */}}
+            {{- $tag := .Values.image.tag | default .Chart.AppVersion }}
+            {{- $optInAPI := or (not (regexMatch "^v?[0-9]+\\.[0-9]+\\.[0-9]+" $tag)) (semverCompare ">=4.111.0-0" $tag) }}
+            {{- if .Values.streams.api.enable }}
+            {{- if $optInAPI }}
+            - "--bind-http"
+            {{- end }}
+            {{- else if not $optInAPI }}
             - "--no-api"
             {{- end }}
             - /streams/*.yaml

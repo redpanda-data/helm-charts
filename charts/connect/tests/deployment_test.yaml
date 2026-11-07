@@ -167,6 +167,44 @@ tests:
                 name: my-config-map
               name: resources
 
+  - it: should pass --bind-http when the streams API is enabled
+    set:
+      deployment:
+        rolloutConfigMap: false
+      streams:
+        enabled: true
+        streamsConfigMap: "my-config-map"
+        api:
+          enable: true
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].args
+          value:
+            - -c
+            - /redpanda-connect.yaml
+            - streams
+            - --bind-http
+            - /streams/*.yaml
+
+  - it: should pass --no-api, not --bind-http, to an image older than 4.111.0
+    set:
+      deployment:
+        rolloutConfigMap: false
+      image:
+        tag: 4.110.0
+      streams:
+        enabled: true
+        streamsConfigMap: "my-config-map"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].args
+          value:
+            - -c
+            - /redpanda-connect.yaml
+            - streams
+            - --no-api
+            - /streams/*.yaml
+
   - it: should enable streams
     set:
       deployment:
@@ -218,7 +256,6 @@ tests:
             - -c
             - /redpanda-connect.yaml
             - streams
-            - --no-api
             - /streams/*.yaml
       - equal:
           path: spec.template.spec.containers[0].volumeMounts
