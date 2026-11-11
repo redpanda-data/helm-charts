@@ -3795,6 +3795,43 @@ entries:
           description: Define a Redpanda cluster
       artifacthub.io/images: |
         - name: redpanda-operator
+          image: docker.redpanda.com/redpandadata/redpanda-operator:v26.2.6
+        - name: redpanda
+          image: docker.redpanda.com/redpandadata/redpanda:v26.2.6
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://docs.redpanda.com
+        - name: "Helm (>= 3.6.0)"
+          url: https://helm.sh/docs/intro/install/
+      artifacthub.io/operator: "true"
+      artifacthub.io/operatorCapabilities: Seamless Upgrades
+    apiVersion: v2
+    appVersion: v26.2.6
+    created: "2026-11-11T22:01:24.25478347Z"
+    description: Redpanda operator helm chart
+    digest: 56578ae7985bf3b7069723639c9511a64285f63fae86fc440cacd4e02da44004
+    icon: https://go.redpanda.com/hubfs/Redpandas/operator-panda.png
+    kubeVersion: '>= 1.25.0-0'
+    maintainers:
+    - name: redpanda-data
+      url: https://github.com/orgs/redpanda-data/people
+    name: operator
+    sources:
+    - https://github.com/redpanda-data/redpanda-operator/tree/main/operator/chart
+    type: application
+    urls:
+    - https://github.com/redpanda-data/helm-charts/releases/download/operator/v26.2.6/operator-26.2.6.tgz
+    version: 26.2.6
+  - annotations:
+      artifacthub.io/crds: |
+        - kind: Redpanda
+          version: v1alpha1
+          name: redpanda
+          displayName: Redpanda
+          description: Define a Redpanda cluster
+      artifacthub.io/images: |
+        - name: redpanda-operator
           image: docker.redpanda.com/redpandadata/redpanda-operator:v26.2.5
         - name: redpanda
           image: docker.redpanda.com/redpandadata/redpanda:v26.2.6
@@ -23778,4 +23815,4 @@ entries:
     urls:
     - https://charts.redpanda.com/redpanda-0.1.0.tgz
     version: 0.1.0
-generated: "2026-11-11T21:36:46.6268638Z"
+generated: "2026-11-11T22:01:24.255253664Z"
