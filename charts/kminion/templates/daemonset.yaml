@@ -24,7 +24,7 @@ metadata:
     {{- include "kminion.labels" . | nindent 4}}
 spec:
   updateStrategy:
-    type: OnDelete
+    {{- toYaml .Values.daemonset.updateStrategy | nindent 4}}
   selector:
     matchLabels:
       {{- include "kminion.selectorLabels" . | nindent 6}}
