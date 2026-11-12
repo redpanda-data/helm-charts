@@ -232,7 +232,7 @@ deployment:
 
 kminion:
   # KMinion can be configured using environment variables and/or a YAML config. The yaml contents under config will
-  # end up in a YAML file which will be mounted into the kminion container.
+  # end up in a YAML file in a Secret, which will be mounted into the kminion container.
   # See reference config: https://github.com/redpanda-data/kminion/blob/master/docs/reference-config.yaml
   config: {}
 #    logger:
