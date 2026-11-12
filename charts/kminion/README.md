@@ -255,6 +255,12 @@ The port for kminion metrics endpoint
 
 **Default:** `{}`
 
+### [serviceAccount.automountServiceAccountToken](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=serviceAccount.automountServiceAccountToken)
+
+Mount the service account token into the pod. KMinion does not use the Kubernetes API, so the default is `false`. Set to `true` only if a sidecar in `deployment.extraContainers` needs the token.
+
+**Default:** `false`
+
 ### [serviceAccount.create](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=serviceAccount.create)
 
 **Default:** `true`

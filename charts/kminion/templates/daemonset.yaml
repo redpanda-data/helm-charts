@@ -48,6 +48,7 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8}}
       serviceAccountName: {{ include "kminion.serviceAccountName" . }}
+      automountServiceAccountToken: {{ .Values.serviceAccount.automountServiceAccountToken }}
       enableServiceLinks: {{ .Values.enableServiceLinks }}
       {{- with .Values.priorityClassName }}
       priorityClassName: {{ . }}
