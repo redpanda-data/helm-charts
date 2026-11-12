@@ -37,6 +37,9 @@ serviceAccount:
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
+  # -- Mount the service account token into the pod. KMinion does not use the Kubernetes API, so the default is `false`.
+  # Set to `true` only if a sidecar in `deployment.extraContainers` needs the token.
+  automountServiceAccountToken: false
 
 # -- KMinion maps every env var to a config key, so Kubernetes service-link env vars can override config values.
 # Set to `true` only if something in the pod needs the service-link env vars.
