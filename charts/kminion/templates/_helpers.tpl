@@ -70,11 +70,11 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
-Annotation to trigger Deployment/DaemonSet restart when configmap changes
+Annotation to trigger Deployment/DaemonSet restart when the config Secret changes
 */}}
 {{- define "kminion.restartAnnotation" -}}
 {{- if .Values.configAutoReload }}
-checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum  | trunc 63 }}
+checksum/config: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum  | trunc 63 }}
 {{- end }}
 {{- end }}
 
