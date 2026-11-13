@@ -3197,6 +3197,33 @@ entries:
   - annotations:
       artifacthub.io/images: |
         - name: kminion
+          image: docker.redpanda.com/redpandadata/kminion:v2.6.1
+      artifacthub.io/license: Apache-2.0
+      artifacthub.io/links: |
+        - name: Documentation
+          url: https://docs.redpanda.com
+        - name: "Helm (>= 3.6.0)"
+          url: https://helm.sh/docs/intro/install/
+    apiVersion: v2
+    appVersion: v2.6.1
+    created: "2026-11-13T15:36:07.864806167Z"
+    description: The most popular Open Source Kafka JMX to Prometheus tool by the
+      creators of Redpanda Console and Redpanda
+    digest: 1e1a0e36cde977de2a9973800a3e2f7b5fd1ba0693202cd2e28aeb6f3c252fe1
+    icon: https://images.ctfassets.net/paqvtpyf8rwu/3cYHw5UzhXCbKuR24GDFGO/73fb682e6157d11c10d5b2b5da1d5af0/skate-stand-panda.svg
+    maintainers:
+    - name: redpanda-data
+      url: https://github.com/orgs/redpanda-data/people
+    name: kminion
+    sources:
+    - https://github.com/redpanda-data/helm-charts
+    type: application
+    urls:
+    - https://github.com/redpanda-data/helm-charts/releases/download/kminion-0.20.0/kminion-0.20.0.tgz
+    version: 0.20.0
+  - annotations:
+      artifacthub.io/images: |
+        - name: kminion
           image: docker.redpanda.com/redpandadata/kminion:v2.5.1
       artifacthub.io/license: Apache-2.0
       artifacthub.io/links: |
@@ -23842,4 +23869,4 @@ entries:
     urls:
     - https://charts.redpanda.com/redpanda-0.1.0.tgz
     version: 0.1.0
-generated: "2026-11-12T10:17:52.50066641Z"
+generated: "2026-11-13T15:36:07.866039011Z"
