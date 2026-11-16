@@ -17,6 +17,14 @@ deployment:
   # -- Rollout the deployment on ConfigMap changes.
   rolloutConfigMap: true
 
+  # -- Configuration for the startup probe. Kubernetes holds off the liveness and readiness probes until it succeeds, so slow-starting pipelines are not restarted. Unset by default.
+  startupProbe: {}
+  #   httpGet:
+  #     path: /ping
+  #     port: http
+  #   periodSeconds: 5
+  #   failureThreshold: 24
+
   # -- Configuration for the readiness probe that checks if the container is ready to accept traffic.
   readinessProbe:
     # -- Number of consecutive failures before marking Pod as unhealthy.
