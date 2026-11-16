@@ -244,6 +244,12 @@ Rollout the deployment on ConfigMap changes.
 
 **Default:** `true`
 
+### [deployment.startupProbe](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=deployment.startupProbe)
+
+Configuration for the startup probe. Kubernetes holds off the liveness and readiness probes until it succeeds, so slow-starting pipelines are not restarted. Unset by default.
+
+**Default:** `{}`
+
 ### [deployment.terminationGracePeriodSeconds](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=deployment.terminationGracePeriodSeconds)
 
 Time in seconds for Pod termination grace period.
