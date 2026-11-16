@@ -15,10 +15,10 @@
 # limitations under the License.
 
 # This workflow piggy backs on chart-releaser to release charts hosted in the
-# redpanda-operator repo. It's idempotent, processes the last 30 releases, and
-# may be triggered by a workflow in the operator or manually. The repository
-# the releases are read from is the OPERATOR_RELEASES_REPO repository
-# variable and defaults to redpanda-data/redpanda-operator.
+# operator repo. It's idempotent, processes the last 30 releases, and may be
+# triggered by a workflow in the operator or manually. The repository the
+# releases are read from is the OPERATOR_RELEASES_REPO repository variable
+# and defaults to redpanda-data/operator-enterprise.
 name: Sync Operator Repo Releases
 on:
   # For manually dispatching.
@@ -87,7 +87,7 @@ jobs:
         env:
           GH_TOKEN: ${{ env.ACTIONS_BOT_TOKEN }}
           REPO_TOKEN: ${{ github.token }}
-          OPERATOR_REPO: ${{ vars.OPERATOR_RELEASES_REPO || 'redpanda-data/redpanda-operator' }}
+          OPERATOR_REPO: ${{ vars.OPERATOR_RELEASES_REPO || 'redpanda-data/operator-enterprise' }}
         run: |
           set -ex
 
