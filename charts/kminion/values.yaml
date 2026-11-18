@@ -174,6 +174,13 @@ serviceMonitor:
   namespaceSelector: {}
   #  matchNames:
   #  - logging
+  # -- Labels the ServiceMonitor uses to select the KMinion Service. When empty, all chart labels are used,
+  # including `helm.sh/chart`, `app.kubernetes.io/version` and `app.kubernetes.io/managed-by`. Set it when a tool
+  # rewrites those labels on the Service (for example Pulumi sets `app.kubernetes.io/managed-by: pulumi`), so the
+  # ServiceMonitor still finds the Service.
+  selector: {}
+  #  app.kubernetes.io/name: kminion
+  #  app.kubernetes.io/instance: kminion
 
 # For DaemonSet mode you may set daemonset to "true" and replicaCount to 0.
 daemonset:

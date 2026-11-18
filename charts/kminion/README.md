@@ -301,6 +301,12 @@ Mount the service account token into the pod. KMinion does not use the Kubernete
 
 **Default:** `"10s"`
 
+### [serviceMonitor.selector](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=serviceMonitor.selector)
+
+Labels the ServiceMonitor uses to select the KMinion Service. When empty, all chart labels are used, including `helm.sh/chart`, `app.kubernetes.io/version` and `app.kubernetes.io/managed-by`. Set it when a tool rewrites those labels on the Service (for example Pulumi sets `app.kubernetes.io/managed-by: pulumi`), so the ServiceMonitor still finds the Service.
+
+**Default:** `{}`
+
 ### [serviceMonitor.targetLabels](https://artifacthub.io/packages/helm/redpanda-data/redpanda?modal=values&path=serviceMonitor.targetLabels)
 
 **Default:** `[]`
