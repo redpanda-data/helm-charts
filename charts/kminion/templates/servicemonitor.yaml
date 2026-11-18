@@ -31,7 +31,11 @@ spec:
   {{- end }}
   selector:
     matchLabels:
+      {{- if .Values.serviceMonitor.selector }}
+      {{- toYaml .Values.serviceMonitor.selector | nindent 6 }}
+      {{- else }}
       {{- include "kminion.labels" . | nindent 6}}
+      {{- end }}
   endpoints:
     - port: metrics
       path: /metrics
