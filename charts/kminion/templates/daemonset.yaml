@@ -24,7 +24,7 @@ metadata:
     {{- include "kminion.labels" . | nindent 4}}
 spec:
   updateStrategy:
-    type: OnDelete
+    {{- toYaml .Values.daemonset.updateStrategy | nindent 4}}
   selector:
     matchLabels:
       {{- include "kminion.selectorLabels" . | nindent 6}}
@@ -48,13 +48,15 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8}}
       serviceAccountName: {{ include "kminion.serviceAccountName" . }}
+      automountServiceAccountToken: {{ .Values.serviceAccount.automountServiceAccountToken }}
+      enableServiceLinks: {{ .Values.enableServiceLinks }}
       {{- with .Values.priorityClassName }}
       priorityClassName: {{ . }}
       {{- end }}
       volumes:
         - name: config
-          configMap:
-            name: {{include "kminion.fullname" .}}
+          secret:
+            secretName: {{include "kminion.fullname" .}}
         {{- range .Values.deployment.volumes.secrets}}
         - name: {{.secretName}}
           secret:

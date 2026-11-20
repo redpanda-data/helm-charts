@@ -3,7 +3,7 @@
 description: Find the default values and descriptions of settings in the Redpanda Connect Helm chart.
 ---
 
-![Version: 3.3.0](https://img.shields.io/badge/Version-3.3.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.115.1](https://img.shields.io/badge/AppVersion-4.115.1-informational?style=flat-square)
+![Version: 3.3.0](https://img.shields.io/badge/Version-3.3.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 4.118.0](https://img.shields.io/badge/AppVersion-4.118.0-informational?style=flat-square)
 
 Redpanda Connect is a high performance and resilient stream processor, able to connect various sources and sinks in a range of brokering patterns and perform hydration, enrichments, transformations and filters on payloads.
 
@@ -243,6 +243,12 @@ Restart policy for containers in the Pod.
 Rollout the deployment on ConfigMap changes.
 
 **Default:** `true`
+
+### [deployment.startupProbe](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=deployment.startupProbe)
+
+Configuration for the startup probe. Kubernetes holds off the liveness and readiness probes until it succeeds, so slow-starting pipelines are not restarted. Unset by default.
+
+**Default:** `{}`
 
 ### [deployment.terminationGracePeriodSeconds](https://artifacthub.io/packages/helm/redpanda-data/connect?modal=values&path=deployment.terminationGracePeriodSeconds)
 

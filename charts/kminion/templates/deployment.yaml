@@ -53,6 +53,8 @@ spec:
         {{- toYaml . | nindent 8}}
       {{- end}}
       serviceAccountName: {{include "kminion.serviceAccountName" .}}
+      automountServiceAccountToken: {{ .Values.serviceAccount.automountServiceAccountToken }}
+      enableServiceLinks: {{ .Values.enableServiceLinks }}
       {{- with .Values.priorityClassName }}
       priorityClassName: {{ . }}
       {{- end }}
@@ -60,8 +62,8 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8}}
       volumes:
         - name: config
-          configMap:
-            name: {{include "kminion.fullname" .}}
+          secret:
+            secretName: {{include "kminion.fullname" .}}
         {{- range .Values.deployment.volumes.secrets}}
         - name: {{.secretName}}
           secret:

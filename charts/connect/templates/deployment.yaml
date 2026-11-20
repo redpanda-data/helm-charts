@@ -105,6 +105,10 @@ spec:
               {{- end }}
               protocol: TCP
           {{- if .Values.http.enabled }}
+          {{- with .Values.deployment.startupProbe }}
+          startupProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           livenessProbe:
             {{- toYaml .Values.deployment.livenessProbe | nindent 12 }}
           readinessProbe:
