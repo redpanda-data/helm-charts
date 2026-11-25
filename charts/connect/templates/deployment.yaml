@@ -74,7 +74,7 @@ spec:
             {{- if eq .Values.watch true}}
             - -w
             {{- end }}
-            {{- if eq .Values.telemetry false}}
+            {{- if and (eq .Values.telemetry false) (eq .Values.streams.enabled false) }}
             - --disable-telemetry
             {{- end }}
             {{- if and .Values.connectResources.enabled .Values.connectResources.resourcesConfigMap }}
@@ -85,6 +85,9 @@ spec:
             - "streams"
             {{- if eq .Values.streams.api.enable false }}
             - "--no-api"
+            {{- end }}
+            {{- if eq .Values.telemetry false}}
+            - "--disable-telemetry"
             {{- end }}
             - /streams/*.yaml
             {{- end }}
